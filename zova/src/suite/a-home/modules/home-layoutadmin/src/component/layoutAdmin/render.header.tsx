@@ -41,7 +41,10 @@ export class RenderHeader extends BeanRenderBase {
             {this.$$r.$$renderTabs.renderTabItems()}
           </div>
           <div
-            ref={ref => this.setHeaderActionsElement((ref as HTMLDivElement | null) ?? undefined)}
+            ref={ref => {
+              if (!this.ctx.disposed)
+                this.setHeaderActionsElement?.((ref as HTMLDivElement | null) ?? undefined);
+            }}
             class={classes('relative flex-none', this.cHeaderActions)}
             data-testid="header-actions"
             onFocusout={event => this.onHeaderActionsFocusout(event)}

@@ -134,7 +134,7 @@ export class RenderTabs extends BeanRenderBase {
         data-compact={this.tabItemsCompact ? 'true' : 'false'}
         ref={ref => {
           if (!this.ctx.disposed)
-            this.setTabItemsElement((ref as HTMLDivElement | null) ?? undefined);
+            this.setTabItemsElement?.((ref as HTMLDivElement | null) ?? undefined);
         }}
       >
         <div
@@ -161,7 +161,7 @@ export class RenderTabs extends BeanRenderBase {
           id={this.tabItemsMenuId}
           ref={ref => {
             if (!this.ctx.disposed)
-              this.setTabItemsMenuElement((ref as HTMLDivElement | null) ?? undefined);
+              this.setTabItemsMenuElement?.((ref as HTMLDivElement | null) ?? undefined);
           }}
           {...{ popover: 'auto' }}
           class={`${this.cTabItemsMenu} bg-base-100 border border-base-300 rounded-box shadow-lg p-2`}
