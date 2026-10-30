@@ -1,5 +1,26 @@
 # Changelog
 
+## 5.1.250
+
+### Features
+
+- Add Japanese (`ja-jp`) and Traditional Chinese (`zh-tw`) locales.
+- Introduce locale providers and locale specifications.
+- Add grouping and aggregation capabilities.
+
+### Bug Fixes
+
+- Distinguish planning closure from unfinished work breakdown structure (WBS) scope.
+- Correct target decorator DTO resolution for OpenAPI.
+- Keep Cabloy Locale delivery confined to its worktree.
+
+### Improvements
+
+- Refactor CLI CRUD functionality.
+- Enhance grouping and aggregation.
+- Clarify locale provider examples and metadata commands.
+- Update locale documentation and synchronize OpenAPI guidance.
+
 ## 5.1.249
 
 ### Features
