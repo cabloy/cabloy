@@ -1,5 +1,15 @@
 # Guidance and Release-Readiness Evidence
 
+## Current configuration and mapping dependency — 2026-10-30
+
+The latest user correction requires frontend/backend language configuration and Zod mappings without an actual business consumer. It supersedes the earlier same-date restoration below and Commerce-profile recommendation, not accepted dictionary/framework/reload/guidance proof. WBS-LOC-40-01 remains active and `not-started`; WBS-LOC-50-01 / ATP-LOC-08 remain blocked on its verified bilateral configuration/mapping result under ATP-LOC-03/07. ATP-LOC-04 and business-page/schema/draft/SSR/browser acceptance are not required current scope and are not passed. No new Commerce flavor/profile or runner expansion is needed. Concrete application-owned configuration/initialization placement and activation scope remain a finite execution gate, preserving Basic defaults/home-base mappings. No implementation, runtime/build result or publication approval is recorded by this specification change; see [current progress](../../progress.md).
+
+All readiness/status conclusions below retain their original scope and chronology. Guidance-only acceptance does not prove pending actual Zod mappings, and historical excluded tests do not become current passes.
+
+## Scope restoration notice — 2026-10-30
+
+The user now requires one actual business-application consumer again. The current PRD/SRS/WBS/test plan supersede the 2026-10-27 exclusion: WBS-LOC-40-01 is `not-started`; WBS-LOC-50-01 / ATP-LOC-08 current readiness is `blocked` on its verified result. Earlier reduced-scope readiness below remains valid only for that original scope, not the restored consumer acceptance. Guidance-only ATP-LOC-07 proof is retained, while its restored runtime validation/schema/draft portion and ATP-LOC-04 require new selected-consumer proof. The 1,550-entry dictionary acceptance and framework/reload records are unchanged. No runtime/build/source operation or new acceptance result follows from this specification change; see [current progress](../../progress.md).
+
 ## AccountUserName supplement disposition — 2026-10-27
 
 The user subsequently approved the bounded next step with “同意，请执行下一步”. Both Zova home-user provider dictionaries now contain `AccountUserName`: Japanese `ユーザー名`, Taiwan Traditional Chinese `使用者名稱`, consistent with existing home-login wording. The [supplement review packet](../phase-30/terminology-review.md#accountusername-supplement--2026-10-27) and [actual inventory/source checks](../phase-30/artifacts/account-username-398f2e-checks.txt) supersede the missing-source gate below, without changing historical records. Base remains `398f2e270aac823a6feb0da5eac534e5867798e8` plus the preceding documentary edits and exact retained two-file source diff.

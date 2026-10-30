@@ -2,7 +2,7 @@
 
 ## Delivery Objective
 
-Deliver modular Japanese and Traditional Chinese resources with explicit framework language policy, early registration, predictable precedence, reload correctness and application-owned configuration guidance. The accepted framework/dictionary/reload slices remain supported by their retained proof. Per the user's 2026-10-27 correction, no actual enabled business-application consumer or corresponding runtime integration verification is required for suite delivery.
+Deliver modular Japanese and Traditional Chinese resources with explicit framework language policy, early registration, predictable precedence, reload correctness and application-owned configuration guidance. The user's latest 2026-10-30 correction retains frontend and backend language configuration and Zod validation mappings, but removes actual business-consumer delivery and its page/schema/draft/SSR acceptance. Accepted dictionary/framework/reload and guidance proof retains its recorded scope; it does not prove the pending bilateral configuration/mapping delivery.
 
 ## Delivery Principles
 
@@ -122,39 +122,44 @@ Acceptance checks:
 - Reload state matches clean startup precedence, and no stale envelope/global modules key appears.
 - Verification uses an authorized test/dev boundary without killing unrelated processes or resetting data.
 
-### Phase 40: Former Consumer Integration Scope — Not Required
+### Phase 40: Application Language Configuration and Validation
 
 Dependencies: `WBS-LOC-30-01`, `WBS-LOC-30-02`.
 
-#### WBS-LOC-40-01: Retain the disposition of former application integration verification
+#### WBS-LOC-40-01: Configure frontend and backend languages and Zod mappings
 
 Traceability: `PRD-LOC-03`, `PRD-LOC-05`, `PRD-LOC-06`, `SRS-LOC-03`, `SRS-LOC-06`, `SRS-LOC-09`, `SRS-LOC-12`, `ATP-LOC-03`, `ATP-LOC-04`, `ATP-LOC-07`.
 
+`ATP-LOC-04` is retained as historical traceability only; it is not required current scope, not a dependency and not a current pass.
+
 Dependencies: `WBS-LOC-30-01`, `WBS-LOC-30-02`.
 
-Source areas: historical phase-40 records and the public I18n Guide. Basic's Vona/Zova home-base adapters and ordinary policy remain unchanged; additional vendor validation registration belongs to application owners.
+Source areas: paired application root language configuration and application initialization through the existing Vona/Zova validation adapters, public I18n guidance and existing focused locale/validation tests. Concrete configuration and registration paths and activation scope must be named in the bounded execution dossier; no business page, API or shared-host selection is required.
 
 Tasks:
 
-- This former runtime integration increment is outside the revised delivery scope following the user's explicit 2026-10-27 correction. It requires no implementation, consumer discovery/configuration or verification run.
-- Retain historical results and stable identifiers for attribution. Do not restore the rejected test-only locale-policy switch, integration matrix or Basic ja/zhTW registrations.
-- Retain application-owned configuration guidance without creating an application, Site, flavor, route, API or environment override.
+- Apply the latest 2026-10-30 correction: deliver frontend and backend language configuration and Zod mappings without an actual business consumer. Before source execution, settle only the application-owned configuration/registration placement and activation scope that preserve Basic's existing baseline. This finite gate does not authorize a new Commerce profile, Site/flavor, runner expansion or replacement locale engine.
+- Enable ja-jp and zh-tw through normal paired root policy, retaining en-us/zh-cn and aligned default en-us. Because `locale.items` replaces earlier items, declare the complete intended four-language set. Do not infer enablement from provider installation.
+- Register the complete en/zhCN/ja/zhTW vendor map through existing application adapters after baseline registration: backend uses `app.config.locale.default`; frontend uses its root default inside `process.env.CLIENT`. Registration replaces the previous map and occurs at startup, never per request. Preserve Basic home-base mappings and keep provider modules data-only.
+- Run proportional ATP-LOC-03 effective-policy assertions and ATP-LOC-07 actual mapping checks through existing supported adapters/test infrastructure. Retain applicable original-language and separate-context regressions. No business submission, page adaptation, schema/draft flow or SSR/browser matrix is required; ATP-LOC-04 is outside current scope, not passed.
+- Reuse accepted framework/dictionary/reload/guidance proof within its recorded source scope and preserve historical failures. Source changes and meaningful runtime verification require a separately approved bounded dossier; prepare affected paired artifacts only if that actual implementation needs them.
 
 Acceptance checks:
 
-- No current pass is claimed for the excluded application validation, schema/draft switching, SSR, hydration, navigation or concurrent-request procedures. ATP-LOC-04 is not required; ATP-LOC-07 now covers configuration guidance only. ATP-LOC-03 keeps its existing framework policy proof without an application-integration rerun.
-- Record this task as `deferred` (out of current scope, not verified), with no scheduled resumption or runtime prerequisite for suite delivery. This is a scope removal, not a temporary evidence waiver.
-- WBS-LOC-50-01 does not depend on this task. Retained dictionary/mechanism/reload proof and public guidance, not an enabled consumer, govern current readiness.
+- Concrete frontend/backend configuration and registration owners, activation scope and source revision are attributable; both new languages and the full four-entry vendor map are effective without changing Basic defaults/home-base registrations.
+- ATP-LOC-03 confirms the paired enabled set/default and replacement semantics; ATP-LOC-07 verifies actual Zod validation messages for both new languages on both stacks through existing adapters, retaining original-language controls and scoped-locale behavior. Keep exact commands, configuration, assertions, cleanup and sanitized results.
+- No actual business consumer, Commerce flavor/profile, test-runner extension or business-page/schema/draft/SSR acceptance is a prerequisite. Guidance alone or historical removed-test results do not prove the retained configuration/mapping delivery.
+- WBS-LOC-40-01 remains active and `not-started` until approved execution begins. WBS-LOC-50-01 depends on its verified configuration/mapping result, not a consumer result.
 
 ### Phase 50: Documentation and Release Readiness
 
-Dependencies: `WBS-LOC-30-01`, `WBS-LOC-30-02`.
+Dependencies: `WBS-LOC-30-01`, `WBS-LOC-30-02`, `WBS-LOC-40-01`.
 
 #### WBS-LOC-50-01: Close guidance and release-readiness proof
 
 Traceability: `PRD-LOC-05`, `PRD-LOC-06`, `SRS-LOC-09`, `SRS-LOC-12`, `ATP-LOC-07`, `ATP-LOC-08`.
 
-Dependencies: `WBS-LOC-30-01`, `WBS-LOC-30-02`.
+Dependencies: `WBS-LOC-30-01`, `WBS-LOC-30-02`, `WBS-LOC-40-01`.
 
 Source areas: repo-docs backend i18n and frontend module/startup/configuration guidance; existing root validation/build scripts; this planning set's progress/evidence references.
 
@@ -162,13 +167,13 @@ Tasks:
 
 - Document pack authoring, cross-module envelopes, enablement/defaults, precedence, fallback, generator behavior, reload behavior, and migration from module defaultLocale.
 - Explicitly explain text versus date/number/currency formatting coverage and the absence of automatic language enablement.
-- Reuse retained docs/build/link and framework/dictionary/reload proof within its recorded source scope; reconcile the current guidance and scope disposition under ATP-LOC-07/08. No consumer integration tests, extra runtime checks or builds solely for the removed validation are required.
-- Review translation approvals, evidence sanitization, compatibility/config migration notes and the explicitly removed application-integration scope. Scope removal is not a passed test or automatic readiness closure. Request release approval separately; do not publish.
+- Reuse retained docs/build/link and framework/dictionary/reload proof within its recorded source scope; reconcile guidance with the bilateral configuration/mapping ATP-LOC-03/07 results under ATP-LOC-08. Build/sync only artifacts actually affected by approved implementation, not an invented consumer flow.
+- Review translation approvals, evidence sanitization, compatibility/config migration notes and the latest configuration/mapping scope. Earlier readiness conclusions remain historical for their own scope. Request release approval separately; do not publish.
 
 Acceptance checks:
 
 - ATP-LOC-08 passes with links to current revision-scoped ATP results and actual docs/build outputs.
-- No open in-scope dictionary, framework policy, reload or guidance issue is hidden by a static planning pass. Excluded application-consumer verification does not block readiness and is not claimed as passed.
+- No open dictionary, framework policy, reload, guidance or bilateral configuration/mapping gate is hidden by a static planning pass. WBS-LOC-40-01 must be verified for that retained scope; no business-consumer or ATP-LOC-04 prerequisite remains. Prior guidance-only readiness and removed tests do not establish current configuration/mapping proof.
 - Release-readiness completion does not authorize npm publication, deployment, version changes, or a release operation.
 
 ## Dependency and Contract-Loop Rules
@@ -182,7 +187,7 @@ Acceptance checks:
 
 ## Traceability Matrix
 
-WBS-LOC-40-01 and ATP-LOC-04 associations remain historical only; they do not require execution or block current delivery. ATP-LOC-07 is now a guidance check under WBS-LOC-50-01.
+WBS-LOC-40-01 remains active for bilateral language configuration/Zod mappings. ATP-LOC-04 retains its stable historical ID but is not required current scope. ATP-LOC-07 covers guidance and effective mapping checks, not business schema/draft acceptance; WBS-LOC-50-01 reconciles the applicable proof after Phase 40 closes.
 
 | WBS           | Contracts                                                                                      | Acceptance / authority                                                              |
 | ------------- | ---------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------- |
@@ -190,7 +195,7 @@ WBS-LOC-40-01 and ATP-LOC-04 associations remain historical only; they do not re
 | WBS-LOC-20-01 | SRS-LOC-01, SRS-LOC-02, SRS-LOC-03, SRS-LOC-04, SRS-LOC-05, SRS-LOC-06, SRS-LOC-07, SRS-LOC-10 | ATP-LOC-01, ATP-LOC-02, ATP-LOC-03                                                  |
 | WBS-LOC-30-01 | SRS-LOC-01, SRS-LOC-08                                                                         | ATP-LOC-01, ATP-LOC-05                                                              |
 | WBS-LOC-30-02 | SRS-LOC-11                                                                                     | ATP-LOC-06                                                                          |
-| WBS-LOC-40-01 | SRS-LOC-03, SRS-LOC-06, SRS-LOC-09, SRS-LOC-12                                                 | ATP-LOC-03, ATP-LOC-04, ATP-LOC-07                                                  |
+| WBS-LOC-40-01 | SRS-LOC-03, SRS-LOC-06, SRS-LOC-09, SRS-LOC-12                                                 | ATP-LOC-03, ATP-LOC-07                                                              |
 | WBS-LOC-50-01 | SRS-LOC-09, SRS-LOC-12                                                                         | ATP-LOC-07, ATP-LOC-08                                                              |
 
 ## Completion and Evidence Rules

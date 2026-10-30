@@ -1,4 +1,14 @@
-# Existing Consumer Integration Evidence
+# Language Configuration and Historical Integration Evidence
+
+## Current bilateral configuration and mapping scope — 2026-10-30
+
+The user's subsequent same-date correction retains frontend/backend language configuration and Zod mappings, but removes the actual business-consumer requirement. WBS-LOC-40-01 remains active and `not-started`, pending concrete application-owned configuration/initialization placement, activation scope and bounded execution approval. WBS-LOC-50-01 waits for its verified ATP-LOC-03/07 configuration/mapping result, not consumer proof. ATP-LOC-04 is not required current scope and not passed. No Commerce profile/flavor, runner extension, business page, schema/draft flow or SSR/browser matrix is required. Basic defaults/home-base mappings remain unchanged. No new runtime implementation or result is recorded here; [current progress](../../progress.md) owns the handoff.
+
+The restoration and integration material below is historical and superseded in scope by this correction. Prior successes, failures, source hashes and removal records remain unchanged; guidance and former dirty-candidate results do not establish pending mapping delivery.
+
+## Consumer requirement restored — 2026-10-30
+
+The user now requires “落实一个符合既定边界的实际业务应用消费者”. WBS-LOC-40-01 is active again as `not-started`, pending selection/confirmation of one actual application-owned consumer and a separately approved execution dossier. Both languages and focused ATP-LOC-03/04/07 proof are required; WBS-LOC-50-01 readiness waits for its verified result. Prior removed tests, the former dirty candidate and the 2026-10-27 reduced-scope closure do not prove this restored requirement. The Basic baseline and rejected test-only-switch boundaries below remain in force. No new consumer implementation or runtime result is recorded by this specification update; [current progress](../../progress.md) owns the current handoff.
 
 ## Basic baseline Zod registration retained
 
@@ -15,7 +25,7 @@ The material below is **historical proof for the former 13-file candidate**, not
 ## Scope, approval, and attribution
 
 - Date: 2026-10-26. Edition: Cabloy Basic, detected from the sole `__CABLOY_BASIC__` marker.
-- Selected increment: [WBS-LOC-40-01](../../pdp-wbs.md#wbs-loc-40-01-verify-validation-schema-switching-ssr-and-paired-artifacts), existing validation/schema/SSR consumers and paired artifacts only. The user explicitly approved its bounded execution dossier before implementation. This record does not grant successor or release approval.
+- Selected increment: [WBS-LOC-40-01](../../pdp-wbs.md#wbs-loc-40-01-configure-frontend-and-backend-languages-and-zod-mappings), existing validation/schema/SSR consumers and paired artifacts only. The user explicitly approved its bounded execution dossier before implementation. This record does not grant successor or release approval.
 - Traceability: PRD-LOC-03/05/06; SRS-LOC-03/06/09/12; [ATP-LOC-03, ATP-LOC-04, ATP-LOC-07](../../test-plan.md).
 - Predecessors: WBS-LOC-30-01 dictionary acceptance and WBS-LOC-30-02 reload proof remain independently verified in [phase 30](../phase-30/index.md) and [dictionary closure](../phase-30/dictionaries.md#final-human-review-and-dictionary-closure-2026-10-26).
 - Base revision: `308cfe5c3677fc0c8124c1f26527f92a6125feec`, branch `worktree-spec-basic-cabloy-locale`, **dirty implementation**. Base SHA alone cannot reproduce these results.

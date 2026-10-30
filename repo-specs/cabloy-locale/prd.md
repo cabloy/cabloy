@@ -8,8 +8,8 @@ Provide maintainable Japanese and Traditional Chinese (Taiwan) language support 
 
 - Let maintainers distribute additional languages without changing every translated module.
 - Let application owners independently choose supported languages and the default.
-- Supply reviewed localized text and schema-label keys, with guidance for application-owned vendor validation mappings.
-- Preserve application overrides, existing English/Simplified Chinese behavior and framework startup semantics; delivery does not include an enabled business-application consumer or its runtime integration verification.
+- Supply reviewed localized text and schema-label keys, with application-owned language configuration and Zod validation mappings on both frontend and backend.
+- Preserve application overrides, existing English/Simplified Chinese behavior and framework startup semantics; deliver and proportionately verify the paired application configuration/mappings without requiring a business consumer.
 
 ## Personas
 
@@ -26,8 +26,9 @@ Provide maintainable Japanese and Traditional Chinese (Taiwan) language support 
 
 - Paired frontend/backend `cabloy-locale` suites, initially `locale-jajp` and `locale-zhtw`.
 - Cross-module Japanese (`ja-jp`) and Traditional Chinese (Taiwan) (`zh-tw`) resources for the current Cabloy Basic source inventory.
-- Necessary core error text, language names, schema-label translations, and guidance for application-owned validation-library language mapping.
-- Framework language selection/defaults, early registration, overrides, fallback, metadata generation, and development reload behavior. Existing Admin/Web consumers retain their ownership; this suite does not deliver or verify an application that enables the additional languages.
+- Necessary core error text, language names, schema-label translations, and application-owned Zod validation-language mapping on both stacks.
+- Framework language selection/defaults, early registration, overrides, fallback, metadata generation, and development reload behavior.
+- Actual frontend and backend application language configuration for `ja-jp` and `zh-tw`, with corresponding Zod mappings and proportional configuration/adapter verification. The concrete app-owned placement is a finite execution gate, not a requirement to select a business consumer or introduce a new configuration profile. Basic's original English/Simplified Chinese defaults and home-base mappings remain unchanged absent explicit new approval. Guidance alone does not complete this delivery.
 - Inventory-based completeness and human terminology review before release.
 
 ### Deferred
@@ -37,12 +38,12 @@ Provide maintainable Japanese and Traditional Chinese (Taiwan) language support 
 
 ### Out of Scope
 
-New business pages, sites, flavors, APIs, persisted resources, identities, tenant rules, migrations, authentication policies, public dynamic registration APIs, and a replacement internationalization engine. Establishing or locating an enabled Japanese/Traditional Chinese business-application consumer and verifying its application-level validation, schema/draft switching, SSR, hydration, navigation or request isolation are also excluded by the user's 2026-10-27 scope correction. These are not prerequisites for this suite's delivery or readiness; excluded checks are not reported as passed.
+New business pages, sites, flavors, APIs, persisted resources, identities, tenant rules, migrations, authentication policies, public dynamic registration APIs, and a replacement internationalization engine. The user's subsequent 2026-10-30 correction, “前端和后端均进行‘语言配置和zod验证映射’，不需要再进行‘业务消费者’”, supersedes the earlier same-date actual-consumer restoration. A business consumer, business/page integration, schema/draft-switching flow and SSR/browser consumer acceptance are not prerequisites for this increment; generic reactive-schema, SSR/hydration and request-isolation constraints remain framework safety obligations, not a requirement to demonstrate a real flow. No new flavor, configuration profile or test runner is required. The rejected test-only policy switch remains rejected, and this correction does not approve changes to Basic's defaults.
 
 ## Primary User Journeys
 
 1. A maintainer installs a language pack but does not enable that language; available choices and the default remain unchanged.
-2. An application owner may independently enable Japanese or Traditional Chinese and configure vendor validation mappings using the public guidance. Delivering or verifying that application's integration is outside this suite.
+2. An application owner configures Japanese and Traditional Chinese and registers the corresponding Zod mappings on both frontend and backend at confirmed app-owned locations. Existing scoped adapter/validation tests and proportional policy assertions verify those mappings and paired configuration; a business page or end-user integration flow is not required.
 3. A translator updates target-module dictionaries centrally; lazy target loading and development reload preserve the documented precedence.
 4. An application owner overrides selected translated messages; the application-specific wording wins.
 5. A user encounters an untranslated message; existing fallback remains usable instead of failing the page or API.
@@ -53,7 +54,7 @@ New business pages, sites, flavors, APIs, persisted resources, identities, tenan
 - **PRD-LOC-02**: An application owner controls enabled languages and the default independently of installed language resources; unsupported saved or requested language selections cannot activate a disabled language. Traceability: `SRS-LOC-05`, `SRS-LOC-06`.
 - **PRD-LOC-03**: Existing application consumers can use contributed text from their first supported initialization/render boundary, including preload consumers and lazily loaded modules, without inconsistent SSR/client text. Traceability: `SRS-LOC-03`, `SRS-LOC-04`, `SRS-LOC-09`.
 - **PRD-LOC-04**: Application-specific target-module wording takes precedence over language-pack wording, which takes precedence over target defaults; missing messages preserve the established fallback behavior. Traceability: `SRS-LOC-02`, `SRS-LOC-07`.
-- **PRD-LOC-05**: Japanese and Traditional Chinese providers supply reviewed module text, language names, existing schema-label translations and core error text with intact interpolation and plural conventions. Vendor validation registration remains an application-owned choice documented by this suite, not a delivered or runtime-verified application integration; incomplete dictionary work is not reported as complete. Traceability: `SRS-LOC-08`, `SRS-LOC-09`.
+- **PRD-LOC-05**: Japanese and Traditional Chinese providers supply reviewed module text, language names, existing schema-label translations and core error text with intact interpolation and plural conventions. Application owners deliver language configuration and Zod mappings for both languages on frontend and backend through existing supported adapters, with proportional configuration/validation proof. Dictionary coverage, guidance and actual configuration/mapping delivery remain separate; neither dictionaries nor guidance alone complete the latter. No business consumer is required. Traceability: `SRS-LOC-08`, `SRS-LOC-09`.
 - **PRD-LOC-06**: Maintainers can generate, typecheck, develop, and prepare these language packs using normal repository workflows, without stale language overrides, hand-edited generated consumers, or automatic policy changes. Traceability: `SRS-LOC-01`, `SRS-LOC-10`, `SRS-LOC-11`, `SRS-LOC-12`.
 
 ## Business Rules
@@ -68,20 +69,20 @@ New business pages, sites, flavors, APIs, persisted resources, identities, tenan
 
 ## Launch Criteria
 
-Both language packs are present in both stacks, applicable framework/dictionary/reload proof and public configuration guidance are retained, translation coverage and terminology review have no unresolved required omission, and evidence remains revision scoped. Establishing an enabled business-application consumer and its application-level runtime verification are not launch criteria. ATP-LOC-04 and the former runtime portion of ATP-LOC-07 are no longer required, not passed or temporarily waived; ATP-LOC-03 retains its framework policy scope without a new consumer-integration rerun. Existing English/Simplified Chinese behavior remains unchanged. Publication still requires separate authorization.
+Both language packs are present in both stacks, applicable framework/dictionary/reload proof and public configuration guidance are retained, translation coverage and terminology review have no unresolved required omission, and evidence remains revision scoped. Under the subsequent 2026-10-30 correction, actual frontend/backend application language configuration and Zod mappings, proportional ATP-LOC-03 configuration assertions and ATP-LOC-07 mapping proof are launch criteria. WBS-LOC-40-01 remains active implementation delivery, not deferred or guidance-only; WBS-LOC-50-01 still depends on its verified configuration/mapping result. Confirm the app-owned placement and bounded execution scope without inventing a consumer/profile or changing Basic's original defaults/home-base mappings. Already accepted inventory, terminology, framework, reload and guidance proof remains valid within its recorded scope; earlier guidance-only or historical integration results do not prove the new configuration/mapping delivery. ATP-LOC-04 is retained as historical integration only, explicitly not required for current scope and not reported as passed. This planning correction supplies no implementation/runtime approval or new acceptance result. Publication still requires separate authorization.
 
 ## Requirement Traceability
 
-Stable references to WBS-LOC-40-01 and ATP-LOC-04 below are historical associations only; that task/scenario is outside current scope. ATP-LOC-07 now covers application-configuration guidance under WBS-LOC-50-01, not runtime validation.
+WBS-LOC-40-01 remains active for bilateral application language configuration and Zod mapping delivery under the subsequent 2026-10-30 correction. ATP-LOC-03 retains framework policy proof plus proportional configuration assertions; ATP-LOC-07 verifies backend/frontend configuration and mappings using existing supported scoped adapter/validation tests, without a selected consumer. ATP-LOC-04 retains its ID as historical integration only, is not required for current scope and is not passed. WBS-LOC-50-01 reconciles actual configuration/mapping proof before current readiness can close.
 
-| Product requirement | Technical owners                               | Delivery                                                   | Acceptance                                                 |
-| ------------------- | ---------------------------------------------- | ---------------------------------------------------------- | ---------------------------------------------------------- |
-| PRD-LOC-01          | SRS-LOC-01, SRS-LOC-02, SRS-LOC-08             | WBS-LOC-20-01, WBS-LOC-30-01                               | ATP-LOC-01, ATP-LOC-02, ATP-LOC-05                         |
-| PRD-LOC-02          | SRS-LOC-05, SRS-LOC-06                         | WBS-LOC-20-01                                              | ATP-LOC-03                                                 |
-| PRD-LOC-03          | SRS-LOC-03, SRS-LOC-04, SRS-LOC-09             | WBS-LOC-20-01, WBS-LOC-40-01                               | ATP-LOC-01, ATP-LOC-04, ATP-LOC-07                         |
-| PRD-LOC-04          | SRS-LOC-02, SRS-LOC-07                         | WBS-LOC-20-01                                              | ATP-LOC-02                                                 |
-| PRD-LOC-05          | SRS-LOC-08, SRS-LOC-09                         | WBS-LOC-30-01, WBS-LOC-40-01, WBS-LOC-50-01                | ATP-LOC-05, ATP-LOC-07                                     |
-| PRD-LOC-06          | SRS-LOC-01, SRS-LOC-10, SRS-LOC-11, SRS-LOC-12 | WBS-LOC-20-01, WBS-LOC-30-02, WBS-LOC-40-01, WBS-LOC-50-01 | ATP-LOC-01, ATP-LOC-04, ATP-LOC-06, ATP-LOC-07, ATP-LOC-08 |
+| Product requirement | Technical owners                               | Delivery                                                   | Acceptance                                     |
+| ------------------- | ---------------------------------------------- | ---------------------------------------------------------- | ---------------------------------------------- |
+| PRD-LOC-01          | SRS-LOC-01, SRS-LOC-02, SRS-LOC-08             | WBS-LOC-20-01, WBS-LOC-30-01                               | ATP-LOC-01, ATP-LOC-02, ATP-LOC-05             |
+| PRD-LOC-02          | SRS-LOC-05, SRS-LOC-06                         | WBS-LOC-20-01, WBS-LOC-40-01                               | ATP-LOC-03                                     |
+| PRD-LOC-03          | SRS-LOC-03, SRS-LOC-04, SRS-LOC-09             | WBS-LOC-20-01, WBS-LOC-40-01                               | ATP-LOC-01, ATP-LOC-07                         |
+| PRD-LOC-04          | SRS-LOC-02, SRS-LOC-07                         | WBS-LOC-20-01                                              | ATP-LOC-02                                     |
+| PRD-LOC-05          | SRS-LOC-08, SRS-LOC-09                         | WBS-LOC-30-01, WBS-LOC-40-01, WBS-LOC-50-01                | ATP-LOC-05, ATP-LOC-07                         |
+| PRD-LOC-06          | SRS-LOC-01, SRS-LOC-10, SRS-LOC-11, SRS-LOC-12 | WBS-LOC-20-01, WBS-LOC-30-02, WBS-LOC-40-01, WBS-LOC-50-01 | ATP-LOC-01, ATP-LOC-06, ATP-LOC-07, ATP-LOC-08 |
 
 ## Related Records
 
