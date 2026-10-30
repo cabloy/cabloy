@@ -86,8 +86,6 @@ export default function (sys: ZovaSys) {
     items: {
       'en-us': 'LanguageEnglish',
       'zh-cn': 'LanguageChinese',
-      'ja-jp': 'LanguageJapanese',
-      'zh-tw': 'LanguageTraditionalChinese',
     },
   };
 

@@ -1,6 +1,6 @@
 import type { IModuleMain } from 'zova';
 
-import { en, ja, zhCN, zhTW } from 'zod/locales';
+import { en, zhCN } from 'zod/locales';
 import { BeanSimple } from 'zova';
 
 export class Main extends BeanSimple implements IModuleMain {
@@ -11,8 +11,6 @@ export class Main extends BeanSimple implements IModuleMain {
       const localeErrors = {
         'en-us': en,
         'zh-cn': zhCN,
-        'ja-jp': ja,
-        'zh-tw': zhTW,
       };
       this.app.util.setLocaleErrors(localeErrors, this.sys.config.locale.default);
     }
