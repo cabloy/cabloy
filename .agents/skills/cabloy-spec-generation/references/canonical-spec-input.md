@@ -111,7 +111,7 @@ Setup, Procedure, Expected result, Minimum proof, and Traceability must each be 
 | `WBS-DEMO-10-01` | `not-started` | None; execution has not begun. | Confirm the bounded execution dossier. |
 ```
 
-Resolve columns by header names (`WBS ID` and `Status`), never fixed cell positions. Additional/reordered columns are allowed. Require one row for every formal WBS task when constructing the complete chart model. Preserve the established status vocabulary and explain blockers/waivers precisely. `planning-complete` is valid only for a task declaring `Completion mode: planning-only.` in its WBS body; it satisfies a predecessor dependency edge but does not grant successor execution approval, count as verified, or reduce the verified-based burndown remainder.
+Resolve columns by header names (`WBS ID` and `Status`), never fixed cell positions. Additional/reordered columns are allowed. Require one row for every formal WBS task when constructing the complete chart model. Preserve the established status vocabulary and explain blockers/waivers precisely. `planning-complete` is valid only for a task declaring `Completion mode: planning-only.` in its WBS body; it satisfies a predecessor dependency edge but does not grant successor execution approval or count as verified. The burndown reports verified and eligible planning-complete counts separately; remaining = active scope − verified − eligible planning-complete. Deferred scope is separate; all other active statuses remain unfinished.
 
 ## Three gates, not one success signal
 

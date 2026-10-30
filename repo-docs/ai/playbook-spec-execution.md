@@ -132,7 +132,7 @@ Use status precisely:
 - `implementation-complete` — source work is complete, but required ATP or release proof remains
 - `verified` — all applicable WBS checks and ATPs have durable, linked, redacted observed evidence
 
-`planning-complete` satisfies a predecessor dependency edge but does not unblock a task still recorded `blocked` or grant an execution dossier. Charts count only `verified` toward verified/remaining metrics. A successful build, generation command, hook, manual walkthrough, screenshot, or unrelated test run is not by itself `verified` unless the authoritative test plan defines it as sufficient retained proof. Evidence is revision- and authority-scoped; mark old proof superseded or requiring rerun when relevant source or authority changes.
+`planning-complete` satisfies a predecessor dependency edge but does not unblock a task still recorded `blocked` or grant an execution dossier. Charts count only `verified` toward verified totals and show eligible `planning-complete` closure separately. The burndown calculates remaining = active scope − verified − eligible planning-complete; deferred scope is separate, and all other active statuses remain unfinished. Documentary closure is not runtime ATP verification. A successful build, generation command, hook, manual walkthrough, screenshot, or unrelated test run is not by itself `verified` unless the authoritative test plan defines it as sufficient retained proof. Evidence is revision- and authority-scoped; mark old proof superseded or requiring rerun when relevant source or authority changes.
 
 ## Refresh derived charts last
 
