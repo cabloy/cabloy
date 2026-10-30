@@ -18,6 +18,7 @@ import type {
   TypeModelWhere,
 } from '../../types/index.ts';
 
+import { normalizeAggregateRows, normalizeAggregateValue } from '../aggregateResult.ts';
 import { BeanModelView } from './bean.model_view.ts';
 
 export class BeanModelCrudInner<TRecord extends {}> extends BeanModelView<TRecord> {
@@ -66,7 +67,8 @@ export class BeanModelCrudInner<TRecord extends {}> extends BeanModelView<TRecor
   }
 
   protected async _select<
-    T extends IModelSelectParams<TRecord> | IBuildModelSelectParams<TRecord, undefined, never>,
+    T extends (IModelSelectParams<TRecord> | IBuildModelSelectParams<TRecord, undefined, never>) &
+      Pick<IModelSelectGeneralParams<TRecord>, 'aggrs'>,
   >(
     table?: keyof ITableRecord,
     params?: T,
@@ -89,7 +91,10 @@ export class BeanModelCrudInner<TRecord extends {}> extends BeanModelView<TRecor
       }
       return `model.select: ${tip}, ${builder.toQuery()}`;
     });
-    return (await this.dialect.select(builder, datas, () => this.columns(table))) as TRecord[];
+    const rows = (await this.dialect.select(builder, datas, () =>
+      this.columns(table),
+    )) as TRecord[];
+    return normalizeAggregateRows(rows, params?.aggrs);
   }
 
   protected _select_buildParams<T extends IModelSelectGeneralParams<TRecord>>(
@@ -164,7 +169,7 @@ export class BeanModelCrudInner<TRecord extends {}> extends BeanModelView<TRecor
     // ready
     this.$loggerChild('model').debug(() => `model.count: ${builder.toQuery()}`);
     const res = await builder;
-    return this.extractFirstNumber(res);
+    return normalizeAggregateValue(this.extractFirstValue(res), 'count');
   }
 
   protected async _increment(
