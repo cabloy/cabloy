@@ -1,0 +1,42 @@
+Phase 50 guidance/link/command review
+base=683d25987485da60b80d47af0a902fed7b9337ec
+rendered links/fragments and sidebar entry passed: repo-docs/backend/i18n-guide.md
+rendered links/fragments and sidebar entry passed: repo-docs/frontend/module-scope.md
+rendered links/fragments and sidebar entry passed: repo-docs/frontend/environment-config-guide.md
+rendered links/fragments and sidebar entry passed: repo-docs/frontend/system-startup-guide.md
+root-local link occurrences checked=37
+CLI declaration present vona/packages-cli/cli-set-api/src/lib/command/init.locale.ts sha256=ced4ba51df45d6f1f0f4bb55d19ba9bfe6ef3c8095de698e56248d3a3e249847
+CLI declaration present vona/packages-cli/cli-set-api/src/lib/command/tools.metadata.ts sha256=d0de6013df417e798de287f4cc6f5c6c9cd5d044b12e92c761f66626a364fd23
+CLI declaration present zova/packages-cli/cli-set-front/src/lib/command/init.locale.ts sha256=0316a768abeb482a9b8b1e405c13333f58b4ac6abc4387931bddb2132f5039bb
+CLI declaration present zova/packages-cli/cli-set-front/src/lib/command/tools.metadata.ts sha256=b6b9f32c0753d71dced005f1a1bf1c0c4f2808e9b28ef697ac84bd62b168eac7
+root script vona=node ./vona/packages-cli/cli/src/bin/vona.ts --projectPath=vona
+root script zova=node ./zova/packages-cli/cli/src/bin/zova.ts --projectPath=zova
+root script docs:build=pnpm --dir repo-docs docs:build
+root script build:zova:admin=pnpm --dir zova run build:ssr:cabloyBasicAdmin && pnpm --dir zova run build:rest:cabloyBasicAdmin
+root script build:zova:web=pnpm --dir zova run build:ssr:cabloyBasicWeb && pnpm --dir zova run build:rest:cabloyBasicWeb
+root script deps:vona=pnpm --dir vona run vona :tools:deps
+root script tsc:vona=pnpm --dir vona run tsc
+root script tsc:zova=pnpm --dir zova run tsc
+Manual guidance disposition: provider resources are data-only; enabled policy, configured default and English/key fallback are distinct; no implicit zh-tw to zh-cn fallback.
+Main-only I18n Guide retains baseline Basic en-us/zh-cn statements at lines 152 and 298; these are not evidence of this branch root defaults. SRS-LOC-09 and corrected Phase40 proof own this branch four-language choice. Guide four-language example and home-base moduleLoaded/client-only instructions remain applicable. No guide edit or runtime rollback is authorized.
+Migration: root config.locale.default replaces obsolete a-locale defaultLocale; transport/timezone settings remain separate. Text packs do not promise date/number/currency formatting. Authored localesProvider stays outside ordinary generation; generated consumers are not hand-edited.
+Source review is not browser/SSR acceptance or a new runtime test. ATP-LOC-04 remains excluded.
+command: npm run spec:check -- cabloy-locale
+
+> cabloy@5.1.242 spec:check
+> node ./repo-agent-governance/tools/spec-audit/audit.mjs cabloy-locale
+
+repo-specs/cabloy-locale: complete planning structure passed (32 definitions).
+Complete-baseline structure and explicit exact-ID chain.
+Static structure only; approval, semantic sufficiency, implementation, and evidence authenticity require human review.
+
+producer_exit=0
+command: npm run spec:charts:check -- cabloy-locale
+
+> cabloy@5.1.242 spec:charts:check
+> node ./repo-agent-governance/tools/spec-charts/generate-implementation-charts.mjs --check cabloy-locale
+
+checked implementation-gantt.svg and implementation-burndown.svg for repo-specs/cabloy-locale (en; 4/6 verified).
+
+producer_exit=0
+sanitizer_exit=0

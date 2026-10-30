@@ -1,5 +1,9 @@
 # Language Configuration and Historical Integration Evidence
 
+## Later guide restoration and Phase 50 handoff — 2026-10-30
+
+After the corrected-placement run, the user designated `main` as the sole source of truth for `repo-docs/backend/i18n-guide.md` and required leaving it unchanged. It was restored to `main`; the guide hash `3bbc1e8a3bf6869a048b47ef3f648b56b37a198b49d18b8be05cb3b19fdd8cca` and docs-build result below describe the earlier, branch-modified guide only. They do not prove the restored guide bytes. Runtime/configuration/test and paired-build/type proof below retains its source scope. The separately approved [Phase 50 reconciliation](../phase-50/index.md#approved-readiness-reconciliation--2026-10-30) records the current-guide build and applicability; the earlier no-successor-approval handoff is historical, not a remaining execution gate.
+
 ## Home-base registration correction — 2026-10-30
 
 The user subsequently directed both stacks to append Japanese/Traditional Chinese mappings in their existing `home-base/src/main.ts`, not project monkeys. This supersedes the same-day project-monkey placement and unchanged-home-base requirement, not the four-language root policy, baseline/default, client-only frontend registration or data-only providers. The bounded correction and its applicable ATP-LOC-03/07 rerun are complete: **WBS-LOC-40-01 is verified**. The project-monkey candidate below remains historical proof for its exact bytes; corrected-placement proof follows here. No Phase 50 execution, release, environment change or reset is authorized by this correction.

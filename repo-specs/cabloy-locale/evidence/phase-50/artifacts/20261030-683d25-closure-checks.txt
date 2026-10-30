@@ -1,0 +1,59 @@
+Phase 50 final documentary checks
+base=683d25987485da60b80d47af0a902fed7b9337ec
+node=v24.11.0
+command: node_modules/.bin/oxfmt --write repo-specs/cabloy-locale/README.md repo-specs/cabloy-locale/progress.md
+Finished in 26ms on 2 files using 12 threads.
+
+producer_exit=0
+command: npm run format -- repo-specs/cabloy-locale/README.md repo-specs/cabloy-locale/progress.md
+
+> cabloy@5.1.242 format
+> oxfmt --check repo-specs/cabloy-locale/README.md repo-specs/cabloy-locale/progress.md
+
+Checking formatting...
+
+All matched files use the correct format.
+Finished in 23ms on 2 files using 12 threads.
+
+producer_exit=0
+command: npm run spec:check -- cabloy-locale
+
+> cabloy@5.1.242 spec:check
+> node ./repo-agent-governance/tools/spec-audit/audit.mjs cabloy-locale
+
+repo-specs/cabloy-locale: complete planning structure passed (32 definitions).
+Complete-baseline structure and explicit exact-ID chain.
+Static structure only; approval, semantic sufficiency, implementation, and evidence authenticity require human review.
+
+producer_exit=0
+command: npm run spec:charts -- cabloy-locale
+
+> cabloy@5.1.242 spec:charts
+> node ./repo-agent-governance/tools/spec-charts/generate-implementation-charts.mjs cabloy-locale
+
+generated implementation-gantt.svg and implementation-burndown.svg for repo-specs/cabloy-locale (en; 5/6 verified).
+
+producer_exit=0
+command: npm run spec:charts:check -- cabloy-locale
+
+> cabloy@5.1.242 spec:charts:check
+> node ./repo-agent-governance/tools/spec-charts/generate-implementation-charts.mjs --check cabloy-locale
+
+checked implementation-gantt.svg and implementation-burndown.svg for repo-specs/cabloy-locale (en; 5/6 verified).
+
+producer_exit=0
+command: git diff --exit-code main -- repo-docs/backend/i18n-guide.md
+
+producer_exit=0
+command: git diff --check
+
+producer_exit=0
+documentary dirty scope (lexical order): repo-specs/cabloy-locale/README.md, repo-specs/cabloy-locale/evidence/phase-40/index.md, repo-specs/cabloy-locale/evidence/phase-50/index.md, repo-specs/cabloy-locale/implementation-burndown.svg, repo-specs/cabloy-locale/implementation-gantt.svg, repo-specs/cabloy-locale/progress.md
+git diff --no-ext-diff --binary 683d25987485da60b80d47af0a902fed7b9337ec -- <scope>; sha256=72bc988be8243b7c354de80e38fff9262b2073d9913377f391fb2221fd96f71e
+New artifacts excluded from documentary digest: current docs-build, guidance-review and this closure-checks output. No runtime/public-guide source changed.
+Manual changed-record/new-artifact review: repository-relative source locations and public/synthetic diagnostics only; no remaining local roots, credentials, tokens, signed state, live provider identifiers or customer/payment data identified. Bounded path recognition is not a secret scanner.
+command: evidence:check -- --map <PACKAGE_STORE mapping> -- <six changed records and two fresh artifacts>
+
+
+producer_exit=0
+sanitizer_exit=0
