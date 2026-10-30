@@ -138,7 +138,10 @@ function installStudentCreateResponseCapture(page: Page) {
 const studentDraftCreatePath = '/admin/rest/resource/training-student%3Astudent/create';
 
 function studentDraftNameInput(page: Page) {
-  return page.getByRole('group', { name: 'Student Name *', exact: true }).getByRole('textbox');
+  return page
+    .locator('[role="tabpanel"]:not([hidden]):visible')
+    .getByRole('group', { name: 'Student Name *', exact: true })
+    .getByRole('textbox');
 }
 
 function studentDraftBanner(page: Page) {
