@@ -162,6 +162,55 @@ Schema metadata remains declarative: author `requiresSelection`, `selectedMaxIds
 
 Selection persists while paging the same result universe and during ordinary refetches. It clears on a material fixed-query change, filter submit/reset, sorting, page-size change, resource change, or a successful selection-consuming mutation. Page-size changes also return to page 1.
 
+## Narrow-container behavior in Cabloy Basic
+
+Cabloy Basic's `ZTable` owns a horizontal scroll container and observes its **available container width**, not the browser viewport or the table's scrollable content width. By default, a container narrower than `768px` uses compact presentation:
+
+- all columns, including row selection, temporarily stop being pinned;
+- `basic-table:actionOperationsRow` uses a compact column and a **More actions** popover instead of parallel buttons;
+- row actions retain their permission checks, confirmations, loading, duplicate-click protection, and error handling;
+- widening the container restores schema-defined pinning and the schema or personal-layout widths.
+
+This is a presentation override, not a schema or personal-layout mutation. Column visibility, order, and saved widths remain unchanged; resizing does not save or reset a layout. Sorting and selection also remain active.
+
+For direct Basic table consumers, configure the threshold or disable automatic compact presentation:
+
+```tsx
+import { ZTable } from 'zova-module-basic-table';
+
+<ZTable data={this.students} schema={this.schemaRow} compactBreakpoint={640} />;
+<ZTable data={this.students} schema={this.schemaRow} compactBreakpoint={false} />;
+```
+
+The default resource-page and details-table blocks inherit this behavior. When the resolved SSR cache policy emits `public, max-age=${expires}`, SSR omits `compactHint` entirely for every User-Agent. Server HTML and the hydration-time initial render both default to neutral desktop presentation. This keeps the compact presentation independent of User-Agent for public cached HTML, preserves the cache policy, and adds no `Vary: User-Agent` or CDN variation requirement.
+
+For responses outside that public-cache branch—including session/no-store responses, development, and `responseCache: false`—SSR uses a request User-Agent mobile hint for provisional compact presentation and transfers the same value for initial hydration. The hint reduces typical mobile first-paint layout changes; it cannot measure the container or predict tablet mode or every browser accurately.
+
+In both branches, measured container width becomes authoritative after mounting and initial hydration: a mobile request in a wide container uses desktop presentation, while any request in a narrow container becomes compact. `compactBreakpoint: false` disables both provisional and measured compact presentation; a custom numeric threshold applies to actual measurements, not to the provisional mobile classification. SPA startup uses the existing mounted measurement without a server hint.
+
+The popover uses the browser's native Popover API to escape table overflow clipping. Compact action panels stay hidden before hydration, including in unsupported browsers; post-hydration capability detection restores the existing inline actions when the API is unavailable rather than leaving an unusable trigger.
+
+## Narrow-container behavior in Cabloy Start
+
+Cabloy Start's `start-page:blockTable` and `start-details:blockTable` provide the same temporary compact policy through their Vuetify adapters. Each block observes its available container width after mounting and initial SSR hydration. The Vuetify table wrapper continues to own horizontal scrolling; the observer does not measure the table's intrinsic content width.
+
+Below the default `768px` threshold:
+
+- columns, including row selection, temporarily stop being pinned;
+- columns rendered by `start-table:actionOperationsRow` or `start-details:actionOperationsRow` use an approximately `80px` Operations column and a **More actions** popover;
+- widening the container restores schema-defined pinning and schema or personal-layout widths, without saving or resetting the layout.
+
+Configure the threshold on the owning Start block, rather than on the shared `a-table` engine:
+
+```ts
+ZovaRender.block('start-page:blockTable', { compactBreakpoint: 640 });
+ZovaRender.block('start-details:blockTable', { compactBreakpoint: false });
+```
+
+The popover retains the original Start action renderers and their permission checks, confirmations, loading, duplicate-click protection, errors, and retries. Clicking an enabled action closes the popover **before** the original action runs; keyboard activation follows the same path. Closing does not unmount a pending action. Escape closes the popover and restores trigger focus; scrolling outside it or resizing closes it as well.
+
+Start uses Vuetify `VMenu` for connected positioning, outside-click dismissal, keyboard handling, and scroll dismissal, not Basic's native Popover API or DaisyUI presentation. Its eager menu host retains the same action subtree through closure and desktop/compact transitions. SSR and initial hydration use the same cache-policy-dependent provisional presentation described above. In compact presentation, the retained actions are staged hidden until the menu host exists, then move into that host without a visible inline-action flash or remount; desktop actions stay inline. Post-hydration container measurement takes over, and native Popover API support is not required. The shared table engine consumes `compact` and `columnSizing`; it does not itself supply automatic measurement or an edition's row-action UI.
+
 ## Step 3: Let schema metadata drive the default columns
 
 In the default path, `ZTable` reads table-scene metadata from the row schema.

@@ -3,6 +3,7 @@ import type { IThemeRecord } from 'zova-module-a-style';
 import { BeanRenderBase, ClientOnly } from 'zova';
 import { Render } from 'zova-module-a-bean';
 import { $icon } from 'zova-module-a-icon';
+import { ZButton } from 'zova-module-basic-button';
 import { closeNearestDetails } from 'zova-module-home-base';
 
 @Render()
@@ -25,7 +26,10 @@ export class RenderTheme extends BeanRenderBase {
     return (
       <li>
         <details>
-          <summary>{$icon('::dark-theme', 24)}</summary>
+          <summary aria-label={this.scope.locale.ColorMode()} title={this.scope.locale.ColorMode()}>
+            {$icon('::dark-theme', 24)}
+            <span class="lg:hidden">{this.scope.locale.ColorMode()}</span>
+          </summary>
           <ClientOnly>
             <ul class="bg-base-100 rounded-t-none p-2 w-48">
               {themes.map(item => {
@@ -34,15 +38,16 @@ export class RenderTheme extends BeanRenderBase {
                     key={item.mode.toString()}
                     class={this.$theme.darkMode === item.mode ? 'disabled' : ''}
                   >
-                    <a
-                      onClick={event => {
+                    <ZButton
+                      disabled={this.$theme.darkMode === item.mode}
+                      onPerform={event => {
                         this.$theme.darkMode = item.mode as any;
-                        closeNearestDetails(event);
+                        closeNearestDetails({ currentTarget: event.target });
                       }}
                     >
                       {$icon(this.$theme.darkMode === item.mode ? '::done' : '::none', 24)}
                       {item.title}
-                    </a>
+                    </ZButton>
                   </li>
                 );
               })}
@@ -58,21 +63,25 @@ export class RenderTheme extends BeanRenderBase {
     return (
       <li>
         <details>
-          <summary>{$icon(':outline:theme-outline', 24)}</summary>
+          <summary aria-label={this.scope.locale.Theme()} title={this.scope.locale.Theme()}>
+            {$icon(':outline:theme-outline', 24)}
+            <span class="lg:hidden">{this.scope.locale.Theme()}</span>
+          </summary>
           <ClientOnly>
             <ul class="bg-base-100 rounded-t-none p-2 w-48">
               {themes.map(item => {
                 return (
                   <li key={item.name} class={this.$theme.name === item.name ? 'disabled' : ''}>
-                    <a
-                      onClick={event => {
+                    <ZButton
+                      disabled={this.$theme.name === item.name}
+                      onPerform={event => {
                         this.$theme.name = item.name as keyof IThemeRecord;
-                        closeNearestDetails(event);
+                        closeNearestDetails({ currentTarget: event.target });
                       }}
                     >
                       {$icon(this.$theme.name === item.name ? '::done' : '::none', 24)}
                       {item.title}
-                    </a>
+                    </ZButton>
                   </li>
                 );
               })}

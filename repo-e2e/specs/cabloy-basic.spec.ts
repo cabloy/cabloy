@@ -4,6 +4,10 @@ import { expect, test } from '../scripts/managedTest.ts';
 
 const studentResourceUrl =
   /\/admin\/rest\/resource\/training-student(?:%3A|:|%253A)student(?:[/?#]|$)/;
+const mobileUserAgent =
+  'Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Mobile/15E148 Safari/604.1';
+const desktopUserAgent =
+  'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36';
 
 interface IModelPersistenceIdentity {
   appName: string;
@@ -134,7 +138,10 @@ function installStudentCreateResponseCapture(page: Page) {
 const studentDraftCreatePath = '/admin/rest/resource/training-student%3Astudent/create';
 
 function studentDraftNameInput(page: Page) {
-  return page.getByRole('group', { name: 'Student Name *', exact: true }).getByRole('textbox');
+  return page
+    .locator('[role="tabpanel"]:not([hidden]):visible')
+    .getByRole('group', { name: 'Student Name *', exact: true })
+    .getByRole('textbox');
 }
 
 function studentDraftBanner(page: Page) {
@@ -482,6 +489,13 @@ function assertVisualOrder(geometry: IFieldGeometry[]) {
   }
 }
 
+function basicTableWrapper(page: Page) {
+  return page
+    .locator('div[data-table-compact]')
+    .filter({ has: page.locator('table') })
+    .first();
+}
+
 async function getDocumentHorizontalOverflow(page: Page) {
   return page.evaluate(() => {
     return (
@@ -524,6 +538,43 @@ test(
     await expect(page.locator('body')).toBeVisible();
     await expect(page).not.toHaveTitle(/error/i);
     expect(pageErrors).toEqual([]);
+  },
+);
+
+test(
+  'ATP-BASIC-SSR-06: public cache omits compact hints while no-store SSR retains them',
+  { tag: ['@web', '@ssr'] },
+  async ({ request }) => {
+    // The same cacheable URL must remain hint-free for mobile, desktop, then mobile requests.
+    for (const userAgent of [mobileUserAgent, desktopUserAgent, mobileUserAgent]) {
+      const response = await request.get('/', {
+        headers: { 'User-Agent': userAgent },
+      });
+      expect(response.ok()).toBeTruthy();
+      expect(response.headers()['cache-control']).toBe('public, max-age=600');
+      expect((response.headers().vary ?? '').toLowerCase().split(/\s*,\s*/)).not.toContain(
+        'user-agent',
+      );
+      const html = await response.text();
+      const state = html.match(/<script[^>]*id="ssr-state-init"[^>]*>([\s\S]*?)<\/script>/)?.[1];
+      expect(state).toBeTruthy();
+      expect(state).not.toContain('compactHint');
+    }
+
+    for (const compactHint of [true, false]) {
+      const response = await request.get('/demo/basic/state', {
+        headers: { 'User-Agent': compactHint ? mobileUserAgent : desktopUserAgent },
+      });
+      expect(response.ok()).toBeTruthy();
+      expect(response.headers()['cache-control']).toBe('no-cache, no-store, must-revalidate');
+      expect((response.headers().vary ?? '').toLowerCase().split(/\s*,\s*/)).not.toContain(
+        'user-agent',
+      );
+      const html = await response.text();
+      const state = html.match(/<script[^>]*id="ssr-state-init"[^>]*>([\s\S]*?)<\/script>/)?.[1];
+      expect(state).toBeTruthy();
+      expect(state?.match(/compactHint\s*:\s*(true|false)/)?.[1]).toBe(String(compactHint));
+    }
   },
 );
 
@@ -665,6 +716,1039 @@ test(
     } finally {
       await page.unroute(studentResourceUrl);
     }
+  },
+);
+
+test(
+  'ATP-BASIC-HEADER-01: mobile and desktop SSR header geometry survives hydration',
+  { tag: ['@admin', '@ssr'] },
+  async ({ page }) => {
+    test.setTimeout(120_000);
+    await loginAsAdmin(page);
+    const pageErrors = collectPageErrors(page);
+    const consoleErrors = collectConsoleErrors(page);
+    const hydrationWarnings: string[] = [];
+    page.on('console', message => {
+      if (/hydration.*mismatch|mismatch.*hydration/i.test(message.text())) {
+        hydrationWarnings.push(message.text());
+      }
+    });
+    const actions = page.getByTestId('header-actions');
+    const panel = actions.locator(':scope > .header-actions-panel');
+    const more = actions.locator('button').first();
+    const readGeometry = async () => {
+      await page.evaluate(() => document.fonts.ready.then(() => undefined));
+      return actions.evaluate(async element => {
+        await new Promise<void>(resolve => requestAnimationFrame(() => resolve()));
+        const header = element.closest('.navbar')!;
+        const panel = element.querySelector(':scope > .header-actions-panel')!;
+        const details = Array.from(panel.querySelectorAll(':scope > ul > li > details'));
+        const nodes = [
+          header,
+          header.nextElementSibling!,
+          element,
+          element.querySelector('button')!,
+          ...details.map(detail => detail.querySelector('summary')!),
+        ];
+        return {
+          // ClientOnly adds menu leaves after hydration, not another action tree.
+          shape: {
+            wrappers: header.querySelectorAll('[data-testid="header-actions"]').length,
+            panels: element.querySelectorAll('.header-actions-panel').length,
+            lists: panel.querySelectorAll(':scope > ul').length,
+            details: details.length,
+            summaries: panel.querySelectorAll(':scope > ul > li > details > summary').length,
+          },
+          boxes: nodes.map(node => {
+            const rect = node.getBoundingClientRect();
+            return rect.width && rect.height
+              ? { x: rect.x, y: rect.y, width: rect.width, height: rect.height }
+              : null;
+          }),
+        };
+      });
+    };
+
+    for (const width of [390, 1440]) {
+      await page.setViewportSize({ width, height: 900 });
+      let releaseScripts!: () => void;
+      const scriptsHeld = new Promise<void>(resolve => {
+        releaseScripts = resolve;
+      });
+      let heldScripts = 0;
+      const holdExternalScripts = async (route: Route) => {
+        if (route.request().resourceType() === 'script') {
+          heldScripts++;
+          await scriptsHeld;
+        }
+        await route.continue();
+      };
+      // Leave CSS and the existing inline body-ready/bootstrap scripts untouched.
+      await page.route('**/*', holdExternalScripts);
+      try {
+        const response = await page.goto('/admin/', { waitUntil: 'commit' });
+        expect(response?.ok()).toBeTruthy();
+        await expect(actions).toHaveCount(1);
+        await expect(page.locator('.navbar').nth(1)).toBeVisible();
+        await page.waitForFunction(() =>
+          Array.from(document.querySelectorAll<HTMLLinkElement>('link[rel="stylesheet"]')).every(
+            link => link.sheet !== null,
+          ),
+        );
+        await expect.poll(() => heldScripts).toBeGreaterThan(0);
+        await expect(page.locator('html')).not.toHaveAttribute('data-zova-hydrated');
+        await expect(page.locator('body')).toBeVisible();
+        await expect(more).toHaveAttribute('aria-label', 'More actions');
+        await expect(more).toHaveAttribute('aria-expanded', 'false');
+        const panelId = await panel.getAttribute('id');
+        expect(panelId).toBeTruthy();
+        await expect(more).toHaveAttribute('aria-controls', panelId!);
+        if (width < 1024) {
+          await expect(more).toBeVisible();
+          await expect(panel).toBeHidden();
+        } else {
+          await expect(more).toBeHidden();
+          await expect(panel).toBeVisible();
+        }
+        const labels = panel.locator(':scope > ul > li > details > summary > span');
+        await expect(labels).toHaveText(['Language', 'Color mode', 'Theme']);
+        const summaries = panel.locator(':scope > ul > li > details > summary');
+        for (const [index, title] of ['Language', 'Color mode', 'Theme'].entries()) {
+          await expect(summaries.nth(index)).toHaveAttribute('title', title);
+        }
+        if (width >= 1024) {
+          for (const label of await labels.all()) await expect(label).toBeHidden();
+        }
+        const before = await readGeometry();
+        expect(before.shape).toEqual({
+          wrappers: 1,
+          panels: 1,
+          lists: 1,
+          details: 4,
+          summaries: 4,
+        });
+        expect(before.boxes[3] !== null).toBe(width < 1024);
+        expect(before.boxes.slice(4).every(box => box !== null)).toBe(width >= 1024);
+
+        releaseScripts();
+        await page.waitForLoadState('load');
+        await expect(page.locator('html')).toHaveAttribute('data-zova-hydrated', 'admin');
+        const after = await readGeometry();
+        expect(after.shape).toEqual(before.shape);
+        await expect(panel).toHaveAttribute('id', panelId!);
+        await expect(more).toHaveAttribute('aria-expanded', 'false');
+        for (const [index, previous] of before.boxes.entries()) {
+          const current = after.boxes[index];
+          if (previous === null) {
+            expect(current).toBeNull();
+          } else {
+            expect(current).not.toBeNull();
+            for (const key of ['x', 'y', 'width', 'height'] as const) {
+              expect(
+                Math.abs(current![key] - previous[key]),
+                `${width}px header node ${index} ${key}`,
+              ).toBeLessThanOrEqual(1);
+            }
+          }
+        }
+        await expect.poll(() => getDocumentHorizontalOverflow(page)).toBeLessThanOrEqual(1);
+      } finally {
+        releaseScripts();
+        await page.unroute('**/*', holdExternalScripts);
+      }
+    }
+    expect(hydrationWarnings).toEqual([]);
+    expect(consoleErrors).toEqual([]);
+    expect(pageErrors).toEqual([]);
+  },
+);
+
+test(
+  'ATP-BASIC-HEADER-02: 320px actions support locale, themes, dismissal and account navigation',
+  { tag: ['@admin', '@flow'] },
+  async ({ page }) => {
+    test.setTimeout(120_000);
+    await page.setViewportSize({ width: 320, height: 900 });
+    await loginAsAdmin(page);
+    const pageErrors = collectPageErrors(page);
+    const consoleErrors = collectConsoleErrors(page);
+    const actions = page.getByTestId('header-actions');
+    const more = actions.locator('button').first();
+    const panel = actions.locator(':scope > .header-actions-panel');
+    const details = panel.locator(':scope > ul > li > details');
+    const locale = details.nth(0);
+    const dark = details.nth(1);
+    const theme = details.nth(2);
+    const user = details.nth(3);
+    const openActions = async () => {
+      if (!(await panel.isVisible())) await more.click();
+      await expect(more).toHaveAttribute('aria-expanded', 'true');
+      await expect(panel).toBeVisible();
+    };
+    const choose = async (menu: Locator, label: string, keyboard = false) => {
+      await openActions();
+      await menu.locator('summary').click();
+      const leaf = menu.getByText(label, { exact: true });
+      if (keyboard) await menu.getByRole('button', { name: label, exact: true }).press('Enter');
+      else await leaf.click();
+      await expect(panel).toBeHidden();
+      await expect(more).toHaveAttribute('aria-expanded', 'false');
+      await expect(details.locator('ul:visible')).toHaveCount(0);
+      await expect.poll(() => getDocumentHorizontalOverflow(page)).toBeLessThanOrEqual(1);
+    };
+    const initialMode = (await dark.locator('li.disabled').textContent())!.trim();
+    const initialTheme = (await theme.locator('li.disabled').textContent())!.trim();
+    const initialPrimary = await page
+      .locator('body')
+      .evaluate(element => element.style.getPropertyValue('--color-primary'));
+    const secondNavbar = page.locator('.navbar').nth(1);
+    const before = await secondNavbar.boundingBox();
+    await expect(more).toHaveAccessibleName('More actions');
+    await expect(panel).toBeHidden();
+    await openActions();
+    await expect(details).toHaveCount(4);
+    const labels = details.locator('summary > span');
+    await expect(labels).toHaveText(['Language', 'Color mode', 'Theme']);
+    for (const label of await labels.all()) await expect(label).toBeVisible();
+    await expect(panel).toHaveCSS('position', 'absolute');
+    await expect(panel).toHaveCSS('width', '256px');
+    const panelBox = await panel.boundingBox();
+    expect(panelBox!.x).toBeGreaterThanOrEqual(0);
+    expect(panelBox!.x + panelBox!.width).toBeLessThanOrEqual(320);
+    const summaries = await details.locator('summary').evaluateAll(elements =>
+      elements.map(element => {
+        const rect = element.getBoundingClientRect();
+        return { x: rect.x, top: rect.top, bottom: rect.bottom };
+      }),
+    );
+    for (let index = 1; index < summaries.length; index++) {
+      expect(summaries[index].top).toBeGreaterThanOrEqual(summaries[index - 1].bottom - 1);
+      expect(Math.abs(summaries[index].x - summaries[0].x)).toBeLessThanOrEqual(1);
+    }
+    await locale.locator('summary').click();
+    await expect(locale.locator('ul')).not.toHaveCSS('position', 'absolute');
+    await expect
+      .poll(async () => {
+        const nested = await locale.locator('ul').boundingBox();
+        const nextSummary = await dark.locator('summary').boundingBox();
+        return nextSummary!.y - nested!.y - nested!.height;
+      })
+      .toBeGreaterThanOrEqual(-1);
+    expect(await secondNavbar.boundingBox()).toEqual(before);
+    await expect.poll(() => getDocumentHorizontalOverflow(page)).toBeLessThanOrEqual(1);
+    await locale.locator('summary').press('Escape');
+    await expect(locale).not.toHaveAttribute('open');
+    await expect(panel).toBeVisible();
+    await expect(locale.locator('summary')).toBeFocused();
+    await page.keyboard.press('Escape');
+    await expect(panel).toBeHidden();
+    await expect(more).toBeFocused();
+
+    await openActions();
+    await page
+      .locator('.navbar')
+      .first()
+      .click({ position: { x: 1, y: 1 } });
+    await expect(panel).toBeHidden();
+    await openActions();
+    await page.locator('.navbar').first().locator('button').first().focus();
+    await expect(panel).toBeHidden();
+
+    await choose(locale, 'Chinese', true);
+    await expect(more).toHaveAccessibleName('更多操作');
+    await openActions();
+    await expect(labels).toHaveText(['语言', '明暗模式', '主题']);
+    for (const label of await labels.all()) await expect(label).toBeVisible();
+    await choose(locale, '英语');
+    await expect(more).toHaveAccessibleName('More actions');
+    for (const mode of ['Dark', 'Light']) {
+      await choose(dark, mode);
+      await expect(dark.locator('li.disabled')).toHaveText(mode);
+      await expect(page.locator('body')).toHaveAttribute('data-theme', mode.toLowerCase());
+    }
+    if (initialMode !== 'Light') await choose(dark, initialMode);
+    const alternateTheme = initialTheme === 'Blue' ? 'Orange' : 'Blue';
+    await choose(theme, alternateTheme);
+    await expect(theme.locator('li.disabled')).toHaveText(alternateTheme);
+    await expect
+      .poll(() =>
+        page.locator('body').evaluate(element => element.style.getPropertyValue('--color-primary')),
+      )
+      .not.toBe(initialPrimary);
+    await choose(theme, initialTheme);
+    await expect(theme.locator('li.disabled')).toHaveText(initialTheme);
+    await expect(dark.locator('li.disabled')).toHaveText(initialMode);
+    await expect
+      .poll(() =>
+        page.locator('body').evaluate(element => element.style.getPropertyValue('--color-primary')),
+      )
+      .toBe(initialPrimary);
+
+    await choose(user, 'Account Settings');
+    await expect(page).toHaveURL(/\/admin\/home\/user\/account(?:[/?#]|$)/);
+    await expect(page.locator('html')).toHaveAttribute('data-zova-hydrated', 'admin');
+    await expect.poll(() => getDocumentHorizontalOverflow(page)).toBeLessThanOrEqual(1);
+    expect(consoleErrors).toEqual([]);
+    expect(pageErrors).toEqual([]);
+  },
+);
+
+test(
+  'ATP-BASIC-HEADER-03: the lg breakpoint reuses one action tree and clears transient menus',
+  { tag: ['@admin', '@flow'] },
+  async ({ page }) => {
+    await page.setViewportSize({ width: 1023, height: 900 });
+    await loginAsAdmin(page);
+    const pageErrors = collectPageErrors(page);
+    const actions = page.getByTestId('header-actions');
+    const more = actions.locator('button').first();
+    const panel = actions.locator(':scope > .header-actions-panel');
+    const details = panel.locator(':scope > ul > li > details');
+    await expect(more).toBeVisible();
+    await expect(panel).toBeHidden();
+    const originalPanel = await panel.elementHandle();
+    expect(originalPanel).not.toBeNull();
+    try {
+      await more.click();
+      await details.first().locator('summary').click();
+      await expect(details.first()).toHaveAttribute('open', '');
+      await page.setViewportSize({ width: 1024, height: 900 });
+      await expect(more).toBeHidden();
+      await expect(more).toHaveAttribute('aria-expanded', 'false');
+      await expect(panel).toBeVisible();
+      await expect(panel).toHaveCSS('position', 'static');
+      await expect(panel.locator('details[open]')).toHaveCount(0);
+      expect(await panel.evaluate((element, original) => element === original, originalPanel)).toBe(
+        true,
+      );
+      await expect(details.locator('summary')).toHaveCount(4);
+      const desktop = await details.locator('summary').evaluateAll(elements =>
+        elements.map(element => {
+          const rect = element.getBoundingClientRect();
+          return { x: rect.x, y: rect.y };
+        }),
+      );
+      for (let index = 1; index < desktop.length; index++) {
+        expect(Math.abs(desktop[index].y - desktop[0].y)).toBeLessThanOrEqual(1);
+        expect(desktop[index].x).toBeGreaterThan(desktop[index - 1].x);
+      }
+      await details.last().locator('summary').click();
+      await expect(details.last()).toHaveAttribute('open', '');
+      await page.setViewportSize({ width: 1023, height: 900 });
+      await expect(more).toBeVisible();
+      await expect(more).toHaveAttribute('aria-expanded', 'false');
+      await expect(panel).toBeHidden();
+      await expect(panel.locator('details[open]')).toHaveCount(0);
+      expect(await panel.evaluate((element, original) => element === original, originalPanel)).toBe(
+        true,
+      );
+      await expect(actions).toHaveCount(1);
+      await expect(panel).toHaveCount(1);
+      await expect(details).toHaveCount(4);
+      await more.click();
+      await expect(panel).toBeVisible();
+      await page.setViewportSize({ width: 390, height: 900 });
+      await expect(panel).toBeHidden();
+      await expect(more).toHaveAttribute('aria-expanded', 'false');
+      expect(await panel.evaluate((element, original) => element === original, originalPanel)).toBe(
+        true,
+      );
+      await expect.poll(() => getDocumentHorizontalOverflow(page)).toBeLessThanOrEqual(1);
+      expect(pageErrors).toEqual([]);
+    } finally {
+      await originalPanel?.dispose();
+    }
+  },
+);
+
+test(
+  'ATP-BASIC-WEB-HEADER-01: public mobile and desktop header geometry survives anonymous and signed-in hydration',
+  { tag: ['@web', '@ssr'] },
+  async ({ page }) => {
+    test.setTimeout(180_000);
+    const pageErrors = collectPageErrors(page);
+    const consoleErrors = collectConsoleErrors(page);
+    const hydrationWarnings: string[] = [];
+    page.on('console', message => {
+      if (/hydration.*mismatch|mismatch.*hydration/i.test(message.text())) {
+        hydrationWarnings.push(message.text());
+      }
+    });
+    const actions = page.getByTestId('header-actions');
+    const panel = actions.locator(':scope > .header-actions-panel');
+    const more = actions.locator('button').first();
+    const details = panel.locator(':scope > ul > li > details');
+    const account = details.nth(2);
+    const readGeometry = async () => {
+      await page.evaluate(() => document.fonts.ready.then(() => undefined));
+      return actions.evaluate(async element => {
+        await new Promise<void>(resolve => requestAnimationFrame(() => resolve()));
+        const header = element.closest('.navbar')!;
+        const panel = element.querySelector(':scope > .header-actions-panel')!;
+        const details = Array.from(panel.querySelectorAll(':scope > ul > li > details'));
+        const account = details[2].querySelector('summary')!;
+        const nodes = [
+          header,
+          element.previousElementSibling!,
+          element,
+          element.querySelector('button')!,
+          ...details.map(detail => detail.querySelector('summary')!),
+          account.querySelector('img')!,
+          account.querySelector('span')!,
+        ];
+        return {
+          shape: {
+            wrappers: header.querySelectorAll('[data-testid="header-actions"]').length,
+            panels: element.querySelectorAll('.header-actions-panel').length,
+            lists: panel.querySelectorAll(':scope > ul').length,
+            details: details.length,
+            summaries: panel.querySelectorAll(':scope > ul > li > details > summary').length,
+          },
+          boxes: nodes.map(node => {
+            const rect = node.getBoundingClientRect();
+            return rect.width && rect.height
+              ? { x: rect.x, y: rect.y, width: rect.width, height: rect.height }
+              : null;
+          }),
+        };
+      });
+    };
+
+    let displayName = '';
+    for (const authenticated of [false, true]) {
+      if (authenticated) {
+        await loginAsAdmin(page);
+        displayName = (await page
+          .getByTestId('header-actions')
+          .locator('details')
+          .last()
+          .locator('summary')
+          .textContent())!.trim();
+        expect(displayName).not.toBe('');
+      }
+      for (const width of [390, 1440]) {
+        await page.setViewportSize({ width, height: 900 });
+        let releaseScripts!: () => void;
+        const scriptsHeld = new Promise<void>(resolve => {
+          releaseScripts = resolve;
+        });
+        let heldScripts = 0;
+        const holdExternalScripts = async (route: Route) => {
+          if (route.request().resourceType() === 'script') {
+            heldScripts++;
+            await scriptsHeld;
+          }
+          await route.continue();
+        };
+        // Keep CSS and inline bootstrap scripts running while inspecting the public SSR shell.
+        await page.route('**/*', holdExternalScripts);
+        try {
+          const response = await page.goto('/', { waitUntil: 'commit' });
+          expect(response?.ok()).toBeTruthy();
+          expect(response?.headers()['cache-control']).toBe('public, max-age=600');
+          await expect(actions).toHaveCount(1);
+          await page.waitForFunction(() =>
+            Array.from(document.querySelectorAll<HTMLLinkElement>('link[rel="stylesheet"]')).every(
+              link => link.sheet !== null,
+            ),
+          );
+          await expect.poll(() => heldScripts).toBeGreaterThan(0);
+          await expect(page.locator('html')).not.toHaveAttribute('data-zova-hydrated');
+          await expect(page.locator('body')).toBeVisible();
+          await expect(panel).toHaveAttribute('id', 'home-layoutweb-header-actions');
+          await expect(more).toHaveAttribute('aria-controls', 'home-layoutweb-header-actions');
+          await expect(more).toHaveAttribute('aria-label', 'More actions');
+          await expect(more).toHaveAttribute('aria-expanded', 'false');
+          await expect(details).toHaveCount(3);
+          const summaries = details.locator('summary');
+          for (const [index, title] of ['Language', 'Color mode', 'Account'].entries()) {
+            await expect(summaries.nth(index)).toHaveAttribute('title', title);
+          }
+          await expect(account.locator('summary')).toHaveAttribute('aria-label', 'Account');
+          await expect(account.locator('summary')).toHaveText('');
+          await expect(details.locator(':scope > ul')).toHaveCount(0);
+          const labels = details.locator('summary > span.lg\\:hidden');
+          await expect(labels).toHaveText(['Language', 'Color mode']);
+          if (width < 1024) {
+            await expect(more).toBeVisible();
+            await expect(panel).toBeHidden();
+          } else {
+            await expect(more).toBeHidden();
+            await expect(panel).toBeVisible();
+            for (const label of await labels.all()) await expect(label).toBeHidden();
+            await expect(account.locator('summary > img')).toHaveCSS('width', '24px');
+            await expect(account.locator('summary > img')).toHaveCSS('height', '24px');
+            await expect(account.locator('summary > span')).toHaveCSS('width', '128px');
+          }
+          const before = await readGeometry();
+          expect(before.shape).toEqual({
+            wrappers: 1,
+            panels: 1,
+            lists: 1,
+            details: 3,
+            summaries: 3,
+          });
+          expect(before.boxes[3] !== null).toBe(width < 1024);
+          expect(before.boxes.slice(4).every(box => box !== null)).toBe(width >= 1024);
+
+          releaseScripts();
+          await page.waitForLoadState('load');
+          await expect(page.locator('html')).toHaveAttribute('data-zova-hydrated', 'web');
+          await expect(account.locator('summary')).toHaveText(
+            authenticated ? displayName : 'Not logged in',
+          );
+          await expect(account.locator('summary')).toHaveAttribute('aria-label', 'Account');
+          await expect(account.locator('summary')).toHaveAttribute('title', 'Account');
+          await expect(account.getByText('Login', { exact: true })).toHaveCount(
+            authenticated ? 0 : 1,
+          );
+          await expect(
+            account.getByRole('link', {
+              name: 'Account Settings',
+              exact: true,
+              includeHidden: true,
+            }),
+          ).toHaveCount(authenticated ? 1 : 0);
+          await expect(
+            account.getByRole('button', { name: 'Logout', exact: true, includeHidden: true }),
+          ).toHaveCount(authenticated ? 1 : 0);
+          const after = await readGeometry();
+          expect(after.shape).toEqual(before.shape);
+          await expect(more).toHaveAttribute('aria-expanded', 'false');
+          for (const [index, previous] of before.boxes.entries()) {
+            const current = after.boxes[index];
+            if (previous === null) {
+              expect(current).toBeNull();
+            } else {
+              expect(current).not.toBeNull();
+              for (const key of ['x', 'y', 'width', 'height'] as const) {
+                expect(
+                  Math.abs(current![key] - previous[key]),
+                  `${authenticated ? 'signed-in' : 'anonymous'} ${width}px header node ${index} ${key}`,
+                ).toBeLessThanOrEqual(1);
+              }
+            }
+          }
+          await expect.poll(() => getDocumentHorizontalOverflow(page)).toBeLessThanOrEqual(1);
+        } finally {
+          releaseScripts();
+          await page.unroute('**/*', holdExternalScripts);
+        }
+      }
+    }
+    await account.locator('summary').click();
+    const accountLink = account.getByRole('link', { name: 'Account Settings', exact: true });
+    await expect(accountLink).toHaveAttribute('href', '/home/user/account');
+    await accountLink.click();
+    await expect(page).toHaveURL(/\/home\/user\/account(?:[/?#]|$)/);
+    await expect(
+      page.getByRole('heading', { name: 'Account Settings', exact: true }),
+    ).toBeVisible();
+    await expect(account).not.toHaveAttribute('open');
+    expect(hydrationWarnings).toEqual([]);
+    expect(consoleErrors).toEqual([]);
+    expect(pageErrors).toEqual([]);
+  },
+);
+
+test(
+  'ATP-BASIC-WEB-HEADER-02: 320px actions preserve locale navigation and support color mode, dismissal and Login',
+  { tag: ['@web', '@flow'] },
+  async ({ page }) => {
+    test.setTimeout(120_000);
+    await page.setViewportSize({ width: 320, height: 900 });
+    const pageErrors = collectPageErrors(page);
+    const consoleErrors = collectConsoleErrors(page);
+    await page.goto('/en-us?headerProbe=one&headerProbe=two', { waitUntil: 'load' });
+    await expect(page.locator('html')).toHaveAttribute('data-zova-hydrated', 'web');
+    const actions = page.getByTestId('header-actions');
+    const more = actions.locator('button').first();
+    const panel = actions.locator(':scope > .header-actions-panel');
+    const details = panel.locator(':scope > ul > li > details');
+    const locale = details.nth(0);
+    const dark = details.nth(1);
+    const account = details.nth(2);
+    const labels = details.locator('summary > span.lg\\:hidden');
+    const header = page.locator('.navbar').first();
+    const before = await header.boundingBox();
+    const openActions = async () => {
+      if (!(await panel.isVisible())) await more.click();
+      await expect(more).toHaveAttribute('aria-expanded', 'true');
+      await expect(panel).toBeVisible();
+    };
+    const choose = async (menu: Locator, label: string, keyboard = false) => {
+      await openActions();
+      await menu.locator('summary').click();
+      const leaf = menu.getByText(label, { exact: true });
+      if (keyboard) await menu.getByRole('button', { name: label, exact: true }).press('Enter');
+      else await leaf.click();
+      await expect(panel).toBeHidden();
+      await expect(more).toHaveAttribute('aria-expanded', 'false');
+      await expect(details.locator('ul:visible')).toHaveCount(0);
+      await expect.poll(() => getDocumentHorizontalOverflow(page)).toBeLessThanOrEqual(1);
+    };
+    const initialMode = (await dark.locator('li.disabled').textContent())!.trim();
+    await expect(more).toHaveAccessibleName('More actions');
+    await expect(panel).toBeHidden();
+    await openActions();
+    await expect(details).toHaveCount(3);
+    await expect(labels).toHaveText(['Language', 'Color mode']);
+    for (const label of await labels.all()) await expect(label).toBeVisible();
+    await expect(panel).toHaveCSS('position', 'absolute');
+    await expect(panel).toHaveCSS('width', '256px');
+    const panelBox = await panel.boundingBox();
+    expect(panelBox!.x).toBeGreaterThanOrEqual(0);
+    expect(panelBox!.x + panelBox!.width).toBeLessThanOrEqual(320);
+    const summaries = await details.locator('summary').evaluateAll(elements =>
+      elements.map(element => {
+        const rect = element.getBoundingClientRect();
+        return { x: rect.x, top: rect.top, bottom: rect.bottom };
+      }),
+    );
+    for (let index = 1; index < summaries.length; index++) {
+      expect(summaries[index].top).toBeGreaterThanOrEqual(summaries[index - 1].bottom - 1);
+      expect(Math.abs(summaries[index].x - summaries[0].x)).toBeLessThanOrEqual(1);
+    }
+    await locale.locator('summary').click();
+    await expect(locale.locator('ul')).not.toHaveCSS('position', 'absolute');
+    await expect
+      .poll(async () => {
+        const nested = await locale.locator('ul').boundingBox();
+        const nextSummary = await dark.locator('summary').boundingBox();
+        return nextSummary!.y - nested!.y - nested!.height;
+      })
+      .toBeGreaterThanOrEqual(-1);
+    expect(await header.boundingBox()).toEqual(before);
+    await expect.poll(() => getDocumentHorizontalOverflow(page)).toBeLessThanOrEqual(1);
+    await locale.locator('summary').press('Escape');
+    await expect(locale).not.toHaveAttribute('open');
+    await expect(panel).toBeVisible();
+    await expect(locale.locator('summary')).toBeFocused();
+    await page.keyboard.press('Escape');
+    await expect(panel).toBeHidden();
+    await expect(more).toBeFocused();
+    await openActions();
+    await header.click({ position: { x: 1, y: 1 } });
+    await expect(panel).toBeHidden();
+    await openActions();
+    await header.locator('button').first().focus();
+    await expect(panel).toBeHidden();
+
+    await choose(locale, 'Chinese', true);
+    await expect(page).toHaveURL(url => url.pathname === '/zh-cn');
+    // $gotoPage serializes array-valued query entries as JSON.
+    expect(JSON.parse(new URL(page.url()).searchParams.get('headerProbe')!)).toEqual([
+      'one',
+      'two',
+    ]);
+    await expect(more).toHaveAccessibleName('更多操作');
+    await openActions();
+    await expect(labels).toHaveText(['语言', '明暗模式']);
+    for (const label of await labels.all()) await expect(label).toBeVisible();
+    await choose(locale, '英语');
+    await expect(page).toHaveURL(url => url.pathname === '/');
+    expect(JSON.parse(new URL(page.url()).searchParams.get('headerProbe')!)).toEqual([
+      'one',
+      'two',
+    ]);
+    await expect(more).toHaveAccessibleName('More actions');
+    for (const mode of ['Dark', 'Light']) {
+      await choose(dark, mode);
+      await expect(dark.locator('li.disabled')).toHaveText(mode);
+      await expect(page.locator('body')).toHaveAttribute('data-theme', mode.toLowerCase());
+    }
+    if (initialMode !== 'Light') await choose(dark, initialMode);
+    await expect(dark.locator('li.disabled')).toHaveText(initialMode);
+    await openActions();
+    await account.locator('summary').click();
+    await account.getByText('Login', { exact: true }).click();
+    await expect(page).toHaveURL(/\/login(?:[/?#]|$)/);
+    await expect(page.getByRole('heading', { name: 'Login', exact: true })).toBeVisible();
+    expect(consoleErrors).toEqual([]);
+    expect(pageErrors).toEqual([]);
+  },
+);
+
+test(
+  'ATP-BASIC-WEB-HEADER-03: the lg breakpoint reuses one Web action tree and clears transient menus',
+  { tag: ['@web', '@flow'] },
+  async ({ page }) => {
+    await page.setViewportSize({ width: 1023, height: 900 });
+    const pageErrors = collectPageErrors(page);
+    await page.goto('/', { waitUntil: 'load' });
+    await expect(page.locator('html')).toHaveAttribute('data-zova-hydrated', 'web');
+    const actions = page.getByTestId('header-actions');
+    const more = actions.locator('button').first();
+    const panel = actions.locator(':scope > .header-actions-panel');
+    const details = panel.locator(':scope > ul > li > details');
+    const labels = details.locator('summary > span.lg\\:hidden');
+    await expect(more).toBeVisible();
+    await expect(panel).toBeHidden();
+    const originalPanel = await panel.elementHandle();
+    expect(originalPanel).not.toBeNull();
+    try {
+      await more.click();
+      for (const label of await labels.all()) await expect(label).toBeVisible();
+      await details.first().locator('summary').click();
+      await expect(details.first()).toHaveAttribute('open', '');
+      await page.setViewportSize({ width: 1024, height: 900 });
+      await expect(more).toBeHidden();
+      await expect(more).toHaveAttribute('aria-expanded', 'false');
+      await expect(panel).toBeVisible();
+      await expect(panel).toHaveCSS('position', 'static');
+      await expect(panel.locator('details[open]')).toHaveCount(0);
+      expect(await panel.evaluate((element, original) => element === original, originalPanel)).toBe(
+        true,
+      );
+      for (const label of await labels.all()) await expect(label).toBeHidden();
+      await expect(details.locator('summary')).toHaveCount(3);
+      const desktop = await details.locator('summary').evaluateAll(elements =>
+        elements.map(element => {
+          const rect = element.getBoundingClientRect();
+          return { x: rect.x, y: rect.y };
+        }),
+      );
+      for (let index = 1; index < desktop.length; index++) {
+        expect(Math.abs(desktop[index].y - desktop[0].y)).toBeLessThanOrEqual(1);
+        expect(desktop[index].x).toBeGreaterThan(desktop[index - 1].x);
+      }
+      await details.last().locator('summary').click();
+      await expect(details.last()).toHaveAttribute('open', '');
+      await page.setViewportSize({ width: 1023, height: 900 });
+      await expect(more).toBeVisible();
+      await expect(more).toHaveAttribute('aria-expanded', 'false');
+      await expect(panel).toBeHidden();
+      await expect(panel.locator('details[open]')).toHaveCount(0);
+      expect(await panel.evaluate((element, original) => element === original, originalPanel)).toBe(
+        true,
+      );
+      await expect(actions).toHaveCount(1);
+      await expect(panel).toHaveCount(1);
+      await expect(details).toHaveCount(3);
+      await more.click();
+      await expect(panel).toBeVisible();
+      await page.setViewportSize({ width: 390, height: 900 });
+      await expect(panel).toBeHidden();
+      await expect(more).toHaveAttribute('aria-expanded', 'false');
+      expect(await panel.evaluate((element, original) => element === original, originalPanel)).toBe(
+        true,
+      );
+      await expect.poll(() => getDocumentHorizontalOverflow(page)).toBeLessThanOrEqual(1);
+      expect(pageErrors).toEqual([]);
+    } finally {
+      await originalPanel?.dispose();
+    }
+  },
+);
+
+test(
+  'ATP-BASIC-TABS-01: task tabs reveal active drafts, compact by container width and switch or close through All tabs',
+  { tag: ['@admin', '@flow', '@layout'] },
+  async ({ page }, testInfo) => {
+    test.setTimeout(120_000);
+    await page.setViewportSize({ width: 1440, height: 900 });
+    await loginAsAdmin(page);
+    await withDraftStudents(page, 3, async students => {
+      const effects = collectDraftEffects(page, true);
+      // The existing three-task limit excludes the workspace anchor; do not raise it.
+      const titles = students.map(
+        (student, index) =>
+          `${student.name} task ${index + 1} with a deliberately long unique unsaved tab title`,
+      );
+      for (const [index, student] of students.entries()) {
+        await openStudentDraftEdit(page, student.name, student.id);
+        await studentDraftNameInput(page).fill(titles[index]!);
+        await waitForStudentDraft(page, titles[index]!, student.id);
+      }
+
+      const items = page.getByTestId('tab-items');
+      const more = page.getByTestId('tab-items-more');
+      // A CSS/test-id locator also resolves the native popover while it is closed.
+      const list = page.getByTestId('tab-items-list');
+      const tabs = items.getByRole('tab');
+      const viewport = items.locator('.tab-items-viewport');
+      const scroller = viewport.locator(':scope > .tab-items-scroll');
+      const task = (index: number) => items.getByRole('tab', { name: titles[index], exact: true });
+      const select = (index: number) =>
+        list.locator('.tab-items-select').filter({ hasText: titles[index]! });
+      const expectBounds = async (popup: Locator) => {
+        const bounds = (await popup.boundingBox())!;
+        expect(bounds).not.toBeNull();
+        expect(bounds.x).toBeGreaterThanOrEqual(-1);
+        expect(bounds.y).toBeGreaterThanOrEqual(-1);
+        expect(bounds.x + bounds.width).toBeLessThanOrEqual(page.viewportSize()!.width + 1);
+        expect(bounds.y + bounds.height).toBeLessThanOrEqual(page.viewportSize()!.height + 1);
+      };
+      const openMenu = async (remaining: number[], active?: number, keyboard = false) => {
+        await expect(more).toHaveAccessibleName('All tabs');
+        await expect(more).toHaveJSProperty('tagName', 'BUTTON');
+        await expect(list).toBeHidden();
+        if (keyboard) {
+          await more.focus();
+          await more.press('Enter');
+        } else {
+          await more.click();
+        }
+        await expect(list).toBeVisible();
+        await expect(list).toHaveAttribute('popover', 'auto');
+        await expect(list).toHaveAttribute('role', 'group');
+        await expect(list).toHaveAccessibleName('All tabs');
+        expect(await list.evaluate(element => element.matches(':popover-open'))).toBe(true);
+        await expect(list.locator('.tab-items-row')).toHaveCount(remaining.length);
+        await expect(list.locator('.tab-items-select')).toHaveCount(remaining.length);
+        await expect(list.locator('.tab-items-select').first()).toBeFocused();
+        for (const index of remaining) {
+          const row = list.locator('.tab-items-row').filter({
+            has: page.locator('.tab-items-select').filter({ hasText: titles[index]! }),
+          });
+          await expect(row).toHaveCount(1);
+          await expect(select(index)).toHaveJSProperty('tagName', 'BUTTON');
+          const close = row.getByRole('button', {
+            name: `Close tab: ${titles[index]}`,
+            exact: true,
+          });
+          await expect(close).toBeEnabled();
+          // Switching and closing are sibling actions, never nested buttons.
+          await expect(select(index).locator('button')).toHaveCount(0);
+          await expect(row.getByRole('button')).toHaveCount(2);
+          if (index === active) await expect(select(index)).toHaveAttribute('aria-current', 'page');
+          else await expect(select(index)).not.toHaveAttribute('aria-current', 'page');
+          expect(
+            await select(index).evaluate(element => {
+              const rect = element.getBoundingClientRect();
+              return element.contains(
+                document.elementFromPoint(rect.left + rect.width / 2, rect.top + rect.height / 2),
+              );
+            }),
+          ).toBe(true);
+        }
+        await expect(list.locator('.tab-items-select[aria-current="page"]')).toHaveCount(
+          active === undefined ? 0 : 1,
+        );
+        await expectBounds(list);
+      };
+      const choose = async (index: number, keyboard = false) => {
+        if (keyboard) {
+          await select(index).focus();
+          await select(index).press('Enter');
+        } else {
+          await select(index).click();
+        }
+        await expect(list).toBeHidden();
+        await expect(page).toHaveURL(
+          new RegExp(`/training-student(?:%3A|:)student/${students[index]!.id}/edit(?:[?#]|$)`),
+        );
+        await expect(studentDraftNameInput(page)).toHaveValue(titles[index]!);
+        await expect(task(index)).toHaveAttribute('aria-selected', 'true');
+      };
+      const expectStrip = async (compact: boolean, count: number) => {
+        await expect(items).toHaveAttribute('data-compact', String(compact));
+        const width = await items.evaluate(element => element.getBoundingClientRect().width);
+        if (compact) expect(width).toBeLessThan(240);
+        else expect(width).toBeGreaterThanOrEqual(240);
+        await expect(tabs).toHaveCount(count);
+        await expect(items.locator('.tab-items-content')).toHaveAttribute('role', 'tablist');
+        await expect(more).toBeVisible();
+        await expect
+          .poll(() =>
+            items.evaluate(element => {
+              const header = element.closest('.navbar')!;
+              const headerBox = header.getBoundingClientRect();
+              const more = header.querySelector('[data-testid="tab-items-more"]')!;
+              const boxes = [element, more].map(node => node.getBoundingClientRect());
+              return (
+                headerBox.left >= -1 &&
+                headerBox.right <= document.documentElement.clientWidth + 1 &&
+                header.scrollWidth <= header.clientWidth + 1 &&
+                boxes.every(
+                  box =>
+                    box.width > 0 &&
+                    box.left >= headerBox.left - 1 &&
+                    box.right <= headerBox.right + 1,
+                )
+              );
+            }),
+          )
+          .toBe(true);
+        await expect.poll(() => getDocumentHorizontalOverflow(page)).toBeLessThanOrEqual(1);
+      };
+      const expectActiveRevealed = async (index: number) => {
+        await expect
+          .poll(() =>
+            task(index).evaluate(element => {
+              const viewport = element.closest('.tab-items-scroll')!;
+              const tab = element.getBoundingClientRect();
+              const clip = viewport.getBoundingClientRect();
+              return tab.left >= clip.left - 1 && tab.right <= clip.right + 1;
+            }),
+          )
+          .toBe(true);
+      };
+      const close = async (index: number) => {
+        await list
+          .getByRole('button', { name: `Close tab: ${titles[index]}`, exact: true })
+          .click();
+        // Assert the exact persisted identity, not just removal of a rendered row.
+        await expectNoStudentDraft(page, students[index]!.id);
+        await expect(task(index)).toHaveCount(0);
+        await expect(select(index)).toHaveCount(0);
+        // A close action may intentionally leave the list open for consecutive closes.
+        if (await list.isVisible()) await page.keyboard.press('Escape');
+        await expect(list).toBeHidden();
+      };
+
+      await expectStrip(false, 3);
+      await expect(task(2)).toHaveAttribute('aria-selected', 'true');
+      await expectActiveRevealed(2);
+      await task(2).hover();
+      const taskClose = task(2).locator('.tab-close');
+      await expect(taskClose).toBeVisible();
+      await expect(taskClose).toHaveCSS('top', '2px');
+      expect(
+        await taskClose.evaluate(element => {
+          const icon = element.getBoundingClientRect();
+          const tab = element.closest('[role="tab"]')!.getBoundingClientRect();
+          const clip = element.closest('.tab-items-scroll')!.getBoundingClientRect();
+          return (
+            icon.top >= Math.max(tab.top, clip.top) &&
+            icon.bottom <= Math.min(tab.bottom, clip.bottom) &&
+            icon.left >= Math.max(tab.left, clip.left) &&
+            icon.right <= Math.min(tab.right, clip.right)
+          );
+        }),
+      ).toBe(true);
+      await expect(list).toBeHidden();
+      await expect(scroller).toHaveJSProperty('tagName', 'DIV');
+      await expect(scroller).toHaveCSS('overflow-x', 'auto');
+
+      // Basic caps tab titles at 130px. Find a naturally constrained header where
+      // all three tasks still render (wrapper >=240px) and actually overflow.
+      const geometries: { width: number; wrapper: number; overflow: number }[] = [];
+      for (const width of [900, 800, 700, 600, 520, 480, 440, 400]) {
+        await page.setViewportSize({ width, height: 900 });
+        const geometry = await items.evaluate(async element => {
+          // Let the container observer and its render settle before choosing a size.
+          await new Promise<void>(resolve => requestAnimationFrame(() => resolve()));
+          await new Promise<void>(resolve => requestAnimationFrame(() => resolve()));
+          const scroller = element.querySelector('.tab-items-scroll')!;
+          return {
+            wrapper: element.getBoundingClientRect().width,
+            overflow: scroller.scrollWidth - scroller.clientWidth,
+          };
+        });
+        geometries.push({ width, ...geometry });
+        if (geometry.wrapper >= 240 && geometry.overflow > 1) break;
+        if (geometry.wrapper < 240) break;
+      }
+      expect(
+        geometries.some(geometry => geometry.wrapper >= 240 && geometry.overflow > 1),
+        `Expected real noncompact tab overflow: ${JSON.stringify(geometries)}`,
+      ).toBe(true);
+      await expectStrip(false, 3);
+      await expect
+        .poll(() => scroller.evaluate(element => element.scrollWidth - element.clientWidth))
+        .toBeGreaterThan(1);
+      // Task insertion follows the current model entry, not creation chronology.
+      // Derive the strip edges from its rendered order before testing reveal.
+      const renderedOrder = await tabs.evaluateAll((elements, titles) => {
+        return elements.map(element =>
+          titles.findIndex(title => element.textContent!.includes(title)),
+        );
+      }, titles);
+      expect(renderedOrder.toSorted()).toEqual([0, 1, 2]);
+      const firstTask = renderedOrder[0]!;
+      const lastTask = renderedOrder[renderedOrder.length - 1]!;
+      await openMenu([0, 1, 2], 2);
+      await choose(firstTask);
+      await expectActiveRevealed(firstTask);
+      await expect(viewport).not.toHaveClass(/\bhas-start\b/);
+      await expect(viewport).toHaveClass(/\bhas-end\b/);
+      const firstPosition = await scroller.evaluate(element => element.scrollLeft);
+      const triggerBefore = (await more.boundingBox())!;
+      await scroller.hover();
+      await page.mouse.wheel(10_000, 0);
+      await expect
+        .poll(() => scroller.evaluate(element => element.scrollLeft))
+        .toBeGreaterThan(firstPosition + 1);
+      await expect(viewport).toHaveClass(/\bhas-start\b/);
+      await expect(viewport).not.toHaveClass(/\bhas-end\b/);
+      await openMenu([0, 1, 2], firstTask);
+      await choose(lastTask);
+      await expectActiveRevealed(lastTask);
+      await openMenu([0, 1, 2], lastTask);
+      await choose(firstTask);
+      await expectActiveRevealed(firstTask);
+      await expect(viewport).not.toHaveClass(/\bhas-start\b/);
+      await openMenu([0, 1, 2], firstTask);
+      await choose(lastTask);
+      await expectActiveRevealed(lastTask);
+      await expect
+        .poll(() => scroller.evaluate(element => element.scrollLeft))
+        .toBeGreaterThan(firstPosition + 1);
+      const triggerAfter = (await more.boundingBox())!;
+      for (const key of ['x', 'y', 'width', 'height'] as const) {
+        expect(Math.abs(triggerAfter[key] - triggerBefore[key])).toBeLessThanOrEqual(1);
+      }
+      await openMenu([0, 1, 2], lastTask);
+      await choose(2);
+
+      await page.setViewportSize({ width: 320, height: 900 });
+      await expectStrip(true, 1);
+      await expect(task(2)).toHaveAttribute('aria-selected', 'true');
+      await testInfo.attach('ATP-BASIC-TABS-01-320px-header', {
+        body: await items.locator('xpath=ancestor::*[contains(@class, "navbar")][1]').screenshot(),
+        contentType: 'image/png',
+      });
+      await openMenu([0, 1, 2], 2, true);
+      await testInfo.attach('ATP-BASIC-TABS-01-320px-all-tabs', {
+        body: await list.screenshot(),
+        contentType: 'image/png',
+      });
+      await select(0).focus();
+      await page.keyboard.press('Escape');
+      await expect(list).toBeHidden();
+      await expect(more).toBeFocused();
+      await expect(studentDraftNameInput(page)).toHaveValue(titles[2]!);
+      await openMenu([0, 1, 2], 2, true);
+      await choose(0, true);
+      await expectStrip(true, 1);
+      await openMenu([0, 1, 2], 0);
+      await close(1);
+      await expect(studentDraftNameInput(page)).toHaveValue(titles[0]!);
+      await waitForStudentDraft(page, titles[0]!, students[0]!.id);
+      await waitForStudentDraft(page, titles[2]!, students[2]!.id);
+
+      // The current workspace anchor is not a secondary task. Its compact strip
+      // must be empty, but All tabs must still expose every surviving child.
+      await page.locator('.tabs-lifted').getByRole('tab', { name: 'Student', exact: true }).click();
+      await expect(page).toHaveURL(studentResourceUrl);
+      await expectStrip(true, 0);
+      await openMenu([0, 2]);
+      await choose(0);
+      await expectStrip(true, 1);
+
+      await page.setViewportSize({ width: 1440, height: 900 });
+      await expectStrip(false, 2);
+      await expectActiveRevealed(0);
+      await openMenu([0, 2], 0, true);
+      await page.keyboard.press('Escape');
+      await expect(list).toBeHidden();
+      await expect(more).toBeFocused();
+      await openMenu([0, 2], 0);
+      await close(0);
+      await expect(studentDraftNameInput(page)).toHaveValue(titles[2]!);
+      await expect(task(2)).toHaveAttribute('aria-selected', 'true');
+      await openMenu([2], 2);
+      await close(2);
+      await expect(page).toHaveURL(studentResourceUrl);
+      await expect(tabs).toHaveCount(0);
+      for (const student of students) await expectNoStudentDraft(page, student.id);
+      await expect.poll(() => getDocumentHorizontalOverflow(page)).toBeLessThanOrEqual(1);
+      expect(effects.mutations).toEqual([]);
+      expect(effects.hydrationWarnings).toEqual([]);
+      expect(effects.consoleErrors).toEqual([]);
+      expect(effects.pageErrors).toEqual([]);
+    });
   },
 );
 
@@ -877,7 +1961,15 @@ test(
       await page.getByRole('link', { name: 'Student', exact: true }).click();
       await expect(page).toHaveURL(studentResourceUrl);
       await initialSelect;
-      await page.setViewportSize({ width: 800, height: 900 });
+      // Keep the container above the compact breakpoint while forcing real horizontal overflow.
+      const tableWrapper = basicTableWrapper(page);
+      await tableWrapper.evaluate(element => {
+        element.style.width = '800px';
+      });
+      await expect(tableWrapper).toHaveAttribute('data-table-compact', 'false');
+      expect(await tableWrapper.evaluate(element => element.clientWidth)).toBeGreaterThanOrEqual(
+        768,
+      );
 
       const nameSort = page.getByRole('button', { name: 'Sort by name', exact: true });
       const nameHeader = nameSort.locator('xpath=ancestor::th');
@@ -916,10 +2008,6 @@ test(
       const ascendingUrl = new URL(ascending.url());
       expect(JSON.parse(ascendingUrl.searchParams.get('orders')!)).toEqual([['name', 'asc']]);
 
-      const tableWrapper = page
-        .locator('div.overflow-x-auto')
-        .filter({ has: page.locator('table') })
-        .first();
       await expect(tableWrapper).toBeVisible();
       const overflow = await tableWrapper.evaluate(element => {
         return element.scrollWidth > element.clientWidth;
@@ -984,15 +2072,390 @@ test(
 );
 
 test(
-  'ATP-BASIC-TABLE-03: Training Student row delete handles cancellation, local failures, and retry',
-  { tag: ['@admin', '@flow'] },
+  'ATP-BASIC-TABLE-04: container resizing compacts row actions and narrow SSR reloads hydrate cleanly',
+  { tag: ['@admin', '@flow', '@ssr'] },
   async ({ page }) => {
+    test.setTimeout(120_000);
+    await page.setViewportSize({ width: 1440, height: 900 });
+    const pageErrors = collectPageErrors(page);
+    const consoleErrors = collectConsoleErrors(page);
+    const consoleWarnings: string[] = [];
+    page.on('console', message => {
+      if (
+        message.type() === 'warning' ||
+        /hydration.*mismatch|mismatch.*hydration/i.test(message.text())
+      ) {
+        consoleWarnings.push(message.text());
+      }
+    });
+    await loginAsAdmin(page);
+    await withDraftStudents(page, 1, async ([student]) => {
+      const initialSelect = waitForStudentSelect(page);
+      await page.getByRole('link', { name: 'Student', exact: true }).click();
+      await expect(page).toHaveURL(studentResourceUrl);
+      await initialSelect;
+      await page.getByLabel('Student Name').fill(student.name);
+      const filteredResponse = waitForStudentSelect(page);
+      await page.getByRole('button', { name: 'Search', exact: true }).click();
+      await filteredResponse;
+
+      const wrapper = basicTableWrapper(page);
+      const row = wrapper.locator('tbody tr').filter({
+        has: page.getByRole('link', { name: student.name, exact: true }),
+      });
+      const nameHeader = wrapper
+        .getByRole('button', { name: 'Sort by name', exact: true })
+        .locator('xpath=ancestor::th');
+      const operationsHeader = wrapper.getByRole('columnheader', {
+        name: 'Operations',
+        exact: true,
+      });
+      const operationsCell = row.locator('td').last();
+      const more = row.getByRole('button', { name: 'More actions', exact: true });
+      // CSS locators also see the mounted action group while the native popover is closed.
+      const actions = row.locator('[popover="auto"][role="group"][aria-label="Row actions"]');
+      await expect(row).toHaveCount(1);
+      await expect(wrapper).toHaveAttribute('data-table-compact', 'false');
+      await expect(nameHeader).toHaveCSS('position', 'sticky');
+      await expect(operationsHeader).toHaveCSS('min-width', '360px');
+
+      const profileWrites: string[] = [];
+      const observeProfileWrites = (request: Request) => {
+        const path = new URL(request.url()).pathname;
+        if (
+          (path === '/api/layoutprofile/save' || path === '/api/layoutprofile/reset') &&
+          !request.headers()['x-vona-openapi-schema']
+        ) {
+          profileWrites.push(`${request.method()} ${path}`);
+        }
+      };
+      page.on('request', observeProfileWrites);
+      try {
+        // The viewport stays desktop-sized: only the Basic table's own container changes.
+        for (const width of [360, 320]) {
+          await wrapper.evaluate((element, width) => {
+            element.style.width = `${width}px`;
+          }, width);
+          await expect(wrapper).toHaveAttribute('data-table-compact', 'true');
+          await expect.poll(() => wrapper.evaluate(element => element.clientWidth)).toBe(width);
+          expect(page.viewportSize()?.width).toBe(1440);
+          await expect
+            .poll(() =>
+              wrapper
+                .locator('th, td')
+                .evaluateAll(cells =>
+                  cells.every(cell => getComputedStyle(cell).position !== 'sticky'),
+                ),
+            )
+            .toBe(true);
+          await expect(operationsHeader).toHaveCSS('min-width', '80px');
+          await expect(operationsCell).toHaveCSS('min-width', '80px');
+          await expect
+            .poll(() =>
+              operationsCell.evaluate(element =>
+                Math.abs(element.getBoundingClientRect().width - 80),
+              ),
+            )
+            .toBeLessThanOrEqual(1);
+          await expect(more).toHaveCount(1);
+          await expect(row.getByRole('button')).toHaveCount(1);
+          await expect(actions).toHaveCount(1);
+          await expect(actions).toBeHidden();
+          await expect(actions.locator('button')).toHaveCount(4);
+          await wrapper.evaluate(element => {
+            element.scrollLeft = element.scrollWidth;
+          });
+          const reach = await wrapper.evaluate(element => ({
+            overflow: element.scrollWidth - element.clientWidth,
+            remaining: element.scrollWidth - element.clientWidth - element.scrollLeft,
+          }));
+          expect(reach.overflow).toBeGreaterThan(0);
+          expect(Math.abs(reach.remaining)).toBeLessThanOrEqual(1);
+          await expect(more).toBeInViewport();
+        }
+
+        // Clip below the first row so a normal descendant menu cannot pass this check.
+        await wrapper.evaluate(element => {
+          const table = element.querySelector('table')!;
+          const row = table.querySelector('tbody tr')!;
+          const height = row.getBoundingClientRect().bottom - table.getBoundingClientRect().top;
+          element.style.height = `${Math.ceil(height)}px`;
+          element.style.overflowY = 'hidden';
+        });
+        await more.click();
+        await expect(actions).toBeVisible();
+        await expect(more).toHaveAttribute('aria-expanded', 'true');
+        for (const label of ['Edit', 'Delete', 'Force Delete', 'Summary']) {
+          const action = actions.getByRole('button', { name: label, exact: true });
+          await expect(action).toBeVisible();
+          await expect(action).toHaveText(label);
+        }
+        const deleteAction = actions.getByRole('button', { name: 'Delete', exact: true });
+        const clipping = await deleteAction.evaluate(element => {
+          const wrapper = element.closest('[data-table-compact]')!;
+          const rect = element.getBoundingClientRect();
+          const clip = wrapper.getBoundingClientRect();
+          const x = rect.left + rect.width / 2;
+          const y = rect.top + rect.height / 2;
+          return {
+            outside: y > clip.bottom || y < clip.top || x < clip.left || x > clip.right,
+            hit: element.contains(document.elementFromPoint(x, y)),
+          };
+        });
+        expect(clipping).toEqual({ outside: true, hit: true });
+        await deleteAction.focus();
+        await page.keyboard.press('Escape');
+        await expect(actions).toBeHidden();
+        await expect(more).toHaveAttribute('aria-expanded', 'false');
+        await expect(more).toBeFocused();
+        await more.click();
+        await deleteAction.click();
+        await expect(actions).toBeHidden();
+        await expect(more).toHaveAttribute('aria-expanded', 'false');
+        const confirmDialog = page.getByRole('dialog').filter({
+          hasText: 'Are you sure you want to delete this item?',
+        });
+        await expect(confirmDialog).toBeVisible();
+        await confirmDialog.getByRole('button', { name: 'No', exact: true }).click();
+        await expect(confirmDialog).toHaveCount(0);
+        await expect(row).toHaveCount(1);
+
+        await more.click();
+        await actions.getByRole('button', { name: 'Summary', exact: true }).press('Enter');
+        await expect(actions).toBeHidden();
+        await expect(more).toHaveAttribute('aria-expanded', 'false');
+        const summaryDialog = page.getByRole('dialog').filter({
+          has: page.getByRole('heading', { name: 'Summary', exact: true }),
+        });
+        await expect(summaryDialog).toBeVisible();
+        await page.keyboard.press('Escape');
+        await expect(summaryDialog).toHaveCount(0);
+
+        await wrapper.evaluate(element => {
+          element.style.width = '800px';
+          element.style.removeProperty('height');
+          element.style.removeProperty('overflow-y');
+        });
+        await expect(wrapper).toHaveAttribute('data-table-compact', 'false');
+        await expect(nameHeader).toHaveCSS('position', 'sticky');
+        await expect(operationsHeader).toHaveCSS('position', 'sticky');
+        await expect(operationsHeader).toHaveCSS('min-width', '360px');
+        await expect(operationsCell).toHaveCSS('min-width', '360px');
+        await expect(more).toHaveCount(0);
+        await expect(row.getByRole('button')).toHaveCount(4);
+        expect(profileWrites).toEqual([]);
+
+        for (const width of [320, 390]) {
+          await page.setViewportSize({ width, height: 900 });
+          const response = await page.reload({ waitUntil: 'load' });
+          expect(response?.ok()).toBeTruthy();
+          await expect(page.locator('html')).toHaveAttribute('data-zova-hydrated', 'admin');
+          await expect(wrapper).toHaveAttribute('data-table-compact', 'true');
+          await expect.poll(() => getDocumentHorizontalOverflow(page)).toBeLessThanOrEqual(1);
+          await expect(
+            wrapper
+              .locator('tbody tr')
+              .first()
+              .getByRole('button', { name: 'More actions', exact: true }),
+          ).toHaveCount(1);
+        }
+        // Closing the cached Admin tab must unmount the table without ref teardown errors.
+        await page.setViewportSize({ width: 1440, height: 900 });
+        const studentTab = page.getByRole('tab', { name: 'Student', exact: true });
+        await studentTab.hover();
+        await studentTab.locator('.tab-close').click();
+        await expect(studentTab).toHaveCount(0);
+        await expect(wrapper).toHaveCount(0);
+        const reopenedSelect = waitForStudentSelect(page);
+        await page.getByRole('link', { name: 'Student', exact: true }).click();
+        await reopenedSelect;
+        await expect(wrapper).toBeVisible();
+        await expect(wrapper).toHaveAttribute('data-table-compact', 'false');
+        expect(profileWrites).toEqual([]);
+        expect(consoleWarnings).toEqual([]);
+        expect(consoleErrors).toEqual([]);
+        expect(pageErrors).toEqual([]);
+      } finally {
+        page.off('request', observeProfileWrites);
+      }
+    });
+  },
+);
+
+test(
+  'ATP-BASIC-TABLE-05: mobile-UA SSR starts compact before scripts and container width wins after hydration',
+  { tag: ['@admin', '@flow', '@ssr'] },
+  async ({ page, browser }) => {
+    test.setTimeout(120_000);
+    await page.setViewportSize({ width: 1440, height: 900 });
+    await loginAsAdmin(page);
+    await withDraftStudents(page, 1, async ([student]) => {
+      const loaded = waitForStudentSelect(page);
+      await page.getByRole('link', { name: 'Student', exact: true }).click();
+      await expect(page).toHaveURL(studentResourceUrl);
+      await loaded;
+      const listUrl = page.url();
+      const storageState = await page.context().storageState();
+      for (const scenario of [
+        { mobile: true, width: 390, unsupportedPopover: false },
+        { mobile: true, width: 1440, unsupportedPopover: false },
+        { mobile: false, width: 390, unsupportedPopover: false },
+        { mobile: true, width: 390, unsupportedPopover: true },
+      ]) {
+        const context = await browser.newContext({
+          baseURL: new URL(listUrl).origin,
+          storageState,
+          userAgent: scenario.mobile ? mobileUserAgent : desktopUserAgent,
+          viewport: { width: scenario.width, height: 900 },
+        });
+        try {
+          if (scenario.unsupportedPopover) {
+            await context.addInitScript(() => {
+              Object.defineProperty(HTMLElement.prototype, 'showPopover', {
+                configurable: true,
+                value: undefined,
+              });
+            });
+          }
+          const ssrPage = await context.newPage();
+          const pageErrors = collectPageErrors(ssrPage);
+          const consoleErrors = collectConsoleErrors(ssrPage);
+          const hydrationWarnings: string[] = [];
+          ssrPage.on('console', message => {
+            if (/hydration.*mismatch|mismatch.*hydration/i.test(message.text())) {
+              hydrationWarnings.push(message.text());
+            }
+          });
+          let releaseScripts!: () => void;
+          const scriptsHeld = new Promise<void>(resolve => {
+            releaseScripts = resolve;
+          });
+          let heldScripts = 0;
+          const holdExternalScripts = async (route: Route) => {
+            if (route.request().resourceType() === 'script') {
+              heldScripts++;
+              await scriptsHeld;
+            }
+            await route.continue();
+          };
+          await ssrPage.route('**/*', holdExternalScripts);
+          try {
+            const response = await ssrPage.goto(listUrl, { waitUntil: 'commit' });
+            expect(response?.ok()).toBeTruthy();
+            expect(response?.headers()['cache-control']).toBe('private, no-store');
+            expect((response?.headers().vary ?? '').toLowerCase().split(/\s*,\s*/)).not.toContain(
+              'user-agent',
+            );
+            const wrapper = basicTableWrapper(ssrPage);
+            const row = wrapper.locator('tbody tr').filter({
+              has: ssrPage.getByRole('link', { name: student.name, exact: true }),
+            });
+            const operationsHeader = wrapper.getByRole('columnheader', {
+              name: 'Operations',
+              exact: true,
+            });
+            const operationsCell = row.locator('td').last();
+            const more = row.getByRole('button', { name: 'More actions', exact: true });
+            const actions = row.locator('[popover="auto"][role="group"][aria-label="Row actions"]');
+            await expect(row).toHaveCount(1);
+            await ssrPage.waitForFunction(() =>
+              Array.from(
+                document.querySelectorAll<HTMLLinkElement>('link[rel="stylesheet"]'),
+              ).every(link => link.sheet !== null),
+            );
+            await expect.poll(() => heldScripts).toBeGreaterThan(0);
+            await expect(ssrPage.locator('html')).not.toHaveAttribute('data-zova-hydrated');
+            await expect(wrapper).toHaveAttribute('data-table-compact', String(scenario.mobile));
+            if (scenario.mobile) {
+              for (const cell of [operationsHeader, operationsCell]) {
+                await expect(cell).toHaveCSS('width', '80px');
+                await expect(cell).toHaveCSS('min-width', '80px');
+              }
+              const heading = operationsHeader.locator('.sr-only');
+              await expect(heading).toHaveText('Operations');
+              await expect(heading).toHaveCSS('position', 'absolute');
+              await expect(heading).toHaveCSS('width', '1px');
+              await expect(more).toBeVisible();
+              await expect(more).toHaveAttribute('aria-expanded', 'false');
+              await expect(actions).toHaveCount(1);
+              await expect(actions).toBeHidden();
+              await expect(actions.locator('button')).toHaveCount(4);
+              await expect(row.getByRole('button')).toHaveCount(1);
+            } else {
+              await expect(more).toHaveCount(0);
+              await expect(row.getByRole('button')).toHaveCount(4);
+            }
+
+            releaseScripts();
+            await ssrPage.waitForLoadState('load');
+            await expect(ssrPage.locator('html')).toHaveAttribute('data-zova-hydrated', 'admin');
+            const measuredCompact = scenario.width < 768 && !scenario.unsupportedPopover;
+            await expect(wrapper).toHaveAttribute('data-table-compact', String(measuredCompact));
+            if (measuredCompact) {
+              await expect(operationsHeader).toHaveCSS('min-width', '80px');
+              const actionsId = await actions.getAttribute('id');
+              expect(actionsId).toBeTruthy();
+              await expect(more).toHaveAttribute('popovertarget', actionsId!);
+              await expect(more).toHaveAttribute('aria-controls', actionsId!);
+              await more.scrollIntoViewIfNeeded();
+              await more.click();
+              await expect(actions).toBeVisible();
+              await expect(
+                actions.getByRole('button', { name: 'Summary', exact: true }),
+              ).toBeVisible();
+              await ssrPage.keyboard.press('Escape');
+              await expect(actions).toBeHidden();
+              await expect(more).toHaveAttribute('aria-expanded', 'false');
+            } else {
+              if (!scenario.unsupportedPopover) {
+                expect(
+                  await wrapper.evaluate(element => element.clientWidth),
+                ).toBeGreaterThanOrEqual(768);
+              }
+              await expect(operationsHeader).toHaveCSS('min-width', '360px');
+              await expect(more).toHaveCount(0);
+              await expect(row.getByRole('button')).toHaveCount(4);
+              if (scenario.unsupportedPopover) {
+                const summary = row.getByRole('button', { name: 'Summary', exact: true });
+                await summary.scrollIntoViewIfNeeded();
+                await summary.click();
+                const dialog = ssrPage.getByRole('dialog');
+                await expect(dialog).toBeVisible();
+                await expect(
+                  dialog.getByRole('heading', { name: 'Summary', exact: true }),
+                ).toBeVisible();
+                await ssrPage.keyboard.press('Escape');
+                await expect(dialog).toHaveCount(0);
+              }
+            }
+            expect(hydrationWarnings).toEqual([]);
+            expect(consoleErrors).toEqual([]);
+            expect(pageErrors).toEqual([]);
+          } finally {
+            releaseScripts();
+            // Drain released handlers before closing their context, preserving the first failure.
+            await ssrPage.unrouteAll({ behavior: 'wait' });
+          }
+        } finally {
+          await context.close();
+        }
+      }
+    });
+  },
+);
+
+test(
+  'ATP-BASIC-TABLE-03: compact row delete handles cancellation, local failures, and retry',
+  { tag: ['@admin', '@flow'] },
+  async ({ page, request }) => {
     test.setTimeout(120_000);
     page.setDefaultTimeout(10_000);
     await page.setViewportSize({ width: 1440, height: 900 });
     const pageErrors = collectPageErrors(page);
     await loginAsAdmin(page);
 
+    let scenarioError: unknown;
+    let cleanupError: unknown;
     const studentName = `Row Delete E2E ${Date.now()}`;
     const accessToken = (await page.context().cookies()).find(
       cookie => cookie.name === 'token',
@@ -1019,14 +2482,30 @@ test(
       await page.getByRole('button', { name: 'Search', exact: true }).click();
       await filteredResponse;
 
-      const row = page.locator('tbody tr').filter({
+      await page.setViewportSize({ width: 390, height: 900 });
+      const wrapper = basicTableWrapper(page);
+      await expect(wrapper).toHaveAttribute('data-table-compact', 'true');
+      const row = wrapper.locator('tbody tr').filter({
         has: page.getByRole('link', { name: studentName, exact: true }),
       });
-      const deleteButton = row.locator('button.btn-outline.btn-error').first();
+      const more = row.getByRole('button', { name: 'More actions', exact: true });
+      const actions = row.locator('[popover="auto"][role="group"][aria-label="Row actions"]');
+      const deleteButton = actions.getByRole('button', {
+        name: 'Delete',
+        exact: true,
+        includeHidden: true,
+      });
+      const openActions = async () => {
+        if (!(await actions.isVisible())) await more.click();
+        await expect(actions).toBeVisible();
+        await expect(actions.locator('button')).toHaveCount(4);
+      };
       const confirmDialog = page.getByRole('dialog').filter({
         hasText: 'Are you sure you want to delete this item?',
       });
       await expect(row).toHaveCount(1);
+      await expect(actions).toBeHidden();
+      await openActions();
       await expect(deleteButton).toBeVisible();
 
       let cancelledRequestCount = 0;
@@ -1043,10 +2522,15 @@ test(
       page.on('request', cancelledRequestListener);
       try {
         await deleteButton.click();
+        await expect(actions).toBeHidden();
+        await expect(more).toHaveAttribute('aria-expanded', 'false');
         await expect(confirmDialog).toBeVisible();
         await confirmDialog.getByRole('button', { name: 'No', exact: true }).click();
         await expect(confirmDialog).toHaveCount(0);
         await expect(row).toHaveCount(1);
+        await openActions();
+        await expect(deleteButton).toBeEnabled();
+        await expect(deleteButton).not.toHaveAttribute('aria-busy', 'true');
         expect(cancelledRequestCount).toBe(0);
       } finally {
         page.off('request', cancelledRequestListener);
@@ -1058,25 +2542,59 @@ test(
         releaseFailedDelete = resolve;
       });
       const deleteRoute = (url: URL) => url.pathname === `/api/training/student/${studentId}`;
-      const failedDeleteHandler = async (route: Route) => {
+      const failedDeleteErrors: unknown[] = [];
+      const pendingFailedDeletes: Promise<void>[] = [];
+      const failedDeleteHandler = (route: Route) => {
         failureRequestCount++;
-        await failedDeleteHeld;
-        await route.fulfill({
-          status: 500,
-          contentType: 'application/json',
-          body: JSON.stringify({ code: 500, message: 'Row deletion temporarily unavailable' }),
+        const handled = (async () => {
+          await failedDeleteHeld;
+          await route.fulfill({
+            status: 500,
+            contentType: 'application/json',
+            body: JSON.stringify({ code: 500, message: 'Row deletion temporarily unavailable' }),
+          });
+        })().catch(error => {
+          // Report owned route failures after draining, not as detached Playwright errors.
+          failedDeleteErrors.push(error);
         });
+        pendingFailedDeletes.push(handled);
+        return handled;
       };
       await page.route(deleteRoute, failedDeleteHandler);
+      let failureScenarioError: unknown;
       try {
         await deleteButton.click();
         await confirmDialog.getByRole('button', { name: 'Yes', exact: true }).click();
         await expect.poll(() => failureRequestCount).toBe(1);
+        await expect(confirmDialog).toHaveCount(0);
+        await openActions();
         await expect(deleteButton).toBeDisabled();
         await expect(deleteButton).toHaveAttribute('aria-busy', 'true');
         await expect(deleteButton.locator('.loading.loading-spinner')).toHaveCount(1);
-        await deleteButton.click({ force: true });
-        await expect.poll(() => failureRequestCount).toBe(1);
+        const pendingDelete = await deleteButton.elementHandle();
+        expect(pendingDelete).not.toBeNull();
+        try {
+          await page.keyboard.press('Escape');
+          await expect(actions).toBeHidden();
+          await expect(more).toBeFocused();
+          // Closed native popovers hide, rather than replace, the running action component.
+          expect(await pendingDelete!.evaluate(element => element.isConnected)).toBe(true);
+          await expect(deleteButton).toBeDisabled();
+          await expect(deleteButton).toHaveAttribute('aria-busy', 'true');
+          await openActions();
+          expect(
+            await deleteButton.evaluate((element, pending) => element === pending, pendingDelete),
+          ).toBe(true);
+          await expect(deleteButton).toBeDisabled();
+          await expect(deleteButton.locator('.loading.loading-spinner')).toHaveCount(1);
+          await deleteButton.click({ force: true });
+          expect(failureRequestCount).toBe(1);
+          await page.keyboard.press('Escape');
+          await expect(actions).toBeHidden();
+          await expect(more).toBeFocused();
+        } finally {
+          await pendingDelete?.dispose();
+        }
 
         releaseFailedDelete?.();
         const errorDialog = page.getByRole('dialog').filter({
@@ -1090,10 +2608,37 @@ test(
         await expect(deleteButton).toBeEnabled();
         await expect(deleteButton).not.toHaveAttribute('aria-busy', 'true');
         await expect(deleteButton.locator('.loading.loading-spinner')).toHaveCount(0);
+        await openActions();
+        await expect(deleteButton).toBeEnabled();
+        await expect(deleteButton).not.toHaveAttribute('aria-busy', 'true');
+        await page.keyboard.press('Escape');
+        await expect(actions).toBeHidden();
+        await openActions();
+        await expect(deleteButton).toBeEnabled();
+        expect(failureRequestCount).toBe(1);
+      } catch (error) {
+        failureScenarioError = error;
       } finally {
         releaseFailedDelete?.();
-        await page.unroute(deleteRoute, failedDeleteHandler);
+        // A held route must finish before unroute can let that request continue.
+        for (let index = 0; index < pendingFailedDeletes.length; index++) {
+          await pendingFailedDeletes[index];
+        }
+        try {
+          await page.unroute(deleteRoute, failedDeleteHandler);
+        } catch (error) {
+          failedDeleteErrors.push(error);
+        }
       }
+      if (failedDeleteErrors.length) {
+        throw new AggregateError(
+          failureScenarioError === undefined
+            ? failedDeleteErrors
+            : [failureScenarioError, ...failedDeleteErrors],
+          'Compact row delete assertion or route cleanup failed',
+        );
+      }
+      if (failureScenarioError !== undefined) throw failureScenarioError;
 
       const deleteRequest = page.waitForRequest(request => {
         const url = new URL(request.url());
@@ -1123,21 +2668,37 @@ test(
       expect(refetch.ok()).toBeTruthy();
       await expect(row).toHaveCount(0);
       expect(pageErrors).toEqual([]);
+    } catch (error) {
+      scenarioError = error;
     } finally {
       if (studentId !== undefined) {
-        const deleteResponse = await page.request.delete(
-          `/api/training/student/deleteForce/${studentId}`,
-          {
-            headers,
-            timeout: 10_000,
-          },
-        );
-        expect(
-          deleteResponse.ok() || deleteResponse.status() === 404,
-          `Failed to clean up Training Student ${studentName} (${studentId}): ${deleteResponse.status()}`,
-        ).toBeTruthy();
+        try {
+          const deleteResponse = await request.delete(
+            `/api/training/student/deleteForce/${studentId}`,
+            {
+              headers,
+              timeout: 10_000,
+            },
+          );
+          expect(
+            deleteResponse.ok() || deleteResponse.status() === 404,
+            `Failed to clean up Training Student ${studentName} (${studentId}): ${deleteResponse.status()}`,
+          ).toBeTruthy();
+        } catch (error) {
+          cleanupError = error;
+        }
       }
     }
+    if (cleanupError !== undefined) {
+      if (scenarioError !== undefined) {
+        throw new AggregateError(
+          [scenarioError, cleanupError],
+          'Compact row delete assertion and owned fixture cleanup failed',
+        );
+      }
+      throw cleanupError;
+    }
+    if (scenarioError !== undefined) throw scenarioError;
   },
 );
 

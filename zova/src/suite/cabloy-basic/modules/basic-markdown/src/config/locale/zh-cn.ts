@@ -22,6 +22,8 @@ export default {
   Link: '链接',
   LinkUrl: '链接地址',
   MarkdownToolbar: 'Markdown 工具栏',
+  MarkdownSource: 'Markdown 源码',
+  SourceMode: '源码编辑模式',
   OrderedList: '有序列表',
   Paragraph: '段落',
   PlainText: '纯文本',

@@ -1,5 +1,6 @@
 import { BeanRenderBase } from 'zova';
 import { Render } from 'zova-module-a-bean';
+import { ZButton } from 'zova-module-basic-button';
 import { resolveImagePreviewUrl } from 'zova-module-basic-image';
 import { closeNearestDetails } from 'zova-module-home-base';
 
@@ -23,7 +24,18 @@ export class RenderUser extends BeanRenderBase {
           <ul class="bg-base-100 rounded-t-none p-2 w-32">
             <li>
               <a
+                href={this.$router.getPagePath('/home/user/account')}
                 onClick={event => {
+                  if (
+                    event.button !== 0 ||
+                    event.metaKey ||
+                    event.ctrlKey ||
+                    event.shiftKey ||
+                    event.altKey
+                  ) {
+                    return;
+                  }
+                  event.preventDefault();
                   this.app.$gotoPage('/home/user/account');
                   closeNearestDetails(event);
                 }}
@@ -32,14 +44,14 @@ export class RenderUser extends BeanRenderBase {
               </a>
             </li>
             <li>
-              <a
-                onClick={event => {
-                  this.$passport.logout().mutate();
+              <ZButton
+                onPerform={async event => {
                   closeNearestDetails(event);
+                  await this.$passport.logout().mutateAsync();
                 }}
               >
                 {this.scope.locale.Logout()}
-              </a>
+              </ZButton>
             </li>
           </ul>
         </details>

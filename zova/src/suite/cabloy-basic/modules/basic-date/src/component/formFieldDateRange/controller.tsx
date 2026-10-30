@@ -30,7 +30,19 @@ export class ControllerFormFieldDateRange extends BeanControllerBase {
   cContainer: string;
 
   protected async __init__() {
-    this.cContainer = this.$style({ width: 'auto' });
+    this.cContainer = this.$style({
+      width: 'auto',
+      maxWidth: '100%',
+      $nest: {
+        '&.input': {
+          height: 'auto',
+          minHeight: 'var(--size)',
+          flexWrap: 'wrap',
+          paddingTop: '0.5rem',
+          paddingBottom: '0.5rem',
+        },
+      },
+    });
   }
 
   protected render() {

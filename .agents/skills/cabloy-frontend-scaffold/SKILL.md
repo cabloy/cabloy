@@ -202,6 +202,8 @@ In that case, surface this operational sequence:
 
 ### Component and interaction follow-up
 
+For both Cabloy Basic and Cabloy Start, prefer `ZButton` for button actions when creating or modifying an interaction, including existing menu actions. Do not reconstruct its action lifecycle with native elements by default. Keep navigation as links; use native buttons or lower-level behaviors only for a defined interaction need, and preserve form-wide or shared lifecycle ownership. Resolve the component import and styling from the active edition.
+
 Check whether the feature needs:
 
 - props contract review
@@ -209,7 +211,7 @@ Check whether the feature needs:
 - generic component conversion
 - style/theme/icon updates
 - wrapper usage review
-- async interaction ownership: for a button-only action, return or await the complete action through `ZButton onPerform`, choose one error presentation owner rather than combining its generic alert with local query/error UI, and do not mirror the same lifecycle with button-local `loading` / `disabled` state; retain explicit state only for independently initiated or broader shared work
+- async interaction ownership: for a button-only action, return or await the complete action through `ZButton onPerform`; when the button owns mutation-error feedback, use `mutateAsync()` rather than `mutate()`, which consumes the rejection; choose one error presentation owner rather than combining its generic alert with local query/error UI, and do not mirror the same lifecycle with button-local `loading` / `disabled` state; retain explicit state only for independently initiated or broader shared work
 - business row actions that require additional input: prefer a compact trigger and a focused dialog unless deliberate inline editing is intended; follow the [TableCell dialog pattern](../../../repo-docs/frontend/table-cell-cookbook.md#collect-input-for-a-business-row-action-in-a-dialog) for schema-backed forms where suitable, existing mutation ownership, success-only closure, failure input retention, and dialog-scoped E2E verification
 - async-loading or controllerRef implications
 
@@ -224,7 +226,7 @@ Check whether the feature needs:
 - SSR or route-path verification
 - hydration-time initial-render equivalence when SSR, private state, browser-only state, or async model state changes
 - edition-specific flavor, SSR site baseline, and project-asset verification
-- interaction failure-path verification when `ZButton onPerform` owns a query action: a failed refetch reaches exactly the intended `onError`, generic alert, or local error UI, and button loading resets
+- interaction failure-path verification when `ZButton onPerform` owns a query or mutation action: a failed refetch or mutation reaches exactly the intended `onError`, generic alert, or local error UI, and button loading resets
 
 ### SSR theme review reminder
 

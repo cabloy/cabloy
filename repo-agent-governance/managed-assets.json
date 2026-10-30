@@ -95,7 +95,7 @@
     {
       "adapter": "codex",
       "category": "skill",
-      "sha256": "0324ce1fb9a9b7b2074f60b8252c62b124f5804b808be8146ebb2ccb8762b38b",
+      "sha256": "fb81da315c743a45ced77d6e7c10be25f521d72de7f14d4e7b4a8037716b2b31",
       "source": "skills/cabloy-frontend-scaffold/SKILL.md",
       "target": ".agents/skills/cabloy-frontend-scaffold/SKILL.md"
     },
@@ -431,7 +431,7 @@
     {
       "adapter": "claude",
       "category": "skill",
-      "sha256": "0324ce1fb9a9b7b2074f60b8252c62b124f5804b808be8146ebb2ccb8762b38b",
+      "sha256": "fb81da315c743a45ced77d6e7c10be25f521d72de7f14d4e7b4a8037716b2b31",
       "source": "skills/cabloy-frontend-scaffold/SKILL.md",
       "target": ".claude/skills/cabloy-frontend-scaffold/SKILL.md"
     },
@@ -683,7 +683,7 @@
     {
       "adapter": "cursor",
       "category": "policy",
-      "sha256": "a41379c32f2ab77a691b282d13d3ad1fd2887e14694109f2afa43974a438cbee",
+      "sha256": "ad91c94c7dd07f24ef3580c991b34439721902413051843a3445ca903979f5a3",
       "source": "policies/repository.md",
       "target": ".cursor/rules/cabloy-governance.mdc"
     },
@@ -781,7 +781,7 @@
     {
       "adapter": "cursor",
       "category": "skill",
-      "sha256": "0324ce1fb9a9b7b2074f60b8252c62b124f5804b808be8146ebb2ccb8762b38b",
+      "sha256": "fb81da315c743a45ced77d6e7c10be25f521d72de7f14d4e7b4a8037716b2b31",
       "source": "skills/cabloy-frontend-scaffold/SKILL.md",
       "target": ".cursor/skills/cabloy-frontend-scaffold/SKILL.md"
     },
@@ -1005,14 +1005,14 @@
     {
       "adapter": "codex",
       "category": "policy",
-      "sha256": "19b84cff474c23e561ba0cf532ff343da56febab3c484a4eb42912f9b9d8c6d3",
+      "sha256": "deb64df2f792d1c28dec0727e1a70871c7a96445eceb8a65155977fc77cbde62",
       "source": "policies/repository.md",
       "target": "AGENTS.md"
     },
     {
       "adapter": "claude",
       "category": "policy",
-      "sha256": "19b84cff474c23e561ba0cf532ff343da56febab3c484a4eb42912f9b9d8c6d3",
+      "sha256": "deb64df2f792d1c28dec0727e1a70871c7a96445eceb8a65155977fc77cbde62",
       "source": "policies/repository.md",
       "target": "CLAUDE.md"
     }

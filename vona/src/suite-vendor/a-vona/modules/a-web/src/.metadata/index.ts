@@ -1,4 +1,44 @@
 // eslint-disable
+/** filterTransform: begin */
+export * from '../bean/filterTransform.base.ts';
+export * from '../bean/filterTransform.dateRange.ts';
+import type { IFilterTransformOptionsBase } from '../bean/filterTransform.base.ts';
+import type { IFilterTransformOptionsDateRange } from '../bean/filterTransform.dateRange.ts';
+import 'vona-module-a-web';
+declare module 'vona-module-a-web' {
+
+    export interface IFilterTransformRecord {
+      'a-web:base': IFilterTransformOptionsBase;
+'a-web:dateRange': IFilterTransformOptionsDateRange;
+    }
+
+
+}
+declare module 'vona-module-a-web' {
+
+        export interface FilterTransformBase {
+          /** @internal */
+          get scope(): ScopeModuleAWeb;
+        }
+
+          export interface FilterTransformBase {
+            get $beanFullName(): 'a-web.filterTransform.base';
+            get $onionName(): 'a-web:base';
+            get $onionOptions(): IFilterTransformOptionsBase;
+          }
+
+        export interface FilterTransformDateRange {
+          /** @internal */
+          get scope(): ScopeModuleAWeb;
+        }
+
+          export interface FilterTransformDateRange {
+            get $beanFullName(): 'a-web.filterTransform.dateRange';
+            get $onionName(): 'a-web:dateRange';
+            get $onionOptions(): IFilterTransformOptionsDateRange;
+          }
+}
+/** filterTransform: end */
 /** pipe: begin */
 export * from '../bean/pipe.filter.ts';
 export * from '../bean/pipe.valid.ts';
@@ -167,46 +207,6 @@ declare module 'vona-module-a-web' {
           }
 }
 /** startup: end */
-/** filterTransform: begin */
-export * from '../bean/filterTransform.base.ts';
-export * from '../bean/filterTransform.dateRange.ts';
-import type { IFilterTransformOptionsBase } from '../bean/filterTransform.base.ts';
-import type { IFilterTransformOptionsDateRange } from '../bean/filterTransform.dateRange.ts';
-import 'vona-module-a-web';
-declare module 'vona-module-a-web' {
-
-    export interface IFilterTransformRecord {
-      'a-web:base': IFilterTransformOptionsBase;
-'a-web:dateRange': IFilterTransformOptionsDateRange;
-    }
-
-
-}
-declare module 'vona-module-a-web' {
-
-        export interface FilterTransformBase {
-          /** @internal */
-          get scope(): ScopeModuleAWeb;
-        }
-
-          export interface FilterTransformBase {
-            get $beanFullName(): 'a-web.filterTransform.base';
-            get $onionName(): 'a-web:base';
-            get $onionOptions(): IFilterTransformOptionsBase;
-          }
-
-        export interface FilterTransformDateRange {
-          /** @internal */
-          get scope(): ScopeModuleAWeb;
-        }
-
-          export interface FilterTransformDateRange {
-            get $beanFullName(): 'a-web.filterTransform.dateRange';
-            get $onionName(): 'a-web:dateRange';
-            get $onionOptions(): IFilterTransformOptionsDateRange;
-          }
-}
-/** filterTransform: end */
 /** config: begin */
 export * from '../config/config.ts';
 import type { config } from '../config/config.ts';

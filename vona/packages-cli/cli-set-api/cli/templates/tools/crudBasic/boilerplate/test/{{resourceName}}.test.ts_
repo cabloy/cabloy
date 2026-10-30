@@ -29,6 +29,8 @@ describe('<%=argv.resourceName%>.test.ts', { concurrency: false }, () => {
       const expectedSummaries = {
         create: ['post', moduleApiPath, 'Create <%=argv.resourceNameCapitalize%>'],
         select: ['get', moduleApiPath, 'Query <%=argv.resourceNameCapitalize%> List'],
+        group: ['get', `${moduleApiPath}/group`, 'Group <%=argv.resourceNameCapitalize%>'],
+        aggregate: ['get', `${moduleApiPath}/aggregate`, 'Aggregate <%=argv.resourceNameCapitalize%>'],
         view: ['get', `${moduleApiPath}/{id}`, 'View <%=argv.resourceNameCapitalize%>'],
         update: ['patch', `${moduleApiPath}/{id}`, 'Update <%=argv.resourceNameCapitalize%>'],
         delete: ['delete', `${moduleApiPath}/{id}`, 'Delete <%=argv.resourceNameCapitalize%>'],
@@ -54,6 +56,8 @@ describe('<%=argv.resourceName%>.test.ts', { concurrency: false }, () => {
       const expectedInherits = {
         create: undefined,
         select: undefined,
+        group: `${controllerBeanFullName}#select`,
+        aggregate: `${controllerBeanFullName}#select`,
         view: undefined,
         update: undefined,
         delete: undefined,

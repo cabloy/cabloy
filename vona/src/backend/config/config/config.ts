@@ -1,4 +1,9 @@
-import type { ILoggerOptionsClientInfo, VonaApplication, VonaConfigOptional } from 'vona';
+import type {
+  ILocaleRecord,
+  ILoggerOptionsClientInfo,
+  VonaApplication,
+  VonaConfigOptional,
+} from 'vona';
 import type { IMailClientRecord, TypeMailTransportService } from 'vona-module-a-mail';
 import type { IDatabaseClientRecord } from 'vona-module-a-orm';
 
@@ -47,7 +52,7 @@ export default async function (app: VonaApplication) {
       'ja-jp': 'LanguageJapanese',
       'zh-tw': 'LanguageTraditionalChinese',
     },
-    default: 'en-us',
+    default: (env.APP_LOCALE_DEFAULT || 'en-us') as keyof ILocaleRecord,
   };
 
   // instance

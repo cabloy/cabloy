@@ -1,0 +1,1028 @@
+{
+  "closeout": {
+    "date": "2026-10-29",
+    "status": "investigation closed; historical evidence only",
+    "finalDecision": "Accept measured initialization cost; retain fresh apps; implement neither an app pool nor Monkey dispatch-list optimization.",
+    "removed": "Runtime timing, runtime switch, dedicated tests, benchmark driver and public guide.",
+    "reproduction": "Requires removed uncommitted measurement implementation and compatible artifacts; recorded HEAD alone is insufficient. No complete replay archive is retained.",
+    "measurementPayload": "Original measurements and provenance hashes retained unchanged. They do not describe rebuilt post-cleanup artifacts."
+  },
+  "environment": {
+    "edition": "Cabloy Basic",
+    "entry": "Vona integrated SSR",
+    "backendMode": "test",
+    "backendSource": true,
+    "flavor": "normal",
+    "workers": 1,
+    "frontend": "built SSR bundle",
+    "timing": true,
+    "route": "/demo/basic/state",
+    "anonymous": true,
+    "processPolicy": "one fresh managed process; three sequential rounds in the same process",
+    "priorTraffic": "managed readiness handshake only before first round; subsequent rounds follow previous measured traffic",
+    "cachePolicyEvidence": "Expected from route policy and prior timing-on/off managed correctness checks; the benchmark driver does not record cache headers.",
+    "workloadNote": "State demo has no authored API query; includes normal layout/framework behavior. Not a representative data-heavy business page.",
+    "measurementDate": "2026-10-29",
+    "node": "v24.8.0",
+    "platform": "darwin"
+  },
+  "provenance": {
+    "revision": "75484d14ae8e3d6042e142ae8d3d598724c0afb0",
+    "workingTree": "uncommitted Stage A changes present",
+    "sourceHashes": {
+      "scripts/benchSsr.ts": "93b0524fa9801d949210ef26bad266ac8e605d7c16f4962f2a854bdbc5d2bdd1",
+      "scripts/runIsolatedTest.ts": "17eff1d80ff25cc46590898a7863331fefb572ec818341731a0a2fddac51141e",
+      "zova/packages-zova/zova-core/src/core/app/application.ts": "49b46b7e60c425781930e54c2f49dfe4f536a522b81c25f154adc75a5604cc7d",
+      "zova/src/suite-vendor/a-zova/modules/a-ssr/src/lib/ssrTiming.ts": "dd659f9813740e5d8c87a97b31c2d74a25678e1e67c8427476338667cfb331cd",
+      "zova/src/suite-vendor/a-zova/modules/a-ssrserver/src/service/ssrHandler.ts": "2d07ac086a8e3c58a370cb4e595a2278bc2cc5b099188b87e747a20567025dfe"
+    },
+    "artifactRoot": "vona/src/suite/cabloy-basic/modules/basic-siteweb/assets/site/ssr-cabloyBasicWeb-5.0.0",
+    "artifactTree": {
+      "sha256": "e0bf5aa5c6a40289ec7dd0eda13ec49365883ddec41be0e2564e8406cbbc5825",
+      "files": 138
+    }
+  },
+  "runs": [
+    {
+      "round": 1,
+      "driver": {
+        "version": 1,
+        "node": "v24.8.0"
+      },
+      "target": {
+        "transport": "direct-loopback-http",
+        "provenance": "unverified",
+        "mode": "unverified",
+        "revision": "unverified",
+        "workers": "unverified"
+      },
+      "workload": {
+        "warmup": 10,
+        "serial": 50,
+        "concurrent": 100,
+        "concurrency": 4,
+        "timeoutMs": 10000
+      },
+      "connection": {
+        "keepAlive": true,
+        "maxSockets": 4,
+        "maxTotalSockets": 4
+      },
+      "valid": true,
+      "firstObserved": {
+        "requested": 1,
+        "attempted": 1,
+        "succeeded": 1,
+        "failed": 0,
+        "errors": {},
+        "sample": {
+          "wallMs": 717.2612500000014,
+          "headerMs": 716.737833000001,
+          "bytes": 22927,
+          "serverTimingMs": {
+            "ssr_total": 71.598,
+            "ssr_route": 1.125,
+            "ssr_entry": 0.867,
+            "ssr_render": 66.456,
+            "ssr_callbacks": 0.396,
+            "ssr_finalize": 1.534,
+            "ssr_html": 1.178,
+            "ssr_clear": 0.013,
+            "ssr_app_init": 18.286,
+            "ssr_init_setup": 0.114,
+            "ssr_init_modules": 5.98,
+            "ssr_init_initialize": 6.299,
+            "ssr_init_initialized": 4.301,
+            "ssr_init_ready": 1.574,
+            "ssr_navigation": 1.451,
+            "ssr_state_meta": 1.091,
+            "ssr_app_cleanup": 0.415
+          }
+        }
+      },
+      "warmup": {
+        "requested": 10,
+        "attempted": 10,
+        "succeeded": 10,
+        "failed": 0,
+        "errors": {}
+      },
+      "serial": {
+        "requested": 50,
+        "attempted": 50,
+        "succeeded": 50,
+        "failed": 0,
+        "errors": {},
+        "elapsedMs": 852.915,
+        "successfulResponsesPerSecond": 58.622,
+        "bytes": 1146350,
+        "wallMs": {
+          "count": 50,
+          "p50": 16.157,
+          "p95": 20.694,
+          "max": 34.134
+        },
+        "headerMs": {
+          "count": 50,
+          "p50": 16.029,
+          "p95": 20.568,
+          "max": 33.991
+        },
+        "serverTimingMs": {
+          "ssr_total": {
+            "count": 50,
+            "p50": 14.209,
+            "p95": 18.21,
+            "max": 24.829
+          },
+          "ssr_route": {
+            "count": 50,
+            "p50": 0.057,
+            "p95": 0.099,
+            "max": 0.109
+          },
+          "ssr_entry": {
+            "count": 50,
+            "p50": 0.024,
+            "p95": 0.038,
+            "max": 0.052
+          },
+          "ssr_render": {
+            "count": 50,
+            "p50": 13.453,
+            "p95": 17.415,
+            "max": 24.067
+          },
+          "ssr_callbacks": {
+            "count": 50,
+            "p50": 0.065,
+            "p95": 0.088,
+            "max": 0.112
+          },
+          "ssr_finalize": {
+            "count": 50,
+            "p50": 0.323,
+            "p95": 0.404,
+            "max": 0.463
+          },
+          "ssr_html": {
+            "count": 50,
+            "p50": 0.259,
+            "p95": 0.292,
+            "max": 0.298
+          },
+          "ssr_clear": {
+            "count": 50,
+            "p50": 0.001,
+            "p95": 0.002,
+            "max": 0.011
+          },
+          "ssr_app_init": {
+            "count": 50,
+            "p50": 4.838,
+            "p95": 5.256,
+            "max": 8.473
+          },
+          "ssr_init_setup": {
+            "count": 50,
+            "p50": 0.017,
+            "p95": 0.027,
+            "max": 0.098
+          },
+          "ssr_init_modules": {
+            "count": 50,
+            "p50": 2.088,
+            "p95": 2.314,
+            "max": 2.982
+          },
+          "ssr_init_initialize": {
+            "count": 50,
+            "p50": 1.224,
+            "p95": 1.52,
+            "max": 2.746
+          },
+          "ssr_init_initialized": {
+            "count": 50,
+            "p50": 1.144,
+            "p95": 1.375,
+            "max": 2.173
+          },
+          "ssr_init_ready": {
+            "count": 50,
+            "p50": 0.312,
+            "p95": 0.426,
+            "max": 0.535
+          },
+          "ssr_navigation": {
+            "count": 50,
+            "p50": 0.275,
+            "p95": 0.377,
+            "max": 0.477
+          },
+          "ssr_state_meta": {
+            "count": 50,
+            "p50": 0.144,
+            "p95": 0.182,
+            "max": 0.246
+          },
+          "ssr_app_cleanup": {
+            "count": 50,
+            "p50": 0.172,
+            "p95": 0.22,
+            "max": 0.239
+          }
+        }
+      },
+      "concurrent": {
+        "requested": 100,
+        "attempted": 100,
+        "succeeded": 100,
+        "failed": 0,
+        "errors": {},
+        "elapsedMs": 1501.323,
+        "successfulResponsesPerSecond": 66.608,
+        "bytes": 2292700,
+        "wallMs": {
+          "count": 100,
+          "p50": 59.498,
+          "p95": 64.034,
+          "max": 103.907
+        },
+        "headerMs": {
+          "count": 100,
+          "p50": 59.399,
+          "p95": 63.936,
+          "max": 103.806
+        },
+        "serverTimingMs": {
+          "ssr_total": {
+            "count": 100,
+            "p50": 12.942,
+            "p95": 14.231,
+            "max": 17.838
+          },
+          "ssr_route": {
+            "count": 100,
+            "p50": 0.047,
+            "p95": 0.073,
+            "max": 0.111
+          },
+          "ssr_entry": {
+            "count": 100,
+            "p50": 0.022,
+            "p95": 0.032,
+            "max": 0.041
+          },
+          "ssr_render": {
+            "count": 100,
+            "p50": 12.279,
+            "p95": 13.493,
+            "max": 17.098
+          },
+          "ssr_callbacks": {
+            "count": 100,
+            "p50": 0.056,
+            "p95": 0.075,
+            "max": 0.095
+          },
+          "ssr_finalize": {
+            "count": 100,
+            "p50": 0.297,
+            "p95": 0.354,
+            "max": 0.387
+          },
+          "ssr_html": {
+            "count": 100,
+            "p50": 0.251,
+            "p95": 0.275,
+            "max": 0.303
+          },
+          "ssr_clear": {
+            "count": 100,
+            "p50": 0.001,
+            "p95": 0.001,
+            "max": 0.002
+          },
+          "ssr_app_init": {
+            "count": 100,
+            "p50": 4.472,
+            "p95": 4.899,
+            "max": 8.942
+          },
+          "ssr_init_setup": {
+            "count": 100,
+            "p50": 0.017,
+            "p95": 0.023,
+            "max": 0.028
+          },
+          "ssr_init_modules": {
+            "count": 100,
+            "p50": 2.001,
+            "p95": 2.18,
+            "max": 6.319
+          },
+          "ssr_init_initialize": {
+            "count": 100,
+            "p50": 1.095,
+            "p95": 1.272,
+            "max": 1.357
+          },
+          "ssr_init_initialized": {
+            "count": 100,
+            "p50": 1.034,
+            "p95": 1.208,
+            "max": 1.454
+          },
+          "ssr_init_ready": {
+            "count": 100,
+            "p50": 0.275,
+            "p95": 0.377,
+            "max": 0.415
+          },
+          "ssr_navigation": {
+            "count": 100,
+            "p50": 0.241,
+            "p95": 0.336,
+            "max": 0.361
+          },
+          "ssr_state_meta": {
+            "count": 100,
+            "p50": 0.129,
+            "p95": 0.157,
+            "max": 0.188
+          },
+          "ssr_app_cleanup": {
+            "count": 100,
+            "p50": 0.16,
+            "p95": 0.196,
+            "max": 0.227
+          }
+        }
+      },
+      "interpretation": {
+        "firstObserved": "Not proof of process-cold startup; target process freshness is external evidence.",
+        "serverTiming": "Inclusive nested spans, not additive; no derived pure-render or API-wait estimate.",
+        "total": "ssr_total excludes earlier Vona/Sys preparation and HTTP transmission.",
+        "percentiles": "p50 is median; p95 is nearest rank. Warmup and first observed are excluded from measured phases."
+      },
+      "unmeasured": ["server_cpu", "server_memory", "server_gc"]
+    },
+    {
+      "round": 2,
+      "driver": {
+        "version": 1,
+        "node": "v24.8.0"
+      },
+      "target": {
+        "transport": "direct-loopback-http",
+        "provenance": "unverified",
+        "mode": "unverified",
+        "revision": "unverified",
+        "workers": "unverified"
+      },
+      "workload": {
+        "warmup": 10,
+        "serial": 50,
+        "concurrent": 100,
+        "concurrency": 4,
+        "timeoutMs": 10000
+      },
+      "connection": {
+        "keepAlive": true,
+        "maxSockets": 4,
+        "maxTotalSockets": 4
+      },
+      "valid": true,
+      "firstObserved": {
+        "requested": 1,
+        "attempted": 1,
+        "succeeded": 1,
+        "failed": 0,
+        "errors": {},
+        "sample": {
+          "wallMs": 15.295749999997497,
+          "headerMs": 15.197707999999693,
+          "bytes": 22927,
+          "serverTimingMs": {
+            "ssr_total": 13.325,
+            "ssr_route": 0.062,
+            "ssr_entry": 0.027,
+            "ssr_render": 12.621,
+            "ssr_callbacks": 0.057,
+            "ssr_finalize": 0.299,
+            "ssr_html": 0.254,
+            "ssr_clear": 0.001,
+            "ssr_app_init": 4.806,
+            "ssr_init_setup": 0.018,
+            "ssr_init_modules": 2.114,
+            "ssr_init_initialize": 1.279,
+            "ssr_init_initialized": 1.088,
+            "ssr_init_ready": 0.303,
+            "ssr_navigation": 0.269,
+            "ssr_state_meta": 0.127,
+            "ssr_app_cleanup": 0.167
+          }
+        }
+      },
+      "warmup": {
+        "requested": 10,
+        "attempted": 10,
+        "succeeded": 10,
+        "failed": 0,
+        "errors": {}
+      },
+      "serial": {
+        "requested": 50,
+        "attempted": 50,
+        "succeeded": 50,
+        "failed": 0,
+        "errors": {},
+        "elapsedMs": 806.719,
+        "successfulResponsesPerSecond": 61.979,
+        "bytes": 1146350,
+        "wallMs": {
+          "count": 50,
+          "p50": 14.882,
+          "p95": 21.615,
+          "max": 39.163
+        },
+        "headerMs": {
+          "count": 50,
+          "p50": 14.741,
+          "p95": 21.514,
+          "max": 38.984
+        },
+        "serverTimingMs": {
+          "ssr_total": {
+            "count": 50,
+            "p50": 12.912,
+            "p95": 18.747,
+            "max": 35.008
+          },
+          "ssr_route": {
+            "count": 50,
+            "p50": 0.056,
+            "p95": 0.076,
+            "max": 0.094
+          },
+          "ssr_entry": {
+            "count": 50,
+            "p50": 0.025,
+            "p95": 0.06,
+            "max": 0.406
+          },
+          "ssr_render": {
+            "count": 50,
+            "p50": 12.221,
+            "p95": 17.949,
+            "max": 33.658
+          },
+          "ssr_callbacks": {
+            "count": 50,
+            "p50": 0.06,
+            "p95": 0.079,
+            "max": 0.122
+          },
+          "ssr_finalize": {
+            "count": 50,
+            "p50": 0.298,
+            "p95": 0.359,
+            "max": 0.64
+          },
+          "ssr_html": {
+            "count": 50,
+            "p50": 0.256,
+            "p95": 0.289,
+            "max": 0.49
+          },
+          "ssr_clear": {
+            "count": 50,
+            "p50": 0.001,
+            "p95": 0.002,
+            "max": 0.003
+          },
+          "ssr_app_init": {
+            "count": 50,
+            "p50": 4.48,
+            "p95": 5.1,
+            "max": 13.467
+          },
+          "ssr_init_setup": {
+            "count": 50,
+            "p50": 0.017,
+            "p95": 0.023,
+            "max": 0.028
+          },
+          "ssr_init_modules": {
+            "count": 50,
+            "p50": 2.001,
+            "p95": 2.179,
+            "max": 2.21
+          },
+          "ssr_init_initialize": {
+            "count": 50,
+            "p50": 1.128,
+            "p95": 1.37,
+            "max": 2.126
+          },
+          "ssr_init_initialized": {
+            "count": 50,
+            "p50": 1.027,
+            "p95": 1.263,
+            "max": 8.022
+          },
+          "ssr_init_ready": {
+            "count": 50,
+            "p50": 0.278,
+            "p95": 0.419,
+            "max": 1.34
+          },
+          "ssr_navigation": {
+            "count": 50,
+            "p50": 0.246,
+            "p95": 0.373,
+            "max": 1.236
+          },
+          "ssr_state_meta": {
+            "count": 50,
+            "p50": 0.131,
+            "p95": 0.155,
+            "max": 0.276
+          },
+          "ssr_app_cleanup": {
+            "count": 50,
+            "p50": 0.164,
+            "p95": 0.2,
+            "max": 0.355
+          }
+        }
+      },
+      "concurrent": {
+        "requested": 100,
+        "attempted": 100,
+        "succeeded": 100,
+        "failed": 0,
+        "errors": {},
+        "elapsedMs": 1548.885,
+        "successfulResponsesPerSecond": 64.563,
+        "bytes": 2292700,
+        "wallMs": {
+          "count": 100,
+          "p50": 57.692,
+          "p95": 78.599,
+          "max": 144.999
+        },
+        "headerMs": {
+          "count": 100,
+          "p50": 57.571,
+          "p95": 78.495,
+          "max": 144.917
+        },
+        "serverTimingMs": {
+          "ssr_total": {
+            "count": 100,
+            "p50": 12.79,
+            "p95": 17.007,
+            "max": 22.094
+          },
+          "ssr_route": {
+            "count": 100,
+            "p50": 0.043,
+            "p95": 0.079,
+            "max": 0.129
+          },
+          "ssr_entry": {
+            "count": 100,
+            "p50": 0.021,
+            "p95": 0.041,
+            "max": 0.054
+          },
+          "ssr_render": {
+            "count": 100,
+            "p50": 12.091,
+            "p95": 16.3,
+            "max": 21.141
+          },
+          "ssr_callbacks": {
+            "count": 100,
+            "p50": 0.054,
+            "p95": 0.078,
+            "max": 0.131
+          },
+          "ssr_finalize": {
+            "count": 100,
+            "p50": 0.294,
+            "p95": 0.37,
+            "max": 0.421
+          },
+          "ssr_html": {
+            "count": 100,
+            "p50": 0.255,
+            "p95": 0.333,
+            "max": 0.407
+          },
+          "ssr_clear": {
+            "count": 100,
+            "p50": 0.001,
+            "p95": 0.001,
+            "max": 0.002
+          },
+          "ssr_app_init": {
+            "count": 100,
+            "p50": 4.387,
+            "p95": 6.979,
+            "max": 8.147
+          },
+          "ssr_init_setup": {
+            "count": 100,
+            "p50": 0.016,
+            "p95": 0.025,
+            "max": 0.046
+          },
+          "ssr_init_modules": {
+            "count": 100,
+            "p50": 1.967,
+            "p95": 2.311,
+            "max": 4.735
+          },
+          "ssr_init_initialize": {
+            "count": 100,
+            "p50": 1.074,
+            "p95": 1.434,
+            "max": 4.657
+          },
+          "ssr_init_initialized": {
+            "count": 100,
+            "p50": 1.014,
+            "p95": 1.269,
+            "max": 4.244
+          },
+          "ssr_init_ready": {
+            "count": 100,
+            "p50": 0.267,
+            "p95": 0.375,
+            "max": 0.43
+          },
+          "ssr_navigation": {
+            "count": 100,
+            "p50": 0.235,
+            "p95": 0.334,
+            "max": 0.384
+          },
+          "ssr_state_meta": {
+            "count": 100,
+            "p50": 0.127,
+            "p95": 0.173,
+            "max": 0.222
+          },
+          "ssr_app_cleanup": {
+            "count": 100,
+            "p50": 0.163,
+            "p95": 0.198,
+            "max": 0.262
+          }
+        }
+      },
+      "interpretation": {
+        "firstObserved": "Not proof of process-cold startup; target process freshness is external evidence.",
+        "serverTiming": "Inclusive nested spans, not additive; no derived pure-render or API-wait estimate.",
+        "total": "ssr_total excludes earlier Vona/Sys preparation and HTTP transmission.",
+        "percentiles": "p50 is median; p95 is nearest rank. Warmup and first observed are excluded from measured phases."
+      },
+      "unmeasured": ["server_cpu", "server_memory", "server_gc"]
+    },
+    {
+      "round": 3,
+      "driver": {
+        "version": 1,
+        "node": "v24.8.0"
+      },
+      "target": {
+        "transport": "direct-loopback-http",
+        "provenance": "unverified",
+        "mode": "unverified",
+        "revision": "unverified",
+        "workers": "unverified"
+      },
+      "workload": {
+        "warmup": 10,
+        "serial": 50,
+        "concurrent": 100,
+        "concurrency": 4,
+        "timeoutMs": 10000
+      },
+      "connection": {
+        "keepAlive": true,
+        "maxSockets": 4,
+        "maxTotalSockets": 4
+      },
+      "valid": true,
+      "firstObserved": {
+        "requested": 1,
+        "attempted": 1,
+        "succeeded": 1,
+        "failed": 0,
+        "errors": {},
+        "sample": {
+          "wallMs": 14.783416999998735,
+          "headerMs": 14.695208999997703,
+          "bytes": 22927,
+          "serverTimingMs": {
+            "ssr_total": 12.837,
+            "ssr_route": 0.068,
+            "ssr_entry": 0.029,
+            "ssr_render": 12.123,
+            "ssr_callbacks": 0.054,
+            "ssr_finalize": 0.278,
+            "ssr_html": 0.277,
+            "ssr_clear": 0.001,
+            "ssr_app_init": 4.305,
+            "ssr_init_setup": 0.017,
+            "ssr_init_modules": 2.002,
+            "ssr_init_initialize": 1.064,
+            "ssr_init_initialized": 0.969,
+            "ssr_init_ready": 0.25,
+            "ssr_navigation": 0.222,
+            "ssr_state_meta": 0.119,
+            "ssr_app_cleanup": 0.155
+          }
+        }
+      },
+      "warmup": {
+        "requested": 10,
+        "attempted": 10,
+        "succeeded": 10,
+        "failed": 0,
+        "errors": {}
+      },
+      "serial": {
+        "requested": 50,
+        "attempted": 50,
+        "succeeded": 50,
+        "failed": 0,
+        "errors": {},
+        "elapsedMs": 730.495,
+        "successfulResponsesPerSecond": 68.447,
+        "bytes": 1146350,
+        "wallMs": {
+          "count": 50,
+          "p50": 14.02,
+          "p95": 17.274,
+          "max": 17.883
+        },
+        "headerMs": {
+          "count": 50,
+          "p50": 13.931,
+          "p95": 17.192,
+          "max": 17.797
+        },
+        "serverTimingMs": {
+          "ssr_total": {
+            "count": 50,
+            "p50": 12.492,
+            "p95": 13.057,
+            "max": 13.199
+          },
+          "ssr_route": {
+            "count": 50,
+            "p50": 0.05,
+            "p95": 0.089,
+            "max": 0.113
+          },
+          "ssr_entry": {
+            "count": 50,
+            "p50": 0.024,
+            "p95": 0.043,
+            "max": 0.051
+          },
+          "ssr_render": {
+            "count": 50,
+            "p50": 11.823,
+            "p95": 12.337,
+            "max": 12.46
+          },
+          "ssr_callbacks": {
+            "count": 50,
+            "p50": 0.05,
+            "p95": 0.083,
+            "max": 0.1
+          },
+          "ssr_finalize": {
+            "count": 50,
+            "p50": 0.274,
+            "p95": 0.365,
+            "max": 0.368
+          },
+          "ssr_html": {
+            "count": 50,
+            "p50": 0.252,
+            "p95": 0.278,
+            "max": 0.298
+          },
+          "ssr_clear": {
+            "count": 50,
+            "p50": 0.001,
+            "p95": 0.001,
+            "max": 0.002
+          },
+          "ssr_app_init": {
+            "count": 50,
+            "p50": 4.315,
+            "p95": 4.518,
+            "max": 4.535
+          },
+          "ssr_init_setup": {
+            "count": 50,
+            "p50": 0.016,
+            "p95": 0.02,
+            "max": 0.022
+          },
+          "ssr_init_modules": {
+            "count": 50,
+            "p50": 1.946,
+            "p95": 2.124,
+            "max": 2.193
+          },
+          "ssr_init_initialize": {
+            "count": 50,
+            "p50": 1.049,
+            "p95": 1.177,
+            "max": 1.226
+          },
+          "ssr_init_initialized": {
+            "count": 50,
+            "p50": 1.001,
+            "p95": 1.088,
+            "max": 1.112
+          },
+          "ssr_init_ready": {
+            "count": 50,
+            "p50": 0.256,
+            "p95": 0.294,
+            "max": 0.352
+          },
+          "ssr_navigation": {
+            "count": 50,
+            "p50": 0.227,
+            "p95": 0.262,
+            "max": 0.316
+          },
+          "ssr_state_meta": {
+            "count": 50,
+            "p50": 0.119,
+            "p95": 0.158,
+            "max": 0.165
+          },
+          "ssr_app_cleanup": {
+            "count": 50,
+            "p50": 0.152,
+            "p95": 0.221,
+            "max": 0.242
+          }
+        }
+      },
+      "concurrent": {
+        "requested": 100,
+        "attempted": 100,
+        "succeeded": 100,
+        "failed": 0,
+        "errors": {},
+        "elapsedMs": 1401.758,
+        "successfulResponsesPerSecond": 71.339,
+        "bytes": 2292700,
+        "wallMs": {
+          "count": 100,
+          "p50": 55.199,
+          "p95": 61.554,
+          "max": 96.517
+        },
+        "headerMs": {
+          "count": 100,
+          "p50": 55.11,
+          "p95": 61.464,
+          "max": 96.44
+        },
+        "serverTimingMs": {
+          "ssr_total": {
+            "count": 100,
+            "p50": 12.184,
+            "p95": 14.666,
+            "max": 19.854
+          },
+          "ssr_route": {
+            "count": 100,
+            "p50": 0.035,
+            "p95": 0.065,
+            "max": 0.176
+          },
+          "ssr_entry": {
+            "count": 100,
+            "p50": 0.02,
+            "p95": 0.034,
+            "max": 0.056
+          },
+          "ssr_render": {
+            "count": 100,
+            "p50": 11.532,
+            "p95": 14.042,
+            "max": 18.973
+          },
+          "ssr_callbacks": {
+            "count": 100,
+            "p50": 0.052,
+            "p95": 0.075,
+            "max": 0.1
+          },
+          "ssr_finalize": {
+            "count": 100,
+            "p50": 0.277,
+            "p95": 0.333,
+            "max": 0.366
+          },
+          "ssr_html": {
+            "count": 100,
+            "p50": 0.246,
+            "p95": 0.275,
+            "max": 0.29
+          },
+          "ssr_clear": {
+            "count": 100,
+            "p50": 0.001,
+            "p95": 0.001,
+            "max": 0.002
+          },
+          "ssr_app_init": {
+            "count": 100,
+            "p50": 4.211,
+            "p95": 6.33,
+            "max": 10.713
+          },
+          "ssr_init_setup": {
+            "count": 100,
+            "p50": 0.016,
+            "p95": 0.021,
+            "max": 0.037
+          },
+          "ssr_init_modules": {
+            "count": 100,
+            "p50": 1.917,
+            "p95": 2.246,
+            "max": 4.581
+          },
+          "ssr_init_initialize": {
+            "count": 100,
+            "p50": 1.048,
+            "p95": 1.266,
+            "max": 2.987
+          },
+          "ssr_init_initialized": {
+            "count": 100,
+            "p50": 0.976,
+            "p95": 1.128,
+            "max": 5.033
+          },
+          "ssr_init_ready": {
+            "count": 100,
+            "p50": 0.255,
+            "p95": 0.347,
+            "max": 3.08
+          },
+          "ssr_navigation": {
+            "count": 100,
+            "p50": 0.224,
+            "p95": 0.305,
+            "max": 3.048
+          },
+          "ssr_state_meta": {
+            "count": 100,
+            "p50": 0.117,
+            "p95": 0.142,
+            "max": 0.156
+          },
+          "ssr_app_cleanup": {
+            "count": 100,
+            "p50": 0.156,
+            "p95": 0.191,
+            "max": 0.21
+          }
+        }
+      },
+      "interpretation": {
+        "firstObserved": "Not proof of process-cold startup; target process freshness is external evidence.",
+        "serverTiming": "Inclusive nested spans, not additive; no derived pure-render or API-wait estimate.",
+        "total": "ssr_total excludes earlier Vona/Sys preparation and HTTP transmission.",
+        "percentiles": "p50 is median; p95 is nearest rank. Warmup and first observed are excluded from measured phases."
+      },
+      "unmeasured": ["server_cpu", "server_memory", "server_gc"]
+    }
+  ],
+  "cleanup": "managed server shutdown and resource cleanup completed",
+  "artifactStable": true,
+  "interpretationNotes": [
+    "Three sequential workloads in ONE process, not three independent cold starts.",
+    "Ratios of phase p50 values are descriptive only, not per-request share percentiles or measured optimization gains.",
+    "No pool/reset implementation, no timing-off performance control, no server CPU/memory/GC measurement.",
+    "Whole artifact tree sorted relative filenames plus NUL plus file SHA256 plus NUL; files recursively included; symbolic links rejected.",
+    "Evidence JSON extracted from path-sanitized producer output after successful managed shutdown and cleanup."
+  ]
+}

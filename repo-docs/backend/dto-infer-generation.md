@@ -444,14 +444,32 @@ The test suite also shows the behavioral difference from a one-off `columns` sel
 
 ## Aggregate and group DTO inference
 
-Summary-oriented ORM queries often benefit from inferred DTOs because the result shape is driven by `aggrs`, `groups`, and relation configuration.
+Summary-oriented ORM queries often benefit from inferred DTOs because the result shape is driven by `aggrs`, `groups`, and relation configuration. For fixed server-authored query shapes, use `$Dto.aggregate(...)` / `$Dto.group(...)` and wrap a reused contract in a named DTO.
 
-A practical rule is:
+For a backend allowlist with client-selectable combinations, infer from one shared `$defineAnalysis` policy instead:
 
-- if the summary shape comes directly from ORM query structure, inference is often the cleanest option
-- if the same summary contract is reused broadly, wrap the inferred DTO into a named DTO class
+```typescript
+@Dto({ analysis: studentAnalysis })
+export class DtoStudentSelectReq extends $Dto.queryPage(EntityStudent, [
+  'name',
+  'level',
+  'createdAt',
+]) {}
 
-For the query side of this topic, also see [ORM Aggregate and Group Guide](/backend/orm-aggregate-group-guide).
+@Dto()
+export class DtoStudentGroupResItem extends $Dto.analysisGroup(studentAnalysis) {}
+
+@Dto()
+export class DtoStudentAggregateRes extends $Dto.analysisAggregate(studentAnalysis) {}
+```
+
+These are abbreviated declarations; keep existing request field refinements such as Student's date-range transform. The policy explicitly identifies the Model, allowed dimensions, function-specific metric columns, per-action defaults, and limits. It can therefore allow `count('imageId')` even though `imageId` is not a named filter in SelectReq. No analysis capability flags belong on the Entity, and no separate AnalysisReq is needed.
+
+The response schema is a finite optional superset of all policy-permitted dimension and metric keys, not an unrestricted property map. Execution returns **requested keys only**, with fixed ORM aliases such as `count_all` and `count_imageId`. Group keys retain their column types; count aliases are decimal strings; non-count aliases are strings or SQL `null`. An optional property is unrequested, not a substitute for nullable. If refining a nullable description dimension, preserve both optionality and nullability (`description?: string | null`) and do not synthesize it when absent from the result.
+
+Select, group, and aggregate remain separate action schemas. Attach the policy to SelectReq, then use `@Arg.filter(DtoStudentSelectReq, { mode: 'group' })` or `{ mode: 'aggregate' }` on the analysis action; ordinary select remains unchanged and rejects explicit analysis controls. The named wrappers keep response references distinct, while public action capabilities and enums come from the same policy.
+
+See [CRUD Workflow](/backend/crud-workflow#grouping-and-statistics) for the Student policy, GET JSON controls, and generator workflow; [Validation Guide](/backend/validation-guide#analysis-action-modes) for defaults, validation, and limits; and [ORM Aggregate and Group Guide](/backend/orm-aggregate-group-guide) for the underlying model operations.
 
 ## How DTOs surface in generated metadata
 

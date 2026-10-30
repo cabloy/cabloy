@@ -5,7 +5,11 @@ import test from 'node:test';
 
 import type { ISsrRouteProfileOptions } from '../../src/types/ssr.ts';
 
-import { resolveSsrProfile, resolveSsrProfileOptions } from '../../src/lib/ssrProfile.ts';
+import {
+  resolveSsrProfile,
+  resolveSsrProfileOptions,
+  resolveSsrResponseCacheExpires,
+} from '../../src/lib/ssrProfile.ts';
 
 const profiles = {
   public: {
@@ -75,6 +79,24 @@ test('SSR route options override locale-aware cache defaults', () => {
   assert.deepEqual(unlocalizedOverride.responseCache, { expires: '5m' });
   assert.deepEqual(localeAwareOverride.responseCache, { expires: '5m' });
   assert.equal(disabled.responseCache, false);
+});
+
+test('SSR response cache expiry preserves disabled, no-store, and public max-age branches', () => {
+  assert.equal(resolveSsrResponseCacheExpires(false, 'production'), false);
+  assert.equal(resolveSsrResponseCacheExpires(false, 'development'), false);
+  assert.equal(resolveSsrResponseCacheExpires({}, 'production'), 0);
+  assert.equal(resolveSsrResponseCacheExpires({ expires: 0 }, 'production'), 0);
+  assert.equal(resolveSsrResponseCacheExpires({ expires: '0s' }, 'production'), 0);
+  assert.equal(resolveSsrResponseCacheExpires({ expires: 600 }, 'production'), 600);
+  assert.equal(resolveSsrResponseCacheExpires({ expires: '10m' }, 'test'), 600);
+  assert.equal(resolveSsrResponseCacheExpires({ expires: '10m' }, 'development'), 0);
+
+  const override = resolveSsrProfileOptions('public', profiles, {
+    responseCache: { expires: '5m' },
+  });
+  assert.equal(resolveSsrResponseCacheExpires(override.responseCache, 'production'), 300);
+  const noLocale = resolveSsrProfileOptions('public', profiles);
+  assert.equal(resolveSsrResponseCacheExpires(noLocale.responseCache, 'production'), 0);
 });
 
 test('SSR profile options are fresh immutable snapshots', () => {

@@ -1,5 +1,9 @@
 export default {
   'Home': 'Home',
+  'MoreActions': 'More actions',
+  'Language': 'Language',
+  'ColorMode': 'Color mode',
+  'Account': 'Account',
   'Logout': 'Logout',
   'Login': 'Login',
   'NotLoggedIn': 'Not logged in',

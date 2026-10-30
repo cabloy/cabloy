@@ -20,6 +20,7 @@ import type {
   IModelSelectAggrParams,
   IModelSelectCountParams,
   IModelSelectGroupParams,
+  IModelSelectGeneralParams,
   IModelSelectParams,
   IModelUpdateOptions,
   ITableRecord,
@@ -34,6 +35,7 @@ import type {
 } from '../../types/index.ts';
 
 import { getTargetColumnName } from '../../common/utils.ts';
+import { normalizeAggregateRows } from '../../lib/aggregateResult.ts';
 import { getCacheModelsClear } from '../../lib/const.ts';
 import { ServiceCacheEntity } from '../../service/cacheEntity_.ts';
 import { ServiceCacheQuery } from '../../service/cacheQuery_.ts';
@@ -425,7 +427,7 @@ export class BeanModelCache<TRecord extends {} = {}> extends BeanModelCrud<TReco
 
   private async __select_cache(
     table: keyof ITableRecord,
-    params?: IModelSelectParams<TRecord>,
+    params?: IModelSelectParams<TRecord> & Pick<IModelSelectGeneralParams<TRecord>, 'aggrs'>,
     options?: IModelMethodOptions,
   ): Promise<TRecord[]> {
     // check if cache
@@ -445,7 +447,7 @@ export class BeanModelCache<TRecord extends {} = {}> extends BeanModelCrud<TReco
       },
       db: this.db,
     });
-    return items;
+    return normalizeAggregateRows(items, params?.aggrs);
   }
 
   async get<T extends IModelGetOptions<TRecord>>(

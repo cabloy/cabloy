@@ -102,6 +102,8 @@ export class ControllerFormFieldMarkdown extends BeanControllerBase {
   editor?: Editor;
   value = '';
   readonly = false;
+  sourceMode = false;
+  private _sourceModeValue?: string;
   toolbarState: IMarkdownToolbarState = this._emptyToolbarState();
   tableToolbarPosition?: IMarkdownContextualToolbarPosition;
   codeBlockToolbarPosition?: IMarkdownContextualToolbarPosition;
@@ -232,8 +234,48 @@ export class ControllerFormFieldMarkdown extends BeanControllerBase {
     this._scheduleContextualToolbarPosition();
   }
 
-  private _runCommand(command: (editor: Editor) => boolean) {
+  public toggleSourceMode() {
     if (this.readonly || !this.editor) return;
+    if (this.sourceMode) {
+      this._leaveSourceMode();
+    } else {
+      this._sourceModeValue = this.value;
+      this.sourceMode = true;
+      this.closeTablePicker();
+      this._imageUploadSelection = undefined;
+      this._setTableToolbarPosition();
+      this._setCodeBlockToolbarPosition();
+    }
+  }
+
+  private _leaveSourceMode() {
+    if (this.value !== this._sourceModeValue) this._syncEditorValue(this.value);
+    this.sourceMode = false;
+    this._sourceModeValue = undefined;
+    this._refreshToolbarState();
+  }
+
+  public handleSourceInput(value: string) {
+    if (this.readonly || !this.sourceMode) return;
+    this._setValue?.(value);
+  }
+
+  public handleSourceBlur() {
+    this._handleBlur?.();
+  }
+
+  private _syncEditorValue(value: string) {
+    if (!this.editor) return;
+    this._syncing = true;
+    try {
+      this.editor.commands.setContent(value, { contentType: 'markdown', emitUpdate: false });
+    } finally {
+      this._syncing = false;
+    }
+  }
+
+  private _runCommand(command: (editor: Editor) => boolean) {
+    if (this.readonly || this.sourceMode || !this.editor) return;
     command(this.editor);
   }
 
@@ -242,6 +284,7 @@ export class ControllerFormFieldMarkdown extends BeanControllerBase {
     return !!(
       editor &&
       !this.readonly &&
+      !this.sourceMode &&
       editor.isEditable &&
       editor.isActive('table') &&
       (editor.view.hasFocus() || this._tableToolbarFocused)
@@ -276,6 +319,7 @@ export class ControllerFormFieldMarkdown extends BeanControllerBase {
     return !!(
       editor &&
       !this.readonly &&
+      !this.sourceMode &&
       editor.isEditable &&
       (editor.isActive('codeBlock') || (this.toolbarState.codeBlock && toolbarInteraction)) &&
       (editor.view.hasFocus() || toolbarInteraction)
@@ -535,7 +579,7 @@ export class ControllerFormFieldMarkdown extends BeanControllerBase {
 
   public async editLink() {
     const editor = this.editor;
-    if (this.readonly || !editor) return;
+    if (this.readonly || this.sourceMode || !editor) return;
     const selection = editor.state.selection;
     const linkActive = editor.isActive('link');
     const canEditLink = linkActive
@@ -550,7 +594,7 @@ export class ControllerFormFieldMarkdown extends BeanControllerBase {
       text: this.scope.locale.LinkUrl(),
       defaultValue: href,
     });
-    if (this.readonly || this.editor !== editor || result === undefined) return;
+    if (this.readonly || this.sourceMode || this.editor !== editor || result === undefined) return;
 
     const value = result.trim();
     const chain = editor.chain().focus().setTextSelection({
@@ -644,7 +688,7 @@ export class ControllerFormFieldMarkdown extends BeanControllerBase {
 
   public beginImageUpload(chooseFiles: () => void) {
     const editor = this.editor;
-    if (this.readonly || !editor || !editor.isEditable) return;
+    if (this.readonly || this.sourceMode || !editor || !editor.isEditable) return;
     this._imageUploadSelection = {
       from: editor.state.selection.from,
       to: editor.state.selection.to,
@@ -654,6 +698,7 @@ export class ControllerFormFieldMarkdown extends BeanControllerBase {
   }
 
   public handleImageUploaded(result: IImageUploaderResult) {
+    if (this.sourceMode || !this._imageUploadSelection) return;
     const editor = this.editor;
     const selection = this._imageUploadSelection;
     const src = this._resolveImageUrl(result.url);
@@ -743,7 +788,7 @@ export class ControllerFormFieldMarkdown extends BeanControllerBase {
           },
         },
         onUpdate: ({ editor }) => {
-          if (!this._syncing) {
+          if (!this._syncing && !this.sourceMode) {
             this._setValue?.(editor.getMarkdown());
           }
         },
@@ -765,16 +810,15 @@ export class ControllerFormFieldMarkdown extends BeanControllerBase {
       this.$watch(
         () => this.value,
         value => {
-          if (!this.editor || this.editor.getMarkdown() === value) return;
-          this._syncing = true;
-          this.editor.commands.setContent(value, { contentType: 'markdown' });
-          this._syncing = false;
+          if (this.sourceMode || !this.editor || this.editor.getMarkdown() === value) return;
+          this._syncEditorValue(value);
         },
       );
       this.$watch(
         () => this.readonly,
         readonly => {
-          this.editor?.setEditable(!readonly);
+          if (readonly && this.sourceMode) this._leaveSourceMode();
+          this.editor?.setEditable(!readonly, false);
           if (readonly) this.closeTablePicker();
           this._refreshToolbarState();
         },

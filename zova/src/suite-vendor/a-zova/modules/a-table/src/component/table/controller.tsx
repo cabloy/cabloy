@@ -10,6 +10,7 @@ import type {
 import { celEnvBase, isNilOrEmptyString } from '@cabloy/utils';
 import {
   CellContext,
+  ColumnSizingState,
   createColumnHelper,
   functionalUpdate,
   getCoreRowModel,
@@ -56,6 +57,8 @@ import { reconcileTableLayout } from '../../types/tableLayout.ts';
 export interface ControllerTableProps<TData extends {} = {}> {
   data?: TData[];
   layout?: ITableLayout;
+  compact?: boolean;
+  columnSizing?: ColumnSizingState;
   schema?: SchemaObject;
   schemaOrder?: SchemaObject;
   sorting?: SortingState;
@@ -125,6 +128,10 @@ export class ControllerTable<TData extends {} = {}> extends BeanControllerTableB
     return this.$props.data;
   }
 
+  public get compact() {
+    return this.$props.compact ?? false;
+  }
+
   public get sorting() {
     return this.$props.sorting ?? [];
   }
@@ -144,7 +151,6 @@ export class ControllerTable<TData extends {} = {}> extends BeanControllerTableB
   public async refreshMeta() {
     this.tableMeta = await this._createTableMeta();
     this.columns = await this._createColumns();
-    this.table?.setColumnPinning(this._getColumnPinning());
   }
 
   private _createTable() {
@@ -176,6 +182,9 @@ export class ControllerTable<TData extends {} = {}> extends BeanControllerTableB
         get columnSizing() {
           return self._getColumnSizing();
         },
+        get columnPinning() {
+          return self._getColumnPinning();
+        },
       },
       onSortingChange: updater => {
         const sorting = functionalUpdate(updater, self.sorting).slice(0, 1);
@@ -185,10 +194,6 @@ export class ControllerTable<TData extends {} = {}> extends BeanControllerTableB
         const rowSelection = functionalUpdate(updater, self.rowSelection);
         self.$props.onRowSelectionChange?.(rowSelection);
       },
-      get initialState() {
-        const columnPinning = self._getColumnPinning();
-        return { columnPinning };
-      },
       get data() {
         return self.data || [];
       },
@@ -197,7 +202,6 @@ export class ControllerTable<TData extends {} = {}> extends BeanControllerTableB
       },
     };
     this.table = this.$useTable(tableOptions);
-    this.table.setColumnPinning(this._getColumnPinning());
   }
 
   private async _createColumns() {
@@ -318,14 +322,18 @@ export class ControllerTable<TData extends {} = {}> extends BeanControllerTableB
   }
 
   private _getColumnSizing() {
-    return Object.fromEntries(
-      this.layout.columns
-        .filter(column => typeof column.width === 'number')
-        .map(column => [column.key, column.width as number]),
-    );
+    return {
+      ...Object.fromEntries(
+        this.layout.columns
+          .filter(column => typeof column.width === 'number')
+          .map(column => [column.key, column.width as number]),
+      ),
+      ...this.$props.columnSizing,
+    };
   }
 
   private _getColumnPinning() {
+    if (this.compact) return { left: [], right: [] };
     const left: string[] = this.$props.enableRowSelection ? [TableColumnIdSelection] : [];
     const right: string[] = [];
     for (const property of this.tableMeta?.properties ?? []) {

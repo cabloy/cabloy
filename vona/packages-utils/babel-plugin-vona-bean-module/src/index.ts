@@ -95,6 +95,7 @@ function __createDecoratorNode(beanInfo) {
 
 export function isValidBeanModuleFile(fileName?: string | null) {
   if (!fileName) return false;
+  fileName = fileName.replace(/\\/g, '/');
   if (/[\\/].vona-test-\d{14}-[a-f0-9]{8}[\\/]/.test(fileName)) return false;
   return !['src/boot/app/', '.zova/app/', 'src/backend/', '.vona/'].some(item => {
     return fileName.includes(item);

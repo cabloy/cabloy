@@ -21,6 +21,7 @@ export class ControllerDateRange extends BeanControllerBase {
     this.modelValue = this.$useModel('modelValue');
     this.cSeparator = this.$style({
       width: '20px',
+      flexShrink: 0,
       display: 'inline-block',
       textAlign: 'center',
     });
@@ -29,9 +30,9 @@ export class ControllerDateRange extends BeanControllerBase {
   protected render() {
     const [dateStartStr, dateEndStr] = this._parseValue(this.modelValue);
     return (
-      <div>
+      <div class="inline-flex min-w-0 max-w-full items-center">
         <input
-          style={{ width: '130px' }}
+          style={{ width: '130px', minWidth: 0 }}
           type="date"
           value={dateStartStr}
           onInput={e => {
@@ -41,7 +42,7 @@ export class ControllerDateRange extends BeanControllerBase {
         />
         <div class={this.cSeparator}>{this.$props.separator}</div>
         <input
-          style={{ width: '130px' }}
+          style={{ width: '130px', minWidth: 0 }}
           type="date"
           value={dateEndStr}
           onInput={e => {

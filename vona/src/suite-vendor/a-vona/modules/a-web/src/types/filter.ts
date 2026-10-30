@@ -1,4 +1,9 @@
-import type { IModelSelectParamsJoinType, ITableRecord, TypeOpsNormal } from 'vona-module-a-orm';
+import type {
+  IAnalysisCapabilities,
+  IModelSelectParamsJoinType,
+  ITableRecord,
+  TypeOpsNormal,
+} from 'vona-module-a-orm';
 
 import type {
   IDecoratorFilterTransformOptions,
@@ -15,7 +20,7 @@ export interface ISchemaObjectExtensionFieldFilterCapabilities {
   where?: boolean;
   // filter?: boolean;
   order?: boolean;
-  // group?: boolean;
+  analysis?: IAnalysisCapabilities;
 }
 
 export type TypeSchemaObjectExtensionFieldFilterTransform = [

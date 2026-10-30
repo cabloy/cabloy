@@ -22,6 +22,8 @@ export default {
   StudentController: 'Student Management',
   StudentCreate: 'Create Student',
   StudentSelect: 'List Students',
+  StudentGroup: 'Group Students',
+  StudentAggregate: 'Aggregate Students',
   StudentView: 'View Student',
   StudentUpdate: 'Update Student',
   StudentSummary: 'View Student Summary',

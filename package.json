@@ -1,6 +1,6 @@
 {
   "name": "cabloy",
-  "version": "5.1.242",
+  "version": "5.1.249",
   "gitHead": "2c5c19284bab738e492856189acb6fad74b8a7b7",
   "description": "A Node.js fullstack framework",
   "keywords": [
@@ -69,7 +69,6 @@
     "docs:dev": "pnpm --dir repo-docs docs:dev",
     "docs:build": "pnpm --dir repo-docs docs:build",
     "docs:preview": "pnpm --dir repo-docs docs:preview",
-    "docs:fix": "textlint --fix ./repo-docs/**/*.md",
     "release-patch": "node scripts/release.ts patch",
     "release-minor": "node scripts/release.ts minor",
     "release-major": "node scripts/release.ts major",
@@ -101,11 +100,6 @@
     "oxfmt": "^0.74.0",
     "oxlint": "^1.89.0",
     "tar": "^7.5.22",
-    "textlint": "^15.7.0",
-    "textlint-rule-en-no-mixed-period": "^3.0.2",
-    "textlint-rule-ja-no-mixed-period": "^3.0.2",
-    "textlint-rule-ja-space-between-half-and-full-width": "^2.4.2",
-    "textlint-rule-period-in-list-item": "^1.0.1",
     "typescript": "^5.9.3"
   },
   "engines": {

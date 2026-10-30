@@ -3,8 +3,10 @@ import type { SchemaLike } from 'vona-module-a-openapiutils';
 import type z from 'zod';
 
 import { setArgumentPipe } from 'vona-module-a-aspect';
-import { $schema } from 'vona-module-a-openapiutils';
 
+import type { IArgFilterOptions } from '../analysisFilter.ts';
+
+import { prepareAnalysisFilter } from '../analysisFilter.ts';
 import { createPipesArgumentDecorator } from './pipesArgument.ts';
 
 function Param(): ParameterDecorator;
@@ -71,10 +73,10 @@ function RbacScopeCurrent(): ParameterDecorator {
   return createPipesArgumentDecorator('rbacScopeCurrent')();
 }
 
-function ArgFilter(schemaLike: z.ZodType | Constructable): any {
+function ArgFilter(schemaLike: z.ZodType | Constructable, options?: IArgFilterOptions): any {
   return function (target: object, prop: MetadataKey | undefined, index: number) {
-    const schema = $schema(schemaLike as any);
-    setArgumentPipe('a-web:filter', { type: 'query', schema }, target, prop, index);
+    const prepared = prepareAnalysisFilter(schemaLike, options);
+    setArgumentPipe('a-web:filter', { type: 'query', ...prepared }, target, prop, index);
   };
 }
 

@@ -1,0 +1,11 @@
+import type { IDecoratorDtoOptions } from 'vona-module-a-web';
+
+import { $Dto } from 'vona-module-a-orm';
+import { Dto } from 'vona-module-a-web';
+
+import { <%=argv.resourceName%>Analysis } from '../lib/<%=argv.resourceName%>Analysis.ts';
+
+export interface IDtoOptions<%=argv.resourceNameCapitalize%>GroupResItem extends IDecoratorDtoOptions {}
+
+@Dto<IDtoOptions<%=argv.resourceNameCapitalize%>GroupResItem>()
+export class Dto<%=argv.resourceNameCapitalize%>GroupResItem extends $Dto.analysisGroup(<%=argv.resourceName%>Analysis) {}

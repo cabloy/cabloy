@@ -78,6 +78,8 @@ describe('student.test.ts', { concurrency: false }, () => {
       const expectedSummaries = {
         create: ['post', '/api/training/student', 'Create Student'],
         select: ['get', '/api/training/student', 'List Students'],
+        group: ['get', '/api/training/student/group', 'Group Students'],
+        aggregate: ['get', '/api/training/student/aggregate', 'Aggregate Students'],
         view: ['get', '/api/training/student/{id}', 'View Student'],
         update: ['patch', '/api/training/student/{id}', 'Update Student'],
         summary: ['get', '/api/training/student/summary/{id}', 'View Student Summary'],
@@ -685,6 +687,8 @@ describe('student.test.ts', { concurrency: false }, () => {
       const expectedInherits = {
         create: undefined,
         select: undefined,
+        group: `${controllerBeanFullName}#select`,
+        aggregate: `${controllerBeanFullName}#select`,
         view: undefined,
         update: undefined,
         summary: `${controllerBeanFullName}#view`,

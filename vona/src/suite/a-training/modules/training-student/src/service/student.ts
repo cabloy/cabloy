@@ -1,17 +1,26 @@
 import type { TableIdentity } from 'table-identity';
-import type { IQueryParams } from 'vona-module-a-orm';
+import type {
+  IQueryParams,
+  TypeAnalysisAggregateParams,
+  TypeAnalysisGroupParams,
+} from 'vona-module-a-orm';
 
 import { BeanBase } from 'vona';
 import { Service } from 'vona-module-a-bean';
 import { Core } from 'vona-module-a-core';
+import { $executeAnalysisAggregate, $executeAnalysisGroup } from 'vona-module-a-orm';
 
+import type { DtoStudentAggregateRes } from '../dto/studentAggregateRes.tsx';
 import type { DtoStudentCreate } from '../dto/studentCreate.tsx';
+import type { DtoStudentGroupResItem } from '../dto/studentGroupResItem.tsx';
 import type { DtoStudentSelectRes } from '../dto/studentSelectRes.tsx';
 import type { DtoStudentSummary } from '../dto/studentSummary.tsx';
 import type { DtoStudentUpdate } from '../dto/studentUpdate.tsx';
 import type { DtoStudentView } from '../dto/studentView.tsx';
 import type { EntityStudent } from '../entity/student.tsx';
 import type { ModelStudent } from '../model/student.ts';
+
+import { studentAnalysis } from '../lib/studentAnalysis.ts';
 
 type StudentContentInput = {
   descriptionMarkdown?: string;
@@ -41,6 +50,18 @@ export class ServiceStudent extends BeanBase {
 
   async select(params?: IQueryParams<ModelStudent>): Promise<DtoStudentSelectRes> {
     return await this.scope.model.student.selectAndCount(params);
+  }
+
+  async group(
+    params?: TypeAnalysisGroupParams<typeof studentAnalysis>,
+  ): Promise<DtoStudentGroupResItem[]> {
+    return await $executeAnalysisGroup(this.scope.model.student, studentAnalysis, params);
+  }
+
+  async aggregate(
+    params?: TypeAnalysisAggregateParams<typeof studentAnalysis>,
+  ): Promise<DtoStudentAggregateRes> {
+    return await $executeAnalysisAggregate(this.scope.model.student, studentAnalysis, params);
   }
 
   async view(id: TableIdentity): Promise<DtoStudentView | undefined> {

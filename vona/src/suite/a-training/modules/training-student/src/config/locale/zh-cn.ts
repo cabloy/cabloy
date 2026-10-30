@@ -22,6 +22,8 @@ export default {
   StudentController: '学生管理',
   StudentCreate: '创建学生',
   StudentSelect: '查询学生列表',
+  StudentGroup: '学生分组统计',
+  StudentAggregate: '学生统计',
   StudentView: '查看学生',
   StudentUpdate: '更新学生',
   StudentSummary: '查看学生摘要',
