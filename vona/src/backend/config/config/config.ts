@@ -44,6 +44,8 @@ export default async function (app: VonaApplication) {
     items: {
       'en-us': 'LanguageEnglish',
       'zh-cn': 'LanguageChinese',
+      'ja-jp': 'LanguageJapanese',
+      'zh-tw': 'LanguageTraditionalChinese',
     },
     default: 'en-us',
   };

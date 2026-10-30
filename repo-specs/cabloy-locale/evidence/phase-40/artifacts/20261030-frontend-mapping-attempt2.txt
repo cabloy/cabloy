@@ -1,0 +1,10 @@
+✔ actual root policy preserves the English fallback and supported environment override (0.733791ms)
+✔ actual project initialization replaces the baseline map only on the client (2.623916ms)
+ℹ tests 2
+ℹ suites 0
+ℹ pass 2
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 665.702417

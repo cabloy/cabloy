@@ -1,0 +1,12 @@
+
+> cabloy@5.1.242 format
+> oxfmt --check vona/src/backend/config/config/config.ts vona/src/backend/config/monkey.ts zova/src/front/config/config/config.ts zova/src/front/config/monkey.ts vona/src/suite/cabloy-locale/modules/locale-test/test/zod.test.ts vona/src/suite/cabloy-locale/modules/locale-test/test/provider.test.ts zova/src/suite/cabloy-locale/modules/locale-test/test/zod.test.ts
+
+Checking formatting...
+
+All matched files use the correct format.
+Finished in 44ms on 7 files using 12 threads.
+
+> cabloy@5.1.242 lint
+> oxlint --disable-nested-config vona/src/backend/config/config/config.ts vona/src/backend/config/monkey.ts zova/src/front/config/config/config.ts zova/src/front/config/monkey.ts vona/src/suite/cabloy-locale/modules/locale-test/test/zod.test.ts vona/src/suite/cabloy-locale/modules/locale-test/test/provider.test.ts zova/src/suite/cabloy-locale/modules/locale-test/test/zod.test.ts
+

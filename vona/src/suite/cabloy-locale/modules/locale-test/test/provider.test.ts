@@ -3,11 +3,11 @@ import { describe, it } from 'node:test';
 import { app } from 'vona-mock';
 
 describe('provider.test.ts', () => {
-  it('provider: Japanese scoped lookup stays independent of disabled active language', async () => {
+  it('provider: Japanese scoped lookup and explicitly enabled active language', async () => {
     await app.bean.executor.mockCtx(
       async () => {
         const scopeTest = app.scope('test-vona');
-        assert.equal(Object.hasOwn(app.config.locale.items, 'ja-jp'), false);
+        assert.equal(Object.hasOwn(app.config.locale.items, 'ja-jp'), true);
         assert.equal(app.meta.modules['locale-jajp'].info.capabilities?.locale, true);
         assert.equal(scopeTest.locale.TestHelloWorld.locale('ja-jp'), 'こんにちは、世界');
         assert.equal(app.scope('home-base').locale.SiteAll.locale('ja-jp'), 'すべてのサイト');
@@ -27,20 +27,20 @@ describe('provider.test.ts', () => {
         assert.equal(app.meta.text.locale('ja-jp', '404'), '見つかりません');
         assert.equal(scopeTest.locale.TestHelloWorld.locale('zh-cn'), '您好，世界');
         app.ctx.locale = 'ja-jp';
-        assert.equal(app.ctx.locale, app.config.locale.default);
-        assert.equal(app.meta.locale.current, app.config.locale.default);
-        assert.equal(scopeTest.locale.TestHelloWorld(), 'Hello World');
+        assert.equal(app.ctx.locale, 'ja-jp');
+        assert.equal(app.meta.locale.current, 'ja-jp');
+        assert.equal(scopeTest.locale.TestHelloWorld(), 'こんにちは、世界');
         assert.equal(scopeTest.locale.TestHelloWorld.locale('ja-jp'), 'こんにちは、世界');
       },
       { locale: 'en-us' },
     );
   });
 
-  it('provider: Traditional scoped lookup and core globals coexist with Japanese without enabling either', async () => {
+  it('provider: Traditional scoped lookup and core globals coexist with enabled Japanese', async () => {
     await app.bean.executor.mockCtx(
       async () => {
         const scopeTest = app.scope('test-vona');
-        assert.equal(Object.hasOwn(app.config.locale.items, 'zh-tw'), false);
+        assert.equal(Object.hasOwn(app.config.locale.items, 'zh-tw'), true);
         assert.equal(app.meta.modules['locale-zhtw'].info.capabilities?.locale, true);
         assert.equal(scopeTest.locale.TestHelloWorld.locale('zh-tw'), '您好，世界');
         assert.equal(app.scope('home-base').locale.SiteAll.locale('zh-tw'), '所有網站');
@@ -56,9 +56,9 @@ describe('provider.test.ts', () => {
         assert.equal(Object.hasOwn(app.meta.locales['zh-tw'], 'modules'), false);
         assert.equal(app.meta.localeModules['locale-zhtw'], undefined);
         app.ctx.locale = 'zh-tw';
-        assert.equal(app.ctx.locale, app.config.locale.default);
-        assert.equal(app.meta.locale.current, app.config.locale.default);
-        assert.equal(scopeTest.locale.TestHelloWorld(), 'Hello World');
+        assert.equal(app.ctx.locale, 'zh-tw');
+        assert.equal(app.meta.locale.current, 'zh-tw');
+        assert.equal(scopeTest.locale.TestHelloWorld(), '您好，世界');
         assert.equal(scopeTest.locale.TestHelloWorld.locale('zh-cn'), '您好，世界');
         assert.equal(scopeTest.locale.TestHelloWorld.locale('ja-jp'), 'こんにちは、世界');
         assert.equal(scopeTest.locale.TestHelloWorld.locale('zh-tw'), '您好，世界');

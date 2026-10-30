@@ -6,7 +6,7 @@ This document defines executable acceptance and minimum proof for the [SRS](./sr
 
 ## Scope, Quality Priorities, and Risk
 
-Priorities are correct registration/precedence, framework language-policy isolation from installed packs, startup/lazy correctness, single-language metadata generation, reviewed dictionary coverage, development reload correctness and bilateral application-owned language configuration/Zod mappings. The user's latest 2026-10-30 correction removes the actual business-consumer requirement and its page/schema/draft/SSR/browser acceptance. Retain proportional effective-policy and actual adapter-validation proof; do not replace it with guidance-only closure. Basic's English/Simplified Chinese policy and home-base adapters remain unchanged. No new business authorization, database lifecycle, concurrency control, external provider flow, Commerce profile or runner expansion is introduced.
+Priorities are correct registration/precedence, framework language-policy isolation from installed packs, startup/lazy correctness, single-language metadata generation, reviewed dictionary coverage, development reload correctness and bilateral application-owned language configuration/Zod mappings. The user's latest 2026-10-30 correction removes the actual business-consumer requirement and its page/schema/draft/SSR/browser acceptance. Retain proportional effective-policy and actual adapter-validation proof; do not replace it with guidance-only closure. The latest narrow approval enables exactly en-us/zh-cn/ja-jp/zh-tw in the existing Basic roots, with en-us baseline/fallback and supported frontend default override retained; both existing home-base moduleLoaded hooks own the complete factory map (frontend CLIENT-only), using their respective configured defaults. Project-monkey placement and the home-base byte-unchanged constraint are superseded. No new business authorization, database lifecycle, concurrency control, external provider flow, Commerce profile or runner expansion is introduced.
 
 ## Verification Model
 
@@ -100,7 +100,8 @@ Applicability: retain existing framework/policy and original-language proof with
 
 Setup:
 
-- Isolated app/config fixtures for: both packs installed with only en-us/zh-cn enabled; ja-jp enabled/default with and without its pack; both new languages enabled; invalid empty items or default outside items.
+- Retain isolated framework app/config fixtures for: both packs installed with only en-us/zh-cn enabled; ja-jp enabled/default with and without its pack; both new languages enabled; invalid empty items or default outside items. The two-language fixture proves subset/installed-but-disabled behavior, not Basic's latest approved effective root policy.
+- For current WBS-LOC-40-01, use the actual existing backend/frontend root configs with exactly en-us, zh-cn, ja-jp and zh-tw enabled and baseline/fallback default en-us, preserving the supported frontend APP_LOCALE_DEFAULT override. No environment file is read or changed.
 - Synthetic query/header/cookie/preference/current-assignment and locale-route inputs, including canonicalizable casing/underscores, aliases to disabled targets, and unknown values.
 
 Procedure:
@@ -199,19 +200,19 @@ Applicability: the latest 2026-10-30 correction retains bilateral configuration/
 
 Setup:
 
-- Concrete paired application configuration/initialization owners and activation scope from the bounded WBS-LOC-40-01 dossier, preserving Basic policy/home-base mappings. No business page, host, API, schema/draft flow, Commerce profile or new flavor is required.
-- Complete root `locale.items` and vendor maps retaining en-us/en, zh-cn/zhCN, ja-jp/ja and zh-tw/zhTW, default en-us. Use existing Vona/Zova adapters and focused locale/validation test infrastructure, not a bespoke source-evaluation harness or test-only enablement switch.
+- Existing root configs `vona/src/backend/config/config/config.ts` and `zova/src/front/config/config/config.ts`; existing home-base mains `vona/src/suite/a-home/modules/home-base/src/main.ts` and `zova/src/suite/a-home/modules/home-base/src/main.ts`, both registering during moduleLoaded (frontend CLIENT-only). The latest correction settles placement under the existing bounded WBS-LOC-40-01 approval; no business page, host, API, schema/draft flow, Commerce profile or new flavor is required.
+- Complete root `locale.items` and factory maps retaining en-us/en, zh-cn/zhCN, ja-jp/ja and zh-tw/zhTW, baseline/fallback default en-us, supported frontend APP_LOCALE_DEFAULT override retained and registration owned by both home-base moduleLoaded hooks, not project monkeys. Use existing Vona/Zova adapters and focused locale/validation test infrastructure, not a bespoke source-evaluation harness or test-only enablement switch.
 
 Procedure:
 
 - Review guidance/source distinction between installed dictionaries, enabled policy and vendor registration; assert effective paired policy/default under ATP-LOC-03. Both `locale.items` and `setLocaleErrors` replace prior maps, so verify all four entries survive application initialization.
-- Verify backend registration uses `app.config.locale.default`, and frontend registration uses its current root default only inside `process.env.CLIENT`. Register at startup after baseline initialization, not per request or through provider dictionaries.
+- Verify both existing home-base moduleLoaded hooks register the complete en/zhCN/ja/zhTW map through `this.app.util.setLocaleErrors`: backend with `this.app.config.locale.default`, frontend with `this.sys.config.locale.default` only inside `process.env.CLIENT`, never during SSR. Assert all four entries survive normal initialization and no project-monkey registration remains for this increment. Registration is startup-only, never per request or through providers; no home-base byte-unchanged check applies.
 - Through the actual existing adapter, validate representative synthetic invalid input in ja-jp and zh-tw on both stacks and assert installed-Zod messages, not manually constructed translated errors. Retain en-us/zh-cn controls and configured-default fallback. Use separate backend mockCtx/request contexts for scoped-locale assertions without request-time global Zod reconfiguration.
 - Use the smallest supported existing tests that prove the configuration and adapter behavior. No business submission, browser form, schema label/draft preservation, SSR/hydration/navigation or exhaustive matrix is required. Prepare paired artifacts only if the approved source change actually needs them; never patch generated consumers.
 
 Expected result:
 
-- Both stacks expose the intended complete language policy and validation mappings with aligned default; Basic's original policy/home-base registrations remain unchanged and provider installation remains independent.
+- Both stacks expose exactly en-us/zh-cn/ja-jp/zh-tw and the complete en/zhCN/ja/zhTW factory map through the existing roots and home-base moduleLoaded owners, with aligned baseline/fallback en-us and supported frontend override intact. Frontend registration remains CLIENT-only and each stack uses its configured default. Providers remain data-only; project-monkey placement is superseded.
 - Both new languages produce the expected actual Zod errors through the existing adapters, original-language controls remain valid, and current scoped locale is respected without global per-request mutation. No business-consumer result is claimed or required.
 
 Minimum proof:
@@ -253,19 +254,21 @@ No single screenshot, source grep, generated file, or helper test substitutes fo
 
 The user explicitly clarified: “前端和后端均进行‘语言配置和zod验证映射’，不需要再进行‘业务消费者’了”. This supersedes the same-date consumer restoration and Commerce dossier recommendation. It retains actual bilateral configuration/mapping delivery, not merely guidance or complete Phase-40 deferral. Earlier scope changes and closures retain their historical attribution.
 
-ATP-LOC-03 retains accepted framework policy proof and adds proportional effective configuration assertions. ATP-LOC-07 retains guidance proof and requires actual frontend/backend Zod mapping checks through supported existing adapters/tests. ATP-LOC-04 is not required current scope and is not reported passed. Business pages, schema/draft adaptation, SSR/hydration/navigation campaigns, a Commerce backend profile and test-runner expansion are not prerequisites. Do not restore test-only policy plumbing or alter Basic home-base mappings.
+ATP-LOC-03 retains accepted framework policy proof and adds proportional effective configuration assertions. ATP-LOC-07 retains guidance proof and requires actual frontend/backend Zod mapping checks through supported existing adapters/tests. ATP-LOC-04 is not required current scope and is not reported passed. Business pages, schema/draft adaptation, SSR/hydration/navigation campaigns, a Commerce backend profile and test-runner expansion are not prerequisites. Do not restore test-only policy plumbing; extend the existing home-base mappings as specified in SRS-LOC-09, not project monkeys.
 
-WBS-LOC-40-01 remains active and `not-started`; only concrete application-owned configuration/registration placement and activation scope, followed by bounded execution approval, remain its finite execution gate. Basic defaults stay unchanged absent explicit changed authority. WBS-LOC-50-01 is `blocked` on verified configuration/mapping proof, not consumer proof. This specification correction authorizes no runtime test, build, source implementation, dependency operation, environment edit, reset or publication.
+The latest user correction replaces the prior project-monkey placement and home-base byte-unchanged requirement with both existing home-base moduleLoaded registrations (frontend CLIENT-only), using each stack's configured default. The four-language roots, baseline/fallback en-us and supported frontend override remain unchanged. WBS-LOC-40-01 is temporarily `in-progress` pending corrected-placement ATP-LOC-03/07 rerun; prior same-day project-monkey approval/results remain superseded history, not current proof. WBS-LOC-50-01 remains `blocked` pending verified configuration/mapping proof and separate execution approval. No consumer, environment edit, reset, commit/push, publication or Phase 50 execution is added. Main execution owns final evidence/status/charts.
 
 ## Commands
 
-### Planning-only checks authorized for this generation
+### Planning checks and derived views
 
 ```sh
 npm run spec:check -- cabloy-locale
 npm run spec:charts -- cabloy-locale
 npm run spec:charts:check -- cabloy-locale
 ```
+
+These are existing procedures, not results or authorization to execute adjacent delivery work. This incremental editing assignment performs no chart generation or broad build; main execution owns verification and any derived-view refresh. Existing SVGs remain untouched here and are not claimed fresh for the new in-progress status.
 
 ### Observed implementation entrypoints, not executed by generation
 

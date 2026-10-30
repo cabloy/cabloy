@@ -1,0 +1,7 @@
+
+> cabloy@5.1.242 vona
+> node ./vona/packages-cli/cli/src/bin/vona.ts --projectPath=vona :init:appMonkey
+
+vona api:init:appMonkey at .
+
+write to vona/src/backend/config/monkey.ts

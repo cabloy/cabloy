@@ -1,0 +1,263 @@
+
+> cabloy@5.1.242 test
+> cd vona && npm run test locale-test/test/*.test.ts test-vona/test/locale.test.ts
+
+
+> test
+> node ../scripts/runIsolatedTest.ts unit locale-test/test/*.test.ts test-vona/test/locale.test.ts
+
+
+> prerun
+> npm run vona :tools:deps
+
+
+> vona
+> node ./packages-cli/cli/src/bin/vona.ts :tools:deps
+
+vona api:tools:deps at vona
+
+vona api:bin:test at vona
+
+<claude-code-hint v="1" type="plugin" value="stripe@claude-plugins-official" />
+2026-10-30T09:35:19.334Z silly [a-startup.service.startup] startup: a-version:databaseInit, pid: 54995
+2026-10-30T09:35:19.461Z silly [a-version.service.database] {"method":"POST"} dialect: better-sqlite3
+2026-10-30T09:35:19.462Z silly [a-version.service.database] {"method":"POST"} database: vona/.app-test-20261030093512-d0a095cf/sqlite3/vona-test-cabtest20261030093512-d0a095cf-s-20261030-173519.db, pid: 54995
+2026-10-30T09:35:21.389Z info [a-version.service.version] {"method":"POST"} {
+  "a-version": {
+    "fileVersionOld": 0,
+    "fileVersionNew": 1
+  },
+  "a-image": {
+    "fileVersionOld": 0,
+    "fileVersionNew": 1
+  },
+  "a-auth": {
+    "fileVersionOld": 0,
+    "fileVersionNew": 1
+  },
+  "auth-simple": {
+    "fileVersionOld": 0,
+    "fileVersionNew": 1
+  },
+  "a-instance": {
+    "fileVersionOld": 0,
+    "fileVersionNew": 1
+  },
+  "a-mail": {
+    "fileVersionOld": 0,
+    "fileVersionNew": 1
+  },
+  "a-pay": {
+    "fileVersionOld": 0,
+    "fileVersionNew": 1
+  },
+  "commerce-member": {
+    "fileVersionOld": 0,
+    "fileVersionNew": 1
+  },
+  "commerce-payment": {
+    "fileVersionOld": 0,
+    "fileVersionNew": 1
+  },
+  "home-user": {
+    "fileVersionOld": 0,
+    "fileVersionNew": 1
+  },
+  "commerce-promotion": {
+    "fileVersionOld": 0,
+    "fileVersionNew": 1
+  },
+  "commerce-trade": {
+    "fileVersionOld": 0,
+    "fileVersionNew": 1
+  },
+  "commerce-catalog": {
+    "fileVersionOld": 0,
+    "fileVersionNew": 1
+  },
+  "training-record": {
+    "fileVersionOld": 0,
+    "fileVersionNew": 1
+  },
+  "training-recordsubject": {
+    "fileVersionOld": 0,
+    "fileVersionNew": 1
+  },
+  "training-student": {
+    "fileVersionOld": 0,
+    "fileVersionNew": 1
+  },
+  "a-datasource": {
+    "fileVersionOld": 0,
+    "fileVersionNew": 1
+  },
+  "a-layoutprofile": {
+    "fileVersionOld": 0,
+    "fileVersionNew": 1
+  },
+  "a-status": {
+    "fileVersionOld": 0,
+    "fileVersionNew": 1
+  },
+  "a-file": {
+    "fileVersionOld": 0,
+    "fileVersionNew": 1
+  },
+  "test-file": {
+    "fileVersionOld": 0,
+    "fileVersionNew": 1
+  },
+  "test-image": {
+    "fileVersionOld": 0,
+    "fileVersionNew": 1
+  },
+  "test-rest": {
+    "fileVersionOld": 0,
+    "fileVersionNew": 1
+  },
+  "test-vona": {
+    "fileVersionOld": 0,
+    "fileVersionNew": 1
+  }
+}
+2026-10-30T09:35:21.390Z silly [a-version.service.version] {"method":"POST"} All modules are checked successfully!
+2026-10-30T09:35:21.421Z silly [a-version.service.database] {"method":"POST"} dialect: better-sqlite3
+2026-10-30T09:35:21.422Z silly [a-version.service.database] {"method":"POST"} database: vona/.app-test-20261030093512-d0a095cf/sqlite3/vona-test-cabtest202610-i-zOzBYK6y7X-20261030-173521.db, pid: 54995
+2026-10-30T09:35:23.599Z info [a-version.service.version] {"method":"POST"} {
+  "a-version": {
+    "fileVersionOld": 0,
+    "fileVersionNew": 1
+  },
+  "a-image": {
+    "fileVersionOld": 0,
+    "fileVersionNew": 1
+  },
+  "a-auth": {
+    "fileVersionOld": 0,
+    "fileVersionNew": 1
+  },
+  "auth-simple": {
+    "fileVersionOld": 0,
+    "fileVersionNew": 1
+  },
+  "a-instance": {
+    "fileVersionOld": 0,
+    "fileVersionNew": 1
+  },
+  "a-mail": {
+    "fileVersionOld": 0,
+    "fileVersionNew": 1
+  },
+  "a-pay": {
+    "fileVersionOld": 0,
+    "fileVersionNew": 1
+  },
+  "commerce-member": {
+    "fileVersionOld": 0,
+    "fileVersionNew": 1
+  },
+  "commerce-payment": {
+    "fileVersionOld": 0,
+    "fileVersionNew": 1
+  },
+  "home-user": {
+    "fileVersionOld": 0,
+    "fileVersionNew": 1
+  },
+  "commerce-promotion": {
+    "fileVersionOld": 0,
+    "fileVersionNew": 1
+  },
+  "commerce-trade": {
+    "fileVersionOld": 0,
+    "fileVersionNew": 1
+  },
+  "commerce-catalog": {
+    "fileVersionOld": 0,
+    "fileVersionNew": 1
+  },
+  "training-record": {
+    "fileVersionOld": 0,
+    "fileVersionNew": 1
+  },
+  "training-recordsubject": {
+    "fileVersionOld": 0,
+    "fileVersionNew": 1
+  },
+  "training-student": {
+    "fileVersionOld": 0,
+    "fileVersionNew": 1
+  },
+  "a-datasource": {
+    "fileVersionOld": 0,
+    "fileVersionNew": 1
+  },
+  "a-layoutprofile": {
+    "fileVersionOld": 0,
+    "fileVersionNew": 1
+  },
+  "a-status": {
+    "fileVersionOld": 0,
+    "fileVersionNew": 1
+  },
+  "a-file": {
+    "fileVersionOld": 0,
+    "fileVersionNew": 1
+  },
+  "test-file": {
+    "fileVersionOld": 0,
+    "fileVersionNew": 1
+  },
+  "test-image": {
+    "fileVersionOld": 0,
+    "fileVersionNew": 1
+  },
+  "test-rest": {
+    "fileVersionOld": 0,
+    "fileVersionNew": 1
+  },
+  "test-vona": {
+    "fileVersionOld": 0,
+    "fileVersionNew": 1
+  }
+}
+2026-10-30T09:35:23.599Z silly [a-version.service.version] {"method":"POST"} All modules are checked successfully!
+2026-10-30T09:35:23.599Z silly [a-startup.service.startup] startup: a-version:databaseName, pid: 54995
+vona/src/backend/config/monkey.ts:8
+        this.app.util.setLocaleErrors({
+                 ^
+
+TypeError: Cannot read properties of undefined (reading 'util')
+    at AppMonkey.appStart (vona/src/backend/config/monkey.ts:8:18)
+    at AppUtil.monkeyModule (vona/packages-vona/vona-core/src/lib/utils/util.ts:137:46)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async Start._start_appStart (vona/packages-vona/vona-core/src/lib/framework/start.ts:44:9)
+    at async Start.start (vona/packages-vona/vona-core/src/lib/framework/start.ts:21:13)
+    at async createApp (vona/packages-vona/vona-core/src/lib/framework/createApp.ts:36:13)
+    at async Module.createSingleApp (vona/.vona-test-20261030093512-d0a095cf/app.ts:5:12)
+    at async createGeneralApp (vona/packages-vona/vona-core/src/lib/framework/useApp.ts:35:16)
+    at async testRun (vona/packages-cli/cli-set-api/toolsIsolate/test.ts:58:17)
+    at async vona/packages-cli/cli-set-api/toolsIsolate/test.ts:18:1
+
+Node.js v24.11.0
+Error: Test child exited: 1
+    at ChildProcess.<anonymous> (vona/packages-cli/cli-set-api/src/lib/bean/cli.bin.test.ts:35:21)
+    at Object.onceWrapper (node:events:623:26)
+    at ChildProcess.emit (node:events:508:28)
+    at maybeClose (node:internal/child_process:1101:16)
+    at ChildProcess._handle.onexit (node:internal/child_process:305:5)
+Isolated test claim and resources retained for inspection: vona/.vona-test-claim/20261030093512-d0a095cf.json
+scripts/runIsolatedTest.ts:476
+      throw new Error(`Isolated test exited: ${result.result?.signal ?? result.result?.code}`);
+            ^
+
+Error: Isolated test exited: 1
+    at runIsolatedProcess (scripts/runIsolatedTest.ts:476:13)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async scripts/runIsolatedTest.ts:731:11
+    at async withIsolatedRunInternal (scripts/runIsolatedTest.ts:671:14)
+    at async withIsolatedRun (scripts/runIsolatedTest.ts:617:12)
+    at async runIsolatedTest (scripts/runIsolatedTest.ts:726:3)
+    at async scripts/runIsolatedTest.ts:750:3
+
+Node.js v24.11.0

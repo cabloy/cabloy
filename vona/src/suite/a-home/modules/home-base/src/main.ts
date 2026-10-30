@@ -1,7 +1,7 @@
 import type { IModuleMain } from 'vona';
 
 import { BeanSimple } from 'vona';
-import { en, zhCN } from 'zod/locales';
+import { en, ja, zhCN, zhTW } from 'zod/locales';
 
 export class Main extends BeanSimple implements IModuleMain {
   async moduleLoading() {}
@@ -9,6 +9,8 @@ export class Main extends BeanSimple implements IModuleMain {
     const localeErrors = {
       'en-us': en,
       'zh-cn': zhCN,
+      'ja-jp': ja,
+      'zh-tw': zhTW,
     };
     this.app.util.setLocaleErrors(localeErrors, this.app.config.locale.default);
   }
