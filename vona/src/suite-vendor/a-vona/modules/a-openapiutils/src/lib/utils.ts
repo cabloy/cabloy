@@ -38,7 +38,7 @@ export function getTargetDecoratorDtoOpenapi(
       replace: true,
     });
   }
-  return appMetadata.getOwnMetadata(SymbolDecoratorDtoOpenapi, target);
+  return appMetadata.getMetadata(SymbolDecoratorDtoOpenapi, target);
 }
 
 export function setTargetDecoratorDtoOpenapi(
