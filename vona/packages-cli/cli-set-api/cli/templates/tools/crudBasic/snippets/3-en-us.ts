@@ -15,6 +15,8 @@ declare module '@cabloy/cli' {
   interface ICommandArgv {
     module: string;
     resourceNameCapitalize: string;
+    aggregate?: boolean;
+    groupBy?: 'name' | 'description';
   }
 }
 
@@ -41,6 +43,8 @@ export default metadataCustomSnippet({
       [`${resource}Delete`]: `Delete ${resource}`,
       [`${resource}DeleteBulk`]: `Bulk Delete ${resource}`,
     };
+    if (argv.groupBy) resources[`${resource}Group`] = `Group ${resource}`;
+    if (argv.aggregate) resources[`${resource}Aggregate`] = `Aggregate ${resource}`;
     return locale_transform({ ast, argv, resources });
   },
 });

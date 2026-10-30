@@ -216,8 +216,10 @@ export * from '../dto/detailRecordBase.tsx';
 export * from '../dto/detailRecordMutate.tsx';
 export * from '../dto/detailRecordResItem.tsx';
 export * from '../dto/detailRecordView.tsx';
+export * from '../dto/studentAggregateRes.tsx';
 export * from '../dto/studentCreate.tsx';
 export * from '../dto/studentDeleteBulk.tsx';
+export * from '../dto/studentGroupResItem.tsx';
 export * from '../dto/studentSelectReq.tsx';
 export * from '../dto/studentSelectRes.tsx';
 export * from '../dto/studentSelectResItem.tsx';
@@ -228,8 +230,10 @@ import type { IDtoOptionsDetailRecordBase } from '../dto/detailRecordBase.tsx';
 import type { IDtoOptionsDetailRecordMutate } from '../dto/detailRecordMutate.tsx';
 import type { IDtoOptionsDetailRecordResItem } from '../dto/detailRecordResItem.tsx';
 import type { IDtoOptionsDetailRecordView } from '../dto/detailRecordView.tsx';
+import type { IDtoOptionsStudentAggregateRes } from '../dto/studentAggregateRes.tsx';
 import type { IDtoOptionsStudentCreate } from '../dto/studentCreate.tsx';
 import type { IDtoOptionsStudentDeleteBulk } from '../dto/studentDeleteBulk.tsx';
+import type { IDtoOptionsStudentGroupResItem } from '../dto/studentGroupResItem.tsx';
 import type { IDtoOptionsStudentSelectReq } from '../dto/studentSelectReq.tsx';
 import type { IDtoOptionsStudentSelectRes } from '../dto/studentSelectRes.tsx';
 import type { IDtoOptionsStudentSelectResItem } from '../dto/studentSelectResItem.tsx';
@@ -244,8 +248,10 @@ declare module 'vona-module-a-web' {
 'training-student:detailRecordMutate': IDtoOptionsDetailRecordMutate;
 'training-student:detailRecordResItem': IDtoOptionsDetailRecordResItem;
 'training-student:detailRecordView': IDtoOptionsDetailRecordView;
+'training-student:studentAggregateRes': IDtoOptionsStudentAggregateRes;
 'training-student:studentCreate': IDtoOptionsStudentCreate;
 'training-student:studentDeleteBulk': IDtoOptionsStudentDeleteBulk;
+'training-student:studentGroupResItem': IDtoOptionsStudentGroupResItem;
 'training-student:studentSelectReq': IDtoOptionsStudentSelectReq;
 'training-student:studentSelectRes': IDtoOptionsStudentSelectRes;
 'training-student:studentSelectResItem': IDtoOptionsStudentSelectResItem;
@@ -265,8 +271,10 @@ import type { DtoDetailRecordBase } from '../dto/detailRecordBase.tsx';
 import type { DtoDetailRecordMutate } from '../dto/detailRecordMutate.tsx';
 import type { DtoDetailRecordResItem } from '../dto/detailRecordResItem.tsx';
 import type { DtoDetailRecordView } from '../dto/detailRecordView.tsx';
+import type { DtoStudentAggregateRes } from '../dto/studentAggregateRes.tsx';
 import type { DtoStudentCreate } from '../dto/studentCreate.tsx';
 import type { DtoStudentDeleteBulk } from '../dto/studentDeleteBulk.tsx';
+import type { DtoStudentGroupResItem } from '../dto/studentGroupResItem.tsx';
 import type { DtoStudentSelectReq } from '../dto/studentSelectReq.tsx';
 import type { DtoStudentSelectRes } from '../dto/studentSelectRes.tsx';
 import type { DtoStudentSelectResItem } from '../dto/studentSelectResItem.tsx';
@@ -291,12 +299,20 @@ declare module 'vona-module-training-student' {
       fields?: TypeEntityOptionsFields<DtoDetailRecordView, IDtoOptionsDetailRecordView[TypeSymbolKeyFieldsMore]>;
     }
 
+    export interface IDtoOptionsStudentAggregateRes {
+      fields?: TypeEntityOptionsFields<DtoStudentAggregateRes, IDtoOptionsStudentAggregateRes[TypeSymbolKeyFieldsMore]>;
+    }
+
     export interface IDtoOptionsStudentCreate {
       fields?: TypeEntityOptionsFields<DtoStudentCreate, IDtoOptionsStudentCreate[TypeSymbolKeyFieldsMore]>;
     }
 
     export interface IDtoOptionsStudentDeleteBulk {
       fields?: TypeEntityOptionsFields<DtoStudentDeleteBulk, IDtoOptionsStudentDeleteBulk[TypeSymbolKeyFieldsMore]>;
+    }
+
+    export interface IDtoOptionsStudentGroupResItem {
+      fields?: TypeEntityOptionsFields<DtoStudentGroupResItem, IDtoOptionsStudentGroupResItem[TypeSymbolKeyFieldsMore]>;
     }
 
     export interface IDtoOptionsStudentSelectReq {
@@ -366,6 +382,8 @@ declare module 'vona-module-a-web' {
     }
 export interface IApiPathGetRecord{
         '/training/student': undefined;
+'/training/student/group': undefined;
+'/training/student/aggregate': undefined;
 '/training/student/:id': undefined;
 '/training/student/summary/:id': undefined;
     }

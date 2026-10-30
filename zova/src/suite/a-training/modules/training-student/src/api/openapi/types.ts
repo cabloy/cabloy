@@ -1298,6 +1298,40 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  '/api/training/student/group': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Group Students */
+    get: operations['TrainingStudent_group'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/training/student/aggregate': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Aggregate Students */
+    get: operations['TrainingStudent_aggregate'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   '/api/training/student/{id}': {
     parameters: {
       query?: never;
@@ -2596,6 +2630,7 @@ export interface components {
       | undefined;
     'home-user.dto.accountCurrent': {
       name: string;
+      displayName?: string | undefined;
       avatar?: string | undefined;
       locale?: unknown;
       tz?: string | undefined;
@@ -2605,7 +2640,7 @@ export interface components {
     };
     'home-user.dto.accountProfileUpdate': {
       /** @description Display name */
-      name: string;
+      displayName?: string | undefined;
       /**
        * Avatar
        * @description Absolute HTTPS avatar URL or API delivery URL
@@ -2673,6 +2708,7 @@ export interface components {
     'home-user.dto.passportUser': {
       id: number | string;
       name: string;
+      displayName?: string | undefined;
       avatar?: string | undefined;
       email?: string | undefined;
       mobile?: string | undefined;
@@ -2783,6 +2819,7 @@ export interface components {
       instanceName: string;
       userId: string;
       userName: string;
+      displayName?: string | undefined;
     };
     'commerce-promotion.dto.couponMineItem': {
       id: number | string;
@@ -3215,7 +3252,9 @@ export interface components {
       shippedAt: Date;
     };
     'commerce-trade.dto.orderShip': {
+      /** @description Carrier */
       carrier: string;
+      /** @description Tracking number */
       trackingNumber: string;
     };
     'commerce-trade.dto.orderSelectRes': {
@@ -4479,6 +4518,16 @@ export interface components {
           signed?: boolean;
         }
       | undefined;
+    'training-student.dto.studentGroupResItem': {
+      /** @description Training Stage */
+      level?: 1 | 2 | 3 | undefined;
+      count_all?: string | undefined;
+      count_imageId?: string | undefined;
+    };
+    'training-student.dto.studentAggregateRes': {
+      count_all?: string | undefined;
+      count_imageId?: string | undefined;
+    };
     /** @description View Student */
     'training-student.dto.studentView_2d063d28bc7243bed02ebd8bddf1212a93c6305b_4826fc678e47603ec467782ddb0d02463792cd60':
       | {
@@ -5066,7 +5115,24 @@ export interface components {
       count_title?: string | undefined;
       sum_stars?: string | undefined;
     };
-    'test-vona.dto.userUpdate': {
+    'test-vona.dto.userCreate_1ff20af69286149eb0b25291d9450172f7bd0054': {
+      name: string;
+      age?: number | undefined;
+      scores?: number | undefined;
+      posts?:
+        | {
+            /** @description Title */
+            title: string;
+          }[]
+        | undefined;
+      roles?:
+        | {
+            id: number | string;
+            deleted?: boolean | undefined;
+          }[]
+        | undefined;
+    };
+    'test-vona.dto.userUpdate_fb27bcbbc8bfc8a865e086eb43abd766c7107326': {
       name: string;
       age?: number | undefined;
       scores?: number | undefined;
@@ -5208,9 +5274,15 @@ export interface components {
       pageNo: number;
     };
     'test-vona.dto.postGroup': {
-      userId: number | string;
+      /** @description Title */
+      title?: string | undefined;
+      userId?: number | string | undefined;
       count_all?: string | undefined;
+      count_stars?: string | undefined;
       sum_stars?: string | undefined;
+      avg_stars?: string | undefined;
+      min_stars?: string | undefined;
+      max_stars?: string | undefined;
     };
     'test-vona.dto.postAggregate': {
       count_all?: string | undefined;
@@ -8160,6 +8232,87 @@ export interface operations {
     };
     authToken: true;
   };
+  TrainingStudent_group: {
+    parameters: {
+      query?: {
+        columns?: string[] | undefined;
+        where?:
+          | {
+              [key: string]: unknown;
+            }
+          | undefined;
+        orders?: string | string[][] | undefined;
+        pageNo?: number;
+        pageSize?: number;
+        createdAt?: string | undefined;
+        name?: string | undefined;
+        level?: number | undefined;
+        aggrs?: {
+          count?: ('*' | 'imageId')[] | undefined;
+        };
+        groups?: 'level'[];
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data: components['schemas']['training-student.dto.studentGroupResItem'][];
+          };
+        };
+      };
+    };
+    authToken: true;
+  };
+  TrainingStudent_aggregate: {
+    parameters: {
+      query?: {
+        columns?: string[] | undefined;
+        where?:
+          | {
+              [key: string]: unknown;
+            }
+          | undefined;
+        orders?: string | string[][] | undefined;
+        pageNo?: number;
+        pageSize?: number;
+        createdAt?: string | undefined;
+        name?: string | undefined;
+        level?: number | undefined;
+        aggrs?: {
+          count?: ('*' | 'imageId')[] | undefined;
+        };
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data: components['schemas']['training-student.dto.studentAggregateRes'];
+          };
+        };
+      };
+    };
+    authToken: true;
+  };
   TrainingStudent_view: {
     parameters: {
       query?: never;
@@ -9174,7 +9327,7 @@ export interface operations {
     };
     requestBody: {
       content: {
-        'application/json': components['schemas']['test-vona.dto.userCreate'];
+        'application/json': components['schemas']['test-vona.dto.userCreate_1ff20af69286149eb0b25291d9450172f7bd0054'];
       };
     };
     responses: {
@@ -9204,7 +9357,7 @@ export interface operations {
     };
     requestBody: {
       content: {
-        'application/json': components['schemas']['test-vona.dto.userUpdate'];
+        'application/json': components['schemas']['test-vona.dto.userUpdate_fb27bcbbc8bfc8a865e086eb43abd766c7107326'];
       };
     };
     responses: {
@@ -9750,7 +9903,28 @@ export interface operations {
   };
   TestVonaPost_group: {
     parameters: {
-      query?: never;
+      query?: {
+        columns?: string[] | undefined;
+        where?:
+          | {
+              [key: string]: unknown;
+            }
+          | undefined;
+        orders?: string | string[][] | undefined;
+        pageNo?: number;
+        pageSize?: number;
+        createdAt?: string | undefined;
+        title?: string | undefined;
+        userName?: string | undefined;
+        aggrs?: {
+          count?: ('*' | 'stars')[] | undefined;
+          sum?: 'stars'[] | undefined;
+          avg?: 'stars'[] | undefined;
+          min?: 'stars'[] | undefined;
+          max?: 'stars'[] | undefined;
+        };
+        groups?: ('title' | 'userId')[];
+      };
       header?: never;
       path?: never;
       cookie?: never;
@@ -9774,7 +9948,27 @@ export interface operations {
   };
   TestVonaPost_aggregate: {
     parameters: {
-      query?: never;
+      query?: {
+        columns?: string[] | undefined;
+        where?:
+          | {
+              [key: string]: unknown;
+            }
+          | undefined;
+        orders?: string | string[][] | undefined;
+        pageNo?: number;
+        pageSize?: number;
+        createdAt?: string | undefined;
+        title?: string | undefined;
+        userName?: string | undefined;
+        aggrs?: {
+          count?: ('*' | 'stars')[] | undefined;
+          sum?: 'stars'[] | undefined;
+          avg?: 'stars'[] | undefined;
+          min?: 'stars'[] | undefined;
+          max?: 'stars'[] | undefined;
+        };
+      };
       header?: never;
       path?: never;
       cookie?: never;

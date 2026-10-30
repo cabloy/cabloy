@@ -8,10 +8,12 @@ import { ZovaRender } from 'zova-rest-cabloy-basic-admin';
 
 import { $locale } from '../.metadata/locales.ts';
 import { EntityStudent, studentLevelItems } from '../entity/student.tsx';
+import { studentAnalysis } from '../lib/studentAnalysis.ts';
 
 export interface IDtoOptionsStudentSelectReq extends IDecoratorDtoOptions {}
 
 @Dto<IDtoOptionsStudentSelectReq>({
+  analysis: studentAnalysis,
   openapi: { filter: { table: 'trainingStudent' } },
   fields: {
     name: $makeSchema(v.optional(), z.string()),

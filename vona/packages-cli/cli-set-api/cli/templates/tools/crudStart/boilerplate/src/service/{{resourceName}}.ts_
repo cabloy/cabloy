@@ -1,17 +1,22 @@
 import type { TableIdentity } from 'table-identity';
-import type { IQueryParams } from 'vona-module-a-orm';
+import type { IQueryParams<% if (argv.groupBy) { %>, TypeAnalysisGroupParams<% } %><% if (argv.aggregate) { %>, TypeAnalysisAggregateParams<% } %> } from 'vona-module-a-orm';
 
 import { BeanBase } from 'vona';
 import { Service } from 'vona-module-a-bean';
 import { Core } from 'vona-module-a-core';
-
+<% if (argv.aggregate || argv.groupBy) { %>import { <% if (argv.groupBy) { %>$executeAnalysisGroup<% } %><% if (argv.aggregate && argv.groupBy) { %>, <% } %><% if (argv.aggregate) { %>$executeAnalysisAggregate<% } %> } from 'vona-module-a-orm';
+<% } %>
 import type { Dto<%=argv.resourceNameCapitalize%>Create } from '../dto/<%=argv.resourceName%>Create.tsx';
 import type { Dto<%=argv.resourceNameCapitalize%>SelectRes } from '../dto/<%=argv.resourceName%>SelectRes.tsx';
 import type { Dto<%=argv.resourceNameCapitalize%>Update } from '../dto/<%=argv.resourceName%>Update.tsx';
 import type { Dto<%=argv.resourceNameCapitalize%>View } from '../dto/<%=argv.resourceName%>View.tsx';
 import type { Entity<%=argv.resourceNameCapitalize%> } from '../entity/<%=argv.resourceName%>.tsx';
 import type { Model<%=argv.resourceNameCapitalize%> } from '../model/<%=argv.resourceName%>.ts';
-
+<% if (argv.groupBy) { %>import type { Dto<%=argv.resourceNameCapitalize%>GroupResItem } from '../dto/<%=argv.resourceName%>GroupResItem.tsx';
+<% } %><% if (argv.aggregate) { %>import type { Dto<%=argv.resourceNameCapitalize%>AggregateRes } from '../dto/<%=argv.resourceName%>AggregateRes.tsx';
+<% } %><% if (argv.aggregate || argv.groupBy) { %>
+import { <%=argv.resourceName%>Analysis } from '../lib/<%=argv.resourceName%>Analysis.ts';
+<% } %>
 @Service()
 export class Service<%=argv.resourceNameCapitalize%> extends BeanBase {
   async create(<%=argv.resourceName%>: Dto<%=argv.resourceNameCapitalize%>Create): Promise<Entity<%=argv.resourceNameCapitalize%>> {
@@ -22,7 +27,19 @@ export class Service<%=argv.resourceNameCapitalize%> extends BeanBase {
     return await this.scope.model.<%=argv.resourceName%>.selectAndCount(params);
   }
 
-  async view(id: TableIdentity): Promise<Dto<%=argv.resourceNameCapitalize%>View | undefined> {
+<% if (argv.groupBy) { %>  async group(params?: TypeAnalysisGroupParams<typeof <%=argv.resourceName%>Analysis>): Promise<Dto<%=argv.resourceNameCapitalize%>GroupResItem[]> {
+    <% if (argv.groupBy === 'description') { %>const items =<% } else { %>return<% } %> await $executeAnalysisGroup(this.scope.model.<%=argv.resourceName%>, <%=argv.resourceName%>Analysis, params);
+<% if (argv.groupBy === 'description') { %>    return items.map(item => Object.hasOwn(item, 'description') ? {
+      ...item,
+      description: item.description ?? null,
+    } : item);
+<% } %>  }
+
+<% } %><% if (argv.aggregate) { %>  async aggregate(params?: TypeAnalysisAggregateParams<typeof <%=argv.resourceName%>Analysis>): Promise<Dto<%=argv.resourceNameCapitalize%>AggregateRes> {
+    return await $executeAnalysisAggregate(this.scope.model.<%=argv.resourceName%>, <%=argv.resourceName%>Analysis, params);
+  }
+
+<% } %>  async view(id: TableIdentity): Promise<Dto<%=argv.resourceNameCapitalize%>View | undefined> {
     return await this.scope.model.<%=argv.resourceName%>.getById(id);
   }
 
