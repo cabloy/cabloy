@@ -2,7 +2,51 @@
 
 ## Home-base registration correction — 2026-10-30
 
-The user subsequently directed both stacks to append Japanese/Traditional Chinese mappings in their existing `home-base/src/main.ts`, not project monkeys. This supersedes the same-day project-monkey placement and unchanged-home-base requirement, not the four-language root policy, baseline/default, client-only frontend registration or data-only providers. WBS-LOC-40-01 is reopened as in-progress for this bounded correction and focused rerun. The project-monkey candidate below remains historical proof for its exact bytes; it does not verify the corrected placement. No Phase 50 execution, release, environment change or reset is authorized by this correction.
+The user subsequently directed both stacks to append Japanese/Traditional Chinese mappings in their existing `home-base/src/main.ts`, not project monkeys. This supersedes the same-day project-monkey placement and unchanged-home-base requirement, not the four-language root policy, baseline/default, client-only frontend registration or data-only providers. The bounded correction and its applicable ATP-LOC-03/07 rerun are complete: **WBS-LOC-40-01 is verified**. The project-monkey candidate below remains historical proof for its exact bytes; corrected-placement proof follows here. No Phase 50 execution, release, environment change or reset is authorized by this correction.
+
+### Corrected source and ownership
+
+Cabloy Basic, branch `worktree-spec-basic-cabloy-locale`, base `ef6368e35ac57cca0485ba47eb926058edae3d99`, dirty candidate. The base SHA alone does not reproduce verification. The seven implementation/test paths below have concatenated lexical-order per-path binary-diff SHA-256 `4a04f91f4c77ac2fb744000ec62d0b6428ef653b91bcebd43060ed39c1432909`, using the same tracked/new-file commands described in the historical attribution below. This digest excludes documentation, specs, logs and charts; it replaces, rather than reuses, the project-monkey digest.
+
+| Implementation/test path | SHA-256 of original source bytes |
+| --- | --- |
+| `vona/src/backend/config/config/config.ts` | `5a465cb1e9bef5186a729475a8bae160716f15964b0b2d5aed12be64b634aee3` |
+| `vona/src/suite/a-home/modules/home-base/src/main.ts` | `30dd245e4cd10ecf5e973fbf2893a8fb9fad3fc75399dfe9a42212071d31d751` |
+| `vona/src/suite/cabloy-locale/modules/locale-test/test/provider.test.ts` | `6815ee273ee89050bec2068b95d6586690c9cf1785ea441e4a22a6d45e7876ca` |
+| `vona/src/suite/cabloy-locale/modules/locale-test/test/zod.test.ts` | `9ef826a4c8949515a277fab20c13387b678d159cfd94c06d9b8b84e4c83eef13` |
+| `zova/src/front/config/config/config.ts` | `b36bbf2724cfdf17c1826692d08fd811af56796a84bededfb58b4f3c73a324f2` |
+| `zova/src/suite/a-home/modules/home-base/src/main.ts` | `893b6c28e9d1f14ffcc1d47cc107f5080c363a3fe95ac3d053bc50f3705386ec` |
+| `zova/src/suite/cabloy-locale/modules/locale-test/test/zod.test.ts` | `774e64ed00642efe8928116f56a9909cc083e5dec49c197b7a6c2c009b102b11` |
+
+Both existing home-base `Main.moduleLoaded` hooks now register all four factories. Backend uses `this.app.config.locale.default`; frontend retains its existing `process.env.CLIENT` guard and `this.sys.config.locale.default`. Frontend project monkey was byte-compared equal to HEAD. The superseded backend monkey was confirmed untracked and still matched its known task-created hash before removing only that file. No project-monkey registration remains for this increment. Root policy/defaults and provider dictionaries are unchanged by this relocation; accepted inventory remains 1,550 entries.
+
+### Corrected-placement procedures and results
+
+All commands used child-scoped Node 24.11.0. Both pipelines recorded producer, ANSI-presentation and path-sanitizer exits separately as **0/0/0**. No corrected-placement command failed.
+
+| Actual procedure | Result | Primary artifact |
+| --- | --- | --- |
+| `npm run format -- <both home-base mains, frontend monkey, both zod tests>` then `npm run lint -- <same five paths>` | Passed | [Focused checks](./artifacts/20261030-home-base-tests.txt) |
+| From `vona`: `SWC_NODE_PROJECT=tsconfig.json node --import=@swc-node/register/esm-register --test ../zova/src/suite/cabloy-locale/modules/locale-test/test/zod.test.ts` | 2 passed, no failures/skips | [Focused checks](./artifacts/20261030-home-base-tests.txt) |
+| `node --experimental-transform-types --test zova/src/suite/cabloy-locale/modules/locale-test/test/locale.test.ts` | 14 passed, no failures/skips | [Focused checks](./artifacts/20261030-home-base-tests.txt) |
+| `npm run test -- 'locale-test/test/*.test.ts' 'test-vona/test/locale.test.ts'` | 19 passed, no failures/skips | [Focused checks](./artifacts/20261030-home-base-tests.txt) |
+| `npm run build:zova:admin && npm run build:zova:web && npm run deps:vona && npm run tsc:zova && npm run tsc:vona && npm run docs:build` | Both Basic SSR/REST pairs, sync, both native typechecks and current public-guide build passed | [Build/type/docs checks](./artifacts/20261030-home-base-builds.txt) |
+
+**ATP-LOC-03 passed for the bounded effective-policy increment:** actual backend startup enables exactly four languages/default en-us; actual frontend root config retains absent/empty/English/Japanese override behavior. Existing installed-but-disabled, loader, normalization and config-replacement regressions passed. **ATP-LOC-07 passed for corrected registration:** actual Zod parsing produces exact installed-vendor messages for en-us/zh-cn/ja-jp/zh-tw on both stacks, with missing/unsupported selection falling back to English. Backend operations use independent `mockCtx(...)` boundaries without per-request registration. Frontend tests invoke actual home-base `moduleLoaded`, `AppLocale` and `AppUtil` with minimal fixture owners, and verify server invocation does not register or change the callback. This is source-level config/hook/adapter proof, not mounted-browser/full-frontend-startup or SSR-validation equivalence. ATP-LOC-04 remains excluded, not passed.
+
+The directly affected public I18n Guide now describes both home-base hooks and no extra project-monkey registration; its original-source SHA-256 is `3bbc1e8a3bf6869a048b47ef3f648b56b37a198b49d18b8be05cb3b19fdd8cca`. Docs build completed with a chunk-size warning; native transform-types warnings also remain visible. Results are not described as warning-free.
+
+### Cleanup, privacy and handoff
+
+Managed passing run `20261030115050-5f607e28` logged graceful shutdown. Its `vona/.app-test-20261030115050-5f607e28`, `vona/.vona-test-20261030115050-5f607e28` and `vona/.vona-test-claim/20261030115050-5f607e28.json` paths were checked absent. Tests create no persisted business fixtures. Earlier failed-run resources and failures remain retained; no manual reset/cleanup was performed.
+
+Both streams were ANSI-normalized in memory and path-sanitized before capture, including explicit `<PACKAGE_STORE>` mapping. Explicit scoped path checks passed with no binary/unsupported exclusions; manual review found no remaining machine-local paths, credentials, tokens, live provider identifiers or customer/payment data in the two new artifacts. The checker establishes bounded path recognition only, not universal secret scanning or ATP proof.
+
+[Final corrected-record checks](./artifacts/20261030-home-base-records.txt) passed: complete `spec:check` (32 definitions), deterministic chart generation/freshness (English, 4/6 verified), scoped source/docs/spec format, seven-path lint, `git diff --check` and bounded evidence-path checks. Producer/presentation/sanitizer exits were 0/0/0. These establish record/model consistency, not runtime acceptance or human approval.
+
+During final attribution checking, HEAD advanced externally to `4cc5108245f8d4bc8c2625d5a96deee07c11b87b` (`feat: ja-jp/zh-tw`). A check using moving HEAD initially failed its digest assertion; no source/test failure occurred. Recomputing against the recorded original base `ef6368e35a` reproduced `4a04f91f4c77ac2fb744000ec62d0b6428ef653b91bcebd43060ed39c1432909`, and all seven verified source files were byte-compared equal to the external commit. Frontend monkey still matches the original base, backend monkey remains absent, and owned passing/failed-run cleanup dispositions remain as recorded. No unchanged runtime test was rerun merely because of this external commit. This assistant did not run commit or push.
+
+Corrected predecessor proof is available for a separately approved WBS-LOC-50-01 / ATP-LOC-08 reconciliation. Phase 50 remains unexecuted and unapproved; no readiness/publication conclusion, environment edit, reset/init, recovery reinstall or business-consumer expansion follows from this WBS-LOC-40-01 closure.
 
 ## Verified bilateral configuration and mapping — 2026-10-30
 

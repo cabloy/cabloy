@@ -149,7 +149,7 @@ config.locale = {
 };
 ```
 
-Cabloy Basic explicitly enables these four languages in its paired application roots and keeps `en-us` as the baseline default. Keep the matching frontend root policy aligned as described in [Environment and Config Guide](/frontend/environment-config-guide). Adding dictionaries or extending `ILocaleRecord` alone does not enable a language.
+This is an explicit four-language policy example, not the ordinary Basic default: Basic enables `en-us`/`zh-cn` by default. Keep the matching frontend root policy aligned as described in [Environment and Config Guide](/frontend/environment-config-guide). Adding dictionaries or extending `ILocaleRecord` alone does not enable a language.
 
 A later configuration layer's `locale.items` **replaces** the earlier enabled set; it does not add languages to it. The final map must be nonempty, have canonical lowercase hyphenated locale keys and string label values, and contain `locale.default` as an own key. Invalid policy fails validation rather than silently inventing a language set.
 
@@ -295,9 +295,9 @@ This is exact numeric-value selection, not automatic `Intl.PluralRules` or CLDR 
 
 A language pack provides text, not a general date/number/currency formatting redesign. The printf placeholders and exact numeric suffixes above do not supply locale-aware decimal separators, currency rules or calendar formatting. Use the application's existing formatter (for example, `Intl.NumberFormat` or a date library) with deliberate locale/timezone options where those semantics are required. Request timezone and active language are related inputs, not interchangeable values.
 
-Cabloy Basic registers the complete four-language Zod map in each existing `home-base` module: `en-us` → `en`, `zh-cn` → `zhCN`, `ja-jp` → `ja` and `zh-tw` → `zhTW`. Installing Japanese or Traditional Chinese dictionaries does not add Zod error locales; application initialization owns vendor validation registration on both backend and frontend.
+Cabloy Basic keeps its existing `home-base` Zod registrations for `en-us` → `en` and `zh-cn` → `zhCN`; installing Japanese or Traditional Chinese dictionaries does not add Zod error locales. In a real business application, import and register the Zod resources corresponding to the languages that application enables, on both backend and frontend.
 
-For a four-language application, import the corresponding Zod resources:
+For example, if the business application enables all four languages, extend its existing `home-base` adapters with:
 
 ```typescript
 import { en, ja, zhCN, zhTW } from 'zod/locales';
@@ -310,7 +310,7 @@ const localeErrors = {
 };
 ```
 
-In the backend `home-base` module's `Main.moduleLoaded` (`vona/src/suite/a-home/modules/home-base/src/main.ts`), call `this.app.util.setLocaleErrors(localeErrors, this.app.config.locale.default)`. In the frontend counterpart (`zova/src/suite/a-home/modules/home-base/src/main.ts`), keep registration inside `if (process.env.CLIENT)` and call `this.app.util.setLocaleErrors(localeErrors, this.sys.config.locale.default)`. No additional project-monkey registration is needed. `setLocaleErrors` replaces the previous map, so retain every intended language in the application map. Register at initialization, not per backend request; the adapter selects the current scoped locale when validation runs.
+In the backend adapter's `moduleLoaded`, register the map with `this.app.util.setLocaleErrors(localeErrors, this.app.config.locale.default)`. In the frontend adapter, keep registration inside the existing `if (process.env.CLIENT)` boundary and call `this.app.util.setLocaleErrors(localeErrors, this.sys.config.locale.default)`. Import only the resources the business application's enabled policy requires; this example is not a request to change Basic's default registrations.
 
 Dictionary text and Zod error text come from different owners; do not duplicate vendor validation messages inside a provider. Frontend registration is client-only, so this mapping alone does not promise identical SSR validation execution. See [Validation Guide](/backend/validation-guide) and [Zod Guide](/frontend/zod-guide).
 

@@ -256,7 +256,7 @@ The user explicitly clarified: “前端和后端均进行‘语言配置和zod�
 
 ATP-LOC-03 retains accepted framework policy proof and adds proportional effective configuration assertions. ATP-LOC-07 retains guidance proof and requires actual frontend/backend Zod mapping checks through supported existing adapters/tests. ATP-LOC-04 is not required current scope and is not reported passed. Business pages, schema/draft adaptation, SSR/hydration/navigation campaigns, a Commerce backend profile and test-runner expansion are not prerequisites. Do not restore test-only policy plumbing; extend the existing home-base mappings as specified in SRS-LOC-09, not project monkeys.
 
-The latest user correction replaces the prior project-monkey placement and home-base byte-unchanged requirement with both existing home-base moduleLoaded registrations (frontend CLIENT-only), using each stack's configured default. The four-language roots, baseline/fallback en-us and supported frontend override remain unchanged. WBS-LOC-40-01 is temporarily `in-progress` pending corrected-placement ATP-LOC-03/07 rerun; prior same-day project-monkey approval/results remain superseded history, not current proof. WBS-LOC-50-01 remains `blocked` pending verified configuration/mapping proof and separate execution approval. No consumer, environment edit, reset, commit/push, publication or Phase 50 execution is added. Main execution owns final evidence/status/charts.
+The latest user correction replaces the prior project-monkey placement and home-base byte-unchanged requirement with both existing home-base moduleLoaded registrations (frontend CLIENT-only), using each stack's configured default. The four-language roots, baseline/fallback en-us and supported frontend override remain unchanged. Corrected-placement ATP-LOC-03/07 proof is required before WBS-LOC-40-01 verification; [current evidence](./evidence/phase-40/index.md#home-base-registration-correction--2026-10-30) and progress retain the observed result. Prior same-day project-monkey approval/results remain superseded history, not corrected-placement proof. WBS-LOC-50-01 requires verified configuration/mapping proof and separate execution approval. No consumer, environment edit, reset, commit/push, publication or Phase 50 execution is added. Main execution owns final evidence/status/charts.
 
 ## Commands
 
@@ -268,7 +268,7 @@ npm run spec:charts -- cabloy-locale
 npm run spec:charts:check -- cabloy-locale
 ```
 
-These are existing procedures, not results or authorization to execute adjacent delivery work. This incremental editing assignment performs no chart generation or broad build; main execution owns verification and any derived-view refresh. Existing SVGs remain untouched here and are not claimed fresh for the new in-progress status.
+These are existing procedures, not results or authorization to execute adjacent delivery work. Current evidence/progress record actual verification and derived-view refresh separately; neither chart freshness nor the planning audit establishes runtime acceptance.
 
 ### Observed implementation entrypoints, not executed by generation
 
