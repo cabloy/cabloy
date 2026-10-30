@@ -7,17 +7,16 @@ import { describe, it } from 'node:test';
 import { fileURLToPath } from 'node:url';
 import ts from 'typescript';
 
-import { CliCommand } from '../../cabloy-cli/src/lib/cli.ts';
 import { LocalTemplate } from '../../cabloy-cli/src/lib/local.template.ts';
 import { CliToolsCrud } from '../src/lib/bean/cli.tools.crud.ts';
 import { CliToolsCrudBasic } from '../src/lib/bean/cli.tools.crudBasic.ts';
 import { CliToolsCrudStart } from '../src/lib/bean/cli.tools.crudStart.ts';
+import { CliToolsMasterDetail } from '../src/lib/bean/cli.tools.masterDetail.ts';
 import crud from '../src/lib/command/tools.crud.ts';
 import basic from '../src/lib/command/tools.crudBasic.ts';
 import start from '../src/lib/command/tools.crudStart.ts';
 
 const packageRoot = fileURLToPath(new URL('../', import.meta.url));
-const repoRoot = path.resolve(packageRoot, '../../..');
 const templateRoot = path.join(packageRoot, 'cli/templates');
 const editions = { basic: CliToolsCrudBasic, start: CliToolsCrudStart };
 
@@ -41,7 +40,6 @@ async function fixture<T>(fn: (root: string) => Promise<T>) {
 async function makeCli(
   root: string,
   Class: typeof CliToolsCrudBasic | typeof CliToolsCrudStart | typeof CliToolsCrud,
-  flags: object = {},
   Template: typeof LocalTemplate = SourceTemplate,
 ) {
   const moduleRoot = path.join(root, 'module');
@@ -70,7 +68,6 @@ async function makeCli(
     module: 'test-record',
     resourceName: 'record',
     projectPath: root,
-    ...flags,
   };
   const cli = new Class({ context: { argv } } as never);
   cli.modulesMeta = { modules: { 'test-record': { root: moduleRoot } } } as never;
@@ -102,217 +99,195 @@ async function read(root: string, file: string) {
   return await fs.readFile(path.join(root, file), 'utf8');
 }
 
-describe('optional CRUD analysis generation', { concurrency: false }, () => {
-  it('declares optional flags without adding interactive questions and uses CLI boolean coercion', async () => {
+describe('default CRUD analysis generation', { concurrency: false }, () => {
+  it('removes analysis flags from command options and usage without adding questions', () => {
     for (const definition of [crud, basic, start]) {
-      assert.equal(definition.options.aggregate.type, 'boolean');
-      assert.equal(definition.options.groupBy.type, 'string');
+      assert.deepEqual(Object.keys(definition.options), ['module']);
+      assert.doesNotMatch(definition.info.usage, /--aggregate|--groupBy/);
       assert.deepEqual(Object.keys(definition.groups.default.questions), [
         'resourceName',
         'module',
       ]);
-      for (const [args, expected] of [
-        [[], undefined],
-        [['--aggregate'], true],
-        [['--aggregate=false'], false],
-      ] as const) {
-        const command = new CliCommand([...args], { meta: definition, argv: {} });
-        const parsed = await (command as any)[Symbol.for('eb:Command#parse')]([...args]);
-        assert.equal(parsed.aggregate, expected);
-      }
     }
   });
 
   for (const [edition, Class] of Object.entries(editions)) {
-    it(`${edition}: default boilerplate output is unchanged from HEAD`, async () =>
+    it(`${edition}: generates both actions with one finite name/count policy by default`, async () =>
+      fixture(async root => {
+        const { cli, moduleRoot, invocations } = await makeCli(root, Class);
+        await cli.execute();
+        const files = await filesUnder(moduleRoot);
+        for (const file of [
+          'src/lib/recordAnalysis.ts',
+          'test/recordAnalysis.test.ts',
+          'src/dto/recordGroupResItem.tsx',
+          'src/dto/recordAggregateRes.tsx',
+        ]) {
+          assert.ok(files.includes(file), file);
+        }
+        assert.equal(
+          files.some(file => file.includes('AnalysisReq')),
+          false,
+        );
+        assert.deepEqual(invocations, [[':tools:metadata', 'test-record']]);
+        const controller = await read(moduleRoot, 'src/controller/record.ts');
+        const service = await read(moduleRoot, 'src/service/record.ts');
+        const req = await read(moduleRoot, 'src/dto/recordSelectReq.tsx');
+        const policy = await read(moduleRoot, 'src/lib/recordAnalysis.ts');
+        assert.doesNotMatch(controller, /AnalysisReq|\$schema|dataScope/);
+        assert.ok(
+          controller.includes(
+            'async select(@Arg.filter(DtoRecordSelectReq) params: IQueryParams<ModelRecord>)',
+          ),
+        );
+        assert.match(req, /\$Dto.queryPage\(EntityRecord, \['name', 'createdAt'\]\)/);
+        assert.match(req, /analysis: recordAnalysis/);
+        assert.match(req, /import \{ recordAnalysis \} from '\.\.\/lib\/recordAnalysis\.ts'/);
+        assert.match(
+          policy,
+          /export const recordAnalysis = \$defineAnalysis\(\(\) => ModelRecord, \{/,
+        );
+        assert.match(policy, /groups: \['name'\]/);
+        assert.match(policy, /aggrs: \{ count: \['\*'\] \}/);
+        assert.match(policy, /group: \{ groups: \['name'\], aggrs: \{ count: \['\*'\] \} \}/);
+        assert.match(policy, /aggregate: \{ aggrs: \{ count: \['\*'\] \} \}/);
+        assert.match(policy, /limits: \{ maxGroups: 3, maxMetrics: 10, maxGroupRows: 1000 \}/);
+        assert.doesNotMatch(policy, /description|AnalysisAggrs|AnalysisGroup/);
+        assert.doesNotMatch(
+          service,
+          /\.\.\.params|\.group\(|\.aggregate\(|items\.map|Object\.hasOwn|normalizeRecordCount|count_all:/,
+        );
+        assert.equal(controller.match(/actionInherit: 'select'/g)?.length, 2);
+        for (const action of ['group', 'aggregate']) {
+          const mode = action === 'group' ? 'Group' : 'Aggregate';
+          assert.ok(
+            controller.includes(
+              `async ${action}(@Arg.filter(DtoRecordSelectReq, { mode: '${action}' }) params: TypeAnalysis${mode}Params<typeof recordAnalysis>)`,
+            ),
+            `${action} must derive action controls from the same SelectReq policy`,
+          );
+          assert.ok(
+            controller.indexOf(`@Web.get('${action}'`) < controller.indexOf("@Web.get(':id'"),
+          );
+          assert.ok(
+            service.includes(
+              `async ${action}(params?: TypeAnalysis${mode}Params<typeof recordAnalysis>)`,
+            ),
+          );
+          assert.ok(
+            service.includes(
+              `return await $executeAnalysis${mode}(this.scope.model.record, recordAnalysis, params)`,
+            ),
+          );
+        }
+        const groupDto = await read(moduleRoot, 'src/dto/recordGroupResItem.tsx');
+        assert.match(groupDto, /\$Dto\.analysisGroup\(recordAnalysis\)/);
+        assert.doesNotMatch(groupDto, /description|\$Class|\$makeSchema|zod/);
+        assert.match(
+          await read(moduleRoot, 'src/dto/recordAggregateRes.tsx'),
+          /\$Dto\.analysisAggregate\(recordAnalysis\)/,
+        );
+        for (const locale of ['en-us', 'zh-cn']) {
+          const source = await read(moduleRoot, `src/config/locale/${locale}.ts`);
+          assert.match(source, /RecordGroup/);
+          assert.match(source, /RecordAggregate/);
+        }
+        const analysisTest = await read(moduleRoot, 'test/recordAnalysis.test.ts');
+        assert.doesNotMatch(analysisTest, /normalizeRecordCount|normalizes only/);
+        assert.match(
+          analysisTest,
+          /returns default and requested-only string counts with validated controls/,
+        );
+        assert.match(analysisTest, /JSON\.stringify\(\{ count: \['\*'\] \}\)/);
+        assert.match(
+          analysisTest,
+          /The shared policy does not enable analysis controls on ordinary select/,
+        );
+        assert.match(analysisTest, /\{ name \}/);
+        assert.match(analysisTest, /where: \{ id: fixture.id \}/);
+        assert.match(
+          analysisTest,
+          /columns: \['id'\], orders: 'name,desc', pageNo: 2, pageSize: 1/,
+        );
+        assert.match(analysisTest, /assert.rejects\(/);
+        assert.match(analysisTest, /for \(const action of \['group', 'aggregate'\] as const\)/);
+        assert.match(analysisTest, /\['description'\]/);
+        assert.match(analysisTest, /pageNo: 2, pageSize: 0/);
+        const actionTest = await read(moduleRoot, 'test/record.test.ts');
+        if (edition === 'basic') {
+          assert.match(
+            actionTest,
+            /group: \['get', `\$\{moduleApiPath\}\/group`, 'Group Record'\]/,
+          );
+          assert.match(
+            actionTest,
+            /aggregate: \['get', `\$\{moduleApiPath\}\/aggregate`, 'Aggregate Record'\]/,
+          );
+          assert.match(actionTest, /group: `\$\{controllerBeanFullName\}#select`/);
+          assert.match(actionTest, /aggregate: `\$\{controllerBeanFullName\}#select`/);
+        } else {
+          assert.match(
+            actionTest,
+            /const actions = \['create', 'select', 'view', 'update', 'delete', 'group', 'aggregate'\]/,
+          );
+        }
+        for (const file of files.filter(file => /\.tsx?$/.test(file))) {
+          const source = await read(moduleRoot, file);
+          assert.ok(source.trim(), file);
+          assert.doesNotMatch(source, /<%/);
+          const result = ts.transpileModule(source, {
+            fileName: file,
+            reportDiagnostics: true,
+            compilerOptions: {
+              target: ts.ScriptTarget.ESNext,
+              module: ts.ModuleKind.ESNext,
+              experimentalDecorators: true,
+            },
+          });
+          assert.deepEqual(
+            result.diagnostics?.filter(
+              diagnostic => diagnostic.category === ts.DiagnosticCategory.Error,
+            ),
+            [],
+            file,
+          );
+        }
+      }));
+
+    it(`${edition}: aggregate master-detail cleanup removes generated standalone analysis artifacts`, async () =>
       fixture(async root => {
         const { cli, moduleRoot } = await makeCli(root, Class);
         await cli.execute();
-        const prefix = `vona/packages-cli/cli-set-api/cli/templates/tools/crud${edition === 'basic' ? 'Basic' : 'Start'}/boilerplate/`;
-        const originalFiles = execFileSync(
-          'git',
-          ['ls-tree', '-r', '--name-only', 'HEAD', '--', prefix],
-          { cwd: repoRoot, encoding: 'utf8' },
-        )
-          .trim()
-          .split('\n');
-        for (const file of originalFiles) {
-          const original = execFileSync('git', ['show', `HEAD:${file}`], {
-            cwd: repoRoot,
-            encoding: 'utf8',
-          });
-          const expected = await cli.template.renderContent({ content: original });
-          const output = file
-            .slice(prefix.length)
-            .replaceAll('{{resourceName}}', 'record')
-            .replace(/_$/, '');
-          assert.equal(await read(moduleRoot, output), expected, output);
+        const masterDetail = new CliToolsMasterDetail({
+          context: {
+            argv: {
+              _detailModule: { root: moduleRoot },
+              detailResourceName: 'record',
+              createdDetailResource: true,
+              detailMode: 'aggregate',
+            },
+          },
+        } as never);
+        (masterDetail as any)._handleAggregateDetailMode(false);
+        const files = await filesUnder(moduleRoot);
+        for (const file of [
+          'src/controller/record.ts',
+          'src/service/record.ts',
+          'src/lib/recordAnalysis.ts',
+          'test/record.test.ts',
+          'test/recordAnalysis.test.ts',
+        ]) {
+          assert.ok(!files.includes(file), file);
         }
-        assert.equal(
-          (await filesUnder(moduleRoot)).some(file => /Analysis|GroupRes|AggregateRes/.test(file)),
-          false,
-        );
-        assert.doesNotMatch(
-          await read(moduleRoot, 'src/config/locale/en-us.ts'),
-          /RecordGroup|RecordAggregate/,
-        );
+        assert.ok(!files.some(file => file.startsWith('src/dto/')));
+        assert.ok(files.includes('src/entity/record.tsx'));
+        assert.ok(files.includes('src/model/record.ts'));
       }));
-
-    for (const flags of [
-      { aggregate: true },
-      { groupBy: 'name' },
-      { groupBy: 'description' },
-      { aggregate: true, groupBy: 'name' },
-      { aggregate: true, groupBy: 'description' },
-      { aggregate: false },
-    ]) {
-      it(`${edition}: renders ${JSON.stringify(flags)} with matching optional files`, async () =>
-        fixture(async root => {
-          const { cli, moduleRoot, invocations } = await makeCli(root, Class, flags);
-          await cli.execute();
-          const files = await filesUnder(moduleRoot);
-          const enabled = !!(flags.aggregate || flags.groupBy);
-          assert.equal(
-            files.some(file => file.includes('AnalysisReq')),
-            false,
-          );
-          assert.equal(files.includes('src/lib/recordAnalysis.ts'), enabled);
-          assert.equal(files.includes('test/recordAnalysis.test.ts'), enabled);
-          assert.equal(files.includes('src/dto/recordGroupResItem.tsx'), !!flags.groupBy);
-          assert.equal(files.includes('src/dto/recordAggregateRes.tsx'), !!flags.aggregate);
-          assert.deepEqual(invocations, [[':tools:metadata', 'test-record']]);
-          const controller = await read(moduleRoot, 'src/controller/record.ts');
-          const service = await read(moduleRoot, 'src/service/record.ts');
-          assert.equal(controller.includes("@Web.get('group'"), !!flags.groupBy);
-          assert.equal(controller.includes("@Web.get('aggregate'"), !!flags.aggregate);
-          assert.doesNotMatch(controller, /AnalysisReq|\$schema/);
-          assert.ok(
-            controller.includes(
-              'async select(@Arg.filter(DtoRecordSelectReq) params: IQueryParams<ModelRecord>)',
-            ),
-          );
-          for (const action of [
-            ...(flags.groupBy ? ['group'] : []),
-            ...(flags.aggregate ? ['aggregate'] : []),
-          ]) {
-            const mode = action === 'group' ? 'Group' : 'Aggregate';
-            assert.ok(
-              controller.includes(
-                `async ${action}(@Arg.filter(DtoRecordSelectReq, { mode: '${action}' }) params: TypeAnalysis${mode}Params<typeof recordAnalysis>)`,
-              ),
-              `${action} must derive action controls from the same SelectReq policy`,
-            );
-          }
-          if (enabled) {
-            const req = await read(moduleRoot, 'src/dto/recordSelectReq.tsx');
-            assert.match(req, /\$Dto.queryPage\(EntityRecord, \['name', 'createdAt'\]\)/);
-            assert.match(controller, /actionInherit: 'select'/);
-            assert.doesNotMatch(controller, /dataScope/);
-            assert.match(req, /analysis: recordAnalysis/);
-            assert.match(req, /import \{ recordAnalysis \} from '\.\.\/lib\/recordAnalysis\.ts'/);
-            assert.doesNotMatch(service, /\.\.\.params|\.group\(|\.aggregate\(/);
-            const policy = await read(moduleRoot, 'src/lib/recordAnalysis.ts');
-            assert.match(
-              policy,
-              /export const recordAnalysis = \$defineAnalysis\(\(\) => ModelRecord, \{/,
-            );
-            assert.match(policy, /aggrs: \{ count: \['\*'\] \}/);
-            assert.match(policy, /limits: \{ maxGroups: 3, maxMetrics: 10, maxGroupRows: 1000 \}/);
-            assert.equal(policy.includes('    group:'), !!flags.groupBy);
-            assert.equal(policy.includes('    aggregate:'), !!flags.aggregate);
-            assert.ok(policy.includes(`groups: [${flags.groupBy ? `'${flags.groupBy}'` : ''}]`));
-            assert.doesNotMatch(policy, /AnalysisAggrs|AnalysisGroup/);
-            assert.doesNotMatch(service, /normalizeRecordCount|count_all:/);
-            const analysisTest = await read(moduleRoot, 'test/recordAnalysis.test.ts');
-            assert.doesNotMatch(analysisTest, /normalizeRecordCount|normalizes only/);
-            assert.match(
-              analysisTest,
-              /returns default and requested-only string counts with validated controls/,
-            );
-            assert.match(analysisTest, /JSON\.stringify\(\{ count: \['\*'\] \}\)/);
-            assert.match(
-              analysisTest,
-              /The shared policy does not enable analysis controls on ordinary select/,
-            );
-            assert.match(analysisTest, /\{ name \}/);
-            assert.match(analysisTest, /where: \{ id: fixture.id \}/);
-            assert.match(
-              analysisTest,
-              /columns: \['id'\], orders: 'name,desc', pageNo: 2, pageSize: 1/,
-            );
-            assert.match(analysisTest, /assert.rejects\(/);
-            assert.match(analysisTest, /for \(const action of \[[^\]]+\] as const\)/);
-            assert.match(analysisTest, /pageNo: 2, pageSize: 0/);
-          }
-          if (flags.groupBy) {
-            assert.ok(
-              controller.indexOf("@Web.get('group'") < controller.indexOf("@Web.get(':id'"),
-            );
-            assert.match(
-              service,
-              /async group\(params\?: TypeAnalysisGroupParams<typeof recordAnalysis>\)/,
-            );
-            assert.match(
-              service,
-              /await \$executeAnalysisGroup\(this\.scope\.model\.record, recordAnalysis, params\)/,
-            );
-            const dto = await read(moduleRoot, 'src/dto/recordGroupResItem.tsx');
-            assert.match(dto, /\$Dto\.analysisGroup\(recordAnalysis\)/);
-            if (flags.groupBy === 'description') {
-              assert.match(dto, /description\?: string \| null/);
-              assert.match(dto, /z.string\(\).nullable\(\).optional\(\)/);
-              assert.match(service, /Object\.hasOwn\(item, 'description'\)/);
-              assert.match(service, /description: item.description \?\? null/);
-              assert.match(service, /\} : item/);
-            } else {
-              assert.match(service, /return await \$executeAnalysisGroup\(/);
-              assert.doesNotMatch(service, /items\.map/);
-            }
-          }
-          if (flags.aggregate) {
-            assert.match(
-              service,
-              /async aggregate\(params\?: TypeAnalysisAggregateParams<typeof recordAnalysis>\)/,
-            );
-            assert.match(
-              service,
-              /return await \$executeAnalysisAggregate\(this\.scope\.model\.record, recordAnalysis, params\)/,
-            );
-            assert.match(
-              await read(moduleRoot, 'src/dto/recordAggregateRes.tsx'),
-              /\$Dto\.analysisAggregate\(recordAnalysis\)/,
-            );
-          }
-          for (const file of files.filter(file => /\.tsx?$/.test(file))) {
-            const source = await read(moduleRoot, file);
-            assert.ok(source.trim(), file);
-            assert.doesNotMatch(source, /<%/);
-            const result = ts.transpileModule(source, {
-              fileName: file,
-              reportDiagnostics: true,
-              compilerOptions: {
-                target: ts.ScriptTarget.ESNext,
-                module: ts.ModuleKind.ESNext,
-                experimentalDecorators: true,
-              },
-            });
-            assert.deepEqual(
-              result.diagnostics?.filter(
-                diagnostic => diagnostic.category === ts.DiagnosticCategory.Error,
-              ),
-              [],
-              file,
-            );
-          }
-        }));
-    }
   }
 
   it(
-    'freshly packaged beans and production templates match source generation',
-    {
-      skip: process.env.CABLOY_TEST_PACKAGED_CLI !== '1',
-    },
+    'freshly packaged beans and production templates match default source generation',
+    { skip: process.env.CABLOY_TEST_PACKAGED_CLI !== '1' },
     async () => {
       // Run after tsc:publish. Published packages ship raw EJS in cli/ and compiled
       // snippets in dist-cli/; verify both are packaged, not just present locally.
@@ -324,62 +299,54 @@ describe('optional CRUD analysis generation', { concurrency: false }, () => {
       ) as { files: { path: string }[] }[];
       const packedFiles = new Set(pack.files.map(file => file.path));
       assert.ok(packedFiles.has('dist/index.js'));
-      const { beans } = await import('../dist/index.js');
+      const { beans, commands } = await import('../dist/index.js');
+      for (const command of ['crud', 'crudBasic', 'crudStart']) {
+        assert.deepEqual(Object.keys(commands.tools[command].options), ['module']);
+        assert.doesNotMatch(commands.tools[command].info.usage, /--aggregate|--groupBy/);
+      }
       const previousBrand = process.env.CabloyCliBrandName;
       process.env.CabloyCliBrandName = 'vona';
       try {
         for (const [edition, Class] of Object.entries(editions)) {
-          for (const flags of [
-            {},
-            { aggregate: true },
-            { groupBy: 'name' },
-            { groupBy: 'description' },
-            { aggregate: true, groupBy: 'description' },
-            { aggregate: false },
-          ]) {
-            await fixture(async root => {
-              const source = await makeCli(path.join(root, 'source'), Class, flags);
-              const packaged = await makeCli(
-                path.join(root, 'packaged'),
-                beans[edition === 'basic' ? 'tools.crudBasic' : 'tools.crudStart'],
-                flags,
-                LocalTemplate,
-              );
-              for (const target of [
-                `tools/crud${edition === 'basic' ? 'Basic' : 'Start'}/boilerplate`,
-                `tools/crud${edition === 'basic' ? 'Basic' : 'Start'}/snippets`,
-                ...(flags.aggregate || flags.groupBy ? ['tools/crudAnalysis/common'] : []),
-                ...(flags.groupBy ? ['tools/crudAnalysis/group'] : []),
-                ...(flags.aggregate ? ['tools/crudAnalysis/aggregate'] : []),
-              ]) {
-                const resolved = packaged.cli.template.resolveTemplatePath('api', target);
-                const prefix = target.endsWith('/snippets')
-                  ? 'dist-cli/templates'
-                  : 'cli/templates';
-                assert.equal(resolved, path.join(packageRoot, prefix, target));
-                const templateFiles = await filesUnder(resolved);
-                assert.ok(templateFiles.length, target);
-                for (const file of templateFiles) {
-                  assert.ok(
-                    packedFiles.has(`${prefix}/${target}/${file}`),
-                    `missing packaged template: ${target}/${file}`,
-                  );
-                }
-              }
-              await source.cli.execute();
-              await packaged.cli.execute();
-              const files = await filesUnder(source.moduleRoot);
-              assert.deepEqual(await filesUnder(packaged.moduleRoot), files);
-              for (const file of files) {
-                assert.equal(
-                  await read(packaged.moduleRoot, file),
-                  await read(source.moduleRoot, file),
-                  `${edition} ${JSON.stringify(flags)} ${file}`,
+          await fixture(async root => {
+            const source = await makeCli(path.join(root, 'source'), Class);
+            const packaged = await makeCli(
+              path.join(root, 'packaged'),
+              beans[edition === 'basic' ? 'tools.crudBasic' : 'tools.crudStart'],
+              LocalTemplate,
+            );
+            for (const target of [
+              `tools/crud${edition === 'basic' ? 'Basic' : 'Start'}/boilerplate`,
+              `tools/crud${edition === 'basic' ? 'Basic' : 'Start'}/snippets`,
+              'tools/crudAnalysis/common',
+              'tools/crudAnalysis/group',
+              'tools/crudAnalysis/aggregate',
+            ]) {
+              const resolved = packaged.cli.template.resolveTemplatePath('api', target);
+              const prefix = target.endsWith('/snippets') ? 'dist-cli/templates' : 'cli/templates';
+              assert.equal(resolved, path.join(packageRoot, prefix, target));
+              const templateFiles = await filesUnder(resolved);
+              assert.ok(templateFiles.length, target);
+              for (const file of templateFiles) {
+                assert.ok(
+                  packedFiles.has(`${prefix}/${target}/${file}`),
+                  `missing packaged template: ${target}/${file}`,
                 );
               }
-              assert.deepEqual(packaged.invocations, source.invocations);
-            });
-          }
+            }
+            await source.cli.execute();
+            await packaged.cli.execute();
+            const files = await filesUnder(source.moduleRoot);
+            assert.deepEqual(await filesUnder(packaged.moduleRoot), files);
+            for (const file of files) {
+              assert.equal(
+                await read(packaged.moduleRoot, file),
+                await read(source.moduleRoot, file),
+                `${edition} ${file}`,
+              );
+            }
+            assert.deepEqual(packaged.invocations, source.invocations);
+          });
         }
       } finally {
         if (previousBrand === undefined) delete process.env.CabloyCliBrandName;
@@ -388,65 +355,31 @@ describe('optional CRUD analysis generation', { concurrency: false }, () => {
     },
   );
 
-  it('validates exact dimensions in every execution path before any writes', async () => {
-    for (const Class of [CliToolsCrud, CliToolsCrudBasic, CliToolsCrudStart]) {
-      for (const flags of [
-        ...[
-          '',
-          'id',
-          'iid',
-          'deleted',
-          'createdAt',
-          'unknown',
-          'name,description',
-          'lower(name)',
-          ' name',
-          ['name', 'description'],
-        ].map(groupBy => ({ groupBy })),
-        { aggregate: 'true' },
-      ]) {
-        await fixture(async root => {
-          const { cli, moduleRoot, invocations } = await makeCli(root, Class, flags);
-          const before = await filesUnder(moduleRoot);
-          cli.helper.ensureDir = async () => {
-            throw new Error('unexpected write');
-          };
-          await assert.rejects(
-            () => cli.execute(),
-            /--groupBy must be exactly|--aggregate must be a boolean/,
-          );
-          assert.deepEqual(await filesUnder(moduleRoot), before);
-          assert.deepEqual(invocations, []);
-        });
-      }
-    }
-  });
-
-  it('wrapper explicitly forwards flags and metadata runs only after all rendering', async () => {
+  it('wrapper invokes default edition generation and refreshes metadata after all rendering', async () => {
     for (const edition of ['basic', 'start']) {
-      for (const flags of [
-        {},
-        { aggregate: true },
-        { aggregate: false, groupBy: 'description' },
-        { aggregate: true, groupBy: 'name' },
-      ]) {
-        await fixture(async root => {
-          if (edition === 'start') await fs.writeFile(path.join(root, '__CABLOY_START__'), '');
-          const { cli, invocations } = await makeCli(root, CliToolsCrud, flags);
-          await cli.execute();
-          assert.deepEqual(invocations, [
-            [
-              edition === 'start' ? ':tools:crudStart' : ':tools:crudBasic',
-              'record',
-              '--module=test-record',
-              '--nometadata',
-              ...(flags.aggregate === undefined ? [] : [`--aggregate=${flags.aggregate}`]),
-              ...(flags.groupBy === undefined ? [] : [`--groupBy=${flags.groupBy}`]),
-            ],
-            [':tools:metadata', 'test-record'],
-          ]);
-        });
-      }
+      await fixture(async root => {
+        const { cli, moduleRoot, invocations } = await makeCli(root, CliToolsCrud);
+        await fs.writeFile(
+          path.join(root, edition === 'start' ? '__CABLOY_START__' : '__CABLOY_BASIC__'),
+          '',
+        );
+        cli.helper.invokeCli = async args => {
+          invocations.push(args);
+          if (args[0] === ':tools:metadata') {
+            assert.match(await read(moduleRoot, 'src/bean/ssrMenu.record.ts'), /record/);
+          }
+        };
+        await cli.execute();
+        assert.deepEqual(invocations, [
+          [
+            edition === 'start' ? ':tools:crudStart' : ':tools:crudBasic',
+            'record',
+            '--module=test-record',
+            '--nometadata',
+          ],
+          [':tools:metadata', 'test-record'],
+        ]);
+      });
     }
   });
 });

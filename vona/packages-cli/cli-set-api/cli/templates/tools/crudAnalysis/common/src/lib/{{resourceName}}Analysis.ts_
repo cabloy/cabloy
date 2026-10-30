@@ -4,11 +4,11 @@ import { Model<%=argv.resourceNameCapitalize%> } from '../model/<%=argv.resource
 
 // One allowlist drives request controls, response fields, and bounded execution.
 export const <%=argv.resourceName%>Analysis = $defineAnalysis(() => Model<%=argv.resourceNameCapitalize%>, {
-  groups: [<% if (argv.groupBy) { %>'<%=argv.groupBy%>'<% } %>],
+  groups: ['name'],
   aggrs: { count: ['*'] },
   defaults: {
-<% if (argv.groupBy) { %>    group: { groups: ['<%=argv.groupBy%>'], aggrs: { count: ['*'] } },
-<% } %><% if (argv.aggregate) { %>    aggregate: { aggrs: { count: ['*'] } },
-<% } %>  },
+    group: { groups: ['name'], aggrs: { count: ['*'] } },
+    aggregate: { aggrs: { count: ['*'] } },
+  },
   limits: { maxGroups: 3, maxMetrics: 10, maxGroupRows: 1000 },
 });

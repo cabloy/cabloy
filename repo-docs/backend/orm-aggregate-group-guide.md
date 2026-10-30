@@ -122,7 +122,7 @@ These helpers deliberately expose less than the raw ORM: no joins, relation load
 
 The default limits are 3 dimensions, 10 function/column metric pairs and 1000 grouped rows. Group execution reads at most the configured row cap plus one and fails with 422 on overflow instead of returning a silently truncated result. This bounds materialized/returned rows, not database scan or aggregation cost. Existing instance scope, soft-delete handling, query caching and scalar normalization remain owned by the ORM.
 
-See [CRUD Workflow](/backend/crud-workflow#optional-grouping-and-statistics) for the Student policy, JSON query transport and optional CLI generation.
+See [CRUD Workflow](/backend/crud-workflow#grouping-and-statistics) for the Student policy, JSON query transport and default CLI analysis generation.
 
 ## `having` and grouped ordering
 

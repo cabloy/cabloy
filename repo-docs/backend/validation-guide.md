@@ -134,7 +134,7 @@ List controls such as `columns`, `orders`, `pageNo`, and `pageSize` remain valid
 
 `$executeAnalysisGroup(model, policy, params)` and `$executeAnalysisAggregate(model, policy, params)` revalidate analysis controls for direct service callers. The default effective limits are `maxGroups: 3`, `maxMetrics: 10`, and `maxGroupRows: 1000`; policies can deliberately override them. Group execution uses deterministic dimension ordering and reads cap+1 rows to detect overflow. Invalid analysis selections and group-row overflow produce deliberate `422` errors, not generic server failures or silently truncated results. The row cap is not a limit on database scan/aggregation cost.
 
-The derived schemas expose public `filter.capabilities.analysis` (mode, allowlists, defaults, limits), including on flattened `groups` / `aggrs` query parameter schemas. They do not publish model/class references. See [CRUD Workflow](/backend/crud-workflow#optional-grouping-and-statistics) and [DTO Infer and Generation](/backend/dto-infer-generation#aggregate-and-group-dto-inference) for policy authoring and requested-only response fields.
+The derived schemas expose public `filter.capabilities.analysis` (mode, allowlists, defaults, limits), including on flattened `groups` / `aggrs` query parameter schemas. They do not publish model/class references. See [CRUD Workflow](/backend/crud-workflow#grouping-and-statistics) and [DTO Infer and Generation](/backend/dto-infer-generation#aggregate-and-group-dto-inference) for policy authoring and requested-only response fields.
 
 ## Tool groups
 

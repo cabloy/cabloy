@@ -28,25 +28,39 @@ npm run vona :tools:crudBasic student -- --module=training-student
 
 This is important because the repo already encodes both the full CRUD thread and a lighter CRUD-basic workflow in the CLI surface.
 
-## Optional grouping and statistics
+## Grouping and statistics
 
-The Basic and Start CRUD generators can add two independent read actions:
+The Basic and Start CRUD generators provide `group` and `aggregate` read actions by default, alongside ordinary `select`:
 
 ```bash
-npm run vona :tools:crud report -- --module=demo-report --aggregate --groupBy=name
+npm run vona :tools:crud report -- --module=demo-report
 ```
 
-The direct `:tools:crudBasic` and `:tools:crudStart` commands accept the same options.
+The direct `:tools:crudBasic` and `:tools:crudStart` commands use the same default. There are no `--aggregate` or `--groupBy` options; edit the generated policy to configure analysis capabilities.
 
-| Option                  | Generated action | Result                                                                           |
-| ----------------------- | ---------------- | -------------------------------------------------------------------------------- |
-| `--aggregate`           | `GET aggregate`  | One object with `count_all`                                                      |
-| `--groupBy=name`        | `GET group`      | One row per name, with `count_all`                                               |
-| `--groupBy=description` | `GET group`      | One row per description, including a possible null description, with `count_all` |
+| Generated action | Default result                           |
+| ---------------- | ---------------------------------------- |
+| `GET select`     | Resource records and pagination metadata |
+| `GET group`      | One row per name, with `count_all`       |
+| `GET aggregate`  | One object with `count_all`              |
 
-Both options are opt-in and independent: grouping does not enable the aggregate action. Without these options, the ordinary CRUD output is unchanged. The generator exports one shared analysis policy in `src/lib/<resourceName>Analysis.ts`; its initial allowlist contains only the chosen dimension and `count('*')`. Callers can select combinations only within that backend-owned policy, not arbitrary model columns or SQL expressions. These options add no analysis fields to the Entity.
+The generator exports one shared analysis policy in `src/lib/<resourceName>Analysis.ts`:
 
-Fresh CRUD entities contain `name` and `description`, so `--groupBy` accepts exactly one of those fields. Other fields, system identities, expressions, and comma-separated lists are rejected by the generator. Choose dimensions with suitable cardinality: grouping by a nearly unique name can return almost as many groups as records. Generated group actions do not provide group pagination or a group-count total.
+```typescript
+export const reportAnalysis = $defineAnalysis(() => ModelReport, {
+  groups: ['name'],
+  aggrs: { count: ['*'] },
+  defaults: {
+    group: { groups: ['name'], aggrs: { count: ['*'] } },
+    aggregate: { aggrs: { count: ['*'] } },
+  },
+  limits: { maxGroups: 3, maxMetrics: 10, maxGroupRows: 1000 },
+});
+```
+
+Default API generation does not expose every Entity field. The initial allowlist contains only `name` and `count('*')`; it does not automatically allow `description`, identity fields, timestamps, or numeric metrics. Callers can select combinations only within that backend-owned policy, not arbitrary model columns or SQL expressions. No analysis capability fields are added to the Entity.
+
+Fresh CRUD entities contain `name`, so name grouping provides a runnable starting point, not a universal business default. Refine the policy to use meaningful dimensions such as status, category, or level as the resource evolves. Choose dimensions with suitable cardinality: grouping by a nearly unique name can return almost as many groups as records. Generated group actions do not provide group pagination or a group-count total.
 
 These commands create new resources and refuse an existing controller. Do not rerun them against the existing `training-student` resource to add actions. For an existing resource, define its policy and reuse it in the request DTO, response DTOs, and service; the Student reference uses its already-defined `level` field.
 
@@ -66,7 +80,7 @@ Named local business filters and raw `where` retain their existing semantics. A 
 
 The default policy limits are 3 selected dimensions, 10 selected metric aliases, and 1000 group-result rows; a policy may set explicit limits. Group execution reads at most the row cap plus one and returns a deliberate `422` validation/resource-limit error on overflow, not a silently truncated result. These bounds do not limit the database work needed to scan or aggregate the matching population.
 
-Response DTOs use `$Dto.analysisGroup(policy)` / `$Dto.analysisAggregate(policy)` to describe a finite **optional superset** of allowed keys. Each response includes only requested dimensions and aliases. Optional means unrequested; nullable means a real SQL null. Generated description grouping keeps `description?: string | null` and normalizes null only when that dimension is present.
+Response DTOs use `$Dto.analysisGroup(policy)` / `$Dto.analysisAggregate(policy)` to describe a finite **optional superset** of allowed keys. Each response includes only requested dimensions and aliases. Optional means unrequested; nullable means a real SQL null. If a business-specific policy adds a nullable dimension, preserve both optionality and nullability in its response contract and never synthesize an unrequested key.
 
 Count aliases are decimal strings, normalized by the ORM query/cache boundary; non-count metrics are strings or SQL `null`. Services need no count-conversion helper. An empty group query returns `[]`; an empty aggregate count returns `"0"`. Missing dimension values are not synthesized into zero-valued groups.
 

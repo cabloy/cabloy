@@ -613,6 +613,8 @@ export class CliToolsMasterDetail extends BeanCliBase {
       service: path.join(detailRoot, 'src/service', `${argv.detailResourceName}.ts`),
       dtoDir: path.join(detailRoot, 'src/dto'),
       test: path.join(detailRoot, 'test', `${argv.detailResourceName}.test.ts`),
+      analysisTest: path.join(detailRoot, 'test', `${argv.detailResourceName}Analysis.test.ts`),
+      analysis: path.join(detailRoot, 'src/lib', `${argv.detailResourceName}Analysis.ts`),
       metaVersion: path.join(detailRoot, 'src/bean', 'meta.version.ts'),
       metaIndex: path.join(detailRoot, 'src/bean', 'meta.index.ts'),
     };
@@ -627,7 +629,13 @@ export class CliToolsMasterDetail extends BeanCliBase {
 
   private _removeStandaloneDetailSurface() {
     const files = this._detailPaths();
-    for (const file of [files.controller, files.service, files.test]) {
+    for (const file of [
+      files.controller,
+      files.service,
+      files.test,
+      files.analysisTest,
+      files.analysis,
+    ]) {
       if (fs.existsSync(file)) {
         fs.rmSync(file, { force: true });
       }

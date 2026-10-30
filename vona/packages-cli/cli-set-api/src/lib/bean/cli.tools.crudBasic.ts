@@ -5,7 +5,7 @@ import { combineApiPathControllerAndActionRaw } from '@cabloy/utils';
 import fs from 'node:fs';
 import path from 'node:path';
 
-import { prepareCrudAnalysis, renderCrudAnalysis } from '../crudAnalysis.ts';
+import { renderCrudAnalysis } from '../crudAnalysis.ts';
 import { __ThisSetName__ } from '../this.ts';
 
 declare module '@cabloy/cli' {
@@ -22,7 +22,6 @@ declare module '@cabloy/cli' {
 export class CliToolsCrudBasic extends BeanCliBase {
   async execute() {
     const { argv } = this.context;
-    prepareCrudAnalysis(argv);
     // super
     await super.execute();
     // module name/info

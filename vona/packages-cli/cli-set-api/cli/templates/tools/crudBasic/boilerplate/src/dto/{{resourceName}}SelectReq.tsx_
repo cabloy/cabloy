@@ -7,13 +7,13 @@ import z from 'zod';
 import { ZovaRender } from 'zova-rest-cabloy-basic-admin';
 
 import { Entity<%=argv.resourceNameCapitalize%> } from '../entity/<%=argv.resourceName%>.tsx';
-<% if (argv.aggregate || argv.groupBy) { %>import { <%=argv.resourceName%>Analysis } from '../lib/<%=argv.resourceName%>Analysis.ts';
-<% } %>
+import { <%=argv.resourceName%>Analysis } from '../lib/<%=argv.resourceName%>Analysis.ts';
+
 export interface IDtoOptions<%=argv.resourceNameCapitalize%>SelectReq extends IDecoratorDtoOptions {}
 
 @Dto<IDtoOptions<%=argv.resourceNameCapitalize%>SelectReq>({
-<% if (argv.aggregate || argv.groupBy) { %>  analysis: <%=argv.resourceName%>Analysis,
-<% } %>  openapi: { filter: { table: '<%=argv.moduleResourceName%>' } },
+  analysis: <%=argv.resourceName%>Analysis,
+  openapi: { filter: { table: '<%=argv.moduleResourceName%>' } },
   fields: {
     name: $makeSchema(v.optional(), z.string()),
     createdAt: $makeSchema(

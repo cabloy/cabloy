@@ -469,7 +469,7 @@ The response schema is a finite optional superset of all policy-permitted dimens
 
 Select, group, and aggregate remain separate action schemas. Attach the policy to SelectReq, then use `@Arg.filter(DtoStudentSelectReq, { mode: 'group' })` or `{ mode: 'aggregate' }` on the analysis action; ordinary select remains unchanged and rejects explicit analysis controls. The named wrappers keep response references distinct, while public action capabilities and enums come from the same policy.
 
-See [CRUD Workflow](/backend/crud-workflow#optional-grouping-and-statistics) for the Student policy, GET JSON controls, and generator workflow; [Validation Guide](/backend/validation-guide#analysis-action-modes) for defaults, validation, and limits; and [ORM Aggregate and Group Guide](/backend/orm-aggregate-group-guide) for the underlying model operations.
+See [CRUD Workflow](/backend/crud-workflow#grouping-and-statistics) for the Student policy, GET JSON controls, and generator workflow; [Validation Guide](/backend/validation-guide#analysis-action-modes) for defaults, validation, and limits; and [ORM Aggregate and Group Guide](/backend/orm-aggregate-group-guide) for the underlying model operations.
 
 ## How DTOs surface in generated metadata
 

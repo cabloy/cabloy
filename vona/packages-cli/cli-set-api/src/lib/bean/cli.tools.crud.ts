@@ -4,7 +4,6 @@ import { BeanCliBase } from '@cabloy/cli';
 import fs from 'node:fs';
 import path from 'node:path';
 
-import { prepareCrudAnalysis } from '../crudAnalysis.ts';
 import { __ThisSetName__ } from '../this.ts';
 
 declare module '@cabloy/cli' {
@@ -22,7 +21,6 @@ declare module '@cabloy/cli' {
 export class CliToolsCrud extends BeanCliBase {
   async execute() {
     const { argv } = this.context;
-    prepareCrudAnalysis(argv);
     // super
     await super.execute();
     // ssrSiteModuleName
@@ -51,14 +49,7 @@ export class CliToolsCrud extends BeanCliBase {
     // tools:crud
     const commandName = isCabloyStart ? ':tools:crudStart' : ':tools:crudBasic';
     await this.helper.invokeCli(
-      [
-        commandName,
-        resourceName,
-        `--module=${argv.module}`,
-        '--nometadata',
-        ...(argv.aggregate === undefined ? [] : [`--aggregate=${argv.aggregate}`]),
-        ...(argv.groupBy === undefined ? [] : [`--groupBy=${argv.groupBy}`]),
-      ],
+      [commandName, resourceName, `--module=${argv.module}`, '--nometadata'],
       { cwd: argv.projectPath },
     );
     // render

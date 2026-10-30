@@ -151,7 +151,7 @@ Reuse that same exported policy in three places:
 
 Do not create a separate AnalysisReq or add analysis controls to ordinary select. The policy owns function/column allowlists, action defaults, and execution limits; response inference describes the finite optional field superset, while execution returns selected fields only. Optional is not nullable: an unrequested metric is absent, while a selected non-count metric can be SQL `null`.
 
-The derived action schemas publish frontend-readable `filter.capabilities.analysis` without model/class references. After changing the policy, regenerate affected OpenAPI/SDK consumers rather than duplicating the allowlist in frontend code. See [CRUD Workflow](/backend/crud-workflow#optional-grouping-and-statistics), [DTO Infer and Generation](/backend/dto-infer-generation#aggregate-and-group-dto-inference), and [Validation Guide](/backend/validation-guide#analysis-action-modes) for the connected contract.
+The derived action schemas publish frontend-readable `filter.capabilities.analysis` without model/class references. After changing the policy, regenerate affected OpenAPI/SDK consumers rather than duplicating the allowlist in frontend code. See [CRUD Workflow](/backend/crud-workflow#grouping-and-statistics), [DTO Infer and Generation](/backend/dto-infer-generation#aggregate-and-group-dto-inference), and [Validation Guide](/backend/validation-guide#analysis-action-modes) for the connected contract.
 
 ## App-config override support
 
