@@ -1538,7 +1538,10 @@ test(
         await expect(page).toHaveURL(
           new RegExp(`/training-student(?:%3A|:)student/${students[index]!.id}/edit(?:[?#]|$)`),
         );
-        await expect(studentDraftNameInput(page)).toHaveValue(titles[index]!);
+        const input = studentDraftNameInput(page);
+        // Navigation can finish before the outgoing task's transition.
+        await expect(input).toHaveCount(1);
+        await expect(input).toHaveValue(titles[index]!);
         await expect(task(index)).toHaveAttribute('aria-selected', 'true');
       };
       const expectStrip = async (compact: boolean, count: number) => {
@@ -1736,6 +1739,7 @@ test(
       await expect(more).toBeFocused();
       await openMenu([0, 2], 0);
       await close(0);
+      await expect(studentDraftNameInput(page)).toHaveCount(1);
       await expect(studentDraftNameInput(page)).toHaveValue(titles[2]!);
       await expect(task(2)).toHaveAttribute('aria-selected', 'true');
       await openMenu([2], 2);
