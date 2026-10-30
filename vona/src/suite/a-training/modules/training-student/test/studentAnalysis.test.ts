@@ -371,7 +371,8 @@ describe('studentAnalysis.test.ts', { concurrency: false }, () => {
   });
 
   it('excludes students owned by another instance', async () => {
-    const name = `Analysis-instance-${randomUUID()}`;
+    // Keep the full UUID within the VARCHAR(50) name column.
+    const name = `Analysis-${randomUUID()}`;
     const ids: TableIdentity[] = [];
     try {
       await app.bean.executor.mockCtx(async () => {
