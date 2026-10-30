@@ -133,9 +133,23 @@ jobs:
         run: npm create cabloy@latest cabloy-app
       - name: verify project initialization
         working-directory: cabloy-app
-        run: >-
-          node --input-type=module -e
-          "import { existsSync, readFileSync } from 'node:fs'; const required = ['.cabloy-version', 'package.json', 'vona/package.json', 'zova/package.json', 'node_modules', 'vona/node_modules', 'zova/node_modules', 'zova/dist']; const missing = required.filter(file => !existsSync(file)); const packageVersion = JSON.parse(readFileSync('package.json', 'utf8')).version; if (packageVersion !== process.env.CABLOY_VERSION) { console.error(`Expected cabloy@${process.env.CABLOY_VERSION}, got cabloy@${packageVersion}`); process.exit(1); } if (missing.length) { console.error('Project initialization is incomplete:', missing.join(', ')); process.exit(1); }"
+        shell: bash
+        run: |
+          node --input-type=module <<'NODE'
+          import { existsSync, readFileSync } from 'node:fs';
+
+          const required = ['.cabloy-version', 'package.json', 'vona/package.json', 'zova/package.json', 'node_modules', 'vona/node_modules', 'zova/node_modules', 'zova/dist'];
+          const missing = required.filter(file => !existsSync(file));
+          const packageVersion = JSON.parse(readFileSync('package.json', 'utf8')).version;
+          if (packageVersion !== process.env.CABLOY_VERSION) {
+            console.error(`Expected cabloy@${process.env.CABLOY_VERSION}, got cabloy@${packageVersion}`);
+            process.exit(1);
+          }
+          if (missing.length) {
+            console.error('Project initialization is incomplete:', missing.join(', '));
+            process.exit(1);
+          }
+          NODE
       - name: reset database
         working-directory: cabloy-app
         run: npm run db:reset
