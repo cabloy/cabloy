@@ -97,7 +97,7 @@ function validateBody(body: unknown): void {
   let nodes = 0;
   while (pending.length) {
     const { value, depth } = pending.pop()!;
-    if (++nodes > 256 || depth > 8) throw new FixtureTransportError(400);
+    if (++nodes > 256 || depth > 9) throw new FixtureTransportError(400);
     if (typeof value === 'string') {
       if (Buffer.byteLength(value) > 2048) throw new FixtureTransportError(400);
     } else if (Array.isArray(value)) {

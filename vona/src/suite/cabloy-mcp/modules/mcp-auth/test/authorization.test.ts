@@ -1,4 +1,6 @@
 import type { TableIdentity } from 'table-identity';
+import type { VonaApplication } from 'vona';
+import type { BeanSsrSiteBase, IDecoratorSsrSiteOptions } from 'vona-module-a-ssr';
 
 import assert from 'node:assert/strict';
 import { createHash, randomUUID } from 'node:crypto';
@@ -11,6 +13,7 @@ import type {
   TypeMcpClientAuthentication,
 } from '../src/types/index.ts';
 
+import { MiddlewareSystemAuthorization } from '../src/bean/middlewareSystem.authorization.ts';
 import { config as defaultConfig } from '../src/config/config.ts';
 import {
   getMcpAuthConfig,
@@ -97,6 +100,7 @@ async function withFixture(
   let authId: TableIdentity | undefined;
   let profileId: TableIdentity | undefined;
   const config: IMcpAuthConfig = {
+    ssrSite: undefined,
     registration: { ...defaultConfig(app).registration! },
     pendingTtl: 600,
     codeTtl: 60,
@@ -173,6 +177,7 @@ describe('authorization.test.ts', { concurrency: false }, () => {
   it('validates policy defaults and derives issuer and exact host authority from the backend', async () => {
     const config = defaultConfig(app);
     assert.deepEqual(validateMcpAuthConfig(config), {
+      ssrSite: app.meta.env.MCP_AUTH_SSR_SITE,
       registration: {
         maxBodyBytes: 16384,
         maxRedirectUris: 16,
@@ -235,6 +240,77 @@ describe('authorization.test.ts', { concurrency: false }, () => {
       },
       { instanceName: 'shareTest' as any },
     );
+  });
+
+  it('maps the SSR site environment value into module config', () => {
+    for (const value of [undefined, '', 'basic-siteweb:web']) {
+      const application = { meta: { env: { MCP_AUTH_SSR_SITE: value } } } as VonaApplication;
+      assert.equal(defaultConfig(application).ssrSite, value);
+    }
+  });
+
+  it('prioritizes the configured enabled SSR site and otherwise selects the shortest publicPath', async () => {
+    await withFixture(async fixture => {
+      const sites = await app.bean.executor.mockCtx(async () =>
+        app.scope('a-ssr').service.ssr.getSitesEnabled(),
+      );
+      const sorted = sites.toSorted((left, right) => {
+        const a = left.beanOptions.options as IDecoratorSsrSiteOptions;
+        const b = right.beanOptions.options as IDecoratorSsrSiteOptions;
+        return a.publicPath.length - b.publicPath.length;
+      });
+      assert.ok(sorted.length > 1);
+      const fallback = sorted[0];
+      const configured = sorted.at(-1)!;
+      assert.notEqual(configured.name, fallback.name);
+      for (const [selector, expected] of [
+        [configured.name, configured],
+        [undefined, fallback],
+        ['', fallback],
+        ['mcp-test:missing', undefined],
+      ] as const) {
+        app.config.modules['mcp-auth'].ssrSite = selector as IMcpAuthConfig['ssrSite'];
+        const url = new URL(resource.resource);
+        await app.bean.executor.mockCtx(
+          async () => {
+            const ctx = app.currentContext!;
+            const middleware = app.bean._getBean(MiddlewareSystemAuthorization);
+            const execute = () =>
+              middleware.execute({}, async () => {
+                assert.fail('authorization must not fall through');
+              });
+            if (!expected) {
+              await execute();
+              assert.equal(ctx.status, 503);
+              assert.deepEqual(ctx.body, { error: 'temporarily_unavailable' });
+              return;
+            }
+            const site = app.bean._getBean<BeanSsrSiteBase>(
+              expected.beanOptions.beanFullName as any,
+            );
+            await assert.rejects(execute, error => {
+              assert.ok(error instanceof Error);
+              assert.equal(error.code, 302);
+              const redirect = new URL(error.message, url.origin);
+              const pagePath = site.getPagePath('/cabloy/mcp/consent' as any);
+              assert.equal(redirect.pathname, pagePath);
+              assert.ok(redirect.searchParams.get('request'));
+              return true;
+            });
+          },
+          {
+            instanceName: resource.instanceName as any,
+            req: {
+              headers: { host: url.host },
+              rawHeaders: ['Host', url.host],
+              method: 'GET',
+              url: `/mcp/auth?${authorizationParams(fixture.clientId)}`,
+              socket: { encrypted: url.protocol === 'https:' },
+            },
+          },
+        );
+      }
+    });
   });
 
   it('uses existing real login and one-row digests through approval, exchange and revocation', async () => {

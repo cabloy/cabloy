@@ -5,12 +5,17 @@ import type {
   ServerResponse,
 } from 'node:http';
 import type { VonaApplication } from 'vona';
+import type { DtoStudentCreate, DtoStudentUpdate } from 'vona-module-training-student';
 
+import fse from 'fs-extra';
 import assert from 'node:assert/strict';
 import { createHash, randomBytes, randomUUID } from 'node:crypto';
 import { request } from 'node:http';
+import os from 'node:os';
+import path from 'node:path';
 import { after, before, describe, it } from 'node:test';
 import { setTimeout as delay } from 'node:timers/promises';
+import { isDeepStrictEqual } from 'node:util';
 import { acquireTestLock, app } from 'vona-mock';
 import { BeanExecutor } from 'vona-module-a-executor';
 import {
@@ -25,8 +30,13 @@ const version = '2026-07-28';
 const categoriesName = 'commerce_categories_list';
 const searchName = 'commerce_products_search';
 const detailName = 'commerce_product_detail';
+const studentCreateName = 'training_student_create';
+const studentUpdateName = 'training_student_update';
+const studentDeleteName = 'training_student_delete';
 const studentSummaryName = 'training_student_summary';
 const studentLookupName = 'training_student_lookup';
+const studentSelectName = 'training_student_select';
+const studentViewName = 'training_student_view';
 const excludedNames = [
   categoriesName,
   searchName,
@@ -38,6 +48,8 @@ const excludedNames = [
   'mcp_test_action_unsupported',
   'mcp-test_toolFixture_closed',
   'training-student_student_select',
+  'training_student_deleteForce',
+  'training_student_deleteBulk',
 ];
 const trainingDisabled = (process.env.PROJECT_DISABLED_SUITES ?? '')
   .split(',')
@@ -237,7 +249,9 @@ function output(response: Awaited<ReturnType<typeof send>>) {
   return result.structuredContent;
 }
 
-function allowStudentAction(action: 'lookup' | 'summary') {
+function allowStudentAction(
+  action: 'create' | 'update' | 'delete' | 'select' | 'lookup' | 'view' | 'summary',
+) {
   const controller = 'training-student.controller.student';
   return app.scope('a-rbac').event.resolvePolicy.on((request, next) => {
     if (
@@ -420,7 +434,18 @@ describe('businessHttp.test.ts', { concurrency: false, timeout: 60000 }, () => {
       );
       if (trainingDisabled) {
         for (const [name, args] of [
+          [studentCreateName, { name: 'Unavailable student', mobile: '13812345678', level: 1 }],
+          [
+            studentUpdateName,
+            {
+              params: { id: '1' },
+              body: { name: 'Unavailable student', mobile: '13812345678', level: 1 },
+            },
+          ],
+          [studentDeleteName, { id: '1' }],
+          [studentSelectName, { name: 'Student', pageNo: 1, pageSize: 1 }],
           [studentLookupName, { name: 'Student' }],
+          [studentViewName, { id: '1' }],
           [studentSummaryName, { id: '1' }],
         ] as const) {
           const denied = await send('tools/call', { name, arguments: args }, { legacy, headers });
@@ -436,9 +461,10 @@ describe('businessHttp.test.ts', { concurrency: false, timeout: 60000 }, () => {
 
   it('makes known synthetic and unapproved sibling names uncallable under both scopes and transports', async t => {
     const allToken = await redeemBearer('mcp:all');
-    const original = BeanExecutor.prototype.performAction;
+    const executor = app.bean.executor;
+    const original = executor.performAction;
     const observed = t.mock.method(
-      BeanExecutor.prototype,
+      executor,
       'performAction',
       async function (this: BeanExecutor, ...args: Parameters<BeanExecutor['performAction']>) {
         assert.fail(`excluded tool reached performAction: ${String(args[1])}`);
@@ -611,16 +637,29 @@ describe('businessHttp.test.ts', { concurrency: false, timeout: 60000 }, () => {
     }
   });
 
-  it('discovers only currently authorized student Actions without business reads and reauthorizes calls', async t => {
+  it('discovers only currently authorized student Actions without business work and reauthorizes calls', async t => {
     if (trainingDisabled) return;
     assert.ok(app.meta.modules['training-student']);
     const allToken = await redeemBearer('mcp:all');
     const { ControllerStudent, ModelStudent, ServiceStudent } =
       await import('vona-module-training-student');
     const business = [
+      t.mock.method(ControllerStudent.prototype, 'create'),
+      t.mock.method(ServiceStudent.prototype, 'create'),
+      t.mock.method(ModelStudent.prototype, 'insert'),
+      t.mock.method(ControllerStudent.prototype, 'update'),
+      t.mock.method(ServiceStudent.prototype, 'update'),
+      t.mock.method(ModelStudent.prototype, 'update'),
+      t.mock.method(ControllerStudent.prototype, 'delete'),
+      t.mock.method(ServiceStudent.prototype, 'delete'),
+      t.mock.method(ModelStudent.prototype, 'delete'),
+      t.mock.method(ControllerStudent.prototype, 'select'),
       t.mock.method(ControllerStudent.prototype, 'lookup'),
+      t.mock.method(ControllerStudent.prototype, 'view'),
       t.mock.method(ControllerStudent.prototype, 'summary'),
+      t.mock.method(ServiceStudent.prototype, 'select'),
       t.mock.method(ServiceStudent.prototype, 'lookup'),
+      t.mock.method(ServiceStudent.prototype, 'view'),
       t.mock.method(ServiceStudent.prototype, 'summary'),
       t.mock.method(ModelStudent.prototype, 'select'),
       t.mock.method(ModelStudent.prototype, 'count'),
@@ -656,9 +695,23 @@ describe('businessHttp.test.ts', { concurrency: false, timeout: 60000 }, () => {
     });
     const states = [
       { permissions: [], names: [] },
-      { permissions: ['select'], names: [studentLookupName] },
-      { permissions: ['view'], names: [studentSummaryName] },
-      { permissions: ['select', 'view'], names: [studentLookupName, studentSummaryName] },
+      { permissions: ['select'], names: [studentSelectName, studentLookupName] },
+      { permissions: ['view'], names: [studentViewName, studentSummaryName] },
+      {
+        permissions: ['select', 'view'],
+        names: [studentSelectName, studentLookupName, studentViewName, studentSummaryName],
+      },
+      { permissions: ['create'], names: [] },
+      { permissions: ['update'], names: [] },
+      { permissions: ['delete'], names: [] },
+      {
+        permissions: ['create', 'select', 'view'],
+        names: [studentSelectName, studentLookupName, studentViewName, studentSummaryName],
+      },
+      {
+        permissions: ['create', 'update', 'delete', 'select', 'view'],
+        names: [studentSelectName, studentLookupName, studentViewName, studentSummaryName],
+      },
       { permissions: [], names: [] },
     ];
     try {
@@ -676,14 +729,59 @@ describe('businessHttp.test.ts', { concurrency: false, timeout: 60000 }, () => {
           const names = tools.map((tool: any) => tool.name) as string[];
           assert.deepEqual(
             names.toSorted(),
-            state.names.toSorted(),
-            'only the exact approved Actions are admitted',
+            [
+              ...state.names,
+              ...(token === allToken && state.permissions.includes('create')
+                ? [studentCreateName]
+                : []),
+              ...(token === allToken && state.permissions.includes('update')
+                ? [studentUpdateName]
+                : []),
+              ...(token === allToken && state.permissions.includes('delete')
+                ? [studentDeleteName]
+                : []),
+            ].toSorted(),
+            'scope and independent create/update/delete/select/view authority admit only exact approved Actions',
           );
           assert.deepEqual(
             policyCalls.slice(before),
-            [`${controller}#lookup`, `${controller}#summary`],
-            'each list freshly checks the actual registered Actions',
+            [
+              ...(token === allToken ? [`${controller}#create`] : []),
+              `${controller}#select`,
+              `${controller}#lookup`,
+              `${controller}#view`,
+              ...(token === allToken ? [`${controller}#update`] : []),
+              `${controller}#summary`,
+              ...(token === allToken ? [`${controller}#delete`] : []),
+            ],
+            'each list freshly checks registered Actions in order, skipping mutations only on read scope',
           );
+          const createTool = tools.find((tool: any) => tool.name === studentCreateName);
+          if (createTool) {
+            assert.equal(createTool.annotations.readOnlyHint, false);
+            assert.notEqual(createTool.annotations.destructiveHint, false);
+            assert.deepEqual(Object.keys(createTool.outputSchema.properties), ['result']);
+            assert.deepEqual(createTool.outputSchema.required, ['result']);
+          }
+          const updateTool = tools.find((tool: any) => tool.name === studentUpdateName);
+          if (updateTool) {
+            assert.equal(updateTool.annotations.readOnlyHint, false);
+            assert.notEqual(updateTool.annotations.destructiveHint, false);
+            assert.deepEqual(Object.keys(updateTool.inputSchema.properties), ['params', 'body']);
+            assert.deepEqual(updateTool.inputSchema.required, ['params', 'body']);
+            assert.equal(updateTool.inputSchema.additionalProperties, false);
+            assert.deepEqual(updateTool.outputSchema.properties.result, { type: 'null' });
+            assert.deepEqual(updateTool.outputSchema.required, ['result']);
+          }
+          const deleteTool = tools.find((tool: any) => tool.name === studentDeleteName);
+          if (deleteTool) {
+            assert.equal(deleteTool.annotations.readOnlyHint, false);
+            assert.notEqual(deleteTool.annotations.destructiveHint, false);
+            assert.deepEqual(Object.keys(deleteTool.inputSchema.properties), ['id']);
+            assert.deepEqual(deleteTool.inputSchema.required, ['id']);
+            assert.equal(deleteTool.inputSchema.additionalProperties, false);
+            assert.deepEqual(deleteTool.outputSchema.properties.result, { type: 'null' });
+          }
           const studentTool = tools.find((tool: any) => tool.name === studentSummaryName);
           if (studentTool) {
             assert.deepEqual(Object.keys(studentTool.inputSchema.properties), ['id']);
@@ -710,13 +808,15 @@ describe('businessHttp.test.ts', { concurrency: false, timeout: 60000 }, () => {
         }
         granted = [`${controller}#select`, `${controller}#view`];
         const visible = await send('tools/list', {}, options);
-        assert.equal(
-          visible.body.result.tools.some((tool: any) => tool.name === studentSummaryName),
-          true,
+        assert.deepEqual(
+          visible.body.result.tools.map((tool: any) => tool.name).toSorted(),
+          [studentSelectName, studentLookupName, studentViewName, studentSummaryName].toSorted(),
         );
         granted = [];
         for (const [name, args] of [
+          [studentSelectName, { name: 'unused', pageNo: 1, pageSize: 1 }],
           [studentLookupName, { name: 'unused' }],
+          [studentViewName, { id: '-1' }],
           [studentSummaryName, { id: '-1' }],
         ] as const) {
           const denied = await send('tools/call', { name, arguments: args }, options);
@@ -746,10 +846,8 @@ describe('businessHttp.test.ts', { concurrency: false, timeout: 60000 }, () => {
         granted = [`${controller}#view`];
         const recovered = await send('tools/list', {}, options);
         assert.deepEqual(
-          recovered.body.result.tools
-            .filter((tool: any) => [studentLookupName, studentSummaryName].includes(tool.name))
-            .map((tool: any) => tool.name),
-          [studentSummaryName],
+          recovered.body.result.tools.map((tool: any) => tool.name),
+          [studentViewName, studentSummaryName],
         );
         for (const spy of business) assert.equal(spy.mock.callCount(), 0);
       }
@@ -758,16 +856,1381 @@ describe('businessHttp.test.ts', { concurrency: false, timeout: 60000 }, () => {
       for (const spy of business) spy.mock.restore();
     }
     const after = await send('tools/list', {}, { headers: { authorization: `Bearer ${bearer}` } });
-    assert.equal(
-      after.body.result.tools.some((tool: any) =>
-        [studentLookupName, studentSummaryName].includes(tool.name),
-      ),
-      false,
-      'test policy was removed',
-    );
+    assert.deepEqual(after.body.result.tools, [], 'test policy was removed');
   });
 
-  it('guards independent student lookup and summary with current roles across modern/legacy read scopes and instance boundaries', async t => {
+  it('creates one owned student aggregate only with all scope and independent current create authority', async t => {
+    if (trainingDisabled) return;
+    const { ServiceStudent } = await import('vona-module-training-student');
+    const name = `MCP create ${randomUUID()}`;
+    const recordName = `MCP create record ${randomUUID()}`;
+    const subjectName = `MCP create subject ${randomUUID()}`;
+    const descriptionMarkdown = `# Owned MCP create\n\n${randomUUID()}`;
+    const trainingTime = new Date('2026-05-12T08:00:00.000Z');
+    const studentData = {
+      name,
+      mobile: '13812345678',
+      level: 2,
+      content: { descriptionMarkdown },
+      trainingRecords: [
+        {
+          name: recordName,
+          subjectCount: 1,
+          totalScore: 88,
+          averageScore: 88,
+          trainingTime,
+          description: 'Owned MCP create record',
+          trainingRecordSubjects: [
+            { name: subjectName, score: 88, description: 'Owned MCP create subject' },
+          ],
+        },
+      ],
+    } as DtoStudentCreate;
+    let studentId: string | undefined;
+    let off = () => {};
+    const allToken = await redeemBearer('mcp:all');
+    const revokedToken = await redeemBearer('mcp:all');
+    const observedCalls: Array<{ method: unknown; path: unknown; options: any }> = [];
+    const executor = app.bean.executor;
+    const original = executor.performAction;
+    const observed = t.mock.method(
+      executor,
+      'performAction',
+      async function (this: BeanExecutor, ...args: Parameters<BeanExecutor['performAction']>) {
+        observedCalls.push({ method: args[0], path: args[1], options: args[2] });
+        assert.equal(String(this.bean.passport.currentUser?.id), fixtureUserId);
+        assert.equal(String(this.bean.passport.currentAuth?.id), fixtureAuthId);
+        assert.equal(
+          this.bean.passport.currentRoles?.some(role => role.name === 'systemAdmin'),
+          false,
+        );
+        return await original.apply(this, args);
+      },
+    );
+    const create = t.mock.method(ServiceStudent.prototype, 'create');
+    const call = (args: object = studentData, token = allToken, legacy = false) =>
+      send(
+        'tools/call',
+        { name: studentCreateName, arguments: args },
+        { legacy, headers: { authorization: `Bearer ${token}` } },
+      );
+    const assertDenied = (response: Awaited<ReturnType<typeof send>>, stage: string) => {
+      assert.equal(response.status, 200);
+      assert.equal(response.body.error, undefined, stage);
+      assert.equal(response.body.result.isError, true);
+      assert.equal(response.body.result.structuredContent, undefined);
+      assert.deepEqual(response.body.result.content, [{ type: 'text', text: 'Action failed' }]);
+    };
+    const assertOwnedCounts = async (expected: number) => {
+      await app.bean.executor.mockCtx(
+        async () => {
+          const options = { disableDeleted: true };
+          assert.equal(
+            Number(
+              await app.scope('training-student').model.student.count({ where: { name } }, options),
+            ),
+            expected,
+          );
+          assert.equal(
+            Number(
+              await app
+                .scope('training-student')
+                .model.studentContent.count({ where: { descriptionMarkdown } }, options),
+            ),
+            expected,
+          );
+          assert.equal(
+            Number(
+              await app
+                .scope('training-record')
+                .model.record.count({ where: { name: recordName } }, options),
+            ),
+            expected,
+          );
+          assert.equal(
+            Number(
+              await app
+                .scope('training-recordsubject')
+                .model.subject.count({ where: { name: subjectName } }, options),
+            ),
+            expected,
+          );
+        },
+        { instanceName: '' },
+      );
+    };
+    try {
+      // Broader OAuth scope is not an ordinary business permission.
+      assertDenied(await call(), 'create without current create permission');
+      for (const action of ['select', 'view'] as const) {
+        off();
+        off = allowStudentAction(action);
+        assertDenied(await call(), 'create without current create permission');
+      }
+      assert.equal(create.mock.callCount(), 0, 'select and view cannot enter create service');
+      await assertOwnedCounts(0);
+      off();
+      off = allowStudentAction('create');
+      for (const legacy of [false, true]) {
+        const beforeList = create.mock.callCount();
+        const listed = await send(
+          'tools/list',
+          {},
+          {
+            legacy,
+            headers: { authorization: `Bearer ${allToken}` },
+          },
+        );
+        assert.deepEqual(
+          listed.body.result.tools.map((tool: any) => tool.name),
+          [studentCreateName],
+        );
+        assert.equal(
+          create.mock.callCount(),
+          beforeList,
+          'create discovery is never a trial write',
+        );
+        const readOptions = { legacy, headers: { authorization: `Bearer ${bearer}` } };
+        const readList = await send('tools/list', {}, readOptions);
+        assert.deepEqual(readList.body.result.tools, [], 'read scope hides even authorized create');
+        const before = observedCalls.length;
+        const denied = await call(studentData, bearer, legacy);
+        assert.equal(denied.status, 200);
+        assert.equal(denied.body.error?.code, -32602);
+        assert.equal(denied.body.result, undefined);
+        assert.equal(observedCalls.length, before, 'read scope rejects create before dispatch');
+        for (const args of [
+          { ...studentData, extra: true },
+          { ...studentData, mobile: {} },
+          { ...studentData, innerAccess: true },
+          {
+            ...studentData,
+            trainingRecords: [
+              {
+                name: recordName,
+                trainingRecordSubjects: [{ name: subjectName, score: 95, id: '123' }],
+              },
+            ],
+          },
+          {
+            ...studentData,
+            trainingRecords: [
+              {
+                name: recordName,
+                trainingTime: 'not-a-date',
+                trainingRecordSubjects: [{ name: subjectName, score: 95 }],
+              },
+            ],
+          },
+        ]) {
+          const invalid = await call(args, allToken, legacy);
+          assert.equal(invalid.status, 200);
+          assert.equal(invalid.body.error?.code, -32602);
+          assert.equal(invalid.body.result, undefined);
+        }
+        assert.equal(observedCalls.length, before, 'invalid create arguments fail before dispatch');
+        for (const [toolName, args] of [
+          [studentSelectName, { name, pageNo: 1, pageSize: 1 }],
+          [studentViewName, { id: '-1' }],
+        ] as const) {
+          assertDenied(
+            await send(
+              'tools/call',
+              { name: toolName, arguments: args },
+              {
+                legacy,
+                headers: { authorization: `Bearer ${allToken}` },
+              },
+            ),
+            `create-only authority calling ${toolName}`,
+          );
+        }
+      }
+      await assertOwnedCounts(0);
+      // A previously listed create is independently reauthorized at call time.
+      off();
+      off = allowStudentAction('view');
+      assertDenied(await call(), 'create without current create permission');
+      assert.equal(create.mock.callCount(), 0, 'revoked create permission performs no write');
+      await assertOwnedCounts(0);
+      off();
+      off = allowStudentAction('create');
+      await app.bean.executor.mockCtx(
+        async () => {
+          await app.scope('mcp-auth').service.authorization.revoke(revokedToken);
+        },
+        { instanceName: '' },
+      );
+      const beforeRevoked = observedCalls.length;
+      const revoked = await call(studentData, revokedToken);
+      assert.equal(revoked.status, 401);
+      assert.equal(observedCalls.length, beforeRevoked, 'revoked bearer cannot dispatch create');
+      assert.equal(create.mock.callCount(), 0);
+      await assertOwnedCounts(0);
+
+      const response = await call();
+      const identity = response.body?.result?.structuredContent?.result;
+      if (typeof identity === 'string' || typeof identity === 'number')
+        studentId = String(identity);
+      // Capture ownership before validating either response channel; finally also covers a lost response.
+      const created = output(response);
+      assert.ok(studentId);
+      assert.deepEqual(created, { result: studentId });
+      assert.equal(create.mock.callCount(), 1, 'exactly one aggregate create is executed');
+      const dispatched = observedCalls.at(-1)!;
+      assert.equal(dispatched.method, 'post');
+      assert.equal(dispatched.path, '/training/student');
+      assert.deepEqual(Object.keys(dispatched.options).sort(), ['body', 'innerAccess']);
+      assert.equal(dispatched.options.innerAccess, false);
+      assert.deepEqual(dispatched.options.body, studentData);
+      await assertOwnedCounts(1);
+      await app.bean.executor.mockCtx(
+        async () => {
+          const training = app.scope('training-student');
+          const student = await training.service.student.view(studentId!);
+          assert.ok(student);
+          assert.equal(String(student.id), studentId);
+          assert.equal(student.name, name);
+          assert.equal(student.mobile, studentData.mobile);
+          assert.equal(student.level, studentData.level);
+          assert.equal(student.content?.descriptionMarkdown, descriptionMarkdown);
+          assert.equal(student.trainingRecords?.length, 1);
+          const record = student.trainingRecords![0];
+          assert.equal(record.name, recordName);
+          assert.equal(record.subjectCount, 1);
+          assert.equal(record.totalScore, 88);
+          assert.equal(Number(record.averageScore), 88);
+          assert.equal(new Date(record.trainingTime!).toISOString(), trainingTime.toISOString());
+          assert.equal(record.description, 'Owned MCP create record');
+          const recordWithSubjects = await app
+            .scope('training-record')
+            .model.record.getById(record.id, { include: { trainingRecordSubjects: true } });
+          assert.ok(recordWithSubjects);
+          assert.equal(recordWithSubjects.trainingRecordSubjects.length, 1);
+          const subject = recordWithSubjects.trainingRecordSubjects[0];
+          assert.equal(subject.name, subjectName);
+          assert.equal(subject.score, 88);
+          assert.equal(subject.description, 'Owned MCP create subject');
+          const content = await training.model.studentContent.get({ studentId: studentId! });
+          assert.equal(content?.descriptionMarkdown, descriptionMarkdown);
+          assert.equal(content?.descriptionHtml, app.bean.markdown.renderHtml(descriptionMarkdown));
+        },
+        { instanceName: '' },
+      );
+      await app.bean.executor.mockCtx(
+        async () => {
+          const training = app.scope('training-student');
+          assert.equal(await training.service.student.view(studentId!), undefined);
+          assert.equal(await training.model.student.get({ name }), undefined);
+          assert.equal(
+            await training.model.studentContent.get({ studentId: studentId! }),
+            undefined,
+          );
+          assert.equal(
+            await app.scope('training-record').model.record.get({ name: recordName }),
+            undefined,
+          );
+          assert.equal(
+            await app.scope('training-recordsubject').model.subject.get({ name: subjectName }),
+            undefined,
+          );
+        },
+        { instanceName: 'shareTest' as any },
+      );
+    } finally {
+      off();
+      try {
+        await app.bean.executor.mockCtx(
+          async () => {
+            const training = app.scope('training-student');
+            const ids = new Set(studentId ? [studentId] : []);
+            // Exact test-owned name fallback covers a committed write whose response failed.
+            const owned = await training.model.student.select(
+              { where: { name } },
+              { disableDeleted: true },
+            );
+            for (const student of owned) {
+              if (student.id) ids.add(String(student.id));
+            }
+            for (const id of ids) await training.service.student.deleteForce(id);
+          },
+          { instanceName: '' },
+        );
+      } finally {
+        create.mock.restore();
+        observed.mock.restore();
+      }
+    }
+  });
+
+  it('creates a basic-fields-only student, updates its root and independently authorizes serialized MCP view', async () => {
+    if (trainingDisabled) return;
+    const suffix = randomUUID();
+    const studentData = {
+      name: `MCP basic ${suffix}`,
+      mobile: '13812345678',
+      level: 1,
+    };
+    const body = {
+      name: `MCP basic updated ${suffix}`,
+      mobile: studentData.mobile,
+      level: studentData.level,
+    };
+    const allToken = await redeemBearer('mcp:all');
+    let studentId: string | undefined;
+    const contentIds = new Set<string>();
+    let off = () => {};
+    try {
+      off = allowStudentAction('create');
+      const response = await send(
+        'tools/call',
+        { name: studentCreateName, arguments: studentData },
+        { headers: { authorization: `Bearer ${allToken}` } },
+      );
+      const identity = response.body?.result?.structuredContent?.result;
+      if (typeof identity === 'string' || typeof identity === 'number')
+        studentId = String(identity);
+      // Capture ownership before either output channel is validated.
+      const created = output(response);
+      assert.ok(studentId);
+      assert.deepEqual(created, { result: studentId });
+
+      off();
+      off = allowStudentAction('update');
+      assert.deepEqual(
+        output(
+          await send(
+            'tools/call',
+            { name: studentUpdateName, arguments: { params: { id: studentId }, body } },
+            { headers: { authorization: `Bearer ${allToken}` } },
+          ),
+        ),
+        { result: null },
+      );
+
+      // Mutation authority never supplies the independent read-back grant.
+      off();
+      off = allowStudentAction('view');
+      const student = output(
+        await send(
+          'tools/call',
+          { name: studentViewName, arguments: { id: studentId } },
+          { headers: { authorization: `Bearer ${bearer}` } },
+        ),
+      );
+      assert.equal(student.id, studentId);
+      assert.equal(student.name, body.name);
+      assert.equal(student.level, body.level);
+      assert.equal(student.mobile, '138****5678');
+      // Existing response parsing omits optional empty strings from JSON.
+      assert.equal(Object.hasOwn(student.content, 'descriptionMarkdown'), false);
+      assert.deepEqual(student.trainingRecords, []);
+    } finally {
+      off();
+      await app.bean.executor.mockCtx(
+        async () => {
+          const training = app.scope('training-student');
+          const ids = new Set(studentId ? [studentId] : []);
+          if (!studentId) {
+            // Exact owned-name recovery covers create committing before its response fails.
+            const owned = await training.model.student.select(
+              { where: { name: studentData.name } },
+              { disableDeleted: true },
+            );
+            for (const student of owned) {
+              if (student.id) ids.add(String(student.id));
+            }
+          }
+          for (const id of ids) {
+            const contents = await training.model.studentContent.select(
+              { where: { studentId: id } },
+              { disableDeleted: true },
+            );
+            for (const content of contents) contentIds.add(String(content.id));
+          }
+          for (const id of contentIds) {
+            await training.model.studentContent.deleteById(id, { disableDeleted: true });
+          }
+          for (const id of ids) {
+            await training.model.student.deleteById(id, { disableDeleted: true });
+          }
+        },
+        { instanceName: '' },
+      );
+    }
+  });
+
+  it('updates an owned aggregate through guarded PATCH and authorized view without crossing root or child ownership', async t => {
+    if (trainingDisabled) return;
+    const { ModelStudent, ModelStudentContent, ServiceStudent } =
+      await import('vona-module-training-student');
+    const { ModelRecord } = await import('vona-module-training-record');
+    const { ModelSubject } = await import('vona-module-training-recordsubject');
+    const allToken = await redeemBearer('mcp:all');
+    const revokedToken = await redeemBearer('mcp:all');
+    const suffix = randomUUID();
+    const descriptionMarkdown = `# Owned MCP update\n\n${suffix}`;
+    const trainingTime = new Date('2026-06-15T09:30:00.000Z');
+    type OwnedAggregate = {
+      name: string;
+      instanceName: '' | 'shareTest';
+      id?: string;
+      contentIds: Set<string>;
+      recordIds: Set<string>;
+      subjectIds: Set<string>;
+    };
+    const owned: OwnedAggregate[] = [];
+    const own = (label: string, instanceName: OwnedAggregate['instanceName'] = '') => {
+      const fixture: OwnedAggregate = {
+        name: `MCP update ${label} ${suffix}`,
+        instanceName,
+        contentIds: new Set(),
+        recordIds: new Set(),
+        subjectIds: new Set(),
+      };
+      owned.push(fixture);
+      return fixture;
+    };
+    const target = own('target');
+    const protectedRoot = own('protected');
+    const deletedRoot = own('deleted');
+    const missingRoot = own('missing');
+    const foreignRoot = own('foreign', 'shareTest');
+    const collectOwned = async (fixture: OwnedAggregate) => {
+      const training = app.scope('training-student');
+      if (!fixture.id) {
+        // Only recover this exact owned name if create committed before returning an ID.
+        const roots = await training.model.student.select(
+          { where: { name: fixture.name } },
+          { disableDeleted: true },
+        );
+        assert.ok(roots.length <= 1);
+        if (roots[0]) fixture.id = String(roots[0].id);
+      }
+      if (!fixture.id) return;
+      const contents = await training.model.studentContent.select(
+        { where: { studentId: fixture.id } },
+        { disableDeleted: true },
+      );
+      for (const content of contents) fixture.contentIds.add(String(content.id));
+      const records = await app
+        .scope('training-record')
+        .model.record.select({ where: { studentId: fixture.id } }, { disableDeleted: true });
+      for (const record of records) fixture.recordIds.add(String(record.id));
+      for (const recordId of fixture.recordIds) {
+        const subjects = await app
+          .scope('training-recordsubject')
+          .model.subject.select({ where: { recordId } }, { disableDeleted: true });
+        for (const subject of subjects) fixture.subjectIds.add(String(subject.id));
+      }
+    };
+    const createOwned = async (fixture: OwnedAggregate, multiple = false) =>
+      app.bean.executor.mockCtx(
+        async () => {
+          const student = await app.scope('training-student').service.student.create({
+            name: fixture.name,
+            mobile: '13812345678',
+            level: 1,
+            content: { descriptionMarkdown: `Original ${fixture.name}` },
+            trainingRecords: [
+              {
+                name: `${fixture.name} record`,
+                trainingTime: new Date('2026-05-10T08:00:00.000Z'),
+                trainingRecordSubjects: [
+                  { name: `${fixture.name} subject`, score: 70 },
+                  ...(multiple ? [{ name: `${fixture.name} removed subject`, score: 60 }] : []),
+                ],
+              },
+              ...(multiple
+                ? [
+                    {
+                      name: `${fixture.name} removed record`,
+                      trainingRecordSubjects: [{ name: `${fixture.name} descendant`, score: 50 }],
+                    },
+                  ]
+                : []),
+            ],
+          } as DtoStudentCreate);
+          fixture.id = String(student.id);
+          await collectOwned(fixture);
+          return await app.scope('training-student').model.student.getById(fixture.id, {
+            include: {
+              content: true,
+              trainingRecords: { include: { trainingRecordSubjects: true } },
+            },
+          });
+        },
+        { instanceName: fixture.instanceName as any },
+      );
+    const snapshot = (fixture: OwnedAggregate) =>
+      app.bean.executor.mockCtx(
+        async () => {
+          await collectOwned(fixture);
+          return {
+            root: await app.scope('training-student').model.student.getById(fixture.id!, {
+              disableDeleted: true,
+            }),
+            content: await app
+              .scope('training-student')
+              .model.studentContent.select(
+                { where: { studentId: fixture.id! }, orders: [['id', 'asc']] },
+                { disableDeleted: true },
+              ),
+            records: await app
+              .scope('training-record')
+              .model.record.select(
+                { where: { studentId: fixture.id! }, orders: [['id', 'asc']] },
+                { disableDeleted: true },
+              ),
+            subjects: await app
+              .scope('training-recordsubject')
+              .model.subject.select(
+                { where: { recordId: [...fixture.recordIds] }, orders: [['id', 'asc']] },
+                { disableDeleted: true },
+              ),
+          };
+        },
+        { instanceName: fixture.instanceName as any },
+      );
+    let off = () => {};
+    const observedCalls: Array<{ method: unknown; path: unknown; options: any; result?: unknown }> =
+      [];
+    const spies: Array<{ mock: { restore(): void } }> = [];
+    try {
+      const initial = await createOwned(target, true);
+      const protectedStudent = await createOwned(protectedRoot);
+      await createOwned(deletedRoot);
+      await createOwned(missingRoot);
+      await app.bean.executor.mockCtx(
+        async () => app.scope('training-student').service.student.deleteForce(missingRoot.id!),
+        { instanceName: '' },
+      );
+      await createOwned(foreignRoot);
+      assert.ok(initial && protectedStudent);
+      const record = initial.trainingRecords!.find(item => item.name === `${target.name} record`)!;
+      const removedRecord = initial.trainingRecords!.find(
+        item => item.name === `${target.name} removed record`,
+      )!;
+      const subject = record.trainingRecordSubjects!.find(
+        item => item.name === `${target.name} subject`,
+      )!;
+      const removedSubject = record.trainingRecordSubjects!.find(
+        item => item.name === `${target.name} removed subject`,
+      )!;
+      const protectedRecord = protectedStudent.trainingRecords![0];
+      const protectedSubject = protectedRecord.trainingRecordSubjects![0];
+      await app.bean.executor.mockCtx(
+        async () => app.scope('training-student').service.student.delete(deletedRoot.id!),
+        { instanceName: '' },
+      );
+      const protectedBefore = await snapshot(protectedRoot);
+      const deletedBefore = await snapshot(deletedRoot);
+      const foreignBefore = await snapshot(foreignRoot);
+      const targetBefore = await snapshot(target);
+      const body = {
+        name: `MCP updated ${suffix}`,
+        mobile: '13987654321',
+        level: 3,
+        content: { descriptionMarkdown },
+        trainingRecords: [
+          {
+            id: record.id,
+            name: `MCP updated record ${suffix}`,
+            subjectCount: 2,
+            totalScore: 185,
+            averageScore: 92.5,
+            trainingTime,
+            description: 'Updated existing MCP record',
+            trainingRecordSubjects: [
+              { id: subject.id, name: `MCP updated subject ${suffix}`, score: 96 },
+              { name: `MCP new subject ${suffix}`, score: 89 },
+              // Deletion controls do not waive the declared required business fields.
+              { id: removedSubject.id, deleted: true, name: removedSubject.name, score: 60 },
+            ],
+          },
+          {
+            name: `MCP new record ${suffix}`,
+            trainingTime,
+            trainingRecordSubjects: [{ name: `MCP new record subject ${suffix}`, score: 91 }],
+          },
+          { id: removedRecord.id, deleted: true, name: removedRecord.name },
+        ],
+      } as DtoStudentUpdate;
+      const args = { params: { id: target.id! }, body };
+      const executor = app.bean.executor;
+      const original = executor.performAction;
+      const observed = t.mock.method(
+        executor,
+        'performAction',
+        async function (this: BeanExecutor, ...args: Parameters<BeanExecutor['performAction']>) {
+          const call: (typeof observedCalls)[number] = {
+            method: args[0],
+            path: args[1],
+            options: args[2],
+          };
+          observedCalls.push(call);
+          assert.equal(String(this.bean.passport.currentUser?.id), fixtureUserId);
+          assert.equal(String(this.bean.passport.currentAuth?.id), fixtureAuthId);
+          assert.equal(
+            this.bean.passport.currentRoles?.some(role => role.name === 'systemAdmin'),
+            false,
+          );
+          call.result = await original.apply(this, args);
+          return call.result as Awaited<ReturnType<BeanExecutor['performAction']>>;
+        },
+      );
+      spies.push(observed);
+      const update = t.mock.method(ServiceStudent.prototype, 'update');
+      spies.push(update);
+      const writes = [
+        t.mock.method(ModelStudent.prototype, 'update'),
+        t.mock.method(ModelStudentContent.prototype, 'mutateBulk'),
+        t.mock.method(ModelRecord.prototype, 'mutateBulk'),
+        t.mock.method(ModelSubject.prototype, 'mutateBulk'),
+      ];
+      spies.push(...writes);
+      const writeCounts = () => writes.map(spy => spy.mock.callCount());
+      const call = (input: object = args, token = allToken, legacy = false) =>
+        send(
+          'tools/call',
+          { name: studentUpdateName, arguments: input },
+          { legacy, headers: { authorization: `Bearer ${token}` } },
+        );
+      const list = (token = allToken, legacy = false) =>
+        send('tools/list', {}, { legacy, headers: { authorization: `Bearer ${token}` } });
+      const assertDenied = (response: Awaited<ReturnType<typeof send>>) => {
+        assert.equal(response.status, 200);
+        assert.equal(response.body.error, undefined);
+        assert.equal(response.body.result.isError, true);
+        assert.equal(response.body.result.structuredContent, undefined);
+        assert.deepEqual(response.body.result.content, [{ type: 'text', text: 'Action failed' }]);
+      };
+      const assertNull = (response: Awaited<ReturnType<typeof send>>) => {
+        assert.deepEqual(output(response), { result: null });
+        const dispatched = observedCalls.at(-1)!;
+        assert.equal(dispatched.method, 'patch');
+        assert.equal(dispatched.path, '/training/student/:id');
+        assert.equal(
+          dispatched.result,
+          null,
+          'real Action executor unwraps void completion to null',
+        );
+        assert.deepEqual(Object.keys(dispatched.options).sort(), ['body', 'innerAccess', 'params']);
+        assert.equal(dispatched.options.innerAccess, false);
+      };
+      assertDenied(await call());
+      for (const action of ['create', 'select', 'view'] as const) {
+        off();
+        off = allowStudentAction(action);
+        assertDenied(await call());
+      }
+      assert.equal(update.mock.callCount(), 0, 'create/select/view never grant update');
+      assert.deepEqual(writeCounts(), [0, 0, 0, 0]);
+      assert.deepEqual(await snapshot(target), targetBefore);
+      off();
+      off = allowStudentAction('update');
+      for (const legacy of [false, true]) {
+        const listed = await list(allToken, legacy);
+        assert.equal(listed.status, 200);
+        assert.deepEqual(
+          listed.body.result.tools.map((tool: any) => tool.name),
+          [studentUpdateName],
+        );
+        assert.deepEqual((await list(bearer, legacy)).body.result.tools, []);
+        const before = observedCalls.length;
+        const readDenied = await call(args, bearer, legacy);
+        assert.equal(readDenied.status, 200);
+        assert.equal(readDenied.body.error?.code, -32602);
+        assert.equal(readDenied.body.result, undefined);
+        for (const input of [
+          body,
+          { body },
+          { ...args, extra: true },
+          { ...args, innerAccess: true },
+          { params: { id: target.id, instanceName: 'shareTest' }, body },
+          { params: { id: {} }, body },
+          { params: args.params, body: { mobile: body.mobile, level: body.level } },
+          { params: args.params, body: { name: body.name, level: body.level } },
+          { params: args.params, body: { name: body.name, mobile: body.mobile } },
+          { ...args, body: { ...body, extra: true } },
+          { ...args, body: { ...body, content: { descriptionMarkdown, studentId: target.id } } },
+          {
+            ...args,
+            body: { ...body, trainingRecords: [{ name: record.name, studentId: target.id }] },
+          },
+          {
+            ...args,
+            body: {
+              ...body,
+              trainingRecords: [{ name: record.name, trainingTime: 'not-a-date' }],
+            },
+          },
+          {
+            ...args,
+            body: {
+              ...body,
+              trainingRecords: [
+                {
+                  name: record.name,
+                  trainingRecordSubjects: [{ name: subject.name, score: 80, recordId: record.id }],
+                },
+              ],
+            },
+          },
+        ]) {
+          const invalid = await call(input, allToken, legacy);
+          assert.equal(invalid.status, 200);
+          assert.equal(invalid.body.error?.code, -32602);
+          assert.equal(invalid.body.result, undefined);
+        }
+        assert.equal(
+          observedCalls.length,
+          before,
+          'read scope and malformed updates fail predispatch',
+        );
+      }
+      assert.equal(update.mock.callCount(), 0, 'discovery never invokes the update service');
+      assert.deepEqual(writeCounts(), [0, 0, 0, 0]);
+      assert.deepEqual(await snapshot(target), targetBefore);
+      // A listed tool grants no durable authority: both business permission and token are current.
+      off();
+      off = allowStudentAction('view');
+      assertDenied(await call());
+      assert.equal(update.mock.callCount(), 0);
+      assert.deepEqual(await snapshot(target), targetBefore);
+      off();
+      off = allowStudentAction('update');
+      assert.deepEqual(
+        (await list(revokedToken)).body.result.tools.map((tool: any) => tool.name),
+        [studentUpdateName],
+      );
+      await app.bean.executor.mockCtx(
+        async () => app.scope('mcp-auth').service.authorization.revoke(revokedToken),
+        { instanceName: '' },
+      );
+      const beforeRevoked = observedCalls.length;
+      assert.equal((await call(args, revokedToken)).status, 401);
+      assert.equal(observedCalls.length, beforeRevoked);
+      assert.equal(update.mock.callCount(), 0);
+      assert.deepEqual(writeCounts(), [0, 0, 0, 0]);
+      assert.deepEqual(await snapshot(target), targetBefore);
+
+      assertNull(await call());
+      assert.equal(
+        update.mock.callCount(),
+        1,
+        'one successful aggregate mutation, not automatic replay',
+      );
+      const dispatched = observedCalls.at(-1)!;
+      assert.deepEqual(dispatched.options.params, args.params);
+      assert.deepEqual(dispatched.options.body, {
+        ...body,
+        content: { deleted: false, ...body.content },
+        trainingRecords: body.trainingRecords!.map(record => ({
+          deleted: false,
+          ...record,
+          ...(record.id !== undefined ? { id: String(record.id) } : {}),
+          ...(record.trainingRecordSubjects
+            ? {
+                trainingRecordSubjects: record.trainingRecordSubjects.map(subject => ({
+                  deleted: false,
+                  ...subject,
+                  ...(subject.id !== undefined ? { id: String(subject.id) } : {}),
+                })),
+              }
+            : {}),
+        })),
+      });
+      assert.ok(dispatched.options.body.trainingRecords[0].trainingTime instanceof Date);
+      assert.ok(
+        update.mock.calls.at(-1)!.arguments[1].trainingRecords![0].trainingTime instanceof Date,
+      );
+      // Legacy uses the same guarded PATCH, without replaying the id-less nested inserts.
+      const rootBody = { name: body.name, mobile: body.mobile, level: body.level };
+      assertNull(await call({ params: args.params, body: rootBody }, allToken, true));
+      assert.equal(update.mock.callCount(), 2);
+      // Update does not silently grant read-back authority.
+      assertDenied(
+        await send(
+          'tools/call',
+          { name: studentViewName, arguments: { id: target.id } },
+          {
+            headers: { authorization: `Bearer ${allToken}` },
+          },
+        ),
+      );
+      off();
+      off = allowStudentAction('view');
+      for (const legacy of [false, true]) {
+        const student = output(
+          await send(
+            'tools/call',
+            { name: studentViewName, arguments: { id: target.id } },
+            {
+              legacy,
+              headers: { authorization: `Bearer ${bearer}` },
+            },
+          ),
+        );
+        assert.equal(student.id, target.id);
+        assert.equal(student.name, body.name);
+        assert.equal(student.mobile, '139****4321');
+        assert.equal(student.level, body.level);
+        assert.equal(student.content.descriptionMarkdown, descriptionMarkdown);
+        assert.equal(student.trainingRecords.length, 2);
+        const updated = student.trainingRecords.find(
+          (item: any) => String(item.id) === String(record.id),
+        );
+        const added = student.trainingRecords.find(
+          (item: any) => item.name === `MCP new record ${suffix}`,
+        );
+        assert.ok(updated && added);
+        assert.equal(updated.name, `MCP updated record ${suffix}`);
+        assert.equal(updated.subjectCount, 2);
+        assert.equal(updated.totalScore, 185);
+        assert.equal(updated.averageScore, 92.5);
+        assert.equal(updated.description, 'Updated existing MCP record');
+        for (const item of [updated, added]) {
+          assert.ok(item.trainingTime instanceof Date);
+          assert.equal(item.trainingTime.toISOString(), trainingTime.toISOString());
+        }
+        assert.deepEqual(
+          updated.trainingRecordSubjects.map((item: any) => [item.name, item.score]).toSorted(),
+          [
+            [`MCP updated subject ${suffix}`, 96],
+            [`MCP new subject ${suffix}`, 89],
+          ].toSorted(),
+        );
+        assert.equal(
+          updated.trainingRecordSubjects.find((item: any) => String(item.id) === String(subject.id))
+            ?.score,
+          96,
+        );
+        assert.deepEqual(
+          added.trainingRecordSubjects.map((item: any) => [item.name, item.score]),
+          [[`MCP new record subject ${suffix}`, 91]],
+        );
+      }
+      const afterUpdate = await snapshot(target);
+      const descriptionHtml = await app.bean.executor.mockCtx(
+        async () => app.bean.markdown.renderHtml(descriptionMarkdown),
+        { instanceName: '' },
+      );
+      assert.equal(afterUpdate.content[0].descriptionHtml, descriptionHtml);
+      assert.equal(
+        afterUpdate.records.find(item => String(item.id) === String(removedRecord.id))?.deleted,
+        true,
+      );
+      assert.equal(
+        afterUpdate.subjects.find(item => String(item.id) === String(removedSubject.id))?.deleted,
+        true,
+      );
+      for (const id of target.subjectIds) {
+        const descendant = afterUpdate.subjects.find(item => String(item.id) === id);
+        if (descendant && String(descendant.recordId) === String(removedRecord.id))
+          assert.equal(descendant.deleted, true, 'record deletion includes its owned subjects');
+      }
+      off();
+      off = allowStudentAction('update');
+      // Null acknowledges completion, not existence. Admission must precede every nested write.
+      for (const id of [missingRoot.id!, deletedRoot.id!, foreignRoot.id!]) {
+        const counts = writeCounts();
+        const absentBody = {
+          ...rootBody,
+          content: { descriptionMarkdown: `Absent root ${suffix}` },
+          trainingRecords: [
+            {
+              name: `Absent record ${suffix}`,
+              trainingRecordSubjects: [{ name: `Absent subject ${suffix}`, score: 80 }],
+            },
+          ],
+        };
+        assertNull(await call({ params: { id }, body: absentBody }));
+        assert.deepEqual(
+          writeCounts(),
+          counts,
+          'absent/deleted/foreign root cannot enter relation mutation',
+        );
+        await app.bean.executor.mockCtx(
+          async () => {
+            assert.equal(
+              Number(
+                await app
+                  .scope('training-student')
+                  .model.studentContent.count(
+                    { where: { studentId: id } },
+                    { disableDeleted: true },
+                  ),
+              ),
+              id === deletedRoot.id ? deletedBefore.content.length : 0,
+            );
+            assert.equal(
+              Number(
+                await app
+                  .scope('training-record')
+                  .model.record.count(
+                    { where: { name: `Absent record ${suffix}` } },
+                    { disableDeleted: true },
+                  ),
+              ),
+              0,
+            );
+            assert.equal(
+              Number(
+                await app
+                  .scope('training-recordsubject')
+                  .model.subject.count(
+                    { where: { name: `Absent subject ${suffix}` } },
+                    { disableDeleted: true },
+                  ),
+              ),
+              0,
+            );
+          },
+          { instanceName: '' },
+        );
+      }
+      assert.deepEqual(await snapshot(deletedRoot), deletedBefore);
+      assert.deepEqual(await snapshot(foreignRoot), foreignBefore);
+      for (const nested of [
+        [{ id: protectedRecord.id, name: 'Wrong-parent record' }],
+        [{ id: protectedRecord.id, name: protectedRecord.name, deleted: true }],
+        [
+          {
+            id: record.id,
+            name: `MCP updated record ${suffix}`,
+            trainingRecordSubjects: [
+              { id: protectedSubject.id, name: 'Wrong-parent subject', score: 1 },
+            ],
+          },
+        ],
+        [
+          {
+            id: record.id,
+            name: `MCP updated record ${suffix}`,
+            trainingRecordSubjects: [
+              { id: protectedSubject.id, name: protectedSubject.name, score: 70, deleted: true },
+            ],
+          },
+        ],
+      ]) {
+        assertDenied(
+          await call({ params: args.params, body: { ...rootBody, trainingRecords: nested } }),
+        );
+        assert.deepEqual(
+          await snapshot(protectedRoot),
+          protectedBefore,
+          'wrong-parent child identity cannot update, delete or reparent protected rows',
+        );
+        // The target may already have been written: this is not a rollback/atomicity assertion.
+      }
+    } finally {
+      off();
+      try {
+        // Continue precise reverse-dependency cleanup even if another owned aggregate fails.
+        const failures: unknown[] = [];
+        for (const fixture of owned.toReversed()) {
+          try {
+            await app.bean.executor.mockCtx(
+              async () => {
+                await collectOwned(fixture);
+                for (const id of fixture.subjectIds) {
+                  await app
+                    .scope('training-recordsubject')
+                    .model.subject.deleteById(id, { disableDeleted: true });
+                }
+                for (const id of fixture.recordIds) {
+                  await app
+                    .scope('training-record')
+                    .model.record.deleteById(id, { disableDeleted: true });
+                }
+                for (const id of fixture.contentIds) {
+                  await app
+                    .scope('training-student')
+                    .model.studentContent.deleteById(id, { disableDeleted: true });
+                }
+                if (fixture.id) {
+                  await app
+                    .scope('training-student')
+                    .model.student.deleteById(fixture.id, { disableDeleted: true });
+                }
+              },
+              { instanceName: fixture.instanceName as any },
+            );
+          } catch (error) {
+            failures.push(error);
+          }
+        }
+        assert.deepEqual(failures, [], 'Owned MCP update cleanup failed');
+      } finally {
+        for (const spy of spies.toReversed()) spy.mock.restore();
+      }
+    }
+  });
+
+  it('soft-deletes one owned aggregate through guarded DELETE with independent current delete authority', async t => {
+    if (trainingDisabled) return;
+    const { ServiceStudent } = await import('vona-module-training-student');
+    const allToken = await redeemBearer('mcp:all');
+    const revokedToken = await redeemBearer('mcp:all');
+    const suffix = randomUUID();
+    type OwnedAggregate = {
+      name: string;
+      instanceName: '' | 'shareTest';
+      id?: string;
+      contentIds: Set<string>;
+      recordIds: Set<string>;
+      subjectIds: Set<string>;
+    };
+    const owned: OwnedAggregate[] = [];
+    const own = (label: string, instanceName: OwnedAggregate['instanceName'] = '') => {
+      const fixture: OwnedAggregate = {
+        name: `MCP delete ${label} ${suffix}`,
+        instanceName,
+        contentIds: new Set(),
+        recordIds: new Set(),
+        subjectIds: new Set(),
+      };
+      owned.push(fixture);
+      return fixture;
+    };
+    const target = own('target');
+    const unrelated = own('unrelated');
+    const missing = own('missing');
+    const foreign = own('foreign', 'shareTest');
+    const collectOwned = async (fixture: OwnedAggregate) => {
+      const training = app.scope('training-student');
+      if (!fixture.id) {
+        // Recover only this owned name if aggregate creation committed before returning its ID.
+        const roots = await training.model.student.select(
+          { where: { name: fixture.name } },
+          { disableDeleted: true },
+        );
+        assert.ok(roots.length <= 1);
+        if (roots[0]) fixture.id = String(roots[0].id);
+      }
+      if (!fixture.id) return;
+      const contents = await training.model.studentContent.select(
+        { where: { studentId: fixture.id } },
+        { disableDeleted: true },
+      );
+      for (const content of contents) fixture.contentIds.add(String(content.id));
+      const records = await app
+        .scope('training-record')
+        .model.record.select({ where: { studentId: fixture.id } }, { disableDeleted: true });
+      for (const record of records) fixture.recordIds.add(String(record.id));
+      for (const recordId of fixture.recordIds) {
+        const subjects = await app
+          .scope('training-recordsubject')
+          .model.subject.select({ where: { recordId } }, { disableDeleted: true });
+        for (const subject of subjects) fixture.subjectIds.add(String(subject.id));
+      }
+    };
+    const createOwned = (fixture: OwnedAggregate) =>
+      app.bean.executor.mockCtx(
+        async () => {
+          const student = await app.scope('training-student').service.student.create({
+            name: fixture.name,
+            mobile: '13812345678',
+            level: 1,
+            content: { descriptionMarkdown: `Owned ${fixture.name}` },
+            trainingRecords: [
+              {
+                name: `${fixture.name} record`,
+                trainingTime: new Date('2026-06-15T09:30:00.000Z'),
+                trainingRecordSubjects: [{ name: `${fixture.name} subject`, score: 80 }],
+              },
+            ],
+          } as DtoStudentCreate);
+          fixture.id = String(student.id);
+          await collectOwned(fixture);
+        },
+        { instanceName: fixture.instanceName as any },
+      );
+    const snapshot = (fixture: OwnedAggregate) =>
+      app.bean.executor.mockCtx(
+        async () => {
+          await collectOwned(fixture);
+          return {
+            root: await app.scope('training-student').model.student.getById(fixture.id!, {
+              disableDeleted: true,
+            }),
+            content: await app
+              .scope('training-student')
+              .model.studentContent.select(
+                { where: { studentId: fixture.id! }, orders: [['id', 'asc']] },
+                { disableDeleted: true },
+              ),
+            records: await app
+              .scope('training-record')
+              .model.record.select(
+                { where: { studentId: fixture.id! }, orders: [['id', 'asc']] },
+                { disableDeleted: true },
+              ),
+            subjects: await app
+              .scope('training-recordsubject')
+              .model.subject.select(
+                { where: { recordId: [...fixture.recordIds] }, orders: [['id', 'asc']] },
+                { disableDeleted: true },
+              ),
+          };
+        },
+        { instanceName: fixture.instanceName as any },
+      );
+    let off = () => {};
+    const spies: Array<{ mock: { restore(): void } }> = [];
+    try {
+      for (const fixture of owned) await createOwned(fixture);
+      await app.bean.executor.mockCtx(
+        async () => app.scope('training-student').service.student.deleteForce(missing.id!),
+        { instanceName: '' },
+      );
+      const targetBefore = await snapshot(target);
+      const unrelatedBefore = await snapshot(unrelated);
+      const foreignBefore = await snapshot(foreign);
+      const missingBefore = await snapshot(missing);
+      assert.equal(missingBefore.root, undefined);
+      assert.deepEqual(missingBefore.content, []);
+      assert.deepEqual(missingBefore.records, []);
+      assert.deepEqual(missingBefore.subjects, []);
+      assert.ok(targetBefore.root);
+      assert.equal(targetBefore.root.deleted, false);
+      for (const rows of [targetBefore.content, targetBefore.records, targetBefore.subjects]) {
+        assert.equal(rows.length, 1, 'the owned target has each aggregate relation');
+        assert.equal(rows[0].deleted, false);
+      }
+      const observedCalls: Array<{
+        method: unknown;
+        path: unknown;
+        options: any;
+        result?: unknown;
+      }> = [];
+      const executor = app.bean.executor;
+      const original = executor.performAction;
+      const observed = t.mock.method(
+        executor,
+        'performAction',
+        async function (this: BeanExecutor, ...args: Parameters<BeanExecutor['performAction']>) {
+          const call: (typeof observedCalls)[number] = {
+            method: args[0],
+            path: args[1],
+            options: args[2],
+          };
+          observedCalls.push(call);
+          assert.equal(String(this.bean.passport.currentUser?.id), fixtureUserId);
+          assert.equal(String(this.bean.passport.currentAuth?.id), fixtureAuthId);
+          assert.equal(
+            this.bean.passport.currentRoles?.some(role => role.name === 'systemAdmin'),
+            false,
+          );
+          call.result = await original.apply(this, args);
+          return call.result as Awaited<ReturnType<BeanExecutor['performAction']>>;
+        },
+      );
+      spies.push(observed);
+      const deletion = t.mock.method(ServiceStudent.prototype, 'delete');
+      spies.push(deletion);
+      const call = (args: object = { id: target.id! }, token = allToken, legacy = false) =>
+        send(
+          'tools/call',
+          { name: studentDeleteName, arguments: args },
+          { legacy, headers: { authorization: `Bearer ${token}` } },
+        );
+      const list = (token = allToken) =>
+        send('tools/list', {}, { headers: { authorization: `Bearer ${token}` } });
+      const assertDenied = (response: Awaited<ReturnType<typeof send>>, text = 'Action failed') => {
+        assert.equal(response.status, 200);
+        assert.equal(response.body.error, undefined);
+        assert.equal(response.body.result.isError, true);
+        assert.equal(response.body.result.structuredContent, undefined);
+        assert.deepEqual(response.body.result.content, [{ type: 'text', text }]);
+      };
+      const assertNull = (response: Awaited<ReturnType<typeof send>>, id: string) => {
+        assert.deepEqual(output(response), { result: null });
+        const dispatched = observedCalls.at(-1)!;
+        assert.equal(dispatched.method, 'delete');
+        assert.equal(dispatched.path, '/training/student/:id');
+        assert.deepEqual(dispatched.options, { params: { id }, innerAccess: false });
+        assert.equal(dispatched.result, null, 'real void Action completion is normalized to null');
+        return {
+          structuredContent: response.body.result.structuredContent,
+          content: response.body.result.content,
+        };
+      };
+      assertDenied(await call());
+      for (const action of ['select', 'view', 'create', 'update'] as const) {
+        off();
+        off = allowStudentAction(action);
+        assertDenied(await call());
+      }
+      assert.equal(deletion.mock.callCount(), 0, 'other Student permissions never grant delete');
+      assert.deepEqual(await snapshot(target), targetBefore);
+      off();
+      off = allowStudentAction('delete');
+      const beforeList = observedCalls.length;
+      const listed = await list();
+      assert.equal(listed.status, 200);
+      assert.deepEqual(
+        listed.body.result.tools.map((tool: any) => tool.name),
+        [studentDeleteName],
+      );
+      assert.deepEqual((await list(bearer)).body.result.tools, []);
+      assert.equal(observedCalls.length, beforeList, 'delete listing performs no trial Action');
+      const beforeInvalid = observedCalls.length;
+      const readDenied = await call({ id: target.id! }, bearer);
+      assert.equal(readDenied.status, 200);
+      assert.equal(readDenied.body.error?.code, -32602);
+      assert.equal(readDenied.body.result, undefined);
+      for (const args of [
+        {},
+        { id: '' },
+        { id: null },
+        { id: {} },
+        { id: [] },
+        { id: true },
+        { id: target.id, extra: true },
+        { id: target.id, body: {} },
+        { id: target.id, path: '/training/student' },
+        { id: target.id, route: '/training/student/:id' },
+        { id: target.id, method: 'delete' },
+        { id: target.id, instanceName: 'shareTest' },
+        { id: target.id, tenant: 'shareTest' },
+        { id: target.id, innerAccess: true },
+        { id: target.id, confirm: true },
+      ]) {
+        const invalid = await call(args);
+        assert.equal(invalid.status, 200);
+        assert.equal(invalid.body.error?.code, -32602);
+        assert.equal(invalid.body.result, undefined);
+      }
+      assert.equal(
+        observedCalls.length,
+        beforeInvalid,
+        'read scope and invalid input fail predispatch',
+      );
+      assert.equal(deletion.mock.callCount(), 0, 'listing and rejected input never enter delete');
+      assert.deepEqual(await snapshot(target), targetBefore);
+      // Neither a prior listing nor its bearer retains authority after revocation.
+      off();
+      off = allowStudentAction('view');
+      assertDenied(await call());
+      assert.equal(deletion.mock.callCount(), 0);
+      assert.deepEqual(await snapshot(target), targetBefore);
+      off();
+      off = allowStudentAction('delete');
+      assert.deepEqual(
+        (await list(revokedToken)).body.result.tools.map((tool: any) => tool.name),
+        [studentDeleteName],
+      );
+      await app.bean.executor.mockCtx(
+        async () => app.scope('mcp-auth').service.authorization.revoke(revokedToken),
+        { instanceName: '' },
+      );
+      const beforeRevoked = observedCalls.length;
+      assert.equal((await call({ id: target.id! }, revokedToken)).status, 401);
+      assert.equal(observedCalls.length, beforeRevoked);
+      assert.equal(deletion.mock.callCount(), 0);
+      assert.deepEqual(await snapshot(target), targetBefore);
+
+      const completed = assertNull(await call(), target.id!);
+      assert.equal(
+        deletion.mock.callCount(),
+        1,
+        'one real aggregate delete, without automatic replay',
+      );
+      const deleted = await snapshot(target);
+      assert.ok(deleted.root, 'ordinary deletion retains the persisted root');
+      assert.equal(String(deleted.root.id), target.id);
+      assert.equal(deleted.root.deleted, true);
+      for (const key of ['content', 'records', 'subjects'] as const) {
+        assert.deepEqual(
+          deleted[key].map(row => String(row.id)),
+          targetBefore[key].map(row => String(row.id)),
+          'aggregate descendants are soft-deleted, not physically removed',
+        );
+        for (const row of deleted[key]) assert.equal(row.deleted, true);
+      }
+      assert.deepEqual(await snapshot(unrelated), unrelatedBefore);
+      assertDenied(
+        await send(
+          'tools/call',
+          { name: studentViewName, arguments: { id: target.id } },
+          { headers: { authorization: `Bearer ${allToken}` } },
+        ),
+      );
+      off();
+      off = allowStudentAction('view');
+      assertDenied(
+        await send(
+          'tools/call',
+          { name: studentViewName, arguments: { id: target.id } },
+          { headers: { authorization: `Bearer ${bearer}` } },
+        ),
+        'Resource not found',
+      );
+      off();
+      off = allowStudentAction('delete');
+      // Intentional isolated absence probes, not retries or a replay-safety promise.
+      for (const [id, legacy] of [
+        [target.id!, true],
+        [missing.id!, false],
+        [foreign.id!, false],
+      ] as const) {
+        assert.deepEqual(assertNull(await call({ id }, allToken, legacy), id), completed);
+      }
+      assert.equal(deletion.mock.callCount(), 4);
+      assert.deepEqual(await snapshot(target), deleted);
+      assert.deepEqual(await snapshot(missing), missingBefore);
+      assert.deepEqual(
+        await snapshot(foreign),
+        foreignBefore,
+        'foreign owning-context rows stay unchanged',
+      );
+      assert.deepEqual(await snapshot(unrelated), unrelatedBefore);
+    } finally {
+      off();
+      try {
+        const failures: unknown[] = [];
+        for (const fixture of owned.toReversed()) {
+          try {
+            await app.bean.executor.mockCtx(
+              async () => {
+                await collectOwned(fixture);
+                for (const id of fixture.subjectIds) {
+                  await app
+                    .scope('training-recordsubject')
+                    .model.subject.deleteById(id, { disableDeleted: true });
+                }
+                for (const id of fixture.recordIds) {
+                  await app
+                    .scope('training-record')
+                    .model.record.deleteById(id, { disableDeleted: true });
+                }
+                for (const id of fixture.contentIds) {
+                  await app
+                    .scope('training-student')
+                    .model.studentContent.deleteById(id, { disableDeleted: true });
+                }
+                if (fixture.id) {
+                  await app
+                    .scope('training-student')
+                    .model.student.deleteById(fixture.id, { disableDeleted: true });
+                }
+              },
+              { instanceName: fixture.instanceName as any },
+            );
+          } catch (error) {
+            failures.push(error);
+          }
+        }
+        assert.deepEqual(failures, [], 'Owned MCP delete cleanup failed');
+      } finally {
+        for (const spy of spies.toReversed()) spy.mock.restore();
+      }
+    }
+  });
+
+  it('guards student select/view and independent lookup/summary with current roles across modern/legacy read scopes and instance boundaries', async t => {
     if (trainingDisabled) return;
     assert.ok(app.meta.modules['training-student']);
     assert.ok(fixtureUserId);
@@ -776,7 +2239,34 @@ describe('businessHttp.test.ts', { concurrency: false, timeout: 60000 }, () => {
     const mobile = '13812345678';
     const descriptionMarkdown = `# Private student notes\n\n${randomUUID()}`;
     const level = 2;
+    const trainingTime = new Date('2026-03-10T08:00:00.000Z');
+    const recordName = `MCP record ${randomUUID()}`;
+    const subjectName = `MCP subject ${randomUUID()}`;
+    const studentData = {
+      name,
+      mobile,
+      level,
+      content: { descriptionMarkdown },
+      trainingRecords: [
+        {
+          name: recordName,
+          subjectCount: 1,
+          totalScore: 88,
+          averageScore: 88,
+          trainingTime,
+          description: 'Owned MCP training record',
+          trainingRecordSubjects: [
+            { name: subjectName, score: 95, description: 'Owned MCP training subject' },
+          ],
+        },
+      ],
+    } as DtoStudentCreate;
+    const selectQuery = { name, level, orders: 'createdAt,desc', pageNo: 1, pageSize: 1 };
+    const selectEmptyPageQuery = { ...selectQuery, pageNo: 2 };
+    const selectColumnsQuery = { ...selectQuery, columns: ['id'] };
     let studentId: string | undefined;
+    let imageId: string | undefined;
+    let imageDirectory: string | undefined;
     let otherStudentId: string | undefined;
     let adminRoleId: string | undefined;
     let membershipOwned = false;
@@ -790,9 +2280,10 @@ describe('businessHttp.test.ts', { concurrency: false, timeout: 60000 }, () => {
       roleNames: string[];
       serialized?: Record<string, unknown>;
     }> = [];
-    const original = BeanExecutor.prototype.performAction;
+    const executor = app.bean.executor;
+    const original = executor.performAction;
     const observed = t.mock.method(
-      BeanExecutor.prototype,
+      executor,
       'performAction',
       async function (this: BeanExecutor, ...args: Parameters<BeanExecutor['performAction']>) {
         const call: (typeof observedCalls)[number] = {
@@ -815,12 +2306,150 @@ describe('businessHttp.test.ts', { concurrency: false, timeout: 60000 }, () => {
         { name: studentSummaryName, arguments: { id } },
         { legacy, headers: { authorization: `Bearer ${token}` } },
       );
+    const view = (id: string, token = bearer, legacy = false) =>
+      send(
+        'tools/call',
+        { name: studentViewName, arguments: { id } },
+        { legacy, headers: { authorization: `Bearer ${token}` } },
+      );
     const lookup = (query: Record<string, unknown>, token = bearer, legacy = false) =>
       send(
         'tools/call',
         { name: studentLookupName, arguments: query },
         { legacy, headers: { authorization: `Bearer ${token}` } },
       );
+    const select = (token = bearer, legacy = false, query: Record<string, unknown> = selectQuery) =>
+      send(
+        'tools/call',
+        { name: studentSelectName, arguments: query },
+        { legacy, headers: { authorization: `Bearer ${token}` } },
+      );
+    const normalizeSelect = (serialized: Record<string, unknown>) => {
+      const normalized = JSON.parse(JSON.stringify(serialized));
+      normalized.total = String(normalized.total);
+      normalized.list = normalized.list.map((row: Record<string, unknown>) => {
+        row.id = String(row.id);
+        // The existing optional identity schema normalizes absent SQL values away.
+        if (row.imageId === null) delete row.imageId;
+        else if (row.imageId !== undefined) row.imageId = String(row.imageId);
+        if (row.image) {
+          const image = row.image as Record<string, unknown>;
+          image.id = String(image.id);
+        }
+        return row;
+      });
+      return normalized;
+    };
+    const assertSelect = (response: Awaited<ReturnType<typeof send>>) => {
+      const selected = output(response);
+      const current = observedCalls.at(-1)!;
+      assert.equal(current.path, '/training/student');
+      assert.deepEqual(current.options, { query: selectQuery, innerAccess: false });
+      assert.ok(current.serialized);
+      assert.deepEqual(
+        selected,
+        normalizeSelect(current.serialized),
+        'MCP preserves the complete serialized Action result with existing DTO normalization',
+      );
+      assert.equal(selected.total, '1');
+      assert.equal(selected.pageNo, 1);
+      assert.equal(selected.pageSize, 1);
+      assert.equal(selected.pageCount, 1);
+      assert.equal(selected.list.length, 1);
+      const student = selected.list[0];
+      assert.equal(String(student.id), studentId);
+      assert.notEqual(String(student.id), otherStudentId);
+      assert.equal(student.name, name);
+      assert.equal(student.level, level);
+      assert.equal(student.mobile, '138****5678', 'select retains serialized masked mobile');
+      assert.equal(student.imageId, imageId);
+      assert.equal(student.image.id, imageId);
+      assert.equal(student.image.public, true);
+      assert.equal(student.image.signed, false);
+      const imageUrl = new URL(student.image.url);
+      assert.equal(imageUrl.origin, origin);
+      assert.match(imageUrl.pathname, /^\/api\/static\/public\/\d+\/image-native\//);
+      assert.equal(imageUrl.search, '');
+      for (const field of ['content', 'contentHtml', 'trainingRecords']) {
+        assert.equal(Object.hasOwn(student, field), false, 'select does not load new relations');
+      }
+      const wire = JSON.stringify(response.body.result);
+      for (const secret of [mobile, descriptionMarkdown]) {
+        assert.equal(wire.includes(secret), false);
+      }
+      for (const field of ['descriptionMarkdown', 'descriptionHtml']) {
+        assert.equal(wire.includes(`"${field}"`), false);
+      }
+    };
+    const normalizeView = (serialized: Record<string, unknown>) => {
+      const normalized = JSON.parse(JSON.stringify(serialized));
+      normalized.id = String(normalized.id);
+      // Preserve the select regression's measured optional-identity normalization.
+      if (normalized.imageId === null) delete normalized.imageId;
+      else if (normalized.imageId !== undefined) normalized.imageId = String(normalized.imageId);
+      if (normalized.image) normalized.image.id = String(normalized.image.id);
+      // DtoStudentView includes content.columns: ['descriptionMarkdown'], not its SQL id.
+      if (normalized.content) delete normalized.content.id;
+      for (const record of normalized.trainingRecords ?? []) {
+        record.id = String(record.id);
+        // Both nested DTOs retain EntityBaseInner's declared deleted default.
+        if (record.deleted === undefined) record.deleted = false;
+        // These two optional identity arrays normalize absent SQL nulls away.
+        if (record.sceneImageIds === null) delete record.sceneImageIds;
+        if (record.dossierFileIds === null) delete record.dossierFileIds;
+        for (const subject of record.trainingRecordSubjects ?? []) {
+          subject.id = String(subject.id);
+          if (subject.deleted === undefined) subject.deleted = false;
+        }
+      }
+      return normalized;
+    };
+    const assertView = (response: Awaited<ReturnType<typeof send>>) => {
+      const student = output(response);
+      const current = observedCalls.at(-1)!;
+      assert.equal(current.path, '/training/student/:id');
+      assert.deepEqual(current.options, { params: { id: studentId }, innerAccess: false });
+      assert.ok(current.serialized);
+      assert.deepEqual(
+        student,
+        normalizeView(current.serialized),
+        'both MCP channels preserve the complete serialized view Action with existing DTO normalization',
+      );
+      assert.equal(student.id, studentId);
+      assert.notEqual(student.id, otherStudentId);
+      assert.equal(student.name, name);
+      assert.equal(student.level, level);
+      assert.equal(student.mobile, '138****5678', 'view retains serialized masked mobile');
+      assert.equal(student.imageId, imageId);
+      assert.equal(student.image.id, imageId);
+      assert.equal(student.image.public, true);
+      assert.equal(student.image.signed, false);
+      const imageUrl = new URL(student.image.url);
+      assert.equal(imageUrl.origin, origin);
+      assert.match(imageUrl.pathname, /^\/api\/static\/public\/\d+\/image-native\//);
+      assert.equal(imageUrl.search, '');
+      assert.equal(student.content.descriptionMarkdown, descriptionMarkdown);
+      assert.equal(student.trainingRecords.length, 1);
+      const record = student.trainingRecords[0];
+      assert.equal(typeof record.id, 'string');
+      assert.ok(record.id);
+      assert.equal(record.name, recordName);
+      assert.equal(record.subjectCount, 1);
+      assert.equal(record.totalScore, 88);
+      assert.equal(record.averageScore, 88);
+      // Vona's JSON.parse reviver turns the HTTP ISO string back into a Date.
+      assert.ok(record.trainingTime instanceof Date);
+      assert.equal(record.trainingTime.toISOString(), trainingTime.toISOString());
+      assert.equal(record.description, 'Owned MCP training record');
+      assert.equal(record.trainingRecordSubjects.length, 1);
+      const subject = record.trainingRecordSubjects[0];
+      assert.equal(typeof subject.id, 'string');
+      assert.ok(subject.id);
+      assert.equal(subject.name, subjectName);
+      assert.equal(subject.score, 95);
+      assert.equal(subject.description, 'Owned MCP training subject');
+      assert.equal(JSON.stringify(response.body.result).includes(mobile), false);
+    };
     const errorResult = (response: Awaited<ReturnType<typeof send>>, text: string) => {
       assert.equal(response.status, 200);
       assert.equal(response.body.error, undefined);
@@ -830,16 +2459,26 @@ describe('businessHttp.test.ts', { concurrency: false, timeout: 60000 }, () => {
       return response.body.result;
     };
     try {
+      imageDirectory = await fse.mkdtemp(path.join(os.tmpdir(), 'mcp-student-image-'));
+      const imageFile = path.join(imageDirectory, 'student.png');
+      await fse.writeFile(
+        imageFile,
+        Buffer.from(
+          'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVQIHWP4z8DwHwAFAAH/e+m+7wAAAABJRU5ErkJggg==',
+          'base64',
+        ),
+      );
       await app.bean.executor.mockCtx(
         async () => {
+          const image = await app.bean.image.upload(
+            'image-native:native',
+            { file: imageFile, filename: 'student.png', contentType: 'image/png' },
+            { imageScene: 'training-student:studentImage', clientOptions: { public: true } },
+          );
+          imageId = String(image.id);
           const training = app.scope('training-student');
-          const student = await training.model.student.insert({ name, mobile, level });
+          const student = await training.service.student.create({ ...studentData, imageId });
           studentId = String(student.id);
-          await training.model.studentContent.insert({
-            studentId: student.id,
-            descriptionMarkdown,
-            descriptionHtml: app.bean.markdown.renderHtml(descriptionMarkdown),
-          });
           const role = await app.scope('home-user').model.role.getByName('systemAdmin');
           assert.ok(role, 'existing shared systemAdmin role is read-only');
           adminRoleId = String(role.id);
@@ -853,11 +2492,12 @@ describe('businessHttp.test.ts', { concurrency: false, timeout: 60000 }, () => {
       );
       await app.bean.executor.mockCtx(
         async () => {
-          const student = await app.scope('training-student').model.student.insert({
+          const student = await app.scope('training-student').service.student.create({
             name,
             mobile,
             level,
-          });
+            content: { descriptionMarkdown },
+          } as DtoStudentCreate);
           otherStudentId = String(student.id);
         },
         { instanceName: 'shareTest' as any },
@@ -866,13 +2506,18 @@ describe('businessHttp.test.ts', { concurrency: false, timeout: 60000 }, () => {
       assert.ok(otherStudentId);
       assert.ok(adminRoleId);
       // Neither OAuth scope grants ordinary users student-select or student-view authority.
-      for (const token of [bearer, allToken]) {
-        errorResult(await lookup({ name }, token), 'Action failed');
-        errorResult(await call(studentId, token), 'Action failed');
+      for (const { token, legacy } of [bearer, allToken].flatMap(token =>
+        [false, true].map(legacy => ({ token, legacy })),
+      )) {
+        errorResult(await select(token, legacy), 'Action failed');
+        errorResult(await lookup({ name }, token, legacy), 'Action failed');
+        errorResult(await view(studentId, token, legacy), 'Action failed');
+        errorResult(await call(studentId, token, legacy), 'Action failed');
         assert.equal(observedCalls.at(-1)!.roleNames.includes('systemAdmin'), false);
       }
       // A test-only policy separates select from view without adding any role membership.
       const { ServiceStudent } = await import('vona-module-training-student');
+      const studentView = t.mock.method(ServiceStudent.prototype, 'view');
       const summary = t.mock.method(ServiceStudent.prototype, 'summary');
       const policyCalls: Array<{ action: string; policyActionKey: string }> = [];
       const controllerBeanFullName = 'training-student.controller.student';
@@ -905,6 +2550,7 @@ describe('businessHttp.test.ts', { concurrency: false, timeout: 60000 }, () => {
         for (const { token, legacy } of [bearer, allToken].flatMap(token =>
           [false, true].map(legacy => ({ token, legacy })),
         )) {
+          assertSelect(await select(token, legacy));
           const foundResponse = await lookup({ name }, token, legacy);
           const found = output(foundResponse);
           assert.deepEqual(found, {
@@ -914,10 +2560,13 @@ describe('businessHttp.test.ts', { concurrency: false, timeout: 60000 }, () => {
             pageSize: 10,
             pageCount: 1,
           });
+          const deniedView = await view(found.list[0].id, token, legacy);
+          errorResult(deniedView, 'Action failed');
           const deniedResponse = await call(found.list[0].id, token, legacy);
           errorResult(deniedResponse, 'Action failed');
+          assert.equal(studentView.mock.callCount(), 0, 'select alone cannot enter view service');
           assert.equal(summary.mock.callCount(), 0, 'view denial prevents summary service work');
-          for (const response of [foundResponse, deniedResponse]) {
+          for (const response of [foundResponse, deniedView, deniedResponse]) {
             const wire = JSON.stringify(response.body.result);
             for (const secret of [mobile, '138****5678', descriptionMarkdown]) {
               assert.equal(wire.includes(secret), false);
@@ -931,7 +2580,9 @@ describe('businessHttp.test.ts', { concurrency: false, timeout: 60000 }, () => {
           policyCalls,
           Array.from({ length: 4 })
             .fill([
+              { action: 'select', policyActionKey: `${controllerBeanFullName}#select` },
               { action: 'lookup', policyActionKey: `${controllerBeanFullName}#select` },
+              { action: 'view', policyActionKey: `${controllerBeanFullName}#view` },
               { action: 'summary', policyActionKey: `${controllerBeanFullName}#view` },
             ])
             .flat(),
@@ -941,7 +2592,9 @@ describe('businessHttp.test.ts', { concurrency: false, timeout: 60000 }, () => {
         for (const { token, legacy } of [bearer, allToken].flatMap(token =>
           [false, true].map(legacy => ({ token, legacy })),
         )) {
+          errorResult(await select(token, legacy), 'Action failed');
           errorResult(await lookup({ name }, token, legacy), 'Action failed');
+          assertView(await view(studentId, token, legacy));
           const independent = output(await call(studentId, token, legacy));
           assert.equal(
             independent.id,
@@ -950,14 +2603,30 @@ describe('businessHttp.test.ts', { concurrency: false, timeout: 60000 }, () => {
           );
           assert.deepEqual(Object.keys(independent).sort(), studentSummaryFields);
         }
+        assert.equal(studentView.mock.callCount(), 4);
         assert.equal(summary.mock.callCount(), 4);
+        assert.deepEqual(
+          policyCalls.slice(16),
+          Array.from({ length: 4 })
+            .fill([
+              { action: 'select', policyActionKey: `${controllerBeanFullName}#select` },
+              { action: 'lookup', policyActionKey: `${controllerBeanFullName}#select` },
+              { action: 'view', policyActionKey: `${controllerBeanFullName}#view` },
+              { action: 'summary', policyActionKey: `${controllerBeanFullName}#view` },
+            ])
+            .flat(),
+          'view alone cannot admit select or lookup',
+        );
       } finally {
         off();
+        studentView.mock.restore();
         summary.mock.restore();
       }
+      errorResult(await select(), 'Action failed');
       errorResult(await lookup({ name }), 'Action failed');
+      errorResult(await view(studentId), 'Action failed');
       errorResult(await call(studentId), 'Action failed');
-      assert.equal(policyCalls.length, 16, 'the exact test policy listener was removed');
+      assert.equal(policyCalls.length, 32, 'the exact test policy listener was removed');
       // Basic has no custom grant provider. Exercise its supported unrestricted role
       // through the ordinary membership API, without mutating the shared role itself.
       await app.bean.executor.mockCtx(
@@ -978,6 +2647,7 @@ describe('businessHttp.test.ts', { concurrency: false, timeout: 60000 }, () => {
       for (const { token, legacy } of [bearer, allToken].flatMap(token =>
         [false, true].map(legacy => ({ token, legacy })),
       )) {
+        assertSelect(await select(token, legacy));
         const foundResponse = await lookup({ name: `  ${name}  `, level }, token, legacy);
         const found = output(foundResponse);
         assert.deepEqual(found, {
@@ -993,7 +2663,39 @@ describe('businessHttp.test.ts', { concurrency: false, timeout: 60000 }, () => {
           query: { name, level, pageNo: 1, pageSize: 10 },
           innerAccess: false,
         });
-        assert.equal(JSON.stringify(foundResponse.body.result).includes(mobile), false);
+        const lookupWire = JSON.stringify(foundResponse.body.result);
+        for (const secret of [mobile, '138****5678', descriptionMarkdown]) {
+          assert.equal(lookupWire.includes(secret), false);
+        }
+        for (const field of ['mobile', 'descriptionMarkdown', 'descriptionHtml']) {
+          assert.equal(lookupWire.includes(`"${field}"`), false);
+        }
+        assertView(await view(found.list[0].id, token, legacy));
+        assert.ok(
+          observedCalls.at(-1)!.roleNames.includes('systemAdmin'),
+          'view reloads current roles for existing tokens',
+        );
+        const callsBeforeInvalid = observedCalls.length;
+        for (const args of [
+          {},
+          { id: studentId, extra: true },
+          { id: {} },
+          { id: studentId, path: '/training/student' },
+        ]) {
+          const invalid = await send(
+            'tools/call',
+            { name: studentViewName, arguments: args },
+            { legacy, headers: { authorization: `Bearer ${token}` } },
+          );
+          assert.equal(invalid.status, 200);
+          assert.equal(invalid.body.error?.code, -32602);
+          assert.equal(invalid.body.result, undefined);
+        }
+        assert.equal(
+          observedCalls.length,
+          callsBeforeInvalid,
+          'strict view arguments fail before Action dispatch',
+        );
         const response = await call(found.list[0].id, token, legacy);
         const summary = output(response);
         assert.deepEqual(summary, expected);
@@ -1023,14 +2725,42 @@ describe('businessHttp.test.ts', { concurrency: false, timeout: 60000 }, () => {
           assert.equal(wire.includes(`"${field}"`), false);
         }
       }
+      const emptyPage = output(await select(bearer, false, selectEmptyPageQuery));
+      assert.deepEqual(
+        emptyPage,
+        normalizeSelect(observedCalls.at(-1)!.serialized!),
+        'empty-page output also preserves the serialized Action envelope',
+      );
+      assert.deepEqual(emptyPage, {
+        list: [],
+        total: '1',
+        pageNo: 2,
+        pageSize: 1,
+        pageCount: 1,
+      });
+      errorResult(await select(bearer, false, selectColumnsQuery), 'Action failed');
       const missing = errorResult(await call('-1'), 'Resource not found');
       const otherInstance = errorResult(await call(otherStudentId), 'Resource not found');
       assert.deepEqual(otherInstance, missing);
+      const missingView = errorResult(await view('-1'), 'Resource not found');
+      const otherInstanceView = errorResult(await view(otherStudentId), 'Resource not found');
+      assert.deepEqual(otherInstanceView, missingView);
+      assert.deepEqual(missingView, missing, 'view and summary expose the same safe absence');
       for (const current of observedCalls) {
         assert.equal(current.method, 'get');
-        if (current.path === '/training/student/summary/:id') {
+        if (
+          current.path === '/training/student/:id' ||
+          current.path === '/training/student/summary/:id'
+        ) {
           const options = current.options as { params: { id: string }; innerAccess: boolean };
           assert.deepEqual(options, { params: { id: options.params.id }, innerAccess: false });
+        } else if (current.path === '/training/student') {
+          assert.ok(
+            [selectQuery, selectEmptyPageQuery, selectColumnsQuery].some(query =>
+              isDeepStrictEqual(current.options, { query, innerAccess: false }),
+            ),
+            'select retains only the explicitly supplied filter/pagination/columns query',
+          );
         } else {
           assert.equal(current.path, '/training/student/lookup');
           assert.equal((current.options as { innerAccess: boolean }).innerAccess, false);
@@ -1038,7 +2768,24 @@ describe('businessHttp.test.ts', { concurrency: false, timeout: 60000 }, () => {
         assert.equal(current.userId, userId);
         assert.equal(current.authId, fixtureAuthId);
       }
-      assert.equal(observedCalls.length, 32, 'every read traverses its fixed guarded action');
+      assert.deepEqual(
+        Object.fromEntries(
+          [
+            '/training/student',
+            '/training/student/lookup',
+            '/training/student/:id',
+            '/training/student/summary/:id',
+          ].map(path => [path, observedCalls.filter(current => current.path === path).length]),
+        ),
+        {
+          '/training/student': 19,
+          '/training/student/lookup': 17,
+          '/training/student/:id': 19,
+          '/training/student/summary/:id': 19,
+        },
+        'every select, lookup, view and summary traverses its fixed guarded action',
+      );
+      assert.equal(observedCalls.length, 74);
       await app.bean.executor.mockCtx(
         async () => {
           assert.equal(await app.bean.role.removeUserId(adminRoleId!, userId), true);
@@ -1046,9 +2793,20 @@ describe('businessHttp.test.ts', { concurrency: false, timeout: 60000 }, () => {
         },
         { instanceName: '' },
       );
-      errorResult(await lookup({ name }), 'Action failed');
-      errorResult(await call(studentId), 'Action failed');
-      assert.equal(observedCalls.at(-1)!.roleNames.includes('systemAdmin'), false);
+      for (const { token, legacy } of [bearer, allToken].flatMap(token =>
+        [false, true].map(legacy => ({ token, legacy })),
+      )) {
+        errorResult(await select(token, legacy), 'Action failed');
+        errorResult(await lookup({ name }, token, legacy), 'Action failed');
+        errorResult(await view(studentId, token, legacy), 'Action failed');
+        errorResult(await call(studentId, token, legacy), 'Action failed');
+        assert.equal(observedCalls.at(-1)!.roleNames.includes('systemAdmin'), false);
+      }
+      assert.equal(
+        observedCalls.length,
+        90,
+        'revocation rechecks all four reads on every scope/transport pair',
+      );
     } finally {
       try {
         try {
@@ -1059,13 +2817,9 @@ describe('businessHttp.test.ts', { concurrency: false, timeout: 60000 }, () => {
                 membershipOwned = false;
               }
               if (studentId) {
-                await app
-                  .scope('training-student')
-                  .model.studentContent.delete({ studentId }, { disableDeleted: true });
-                await app
-                  .scope('training-student')
-                  .model.student.deleteById(studentId, { disableDeleted: true });
+                await app.scope('training-student').service.student.deleteForce(studentId);
               }
+              if (imageId) await app.bean.image.delete(imageId);
             },
             { instanceName: '' },
           );
@@ -1073,16 +2827,18 @@ describe('businessHttp.test.ts', { concurrency: false, timeout: 60000 }, () => {
           if (otherStudentId) {
             await app.bean.executor.mockCtx(
               async () => {
-                await app
-                  .scope('training-student')
-                  .model.student.deleteById(otherStudentId!, { disableDeleted: true });
+                await app.scope('training-student').service.student.deleteForce(otherStudentId!);
               },
               { instanceName: 'shareTest' as any },
             );
           }
         }
       } finally {
-        observed.mock.restore();
+        try {
+          if (imageDirectory) await fse.remove(imageDirectory);
+        } finally {
+          observed.mock.restore();
+        }
       }
     }
   });
@@ -1369,7 +3125,7 @@ describe('businessHttp.test.ts', { concurrency: false, timeout: 60000 }, () => {
       missing.headers['www-authenticate'],
       `Bearer resource_metadata="${origin}/.well-known/oauth-protected-resource/mcp"`,
     );
-    const held = t.mock.method(BeanExecutor.prototype, 'performAction', async () => {
+    const held = t.mock.method(app.bean.executor, 'performAction', async () => {
       throw new Error('unauthorized business dispatch');
     });
     try {

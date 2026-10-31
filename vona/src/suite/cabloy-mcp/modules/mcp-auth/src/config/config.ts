@@ -2,8 +2,9 @@ import type { VonaApplication } from 'vona';
 
 import type { IMcpAuthConfig } from '../types/index.ts';
 
-export function config(_app: VonaApplication): IMcpAuthConfig {
+export function config(app: VonaApplication): IMcpAuthConfig {
   return {
+    ssrSite: app.meta.env.MCP_AUTH_SSR_SITE as IMcpAuthConfig['ssrSite'],
     registration: {
       maxBodyBytes: 16384,
       maxRedirectUris: 16,

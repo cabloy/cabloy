@@ -12,7 +12,11 @@ import z from 'zod';
 import type { ToolSchema } from './controllerToolSchema.ts';
 
 import {
+  closeMutationInputSchema,
+  isPrimitiveSchema,
+  normalizeDateTransport,
   resolveSchema,
+  serializeDateTransport,
   strictInputSchema,
   toolSchema,
   UnsupportedActionContract,
@@ -227,7 +231,9 @@ export async function createControllerToolServer(
             throw new UnsupportedActionContract('Typed response contract required');
           }
           const direct = output.type === 'object';
+          const readOnly = options.readOnly ?? route.routeMethod === 'get';
           const inputSchema = toolSchema(input, schemas);
+          if (!readOnly) closeMutationInputSchema(inputSchema);
           const outputSchema = toolSchema(
             direct
               ? output
@@ -242,7 +248,9 @@ export async function createControllerToolServer(
           const inputCheck = fromJsonSchema(inputSchema as Parameters<typeof fromJsonSchema>[0])[
             '~standard'
           ];
-          const readOnly = options.readOnly ?? route.routeMethod === 'get';
+          const outputCheck = isPrimitiveSchema(rawOutput, schemas)
+            ? fromJsonSchema(outputSchema as Parameters<typeof fromJsonSchema>[0])['~standard']
+            : undefined;
           const tool: Tool = {
             name,
             description: options.description
@@ -262,14 +270,17 @@ export async function createControllerToolServer(
             tool,
             readOnly,
             async call(args) {
-              const checked = await inputCheck.validate(args);
+              const checked = await inputCheck.validate(
+                serializeDateTransport(args, inputSchema, schemas),
+              );
               if (checked.issues) throw new ProtocolError(-32602, 'Invalid tool arguments');
               const values = flat ? { [keys[0]]: args } : args;
               const bound: Record<string, unknown> = {};
               for (const key of keys) {
                 const schema = contract.request[key as keyof typeof contract.request];
+                const transported = normalizeDateTransport(values[key], locations[key], schemas);
                 const parsed = await runWithZodQueryCoercion(false, () =>
-                  schema!.safeParseAsync(values[key]),
+                  schema!.safeParseAsync(transported),
                 );
                 if (!parsed.success) throw new ProtocolError(-32602, 'Invalid tool arguments');
                 bound[key] = parsed.data;
@@ -282,6 +293,9 @@ export async function createControllerToolServer(
                 );
                 if (result === undefined || (direct && result === null)) {
                   return failure('Resource not found');
+                }
+                if (outputCheck && (await outputCheck.validate({ result })).issues) {
+                  return failure('Action failed');
                 }
                 const parsed = await validator.parseAsync(result);
                 const structuredContent = JSON.parse(

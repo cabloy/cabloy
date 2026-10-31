@@ -2773,6 +2773,7 @@ export interface components {
       | undefined;
     'home-user.dto.accountCurrent': {
       name: string;
+      displayName?: string | undefined;
       avatar?: string | undefined;
       locale?: unknown;
       tz?: string | undefined;
@@ -2782,7 +2783,7 @@ export interface components {
     };
     'home-user.dto.accountProfileUpdate': {
       /** @description Display name */
-      name: string;
+      displayName?: string | undefined;
       /**
        * Avatar
        * @description Absolute HTTPS avatar URL or API delivery URL
@@ -2850,6 +2851,7 @@ export interface components {
     'home-user.dto.passportUser': {
       id: number | string;
       name: string;
+      displayName?: string | undefined;
       avatar?: string | undefined;
       email?: string | undefined;
       mobile?: string | undefined;
@@ -2960,6 +2962,7 @@ export interface components {
       instanceName: string;
       userId: string;
       userName: string;
+      displayName?: string | undefined;
     };
     'commerce-promotion.dto.couponMineItem': {
       id: number | string;
@@ -4488,13 +4491,6 @@ export interface components {
             /** @description Student Training Record Details */
             trainingRecordSubjects?:
               | {
-                  /**
-                   * @description Deleted
-                   * @default false
-                   */
-                  deleted?: boolean | undefined;
-                  /** @description ID */
-                  id?: number | string | undefined;
                   /** @description Subject Name */
                   name: string;
                   /** @description Subject Score */

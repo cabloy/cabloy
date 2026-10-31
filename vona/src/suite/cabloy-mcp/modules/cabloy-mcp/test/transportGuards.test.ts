@@ -334,12 +334,17 @@ describe('MCP transport guards', { concurrency: false }, () => {
     await rejectsBody(body);
     const shallow = { jsonrpc: '2.0', method: 'fixture/probe' };
     let exact: unknown = 0;
-    for (let depth = 0; depth < 6; depth++) exact = { child: exact };
+    // Eight containers including the root; the leaf scalar is at value depth nine.
+    for (let depth = 0; depth < 7; depth++) exact = { child: exact };
     assert.equal(
       (await parseBody(Buffer.from(JSON.stringify({ ...shallow, nested: exact })))) !== undefined,
       true,
     );
     await rejectsBody({ ...shallow, nested: { child: exact } });
+    // An empty ninth container still rejects, even without a depth-ten scalar.
+    let emptyContainer: unknown = {};
+    for (let depth = 0; depth < 7; depth++) emptyContainer = { child: emptyContainer };
+    await rejectsBody({ ...shallow, nested: emptyContainer });
     const keys = Object.fromEntries(Array.from({ length: 32 }, (_, index) => [`k${index}`, 0]));
     assert.equal(
       (await parseBody(Buffer.from(JSON.stringify({ ...shallow, keys })))) !== undefined,

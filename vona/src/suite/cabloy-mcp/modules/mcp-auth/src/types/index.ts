@@ -1,3 +1,11 @@
+import type { ISsrSiteRecord } from 'vona-module-a-ssr';
+
+declare module 'vona' {
+  export interface VonaConfigEnv {
+    MCP_AUTH_SSR_SITE: string | undefined;
+  }
+}
+
 export interface IMcpAuthResource {
   resource: string;
   instanceName: string;
@@ -52,6 +60,7 @@ export interface IMcpAuthResolvedClient {
 }
 
 export interface IMcpAuthConfig {
+  ssrSite?: keyof ISsrSiteRecord | '';
   registration?: IMcpAuthRegistrationConfig;
   pendingTtl: number;
   codeTtl: number;

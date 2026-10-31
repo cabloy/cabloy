@@ -126,11 +126,13 @@ export class MiddlewareSystemAuthorization extends BeanBase implements IMiddlewa
       }
       this.requireMethod('GET');
       const sites = this.app.scope('a-ssr').service.ssr.getSitesEnabled();
-      const site = sites.toSorted((left, right) => {
-        const a = left.beanOptions.options as IDecoratorSsrSiteOptions;
-        const b = right.beanOptions.options as IDecoratorSsrSiteOptions;
-        return a.publicPath.length - b.publicPath.length;
-      })[0];
+      const site = config.ssrSite
+        ? sites.find(site => site.name === config.ssrSite)
+        : sites.toSorted((left, right) => {
+            const a = left.beanOptions.options as IDecoratorSsrSiteOptions;
+            const b = right.beanOptions.options as IDecoratorSsrSiteOptions;
+            return a.publicPath.length - b.publicPath.length;
+          })[0];
       if (!site) throw new OAuthError('temporarily_unavailable', 503);
       const request = await this.scope.service.authorization.authorize(url.searchParams, resource);
       const siteInstance = this.bean._getBean<BeanSsrSiteBase>(

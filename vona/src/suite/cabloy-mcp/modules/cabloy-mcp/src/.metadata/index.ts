@@ -39,6 +39,46 @@ declare module 'vona-module-cabloy-mcp' {
           }
 }
 /** middlewareSystem: end */
+/** service: begin */
+export * from '../service/sharedBusinessTools.ts';
+
+import 'vona-module-a-bean';
+declare module 'vona-module-a-bean' {
+
+    export interface IServiceRecord {
+      'cabloy-mcp:sharedBusinessTools': never;
+    }
+
+
+}
+declare module 'vona-module-cabloy-mcp' {
+
+        export interface ServiceSharedBusinessTools {
+          /** @internal */
+          get scope(): ScopeModuleCabloyMcp;
+        }
+
+          export interface ServiceSharedBusinessTools {
+            get $beanFullName(): 'cabloy-mcp.service.sharedBusinessTools';
+            get $onionName(): 'cabloy-mcp:sharedBusinessTools';
+          }
+}
+/** service: end */
+/** service: begin */
+import type { ServiceSharedBusinessTools } from '../service/sharedBusinessTools.ts';
+export interface IModuleService {
+  'sharedBusinessTools': ServiceSharedBusinessTools;
+}
+/** service: end */
+/** service: begin */
+
+import 'vona';
+declare module 'vona' {
+  export interface IBeanRecordGeneral {
+    'cabloy-mcp.service.sharedBusinessTools': ServiceSharedBusinessTools;
+  }
+}
+/** service: end */
 /** meta: begin */
 export * from '../bean/meta.printTip.ts';
 
@@ -81,6 +121,7 @@ export class ScopeModuleCabloyMcp extends BeanScopeBase {}
 export interface ScopeModuleCabloyMcp {
   util: BeanScopeUtil;
 config: TypeModuleConfig<typeof config>;
+service: IModuleService;
 }
 
 import 'vona';
