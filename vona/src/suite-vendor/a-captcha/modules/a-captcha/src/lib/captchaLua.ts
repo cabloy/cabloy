@@ -31,8 +31,8 @@ for i, budget in ipairs(policy.budgets) do
   counters[i] = { value = value, deadline = deadline }
   if value >= budget.limit and deadline > retryAt then retryAt = deadline end
 end
-if retryAt > now then return { 0, '', retryAt, cooldown } end
-if redis.call('EXISTS', KEYS[1]) == 1 then return { -1 } end
+if retryAt > now then return { 0, '', retryAt, cooldown, now } end
+if redis.call('EXISTS', KEYS[1]) == 1 then return { -1, '', 0, 0, now } end
 local data = cjson.decode(ARGV[3])
 data.bound.expiresAt = now + policy.ttl
 data.bound.resendAt = now + policy.cooldown
@@ -49,23 +49,23 @@ if policy.cooldown > 0 then
   redis.call('SET', KEYS[3], tostring(data.bound.resendAt))
   redis.call('PEXPIREAT', KEYS[3], data.bound.resendAt)
 end
-return { 1, raw, data.bound.expiresAt, data.bound.resendAt }
+return { 1, raw, data.bound.expiresAt, data.bound.resendAt, now }
 `;
 
 export const captchaFinalizeLua = `
-local current = redis.call('GET', KEYS[1])
-if current ~= ARGV[1] or redis.call('GET', KEYS[2]) ~= ARGV[2] then return 0 end
-local data = cjson.decode(current)
 local time = redis.call('TIME')
 local now = tonumber(time[1]) * 1000 + math.floor(tonumber(time[2]) / 1000)
-if data.bound.state ~= 'pending' or data.bound.expiresAt <= now then return 0 end
+local current = redis.call('GET', KEYS[1])
+if current ~= ARGV[1] or redis.call('GET', KEYS[2]) ~= ARGV[2] then return { 0, now } end
+local data = cjson.decode(current)
+if data.bound.state ~= 'pending' or data.bound.expiresAt <= now then return { 0, now } end
 if ARGV[3] == '' then
   redis.call('DEL', KEYS[1])
 else
   redis.call('SET', KEYS[1], ARGV[3])
   redis.call('PEXPIREAT', KEYS[1], data.bound.expiresAt)
 end
-return 1
+return { 1, now }
 `;
 
 // Verification happens in the provider. Only the caller holding this exact active

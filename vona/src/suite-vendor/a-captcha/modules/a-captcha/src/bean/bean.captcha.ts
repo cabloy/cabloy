@@ -75,6 +75,7 @@ export class BeanCaptcha extends BeanBase {
         provider: provider.name,
         payload: undefined,
         status: 'limited',
+        serverNow: reservation.serverNow,
         resendAt: reservation.resendAt || undefined,
         retryAt: reservation.retryAt,
       };
@@ -89,17 +90,25 @@ export class BeanCaptcha extends BeanBase {
       // A reservation authorizes exactly one external attempt. Never retry sends.
       captcha = await beanInstance.create(provider.options, context);
     } catch {
-      await cache.finalizeBound(id, snapshot);
-      return { id: '', provider: provider.name, payload: undefined, status: 'unknown', ...timing };
+      const finalized = await cache.finalizeBound(id, snapshot);
+      return {
+        id: '',
+        provider: provider.name,
+        payload: undefined,
+        status: 'unknown',
+        serverNow: finalized.serverNow,
+        ...timing,
+      };
     }
     const outcome = captcha.outcome ?? 'accepted';
     if (outcome !== 'accepted' || captcha.token === undefined || captcha.token === null) {
-      await cache.finalizeBound(id, snapshot);
+      const finalized = await cache.finalizeBound(id, snapshot);
       return {
         id: '',
         provider: provider.name,
         payload: undefined,
         status: outcome === 'rejected' ? 'rejected' : 'unknown',
+        serverNow: finalized.serverNow,
         ...timing,
       };
     }
@@ -109,17 +118,27 @@ export class BeanCaptcha extends BeanBase {
       bound: { ...snapshot.data.bound!, state: 'active', version: 1 },
     };
     const finalized = await cache.finalizeBound(id, snapshot, active);
-    if (!finalized)
-      return { id: '', provider: provider.name, payload: undefined, status: 'unknown', ...timing };
+    if (!finalized.finalized) {
+      return {
+        id: '',
+        provider: provider.name,
+        payload: undefined,
+        status: 'unknown',
+        serverNow: finalized.serverNow,
+        ...timing,
+      };
+    }
     const result: ICaptchaData = {
       id,
       provider: provider.name,
       payload: captcha.payload,
       status: 'accepted',
+      serverNow: finalized.serverNow,
       ...timing,
     };
-    // Generic showToken never grants disclosure for a bound provider.
-    if (captcha.exposeToken === true) result.token = captcha.token;
+    // Bound providers must also authorize disclosure for their actual transport.
+    if (this.scope.config.captcha.showToken && captcha.exposeToken === true)
+      result.token = captcha.token;
     return result;
   }
 

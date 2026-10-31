@@ -86,15 +86,21 @@ export class CacheRedisCaptcha extends ServiceCacheRedisBase<
       captchaReserveLua,
       [id, keys.pointer, keys.cooldown, ...keys.budgets],
       [id, JSON.stringify(policy), JSON.stringify(data)],
-    )) as [number, string, number, number];
+    )) as [number, string, number, number, number];
     if (result[0] === -1) throw new Error('captcha identity collision');
     if (result[0] === 0) {
-      return { reserved: false as const, retryAt: result[2], resendAt: result[3] };
+      return {
+        reserved: false as const,
+        retryAt: result[2],
+        resendAt: result[3],
+        serverNow: result[4],
+      };
     }
     if (result[0] !== 1 || !result[1]) throw new Error('invalid captcha reservation');
     return {
       reserved: true as const,
       snapshot: { raw: result[1], data: JSON.parse(result[1]) as ICaptchaDataCache },
+      serverNow: result[4],
     };
   }
 
@@ -102,13 +108,12 @@ export class CacheRedisCaptcha extends ServiceCacheRedisBase<
     this._validateBoundId(id);
     const scope = snapshot.data.bound!.scope;
     const pointer = `${this.boundPrefix()}current:${scope}`;
-    return (
-      (await this._eval(
-        captchaFinalizeLua,
-        [id, pointer],
-        [snapshot.raw, id, data === undefined ? '' : JSON.stringify(data)],
-      )) === 1
-    );
+    const result = (await this._eval(
+      captchaFinalizeLua,
+      [id, pointer],
+      [snapshot.raw, id, data === undefined ? '' : JSON.stringify(data)],
+    )) as [number, number];
+    return { finalized: result[0] === 1, serverNow: result[1] };
   }
 
   /** -1 asks the verifier to reread a competing wrong-attempt update. */

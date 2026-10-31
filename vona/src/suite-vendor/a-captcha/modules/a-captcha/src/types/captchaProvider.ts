@@ -50,7 +50,7 @@ export interface ICaptchaProviderData<TOKEN = unknown, PAYLOAD = unknown> {
   token: TOKEN;
   payload: PAYLOAD;
   outcome?: 'accepted' | 'rejected' | 'unknown';
-  /** Bound providers alone decide whether their actual transport may expose the token. */
+  /** Bound providers authorize transport disclosure subject to captcha.showToken. */
   exposeToken?: boolean;
 }
 
