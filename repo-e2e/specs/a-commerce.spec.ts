@@ -1740,6 +1740,38 @@ test(
         'data-zova-hydrated',
         'commerceAdmin',
       );
+      // Commerce Admin consumes the same task shell: its current create task
+      // remains reachable through the bounded, keyboard-operable compact list.
+      const tabItems = adminPage.getByTestId('tab-items');
+      const allTabs = adminPage.getByTestId('tab-items-more');
+      const tabList = adminPage.getByTestId('tab-items-list');
+      await expect(tabItems).toHaveAttribute('data-compact', 'false');
+      await expect(tabItems.getByRole('tab')).toHaveCount(1);
+      await expect(tabItems.getByRole('tab')).toHaveAttribute('aria-selected', 'true');
+      await adminPage.setViewportSize({ width: 320, height: 900 });
+      await expect(tabItems).toHaveAttribute('data-compact', 'true');
+      await expect(tabItems.getByRole('tab')).toHaveCount(1);
+      await expect(tabItems.getByRole('tab')).toHaveAttribute('aria-selected', 'true');
+      await expect(allTabs).toHaveAccessibleName('All tabs');
+      await allTabs.focus();
+      await allTabs.press('Enter');
+      await expect(tabList).toBeVisible();
+      await expect(tabList).toHaveAttribute('role', 'group');
+      await expect(tabList).toHaveAccessibleName('All tabs');
+      await expect(tabList.locator('.tab-items-select')).toHaveCount(1);
+      await expect(tabList.locator('.tab-items-select')).toHaveAttribute('aria-current', 'page');
+      await expect(tabList.locator('.tab-items-select')).toBeFocused();
+      const popupBox = (await tabList.boundingBox())!;
+      expect(popupBox.x).toBeGreaterThanOrEqual(-1);
+      expect(popupBox.x + popupBox.width).toBeLessThanOrEqual(321);
+      expect(popupBox.y).toBeGreaterThanOrEqual(-1);
+      expect(popupBox.y + popupBox.height).toBeLessThanOrEqual(901);
+      await adminPage.keyboard.press('Escape');
+      await expect(tabList).toBeHidden();
+      await expect(allTabs).toBeFocused();
+      await adminPage.setViewportSize({ width: 1440, height: 900 });
+      await expect(tabItems).toHaveAttribute('data-compact', 'false');
+
       for (const groupName of [
         'Basic Information',
         'Discount Policy',

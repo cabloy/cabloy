@@ -19,7 +19,7 @@ describe('<%=argv.resourceName%>.test.ts', () => {
       await app.bean.passport.signinMock();
       try {
         app.bean.passport.current!.roles = [];
-        const actions = ['create', 'select', 'view', 'update', 'delete'];
+        const actions = ['create', 'select', 'view', 'update', 'delete', 'group', 'aggregate'];
         const permissions = await Promise.all(
           actions.map(action =>
             app.bean.permission.retrievePermissionAction(

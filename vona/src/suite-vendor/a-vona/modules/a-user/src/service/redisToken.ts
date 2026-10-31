@@ -47,11 +47,15 @@ export class ServiceRedisToken extends BeanBase {
 
   private _getAuthRedisKey(payloadData: IPayloadData) {
     if (!this.ctx.instance) return;
-    return `${this._getUserId(payloadData)}:${this._getAuthId(payloadData)}`;
+    const key = `${this._getUserId(payloadData)}:${this._getAuthId(payloadData)}`;
+    if (this.bean.passport.authTokenMode === 'auth') return key;
+    const token = this._getToken(payloadData);
+    if (!token) return;
+    return `${key}:${token}`;
   }
 
   private _getAuthRedisKeyPrefix(user: IUser) {
-    return `${user.id}`;
+    return `${user.id}:`;
   }
 
   private _getToken(payloadData: IPayloadData) {

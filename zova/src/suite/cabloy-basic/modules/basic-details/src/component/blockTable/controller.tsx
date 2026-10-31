@@ -17,7 +17,7 @@ export interface ControllerBlockTableProps extends IResourceBlockOptionsBase {}
 @Controller()
 export class ControllerBlockTable<TData extends {} = {}> extends BeanControllerBase {
   static $propsDefault = {
-    class: 'overflow-x-auto rounded-box border border-base-content/15 bg-base-100',
+    class: 'min-w-0 rounded-box border border-base-content/15 bg-base-100',
   };
 
   static $componentOptions: IComponentOptions = { inheritAttrs: false, deepExtendDefault: true };

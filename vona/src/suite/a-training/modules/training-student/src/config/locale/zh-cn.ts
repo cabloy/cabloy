@@ -23,6 +23,8 @@ export default {
   StudentCreate: '创建学生',
   StudentSelect: '查询学生列表',
   StudentLookup: '查找学生',
+  StudentGroup: '学生分组统计',
+  StudentAggregate: '学生统计',
   StudentView: '查看学生',
   StudentUpdate: '更新学生',
   StudentSummary: '查看学生摘要',

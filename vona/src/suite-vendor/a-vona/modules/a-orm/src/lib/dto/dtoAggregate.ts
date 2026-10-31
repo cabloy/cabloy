@@ -56,7 +56,10 @@ export function _DtoAggregate_inner<
     if (!columns) continue;
     for (const column of columns) {
       const column2 = `${key}_${column === '*' ? 'all' : column}`;
-      Api.field(v.optional(), z.string())(classTarget.prototype, column2);
+      Api.field(v.optional(), key === 'count' ? z.string() : z.string().nullable())(
+        classTarget.prototype,
+        column2,
+      );
     }
   }
   return classTarget as any;

@@ -155,7 +155,7 @@ test('creates a mixed-status model with deferred scope separated', () => {
   assert.doesNotMatch(renderGantt(model, 'Demo'), /--teal:/);
 });
 
-test('planning completion requires an explicit task mode and preserves verified-only metrics', () => {
+test('planning completion requires an explicit task mode and reduces only unfinished scope', () => {
   const wbs = files['pdp-wbs.md'].replace(
     '#### WBS-10-01: Freeze the baseline',
     '#### WBS-10-01: Freeze the baseline\n\nCompletion mode: planning-only.',
@@ -179,13 +179,16 @@ test('planning completion requires an explicit task mode and preserves verified-
   });
   assert.equal(model.tasks[0].completionMode, 'planning-only');
   assert.equal(model.verified, 0);
+  assert.equal(model.planningComplete, 1);
+  assert.equal(model.completed, 1);
+  assert.equal(model.remaining, 1);
   const gantt = renderGantt(model, 'Demo');
   assert.match(gantt, /Planning complete/);
   assert.match(gantt, /--teal:#087f83/);
-  assert.doesNotMatch(renderBurndown(model, 'Demo'), /--teal:/);
+  assert.match(renderBurndown(model, 'Demo'), /--teal:#087f83/);
   assert.match(gantt, /class="caption" x="96" y="195">WBS-20-01: Deliver/);
   assert.doesNotMatch(gantt, /class="caption" x="96" y="195">WBS-10-01/);
-  assert.match(renderBurndown(model, 'Demo'), />2 remaining · 0 verified</);
+  assert.match(renderBurndown(model, 'Demo'), />1 remaining · 0 verified · 1 planning complete</);
   const blocked = createChartModel({
     readme: files['README.md'],
     wbs,
@@ -201,7 +204,91 @@ test('planning completion requires an explicit task mode and preserves verified-
     testPlan: files['test-plan.md'],
   });
   assert.match(renderGantt(chinese, '示例'), /规划完成/);
-  assert.match(renderBurndown(chinese, '示例'), /2 剩余 · 0 已核验/);
+  assert.match(renderBurndown(chinese, '示例'), /1 剩余 · 0 已核验 · 1 规划完成/);
+});
+
+test('verified and planning closure finish scope without conflating acceptance', () => {
+  for (const [readme, suite] of [
+    [files['README.md'], 'Demo'],
+    ['# 中文规划\n完整中文记录。', '示例'],
+  ]) {
+    const model = createChartModel({
+      readme,
+      wbs: files['pdp-wbs.md'].replace(
+        '#### WBS-10-01: Freeze the baseline',
+        '#### WBS-10-01: Freeze the baseline\nCompletion mode: planning-only.',
+      ),
+      progress: files['progress.md']
+        .replace('`not-started`', '`planning-complete`')
+        .replace('`in-progress`', '`verified`'),
+      testPlan: files['test-plan.md'],
+    });
+    assert.equal(model.activeTasks.length, 2);
+    assert.equal(model.deferredTasks.length, 1);
+    assert.equal(model.verified, 1);
+    assert.equal(model.planningComplete, 1);
+    assert.equal(model.completed, 2);
+    assert.equal(model.remaining, 0);
+    const svg = renderBurndown(model, suite);
+    assert.match(svg, /<circle cx="910\.0" cy="650\.0" r="14"/);
+    if (model.language === 'en') {
+      assert.match(svg, />0 remaining · 1 verified · 1 planning complete</);
+      assert.match(svg, /remaining = active scope − verified − planning complete/);
+      assert.match(
+        svg,
+        /aria-label="Phase 10: 1 active; 0 verified; 1 planning complete; 0 remaining"/,
+      );
+      assert.match(
+        svg,
+        /aria-label="Phase 20: 1 active; 1 verified; 0 planning complete; 0 remaining"/,
+      );
+      assert.match(svg, /<text class="small" x="1228" y="832">Planning complete</);
+    } else {
+      assert.match(svg, />0 剩余 · 1 已核验 · 1 规划完成</);
+      assert.match(svg, /剩余 = 活跃范围 − 已核验 − 规划完成/);
+      assert.match(svg, /aria-label="阶段 10：1 项活跃；0 项已核验；1 项规划完成；0 项剩余"/);
+      assert.match(svg, /<text class="small" x="1228" y="832">规划完成</);
+    }
+  }
+});
+
+test('unfinished statuses remain unfinished and mixed phase counts agree with scope', () => {
+  const statuses = [
+    'verified',
+    'planning-complete',
+    'not-started',
+    'in-progress',
+    'implementation-complete',
+    'blocked',
+    'waived',
+    'deferred',
+  ];
+  const model = createChartModel({
+    readme: files['README.md'],
+    wbs: `### Phase 10: Mixed closure\nDependencies: none.\n${statuses
+      .map(
+        (status, index) =>
+          `#### WBS-MIX-${index}: Work ${index}\n${status === 'planning-complete' ? 'Completion mode: planning-only.\n' : ''}`,
+      )
+      .join('\n')}`,
+    progress: `| WBS ID | Status |\n| --- | --- |\n${statuses.map((status, index) => `| WBS-MIX-${index} | ${status} |`).join('\n')}`,
+    testPlan: '',
+  });
+  assert.equal(model.activeTasks.length, 7);
+  assert.equal(model.deferredTasks.length, 1);
+  assert.equal(model.verified, 1);
+  assert.equal(model.planningComplete, 1);
+  assert.equal(model.completed, 2);
+  assert.equal(model.remaining, 5);
+  const svg = renderBurndown(model, 'Demo');
+  assert.match(
+    svg,
+    /aria-label="Phase 10: 7 active; 1 verified; 1 planning complete; 5 remaining"/,
+  );
+  assert.match(svg, />5 remaining · 1 verified · 1 planning complete</);
+  assert.match(svg, /<circle cx="395\.7" cy="478\.6" r="8"/);
+  assert.match(svg, /width="60" height="12" rx="6" fill="var\(--aqua\)"/);
+  assert.doesNotMatch(svg, /r="14" fill="var\(--aqua\)"/);
 });
 
 test('completion mode must be unique, supported and task-local', () => {
@@ -325,7 +412,7 @@ test('renders partial burndown progress at its remaining-count position', async 
   t.after(() => removeFixture(directory));
   const result = await generateCharts(directory);
   const burndown = result.artifacts.get('implementation-burndown.svg');
-  assert.match(burndown, />1 remaining · 1 verified</);
+  assert.match(burndown, />1 remaining · 1 verified · 0 planning complete</);
   assert.match(burndown, />2 remaining</);
   assert.doesNotMatch(burndown, />0 \/ 2</);
   assert.match(
@@ -348,7 +435,7 @@ test('renders a completion marker only when no WBS items remain', async t => {
   });
   t.after(() => removeFixture(directory));
   const burndown = (await generateCharts(directory)).artifacts.get('implementation-burndown.svg');
-  assert.match(burndown, />0 remaining · 2 verified</);
+  assert.match(burndown, />0 remaining · 2 verified · 0 planning complete</);
   assert.match(burndown, /<line x1="190" y1="410" x2="910\.0" y2="650\.0"/);
   assert.match(burndown, /<circle cx="910\.0" cy="650\.0" r="14"/);
   assert.match(burndown, /M904\.0 650\.0 L908\.0 654\.0 L916\.0 645\.0/);
@@ -755,7 +842,7 @@ test('Chinese descriptions, tooltips, aria labels, and fallback copy contain no 
   assert.match(gantt, /aria-label="WBS-ZH-01: 示例工作; 依赖: 无; 受阻"/);
   assert.match(gantt, /<title>WBS-ZH-01: 示例工作; 依赖: 无; 受阻<\/title>/);
   assert.match(gantt, /没有已记录的依赖就绪 WBS 候选项/);
-  assert.match(burndown, /aria-label="阶段 10：0 \/ 1 项已核验"/);
+  assert.match(burndown, /aria-label="阶段 10：1 项活跃；0 项已核验；0 项规划完成；1 项剩余"/);
   assert.match(gantt, /依赖就绪不代表实施批准/);
   assert.match(burndown, /已记录 WBS 范围/);
 });
@@ -833,6 +920,10 @@ test('writes deterministic XML-escaped artifacts and detects stale output', asyn
     /implementation-gantt\.svg/,
   );
   const second = await generateCharts(directory);
+  assert.equal(
+    second.artifacts.get('implementation-burndown.svg'),
+    first.artifacts.get('implementation-burndown.svg'),
+  );
   assert.equal(
     second.artifacts.get('implementation-gantt.svg'),
     first.artifacts.get('implementation-gantt.svg'),

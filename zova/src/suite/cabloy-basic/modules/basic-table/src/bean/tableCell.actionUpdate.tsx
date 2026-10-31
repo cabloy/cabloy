@@ -16,7 +16,9 @@ declare module 'zova-module-a-openapi' {
   }
 }
 
-export interface ITableCellOptionsActionUpdate extends IResourceTableActionRowOptionsBase {}
+export interface ITableCellOptionsActionUpdate extends IResourceTableActionRowOptionsBase {
+  showLabel?: boolean;
+}
 
 @TableCell<ITableCellOptionsActionUpdate>({
   class: 'btn btn-outline btn-primary join-item',
@@ -31,11 +33,13 @@ export class TableCellActionUpdate extends BeanBase implements ITableCellRender 
     return (
       <ZButton
         class={options.class}
+        aria-label={this.scope.locale.Edit()}
         onPerform={async () => {
           await $host.$performCommand('basic-commands:edit', options, renderContext);
         }}
       >
-        <ZIcon name="::draft" width={24}></ZIcon>
+        <ZIcon name="::draft" width={24} aria-hidden="true"></ZIcon>
+        {options.showLabel && this.scope.locale.Edit()}
       </ZButton>
     );
   }

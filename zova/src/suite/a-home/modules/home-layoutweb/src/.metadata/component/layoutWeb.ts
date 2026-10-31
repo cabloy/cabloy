@@ -7,6 +7,7 @@ import type { ControllerLayoutWebProps } from '../../component/layoutWeb/control
 
 import { ControllerLayoutWeb } from '../../component/layoutWeb/controller.tsx';
 import { RenderLayoutWeb } from '../../component/layoutWeb/render.tsx';
+import { StyleLayoutWeb } from '../../component/layoutWeb/style.ts';
 export type ZLayoutWebProps = {
   controllerRef?: (ref: ControllerLayoutWeb) => void;
 } & ControllerLayoutWebProps;
@@ -21,16 +22,17 @@ declare module 'zova-module-home-layoutweb' {
   }
 }
 declare module 'zova-module-home-layoutweb' {
-  export interface RenderLayoutWeb extends ControllerLayoutWeb {}
-  export interface RenderContent extends ControllerLayoutWeb {}
-  export interface RenderHeader extends ControllerLayoutWeb {}
-  export interface RenderLocale extends ControllerLayoutWeb {}
-  export interface RenderTabs extends ControllerLayoutWeb {}
-  export interface RenderTheme extends ControllerLayoutWeb {}
-  export interface RenderUser extends ControllerLayoutWeb {}
+  export interface StyleLayoutWeb extends ControllerLayoutWeb {}
+  export interface RenderLayoutWeb extends StyleLayoutWeb {}
+  export interface RenderContent extends StyleLayoutWeb {}
+  export interface RenderHeader extends StyleLayoutWeb {}
+  export interface RenderLocale extends StyleLayoutWeb {}
+  export interface RenderTabs extends StyleLayoutWeb {}
+  export interface RenderTheme extends StyleLayoutWeb {}
+  export interface RenderUser extends StyleLayoutWeb {}
 }
 export const ZLayoutWeb = defineComponent((_props: ZLayoutWebProps) => {
-  useController(ControllerLayoutWeb, RenderLayoutWeb, undefined);
+  useController(ControllerLayoutWeb, RenderLayoutWeb, StyleLayoutWeb);
   return () => {};
 }, prepareComponentOptions());
 declare module 'zova-module-a-bean' {

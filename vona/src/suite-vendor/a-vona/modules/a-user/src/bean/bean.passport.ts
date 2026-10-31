@@ -10,13 +10,19 @@ import { catchError, isNil } from '@cabloy/utils';
 import { BeanBase, beanFullNameFromOnionName } from 'vona';
 import { Bean } from 'vona-module-a-bean';
 
-import type { IAuth, IAuthIdRecord, IAuthTokenOptions, ISigninOptions } from '../types/auth.ts';
+import type {
+  IAuth,
+  IAuthIdRecord,
+  IAuthTokenOptions,
+  ISigninOptions,
+  TypeAuthTokenMode,
+} from '../types/auth.ts';
 import type { IAuthTokenAdapter } from '../types/authToken.ts';
 import type { IPassport, IPassportAdapter } from '../types/passport.ts';
 import type { IRole, IRoleNameRecord } from '../types/role.ts';
 import type { IUser, IUserNameRecord } from '../types/user.ts';
 
-import { $getAuthIdSystem } from '../lib/auth.ts';
+import { $getAuthIdSystem, $getAuthTokenMode } from '../lib/auth.ts';
 
 @Bean()
 export class BeanPassport extends BeanBase {
@@ -41,6 +47,10 @@ export class BeanPassport extends BeanBase {
       this._passportAdapter = this.bean._getBean(beanFullName) as IPassportAdapter;
     }
     return this._passportAdapter;
+  }
+
+  public get authTokenMode(): TypeAuthTokenMode {
+    return $getAuthTokenMode(this.scope.config.authToken);
   }
 
   public get isAuthenticated(): boolean {
@@ -71,6 +81,7 @@ export class BeanPassport extends BeanBase {
   }
 
   public async setCurrent(passport: IPassport | undefined) {
+    this.ctx.state.passportPayloadData = undefined;
     this.ctx.state.passport = await this.passportAdapter.setCurrent(passport);
   }
 
@@ -107,9 +118,13 @@ export class BeanPassport extends BeanBase {
         ttl: this.scope.config.authToken.ttl,
       },
     );
-    const payloadData = await this._passportSerialize(passport, authTokenOptions);
+    const payloadData = await this._passportSerialize(passport, authTokenOptions, true);
     // jwt token
-    return await this.bean.jwt.create(payloadData, { dev: passport.auth?.id.toString() === '-1' });
+    const jwt = await this.bean.jwt.create(payloadData, {
+      dev: passport.auth?.id.toString() === '-1',
+    });
+    this.ctx.state.passportPayloadData = payloadData;
+    return jwt;
   }
 
   public async signout(): Promise<void> {
@@ -117,7 +132,10 @@ export class BeanPassport extends BeanBase {
     const passport = this.current;
     if (!passport) return;
     // removeAuthToken
-    const payloadData = await this.passportAdapter.serialize(passport);
+    const payloadData =
+      this.authTokenMode === 'session'
+        ? this._getCurrentPayloadData()
+        : await this.passportAdapter.serialize(passport);
     await this.authTokenAdapter.remove(payloadData);
     // event
     await this.scope.event.signout.emit(passport);
@@ -191,6 +209,7 @@ export class BeanPassport extends BeanBase {
     }
     // setCurrent
     await this.setCurrent(passport);
+    this.ctx.state.passportPayloadData = payloadData;
     return { payloadData, passport };
   }
 
@@ -211,7 +230,9 @@ export class BeanPassport extends BeanBase {
     );
     payloadData = await this._handlePayloadData(payloadData, authTokenOptions);
     // jwt token
-    return await this.bean.jwt.create(payloadData);
+    const jwt = await this.bean.jwt.create(payloadData);
+    this.ctx.state.passportPayloadData = payloadData;
+    return jwt;
   }
 
   // only created by accessToken
@@ -247,7 +268,10 @@ export class BeanPassport extends BeanBase {
 
   public async createOauthCodeFromOauthAuthToken(accessToken: string, options?: IJwtSignOptions) {
     // payloadData
-    const payloadData = await this.bean.jwt.get('access').verify(accessToken);
+    const payloadData =
+      this.authTokenMode === 'session'
+        ? (await this.checkAuthToken(accessToken))?.payloadData
+        : await this.bean.jwt.get('access').verify(accessToken);
     if (!payloadData) return this.app.throw(401);
     // code
     return await this.bean.jwt.createOauthCode(payloadData, options);
@@ -282,7 +306,24 @@ export class BeanPassport extends BeanBase {
     return true;
   }
 
-  private async _passportSerialize(passport: IPassport, authTokenOptions?: IAuthTokenOptions) {
+  private _getCurrentPayloadData(): IPayloadData {
+    const payloadData = this.ctx.state.passportPayloadData;
+    if (!payloadData?.[this.scope.config.payloadData.fields.token]) return this.app.throw(401);
+    return payloadData;
+  }
+
+  private async _passportSerialize(
+    passport: IPassport,
+    authTokenOptions?: IAuthTokenOptions,
+    signin = false,
+  ) {
+    if (this.authTokenMode === 'session') {
+      if (signin) {
+        const payloadData = await this.passportAdapter.serialize(passport);
+        return await this.authTokenAdapter.create(payloadData, authTokenOptions?.ttl);
+      }
+      return await this._handlePayloadData(this._getCurrentPayloadData(), authTokenOptions);
+    }
     // serialize
     const payloadData = await this.passportAdapter.serialize(passport);
     return await this._handlePayloadData(payloadData, authTokenOptions);
@@ -296,6 +337,18 @@ export class BeanPassport extends BeanBase {
     const stateless = authTokenOptions?.stateless;
     const strategy = authTokenOptions?.strategy ?? 'refresh';
     const ttl = authTokenOptions?.ttl;
+    if (this.authTokenMode === 'session') {
+      if (stateless) throw new Error('Session auth-token mode requires stateful authentication');
+      if (strategy === 'reissue') {
+        throw new Error('Session auth-token mode does not support the reissue refresh strategy');
+      }
+      const verified = await this.authTokenAdapter.verify(payloadData);
+      if (!verified) return this.app.throw(401);
+      if (strategy === 'refresh') {
+        await this.authTokenAdapter.refresh(payloadData, ttl);
+      }
+      return payloadData;
+    }
     if (stateless) {
       // do nothing
       return payloadData;
@@ -320,17 +373,26 @@ export class BeanPassport extends BeanBase {
     authTokenOptionsCustom: IAuthTokenOptions | undefined,
     authTokenOptionsDefault: IAuthTokenOptions,
   ) {
-    if (!authProviderId) return authTokenOptionsDefault;
-    const { clientOptions } = await this.bean.authProvider.getClientOptions(
-      {
-        id: authProviderId,
-      },
-      { authTokenOptions: authTokenOptionsCustom ?? {} },
-      {
-        authTokenOptions: authTokenOptionsDefault,
-      },
-    );
-    if (!clientOptions) this.app.throw(403);
-    return clientOptions.authTokenOptions!;
+    let authTokenOptions = authTokenOptionsDefault;
+    if (this.authTokenMode === 'session') {
+      authTokenOptions = { ...authTokenOptions, ...authTokenOptionsCustom };
+    }
+    if (authProviderId) {
+      const { clientOptions } = await this.bean.authProvider.getClientOptions(
+        {
+          id: authProviderId,
+        },
+        { authTokenOptions: authTokenOptionsCustom ?? {} },
+        {
+          authTokenOptions: authTokenOptionsDefault,
+        },
+      );
+      if (!clientOptions) this.app.throw(403);
+      authTokenOptions = clientOptions.authTokenOptions!;
+    }
+    if (this.authTokenMode === 'session' && authTokenOptions.stateless) {
+      throw new Error('Session auth-token mode requires stateful authentication');
+    }
+    return authTokenOptions;
   }
 }

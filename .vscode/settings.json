@@ -39,6 +39,5 @@
   // watcher
   "files.watcherExclude": {
     "node_modules": true
-  },
-  "textlint.autoFixOnSave": true
+  }
 }

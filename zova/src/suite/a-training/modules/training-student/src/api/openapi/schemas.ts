@@ -471,6 +471,14 @@ export type ApiSchemaTrainingStudentDtoStudentLookupItem =
   components['schemas']['training-student.dto.studentLookupItem'];
 export type ApiSchemaTrainingStudentDtoStudentLookupItemPartial =
   Partial<ApiSchemaTrainingStudentDtoStudentLookupItem>;
+export type ApiSchemaTrainingStudentDtoStudentGroupResItem =
+  components['schemas']['training-student.dto.studentGroupResItem'];
+export type ApiSchemaTrainingStudentDtoStudentGroupResItemPartial =
+  Partial<ApiSchemaTrainingStudentDtoStudentGroupResItem>;
+export type ApiSchemaTrainingStudentDtoStudentAggregateRes =
+  components['schemas']['training-student.dto.studentAggregateRes'];
+export type ApiSchemaTrainingStudentDtoStudentAggregateResPartial =
+  Partial<ApiSchemaTrainingStudentDtoStudentAggregateRes>;
 export type ApiSchemaTrainingStudentDtoStudentView_2d063d28bc7243bed02ebd8bddf1212a93c6305b_4826fc678e47603ec467782ddb0d02463792cd60 =
   components['schemas']['training-student.dto.studentView_2d063d28bc7243bed02ebd8bddf1212a93c6305b_4826fc678e47603ec467782ddb0d02463792cd60'];
 export type ApiSchemaTrainingStudentDtoStudentView_2d063d28bc7243bed02ebd8bddf1212a93c6305b_4826fc678e47603ec467782ddb0d02463792cd60Partial =
@@ -638,8 +646,14 @@ export type ApiSchemaTestVonaEntityPost_729883d7de16ce4401b26f75bebe618c8948ff64
   components['schemas']['test-vona.entity.post_729883d7de16ce4401b26f75bebe618c8948ff64'];
 export type ApiSchemaTestVonaEntityPost_729883d7de16ce4401b26f75bebe618c8948ff64Partial =
   Partial<ApiSchemaTestVonaEntityPost_729883d7de16ce4401b26f75bebe618c8948ff64>;
-export type ApiSchemaTestVonaDtoUserUpdate = components['schemas']['test-vona.dto.userUpdate'];
-export type ApiSchemaTestVonaDtoUserUpdatePartial = Partial<ApiSchemaTestVonaDtoUserUpdate>;
+export type ApiSchemaTestVonaDtoUserCreate_1ff20af69286149eb0b25291d9450172f7bd0054 =
+  components['schemas']['test-vona.dto.userCreate_1ff20af69286149eb0b25291d9450172f7bd0054'];
+export type ApiSchemaTestVonaDtoUserCreate_1ff20af69286149eb0b25291d9450172f7bd0054Partial =
+  Partial<ApiSchemaTestVonaDtoUserCreate_1ff20af69286149eb0b25291d9450172f7bd0054>;
+export type ApiSchemaTestVonaDtoUserUpdate_fb27bcbbc8bfc8a865e086eb43abd766c7107326 =
+  components['schemas']['test-vona.dto.userUpdate_fb27bcbbc8bfc8a865e086eb43abd766c7107326'];
+export type ApiSchemaTestVonaDtoUserUpdate_fb27bcbbc8bfc8a865e086eb43abd766c7107326Partial =
+  Partial<ApiSchemaTestVonaDtoUserUpdate_fb27bcbbc8bfc8a865e086eb43abd766c7107326>;
 export type ApiSchemaTestVonaEntityCategory_2c7d642ee581efa300341e343180fbb0ecdc785d =
   components['schemas']['test-vona.entity.category_2c7d642ee581efa300341e343180fbb0ecdc785d'];
 export type ApiSchemaTestVonaEntityCategory_2c7d642ee581efa300341e343180fbb0ecdc785dPartial =

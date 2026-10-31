@@ -23,6 +23,8 @@ export default {
   StudentCreate: 'Create Student',
   StudentSelect: 'List Students',
   StudentLookup: 'Find Students',
+  StudentGroup: 'Group Students',
+  StudentAggregate: 'Aggregate Students',
   StudentView: 'View Student',
   StudentUpdate: 'Update Student',
   StudentSummary: 'View Student Summary',

@@ -8,6 +8,7 @@ const guardBeanName = 'demo-demonstration.guard.demonstration';
 const businessRoute = {
   controllerBeanFullName: 'test.controller.business',
   action: 'write',
+  routePathRaw: '/test/business/write',
 };
 
 function guard() {
@@ -29,7 +30,7 @@ function isGuardEnabledForRoute(routePathRaw: string, enable = true): boolean {
   return app.bean.onion.checkOnionOptionsEnabled({ ...options, enable }, routePathRaw);
 }
 
-describe('guardDemonstration.test.ts', () => {
+describe('guardDemonstration.test.ts', { concurrency: false }, () => {
   it('parses a trimmed, deduplicated username whitelist and exposes localized errors', async () => {
     assert.deepEqual(parseUsernameWhitelist(' admin, demo, ,admin '), ['admin', 'demo']);
     assert.deepEqual(parseUsernameWhitelist(undefined), []);
@@ -101,11 +102,84 @@ describe('guardDemonstration.test.ts', () => {
     });
   });
 
-  it('excludes only the configured authentication and OAuth route paths', () => {
+  it('allows non-whitelisted logout only in session auth-token mode', async t => {
+    await app.bean.executor.mockCtx(async () => {
+      const passport = app.bean.passport;
+      await passport.signinMock('admin');
+      try {
+        setRequest('POST', { ...businessRoute, routePathRaw: '/home/user/passport/logout' });
+        for (const authTokenMode of ['auth', 'session'] as const) {
+          const getter = t.mock.getter(passport, 'authTokenMode', () => authTokenMode);
+          try {
+            let continued = false;
+            const [result, err] = await catchError(() =>
+              guard().execute(
+                { enable: true, methodsForWrite: ['POST'], usernameWhitelist: [] } as any,
+                async () => {
+                  continued = true;
+                  return true;
+                },
+              ),
+            );
+            if (authTokenMode === 'session') {
+              assert.ifError(err);
+              assert.equal(result, true);
+              assert.equal(continued, true);
+            } else {
+              assert.equal(err?.code, 'demo-demonstration:1001');
+              assert.equal(err?.status, 403);
+              assert.equal(continued, false);
+            }
+          } finally {
+            getter.mock.restore();
+          }
+        }
+      } finally {
+        await passport.signout();
+      }
+    });
+  });
+
+  it('keeps other writes protected in session mode', async t => {
+    await app.bean.executor.mockCtx(async () => {
+      const passport = app.bean.passport;
+      await passport.signinMock('admin');
+      try {
+        const getter = t.mock.getter(passport, 'authTokenMode', () => 'session' as const);
+        try {
+          for (const [method, routePathRaw] of [
+            ['POST', businessRoute.routePathRaw],
+            ['DELETE', '/home/user/passport/logout'],
+            ['POST', '/home/user/passport/logout/'],
+          ]) {
+            setRequest(method, { ...businessRoute, routePathRaw });
+            let continued = false;
+            const [_, err] = await catchError(() =>
+              guard().execute(
+                { enable: true, methodsForWrite: ['POST', 'DELETE'], usernameWhitelist: [] } as any,
+                async () => {
+                  continued = true;
+                  return true;
+                },
+              ),
+            );
+            assert.equal(err?.code, 'demo-demonstration:1001');
+            assert.equal(err?.status, 403);
+            assert.equal(continued, false);
+          }
+        } finally {
+          getter.mock.restore();
+        }
+      } finally {
+        await passport.signout();
+      }
+    });
+  });
+
+  it('exempts the configured authentication and OAuth routes but still selects logout', () => {
     for (const routePathRaw of [
       '/home/user/passport/login',
       '/home/user/passport/login/:module/:providerName/:clientName?',
-      '/home/user/passport/logout',
       '/home/user/passport/register',
       '/home/user/passport/associate/:module/:providerName/:clientName?',
       '/home/user/passport/migrate/:module/:providerName/:clientName?',
@@ -116,6 +190,8 @@ describe('guardDemonstration.test.ts', () => {
     ]) {
       assert.equal(isGuardEnabledForRoute(routePathRaw), false);
     }
+    assert.equal(isGuardEnabledForRoute('/home/user/passport/logout'), true);
+    assert.equal(isGuardEnabledForRoute('/home/user/passport/logout', false), false);
     assert.equal(isGuardEnabledForRoute('/test/business/write'), true);
   });
 });

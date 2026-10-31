@@ -183,7 +183,9 @@ export class BeanSsrSiteBase<
 
   public get siteOptions() {
     if (!this._siteOptions) {
-      const onionOptions = this.$onionOptions as IDecoratorSsrSiteOptions;
+      const onionOptions = this.bean.onion.ssrSite.getOnionOptionsDynamic(
+        this.$onionName as any,
+      ) as IDecoratorSsrSiteOptions;
       const SSR_WITH_VONA = 'true';
       const META_MODE: ZovaMetaMode =
         this.app.meta.env.META_MODE === 'dev' || this.app.meta.env.DEMONSTRATION_ENABLED === 'true'

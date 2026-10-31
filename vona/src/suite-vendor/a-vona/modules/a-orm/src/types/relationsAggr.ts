@@ -27,7 +27,7 @@ export type TypeUtilAggrPrepareColumns<TColumns> = TColumns extends string[]
     : undefined;
 export type TypeRecordAggrsValues<TRecord extends Record<string, any>> = TRecord[keyof TRecord];
 export type TypeRecordAggrsValuesToObject<AggrValues extends string> = {
-  [K in AggrValues]: string | undefined;
+  [K in AggrValues]: K extends `count_${string}` ? string | undefined : string | null | undefined;
 };
 
 export type TypeUtilGetAggrsFromRelationAndIncludeWrapper<

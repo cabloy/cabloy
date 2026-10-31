@@ -1,4 +1,30 @@
 // eslint-disable
+/** schedule: begin */
+export * from '../bean/schedule.softDeletionPrune.ts';
+
+import { type IDecoratorScheduleOptions } from 'vona-module-a-schedule';
+declare module 'vona-module-a-schedule' {
+
+    export interface IScheduleRecord {
+      'a-orm:softDeletionPrune': IDecoratorScheduleOptions;
+    }
+
+
+}
+declare module 'vona-module-a-orm' {
+
+        export interface ScheduleSoftDeletionPrune {
+          /** @internal */
+          get scope(): ScopeModuleAOrm;
+        }
+
+          export interface ScheduleSoftDeletionPrune {
+            get $beanFullName(): 'a-orm.schedule.softDeletionPrune';
+            get $onionName(): 'a-orm:softDeletionPrune';
+            get $onionOptions(): IDecoratorScheduleOptions;
+          }
+}
+/** schedule: end */
 /** aopMethod: begin */
 export * from '../bean/aopMethod.transaction.ts';
 import type { IAopMethodOptionsTransaction } from '../bean/aopMethod.transaction.ts';
@@ -261,32 +287,6 @@ export interface IModuleQueue {
   'doubleDelete': QueueDoubleDelete;
 }
 /** queue: end */
-/** schedule: begin */
-export * from '../bean/schedule.softDeletionPrune.ts';
-
-import { type IDecoratorScheduleOptions } from 'vona-module-a-schedule';
-declare module 'vona-module-a-schedule' {
-
-    export interface IScheduleRecord {
-      'a-orm:softDeletionPrune': IDecoratorScheduleOptions;
-    }
-
-
-}
-declare module 'vona-module-a-orm' {
-
-        export interface ScheduleSoftDeletionPrune {
-          /** @internal */
-          get scope(): ScopeModuleAOrm;
-        }
-
-          export interface ScheduleSoftDeletionPrune {
-            get $beanFullName(): 'a-orm.schedule.softDeletionPrune';
-            get $onionName(): 'a-orm:softDeletionPrune';
-            get $onionOptions(): IDecoratorScheduleOptions;
-          }
-}
-/** schedule: end */
 /** config: begin */
 export * from '../config/config.ts';
 import type { config } from '../config/config.ts';

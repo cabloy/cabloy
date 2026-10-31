@@ -7,10 +7,12 @@ import z from 'zod';
 import { ZovaRender } from 'zova-rest-cabloy-basic-admin';
 
 import { EntityPost } from '../entity/post.ts';
+import { postAnalysis } from '../lib/postAnalysis.ts';
 
 export interface IDtoOptionsPostSelectReq extends IDecoratorDtoOptions {}
 
 @Dto<IDtoOptionsPostSelectReq>({
+  analysis: postAnalysis,
   openapi: { filter: { table: 'testVonaPost' } },
   fields: {
     title: $makeSchema(v.optional(), v.nullable(), z.string()),

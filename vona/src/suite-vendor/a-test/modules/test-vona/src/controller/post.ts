@@ -1,8 +1,13 @@
-import type { IQueryParams } from 'vona-module-a-orm';
+import type {
+  IQueryParams,
+  TypeAnalysisAggregateParams,
+  TypeAnalysisGroupParams,
+} from 'vona-module-a-orm';
 import type { IDecoratorControllerOptions } from 'vona-module-a-web';
 
 import { BeanBase } from 'vona';
 import { Api, v } from 'vona-module-a-openapiutils';
+import { $executeAnalysisAggregate, $executeAnalysisGroup } from 'vona-module-a-orm';
 import { Passport } from 'vona-module-a-user';
 import { Arg, Controller, Web } from 'vona-module-a-web';
 
@@ -12,6 +17,7 @@ import { DtoPostAggregate } from '../dto/postAggregate.ts';
 import { DtoPostGroup } from '../dto/postGroup.ts';
 import { DtoPostSelectReq } from '../dto/postSelectReq.ts';
 import { DtoPostSelectRes } from '../dto/postSelectRes.ts';
+import { postAnalysis } from '../lib/postAnalysis.ts';
 
 export interface IControllerOptionsPost extends IDecoratorControllerOptions {}
 
@@ -19,28 +25,20 @@ export interface IControllerOptionsPost extends IDecoratorControllerOptions {}
 export class ControllerPost extends BeanBase {
   @Web.get('group')
   @Api.body(v.array(DtoPostGroup))
-  async group(): Promise<DtoPostGroup[]> {
-    return await this.scope.model.post.group({
-      groups: 'userId',
-      aggrs: {
-        count: '*',
-        sum: 'stars',
-      },
-    });
+  async group(
+    @Arg.filter(DtoPostSelectReq, { mode: 'group' })
+    params: TypeAnalysisGroupParams<typeof postAnalysis>,
+  ): Promise<DtoPostGroup[]> {
+    return await $executeAnalysisGroup(this.scope.model.post, postAnalysis, params);
   }
 
   @Web.get('aggregate')
   @Api.body(DtoPostAggregate)
-  async aggregate(): Promise<DtoPostAggregate> {
-    return await this.scope.model.post.aggregate({
-      aggrs: {
-        count: ['*', 'stars'],
-        sum: 'stars',
-        avg: 'stars',
-        min: 'stars',
-        max: 'stars',
-      },
-    });
+  async aggregate(
+    @Arg.filter(DtoPostSelectReq, { mode: 'aggregate' })
+    params: TypeAnalysisAggregateParams<typeof postAnalysis>,
+  ): Promise<DtoPostAggregate> {
+    return await $executeAnalysisAggregate(this.scope.model.post, postAnalysis, params);
   }
 
   @Web.get('findManyEcho')

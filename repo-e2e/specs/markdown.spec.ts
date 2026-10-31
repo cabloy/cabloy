@@ -329,6 +329,22 @@ const product = '${suffix}';
       await expect(editor).toBeVisible();
       const toolbar = adminPage.getByRole('toolbar', { name: 'Markdown toolbar' });
       await expect(toolbar).toBeVisible();
+      const sourceButton = toolbar.getByRole('button', { name: 'Source editing mode' });
+      const sourceInput = adminPage.getByRole('textbox', { name: 'Markdown source' });
+      await expect(sourceButton).toHaveAttribute('type', 'button');
+      await expect(sourceButton).toHaveAttribute('aria-pressed', 'false');
+      await sourceButton.click();
+      await expect(sourceButton).toHaveAttribute('aria-pressed', 'true');
+      await expect(sourceInput).toHaveValue(markdown);
+      await expect(editor).toBeHidden();
+      await expect(toolbar.getByRole('button', { name: 'Bold', exact: true })).toHaveCount(0);
+      await sourceInput.click();
+      await expect(sourceInput).toBeFocused();
+      await sourceButton.click();
+      await expect(editor).toBeVisible();
+      await sourceButton.click();
+      await expect(sourceInput).toHaveValue(markdown);
+      await sourceButton.click();
       const undoButton = toolbar.getByRole('button', { name: 'Undo' });
       await expect(toolbar.getByRole('combobox', { name: 'Code block language' })).toHaveCount(0);
       const codeBlockToolbar = adminPage.getByRole('toolbar', { name: 'Code block language' });
@@ -456,20 +472,40 @@ const product = '${suffix}';
       await expect(tableToolbar).toBeHidden();
       expect(adminPageErrors).toEqual([]);
 
+      await sourceButton.click();
+      expect((await sourceInput.inputValue()).trimEnd()).toBe(
+        markdown.replace('```ts', '```python'),
+      );
+      await expect(tableToolbar).toBeHidden();
+      await expect(codeBlockToolbar).toBeHidden();
+      const sourceMarkdown = `${markdown.replace('```ts', '```python')}\n\n## Source heading\n\nSource **content**`;
+      await sourceInput.fill(sourceMarkdown);
+      await sourceButton.click();
+      await expect(editor.locator('h2')).toHaveText('Source heading');
+      await expect(editor.locator('strong')).toHaveText('content');
+      await sourceButton.click();
+      await expect(sourceInput).toHaveValue(sourceMarkdown);
+      const savedMarkdown = `${sourceMarkdown}\n\n- Saved from source\n`;
+      await sourceInput.fill(savedMarkdown);
+
       const productUpdate = waitForApiResponse(
         adminPage,
         'PATCH',
         `${productActionPath}/${productId}`,
       );
       await adminPage.getByRole('button', { name: 'Submit', exact: true }).click();
-      await productUpdate;
+      const updateResponse = await productUpdate;
+      expect(updateResponse.request().postDataJSON().productContentForm.descriptionMarkdown).toBe(
+        savedMarkdown,
+      );
       const productResponseAfterUpdate = await adminPage.request.get(
         `${productActionPath}/${productId}`,
         { headers },
       );
       expect(productResponseAfterUpdate.ok()).toBeTruthy();
+      // Product content persistence trims boundary whitespace on the server.
       expect((await productResponseAfterUpdate.json()).productContentForm.descriptionMarkdown).toBe(
-        markdown.replace('```ts', '```python'),
+        savedMarkdown.trim(),
       );
       expect(adminPageErrors).toEqual([]);
     } finally {

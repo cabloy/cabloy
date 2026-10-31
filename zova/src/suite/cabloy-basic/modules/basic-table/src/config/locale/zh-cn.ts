@@ -1,5 +1,9 @@
 export default {
   Create: '创建',
+  Edit: '编辑',
+  Delete: '删除',
+  MoreActions: '更多操作',
+  RowActions: '行操作',
   DeleteConfirm: '您确认要删除本数据吗？',
   SelectAllPageRows: '选择本页所有行',
   SelectRow: '选择行 %s',

@@ -1,0 +1,14 @@
+import { $defineAnalysis } from 'vona-module-a-orm';
+
+import { Model<%=argv.resourceNameCapitalize%> } from '../model/<%=argv.resourceName%>.ts';
+
+// One allowlist drives request controls, response fields, and bounded execution.
+export const <%=argv.resourceName%>Analysis = $defineAnalysis(() => Model<%=argv.resourceNameCapitalize%>, {
+  groups: ['name'],
+  aggrs: { count: ['*'] },
+  defaults: {
+    group: { groups: ['name'], aggrs: { count: ['*'] } },
+    aggregate: { aggrs: { count: ['*'] } },
+  },
+  limits: { maxGroups: 3, maxMetrics: 10, maxGroupRows: 1000 },
+});

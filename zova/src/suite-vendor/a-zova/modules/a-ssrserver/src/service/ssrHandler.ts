@@ -2,13 +2,16 @@ import type { ISsrProfileOptions } from 'zova-module-a-ssr';
 
 import { catchError } from '@cabloy/utils';
 import fse from 'fs-extra';
-import ms from 'ms';
 import path, { basename } from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { BeanBase, cast, Use } from 'zova';
 import { Service } from 'zova-module-a-bean';
 import { SysRouter } from 'zova-module-a-router';
-import { resolveSsrProfile, resolveSsrProfileOptions } from 'zova-module-a-ssr';
+import {
+  resolveSsrProfile,
+  resolveSsrProfileOptions,
+  resolveSsrResponseCacheExpires,
+} from 'zova-module-a-ssr';
 
 import { ISsrHandlerRenderOptionsInner, TypeEventResolvePathResult } from '../types/ssr.ts';
 
@@ -286,15 +289,12 @@ export class ServiceSsrHandler extends BeanBase {
     ssrProfileOptions: Readonly<ISsrProfileOptions>,
   ) {
     const { res } = options;
-    const responseCache = ssrProfileOptions.responseCache;
-    if (responseCache === false) return;
-    // expires
-    const responseCacheExpires = responseCache.expires ?? 0;
-    const expires =
-      typeof responseCacheExpires === 'string'
-        ? ms(responseCacheExpires) / 1000
-        : responseCacheExpires;
-    if (expires === 0 || this.sys.env.META_MODE === 'development') {
+    const expires = resolveSsrResponseCacheExpires(
+      ssrProfileOptions.responseCache,
+      this.sys.env.META_MODE,
+    );
+    if (expires === false) return;
+    if (expires === 0) {
       res.setHeader('cache-control', 'no-cache, no-store, must-revalidate');
     } else {
       res.setHeader('cache-control', `public, max-age=${expires}`);

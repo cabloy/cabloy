@@ -92,9 +92,6 @@ export class CliBinTest extends BeanCliBase {
     if (argv.coverage) {
       args.push('--experimental-test-coverage');
     }
-    if (process.env.TEST_WHYISNODERUNNING === 'true') {
-      args.push('--import=why-is-node-running/include');
-    }
     args = args.concat([
       getImportEsm(resolveVonaLocalPaths(projectPath, 'test').generatedDir),
       testFile,

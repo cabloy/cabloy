@@ -1,4 +1,5 @@
 import { DtoAggregate } from './dtoAggregate.ts';
+import { DtoAnalysisAggregate, DtoAnalysisGroup } from './dtoAnalysis.ts';
 import { DtoCreate } from './dtoCreate.ts';
 import { DtoGet } from './dtoGet.ts';
 import { DtoGroup } from './dtoGroup.ts';
@@ -15,6 +16,8 @@ export const $Dto = {
   mutate: DtoMutate,
   get: DtoGet,
   aggregate: DtoAggregate,
+  analysisGroup: DtoAnalysisGroup,
+  analysisAggregate: DtoAnalysisAggregate,
   group: DtoGroup,
   query: DtoQuery,
   queryPage: DtoQueryPage,

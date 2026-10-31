@@ -131,6 +131,54 @@ The `home-user` module exposes out-of-the-box Passport APIs for common account f
 
 In the current repo implementation, these flows live in `home-user/src/controller/passport.ts`, where register/login call `bean.auth.authenticate(...)`, OAuth login uses provider/module path parameters, and token-oriented follow-up endpoints stay concentrated in one controller surface.
 
+## Auth-token mode
+
+The auth-token mode selects how Vona issues, stores, reuses, and refreshes server-side authentication state. By default, logins for the same user and authentication record share one token identity. Applications that need independently managed login sessions can select `session` mode. Ordinary logout revocation follows the selected mode; this is not a logout-only setting.
+
+Set the backend environment value to one of `auth` or `session`:
+
+```dotenv
+AUTH_TOKEN_MODE=session
+```
+
+The default is `auth`. The equivalent typed project-config override is:
+
+```typescript
+import type { VonaConfigOptional } from 'vona';
+
+const config: VonaConfigOptional = {
+  modules: {
+    'a-user': {
+      authToken: {
+        mode: 'session',
+      },
+    },
+  },
+};
+```
+
+The setting is `modules['a-user'].authToken.mode`. Backend code can read the validated effective value through the read-only `bean.passport.authTokenMode` getter. See [Config Guide](/backend/config-guide) for configuration layering.
+
+### Authentication-record mode: `auth`
+
+`auth` preserves the existing behavior: server-side tokens are stored by user and authentication record. With the default signin strategy, separate logins for that pair reuse the same token identity and extend its lifetime. Logout revokes their shared login state, rather than only the requesting browser's login. It does not mean every authentication method associated with the user is revoked.
+
+### Login-session mode: `session`
+
+`session` gives each successful login a fresh session identity in the existing auth-token `token` field. Logout revokes that login's server-side state without revoking independent logins using the same user and authentication record. Token refresh preserves the session identity; receiving a refreshed JWT does not create a new login session.
+
+This is **per login, not per tab**. Tabs or clients that share the same credential share the same session and are signed out together. A separate login creates an independent session.
+
+Session mode requires stateful auth tokens. It is incompatible with `authToken.stateless: true`, including provider/client overrides that select stateless tokens. The refresh strategy `authToken.strategy.refreshAuthToken: 'reissue'` is also unsupported in session mode: refresh must retain the existing session identity rather than replace it. Keep the default `refresh` strategy unless the application has a specific reason to use `reuse`.
+
+The narrower revocation in session mode applies to ordinary logout, not account-wide security operations. Password changes, password resets, and initial password setup retain their broader security invalidation behavior; they do not become session-only operations.
+
+### Switching modes
+
+Treat a change between `auth` and `session` as a coordinated deployment change. All workers serving the same application must use the same effective mode; do not run mixed modes against shared token state. Restart the workers together and require users to log in again. Existing credentials are not transparently migrated between modes.
+
+For shared demonstration deployments, session mode also lets ordinary visitors log out without revoking other visitors' independent logins. See [Demonstration Mode Guide](/backend/demonstration-mode-guide#logout-policy).
+
 ## Registration and password recovery in Cabloy Basic
 
 The Home Login experience uses the Passport registration flow for new users. Registration collects the standard username, email, password, confirmation, and CAPTCHA fields, then continues through the ordinary signed-in navigation flow after it succeeds.

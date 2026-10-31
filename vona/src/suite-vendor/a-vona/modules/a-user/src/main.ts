@@ -2,9 +2,12 @@ import type { IModuleMain, VonaContext } from 'vona';
 
 import { BeanSimple } from 'vona';
 
+import { $getAuthTokenMode } from './lib/auth.ts';
+
 export class Main extends BeanSimple implements IModuleMain {
   async moduleLoading() {}
   async moduleLoaded() {
+    $getAuthTokenMode(this.app.config.modules['a-user'].authToken);
     // user
     Object.defineProperty(this.app.context, 'user', {
       enumerable: false,

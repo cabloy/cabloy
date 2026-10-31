@@ -33,6 +33,24 @@ export type ApiApiTrainingStudentlookupRequestQuery =
 export type ApiApiTrainingStudentlookupResponseBody =
   paths[ApiApiTrainingStudentlookupPath][ApiApiTrainingStudentlookupMethod]['responses']['200']['content']['application/json']['data'];
 
+/** TrainingStudent_group */
+export const ApiApiTrainingStudentgroupPath = '/api/training/student/group';
+export type ApiApiTrainingStudentgroupPath = '/api/training/student/group';
+export type ApiApiTrainingStudentgroupMethod = 'get';
+export type ApiApiTrainingStudentgroupRequestQuery =
+  paths[ApiApiTrainingStudentgroupPath][ApiApiTrainingStudentgroupMethod]['parameters']['query'];
+export type ApiApiTrainingStudentgroupResponseBody =
+  paths[ApiApiTrainingStudentgroupPath][ApiApiTrainingStudentgroupMethod]['responses']['200']['content']['application/json']['data'];
+
+/** TrainingStudent_aggregate */
+export const ApiApiTrainingStudentaggregatePath = '/api/training/student/aggregate';
+export type ApiApiTrainingStudentaggregatePath = '/api/training/student/aggregate';
+export type ApiApiTrainingStudentaggregateMethod = 'get';
+export type ApiApiTrainingStudentaggregateRequestQuery =
+  paths[ApiApiTrainingStudentaggregatePath][ApiApiTrainingStudentaggregateMethod]['parameters']['query'];
+export type ApiApiTrainingStudentaggregateResponseBody =
+  paths[ApiApiTrainingStudentaggregatePath][ApiApiTrainingStudentaggregateMethod]['responses']['200']['content']['application/json']['data'];
+
 /** TrainingStudent_view */
 export const ApiApiTrainingStudentviewPath = '/api/training/student/{id}';
 export type ApiApiTrainingStudentviewPath = '/api/training/student/{id}';
@@ -120,6 +138,30 @@ export class ApiTrainingStudent extends BeanApiBase {
   ) {
     return this.$fetch.get<any, ApiApiTrainingStudentlookupResponseBody>(
       ApiApiTrainingStudentlookupPath,
+      this.$configPrepare(OpenApiBaseURL(this.sys), options, true),
+    );
+  }
+
+  /** Group Students */
+  group(
+    options?: {
+      query?: ApiApiTrainingStudentgroupRequestQuery;
+    } & IApiActionOptions,
+  ) {
+    return this.$fetch.get<any, ApiApiTrainingStudentgroupResponseBody>(
+      ApiApiTrainingStudentgroupPath,
+      this.$configPrepare(OpenApiBaseURL(this.sys), options, true),
+    );
+  }
+
+  /** Aggregate Students */
+  aggregate(
+    options?: {
+      query?: ApiApiTrainingStudentaggregateRequestQuery;
+    } & IApiActionOptions,
+  ) {
+    return this.$fetch.get<any, ApiApiTrainingStudentaggregateResponseBody>(
+      ApiApiTrainingStudentaggregatePath,
       this.$configPrepare(OpenApiBaseURL(this.sys), options, true),
     );
   }

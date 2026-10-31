@@ -1,11 +1,12 @@
 import type { IDecoratorDtoOptions } from 'vona-module-a-web';
 
 import { catchError } from '@cabloy/utils';
+import { ZodMetadata } from '@cabloy/zod-openapi';
 import assert from 'node:assert';
 import { describe, it } from 'node:test';
 import { $Class, cast } from 'vona';
 import { app } from 'vona-mock';
-import { Api } from 'vona-module-a-openapiutils';
+import { $makeMetadata, $schema, Api } from 'vona-module-a-openapiutils';
 import { Dto } from 'vona-module-a-web';
 
 import { DtoProfile } from '../../src/dto/profile.ts';
@@ -19,7 +20,65 @@ class DtoUserWithMarried extends $Class.omit(DtoUser, ['married']) {
   married: boolean;
 }
 
+@Dto({
+  openapi: {
+    title: 'User filter',
+    description: 'Inherited filter metadata',
+    filter: { table: 'testVonaUser', capabilities: { order: false } },
+  },
+  fields: { name: { title: 'Filter name' } },
+})
+class DtoUserFilter extends DtoUser {}
+
+@Dto()
+class DtoUserFilterInherited extends DtoUserFilter {}
+
+@Dto()
+class DtoUserFilterPicked extends $Class.pick(DtoUserFilter, ['name']) {}
+
+@Dto({
+  openapi: { title: 'Post filter', filter: { table: 'testVonaPost' } },
+})
+class DtoUserFilterOverride extends $Class.pick(DtoUserFilter, ['name']) {}
+
 describe('mappedTypes.test.ts', () => {
+  it('inherits root OpenAPI metadata and preserves child overrides', async () => {
+    await app.bean.executor.mockCtx(async () => {
+      const parentMetadata = $makeMetadata($schema(DtoUserFilter));
+      assert.equal(parentMetadata?.title, 'User filter');
+      assert.deepEqual(parentMetadata?.filter, {
+        table: 'testVonaUser',
+        capabilities: { order: false },
+      });
+      for (const DtoClass of [DtoUserFilterInherited, DtoUserFilterPicked]) {
+        const metadata = $makeMetadata($schema(DtoClass));
+        assert.equal(metadata?.title, parentMetadata?.title);
+        assert.equal(metadata?.description, parentMetadata?.description);
+        assert.deepEqual(metadata?.filter, parentMetadata?.filter);
+      }
+      const pickedSchema = $schema(DtoUserFilterPicked, { strict: true });
+      assert.deepEqual(pickedSchema.parse({ name: 'tom' }), { name: 'tom' });
+      assert.equal(pickedSchema.safeParse({ name: 'ab' }).success, false);
+      assert.equal(pickedSchema.safeParse({ name: 'tom', married: true }).success, false);
+      const nameSchema = ZodMetadata.getFieldSchema(pickedSchema, 'name');
+      assert.ok(nameSchema);
+      assert.equal($makeMetadata(nameSchema)?.title, 'Filter name');
+      const overrideMetadata = $makeMetadata($schema(DtoUserFilterOverride));
+      assert.equal(overrideMetadata?.title, 'Post filter');
+      assert.equal(overrideMetadata?.description, 'Inherited filter metadata');
+      assert.deepEqual(overrideMetadata?.filter, {
+        table: 'testVonaPost',
+        capabilities: { order: false },
+      });
+      const parentMetadataAfter = $makeMetadata($schema(DtoUserFilter));
+      assert.equal(parentMetadataAfter?.title, 'User filter');
+      assert.deepEqual(parentMetadataAfter?.filter, {
+        table: 'testVonaUser',
+        capabilities: { order: false },
+      });
+    });
+  });
+
   it('action:mappedTypes', async () => {
     await app.bean.executor.mockCtx(async () => {
       const serviceValidator = app.bean.validator;

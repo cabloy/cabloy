@@ -7,6 +7,8 @@ import {
   ApiApiTrainingStudentselectPath,
   ApiApiTrainingStudentcreatePath,
   ApiApiTrainingStudentlookupPath,
+  ApiApiTrainingStudentgroupPath,
+  ApiApiTrainingStudentaggregatePath,
   ApiApiTrainingStudentviewPath,
   ApiApiTrainingStudentdeletePath,
   ApiApiTrainingStudentupdatePath,
@@ -27,6 +29,14 @@ export class ApiSchemaTrainingStudent extends BeanBase {
 
   lookup(options?: IApiSchemaOptions) {
     return this.$sdk.createApiSchemas(ApiApiTrainingStudentlookupPath, 'get', options);
+  }
+
+  group(options?: IApiSchemaOptions) {
+    return this.$sdk.createApiSchemas(ApiApiTrainingStudentgroupPath, 'get', options);
+  }
+
+  aggregate(options?: IApiSchemaOptions) {
+    return this.$sdk.createApiSchemas(ApiApiTrainingStudentaggregatePath, 'get', options);
   }
 
   view(options?: IApiSchemaOptions) {

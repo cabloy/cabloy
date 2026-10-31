@@ -165,6 +165,31 @@ declare module 'zova' {
   }
 }
 /** render: end */
+/** style: begin */
+export * from '../component/layoutWeb/style.ts';
+
+import 'zova';
+declare module 'zova' {
+
+
+}
+declare module 'zova-module-home-layoutweb' {
+
+        export interface StyleLayoutWeb {
+          /** @internal */
+          get scope(): ScopeModuleHomeLayoutweb;
+        }
+}
+/** style: end */
+/** style: begin */
+import type { StyleLayoutWeb } from '../component/layoutWeb/style.ts';
+import 'zova';
+declare module 'zova' {
+  export interface IBeanRecordLocal {
+    'home-layoutweb.style.layoutWeb': StyleLayoutWeb;
+  }
+}
+/** style: end */
 /** config: begin */
 export * from '../config/config.ts';
 import { config } from '../config/config.ts';

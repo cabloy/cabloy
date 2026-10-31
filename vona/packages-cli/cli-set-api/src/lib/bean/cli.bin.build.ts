@@ -203,6 +203,13 @@ export class CliBinBuild extends BeanCliBase {
 
     const sourceMap = process.env.BUILD_SOURCEMAP === 'true';
 
+    // Explicit roots bypass the application's .vona exclusion and prevent stale emit-cache fallback.
+    const tsconfig = path.join(projectPath, '.vona/tsconfig.build.json');
+    await fse.writeJson(tsconfig, {
+      extends: '../tsconfig.json',
+      files: ['./bootstrap.ts', './app.ts', './env.ts', './config.ts', './modules-meta.ts'],
+    });
+
     const replaceValues = generateConfigDefine(env, ['NODE_ENV', 'META_MODE', 'META_FLAVOR']);
     for (const relativeName in modulesMeta.modules) {
       const module = modulesMeta.modules[relativeName];
@@ -265,11 +272,15 @@ export class CliBinBuild extends BeanCliBase {
       json(),
       commonjs(),
       typescript({
+        tsconfig,
         module: 'nodenext',
         compilerOptions: {
           noCheck: true,
+          noEmit: false,
           declaration: false,
+          declarationMap: false,
           composite: false,
+          incremental: false,
           sourceMap,
         },
         outputToFilesystem: false,

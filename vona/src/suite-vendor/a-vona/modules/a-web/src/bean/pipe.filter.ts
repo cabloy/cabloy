@@ -8,13 +8,15 @@ import type {
   ITableQuery,
   RouteHandlerArgumentMeta,
 } from 'vona-module-a-openapi';
+import type { IAnalysisPolicy, TypeAnalysisMode } from 'vona-module-a-orm';
 import type { ValidatorOptions } from 'vona-module-a-validation';
 
 import { isNil, isNilOrEmptyString } from '@cabloy/utils';
 import { ZodMetadata } from '@cabloy/zod-openapi';
 import { isNullableSchema } from '@cabloy/zod-query';
-import { BeanBase, beanFullNameFromOnionName, cast } from 'vona';
+import { BeanBase, beanFullNameFromOnionName, cast, runWithZodQueryCoercion } from 'vona';
 import { createArgumentPipe, Pipe } from 'vona-module-a-aspect';
+import { analysisFailure, resolveAnalysis } from 'vona-module-a-orm';
 
 import type {
   IFilterTransformRecord,
@@ -28,9 +30,13 @@ export type TypePipeFilterResult = TypeQueryParamsPatch;
 type TypeQueryJoin = NonNullable<TypeQueryParamsPatch['joins']>[number];
 
 export interface IPipeOptionsFilter
-  extends IDecoratorPipeOptions, IDecoratorPipeOptionsArgument, ValidatorOptions {}
+  extends IDecoratorPipeOptions, IDecoratorPipeOptionsArgument, ValidatorOptions {
+  analysis?: IAnalysisPolicy;
+  analysisMode?: TypeAnalysisMode;
+}
 
 const __FieldsSystem = ['columns', 'where', 'orders', 'pageNo', 'pageSize'];
+const __AnalysisControls = ['groups', 'aggrs', 'having', 'joins', 'distinct', 'include', 'with'];
 
 @Pipe<IPipeOptionsFilter>({
   // ValidatorOptions
@@ -53,6 +59,7 @@ export class PipeFilter
         `should specify the schema of pipeFilter: ${metadata.controller.name}.${metadata.method}#${metadata.index}`,
       );
     }
+    value = this._prepareAnalysisControls(value, options);
     // validateSchema
     value = (await this.bean.validator.validateSchema(
       options.schema,
@@ -66,6 +73,35 @@ export class PipeFilter
     return params;
   }
 
+  private _prepareAnalysisControls(value: TypePipeFilterData, options: IPipeOptionsFilter) {
+    if (!!options.analysis !== !!options.analysisMode) {
+      throw new Error('Analysis filter requires both a policy and an action mode');
+    }
+    if (!value || typeof value !== 'object') return value;
+    const prepared = { ...value };
+    for (const key of __AnalysisControls) {
+      if (!Object.hasOwn(value, key)) continue;
+      if (!options.analysisMode) analysisFailure(`Select does not support ${key}`);
+      if (key !== 'aggrs' && !(key === 'groups' && options.analysisMode === 'group')) {
+        analysisFailure(`Analysis ${options.analysisMode} does not support ${key}`);
+      }
+      if (typeof value[key] === 'string') {
+        try {
+          prepared[key] = JSON.parse(value[key]);
+        } catch {
+          analysisFailure(`Analysis ${key} must be valid JSON`);
+        }
+      }
+    }
+    if (options.analysis && options.analysisMode) {
+      // Validate native shapes before permissive generic query coercion runs.
+      runWithZodQueryCoercion(false, () =>
+        resolveAnalysis(options.analysis!, options.analysisMode!, prepared),
+      );
+    }
+    return prepared;
+  }
+
   private async _transform(value: TypePipeFilterData, options: IPipeOptionsFilter) {
     // 1. system: columns/where/orders/pageNo/pageSize
     const params = this._transformSystem(value);
@@ -76,6 +112,10 @@ export class PipeFilter
     await this._transformFields(params, value, options, rootOpenapi);
     // 3. system: orders
     this._transformOrders(params, options, rootOpenapi);
+    if (options.analysis && options.analysisMode) {
+      if (params.joins?.length) analysisFailure('Analysis does not support joined filters');
+      Object.assign(params, resolveAnalysis(options.analysis, options.analysisMode, value));
+    }
     // ok
     return params;
   }
@@ -188,7 +228,8 @@ export class PipeFilter
     options: IPipeOptionsFilter,
     rootOpenapi: ISchemaObjectExtensionField | undefined,
   ) {
-    if (__FieldsSystem.includes(key)) return;
+    if (__FieldsSystem.includes(key) || (options.analysisMode && __AnalysisControls.includes(key)))
+      return;
     const info = this._resolveField(key, options, rootOpenapi);
     if (!info) return;
     const { fieldSchema, fieldSchemaInner, openapi, originalName, fullName, joinInfo } = info;

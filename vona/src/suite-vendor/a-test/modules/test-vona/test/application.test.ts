@@ -21,6 +21,9 @@ describe('application.test.ts', { concurrency: false }, () => {
     const port = app.config.server.listen.port;
     const host = port ? `localhost:${port}` : 'localhost';
     const context = app.createAnonymousContext();
+    assert.equal(context.req.url, '/');
+    assert.equal(context.url, '/');
+    assert.equal(context.path, '/');
     assert.equal(context.host, host);
     assert.equal(context.hostname, 'localhost');
     assert.equal(context.protocol, 'http');
@@ -50,10 +53,14 @@ describe('application.test.ts', { concurrency: false }, () => {
       headers: { host: 'request.example.test' },
       method: 'GET',
       socket: { encrypted: true },
-      url: '/',
+      url: '/callback?code=test',
     };
     const context = app.createAnonymousContext(request);
     assert.equal(context.req, request);
+    assert.equal(context.req.url, '/callback?code=test');
+    assert.equal(context.url, '/callback?code=test');
+    assert.equal(context.path, '/callback');
+    assert.equal(context.querystring, 'code=test');
     assert.equal(context.host, 'request.example.test');
     assert.equal(context.protocol, 'https');
     assert.equal(context.secure, true);

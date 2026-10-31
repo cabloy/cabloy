@@ -1,5 +1,5 @@
 import type { TableIdentity } from 'table-identity';
-import type { IQueryParams } from 'vona-module-a-orm';
+import type { IQueryParams, TypeAnalysisGroupParams, TypeAnalysisAggregateParams } from 'vona-module-a-orm';
 import type { IRbacScopeAccess } from 'vona-module-a-rbac';
 import type { IDecoratorControllerOptions } from 'vona-module-a-web';
 
@@ -18,6 +18,9 @@ import { Dto<%=argv.resourceNameCapitalize%>SelectReq } from '../dto/<%=argv.res
 import { Dto<%=argv.resourceNameCapitalize%>SelectRes } from '../dto/<%=argv.resourceName%>SelectRes.tsx';
 import { Dto<%=argv.resourceNameCapitalize%>Update } from '../dto/<%=argv.resourceName%>Update.tsx';
 import { Dto<%=argv.resourceNameCapitalize%>View } from '../dto/<%=argv.resourceName%>View.tsx';
+import { Dto<%=argv.resourceNameCapitalize%>GroupResItem } from '../dto/<%=argv.resourceName%>GroupResItem.tsx';
+import { Dto<%=argv.resourceNameCapitalize%>AggregateRes } from '../dto/<%=argv.resourceName%>AggregateRes.tsx';
+import type { <%=argv.resourceName%>Analysis } from '../lib/<%=argv.resourceName%>Analysis.ts';
 
 export interface IControllerOptions<%=argv.resourceNameCapitalize%> extends IDecoratorControllerOptions {}
 
@@ -38,6 +41,20 @@ export class Controller<%=argv.resourceNameCapitalize%> extends BeanBase {
   @Passport.rbac()
   async select(@Arg.filter(Dto<%=argv.resourceNameCapitalize%>SelectReq) params: IQueryParams<Model<%=argv.resourceNameCapitalize%>>): Promise<Dto<%=argv.resourceNameCapitalize%>SelectRes> {
     return await this.scope.service.<%=argv.resourceName%>.select(params);
+  }
+
+  @Web.get('group', { summary: $locale('<%=argv.resourceNameCapitalize%>Group') })
+  @Api.body(v.array(v.object(Dto<%=argv.resourceNameCapitalize%>GroupResItem)))
+  @Passport.rbac({ actionInherit: 'select' })
+  async group(@Arg.filter(Dto<%=argv.resourceNameCapitalize%>SelectReq, { mode: 'group' }) params: TypeAnalysisGroupParams<typeof <%=argv.resourceName%>Analysis>): Promise<Dto<%=argv.resourceNameCapitalize%>GroupResItem[]> {
+    return await this.scope.service.<%=argv.resourceName%>.group(params);
+  }
+
+  @Web.get('aggregate', { summary: $locale('<%=argv.resourceNameCapitalize%>Aggregate') })
+  @Api.body(Dto<%=argv.resourceNameCapitalize%>AggregateRes)
+  @Passport.rbac({ actionInherit: 'select' })
+  async aggregate(@Arg.filter(Dto<%=argv.resourceNameCapitalize%>SelectReq, { mode: 'aggregate' }) params: TypeAnalysisAggregateParams<typeof <%=argv.resourceName%>Analysis>): Promise<Dto<%=argv.resourceNameCapitalize%>AggregateRes> {
+    return await this.scope.service.<%=argv.resourceName%>.aggregate(params);
   }
 
   @Web.get(':id', { summary: $locale('<%=argv.resourceNameCapitalize%>View') })

@@ -1,0 +1,81 @@
+import assert from 'node:assert/strict';
+import { randomUUID } from 'node:crypto';
+import { describe, it } from 'node:test';
+import { app } from 'vona-mock';
+
+import { <%=argv.resourceName%>Analysis } from '../src/lib/<%=argv.resourceName%>Analysis.ts';
+
+describe('<%=argv.resourceName%>Analysis.test.ts', { concurrency: false }, () => {
+  it('returns default and requested-only string counts with validated controls', async () => {
+    await app.bean.executor.mockCtx(async () => {
+      const scope = app.scope('<%=argv.moduleInfo.relativeName%>');
+      const name = `__analysis_${randomUUID()}`;
+      const fixture = await scope.model.<%=argv.resourceName%>.insert({ name });
+      try {
+        await app.bean.passport.signinMock();
+        const queries = [
+          { name },
+          // List controls are validated but do not paginate the analysis population.
+          { where: { id: fixture.id }, columns: ['id'], orders: 'name,desc', pageNo: 2, pageSize: 1 },
+        ];
+        for (const query of queries) {
+          const groups = await app.bean.executor.performAction('get', '<%=argv.moduleActionPathRaw%>/group', { query });
+          assert.deepEqual(groups, [{ name, count_all: '1' }]);
+          assert.deepEqual(await app.bean.executor.performAction('get', '<%=argv.moduleActionPathRaw%>/group', {
+            query: { ...query, groups: JSON.stringify(['name']), aggrs: JSON.stringify({ count: ['*'] }) },
+          }), groups);
+          assert.deepEqual(await scope.service.<%=argv.resourceName%>.group({
+            where: { id: fixture.id }, groups: ['name'], aggrs: { count: ['*'] },
+          }), groups);
+          const aggregate = await app.bean.executor.performAction('get', '<%=argv.moduleActionPathRaw%>/aggregate', { query });
+          assert.deepEqual(aggregate, { count_all: '1' });
+          assert.deepEqual(await app.bean.executor.performAction('get', '<%=argv.moduleActionPathRaw%>/aggregate', {
+            query: { ...query, aggrs: JSON.stringify({ count: ['*'] }) },
+          }), aggregate);
+          assert.deepEqual(await scope.service.<%=argv.resourceName%>.aggregate({
+            where: { id: fixture.id }, aggrs: { count: ['*'] },
+          }), aggregate);
+        }
+        for (const action of ['group', 'aggregate'] as const) {
+          for (const controls of [
+            { pageNo: 2, pageSize: 0 },
+            { aggrs: JSON.stringify({}) },
+            { aggrs: JSON.stringify({ count: ['*', '*'] }) },
+            { aggrs: JSON.stringify({ count: ['unknown'] }) },
+            { aggrs: '{invalid-json' },
+          ]) {
+            await assert.rejects(() => app.bean.executor.performAction('get', `<%=argv.moduleActionPathRaw%>/${action}`, {
+              query: { name, ...controls },
+            }));
+          }
+        }
+        // The shared policy does not enable analysis controls on ordinary select.
+        await assert.rejects(() => app.bean.executor.performAction('get', '<%=argv.moduleActionPathRaw%>', {
+          query: { name, aggrs: JSON.stringify({ count: ['*'] }) },
+        }));
+        for (const groups of [[], ['name', 'name'], ['description'], ['unknown']]) {
+          await assert.rejects(() => app.bean.executor.performAction('get', '<%=argv.moduleActionPathRaw%>/group', {
+            query: { name, groups: JSON.stringify(groups) },
+          }));
+        }
+        await assert.rejects(() => scope.service.<%=argv.resourceName%>.group({ aggrs: { count: [] } }));
+        assert.deepEqual(<%=argv.resourceName%>Analysis.defaults.group, {
+          groups: ['name'], aggrs: { count: ['*'] },
+        });
+        await assert.rejects(() => app.bean.executor.performAction('get', '<%=argv.moduleActionPathRaw%>/aggregate', {
+          query: { name, groups: JSON.stringify(['name']) },
+        }));
+        await assert.rejects(() => scope.service.<%=argv.resourceName%>.aggregate({ aggrs: { count: [] } }));
+        assert.deepEqual(<%=argv.resourceName%>Analysis.defaults.aggregate, { aggrs: { count: ['*'] } });
+        await scope.model.<%=argv.resourceName%>.deleteById(fixture.id);
+        for (const query of queries) {
+          assert.deepEqual(await app.bean.executor.performAction('get', '<%=argv.moduleActionPathRaw%>/group', { query }), []);
+          assert.deepEqual(await app.bean.executor.performAction('get', '<%=argv.moduleActionPathRaw%>/aggregate', { query }), { count_all: '0' });
+        }
+      } finally {
+        await scope.model.<%=argv.resourceName%>.deleteById(fixture.id, { disableDeleted: true });
+        await app.bean.passport.signout();
+      }
+    });
+  });
+});

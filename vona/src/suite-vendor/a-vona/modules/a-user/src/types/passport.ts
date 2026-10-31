@@ -20,6 +20,7 @@ export interface IPassportAdapter {
 declare module 'vona' {
   export interface ContextState {
     passport?: IPassport;
+    passportPayloadData?: IPayloadData;
   }
 
   export interface VonaContext {

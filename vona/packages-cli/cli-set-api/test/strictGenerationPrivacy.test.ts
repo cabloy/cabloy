@@ -15,7 +15,17 @@ const devUrl = new URL('../src/lib/bean/cli.bin.dev.ts', import.meta.url).href;
 const core = new URL('../../../packages-vona/vona-core/src/lib/core/', import.meta.url);
 const isolationUrl = new URL('testIsolation.ts', core).href;
 const strictUrl = new URL('testStrictMode.ts', core).href;
-const sourceUrls = [metaUrl, entryUrl, configUrl, validationUrl, devUrl, isolationUrl, strictUrl];
+const testUrl = new URL('../src/lib/bean/cli.bin.test.ts', import.meta.url).href;
+const sourceUrls = [
+  metaUrl,
+  entryUrl,
+  configUrl,
+  validationUrl,
+  devUrl,
+  testUrl,
+  isolationUrl,
+  strictUrl,
+];
 const runId = '20261020010203-a1b2c3d4';
 const project = '/synthetic-project';
 const generatedDir = `.vona-test-${runId}`;
@@ -145,8 +155,10 @@ const mocks: Record<string, string> = {
     export function getEnvMeta(meta) { return { ...meta, local: 'local' }; }
     export function getNodeEnv(mode) { return mode === 'test' ? 'test' : mode === 'dev' ? 'development' : 'production'; }
   `,
-  '../utils.ts':
-    'export function getImportEsm(dir = ".vona") { return "--import=./" + dir + "/register.js"; }',
+  '../utils.ts': `
+    export function getImportEsm(dir = ".vona") { return "--import=./" + dir + "/register.js"; }
+    export function getAbsolutePathOfModule() { throw new Error("Unexpected module path lookup"); }
+  `,
 };
 // Only these real modules receive the synthetic process and virtual collaborators.
 // There are no child processes, application/env files, listeners, drivers or cleanup on disk.
@@ -169,10 +181,12 @@ const hooks = registerHooks({
 let generateVonaMeta: any;
 let generateEntryFiles: any;
 let CliBinDev: any;
+let CliBinTest: any;
 try {
   ({ generateVonaMeta } = await import(metaUrl));
   ({ generateEntryFiles } = await import(entryUrl));
   ({ CliBinDev } = await import(devUrl));
+  ({ CliBinTest } = await import(testUrl));
 } finally {
   hooks.deregister();
 }
@@ -229,6 +243,31 @@ function projectEnv(source: string, env: NodeJS.ProcessEnv) {
   runInNewContext(js, context);
   return JSON.parse(JSON.stringify(context.result));
 }
+
+test('test CLI never preloads source-reading diagnostics and preserves ordinary runner arguments', async () => {
+  for (const enabled of [false, true]) {
+    reset(false);
+    if (enabled) fakeProcess.env.TEST_WHYISNODERUNNING = 'true';
+    const instance = Object.create(CliBinTest.prototype);
+    Object.defineProperty(instance, 'context', {
+      value: { argv: { _: ['src/test/example.test.ts'] } },
+    });
+    const run = instance._run(project, { modules: {}, modulesArray: [] });
+    assert.ok(spawned);
+    assert.equal(spawned.executable, '/synthetic-node');
+    assert.equal(spawned.args.length, 5);
+    assert.equal(spawned.args[0], '--import=./.vona/register.js');
+    assert.ok(spawned.args[1].endsWith('/toolsIsolate/test.ts'));
+    assert.deepEqual(spawned.args.slice(2), [project, 'false', 'src/test/example.test.ts']);
+    assert.ok(!spawned.args.some(arg => arg.includes('why-is-node-running')));
+    spawned.child.emit('close', 0, null);
+    await run;
+    assert.equal(fakeProcess.listenerCount('SIGINT'), 0);
+    assert.equal(fakeProcess.listenerCount('SIGTERM'), 0);
+    assert.equal(envLoads, 0);
+    assert.deepEqual(writes, []);
+  }
+});
 
 test('strict generation and direct writer reject invalid mode/run/directory/owners before env or writes', async () => {
   const cases = [

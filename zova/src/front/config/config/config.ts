@@ -81,7 +81,7 @@ export default function (sys: ZovaSys) {
 
   // locale
   config.locale = {
-    default: env.APP_LOCALE_DEFAULT as keyof ILocaleRecord,
+    default: (env.APP_LOCALE_DEFAULT || 'en-us') as keyof ILocaleRecord,
     storeKey: 'locale',
     items: {
       'en-us': 'LanguageEnglish',

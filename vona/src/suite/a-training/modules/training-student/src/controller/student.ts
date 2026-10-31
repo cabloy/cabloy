@@ -1,5 +1,9 @@
 import type { TableIdentity } from 'table-identity';
-import type { IQueryParams } from 'vona-module-a-orm';
+import type {
+  IQueryParams,
+  TypeAnalysisAggregateParams,
+  TypeAnalysisGroupParams,
+} from 'vona-module-a-orm';
 import type { IDecoratorControllerOptions } from 'vona-module-a-web';
 
 import { BeanBase } from 'vona';
@@ -9,11 +13,14 @@ import { Passport } from 'vona-module-a-user';
 import { Arg, Controller, Web } from 'vona-module-a-web';
 import { z } from 'zod';
 
+import type { studentAnalysis } from '../lib/studentAnalysis.ts';
 import type { ModelStudent } from '../model/student.ts';
 
 import { $locale } from '../.metadata/locales.ts';
+import { DtoStudentAggregateRes } from '../dto/studentAggregateRes.tsx';
 import { DtoStudentCreate } from '../dto/studentCreate.tsx';
 import { DtoStudentDeleteBulk } from '../dto/studentDeleteBulk.tsx';
+import { DtoStudentGroupResItem } from '../dto/studentGroupResItem.tsx';
 import { DtoStudentLookupReq } from '../dto/studentLookupReq.tsx';
 import { DtoStudentLookupRes } from '../dto/studentLookupRes.tsx';
 import { DtoStudentSelectReq } from '../dto/studentSelectReq.tsx';
@@ -72,6 +79,26 @@ export class ControllerStudent extends BeanBase {
     @Arg.query(v.object(DtoStudentLookupReq, { strict: true })) query: DtoStudentLookupReq,
   ): Promise<DtoStudentLookupRes> {
     return await this.scope.service.student.lookup(query);
+  }
+
+  @Web.get('group', { summary: $locale('StudentGroup') })
+  @Api.body(v.array(DtoStudentGroupResItem))
+  @Passport.rbac({ actionInherit: 'select' })
+  async group(
+    @Arg.filter(DtoStudentSelectReq, { mode: 'group' })
+    params: TypeAnalysisGroupParams<typeof studentAnalysis>,
+  ): Promise<DtoStudentGroupResItem[]> {
+    return await this.scope.service.student.group(params);
+  }
+
+  @Web.get('aggregate', { summary: $locale('StudentAggregate') })
+  @Api.body(DtoStudentAggregateRes)
+  @Passport.rbac({ actionInherit: 'select' })
+  async aggregate(
+    @Arg.filter(DtoStudentSelectReq, { mode: 'aggregate' })
+    params: TypeAnalysisAggregateParams<typeof studentAnalysis>,
+  ): Promise<DtoStudentAggregateRes> {
+    return await this.scope.service.student.aggregate(params);
   }
 
   @Mcp.tool({

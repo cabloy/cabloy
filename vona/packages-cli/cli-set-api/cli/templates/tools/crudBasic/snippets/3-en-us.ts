@@ -40,6 +40,8 @@ export default metadataCustomSnippet({
       [`${resource}Update`]: `Update ${resource}`,
       [`${resource}Delete`]: `Delete ${resource}`,
       [`${resource}DeleteBulk`]: `Bulk Delete ${resource}`,
+      [`${resource}Group`]: `Group ${resource}`,
+      [`${resource}Aggregate`]: `Aggregate ${resource}`,
     };
     return locale_transform({ ast, argv, resources });
   },

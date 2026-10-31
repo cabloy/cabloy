@@ -1,0 +1,3495 @@
+{
+  "version": 1,
+  "closeout": {
+    "date": "2026-10-29",
+    "status": "investigation closed; historical evidence only",
+    "finalDecision": "Accept measured initialization cost; retain fresh apps; implement neither an app pool nor Monkey dispatch-list optimization.",
+    "removed": "Runtime timing, runtime switch, dedicated tests, benchmark driver and public guide.",
+    "reproduction": "Requires removed uncommitted measurement implementation and compatible artifacts; recorded HEAD alone is insufficient. No complete replay archive is retained.",
+    "supersedes": "The decision.recommendedCandidate field records the earlier candidate, not current follow-up work.",
+    "measurementPayload": "Original measurements and provenance hashes retained unchanged. They do not describe rebuilt post-cleanup artifacts."
+  },
+  "date": "2026-10-29",
+  "edition": "Cabloy Basic",
+  "question": "Attribute fresh SSR app initialization owners without implementing optimization or app reuse.",
+  "environment": {
+    "entry": "Vona integrated SSR",
+    "backend": "source test mode",
+    "workers": 1,
+    "flavor": "normal",
+    "site": "web",
+    "route": "/demo/basic/state",
+    "authentication": "anonymous",
+    "node": "v24.8.0",
+    "timingEnabled": true
+  },
+  "provenance": {
+    "headAtEvidenceRetention": "75484d14ae8e3d6042e142ae8d3d598724c0afb0",
+    "uncommittedMeasurementChanges": true,
+    "sourceSha256AtEvidenceRetention": {
+      "zova/packages-zova/zova-core/src/core/component/module.ts": "3818794847964cf45e03b0fa39e70bacf32c89910660da2c702ad553ca900885",
+      "zova/packages-zova/zova-core/src/core/sys/module.ts": "7c4bc648d8d664ffaa7ad51d44ea9d2df72244d18dfca5ea90fd3c7c5104a354",
+      "vona/packages-utils/utils/src/utils.ts": "347591a7f861b356658246c2df4f0de7c207abdb59c9ba4c98569bd82dc0ea6c",
+      "zova/src/suite-vendor/a-zova/modules/a-api/src/monkey.ts": "f3b10f6ac10c05d89aad9794c7d8abaa8cb4653f717852354c329b9baa948f90",
+      "zova/src/suite-vendor/a-zova/modules/a-fetch/src/bean/bean.fetch.ts": "820af351c1f2241ab289b8e0a3ea9f69576bcba1fdcb1e69b0c1256ff3398b9a",
+      "zova/src/suite-vendor/a-zova/modules/a-style/src/monkey.ts": "6b073ff583abf89bb4771d9f671bab14f843a1a48b3c80ab5bef6544fa678c46",
+      "zova/src/suite-vendor/a-zova/modules/a-style/src/bean/bean.theme.ts": "9042e8b1daa843926e01415e8c1b64da990d79a0df56ec07f2bab6e10ecc2f0c",
+      "scripts/benchSsr.ts": "93b0524fa9801d949210ef26bad266ac8e605d7c16f4962f2a854bdbc5d2bdd1",
+      "scripts/runIsolatedTest.ts": "17eff1d80ff25cc46590898a7863331fefb572ec818341731a0a2fddac51141e"
+    },
+    "artifact": "vona/src/suite/cabloy-basic/modules/basic-siteweb/assets/site/ssr-cabloyBasicWeb-5.0.0/handler.js",
+    "artifactSha256": "51545a6265357bc79e9df659ff24b8a81c399eae7ae5e66b7c49e273fe1c2975"
+  },
+  "cpuSampling": {
+    "method": "Node --cpu-prof, target interval 500 microseconds; profiles cover startup and workload; only aggregate built-handler frames retained.",
+    "artifact": "vona/src/suite/cabloy-basic/modules/basic-siteweb/assets/site/ssr-cabloyBasicWeb-5.0.0/handler.js",
+    "sha256": "51545a6265357bc79e9df659ff24b8a81c399eae7ae5e66b7c49e273fe1c2975",
+    "benchmark": {
+      "driver": {
+        "version": 1,
+        "node": "v24.8.0"
+      },
+      "target": {
+        "transport": "direct-loopback-http",
+        "provenance": "unverified",
+        "mode": "unverified",
+        "revision": "unverified",
+        "workers": "unverified"
+      },
+      "workload": {
+        "warmup": 30,
+        "serial": 300,
+        "concurrent": 100,
+        "concurrency": 4,
+        "timeoutMs": 10000
+      },
+      "connection": {
+        "keepAlive": true,
+        "maxSockets": 4,
+        "maxTotalSockets": 4
+      },
+      "valid": true,
+      "firstObserved": {
+        "requested": 1,
+        "attempted": 1,
+        "succeeded": 1,
+        "failed": 0,
+        "errors": {},
+        "sample": {
+          "wallMs": 828.442667000003,
+          "headerMs": 827.890459000002,
+          "bytes": 22927,
+          "serverTimingMs": {
+            "ssr_total": 90.465,
+            "ssr_route": 1.487,
+            "ssr_entry": 1.012,
+            "ssr_render": 83.807,
+            "ssr_callbacks": 0.501,
+            "ssr_finalize": 1.913,
+            "ssr_html": 1.693,
+            "ssr_clear": 0.024,
+            "ssr_app_init": 25.557,
+            "ssr_init_setup": 0.172,
+            "ssr_init_modules": 9.158,
+            "ssr_init_initialize": 8.812,
+            "ssr_init_initialized": 4.956,
+            "ssr_init_ready": 2.432,
+            "ssr_navigation": 2.194,
+            "ssr_state_meta": 1.298,
+            "ssr_app_cleanup": 0.58
+          }
+        }
+      },
+      "warmup": {
+        "requested": 30,
+        "attempted": 30,
+        "succeeded": 30,
+        "failed": 0,
+        "errors": {}
+      },
+      "serial": {
+        "requested": 300,
+        "attempted": 300,
+        "succeeded": 300,
+        "failed": 0,
+        "errors": {},
+        "elapsedMs": 5183.812,
+        "successfulResponsesPerSecond": 57.872,
+        "bytes": 6878100,
+        "wallMs": {
+          "count": 300,
+          "p50": 16.073,
+          "p95": 22.892,
+          "max": 75.942
+        },
+        "headerMs": {
+          "count": 300,
+          "p50": 15.954,
+          "p95": 22.784,
+          "max": 74.86
+        },
+        "serverTimingMs": {
+          "ssr_total": {
+            "count": 300,
+            "p50": 13.724,
+            "p95": 19.135,
+            "max": 64.02
+          },
+          "ssr_route": {
+            "count": 300,
+            "p50": 0.058,
+            "p95": 0.104,
+            "max": 0.579
+          },
+          "ssr_entry": {
+            "count": 300,
+            "p50": 0.026,
+            "p95": 0.051,
+            "max": 0.12
+          },
+          "ssr_render": {
+            "count": 300,
+            "p50": 12.974,
+            "p95": 18.247,
+            "max": 63.022
+          },
+          "ssr_callbacks": {
+            "count": 300,
+            "p50": 0.058,
+            "p95": 0.104,
+            "max": 0.553
+          },
+          "ssr_finalize": {
+            "count": 300,
+            "p50": 0.315,
+            "p95": 0.498,
+            "max": 1.503
+          },
+          "ssr_html": {
+            "count": 300,
+            "p50": 0.267,
+            "p95": 0.353,
+            "max": 0.853
+          },
+          "ssr_clear": {
+            "count": 300,
+            "p50": 0.001,
+            "p95": 0.002,
+            "max": 0.015
+          },
+          "ssr_app_init": {
+            "count": 300,
+            "p50": 4.661,
+            "p95": 6.642,
+            "max": 19.992
+          },
+          "ssr_init_setup": {
+            "count": 300,
+            "p50": 0.017,
+            "p95": 0.027,
+            "max": 0.084
+          },
+          "ssr_init_modules": {
+            "count": 300,
+            "p50": 2.094,
+            "p95": 2.794,
+            "max": 9.416
+          },
+          "ssr_init_initialize": {
+            "count": 300,
+            "p50": 1.128,
+            "p95": 1.641,
+            "max": 5.364
+          },
+          "ssr_init_initialized": {
+            "count": 300,
+            "p50": 1.025,
+            "p95": 1.488,
+            "max": 4.994
+          },
+          "ssr_init_ready": {
+            "count": 300,
+            "p50": 0.292,
+            "p95": 0.417,
+            "max": 2.346
+          },
+          "ssr_navigation": {
+            "count": 300,
+            "p50": 0.258,
+            "p95": 0.372,
+            "max": 1.917
+          },
+          "ssr_state_meta": {
+            "count": 300,
+            "p50": 0.142,
+            "p95": 0.21,
+            "max": 0.698
+          },
+          "ssr_app_cleanup": {
+            "count": 300,
+            "p50": 0.168,
+            "p95": 0.287,
+            "max": 0.785
+          }
+        }
+      },
+      "concurrent": {
+        "requested": 100,
+        "attempted": 100,
+        "succeeded": 100,
+        "failed": 0,
+        "errors": {},
+        "elapsedMs": 1572.404,
+        "successfulResponsesPerSecond": 63.597,
+        "bytes": 2292700,
+        "wallMs": {
+          "count": 100,
+          "p50": 58.934,
+          "p95": 74.663,
+          "max": 151.134
+        },
+        "headerMs": {
+          "count": 100,
+          "p50": 58.844,
+          "p95": 74.559,
+          "max": 151.045
+        },
+        "serverTimingMs": {
+          "ssr_total": {
+            "count": 100,
+            "p50": 13.103,
+            "p95": 16.291,
+            "max": 88.714
+          },
+          "ssr_route": {
+            "count": 100,
+            "p50": 0.044,
+            "p95": 0.087,
+            "max": 0.126
+          },
+          "ssr_entry": {
+            "count": 100,
+            "p50": 0.023,
+            "p95": 0.044,
+            "max": 0.062
+          },
+          "ssr_render": {
+            "count": 100,
+            "p50": 12.376,
+            "p95": 15.33,
+            "max": 87.889
+          },
+          "ssr_callbacks": {
+            "count": 100,
+            "p50": 0.051,
+            "p95": 0.082,
+            "max": 2.109
+          },
+          "ssr_finalize": {
+            "count": 100,
+            "p50": 0.294,
+            "p95": 0.445,
+            "max": 0.692
+          },
+          "ssr_html": {
+            "count": 100,
+            "p50": 0.268,
+            "p95": 0.316,
+            "max": 0.515
+          },
+          "ssr_clear": {
+            "count": 100,
+            "p50": 0.001,
+            "p95": 0.002,
+            "max": 0.022
+          },
+          "ssr_app_init": {
+            "count": 100,
+            "p50": 4.505,
+            "p95": 6.428,
+            "max": 79.55
+          },
+          "ssr_init_setup": {
+            "count": 100,
+            "p50": 0.017,
+            "p95": 0.024,
+            "max": 0.04
+          },
+          "ssr_init_modules": {
+            "count": 100,
+            "p50": 2.03,
+            "p95": 3.719,
+            "max": 76.092
+          },
+          "ssr_init_initialize": {
+            "count": 100,
+            "p50": 1.069,
+            "p95": 1.399,
+            "max": 2.691
+          },
+          "ssr_init_initialized": {
+            "count": 100,
+            "p50": 0.992,
+            "p95": 1.261,
+            "max": 2.485
+          },
+          "ssr_init_ready": {
+            "count": 100,
+            "p50": 0.271,
+            "p95": 0.37,
+            "max": 0.454
+          },
+          "ssr_navigation": {
+            "count": 100,
+            "p50": 0.239,
+            "p95": 0.321,
+            "max": 0.411
+          },
+          "ssr_state_meta": {
+            "count": 100,
+            "p50": 0.129,
+            "p95": 0.19,
+            "max": 0.312
+          },
+          "ssr_app_cleanup": {
+            "count": 100,
+            "p50": 0.161,
+            "p95": 0.222,
+            "max": 0.361
+          }
+        }
+      },
+      "interpretation": {
+        "firstObserved": "Not proof of process-cold startup; target process freshness is external evidence.",
+        "serverTiming": "Inclusive nested spans, not additive; no derived pure-render or API-wait estimate.",
+        "total": "ssr_total excludes earlier Vona/Sys preparation and HTTP transmission.",
+        "percentiles": "p50 is median; p95 is nearest rank. Warmup and first observed are excluded from measured phases."
+      },
+      "unmeasured": ["server_cpu", "server_memory", "server_gc"]
+    },
+    "profiles": [
+      {
+        "relevantSamples": 9164,
+        "relevantUs": 5714885,
+        "rows": [
+          {
+            "function": "renderVNode",
+            "file": "vona/src/suite/cabloy-basic/modules/basic-siteweb/assets/site/ssr-cabloyBasicWeb-5.0.0/handler.js",
+            "selfSamples": 11,
+            "inclusiveSamples": 7910,
+            "selfUs": 6458,
+            "inclusiveUs": 4834958,
+            "runtimeLine": 229423,
+            "runtimeColumn": 33
+          },
+          {
+            "function": "renderVNodeChildren",
+            "file": "vona/src/suite/cabloy-basic/modules/basic-siteweb/assets/site/ssr-cabloyBasicWeb-5.0.0/handler.js",
+            "selfSamples": 1,
+            "inclusiveSamples": 5775,
+            "selfUs": 625,
+            "inclusiveUs": 3516958,
+            "runtimeLine": 229451,
+            "runtimeColumn": 41
+          },
+          {
+            "function": "dispatch",
+            "file": "vona/src/suite/cabloy-basic/modules/basic-siteweb/assets/site/ssr-cabloyBasicWeb-5.0.0/handler.js",
+            "selfSamples": 38,
+            "inclusiveSamples": 5311,
+            "selfUs": 22499,
+            "inclusiveUs": 3338949,
+            "runtimeLine": 38740,
+            "runtimeColumn": 26
+          },
+          {
+            "function": "renderElementVNode",
+            "file": "vona/src/suite/cabloy-basic/modules/basic-siteweb/assets/site/ssr-cabloyBasicWeb-5.0.0/handler.js",
+            "selfSamples": 13,
+            "inclusiveSamples": 4653,
+            "selfUs": 8917,
+            "inclusiveUs": 2821669,
+            "runtimeLine": 229455,
+            "runtimeColumn": 40
+          },
+          {
+            "function": "renderComponentSubTree",
+            "file": "vona/src/suite/cabloy-basic/modules/basic-siteweb/assets/site/ssr-cabloyBasicWeb-5.0.0/handler.js",
+            "selfSamples": 8,
+            "inclusiveSamples": 2939,
+            "selfUs": 5001,
+            "inclusiveUs": 1823835,
+            "runtimeLine": 229369,
+            "runtimeColumn": 44
+          },
+          {
+            "function": "",
+            "file": "vona/src/suite/cabloy-basic/modules/basic-siteweb/assets/site/ssr-cabloyBasicWeb-5.0.0/handler.js",
+            "selfSamples": 5,
+            "inclusiveSamples": 2665,
+            "selfUs": 3083,
+            "inclusiveUs": 1675390,
+            "runtimeLine": 38736,
+            "runtimeColumn": 20
+          },
+          {
+            "function": "apply",
+            "file": "vona/src/suite/cabloy-basic/modules/basic-siteweb/assets/site/ssr-cabloyBasicWeb-5.0.0/handler.js",
+            "selfSamples": 7,
+            "inclusiveSamples": 2248,
+            "selfUs": 4457,
+            "inclusiveUs": 1414343,
+            "runtimeLine": 58298,
+            "runtimeColumn": 27
+          },
+          {
+            "function": "renderComponentVNode",
+            "file": "vona/src/suite/cabloy-basic/modules/basic-siteweb/assets/site/ssr-cabloyBasicWeb-5.0.0/handler.js",
+            "selfSamples": 8,
+            "inclusiveSamples": 2267,
+            "selfUs": 5042,
+            "inclusiveUs": 1402217,
+            "runtimeLine": 229357,
+            "runtimeColumn": 42
+          },
+          {
+            "function": "",
+            "file": "vona/src/suite/cabloy-basic/modules/basic-siteweb/assets/site/ssr-cabloyBasicWeb-5.0.0/handler.js",
+            "selfSamples": 17,
+            "inclusiveSamples": 2177,
+            "selfUs": 10581,
+            "inclusiveUs": 1370638,
+            "runtimeLine": 58302,
+            "runtimeColumn": 28
+          },
+          {
+            "function": "get",
+            "file": "vona/src/suite/cabloy-basic/modules/basic-siteweb/assets/site/ssr-cabloyBasicWeb-5.0.0/handler.js",
+            "selfSamples": 311,
+            "inclusiveSamples": 1835,
+            "selfUs": 193708,
+            "inclusiveUs": 1151865,
+            "runtimeLine": 31404,
+            "runtimeColumn": 20
+          },
+          {
+            "function": "",
+            "file": "vona/src/suite/cabloy-basic/modules/basic-siteweb/assets/site/ssr-cabloyBasicWeb-5.0.0/handler.js",
+            "selfSamples": 2,
+            "inclusiveSamples": 1801,
+            "selfUs": 1209,
+            "inclusiveUs": 1114997,
+            "runtimeLine": 229365,
+            "runtimeColumn": 25
+          },
+          {
+            "function": "",
+            "file": "vona/src/suite/cabloy-basic/modules/basic-siteweb/assets/site/ssr-cabloyBasicWeb-5.0.0/handler.js",
+            "selfSamples": 6,
+            "inclusiveSamples": 1685,
+            "selfUs": 4209,
+            "inclusiveUs": 1057905,
+            "runtimeLine": 36453,
+            "runtimeColumn": 70
+          },
+          {
+            "function": "",
+            "file": "vona/src/suite/cabloy-basic/modules/basic-siteweb/assets/site/ssr-cabloyBasicWeb-5.0.0/handler.js",
+            "selfSamples": 8,
+            "inclusiveSamples": 1678,
+            "selfUs": 4876,
+            "inclusiveUs": 1053071,
+            "runtimeLine": 60189,
+            "runtimeColumn": 96
+          },
+          {
+            "function": "run",
+            "file": "vona/src/suite/cabloy-basic/modules/basic-siteweb/assets/site/ssr-cabloyBasicWeb-5.0.0/handler.js",
+            "selfSamples": 0,
+            "inclusiveSamples": 1678,
+            "selfUs": 0,
+            "inclusiveUs": 1053071,
+            "runtimeLine": 30719,
+            "runtimeColumn": 20
+          },
+          {
+            "function": "forEach",
+            "file": "vona/src/suite/cabloy-basic/modules/basic-siteweb/assets/site/ssr-cabloyBasicWeb-5.0.0/handler.js",
+            "selfSamples": 518,
+            "inclusiveSamples": 1521,
+            "selfUs": 324799,
+            "inclusiveUs": 951963,
+            "runtimeLine": 38438,
+            "runtimeColumn": 23
+          },
+          {
+            "function": "",
+            "file": "vona/src/suite/cabloy-basic/modules/basic-siteweb/assets/site/ssr-cabloyBasicWeb-5.0.0/handler.js",
+            "selfSamples": 96,
+            "inclusiveSamples": 1415,
+            "selfUs": 59873,
+            "inclusiveUs": 858451,
+            "runtimeLine": 28,
+            "runtimeColumn": 60
+          },
+          {
+            "function": "_initBeanInstance",
+            "file": "vona/src/suite/cabloy-basic/modules/basic-siteweb/assets/site/ssr-cabloyBasicWeb-5.0.0/handler.js",
+            "selfSamples": 79,
+            "inclusiveSamples": 1280,
+            "selfUs": 48164,
+            "inclusiveUs": 797548,
+            "runtimeLine": 58119,
+            "runtimeColumn": 36
+          },
+          {
+            "function": "runWithInstanceScopeOrAppContext",
+            "file": "vona/src/suite/cabloy-basic/modules/basic-siteweb/assets/site/ssr-cabloyBasicWeb-5.0.0/handler.js",
+            "selfSamples": 8,
+            "inclusiveSamples": 1062,
+            "selfUs": 5500,
+            "inclusiveUs": 667663,
+            "runtimeLine": 57945,
+            "runtimeColumn": 45
+          },
+          {
+            "function": "",
+            "file": "vona/src/suite/cabloy-basic/modules/basic-siteweb/assets/site/ssr-cabloyBasicWeb-5.0.0/handler.js",
+            "selfSamples": 277,
+            "inclusiveSamples": 1019,
+            "selfUs": 171919,
+            "inclusiveUs": 637748,
+            "runtimeLine": 60590,
+            "runtimeColumn": 64
+          },
+          {
+            "function": "setupComponent",
+            "file": "vona/src/suite/cabloy-basic/modules/basic-siteweb/assets/site/ssr-cabloyBasicWeb-5.0.0/handler.js",
+            "selfSamples": 12,
+            "inclusiveSamples": 1026,
+            "selfUs": 7123,
+            "inclusiveUs": 629212,
+            "runtimeLine": 36479,
+            "runtimeColumn": 36
+          },
+          {
+            "function": "",
+            "file": "vona/src/suite/cabloy-basic/modules/basic-siteweb/assets/site/ssr-cabloyBasicWeb-5.0.0/handler.js",
+            "selfSamples": 9,
+            "inclusiveSamples": 968,
+            "selfUs": 5708,
+            "inclusiveUs": 608747,
+            "runtimeLine": 58123,
+            "runtimeColumn": 130
+          },
+          {
+            "function": "setupStatefulComponent",
+            "file": "vona/src/suite/cabloy-basic/modules/basic-siteweb/assets/site/ssr-cabloyBasicWeb-5.0.0/handler.js",
+            "selfSamples": 24,
+            "inclusiveSamples": 974,
+            "selfUs": 15045,
+            "inclusiveUs": 597671,
+            "runtimeLine": 36490,
+            "runtimeColumn": 44
+          },
+          {
+            "function": "_createBeanInstance",
+            "file": "vona/src/suite/cabloy-basic/modules/basic-siteweb/assets/site/ssr-cabloyBasicWeb-5.0.0/handler.js",
+            "selfSamples": 33,
+            "inclusiveSamples": 912,
+            "selfUs": 20708,
+            "inclusiveUs": 567957,
+            "runtimeLine": 58067,
+            "runtimeColumn": 38
+          },
+          {
+            "function": "get",
+            "file": "vona/src/suite/cabloy-basic/modules/basic-siteweb/assets/site/ssr-cabloyBasicWeb-5.0.0/handler.js",
+            "selfSamples": 83,
+            "inclusiveSamples": 821,
+            "selfUs": 51960,
+            "inclusiveUs": 514951,
+            "runtimeLine": 58227,
+            "runtimeColumn": 25
+          },
+          {
+            "function": "runWithContext",
+            "file": "vona/src/suite/cabloy-basic/modules/basic-siteweb/assets/site/ssr-cabloyBasicWeb-5.0.0/handler.js",
+            "selfSamples": 2,
+            "inclusiveSamples": 817,
+            "selfUs": 1250,
+            "inclusiveUs": 511579,
+            "runtimeLine": 34396,
+            "runtimeColumn": 40
+          },
+          {
+            "function": "",
+            "file": "vona/src/suite/cabloy-basic/modules/basic-siteweb/assets/site/ssr-cabloyBasicWeb-5.0.0/handler.js",
+            "selfSamples": 24,
+            "inclusiveSamples": 794,
+            "selfUs": 14709,
+            "inclusiveUs": 498494,
+            "runtimeLine": 34405,
+            "runtimeColumn": 62
+          },
+          {
+            "function": "renderComponentRoot",
+            "file": "vona/src/suite/cabloy-basic/modules/basic-siteweb/assets/site/ssr-cabloyBasicWeb-5.0.0/handler.js",
+            "selfSamples": 9,
+            "inclusiveSamples": 792,
+            "selfUs": 5583,
+            "inclusiveUs": 498210,
+            "runtimeLine": 35633,
+            "runtimeColumn": 41
+          },
+          {
+            "function": "$useStateData",
+            "file": "vona/src/suite/cabloy-basic/modules/basic-siteweb/assets/site/ssr-cabloyBasicWeb-5.0.0/handler.js",
+            "selfSamples": 28,
+            "inclusiveSamples": 784,
+            "selfUs": 17542,
+            "inclusiveUs": 494084,
+            "runtimeLine": 67651,
+            "runtimeColumn": 26
+          },
+          {
+            "function": "instance.<computed>",
+            "file": "vona/src/suite/cabloy-basic/modules/basic-siteweb/assets/site/ssr-cabloyBasicWeb-5.0.0/handler.js",
+            "selfSamples": 10,
+            "inclusiveSamples": 747,
+            "selfUs": 6166,
+            "inclusiveUs": 470498,
+            "runtimeLine": 5865,
+            "runtimeColumn": 58
+          },
+          {
+            "function": "unrefNested",
+            "file": "vona/src/suite/cabloy-basic/modules/basic-siteweb/assets/site/ssr-cabloyBasicWeb-5.0.0/handler.js",
+            "selfSamples": 10,
+            "inclusiveSamples": 744,
+            "selfUs": 6207,
+            "inclusiveUs": 466581,
+            "runtimeLine": 31429,
+            "runtimeColumn": 33
+          },
+          {
+            "function": "render",
+            "file": "vona/src/suite/cabloy-basic/modules/basic-siteweb/assets/site/ssr-cabloyBasicWeb-5.0.0/handler.js",
+            "selfSamples": 10,
+            "inclusiveSamples": 718,
+            "selfUs": 6126,
+            "inclusiveUs": 448096,
+            "runtimeLine": 225991,
+            "runtimeColumn": 25
+          },
+          {
+            "function": "_useController",
+            "file": "vona/src/suite/cabloy-basic/modules/basic-siteweb/assets/site/ssr-cabloyBasicWeb-5.0.0/handler.js",
+            "selfSamples": 41,
+            "inclusiveSamples": 673,
+            "selfUs": 26669,
+            "inclusiveUs": 422998,
+            "runtimeLine": 60278,
+            "runtimeColumn": 30
+          },
+          {
+            "function": "",
+            "file": "vona/src/suite/cabloy-basic/modules/basic-siteweb/assets/site/ssr-cabloyBasicWeb-5.0.0/handler.js",
+            "selfSamples": 135,
+            "inclusiveSamples": 659,
+            "selfUs": 84959,
+            "inclusiveUs": 413786,
+            "runtimeLine": 60593,
+            "runtimeColumn": 109
+          },
+          {
+            "function": "_newBeanInner",
+            "file": "vona/src/suite/cabloy-basic/modules/basic-siteweb/assets/site/ssr-cabloyBasicWeb-5.0.0/handler.js",
+            "selfSamples": 19,
+            "inclusiveSamples": 625,
+            "selfUs": 11875,
+            "inclusiveUs": 395161,
+            "runtimeLine": 58038,
+            "runtimeColumn": 49
+          },
+          {
+            "function": "$useQuery",
+            "file": "vona/src/suite/cabloy-basic/modules/basic-siteweb/assets/site/ssr-cabloyBasicWeb-5.0.0/handler.js",
+            "selfSamples": 14,
+            "inclusiveSamples": 622,
+            "selfUs": 8502,
+            "inclusiveUs": 391917,
+            "runtimeLine": 67477,
+            "runtimeColumn": 22
+          },
+          {
+            "function": "set",
+            "file": "vona/src/suite/cabloy-basic/modules/basic-siteweb/assets/site/ssr-cabloyBasicWeb-5.0.0/handler.js",
+            "selfSamples": 259,
+            "inclusiveSamples": 600,
+            "selfUs": 161998,
+            "inclusiveUs": 377745,
+            "runtimeLine": 31440,
+            "runtimeColumn": 20
+          },
+          {
+            "function": "instance.<computed>",
+            "file": "vona/src/suite/cabloy-basic/modules/basic-siteweb/assets/site/ssr-cabloyBasicWeb-5.0.0/handler.js",
+            "selfSamples": 8,
+            "inclusiveSamples": 564,
+            "selfUs": 5082,
+            "inclusiveUs": 356618,
+            "runtimeLine": 59884,
+            "runtimeColumn": 50
+          },
+          {
+            "function": "get value",
+            "file": "vona/src/suite/cabloy-basic/modules/basic-siteweb/assets/site/ssr-cabloyBasicWeb-5.0.0/handler.js",
+            "selfSamples": 1,
+            "inclusiveSamples": 544,
+            "selfUs": 625,
+            "inclusiveUs": 341952,
+            "runtimeLine": 31827,
+            "runtimeColumn": 26
+          },
+          {
+            "function": "_prepareBeanInstance",
+            "file": "vona/src/suite/cabloy-basic/modules/basic-siteweb/assets/site/ssr-cabloyBasicWeb-5.0.0/handler.js",
+            "selfSamples": 40,
+            "inclusiveSamples": 520,
+            "selfUs": 26126,
+            "inclusiveUs": 328660,
+            "runtimeLine": 58083,
+            "runtimeColumn": 39
+          },
+          {
+            "function": "",
+            "file": "vona/src/suite/cabloy-basic/modules/basic-siteweb/assets/site/ssr-cabloyBasicWeb-5.0.0/handler.js",
+            "selfSamples": 6,
+            "inclusiveSamples": 507,
+            "selfUs": 3751,
+            "inclusiveUs": 319873,
+            "runtimeLine": 67494,
+            "runtimeColumn": 52
+          },
+          {
+            "function": "useBaseQuery",
+            "file": "vona/src/suite/cabloy-basic/modules/basic-siteweb/assets/site/ssr-cabloyBasicWeb-5.0.0/handler.js",
+            "selfSamples": 124,
+            "inclusiveSamples": 499,
+            "selfUs": 78122,
+            "inclusiveUs": 314914,
+            "runtimeLine": 64336,
+            "runtimeColumn": 22
+          },
+          {
+            "function": "_prepareAopChainsSimple",
+            "file": "vona/src/suite/cabloy-basic/modules/basic-siteweb/assets/site/ssr-cabloyBasicWeb-5.0.0/handler.js",
+            "selfSamples": 481,
+            "inclusiveSamples": 496,
+            "selfUs": 297828,
+            "inclusiveUs": 306579,
+            "runtimeLine": 58338,
+            "runtimeColumn": 36
+          },
+          {
+            "function": "instanceScope",
+            "file": "vona/src/suite/cabloy-basic/modules/basic-siteweb/assets/site/ssr-cabloyBasicWeb-5.0.0/handler.js",
+            "selfSamples": 0,
+            "inclusiveSamples": 495,
+            "selfUs": 0,
+            "inclusiveUs": 305084,
+            "runtimeLine": 60186,
+            "runtimeColumn": 26
+          },
+          {
+            "function": "_prepareBeanInstanceCommon",
+            "file": "vona/src/suite/cabloy-basic/modules/basic-siteweb/assets/site/ssr-cabloyBasicWeb-5.0.0/handler.js",
+            "selfSamples": 132,
+            "inclusiveSamples": 483,
+            "selfUs": 84829,
+            "inclusiveUs": 305002,
+            "runtimeLine": 58101,
+            "runtimeColumn": 39
+          },
+          {
+            "function": "ZovaContext",
+            "file": "vona/src/suite/cabloy-basic/modules/basic-siteweb/assets/site/ssr-cabloyBasicWeb-5.0.0/handler.js",
+            "selfSamples": 42,
+            "inclusiveSamples": 474,
+            "selfUs": 26416,
+            "inclusiveUs": 297532,
+            "runtimeLine": 60212,
+            "runtimeColumn": 24
+          },
+          {
+            "function": "__init__",
+            "file": "vona/src/suite/cabloy-basic/modules/basic-siteweb/assets/site/ssr-cabloyBasicWeb-5.0.0/handler.js",
+            "selfSamples": 4,
+            "inclusiveSamples": 452,
+            "selfUs": 2583,
+            "inclusiveUs": 285251,
+            "runtimeLine": 223233,
+            "runtimeColumn": 27
+          },
+          {
+            "function": "render",
+            "file": "vona/src/suite/cabloy-basic/modules/basic-siteweb/assets/site/ssr-cabloyBasicWeb-5.0.0/handler.js",
+            "selfSamples": 2,
+            "inclusiveSamples": 431,
+            "selfUs": 1291,
+            "inclusiveUs": 271869,
+            "runtimeLine": 156206,
+            "runtimeColumn": 19
+          },
+          {
+            "function": "callWithErrorHandling",
+            "file": "vona/src/suite/cabloy-basic/modules/basic-siteweb/assets/site/ssr-cabloyBasicWeb-5.0.0/handler.js",
+            "selfSamples": 9,
+            "inclusiveSamples": 424,
+            "selfUs": 5626,
+            "inclusiveUs": 261877,
+            "runtimeLine": 32249,
+            "runtimeColumn": 43
+          },
+          {
+            "function": "_install",
+            "file": "vona/src/suite/cabloy-basic/modules/basic-siteweb/assets/site/ssr-cabloyBasicWeb-5.0.0/handler.js",
+            "selfSamples": 60,
+            "inclusiveSamples": 411,
+            "selfUs": 37125,
+            "inclusiveUs": 259427,
+            "runtimeLine": 60551,
+            "runtimeColumn": 27
+          },
+          {
+            "function": "render",
+            "file": "vona/src/suite/cabloy-basic/modules/basic-siteweb/assets/site/ssr-cabloyBasicWeb-5.0.0/handler.js",
+            "selfSamples": 9,
+            "inclusiveSamples": 393,
+            "selfUs": 5542,
+            "inclusiveUs": 247954,
+            "runtimeLine": 155597,
+            "runtimeColumn": 19
+          },
+          {
+            "function": "get value",
+            "file": "vona/src/suite/cabloy-basic/modules/basic-siteweb/assets/site/ssr-cabloyBasicWeb-5.0.0/handler.js",
+            "selfSamples": 3,
+            "inclusiveSamples": 384,
+            "selfUs": 1792,
+            "inclusiveUs": 240555,
+            "runtimeLine": 31920,
+            "runtimeColumn": 26
+          },
+          {
+            "function": "refreshComputed",
+            "file": "vona/src/suite/cabloy-basic/modules/basic-siteweb/assets/site/ssr-cabloyBasicWeb-5.0.0/handler.js",
+            "selfSamples": 7,
+            "inclusiveSamples": 379,
+            "selfUs": 4334,
+            "inclusiveUs": 237513,
+            "runtimeLine": 30950,
+            "runtimeColumn": 37
+          },
+          {
+            "function": "_prepareBeanInstanceSimple",
+            "file": "vona/src/suite/cabloy-basic/modules/basic-siteweb/assets/site/ssr-cabloyBasicWeb-5.0.0/handler.js",
+            "selfSamples": 5,
+            "inclusiveSamples": 357,
+            "selfUs": 3125,
+            "inclusiveUs": 221989,
+            "runtimeLine": 58092,
+            "runtimeColumn": 39
+          },
+          {
+            "function": "_newBeanSimple",
+            "file": "vona/src/suite/cabloy-basic/modules/basic-siteweb/assets/site/ssr-cabloyBasicWeb-5.0.0/handler.js",
+            "selfSamples": 14,
+            "inclusiveSamples": 352,
+            "selfUs": 8376,
+            "inclusiveUs": 215715,
+            "runtimeLine": 58027,
+            "runtimeColumn": 27
+          },
+          {
+            "function": "_initializeTabs",
+            "file": "vona/src/suite/cabloy-basic/modules/basic-siteweb/assets/site/ssr-cabloyBasicWeb-5.0.0/handler.js",
+            "selfSamples": 1,
+            "inclusiveSamples": 330,
+            "selfUs": 625,
+            "inclusiveUs": 208996,
+            "runtimeLine": 223338,
+            "runtimeColumn": 28
+          },
+          {
+            "function": "stringify",
+            "file": "vona/src/suite/cabloy-basic/modules/basic-siteweb/assets/site/ssr-cabloyBasicWeb-5.0.0/handler.js",
+            "selfSamples": 30,
+            "inclusiveSamples": 326,
+            "selfUs": 16751,
+            "inclusiveUs": 203409,
+            "runtimeLine": 112650,
+            "runtimeColumn": 23
+          },
+          {
+            "function": "callWithAsyncErrorHandling",
+            "file": "vona/src/suite/cabloy-basic/modules/basic-siteweb/assets/site/ssr-cabloyBasicWeb-5.0.0/handler.js",
+            "selfSamples": 4,
+            "inclusiveSamples": 319,
+            "selfUs": 2416,
+            "inclusiveUs": 198497,
+            "runtimeLine": 32257,
+            "runtimeColumn": 48
+          },
+          {
+            "function": "_getBeanOptionsForce",
+            "file": "vona/src/suite/cabloy-basic/modules/basic-siteweb/assets/site/ssr-cabloyBasicWeb-5.0.0/handler.js",
+            "selfSamples": 100,
+            "inclusiveSamples": 298,
+            "selfUs": 62251,
+            "inclusiveUs": 190586,
+            "runtimeLine": 58061,
+            "runtimeColumn": 39
+          },
+          {
+            "function": "get",
+            "file": "vona/src/suite/cabloy-basic/modules/basic-siteweb/assets/site/ssr-cabloyBasicWeb-5.0.0/handler.js",
+            "selfSamples": 3,
+            "inclusiveSamples": 298,
+            "selfUs": 1750,
+            "inclusiveUs": 186871,
+            "runtimeLine": 67636,
+            "runtimeColumn": 29
+          },
+          {
+            "function": "apply3",
+            "file": "vona/src/suite/cabloy-basic/modules/basic-siteweb/assets/site/ssr-cabloyBasicWeb-5.0.0/handler.js",
+            "selfSamples": 0,
+            "inclusiveSamples": 286,
+            "selfUs": 0,
+            "inclusiveUs": 179497,
+            "runtimeLine": 31332,
+            "runtimeColumn": 28
+          },
+          {
+            "function": "",
+            "file": "vona/src/suite/cabloy-basic/modules/basic-siteweb/assets/site/ssr-cabloyBasicWeb-5.0.0/handler.js",
+            "selfSamples": 0,
+            "inclusiveSamples": 285,
+            "selfUs": 0,
+            "inclusiveUs": 178872,
+            "runtimeLine": 31342,
+            "runtimeColumn": 79
+          },
+          {
+            "function": "_cloneDeep",
+            "file": "vona/src/suite/cabloy-basic/modules/basic-siteweb/assets/site/ssr-cabloyBasicWeb-5.0.0/handler.js",
+            "selfSamples": 48,
+            "inclusiveSamples": 279,
+            "selfUs": 30208,
+            "inclusiveUs": 175112,
+            "runtimeLine": 64098,
+            "runtimeColumn": 20
+          },
+          {
+            "function": "__init__",
+            "file": "vona/src/suite/cabloy-basic/modules/basic-siteweb/assets/site/ssr-cabloyBasicWeb-5.0.0/handler.js",
+            "selfSamples": 1,
+            "inclusiveSamples": 276,
+            "selfUs": 625,
+            "inclusiveUs": 174791,
+            "runtimeLine": 155400,
+            "runtimeColumn": 27
+          },
+          {
+            "function": "",
+            "file": "vona/src/suite/cabloy-basic/modules/basic-siteweb/assets/site/ssr-cabloyBasicWeb-5.0.0/handler.js",
+            "selfSamples": 5,
+            "inclusiveSamples": 277,
+            "selfUs": 3167,
+            "inclusiveUs": 173372,
+            "runtimeLine": 130408,
+            "runtimeColumn": 50
+          },
+          {
+            "function": "retrieveMenus",
+            "file": "vona/src/suite/cabloy-basic/modules/basic-siteweb/assets/site/ssr-cabloyBasicWeb-5.0.0/handler.js",
+            "selfSamples": 1,
+            "inclusiveSamples": 273,
+            "selfUs": 625,
+            "inclusiveUs": 172918,
+            "runtimeLine": 155259,
+            "runtimeColumn": 26
+          },
+          {
+            "function": "map",
+            "file": "vona/src/suite/cabloy-basic/modules/basic-siteweb/assets/site/ssr-cabloyBasicWeb-5.0.0/handler.js",
+            "selfSamples": 1,
+            "inclusiveSamples": 270,
+            "selfUs": 667,
+            "inclusiveUs": 169704,
+            "runtimeLine": 31277,
+            "runtimeColumn": 21
+          },
+          {
+            "function": "__init__",
+            "file": "vona/src/suite/cabloy-basic/modules/basic-siteweb/assets/site/ssr-cabloyBasicWeb-5.0.0/handler.js",
+            "selfSamples": 0,
+            "inclusiveSamples": 268,
+            "selfUs": 0,
+            "inclusiveUs": 168664,
+            "runtimeLine": 131693,
+            "runtimeColumn": 27
+          },
+          {
+            "function": "_QueryEnsureLoadedInner",
+            "file": "vona/src/suite/cabloy-basic/modules/basic-siteweb/assets/site/ssr-cabloyBasicWeb-5.0.0/handler.js",
+            "selfSamples": 0,
+            "inclusiveSamples": 266,
+            "selfUs": 0,
+            "inclusiveUs": 168584,
+            "runtimeLine": 68006,
+            "runtimeColumn": 39
+          },
+          {
+            "function": "$QueryEnsureLoaded",
+            "file": "vona/src/suite/cabloy-basic/modules/basic-siteweb/assets/site/ssr-cabloyBasicWeb-5.0.0/handler.js",
+            "selfSamples": 0,
+            "inclusiveSamples": 266,
+            "selfUs": 0,
+            "inclusiveUs": 168584,
+            "runtimeLine": 67992,
+            "runtimeColumn": 34
+          },
+          {
+            "function": "_getBeanSelectorInner",
+            "file": "vona/src/suite/cabloy-basic/modules/basic-siteweb/assets/site/ssr-cabloyBasicWeb-5.0.0/handler.js",
+            "selfSamples": 58,
+            "inclusiveSamples": 267,
+            "selfUs": 36129,
+            "inclusiveUs": 168044,
+            "runtimeLine": 58010,
+            "runtimeColumn": 40
+          },
+          {
+            "function": "",
+            "file": "vona/src/suite/cabloy-basic/modules/basic-siteweb/assets/site/ssr-cabloyBasicWeb-5.0.0/handler.js",
+            "selfSamples": 0,
+            "inclusiveSamples": 263,
+            "selfUs": 0,
+            "inclusiveUs": 166626,
+            "runtimeLine": 155420,
+            "runtimeColumn": 42
+          },
+          {
+            "function": "",
+            "file": "vona/src/suite/cabloy-basic/modules/basic-siteweb/assets/site/ssr-cabloyBasicWeb-5.0.0/handler.js",
+            "selfSamples": 2,
+            "inclusiveSamples": 258,
+            "selfUs": 1250,
+            "inclusiveUs": 162837,
+            "runtimeLine": 61331,
+            "runtimeColumn": 52
+          },
+          {
+            "function": "OrdinaryGetMetadata",
+            "file": "vona/src/suite/cabloy-basic/modules/basic-siteweb/assets/site/ssr-cabloyBasicWeb-5.0.0/handler.js",
+            "selfSamples": 29,
+            "inclusiveSamples": 259,
+            "selfUs": 17665,
+            "inclusiveUs": 161367,
+            "runtimeLine": 55566,
+            "runtimeColumn": 49
+          },
+          {
+            "function": "_renderMenuItem",
+            "file": "vona/src/suite/cabloy-basic/modules/basic-siteweb/assets/site/ssr-cabloyBasicWeb-5.0.0/handler.js",
+            "selfSamples": 1,
+            "inclusiveSamples": 254,
+            "selfUs": 625,
+            "inclusiveUs": 159704,
+            "runtimeLine": 155791,
+            "runtimeColumn": 28
+          },
+          {
+            "function": "useController",
+            "file": "vona/src/suite/cabloy-basic/modules/basic-siteweb/assets/site/ssr-cabloyBasicWeb-5.0.0/handler.js",
+            "selfSamples": 4,
+            "inclusiveSamples": 253,
+            "selfUs": 2500,
+            "inclusiveUs": 159118,
+            "runtimeLine": 60271,
+            "runtimeColumn": 23
+          },
+          {
+            "function": "",
+            "file": "vona/src/suite/cabloy-basic/modules/basic-siteweb/assets/site/ssr-cabloyBasicWeb-5.0.0/handler.js",
+            "selfSamples": 3,
+            "inclusiveSamples": 242,
+            "selfUs": 1833,
+            "inclusiveUs": 152671,
+            "runtimeLine": 89603,
+            "runtimeColumn": 90
+          },
+          {
+            "function": "createReactiveObject",
+            "file": "vona/src/suite/cabloy-basic/modules/basic-siteweb/assets/site/ssr-cabloyBasicWeb-5.0.0/handler.js",
+            "selfSamples": 172,
+            "inclusiveSamples": 238,
+            "selfUs": 108798,
+            "inclusiveUs": 149256,
+            "runtimeLine": 31704,
+            "runtimeColumn": 42
+          },
+          {
+            "function": "reactive",
+            "file": "vona/src/suite/cabloy-basic/modules/basic-siteweb/assets/site/ssr-cabloyBasicWeb-5.0.0/handler.js",
+            "selfSamples": 14,
+            "inclusiveSamples": 238,
+            "selfUs": 8792,
+            "inclusiveUs": 148460,
+            "runtimeLine": 31687,
+            "runtimeColumn": 30
+          },
+          {
+            "function": "get",
+            "file": "vona/src/suite/cabloy-basic/modules/basic-siteweb/assets/site/ssr-cabloyBasicWeb-5.0.0/handler.js",
+            "selfSamples": 1,
+            "inclusiveSamples": 234,
+            "selfUs": 625,
+            "inclusiveUs": 147415,
+            "runtimeLine": 67580,
+            "runtimeColumn": 29
+          },
+          {
+            "function": "ssrContext.rendered",
+            "file": "vona/src/suite/cabloy-basic/modules/basic-siteweb/assets/site/ssr-cabloyBasicWeb-5.0.0/handler.js",
+            "selfSamples": 1,
+            "inclusiveSamples": 234,
+            "selfUs": 625,
+            "inclusiveUs": 143834,
+            "runtimeLine": 113606,
+            "runtimeColumn": 43
+          },
+          {
+            "function": "_onRenderedLast",
+            "file": "vona/src/suite/cabloy-basic/modules/basic-siteweb/assets/site/ssr-cabloyBasicWeb-5.0.0/handler.js",
+            "selfSamples": 3,
+            "inclusiveSamples": 232,
+            "selfUs": 1916,
+            "inclusiveUs": 142584,
+            "runtimeLine": 113612,
+            "runtimeColumn": 28
+          },
+          {
+            "function": "",
+            "file": "vona/src/suite/cabloy-basic/modules/basic-siteweb/assets/site/ssr-cabloyBasicWeb-5.0.0/handler.js",
+            "selfSamples": 35,
+            "inclusiveSamples": 227,
+            "selfUs": 21793,
+            "inclusiveUs": 140585,
+            "runtimeLine": 38,
+            "runtimeColumn": 59
+          },
+          {
+            "function": "set value",
+            "file": "vona/src/suite/cabloy-basic/modules/basic-siteweb/assets/site/ssr-cabloyBasicWeb-5.0.0/handler.js",
+            "selfSamples": 0,
+            "inclusiveSamples": 219,
+            "selfUs": 0,
+            "inclusiveUs": 137748,
+            "runtimeLine": 31830,
+            "runtimeColumn": 26
+          },
+          {
+            "function": "doWatch",
+            "file": "vona/src/suite/cabloy-basic/modules/basic-siteweb/assets/site/ssr-cabloyBasicWeb-5.0.0/handler.js",
+            "selfSamples": 20,
+            "inclusiveSamples": 209,
+            "selfUs": 13335,
+            "inclusiveUs": 132547,
+            "runtimeLine": 35447,
+            "runtimeColumn": 29
+          },
+          {
+            "function": "catchError",
+            "file": "vona/src/suite/cabloy-basic/modules/basic-siteweb/assets/site/ssr-cabloyBasicWeb-5.0.0/handler.js",
+            "selfSamples": 3,
+            "inclusiveSamples": 208,
+            "selfUs": 1875,
+            "inclusiveUs": 132009,
+            "runtimeLine": 38331,
+            "runtimeColumn": 26
+          },
+          {
+            "function": "_useModule",
+            "file": "vona/src/suite/cabloy-basic/modules/basic-siteweb/assets/site/ssr-cabloyBasicWeb-5.0.0/handler.js",
+            "selfSamples": 26,
+            "inclusiveSamples": 202,
+            "selfUs": 17002,
+            "inclusiveUs": 131040,
+            "runtimeLine": 58468,
+            "runtimeColumn": 29
+          },
+          {
+            "function": "",
+            "file": "vona/src/suite/cabloy-basic/modules/basic-siteweb/assets/site/ssr-cabloyBasicWeb-5.0.0/handler.js",
+            "selfSamples": 2,
+            "inclusiveSamples": 208,
+            "selfUs": 1332,
+            "inclusiveUs": 130827,
+            "runtimeLine": 112738,
+            "runtimeColumn": 39
+          },
+          {
+            "function": "",
+            "file": "vona/src/suite/cabloy-basic/modules/basic-siteweb/assets/site/ssr-cabloyBasicWeb-5.0.0/handler.js",
+            "selfSamples": 22,
+            "inclusiveSamples": 207,
+            "selfUs": 13792,
+            "inclusiveUs": 129125,
+            "runtimeLine": 58243,
+            "runtimeColumn": 32
+          },
+          {
+            "function": "renderTabs",
+            "file": "vona/src/suite/cabloy-basic/modules/basic-siteweb/assets/site/ssr-cabloyBasicWeb-5.0.0/handler.js",
+            "selfSamples": 1,
+            "inclusiveSamples": 200,
+            "selfUs": 625,
+            "inclusiveUs": 126205,
+            "runtimeLine": 155773,
+            "runtimeColumn": 23
+          },
+          {
+            "function": "forwardRoute",
+            "file": "vona/src/suite/cabloy-basic/modules/basic-siteweb/assets/site/ssr-cabloyBasicWeb-5.0.0/handler.js",
+            "selfSamples": 2,
+            "inclusiveSamples": 201,
+            "selfUs": 1250,
+            "inclusiveUs": 126165,
+            "runtimeLine": 223720,
+            "runtimeColumn": 25
+          },
+          {
+            "function": "",
+            "file": "vona/src/suite/cabloy-basic/modules/basic-siteweb/assets/site/ssr-cabloyBasicWeb-5.0.0/handler.js",
+            "selfSamples": 3,
+            "inclusiveSamples": 197,
+            "selfUs": 1916,
+            "inclusiveUs": 124174,
+            "runtimeLine": 60422,
+            "runtimeColumn": 45
+          },
+          {
+            "function": "appInitialize",
+            "file": "vona/src/suite/cabloy-basic/modules/basic-siteweb/assets/site/ssr-cabloyBasicWeb-5.0.0/handler.js",
+            "selfSamples": 1,
+            "inclusiveSamples": 200,
+            "selfUs": 666,
+            "inclusiveUs": 123627,
+            "runtimeLine": 157666,
+            "runtimeColumn": 32
+          },
+          {
+            "function": "appInitialize",
+            "file": "vona/src/suite/cabloy-basic/modules/basic-siteweb/assets/site/ssr-cabloyBasicWeb-5.0.0/handler.js",
+            "selfSamples": 1,
+            "inclusiveSamples": 197,
+            "selfUs": 625,
+            "inclusiveUs": 121711,
+            "runtimeLine": 157401,
+            "runtimeColumn": 32
+          },
+          {
+            "function": "",
+            "file": "vona/src/suite/cabloy-basic/modules/basic-siteweb/assets/site/ssr-cabloyBasicWeb-5.0.0/handler.js",
+            "selfSamples": 2,
+            "inclusiveSamples": 191,
+            "selfUs": 1208,
+            "inclusiveUs": 120205,
+            "runtimeLine": 155262,
+            "runtimeColumn": 53
+          },
+          {
+            "function": "_renderModulesPreload_zova",
+            "file": "vona/src/suite/cabloy-basic/modules/basic-siteweb/assets/site/ssr-cabloyBasicWeb-5.0.0/handler.js",
+            "selfSamples": 48,
+            "inclusiveSamples": 190,
+            "selfUs": 30249,
+            "inclusiveUs": 119124,
+            "runtimeLine": 226131,
+            "runtimeColumn": 39
+          },
+          {
+            "function": "",
+            "file": "vona/src/suite/cabloy-basic/modules/basic-siteweb/assets/site/ssr-cabloyBasicWeb-5.0.0/handler.js",
+            "selfSamples": 3,
+            "inclusiveSamples": 189,
+            "selfUs": 1875,
+            "inclusiveUs": 118297,
+            "runtimeLine": 38755,
+            "runtimeColumn": 56
+          },
+          {
+            "function": "",
+            "file": "vona/src/suite/cabloy-basic/modules/basic-siteweb/assets/site/ssr-cabloyBasicWeb-5.0.0/handler.js",
+            "selfSamples": 1,
+            "inclusiveSamples": 183,
+            "selfUs": 583,
+            "inclusiveUs": 115164,
+            "runtimeLine": 155776,
+            "runtimeColumn": 54
+          },
+          {
+            "function": "watch",
+            "file": "vona/src/suite/cabloy-basic/modules/basic-siteweb/assets/site/ssr-cabloyBasicWeb-5.0.0/handler.js",
+            "selfSamples": 8,
+            "inclusiveSamples": 182,
+            "selfUs": 5126,
+            "inclusiveUs": 114711,
+            "runtimeLine": 31983,
+            "runtimeColumn": 27
+          },
+          {
+            "function": "renderToString2",
+            "file": "vona/src/suite/cabloy-basic/modules/basic-siteweb/assets/site/ssr-cabloyBasicWeb-5.0.0/handler.js",
+            "selfSamples": 2,
+            "inclusiveSamples": 177,
+            "selfUs": 1208,
+            "inclusiveUs": 112800,
+            "runtimeLine": 229559,
+            "runtimeColumn": 43
+          },
+          {
+            "function": "addTab",
+            "file": "vona/src/suite/cabloy-basic/modules/basic-siteweb/assets/site/ssr-cabloyBasicWeb-5.0.0/handler.js",
+            "selfSamples": 0,
+            "inclusiveSamples": 179,
+            "selfUs": 0,
+            "inclusiveUs": 112416,
+            "runtimeLine": 223360,
+            "runtimeColumn": 19
+          }
+        ]
+      }
+    ],
+    "limits": [
+      "CPU sample weights cover process startup and all workload phases, not isolated warm per-hook wall time.",
+      "Inclusive rows overlap and must not be added.",
+      "Only top 100 inclusive built-handler frames per relevant profile retained; raw profiles remain disposable managed resources.",
+      "Sampling adds overhead; baseline timing from the unprofiled run remains the comparison reference.",
+      "runtimeLine/runtimeColumn identify runtime-transformed code, not on-disk artifact coordinates; no reliable source-map attribution was established."
+    ],
+    "cleanup": "managed process and raw-profile resources cleaned"
+  },
+  "wallAttribution": {
+    "method": "Transient asynchronous Node load hook injects wrappers after shared Sys initialization. sysApplicationInitialize attaches per-app wrappers to AppModule and actual Main/Monkey methods. App close flushes request totals; process exit emits aggregate rows. No source or artifact edits.",
+    "measurementWindow": "One first-observed and 30 warmup requests excluded; app indices 32 through 131 correspond to 100 serial requests; final single request excluded.",
+    "aggregation": "Sum durations per label within each app, then median/p95/mean across the 100 apps; calls is the aggregate invocation count across those apps, not per-app count.",
+    "workload": {
+      "driver": {
+        "version": 1,
+        "node": "v24.8.0"
+      },
+      "target": {
+        "transport": "direct-loopback-http",
+        "provenance": "unverified",
+        "mode": "unverified",
+        "revision": "unverified",
+        "workers": "unverified"
+      },
+      "workload": {
+        "warmup": 30,
+        "serial": 100,
+        "concurrent": 1,
+        "concurrency": 1,
+        "timeoutMs": 10000
+      },
+      "connection": {
+        "keepAlive": true,
+        "maxSockets": 1,
+        "maxTotalSockets": 1
+      },
+      "valid": true,
+      "firstObserved": {
+        "requested": 1,
+        "attempted": 1,
+        "succeeded": 1,
+        "failed": 0,
+        "errors": {},
+        "sample": {
+          "wallMs": 758.4549999999981,
+          "headerMs": 757.8973330000008,
+          "bytes": 22927,
+          "serverTimingMs": {
+            "ssr_total": 80.839,
+            "ssr_route": 1.123,
+            "ssr_entry": 1.286,
+            "ssr_render": 74.954,
+            "ssr_callbacks": 0.448,
+            "ssr_finalize": 1.572,
+            "ssr_html": 1.413,
+            "ssr_clear": 0.018,
+            "ssr_app_init": 20.444,
+            "ssr_init_setup": 0.121,
+            "ssr_init_modules": 7.244,
+            "ssr_init_initialize": 6.682,
+            "ssr_init_initialized": 4.633,
+            "ssr_init_ready": 1.747,
+            "ssr_navigation": 1.604,
+            "ssr_state_meta": 1.043,
+            "ssr_app_cleanup": 0.5
+          }
+        }
+      },
+      "warmup": {
+        "requested": 30,
+        "attempted": 30,
+        "succeeded": 30,
+        "failed": 0,
+        "errors": {}
+      },
+      "serial": {
+        "requested": 100,
+        "attempted": 100,
+        "succeeded": 100,
+        "failed": 0,
+        "errors": {},
+        "elapsedMs": 1827.01,
+        "successfulResponsesPerSecond": 54.734,
+        "bytes": 2292700,
+        "wallMs": {
+          "count": 100,
+          "p50": 17.782,
+          "p95": 22.13,
+          "max": 23.276
+        },
+        "headerMs": {
+          "count": 100,
+          "p50": 17.661,
+          "p95": 22.024,
+          "max": 23.147
+        },
+        "serverTimingMs": {
+          "ssr_total": {
+            "count": 100,
+            "p50": 15.433,
+            "p95": 19.262,
+            "max": 20.76
+          },
+          "ssr_route": {
+            "count": 100,
+            "p50": 0.058,
+            "p95": 0.078,
+            "max": 0.164
+          },
+          "ssr_entry": {
+            "count": 100,
+            "p50": 0.027,
+            "p95": 0.039,
+            "max": 0.069
+          },
+          "ssr_render": {
+            "count": 100,
+            "p50": 14.446,
+            "p95": 18.479,
+            "max": 19.862
+          },
+          "ssr_callbacks": {
+            "count": 100,
+            "p50": 0.063,
+            "p95": 0.097,
+            "max": 0.167
+          },
+          "ssr_finalize": {
+            "count": 100,
+            "p50": 0.392,
+            "p95": 0.514,
+            "max": 2.918
+          },
+          "ssr_html": {
+            "count": 100,
+            "p50": 0.268,
+            "p95": 0.356,
+            "max": 2.769
+          },
+          "ssr_clear": {
+            "count": 100,
+            "p50": 0.001,
+            "p95": 0.002,
+            "max": 0.004
+          },
+          "ssr_app_init": {
+            "count": 100,
+            "p50": 5.243,
+            "p95": 6.693,
+            "max": 7.987
+          },
+          "ssr_init_setup": {
+            "count": 100,
+            "p50": 0.022,
+            "p95": 0.031,
+            "max": 0.107
+          },
+          "ssr_init_modules": {
+            "count": 100,
+            "p50": 2.389,
+            "p95": 3.215,
+            "max": 4.058
+          },
+          "ssr_init_initialize": {
+            "count": 100,
+            "p50": 1.281,
+            "p95": 1.636,
+            "max": 1.987
+          },
+          "ssr_init_initialized": {
+            "count": 100,
+            "p50": 1.15,
+            "p95": 1.674,
+            "max": 3.468
+          },
+          "ssr_init_ready": {
+            "count": 100,
+            "p50": 0.332,
+            "p95": 0.48,
+            "max": 1.057
+          },
+          "ssr_navigation": {
+            "count": 100,
+            "p50": 0.295,
+            "p95": 0.396,
+            "max": 0.827
+          },
+          "ssr_state_meta": {
+            "count": 100,
+            "p50": 0.149,
+            "p95": 0.192,
+            "max": 0.364
+          },
+          "ssr_app_cleanup": {
+            "count": 100,
+            "p50": 0.241,
+            "p95": 0.339,
+            "max": 2.774
+          }
+        }
+      },
+      "concurrent": {
+        "requested": 1,
+        "attempted": 1,
+        "succeeded": 1,
+        "failed": 0,
+        "errors": {},
+        "elapsedMs": 16.378,
+        "successfulResponsesPerSecond": 61.058,
+        "bytes": 22927,
+        "wallMs": {
+          "count": 1,
+          "p50": 16.344,
+          "p95": 16.344,
+          "max": 16.344
+        },
+        "headerMs": {
+          "count": 1,
+          "p50": 16.245,
+          "p95": 16.245,
+          "max": 16.245
+        },
+        "serverTimingMs": {
+          "ssr_total": {
+            "count": 1,
+            "p50": 14.478,
+            "p95": 14.478,
+            "max": 14.478
+          },
+          "ssr_route": {
+            "count": 1,
+            "p50": 0.058,
+            "p95": 0.058,
+            "max": 0.058
+          },
+          "ssr_entry": {
+            "count": 1,
+            "p50": 0.027,
+            "p95": 0.027,
+            "max": 0.027
+          },
+          "ssr_render": {
+            "count": 1,
+            "p50": 13.732,
+            "p95": 13.732,
+            "max": 13.732
+          },
+          "ssr_callbacks": {
+            "count": 1,
+            "p50": 0.05,
+            "p95": 0.05,
+            "max": 0.05
+          },
+          "ssr_finalize": {
+            "count": 1,
+            "p50": 0.353,
+            "p95": 0.353,
+            "max": 0.353
+          },
+          "ssr_html": {
+            "count": 1,
+            "p50": 0.253,
+            "p95": 0.253,
+            "max": 0.253
+          },
+          "ssr_clear": {
+            "count": 1,
+            "p50": 0.001,
+            "p95": 0.001,
+            "max": 0.001
+          },
+          "ssr_app_init": {
+            "count": 1,
+            "p50": 5.456,
+            "p95": 5.456,
+            "max": 5.456
+          },
+          "ssr_init_setup": {
+            "count": 1,
+            "p50": 0.022,
+            "p95": 0.022,
+            "max": 0.022
+          },
+          "ssr_init_modules": {
+            "count": 1,
+            "p50": 2.706,
+            "p95": 2.706,
+            "max": 2.706
+          },
+          "ssr_init_initialize": {
+            "count": 1,
+            "p50": 1.351,
+            "p95": 1.351,
+            "max": 1.351
+          },
+          "ssr_init_initialized": {
+            "count": 1,
+            "p50": 1.071,
+            "p95": 1.071,
+            "max": 1.071
+          },
+          "ssr_init_ready": {
+            "count": 1,
+            "p50": 0.302,
+            "p95": 0.302,
+            "max": 0.302
+          },
+          "ssr_navigation": {
+            "count": 1,
+            "p50": 0.264,
+            "p95": 0.264,
+            "max": 0.264
+          },
+          "ssr_state_meta": {
+            "count": 1,
+            "p50": 0.189,
+            "p95": 0.189,
+            "max": 0.189
+          },
+          "ssr_app_cleanup": {
+            "count": 1,
+            "p50": 0.16,
+            "p95": 0.16,
+            "max": 0.16
+          }
+        }
+      },
+      "interpretation": {
+        "firstObserved": "Not proof of process-cold startup; target process freshness is external evidence.",
+        "serverTiming": "Inclusive nested spans, not additive; no derived pure-render or API-wait estimate.",
+        "total": "ssr_total excludes earlier Vona/Sys preparation and HTTP transmission.",
+        "percentiles": "p50 is median; p95 is nearest rank. Warmup and first observed are excluded from measured phases."
+      },
+      "unmeasured": ["server_cpu", "server_memory", "server_gc"]
+    },
+    "owners": {
+      "requestsObserved": 132,
+      "measuredIndices": [32, 131],
+      "rows": [
+        {
+          "label": "modules:dispatch:beanInit",
+          "requests": 100,
+          "calls": 3800,
+          "p50Ms": 3.347,
+          "p95Ms": 3.988,
+          "meanMs": 3.461
+        },
+        {
+          "label": "setup:dispatch:beanInited",
+          "requests": 100,
+          "calls": 3400,
+          "p50Ms": 1.841,
+          "p95Ms": 4.668,
+          "meanMs": 2.668
+        },
+        {
+          "label": "modules:phase",
+          "requests": 100,
+          "calls": 100,
+          "p50Ms": 2.385,
+          "p95Ms": 3.211,
+          "meanMs": 2.488
+        },
+        {
+          "label": "setup:dispatch:beanInit",
+          "requests": 100,
+          "calls": 3400,
+          "p50Ms": 1.726,
+          "p95Ms": 2.189,
+          "meanMs": 2.066
+        },
+        {
+          "label": "modules:dispatch:moduleLoaded",
+          "requests": 100,
+          "calls": 1900,
+          "p50Ms": 1.584,
+          "p95Ms": 1.986,
+          "meanMs": 1.653
+        },
+        {
+          "label": "modules:dispatch:beanInited",
+          "requests": 100,
+          "calls": 3800,
+          "p50Ms": 1.452,
+          "p95Ms": 1.707,
+          "meanMs": 1.505
+        },
+        {
+          "label": "modules:install:home-api",
+          "requests": 100,
+          "calls": 5200,
+          "p50Ms": 1.453,
+          "p95Ms": 1.715,
+          "meanMs": 1.501
+        },
+        {
+          "label": "appInitialize:dispatch:appInitialize",
+          "requests": 100,
+          "calls": 100,
+          "p50Ms": 1.279,
+          "p95Ms": 1.634,
+          "meanMs": 1.324
+        },
+        {
+          "label": "modules:hook:a-api:moduleLoaded",
+          "requests": 100,
+          "calls": 1300,
+          "p50Ms": 1.226,
+          "p95Ms": 1.486,
+          "meanMs": 1.283
+        },
+        {
+          "label": "appInitialized:dispatch:appInitialized",
+          "requests": 100,
+          "calls": 100,
+          "p50Ms": 1.149,
+          "p95Ms": 1.671,
+          "meanMs": 1.24
+        },
+        {
+          "label": "appInitialized:hook:a-style:appInitialized",
+          "requests": 100,
+          "calls": 100,
+          "p50Ms": 0.886,
+          "p95Ms": 1.249,
+          "meanMs": 0.962
+        },
+        {
+          "label": "modules:install:a-api",
+          "requests": 100,
+          "calls": 500,
+          "p50Ms": 0.739,
+          "p95Ms": 0.902,
+          "meanMs": 0.775
+        },
+        {
+          "label": "appInitialize:hook:a-fetch:appInitialize",
+          "requests": 100,
+          "calls": 100,
+          "p50Ms": 0.668,
+          "p95Ms": 0.828,
+          "meanMs": 0.693
+        },
+        {
+          "label": "setup:install:a-icon",
+          "requests": 100,
+          "calls": 2300,
+          "p50Ms": 0.386,
+          "p95Ms": 0.553,
+          "meanMs": 0.4
+        },
+        {
+          "label": "appReady:dispatch:appReady",
+          "requests": 100,
+          "calls": 100,
+          "p50Ms": 0.331,
+          "p95Ms": 0.479,
+          "meanMs": 0.355
+        },
+        {
+          "label": "appInitialize:dispatch:beanInit",
+          "requests": 100,
+          "calls": 1300,
+          "p50Ms": 0.268,
+          "p95Ms": 0.343,
+          "meanMs": 0.278
+        },
+        {
+          "label": "appInitialize:hook:home-passport:appInitialize",
+          "requests": 100,
+          "calls": 100,
+          "p50Ms": 0.262,
+          "p95Ms": 0.351,
+          "meanMs": 0.272
+        },
+        {
+          "label": "appInitialized:hook:a-router:appInitialized",
+          "requests": 100,
+          "calls": 100,
+          "p50Ms": 0.247,
+          "p95Ms": 0.399,
+          "meanMs": 0.267
+        },
+        {
+          "label": "modules:hook:a-router:beanInit",
+          "requests": 100,
+          "calls": 3300,
+          "p50Ms": 0.25,
+          "p95Ms": 0.338,
+          "meanMs": 0.264
+        },
+        {
+          "label": "modules:dispatch:moduleLoading",
+          "requests": 100,
+          "calls": 1900,
+          "p50Ms": 0.201,
+          "p95Ms": 0.265,
+          "meanMs": 0.208
+        },
+        {
+          "label": "modules:hook:a-model:beanInit",
+          "requests": 100,
+          "calls": 3600,
+          "p50Ms": 0.175,
+          "p95Ms": 0.237,
+          "meanMs": 0.192
+        },
+        {
+          "label": "setup:install:a-routertabs",
+          "requests": 100,
+          "calls": 800,
+          "p50Ms": 0.159,
+          "p95Ms": 0.278,
+          "meanMs": 0.179
+        },
+        {
+          "label": "modules:install:home-passport",
+          "requests": 100,
+          "calls": 700,
+          "p50Ms": 0.163,
+          "p95Ms": 0.212,
+          "meanMs": 0.168
+        },
+        {
+          "label": "modules:hook:a-api:beanInit",
+          "requests": 100,
+          "calls": 3100,
+          "p50Ms": 0.159,
+          "p95Ms": 0.197,
+          "meanMs": 0.167
+        },
+        {
+          "label": "appInitialized:dispatch:beanInit",
+          "requests": 100,
+          "calls": 700,
+          "p50Ms": 0.153,
+          "p95Ms": 0.204,
+          "meanMs": 0.163
+        },
+        {
+          "label": "modules:hook:a-ssr:beanInit",
+          "requests": 100,
+          "calls": 3400,
+          "p50Ms": 0.151,
+          "p95Ms": 0.188,
+          "meanMs": 0.158
+        },
+        {
+          "label": "modules:install:basic-app",
+          "requests": 100,
+          "calls": 700,
+          "p50Ms": 0.149,
+          "p95Ms": 0.192,
+          "meanMs": 0.155
+        },
+        {
+          "label": "modules:install:a-model",
+          "requests": 100,
+          "calls": 400,
+          "p50Ms": 0.142,
+          "p95Ms": 0.192,
+          "meanMs": 0.151
+        },
+        {
+          "label": "setup:install:home-layoutweb",
+          "requests": 100,
+          "calls": 3900,
+          "p50Ms": 0.135,
+          "p95Ms": 0.181,
+          "meanMs": 0.141
+        },
+        {
+          "label": "modules:hook:a-fetch:beanInit",
+          "requests": 100,
+          "calls": 3700,
+          "p50Ms": 0.116,
+          "p95Ms": 0.161,
+          "meanMs": 0.126
+        },
+        {
+          "label": "appInitialize:hook:a-router:appInitialize",
+          "requests": 100,
+          "calls": 100,
+          "p50Ms": 0.122,
+          "p95Ms": 0.184,
+          "meanMs": 0.126
+        },
+        {
+          "label": "modules:hook:a-openapi:beanInit",
+          "requests": 100,
+          "calls": 3200,
+          "p50Ms": 0.109,
+          "p95Ms": 0.148,
+          "meanMs": 0.118
+        },
+        {
+          "label": "appInitialized:install:home-theme",
+          "requests": 100,
+          "calls": 1000,
+          "p50Ms": 0.108,
+          "p95Ms": 0.172,
+          "meanMs": 0.118
+        },
+        {
+          "label": "setup:hook:a-style:beanInit",
+          "requests": 100,
+          "calls": 3400,
+          "p50Ms": 0.112,
+          "p95Ms": 0.145,
+          "meanMs": 0.116
+        },
+        {
+          "label": "appInitialize:hook:a-openapi:appInitialize",
+          "requests": 100,
+          "calls": 100,
+          "p50Ms": 0.109,
+          "p95Ms": 0.145,
+          "meanMs": 0.114
+        },
+        {
+          "label": "modules:install:a-router",
+          "requests": 100,
+          "calls": 400,
+          "p50Ms": 0.103,
+          "p95Ms": 0.142,
+          "meanMs": 0.112
+        },
+        {
+          "label": "modules:install:a-bean",
+          "requests": 100,
+          "calls": 500,
+          "p50Ms": 0.104,
+          "p95Ms": 0.135,
+          "meanMs": 0.109
+        },
+        {
+          "label": "modules:install:home-base",
+          "requests": 100,
+          "calls": 400,
+          "p50Ms": 0.1,
+          "p95Ms": 0.137,
+          "meanMs": 0.106
+        },
+        {
+          "label": "modules:install:a-style",
+          "requests": 100,
+          "calls": 400,
+          "p50Ms": 0.099,
+          "p95Ms": 0.147,
+          "meanMs": 0.105
+        },
+        {
+          "label": "setup:install:a-app",
+          "requests": 100,
+          "calls": 500,
+          "p50Ms": 0.095,
+          "p95Ms": 0.149,
+          "meanMs": 0.105
+        },
+        {
+          "label": "appReady:install:demo-basic",
+          "requests": 100,
+          "calls": 400,
+          "p50Ms": 0.094,
+          "p95Ms": 0.14,
+          "meanMs": 0.101
+        },
+        {
+          "label": "modules:install:basic-pageentry",
+          "requests": 100,
+          "calls": 400,
+          "p50Ms": 0.09,
+          "p95Ms": 0.145,
+          "meanMs": 0.099
+        },
+        {
+          "label": "setup:install:a-behavior",
+          "requests": 100,
+          "calls": 1200,
+          "p50Ms": 0.093,
+          "p95Ms": 0.126,
+          "meanMs": 0.099
+        },
+        {
+          "label": "modules:install:a-command",
+          "requests": 100,
+          "calls": 400,
+          "p50Ms": 0.091,
+          "p95Ms": 0.121,
+          "meanMs": 0.096
+        },
+        {
+          "label": "modules:install:a-ssr",
+          "requests": 100,
+          "calls": 400,
+          "p50Ms": 0.087,
+          "p95Ms": 0.118,
+          "meanMs": 0.093
+        },
+        {
+          "label": "appInitialize:install:a-interceptor",
+          "requests": 100,
+          "calls": 800,
+          "p50Ms": 0.086,
+          "p95Ms": 0.127,
+          "meanMs": 0.093
+        },
+        {
+          "label": "setup:hook:a-router:beanInit",
+          "requests": 100,
+          "calls": 3400,
+          "p50Ms": 0.086,
+          "p95Ms": 0.113,
+          "meanMs": 0.09
+        },
+        {
+          "label": "modules:install:a-openapi",
+          "requests": 100,
+          "calls": 400,
+          "p50Ms": 0.081,
+          "p95Ms": 0.1,
+          "meanMs": 0.086
+        },
+        {
+          "label": "setup:hook:basic-app:beanInit",
+          "requests": 100,
+          "calls": 3400,
+          "p50Ms": 0.057,
+          "p95Ms": 0.072,
+          "meanMs": 0.086
+        },
+        {
+          "label": "modules:install:a-icon",
+          "requests": 100,
+          "calls": 400,
+          "p50Ms": 0.077,
+          "p95Ms": 0.119,
+          "meanMs": 0.084
+        },
+        {
+          "label": "modules:install:a-fetch",
+          "requests": 100,
+          "calls": 400,
+          "p50Ms": 0.078,
+          "p95Ms": 0.097,
+          "meanMs": 0.083
+        },
+        {
+          "label": "modules:install:a-ssrserver",
+          "requests": 100,
+          "calls": 400,
+          "p50Ms": 0.079,
+          "p95Ms": 0.095,
+          "meanMs": 0.083
+        },
+        {
+          "label": "appInitialize:hook:home-base:appInitialize",
+          "requests": 100,
+          "calls": 100,
+          "p50Ms": 0.076,
+          "p95Ms": 0.117,
+          "meanMs": 0.083
+        },
+        {
+          "label": "modules:install:basic-adapter",
+          "requests": 100,
+          "calls": 400,
+          "p50Ms": 0.076,
+          "p95Ms": 0.114,
+          "meanMs": 0.082
+        },
+        {
+          "label": "appInitialize:dispatch:beanInited",
+          "requests": 100,
+          "calls": 1300,
+          "p50Ms": 0.081,
+          "p95Ms": 0.095,
+          "meanMs": 0.082
+        },
+        {
+          "label": "modules:install:devui-adapter",
+          "requests": 100,
+          "calls": 400,
+          "p50Ms": 0.074,
+          "p95Ms": 0.096,
+          "meanMs": 0.08
+        },
+        {
+          "label": "modules:hook:a-model:moduleLoaded",
+          "requests": 100,
+          "calls": 1700,
+          "p50Ms": 0.072,
+          "p95Ms": 0.087,
+          "meanMs": 0.075
+        },
+        {
+          "label": "modules:hook:home-passport:moduleLoaded",
+          "requests": 100,
+          "calls": 500,
+          "p50Ms": 0.069,
+          "p95Ms": 0.099,
+          "meanMs": 0.073
+        },
+        {
+          "label": "modules:install:a-ssrhmr",
+          "requests": 100,
+          "calls": 400,
+          "p50Ms": 0.067,
+          "p95Ms": 0.082,
+          "meanMs": 0.069
+        },
+        {
+          "label": "setup:hook:a-model:beanInit",
+          "requests": 100,
+          "calls": 3400,
+          "p50Ms": 0.064,
+          "p95Ms": 0.086,
+          "meanMs": 0.067
+        },
+        {
+          "label": "setup:hook:a-api:beanInit",
+          "requests": 100,
+          "calls": 3400,
+          "p50Ms": 0.063,
+          "p95Ms": 0.092,
+          "meanMs": 0.067
+        },
+        {
+          "label": "setup:dispatch:moduleLoading",
+          "requests": 100,
+          "calls": 400,
+          "p50Ms": 0.062,
+          "p95Ms": 0.093,
+          "meanMs": 0.067
+        },
+        {
+          "label": "modules:hook:basic-app:moduleLoaded",
+          "requests": 100,
+          "calls": 800,
+          "p50Ms": 0.056,
+          "p95Ms": 0.08,
+          "meanMs": 0.06
+        },
+        {
+          "label": "setup:dispatch:moduleLoaded",
+          "requests": 100,
+          "calls": 400,
+          "p50Ms": 0.052,
+          "p95Ms": 0.068,
+          "meanMs": 0.056
+        },
+        {
+          "label": "setup:hook:a-fetch:beanInit",
+          "requests": 100,
+          "calls": 3400,
+          "p50Ms": 0.049,
+          "p95Ms": 0.073,
+          "meanMs": 0.055
+        },
+        {
+          "label": "setup:hook:a-ssr:beanInit",
+          "requests": 100,
+          "calls": 3400,
+          "p50Ms": 0.046,
+          "p95Ms": 0.066,
+          "meanMs": 0.048
+        },
+        {
+          "label": "appInitialized:dispatch:beanInited",
+          "requests": 100,
+          "calls": 700,
+          "p50Ms": 0.044,
+          "p95Ms": 0.056,
+          "meanMs": 0.047
+        },
+        {
+          "label": "modules:installInner:a-router",
+          "requests": 100,
+          "calls": 100,
+          "p50Ms": 0.042,
+          "p95Ms": 0.053,
+          "meanMs": 0.046
+        },
+        {
+          "label": "setup:hook:a-openapi:beanInit",
+          "requests": 100,
+          "calls": 3400,
+          "p50Ms": 0.037,
+          "p95Ms": 0.05,
+          "meanMs": 0.038
+        },
+        {
+          "label": "modules:installInner:a-style",
+          "requests": 100,
+          "calls": 100,
+          "p50Ms": 0.033,
+          "p95Ms": 0.051,
+          "meanMs": 0.036
+        },
+        {
+          "label": "setup:hook:home-passport:beanInit",
+          "requests": 100,
+          "calls": 3400,
+          "p50Ms": 0.034,
+          "p95Ms": 0.045,
+          "meanMs": 0.036
+        },
+        {
+          "label": "setup:installInner:a-routertabs",
+          "requests": 100,
+          "calls": 100,
+          "p50Ms": 0.032,
+          "p95Ms": 0.06,
+          "meanMs": 0.036
+        },
+        {
+          "label": "setup:hook:home-base:beanInit",
+          "requests": 100,
+          "calls": 3400,
+          "p50Ms": 0.033,
+          "p95Ms": 0.048,
+          "meanMs": 0.035
+        },
+        {
+          "label": "setup:hook:a-command:beanInit",
+          "requests": 100,
+          "calls": 3400,
+          "p50Ms": 0.032,
+          "p95Ms": 0.047,
+          "meanMs": 0.034
+        },
+        {
+          "label": "modules:installInner:home-base",
+          "requests": 100,
+          "calls": 100,
+          "p50Ms": 0.031,
+          "p95Ms": 0.041,
+          "meanMs": 0.033
+        },
+        {
+          "label": "modules:installInner:a-ssr",
+          "requests": 100,
+          "calls": 100,
+          "p50Ms": 0.027,
+          "p95Ms": 0.034,
+          "meanMs": 0.03
+        },
+        {
+          "label": "modules:installInner:a-api",
+          "requests": 100,
+          "calls": 100,
+          "p50Ms": 0.023,
+          "p95Ms": 0.03,
+          "meanMs": 0.029
+        },
+        {
+          "label": "appInitialize:hook:a-style:beanInit",
+          "requests": 100,
+          "calls": 1300,
+          "p50Ms": 0.027,
+          "p95Ms": 0.038,
+          "meanMs": 0.029
+        },
+        {
+          "label": "modules:hook:a-style:beanInit",
+          "requests": 100,
+          "calls": 1100,
+          "p50Ms": 0.025,
+          "p95Ms": 0.036,
+          "meanMs": 0.027
+        },
+        {
+          "label": "appReady:dispatch:beanInit",
+          "requests": 100,
+          "calls": 100,
+          "p50Ms": 0.021,
+          "p95Ms": 0.032,
+          "meanMs": 0.026
+        },
+        {
+          "label": "modules:installInner:a-model",
+          "requests": 100,
+          "calls": 100,
+          "p50Ms": 0.021,
+          "p95Ms": 0.043,
+          "meanMs": 0.025
+        },
+        {
+          "label": "modules:installInner:basic-app",
+          "requests": 100,
+          "calls": 100,
+          "p50Ms": 0.024,
+          "p95Ms": 0.032,
+          "meanMs": 0.025
+        },
+        {
+          "label": "modules:installInner:a-bean",
+          "requests": 100,
+          "calls": 100,
+          "p50Ms": 0.023,
+          "p95Ms": 0.03,
+          "meanMs": 0.024
+        },
+        {
+          "label": "modules:installInner:a-openapi",
+          "requests": 100,
+          "calls": 100,
+          "p50Ms": 0.023,
+          "p95Ms": 0.029,
+          "meanMs": 0.024
+        },
+        {
+          "label": "appInitialize:hook:a-router:beanInit",
+          "requests": 100,
+          "calls": 1300,
+          "p50Ms": 0.022,
+          "p95Ms": 0.031,
+          "meanMs": 0.024
+        },
+        {
+          "label": "modules:installInner:home-passport",
+          "requests": 100,
+          "calls": 100,
+          "p50Ms": 0.022,
+          "p95Ms": 0.026,
+          "meanMs": 0.023
+        },
+        {
+          "label": "modules:installInner:basic-pageentry",
+          "requests": 100,
+          "calls": 100,
+          "p50Ms": 0.022,
+          "p95Ms": 0.031,
+          "meanMs": 0.023
+        },
+        {
+          "label": "modules:installInner:a-command",
+          "requests": 100,
+          "calls": 100,
+          "p50Ms": 0.021,
+          "p95Ms": 0.026,
+          "meanMs": 0.022
+        },
+        {
+          "label": "appInitialized:installInner:home-theme",
+          "requests": 100,
+          "calls": 100,
+          "p50Ms": 0.02,
+          "p95Ms": 0.034,
+          "meanMs": 0.022
+        },
+        {
+          "label": "modules:installInner:a-fetch",
+          "requests": 100,
+          "calls": 100,
+          "p50Ms": 0.02,
+          "p95Ms": 0.026,
+          "meanMs": 0.021
+        },
+        {
+          "label": "appInitialized:dispatch:moduleLoading",
+          "requests": 100,
+          "calls": 100,
+          "p50Ms": 0.017,
+          "p95Ms": 0.03,
+          "meanMs": 0.019
+        },
+        {
+          "label": "appReady:installInner:demo-basic",
+          "requests": 100,
+          "calls": 100,
+          "p50Ms": 0.017,
+          "p95Ms": 0.026,
+          "meanMs": 0.018
+        },
+        {
+          "label": "appInitialized:hook:a-style:beanInit",
+          "requests": 100,
+          "calls": 700,
+          "p50Ms": 0.016,
+          "p95Ms": 0.022,
+          "meanMs": 0.017
+        },
+        {
+          "label": "appInitialize:hook:a-model:beanInit",
+          "requests": 100,
+          "calls": 1300,
+          "p50Ms": 0.015,
+          "p95Ms": 0.019,
+          "meanMs": 0.016
+        },
+        {
+          "label": "appInitialize:hook:a-api:beanInit",
+          "requests": 100,
+          "calls": 1300,
+          "p50Ms": 0.015,
+          "p95Ms": 0.02,
+          "meanMs": 0.016
+        },
+        {
+          "label": "appInitialized:dispatch:moduleLoaded",
+          "requests": 100,
+          "calls": 100,
+          "p50Ms": 0.015,
+          "p95Ms": 0.021,
+          "meanMs": 0.016
+        },
+        {
+          "label": "setup:installInner:a-app",
+          "requests": 100,
+          "calls": 100,
+          "p50Ms": 0.014,
+          "p95Ms": 0.025,
+          "meanMs": 0.016
+        },
+        {
+          "label": "setup:installInner:home-layoutweb",
+          "requests": 100,
+          "calls": 100,
+          "p50Ms": 0.015,
+          "p95Ms": 0.023,
+          "meanMs": 0.016
+        },
+        {
+          "label": "setup:installInner:a-behavior",
+          "requests": 100,
+          "calls": 100,
+          "p50Ms": 0.013,
+          "p95Ms": 0.018,
+          "meanMs": 0.015
+        },
+        {
+          "label": "modules:hook:a-ssr:moduleLoaded",
+          "requests": 100,
+          "calls": 1600,
+          "p50Ms": 0.012,
+          "p95Ms": 0.019,
+          "meanMs": 0.014
+        },
+        {
+          "label": "modules:installInner:a-icon",
+          "requests": 100,
+          "calls": 100,
+          "p50Ms": 0.013,
+          "p95Ms": 0.02,
+          "meanMs": 0.014
+        },
+        {
+          "label": "appInitialized:hook:a-router:beanInit",
+          "requests": 100,
+          "calls": 700,
+          "p50Ms": 0.013,
+          "p95Ms": 0.02,
+          "meanMs": 0.014
+        },
+        {
+          "label": "appInitialize:hook:basic-app:beanInit",
+          "requests": 100,
+          "calls": 1300,
+          "p50Ms": 0.012,
+          "p95Ms": 0.018,
+          "meanMs": 0.013
+        },
+        {
+          "label": "appInitialize:installInner:a-interceptor",
+          "requests": 100,
+          "calls": 100,
+          "p50Ms": 0.011,
+          "p95Ms": 0.015,
+          "meanMs": 0.013
+        },
+        {
+          "label": "modules:installInner:home-api",
+          "requests": 100,
+          "calls": 100,
+          "p50Ms": 0.011,
+          "p95Ms": 0.014,
+          "meanMs": 0.012
+        },
+        {
+          "label": "modules:installInner:basic-adapter",
+          "requests": 100,
+          "calls": 100,
+          "p50Ms": 0.011,
+          "p95Ms": 0.016,
+          "meanMs": 0.012
+        },
+        {
+          "label": "appInitialize:hook:a-fetch:beanInit",
+          "requests": 100,
+          "calls": 1300,
+          "p50Ms": 0.01,
+          "p95Ms": 0.018,
+          "meanMs": 0.012
+        },
+        {
+          "label": "appInitialize:hook:a-ssr:beanInit",
+          "requests": 100,
+          "calls": 1300,
+          "p50Ms": 0.011,
+          "p95Ms": 0.015,
+          "meanMs": 0.012
+        },
+        {
+          "label": "appInitialize:dispatch:moduleLoaded",
+          "requests": 100,
+          "calls": 100,
+          "p50Ms": 0.011,
+          "p95Ms": 0.016,
+          "meanMs": 0.012
+        },
+        {
+          "label": "appReady:dispatch:moduleLoading",
+          "requests": 100,
+          "calls": 100,
+          "p50Ms": 0.011,
+          "p95Ms": 0.017,
+          "meanMs": 0.012
+        },
+        {
+          "label": "appReady:dispatch:moduleLoaded",
+          "requests": 100,
+          "calls": 100,
+          "p50Ms": 0.012,
+          "p95Ms": 0.016,
+          "meanMs": 0.012
+        },
+        {
+          "label": "setup:install:home-base",
+          "requests": 100,
+          "calls": 600,
+          "p50Ms": 0.012,
+          "p95Ms": 0.017,
+          "meanMs": 0.012
+        },
+        {
+          "label": "modules:hook:basic-app:beanInit",
+          "requests": 100,
+          "calls": 1000,
+          "p50Ms": 0.01,
+          "p95Ms": 0.016,
+          "meanMs": 0.011
+        },
+        {
+          "label": "modules:installInner:devui-adapter",
+          "requests": 100,
+          "calls": 100,
+          "p50Ms": 0.01,
+          "p95Ms": 0.013,
+          "meanMs": 0.011
+        },
+        {
+          "label": "modules:installInner:a-ssrserver",
+          "requests": 100,
+          "calls": 100,
+          "p50Ms": 0.011,
+          "p95Ms": 0.013,
+          "meanMs": 0.011
+        },
+        {
+          "label": "appInitialize:dispatch:moduleLoading",
+          "requests": 100,
+          "calls": 100,
+          "p50Ms": 0.01,
+          "p95Ms": 0.013,
+          "meanMs": 0.011
+        },
+        {
+          "label": "appInitialized:install:a-router",
+          "requests": 100,
+          "calls": 800,
+          "p50Ms": 0.01,
+          "p95Ms": 0.014,
+          "meanMs": 0.011
+        },
+        {
+          "label": "modules:installInner:a-ssrhmr",
+          "requests": 100,
+          "calls": 100,
+          "p50Ms": 0.009,
+          "p95Ms": 0.012,
+          "meanMs": 0.01
+        },
+        {
+          "label": "appInitialized:hook:a-api:beanInit",
+          "requests": 100,
+          "calls": 700,
+          "p50Ms": 0.008,
+          "p95Ms": 0.012,
+          "meanMs": 0.01
+        },
+        {
+          "label": "modules:hook:AppMonkey:moduleLoading",
+          "requests": 100,
+          "calls": 1900,
+          "p50Ms": 0.009,
+          "p95Ms": 0.011,
+          "meanMs": 0.009
+        },
+        {
+          "label": "appInitialize:hook:a-openapi:beanInit",
+          "requests": 100,
+          "calls": 1300,
+          "p50Ms": 0.008,
+          "p95Ms": 0.01,
+          "meanMs": 0.009
+        },
+        {
+          "label": "appInitialize:hook:a-ssr:appInitialize",
+          "requests": 100,
+          "calls": 100,
+          "p50Ms": 0.008,
+          "p95Ms": 0.012,
+          "meanMs": 0.009
+        },
+        {
+          "label": "appInitialize:hook:a-style:appInitialize",
+          "requests": 100,
+          "calls": 100,
+          "p50Ms": 0.008,
+          "p95Ms": 0.012,
+          "meanMs": 0.009
+        },
+        {
+          "label": "appInitialized:hook:a-model:beanInit",
+          "requests": 100,
+          "calls": 700,
+          "p50Ms": 0.009,
+          "p95Ms": 0.012,
+          "meanMs": 0.009
+        },
+        {
+          "label": "modules:hook:AppMonkey:moduleLoaded",
+          "requests": 100,
+          "calls": 1900,
+          "p50Ms": 0.008,
+          "p95Ms": 0.01,
+          "meanMs": 0.008
+        },
+        {
+          "label": "modules:hook:a-model:moduleLoading",
+          "requests": 100,
+          "calls": 1600,
+          "p50Ms": 0.007,
+          "p95Ms": 0.01,
+          "meanMs": 0.008
+        },
+        {
+          "label": "appInitialize:hook:home-base:beanInit",
+          "requests": 100,
+          "calls": 1300,
+          "p50Ms": 0.007,
+          "p95Ms": 0.01,
+          "meanMs": 0.008
+        },
+        {
+          "label": "appInitialize:hook:home-passport:beanInit",
+          "requests": 100,
+          "calls": 1300,
+          "p50Ms": 0.008,
+          "p95Ms": 0.01,
+          "meanMs": 0.008
+        },
+        {
+          "label": "appInitialize:hook:a-command:beanInit",
+          "requests": 100,
+          "calls": 1300,
+          "p50Ms": 0.008,
+          "p95Ms": 0.01,
+          "meanMs": 0.008
+        },
+        {
+          "label": "appInitialized:hook:a-ssr:beanInit",
+          "requests": 100,
+          "calls": 700,
+          "p50Ms": 0.007,
+          "p95Ms": 0.011,
+          "meanMs": 0.008
+        },
+        {
+          "label": "appInitialized:hook:basic-app:beanInit",
+          "requests": 100,
+          "calls": 700,
+          "p50Ms": 0.007,
+          "p95Ms": 0.011,
+          "meanMs": 0.008
+        },
+        {
+          "label": "setup:hook:a-api:moduleLoaded",
+          "requests": 100,
+          "calls": 400,
+          "p50Ms": 0.007,
+          "p95Ms": 0.013,
+          "meanMs": 0.008
+        },
+        {
+          "label": "appInitialized:hook:a-fetch:beanInit",
+          "requests": 100,
+          "calls": 700,
+          "p50Ms": 0.006,
+          "p95Ms": 0.009,
+          "meanMs": 0.007
+        },
+        {
+          "label": "modules:hook:home-base:beanInit",
+          "requests": 100,
+          "calls": 700,
+          "p50Ms": 0.005,
+          "p95Ms": 0.006,
+          "meanMs": 0.006
+        },
+        {
+          "label": "appInitialize:install:a-openapi",
+          "requests": 100,
+          "calls": 400,
+          "p50Ms": 0.006,
+          "p95Ms": 0.007,
+          "meanMs": 0.006
+        },
+        {
+          "label": "appInitialized:hook:home-base:beanInit",
+          "requests": 100,
+          "calls": 700,
+          "p50Ms": 0.005,
+          "p95Ms": 0.008,
+          "meanMs": 0.006
+        },
+        {
+          "label": "appInitialized:install:a-style",
+          "requests": 100,
+          "calls": 300,
+          "p50Ms": 0.006,
+          "p95Ms": 0.009,
+          "meanMs": 0.006
+        },
+        {
+          "label": "appReady:dispatch:beanInited",
+          "requests": 100,
+          "calls": 100,
+          "p50Ms": 0.006,
+          "p95Ms": 0.007,
+          "meanMs": 0.006
+        },
+        {
+          "label": "modules:hook:a-ssr:moduleLoading",
+          "requests": 100,
+          "calls": 1500,
+          "p50Ms": 0.005,
+          "p95Ms": 0.007,
+          "meanMs": 0.005
+        },
+        {
+          "label": "modules:hook:a-api:moduleLoading",
+          "requests": 100,
+          "calls": 1200,
+          "p50Ms": 0.004,
+          "p95Ms": 0.006,
+          "meanMs": 0.005
+        },
+        {
+          "label": "modules:hook:home-passport:beanInit",
+          "requests": 100,
+          "calls": 600,
+          "p50Ms": 0.005,
+          "p95Ms": 0.007,
+          "meanMs": 0.005
+        },
+        {
+          "label": "appInitialized:hook:a-openapi:beanInit",
+          "requests": 100,
+          "calls": 700,
+          "p50Ms": 0.005,
+          "p95Ms": 0.009,
+          "meanMs": 0.005
+        },
+        {
+          "label": "appInitialized:hook:home-passport:beanInit",
+          "requests": 100,
+          "calls": 700,
+          "p50Ms": 0.004,
+          "p95Ms": 0.007,
+          "meanMs": 0.005
+        },
+        {
+          "label": "appInitialized:hook:a-command:beanInit",
+          "requests": 100,
+          "calls": 700,
+          "p50Ms": 0.004,
+          "p95Ms": 0.007,
+          "meanMs": 0.005
+        },
+        {
+          "label": "appInitialized:install:a-ssr",
+          "requests": 100,
+          "calls": 400,
+          "p50Ms": 0.005,
+          "p95Ms": 0.006,
+          "meanMs": 0.005
+        },
+        {
+          "label": "appInitialized:install:devui-adapter",
+          "requests": 100,
+          "calls": 400,
+          "p50Ms": 0.005,
+          "p95Ms": 0.007,
+          "meanMs": 0.005
+        },
+        {
+          "label": "appReady:hook:a-router:beanInit",
+          "requests": 100,
+          "calls": 100,
+          "p50Ms": 0.002,
+          "p95Ms": 0.004,
+          "meanMs": 0.005
+        },
+        {
+          "label": "setup:hook:a-model:moduleLoading",
+          "requests": 100,
+          "calls": 400,
+          "p50Ms": 0.004,
+          "p95Ms": 0.009,
+          "meanMs": 0.005
+        },
+        {
+          "label": "setup:hook:a-ssr:moduleLoaded",
+          "requests": 100,
+          "calls": 400,
+          "p50Ms": 0.005,
+          "p95Ms": 0.008,
+          "meanMs": 0.005
+        },
+        {
+          "label": "setup:install:demo-basic",
+          "requests": 100,
+          "calls": 200,
+          "p50Ms": 0.005,
+          "p95Ms": 0.007,
+          "meanMs": 0.005
+        },
+        {
+          "label": "appInitialize:install:home-api",
+          "requests": 100,
+          "calls": 300,
+          "p50Ms": 0.004,
+          "p95Ms": 0.006,
+          "meanMs": 0.004
+        },
+        {
+          "label": "appInitialize:hook:a-model:appInitialize",
+          "requests": 100,
+          "calls": 100,
+          "p50Ms": 0.004,
+          "p95Ms": 0.007,
+          "meanMs": 0.004
+        },
+        {
+          "label": "modules:hook:basic-app:moduleLoading",
+          "requests": 100,
+          "calls": 700,
+          "p50Ms": 0.003,
+          "p95Ms": 0.003,
+          "meanMs": 0.003
+        },
+        {
+          "label": "appInitialize:install:a-fetch",
+          "requests": 100,
+          "calls": 200,
+          "p50Ms": 0.003,
+          "p95Ms": 0.004,
+          "meanMs": 0.003
+        },
+        {
+          "label": "appInitialized:hook:a-api:moduleLoaded",
+          "requests": 100,
+          "calls": 100,
+          "p50Ms": 0.003,
+          "p95Ms": 0.006,
+          "meanMs": 0.003
+        },
+        {
+          "label": "setup:hook:a-ssr:moduleLoading",
+          "requests": 100,
+          "calls": 400,
+          "p50Ms": 0.003,
+          "p95Ms": 0.003,
+          "meanMs": 0.003
+        },
+        {
+          "label": "setup:hook:basic-app:moduleLoading",
+          "requests": 100,
+          "calls": 400,
+          "p50Ms": 0.003,
+          "p95Ms": 0.004,
+          "meanMs": 0.003
+        },
+        {
+          "label": "setup:hook:home-passport:moduleLoading",
+          "requests": 100,
+          "calls": 400,
+          "p50Ms": 0.003,
+          "p95Ms": 0.004,
+          "meanMs": 0.003
+        },
+        {
+          "label": "setup:hook:a-model:moduleLoaded",
+          "requests": 100,
+          "calls": 400,
+          "p50Ms": 0.002,
+          "p95Ms": 0.003,
+          "meanMs": 0.003
+        },
+        {
+          "label": "setup:hook:basic-app:moduleLoaded",
+          "requests": 100,
+          "calls": 400,
+          "p50Ms": 0.003,
+          "p95Ms": 0.004,
+          "meanMs": 0.003
+        },
+        {
+          "label": "setup:install:a-bean",
+          "requests": 100,
+          "calls": 200,
+          "p50Ms": 0.003,
+          "p95Ms": 0.004,
+          "meanMs": 0.003
+        },
+        {
+          "label": "modules:hook:home-passport:moduleLoading",
+          "requests": 100,
+          "calls": 400,
+          "p50Ms": 0.001,
+          "p95Ms": 0.002,
+          "meanMs": 0.002
+        },
+        {
+          "label": "modules:hook:a-command:beanInit",
+          "requests": 100,
+          "calls": 200,
+          "p50Ms": 0.002,
+          "p95Ms": 0.004,
+          "meanMs": 0.002
+        },
+        {
+          "label": "appInitialize:install:a-bean",
+          "requests": 100,
+          "calls": 100,
+          "p50Ms": 0.002,
+          "p95Ms": 0.003,
+          "meanMs": 0.002
+        },
+        {
+          "label": "appInitialized:hook:a-ssr:moduleLoaded",
+          "requests": 100,
+          "calls": 100,
+          "p50Ms": 0.002,
+          "p95Ms": 0.003,
+          "meanMs": 0.002
+        },
+        {
+          "label": "appReady:hook:a-model:beanInit",
+          "requests": 100,
+          "calls": 100,
+          "p50Ms": 0.001,
+          "p95Ms": 0.002,
+          "meanMs": 0.002
+        },
+        {
+          "label": "appReady:hook:a-style:beanInit",
+          "requests": 100,
+          "calls": 100,
+          "p50Ms": 0.002,
+          "p95Ms": 0.004,
+          "meanMs": 0.002
+        },
+        {
+          "label": "appReady:hook:a-api:moduleLoaded",
+          "requests": 100,
+          "calls": 100,
+          "p50Ms": 0.002,
+          "p95Ms": 0.003,
+          "meanMs": 0.002
+        },
+        {
+          "label": "setup:hook:a-api:moduleLoading",
+          "requests": 100,
+          "calls": 400,
+          "p50Ms": 0.002,
+          "p95Ms": 0.004,
+          "meanMs": 0.002
+        },
+        {
+          "label": "setup:hook:AppMonkey:moduleLoading",
+          "requests": 100,
+          "calls": 400,
+          "p50Ms": 0.002,
+          "p95Ms": 0.003,
+          "meanMs": 0.002
+        },
+        {
+          "label": "setup:hook:home-passport:moduleLoaded",
+          "requests": 100,
+          "calls": 400,
+          "p50Ms": 0.002,
+          "p95Ms": 0.003,
+          "meanMs": 0.002
+        },
+        {
+          "label": "setup:hook:AppMonkey:moduleLoaded",
+          "requests": 100,
+          "calls": 400,
+          "p50Ms": 0.002,
+          "p95Ms": 0.002,
+          "meanMs": 0.002
+        },
+        {
+          "label": "setup:install:basic-app",
+          "requests": 100,
+          "calls": 100,
+          "p50Ms": 0.002,
+          "p95Ms": 0.003,
+          "meanMs": 0.002
+        },
+        {
+          "label": "modules:hook:home-base/Main:moduleLoaded",
+          "requests": 100,
+          "calls": 100,
+          "p50Ms": 0.001,
+          "p95Ms": 0.001,
+          "meanMs": 0.001
+        },
+        {
+          "label": "appInitialize:hook:a-ssr:moduleLoaded",
+          "requests": 100,
+          "calls": 100,
+          "p50Ms": 0.001,
+          "p95Ms": 0.003,
+          "meanMs": 0.001
+        },
+        {
+          "label": "appInitialize:hook:a-api:moduleLoaded",
+          "requests": 100,
+          "calls": 100,
+          "p50Ms": 0.001,
+          "p95Ms": 0.002,
+          "meanMs": 0.001
+        },
+        {
+          "label": "appInitialize:hook:basic-pageentry:appInitialize",
+          "requests": 100,
+          "calls": 100,
+          "p50Ms": 0.001,
+          "p95Ms": 0.001,
+          "meanMs": 0.001
+        },
+        {
+          "label": "appInitialize:hook:AppMonkey:appInitialize",
+          "requests": 100,
+          "calls": 100,
+          "p50Ms": 0.001,
+          "p95Ms": 0.002,
+          "meanMs": 0.001
+        },
+        {
+          "label": "appInitialized:hook:a-model:moduleLoading",
+          "requests": 100,
+          "calls": 100,
+          "p50Ms": 0.001,
+          "p95Ms": 0.002,
+          "meanMs": 0.001
+        },
+        {
+          "label": "appInitialized:hook:a-ssr:moduleLoading",
+          "requests": 100,
+          "calls": 100,
+          "p50Ms": 0.001,
+          "p95Ms": 0.001,
+          "meanMs": 0.001
+        },
+        {
+          "label": "appInitialized:hook:a-api:moduleLoading",
+          "requests": 100,
+          "calls": 100,
+          "p50Ms": 0.001,
+          "p95Ms": 0.001,
+          "meanMs": 0.001
+        },
+        {
+          "label": "appInitialized:hook:basic-app:moduleLoading",
+          "requests": 100,
+          "calls": 100,
+          "p50Ms": 0.001,
+          "p95Ms": 0.001,
+          "meanMs": 0.001
+        },
+        {
+          "label": "appInitialized:hook:home-passport:moduleLoading",
+          "requests": 100,
+          "calls": 100,
+          "p50Ms": 0.001,
+          "p95Ms": 0.001,
+          "meanMs": 0.001
+        },
+        {
+          "label": "appInitialized:hook:AppMonkey:moduleLoading",
+          "requests": 100,
+          "calls": 100,
+          "p50Ms": 0.001,
+          "p95Ms": 0.001,
+          "meanMs": 0.001
+        },
+        {
+          "label": "appInitialized:hook:a-model:moduleLoaded",
+          "requests": 100,
+          "calls": 100,
+          "p50Ms": 0.001,
+          "p95Ms": 0.001,
+          "meanMs": 0.001
+        },
+        {
+          "label": "appInitialized:hook:basic-app:moduleLoaded",
+          "requests": 100,
+          "calls": 100,
+          "p50Ms": 0.001,
+          "p95Ms": 0.001,
+          "meanMs": 0.001
+        },
+        {
+          "label": "appInitialized:hook:home-passport:moduleLoaded",
+          "requests": 100,
+          "calls": 100,
+          "p50Ms": 0.001,
+          "p95Ms": 0.001,
+          "meanMs": 0.001
+        },
+        {
+          "label": "appInitialized:hook:AppMonkey:appInitialized",
+          "requests": 100,
+          "calls": 100,
+          "p50Ms": 0.001,
+          "p95Ms": 0.001,
+          "meanMs": 0.001
+        },
+        {
+          "label": "appReady:hook:a-model:moduleLoading",
+          "requests": 100,
+          "calls": 100,
+          "p50Ms": 0.001,
+          "p95Ms": 0.001,
+          "meanMs": 0.001
+        },
+        {
+          "label": "appReady:hook:basic-app:moduleLoading",
+          "requests": 100,
+          "calls": 100,
+          "p50Ms": 0.001,
+          "p95Ms": 0.001,
+          "meanMs": 0.001
+        },
+        {
+          "label": "appReady:hook:AppMonkey:moduleLoading",
+          "requests": 100,
+          "calls": 100,
+          "p50Ms": 0,
+          "p95Ms": 0.001,
+          "meanMs": 0.001
+        },
+        {
+          "label": "appReady:hook:a-fetch:beanInit",
+          "requests": 100,
+          "calls": 100,
+          "p50Ms": 0.001,
+          "p95Ms": 0.001,
+          "meanMs": 0.001
+        },
+        {
+          "label": "appReady:hook:a-ssr:beanInit",
+          "requests": 100,
+          "calls": 100,
+          "p50Ms": 0.001,
+          "p95Ms": 0.001,
+          "meanMs": 0.001
+        },
+        {
+          "label": "appReady:hook:a-openapi:beanInit",
+          "requests": 100,
+          "calls": 100,
+          "p50Ms": 0.001,
+          "p95Ms": 0.001,
+          "meanMs": 0.001
+        },
+        {
+          "label": "appReady:hook:a-api:beanInit",
+          "requests": 100,
+          "calls": 100,
+          "p50Ms": 0.001,
+          "p95Ms": 0.002,
+          "meanMs": 0.001
+        },
+        {
+          "label": "appReady:hook:basic-app:beanInit",
+          "requests": 100,
+          "calls": 100,
+          "p50Ms": 0.001,
+          "p95Ms": 0.001,
+          "meanMs": 0.001
+        },
+        {
+          "label": "appReady:hook:home-base:beanInit",
+          "requests": 100,
+          "calls": 100,
+          "p50Ms": 0.001,
+          "p95Ms": 0.001,
+          "meanMs": 0.001
+        },
+        {
+          "label": "appReady:hook:home-passport:beanInit",
+          "requests": 100,
+          "calls": 100,
+          "p50Ms": 0.001,
+          "p95Ms": 0.001,
+          "meanMs": 0.001
+        },
+        {
+          "label": "appReady:hook:a-command:beanInit",
+          "requests": 100,
+          "calls": 100,
+          "p50Ms": 0.001,
+          "p95Ms": 0.001,
+          "meanMs": 0.001
+        },
+        {
+          "label": "appReady:hook:a-model:moduleLoaded",
+          "requests": 100,
+          "calls": 100,
+          "p50Ms": 0,
+          "p95Ms": 0.001,
+          "meanMs": 0.001
+        },
+        {
+          "label": "appReady:hook:a-ssr:moduleLoaded",
+          "requests": 100,
+          "calls": 100,
+          "p50Ms": 0.001,
+          "p95Ms": 0.001,
+          "meanMs": 0.001
+        },
+        {
+          "label": "appReady:hook:basic-app:moduleLoaded",
+          "requests": 100,
+          "calls": 100,
+          "p50Ms": 0,
+          "p95Ms": 0.001,
+          "meanMs": 0.001
+        },
+        {
+          "label": "appInitialize:hook:a-model:moduleLoading",
+          "requests": 100,
+          "calls": 100,
+          "p50Ms": 0,
+          "p95Ms": 0.001,
+          "meanMs": 0
+        },
+        {
+          "label": "appInitialize:hook:a-ssr:moduleLoading",
+          "requests": 100,
+          "calls": 100,
+          "p50Ms": 0,
+          "p95Ms": 0.001,
+          "meanMs": 0
+        },
+        {
+          "label": "appInitialize:hook:a-api:moduleLoading",
+          "requests": 100,
+          "calls": 100,
+          "p50Ms": 0,
+          "p95Ms": 0,
+          "meanMs": 0
+        },
+        {
+          "label": "appInitialize:hook:basic-app:moduleLoading",
+          "requests": 100,
+          "calls": 100,
+          "p50Ms": 0,
+          "p95Ms": 0.001,
+          "meanMs": 0
+        },
+        {
+          "label": "appInitialize:hook:home-passport:moduleLoading",
+          "requests": 100,
+          "calls": 100,
+          "p50Ms": 0,
+          "p95Ms": 0,
+          "meanMs": 0
+        },
+        {
+          "label": "appInitialize:hook:AppMonkey:moduleLoading",
+          "requests": 100,
+          "calls": 100,
+          "p50Ms": 0,
+          "p95Ms": 0,
+          "meanMs": 0
+        },
+        {
+          "label": "appInitialize:hook:a-model:moduleLoaded",
+          "requests": 100,
+          "calls": 100,
+          "p50Ms": 0,
+          "p95Ms": 0.001,
+          "meanMs": 0
+        },
+        {
+          "label": "appInitialize:hook:basic-app:moduleLoaded",
+          "requests": 100,
+          "calls": 100,
+          "p50Ms": 0,
+          "p95Ms": 0.001,
+          "meanMs": 0
+        },
+        {
+          "label": "appInitialize:hook:home-passport:moduleLoaded",
+          "requests": 100,
+          "calls": 100,
+          "p50Ms": 0,
+          "p95Ms": 0,
+          "meanMs": 0
+        },
+        {
+          "label": "appInitialize:hook:AppMonkey:moduleLoaded",
+          "requests": 100,
+          "calls": 100,
+          "p50Ms": 0,
+          "p95Ms": 0,
+          "meanMs": 0
+        },
+        {
+          "label": "appInitialized:hook:AppMonkey:moduleLoaded",
+          "requests": 100,
+          "calls": 100,
+          "p50Ms": 0,
+          "p95Ms": 0.001,
+          "meanMs": 0
+        },
+        {
+          "label": "appReady:hook:a-ssr:moduleLoading",
+          "requests": 100,
+          "calls": 100,
+          "p50Ms": 0,
+          "p95Ms": 0.001,
+          "meanMs": 0
+        },
+        {
+          "label": "appReady:hook:a-api:moduleLoading",
+          "requests": 100,
+          "calls": 100,
+          "p50Ms": 0,
+          "p95Ms": 0.001,
+          "meanMs": 0
+        },
+        {
+          "label": "appReady:hook:home-passport:moduleLoading",
+          "requests": 100,
+          "calls": 100,
+          "p50Ms": 0,
+          "p95Ms": 0.001,
+          "meanMs": 0
+        },
+        {
+          "label": "appReady:hook:home-passport:moduleLoaded",
+          "requests": 100,
+          "calls": 100,
+          "p50Ms": 0,
+          "p95Ms": 0.001,
+          "meanMs": 0
+        },
+        {
+          "label": "appReady:hook:AppMonkey:moduleLoaded",
+          "requests": 100,
+          "calls": 100,
+          "p50Ms": 0,
+          "p95Ms": 0,
+          "meanMs": 0
+        }
+      ]
+    },
+    "cleanup": {
+      "artifactSha256": "51545a6265357bc79e9df659ff24b8a81c399eae7ae5e66b7c49e273fe1c2975",
+      "artifactUnchanged": true,
+      "cleanup": "completed",
+      "method": "transient Node load hook; no source or artifact edits; per-hook async wrappers add overhead"
+    },
+    "limits": [
+      "Async wrappers and clocks add overhead and microtask scheduling; diagnostic timings are not the unprofiled baseline and are not measured optimization gains.",
+      "Inclusive recursion and parallel Promise.all paths overlap; label totals can exceed their containing phase wall time and must not be added.",
+      "The phase variable is per-app, not async-local. Nested concurrent work can restore labels at different times; phase labels are approximate attribution, not exact critical-path partitions.",
+      "setup is the default label outside the explicitly wrapped phases, including post-initialization render work. setup dispatch totals are not ssr_init_setup.",
+      "A new module instance is wrapped after _installInner returns; its first moduleLoading invocation can be missed.",
+      "No individual bean-constructor or dispatch-exclusive cost was measured. Dispatch duration includes actual hooks and nested bean work.",
+      "Registry count queried at process exit was absent after disposal; no runtime module-count claim is supported.",
+      "All emitted owner rows retained; no wall-owner top-N truncation."
+    ]
+  },
+  "failedAttempt": {
+    "method": "Synchronous registerHooks load-hook diagnostic",
+    "exitCode": 1,
+    "failure": "ERR_INVALID_RETURN_PROPERTY_VALUE: load hook received null source before server readiness",
+    "validOwnerSamples": 0,
+    "resources": "Retained according to managed failed-run policy; no manual deletion or reset performed.",
+    "resolution": "Asynchronous register load hook awaited next loader; subsequent managed run succeeded."
+  },
+  "decision": {
+    "implementedOptimization": false,
+    "implementedPool": false,
+    "recommendedCandidate": "Preserve fresh apps and hook semantics; test a narrow Sys-registry-scoped ordered monkey-capability dispatch list, retaining per-app instance lookup, current hook lookup, forward/reverse order, targeted Main and AppMonkey behavior, and registry invalidation."
+  },
+  "privacy": "Aggregate timings, fixed module/hook labels, repository-relative source/artifact paths and hashes only. No raw CPU profiles, HTML, cookies, credentials, target origin, transient port or environment snapshots."
+}

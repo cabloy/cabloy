@@ -59,6 +59,7 @@ export type ISsrProfileOptions = Readonly<
 >;
 
 export interface SSRContextState {
+  compactHint?: boolean;
   envClient?: ZovaConfigEnv;
   pagePathFull?: string;
   pagePath?: string;

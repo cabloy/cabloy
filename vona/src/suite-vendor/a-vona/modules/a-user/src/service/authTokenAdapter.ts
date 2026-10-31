@@ -10,7 +10,10 @@ import type { IUser } from '../types/user.ts';
 export class ServiceAuthTokenAdapter extends BeanBase implements IAuthTokenAdapter {
   async create(payloadData: IPayloadData, ttl?: number): Promise<IPayloadData> {
     const authIdStr = this._getAuthId(payloadData)?.toString();
-    const token = authIdStr === '-1' ? createHash(authIdStr) : uuidv4();
+    const token =
+      this.bean.passport.authTokenMode === 'auth' && authIdStr === '-1'
+        ? createHash(authIdStr)
+        : uuidv4();
     const payloadDataNew = Object.assign({}, payloadData, {
       [this.scope.config.payloadData.fields.token]: token,
     });

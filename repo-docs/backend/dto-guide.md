@@ -124,11 +124,12 @@ Choose the scene from the API contract, not from the particular screen that happ
 
 ## DTO options
 
-Three especially important DTO option areas are:
+Important DTO option areas include:
 
 - `independent`
 - `openapi`
 - `fields`
+- `analysis` for backend-controlled, client-selectable group/aggregate contracts
 
 These options make DTOs configurable as reusable schema objects, not just local TypeScript classes.
 
@@ -137,6 +138,20 @@ A useful ownership rule is:
 - DTO metadata defines the contract shape close to the class
 - app config can still override broader DTO behavior
 - inference tools can reduce how much hand-authored DTO code is needed
+
+### DTO-owned analysis policy
+
+For client-selectable grouping or metrics, attach a shared backend policy with `@Dto({ analysis: studentAnalysis })`. Define it with `$defineAnalysis(() => ModelStudent, config)`, not Entity capability flags. `groups` allows physical dimensions; `aggrs` allows columns separately for each function (`count`, `sum`, `avg`, `min`, `max`). Count may allow `'*'`; non-count metrics require numeric columns. The model identity remains explicit even when the filter DTO's projection omits a legitimate metric column, such as Student `imageId`.
+
+Reuse that same exported policy in three places:
+
+- the filter DTO's `analysis` option and action-aware `@Arg.filter` modes
+- named response wrappers based on `$Dto.analysisGroup(policy)` / `$Dto.analysisAggregate(policy)`
+- service execution through `$executeAnalysisGroup(model, policy, params)` / `$executeAnalysisAggregate(model, policy, params)`
+
+Do not create a separate AnalysisReq or add analysis controls to ordinary select. The policy owns function/column allowlists, action defaults, and execution limits; response inference describes the finite optional field superset, while execution returns selected fields only. Optional is not nullable: an unrequested metric is absent, while a selected non-count metric can be SQL `null`.
+
+The derived action schemas publish frontend-readable `filter.capabilities.analysis` without model/class references. After changing the policy, regenerate affected OpenAPI/SDK consumers rather than duplicating the allowlist in frontend code. See [CRUD Workflow](/backend/crud-workflow#grouping-and-statistics), [DTO Infer and Generation](/backend/dto-infer-generation#aggregate-and-group-dto-inference), and [Validation Guide](/backend/validation-guide#analysis-action-modes) for the connected contract.
 
 ## App-config override support
 

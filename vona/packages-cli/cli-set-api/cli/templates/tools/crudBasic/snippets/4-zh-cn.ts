@@ -23,6 +23,8 @@ export default metadataCustomSnippet({
       [`${resource}Update`]: `更新${resource}`,
       [`${resource}Delete`]: `删除${resource}`,
       [`${resource}DeleteBulk`]: `批量删除${resource}`,
+      [`${resource}Group`]: `${resource}分组统计`,
+      [`${resource}Aggregate`]: `${resource}汇总统计`,
     };
     return locale_transform({ ast, argv, resources });
   },

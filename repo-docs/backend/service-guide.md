@@ -144,7 +144,26 @@ That means service access should be understood together with:
 
 For deciding whether a backend base class should stay a helper, move into service-scene, or remain part of the global bean shorthand surface, also see [Class Placement Rule](/ai/class-placement-rule).
 
-For reusable module-local helper functions, prefer the module `src/lib` directory. If the logic needs container-managed runtime behavior rather than plain helper placement, re-evaluate whether it belongs in service-scene instead. For the fuller rule, also see [Backend Foundation](/backend/foundation).
+### Choosing between lib, scope service, and global bean
+
+Choose placement by responsibility and runtime ownership, not merely whether a function accepts or accesses `app`.
+
+| Responsibility                                                                                                 | Preferred placement                    | Example                                                                                               |
+| -------------------------------------------------------------------------------------------------------------- | -------------------------------------- | ----------------------------------------------------------------------------------------------------- |
+| Pure computation or conversion                                                                                 | Module `src/lib`                       | Normalize values or transform a schema without runtime state                                          |
+| Generic infrastructure adaptation without owning business policy or requiring bean-managed lifecycle/injection | Module `src/lib`                       | An adapter that receives `app` to connect framework facilities                                        |
+| Module-owned business policy or context-dependent orchestration                                                | Module `src/service` with `@Service()` | Select allowed business actions, evaluate current-user permissions, or coordinate resource operations |
+| An intentionally global shorthand API                                                                          | Global bean in `src/bean`              | A shared capability deliberately exposed as `this.bean.xxx`                                           |
+
+Accepting `app` does not make an adapter pure, but it does not by itself require converting that adapter into a service either. If the implementation needs container-managed lifecycle or injection, reconsider service placement even when its responsibility is infrastructure rather than business policy.
+
+For example, a generic adapter may accept an application reference and callbacks. Keep that adaptation in `lib`, while a module scope service owns the business allowlist and permission-aware callbacks supplied to it. The service can use `BeanBase` facilities such as `this.app` and `this.ctx`, and callers can use the [scope lookup patterns](#dependency-lookup) above.
+
+Cross-module reuse alone does not justify a global bean: services already support cross-module scope lookup. Global bean placement is an intentional shorthand API decision, not a prerequisite for application or context access. For ordinary module services, use a normal `src/service/*.ts` file; the special runtime-anchor `*_.ts` rules in [Class Placement Rule](/ai/class-placement-rule) concern a different registration role.
+
+When moving a factory or callback into a service, preserve its operation/request context boundary. Resolve request-dependent permissions when the operation or callback runs; do not retain a request's context, authorization result, or request-specific object in longer-lived service or application state. Service placement does not itself establish a new context or make such state safe to share.
+
+The A / B1 / B2 rule classifies backend base classes; it is not a blanket requirement to move every application-dependent function into a service. For the broader module and runtime access model, see [Backend Foundation](/backend/foundation).
 
 Read this guide together with:
 

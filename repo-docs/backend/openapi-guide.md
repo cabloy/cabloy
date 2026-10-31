@@ -70,6 +70,7 @@ The decorator records metadata; it does not start an MCP server, register a tran
 MCP metadata is independent of ordinary OpenAPI publication. Publishing an HTTP action does not opt it into MCP, and `@Api.exclude()` is not an MCP authorization boundary. Neither the decorator nor `readOnly: true` grants permission, proves the absence of side effects, or supplies tenant isolation, confirmation, transactions, or replay safety.
 
 Keep the layers separate: OpenAPI utilities own the reusable metadata surface; an MCP integration owns tool discovery, argument/result adaptation, transport, authentication, and guarded dispatch.
+
 The metadata declarations are defined in:
 
 - `vona/src/suite-vendor/a-vona/modules/a-openapiutils/src/lib/decorator/mcp.ts`

@@ -28,6 +28,97 @@ npm run vona :tools:crudBasic student -- --module=training-student
 
 This is important because the repo already encodes both the full CRUD thread and a lighter CRUD-basic workflow in the CLI surface.
 
+## Grouping and statistics
+
+The Basic and Start CRUD generators provide `group` and `aggregate` read actions by default, alongside ordinary `select`:
+
+```bash
+npm run vona :tools:crud report -- --module=demo-report
+```
+
+The direct `:tools:crudBasic` and `:tools:crudStart` commands use the same default. There are no `--aggregate` or `--groupBy` options; edit the generated policy to configure analysis capabilities.
+
+| Generated action | Default result                           |
+| ---------------- | ---------------------------------------- |
+| `GET select`     | Resource records and pagination metadata |
+| `GET group`      | One row per name, with `count_all`       |
+| `GET aggregate`  | One object with `count_all`              |
+
+The generator exports one shared analysis policy in `src/lib/<resourceName>Analysis.ts`:
+
+```typescript
+export const reportAnalysis = $defineAnalysis(() => ModelReport, {
+  groups: ['name'],
+  aggrs: { count: ['*'] },
+  defaults: {
+    group: { groups: ['name'], aggrs: { count: ['*'] } },
+    aggregate: { aggrs: { count: ['*'] } },
+  },
+  limits: { maxGroups: 3, maxMetrics: 10, maxGroupRows: 1000 },
+});
+```
+
+Default API generation does not expose every Entity field. The initial allowlist contains only `name` and `count('*')`; it does not automatically allow `description`, identity fields, timestamps, or numeric metrics. Callers can select combinations only within that backend-owned policy, not arbitrary model columns or SQL expressions. No analysis capability fields are added to the Entity.
+
+Fresh CRUD entities contain `name`, so name grouping provides a runnable starting point, not a universal business default. Refine the policy to use meaningful dimensions such as status, category, or level as the resource evolves. Choose dimensions with suitable cardinality: grouping by a nearly unique name can return almost as many groups as records. Generated group actions do not provide group pagination or a group-count total.
+
+These commands create new resources and refuse an existing controller. Do not rerun them against the existing `training-student` resource to add actions. For an existing resource, define its policy and reuse it in the request DTO, response DTOs, and service; the Student reference uses its already-defined `level` field.
+
+### Query and response boundaries
+
+`select`, `group`, and `aggregate` remain separate contracts:
+
+- `select` returns resource records and existing pagination metadata.
+- `group` returns group keys and metrics, not nested lists of resource records.
+- `aggregate` returns metrics over all matching source records, not the current select page.
+
+The actions reuse the resource's `SelectReq`; no separate `AnalysisReq` is generated. `@Dto({ analysis: resourceAnalysis })` attaches the shared policy, and `@Arg.filter(SelectReq, { mode: 'group' })` or `{ mode: 'aggregate' }` derives that action's controls without adding them to ordinary select. Select rejects explicit analysis controls. The service uses `$executeAnalysisGroup(model, policy, params)` or `$executeAnalysisAggregate(model, policy, params)`, which also revalidate controls for direct service callers.
+
+A group request may select `groups: string[]` and `aggrs: { count?: string[]; sum?: string[]; avg?: string[]; min?: string[]; max?: string[] }`; an aggregate request accepts only `aggrs`. Every function and column must be allowed by the policy. Omitted controls independently use the action's defaults. Explicit empty selections, duplicates, unsupported functions/columns, and `groups` on aggregate fail validation rather than falling back or being stripped.
+
+Named local business filters and raw `where` retain their existing semantics. A raw predicate for a field takes precedence over that field's named-filter transformation. List projection, ordering, and pagination controls are still parsed and validated, but do not change analysis: statistics cover all matching source rows, not the current select page. Filters that require joins are rejected for analysis; ordinary select can still use its existing joined filters. Client `having`, joins, expressions, and custom aliases are not analysis controls. Keep server-side instance, soft-delete, and business authorization scope; caller-supplied predicates are not an authorization boundary.
+
+The default policy limits are 3 selected dimensions, 10 selected metric aliases, and 1000 group-result rows; a policy may set explicit limits. Group execution reads at most the row cap plus one and returns a deliberate `422` validation/resource-limit error on overflow, not a silently truncated result. These bounds do not limit the database work needed to scan or aggregate the matching population.
+
+Response DTOs use `$Dto.analysisGroup(policy)` / `$Dto.analysisAggregate(policy)` to describe a finite **optional superset** of allowed keys. Each response includes only requested dimensions and aliases. Optional means unrequested; nullable means a real SQL null. If a business-specific policy adds a nullable dimension, preserve both optionality and nullability in its response contract and never synthesize an unrequested key.
+
+Count aliases are decimal strings, normalized by the ORM query/cache boundary; non-count metrics are strings or SQL `null`. Services need no count-conversion helper. An empty group query returns `[]`; an empty aggregate count returns `"0"`. Missing dimension values are not synthesized into zero-valued groups.
+
+### Student policy and GET controls
+
+The Student reference exports this policy in `src/lib/studentAnalysis.ts`:
+
+```typescript
+export const studentAnalysis = $defineAnalysis(() => ModelStudent, {
+  groups: ['level'],
+  aggrs: { count: ['*', 'imageId'] },
+  defaults: {
+    group: { groups: ['level'], aggrs: { count: ['*'] } },
+    aggregate: { aggrs: { count: ['*', 'imageId'] } },
+  },
+});
+```
+
+Its default `GET /api/training/student/group` counts by `level`, ordered by level. Its default `GET /api/training/student/aggregate` returns `count_all` and `count_imageId` (students with a non-null image reference). A caller can request only `count_imageId`, without receiving `count_all` as an extra field. `name`, mobile, and raw timestamps are not allowed dimensions merely because the Entity contains them.
+
+For GET requests, encode array/object controls as JSON query values using the existing `combineQueries` convention. Generated API methods accept structured controls and handle that encoding. The equivalent raw request is:
+
+```bash
+curl --get 'http://localhost:7102/api/training/student/group' \
+  --data-urlencode 'groups=["level"]' \
+  --data-urlencode 'aggrs={"count":["imageId"]}'
+```
+
+Use the normal authenticated session for this protected action. Do not send comma-separated dimensions or JavaScript object text. Malformed JSON is invalid input. The existing `summary/:id` remains an individual Student summary, not population statistics.
+
+Action request schemas expose finite enums and `filter.capabilities.analysis` with the public allowlist, action defaults, mode, and effective limits, including on emitted `groups` / `aggrs` parameter schemas. Model/class references are not public capabilities. See [DTO Infer and Generation](/backend/dto-infer-generation#aggregate-and-group-dto-inference), [Validation Guide](/backend/validation-guide#analysis-action-modes), and [ORM Aggregate and Group Guide](/backend/orm-aggregate-group-guide).
+
+### Authorization and source scope
+
+The generated analysis actions inherit the `select` RBAC policy. Policy inheritance does not apply row filtering or copy data-scope options. Normal model instance and soft-delete predicates remain active.
+
+For a resource that supports department/owner data scope, explicitly configure that scope and combine `rbacScopeCurrent.where(params.where)` **before** grouping or aggregation. Filtering group results afterward is not an authorization boundary. Do not enable ownership scope for Student or another resource that lacks the corresponding ownership fields. See [RBAC Authorization](/backend/rbac-authorization).
+
 ## Generated structure
 
 The generator creates a connected set of files, typically including:
@@ -45,7 +136,7 @@ This is exactly why this generator should be the default starting point. It give
 
 ### Generated authorization default
 
-The standard generated CRUD actions (`create`, `select`, `view`, `update`, and `delete`) each use `@Passport.systemAdmin()`. This is an explicit administrative whitelist for the generated Admin resource API, matching the generated SSR menu's `systemAdmin` visibility policy.
+The standard generated CRUD actions (`create`, `select`, `view`, `update`, and `delete`) each use `@Passport.rbac()`. Bulk delete inherits the `delete` policy. These guards authorize API execution independently of the generated SSR menu's visibility policy.
 
 The guard is attached to individual actions rather than the controller class. When you add a custom action later, no local Passport guard intentionally means the global authenticated-and-activated baseline applies; it does not mean the action is public. Use `@Passport.public()` to intentionally allow anonymous access, or add a role/domain guard when an action needs stronger restriction.
 

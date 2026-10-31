@@ -25,6 +25,7 @@ export interface ICaptchaData {
   token?: unknown;
   payload: unknown;
   status?: 'accepted' | 'rejected' | 'unknown' | 'limited';
+  serverNow?: number;
   expiresAt?: number;
   resendAt?: number;
   retryAt?: number;

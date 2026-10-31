@@ -1,3 +1,4 @@
+export * from './analysis.ts';
 export * from './columns.ts';
 export * from './config.ts';
 export * from './database.ts';

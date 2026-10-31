@@ -1,5 +1,104 @@
 # Changelog
 
+## 5.1.251
+
+## 5.1.250
+
+### Features
+
+- Add Japanese (`ja-jp`) and Traditional Chinese (`zh-tw`) locales.
+- Introduce locale providers and locale specifications.
+- Add grouping and aggregation capabilities.
+
+### Bug Fixes
+
+- Distinguish planning closure from unfinished work breakdown structure (WBS) scope.
+- Correct target decorator DTO resolution for OpenAPI.
+- Keep Cabloy Locale delivery confined to its worktree.
+
+### Improvements
+
+- Refactor CLI CRUD functionality.
+- Enhance grouping and aggregation.
+- Clarify locale provider examples and metadata commands.
+- Update locale documentation and synchronize OpenAPI guidance.
+
+## 5.1.249
+
+### Features
+
+- Update existing functionality.
+
+### Improvements
+
+- Remove textlint.
+
+## 5.1.248
+
+### Features
+
+- Add tab closing.
+- Add mobile navbar support.
+- Add update functionality.
+
+### Bug Fixes
+
+- Fix teleport behavior.
+
+### Improvements
+
+- Support two-level tabs on mobile.
+- Improve compact hints.
+
+## 5.1.247
+
+### Improvements
+
+- Improve fixed table column behavior on mobile devices.
+
+## 5.1.246
+
+### Features
+
+- Add `APP_LOCALE_DEFAULT` to configure the default application locale.
+
+### Improvements
+
+- Enhance Markdown source mode.
+- Update dependencies in the pnpm lockfile.
+
+## 5.1.245
+
+### Improvements
+
+- Update the home user account tests.
+
+## 5.1.244
+
+### Features
+
+- Add `ZButton` and `AUTH_TOKEN_MODE`.
+
+### Bug Fixes
+
+- Fix Babel plugin compatibility on Windows.
+
+### Improvements
+
+- Refactor `mcp.tool` to `Mcp.tool`.
+
+## 5.1.243
+
+### Bug Fixes
+
+- Fix warning logging.
+- Fix logout in demonstration mode.
+- Fix Rollup build caching.
+
+### Improvements
+
+- Update the demonstration mode guide.
+
 ## 5.1.242
 
 ### Bug Fixes

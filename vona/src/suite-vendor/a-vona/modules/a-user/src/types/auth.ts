@@ -21,8 +21,10 @@ export interface IAuth {
 }
 
 export type TypeAuthTokenStrategy = 'reissue' | 'refresh' | 'reuse';
+export type TypeAuthTokenMode = 'auth' | 'session';
 
 export interface IAuthTokenConfig {
+  mode: TypeAuthTokenMode;
   stateless: boolean;
   strategy: {
     refreshAuthToken: TypeAuthTokenStrategy;
@@ -59,4 +61,10 @@ export interface IAuthTokenOptions {
 
 export interface ISigninOptions {
   authToken?: IAuthTokenOptions;
+}
+
+declare module 'vona' {
+  export interface VonaConfigEnv {
+    AUTH_TOKEN_MODE: string | undefined;
+  }
 }

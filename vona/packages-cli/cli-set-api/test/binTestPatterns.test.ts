@@ -5,6 +5,25 @@ import { join } from 'node:path';
 import { it } from 'node:test';
 
 import { runTestChild } from '../src/lib/bean/cli.bin.test.ts';
+import { formatActiveResourceCounts } from '../toolsIsolate/testDiagnostics.ts';
+
+it('formats only deterministic active resource type counts, including small and empty lists', () => {
+  assert.equal(formatActiveResourceCounts([]), '{}');
+  assert.equal(formatActiveResourceCounts(['Timeout']), '{"Timeout":1}');
+  const types = Object.freeze(['Timeout', 'TCPWrap', 'Timeout', 'PipeWrap']);
+  assert.equal(formatActiveResourceCounts(types), '{"PipeWrap":1,"TCPWrap":1,"Timeout":2}');
+  assert.equal(formatActiveResourceCounts(types.toReversed()), formatActiveResourceCounts(types));
+});
+
+it('wires opt-in test diagnostics without stack preloads or private handle inspection', () => {
+  const runner = readFileSync(new URL('../toolsIsolate/test.ts', import.meta.url), 'utf8');
+  assert.ok(!runner.includes('why-is-node-running'));
+  assert.ok(!runner.includes('_getActiveHandles'));
+  assert.match(
+    runner,
+    /if \(process.env.TEST_WHYISNODERUNNING === 'true'\) \{\s*await sleep\(2000\);\s*console.error\([\s\S]*?formatActiveResourceCounts\(process.getActiveResourcesInfo\(\)\)/,
+  );
+});
 
 it('preserves literal test patterns and arguments through a real Node child', async () => {
   const projectPath = mkdtempSync(join(tmpdir(), 'vona test argv '));

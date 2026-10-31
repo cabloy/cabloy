@@ -96,9 +96,45 @@ For query parameters, that distinction matters because plain optional values sti
 
 ## `@Arg.filter`
 
-The validation layer also supports more advanced query-style inputs through `@Arg.filter`, which ties into DTO/query helper structures.
+The validation layer supports query-style inputs through `@Arg.filter`, which ties DTO/query helpers to named filters, raw `where`, transformations, and list controls.
 
-This is a good example of validation being connected to higher-level query semantics, not only primitive field checks.
+### Analysis action modes
+
+A DTO can attach one shared `$defineAnalysis` policy through `@Dto({ analysis: studentAnalysis })`. Select, group, and aggregate still have separate contracts:
+
+```typescript
+async select(
+  @Arg.filter(DtoStudentSelectReq) params: IQueryParams<ModelStudent>,
+) {
+  return await this.scope.service.student.select(params);
+}
+
+async group(
+  @Arg.filter(DtoStudentSelectReq, { mode: 'group' })
+  params: TypeAnalysisGroupParams<typeof studentAnalysis>,
+) {
+  return await this.scope.service.student.group(params);
+}
+
+async aggregate(
+  @Arg.filter(DtoStudentSelectReq, { mode: 'aggregate' })
+  params: TypeAnalysisAggregateParams<typeof studentAnalysis>,
+) {
+  return await this.scope.service.student.aggregate(params);
+}
+```
+
+Group mode derives `groups` and `aggrs` controls from the policy; aggregate mode derives `aggrs` only. Each action receives its own schema reference and finite enums without mutating the base SelectReq schema. An ordinary select request explicitly containing analysis controls is rejected before unknown-key stripping can hide them. This does not enable strict unknown-key rejection for every unrelated filter.
+
+For GET, array/object controls are JSON query values: `groups=["level"]` and `aggrs={"count":["imageId"]}` before URL encoding. Generated API calls accept structured values and encode them through the existing `combineQueries` convention. Malformed JSON, empty arrays/metric objects, duplicate fields, unsupported functions/columns, or any `groups` on aggregate are invalid. Omitted `groups` and `aggrs` independently use the action defaults; explicit empty input never means “use the default.”
+
+The policy owns a dimension allowlist and function-specific column allowlists. Clients cannot introduce custom aliases, expressions, joins, or `having`. A named filter that requires a join also fails for analysis, rather than silently dropping the join or changing aggregate multiplicity; ordinary select joined filters remain supported. Named local filters, transforms, and raw-`where` precedence retain their existing behavior.
+
+List controls such as `columns`, `orders`, `pageNo`, and `pageSize` remain validated but do not project, sort, or paginate analysis results. For example, invalid `pageSize: 0` still fails, while valid page 2 does not remove matching source rows from the aggregate population. Server-side instance, soft-delete, and business scope must still constrain `where` before execution.
+
+`$executeAnalysisGroup(model, policy, params)` and `$executeAnalysisAggregate(model, policy, params)` revalidate analysis controls for direct service callers. The default effective limits are `maxGroups: 3`, `maxMetrics: 10`, and `maxGroupRows: 1000`; policies can deliberately override them. Group execution uses deterministic dimension ordering and reads cap+1 rows to detect overflow. Invalid analysis selections and group-row overflow produce deliberate `422` errors, not generic server failures or silently truncated results. The row cap is not a limit on database scan/aggregation cost.
+
+The derived schemas expose public `filter.capabilities.analysis` (mode, allowlists, defaults, limits), including on flattened `groups` / `aggrs` query parameter schemas. They do not publish model/class references. See [CRUD Workflow](/backend/crud-workflow#grouping-and-statistics) and [DTO Infer and Generation](/backend/dto-infer-generation#aggregate-and-group-dto-inference) for policy authoring and requested-only response fields.
 
 ## Tool groups
 

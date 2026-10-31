@@ -88,7 +88,10 @@ class FakeGuardian extends EventEmitter {
       callback?.(null);
       queueMicrotask(() => {
         this.emit('message', { type: 'started' });
-        if (message.args.includes(':openapi:generate') && state.generatorCompletes) {
+        if (
+          (message.args.includes(':openapi:generate') || state.expectedKind === 'unit') &&
+          state.generatorCompletes
+        ) {
           queueMicrotask(() => this.complete(state.generatorResult));
         }
       });
@@ -127,6 +130,7 @@ function fixture() {
     launches,
     calls,
     inventory,
+    expectedKind: 'contract',
     cleanupStatus: 'cleaned',
     cleanupWarn: false,
     cleanupThrows: false,
@@ -142,9 +146,12 @@ function fixture() {
     fetchMode: 'ok',
     fetches: [] as { source: string; options: RequestInit | undefined }[],
     fs: {
-      existsSync: (path: string) => path.endsWith('/__CABLOY_BASIC__'),
-      realpathSync: () => {
-        throw new Error('Unexpected npm path resolution');
+      existsSync: (path: string) =>
+        path.endsWith('/__CABLOY_BASIC__') ||
+        (state.expectedKind === 'unit' && path.endsWith('/npm/bin/npm-cli.js')),
+      realpathSync: (path: string) => {
+        assert.equal(state.expectedKind, 'unit', 'Unexpected npm path resolution');
+        return path;
       },
       mkdirSync: (path: string) => {
         calls.push('mkdir');
@@ -202,7 +209,7 @@ Object.defineProperty(globalThis, globalKey, {
     },
     createClaim: async (project: string, runId: string, kind: string, owner: unknown) => {
       state.calls.push('claim');
-      assert.equal(kind, 'contract');
+      assert.equal(kind, state.expectedKind);
       assert.deepEqual(owner, {
         pid: process.pid,
         startTime: 'synthetic-start',
@@ -236,8 +243,9 @@ Object.defineProperty(globalThis, globalKey, {
       host: 'synthetic',
     }),
     inactive: async () => true,
-    clean: async (_path: string, options: any) => {
+    clean: async (path: string, options: any) => {
       state.calls.push('cleanup');
+      assert.ok(path.endsWith(`-${SECRET}.json`), 'cleanup targets only the newly reserved claim');
       assert.equal(await options.isInactive({}), true);
       if (state.cleanupWarn) options.warn(`${SECRET} ${SOURCE}`);
       if (state.cleanupThrows) throw privateError();
@@ -728,13 +736,68 @@ test(
           assert.ok(state.calls.includes('cleanup'));
           delete process.env[TEST_REQUIRE_FRESH_RESOURCES_ENV];
           reset();
-          await assert.rejects(
-            runner.withIsolatedRun('unit', async () => assert.fail('must not run'), '/synthetic', {
-              skipExpiredClaimReaping: true,
-            }),
-            error => assertSafe(error, 'preparation'),
+          state.expectedKind = 'unit';
+          process.env[TEST_REQUIRE_FRESH_RESOURCES_ENV] = 'true';
+          await runner.withIsolatedRun(
+            'unit',
+            async ({ env }) => {
+              assert.equal(env.VONA_TEST_REQUIRE_FRESH_RESOURCES, undefined);
+              assert.equal(usesStrictGeneration(env), false);
+            },
+            '/synthetic',
+            { skipExpiredClaimReaping: true },
           );
-          assert.deepEqual(state.calls, []);
+          assert.ok(!state.calls.includes('reap'));
+          assert.equal(state.calls.filter(call => call === 'cleanup').length, 1);
+          assert.deepEqual(diagnostics, []);
+          delete process.env[TEST_REQUIRE_FRESH_RESOURCES_ENV];
+          reset();
+          state.expectedKind = 'unit';
+          const failure = new Error('synthetic unit failure');
+          await assert.rejects(
+            runner.withIsolatedRun(
+              'unit',
+              async () => {
+                throw failure;
+              },
+              '/synthetic',
+              {
+                skipExpiredClaimReaping: true,
+              },
+            ),
+            error => error === failure,
+          );
+          assert.ok(!state.calls.includes('reap'));
+          assert.ok(!state.calls.includes('cleanup'));
+          assert.equal(state.directories.size, 3);
+          assert.equal(state.updates.at(-1).status, 'failed');
+          assert.ok(
+            diagnostics.some(values =>
+              String(values[0]).startsWith('Isolated test claim and resources retained'),
+            ),
+          );
+          reset();
+          state.expectedKind = 'unit';
+          await runner.runIsolatedTest('unit', [
+            '--skip-expired-claim-reaping',
+            '--ci',
+            'src/test/example.test.ts',
+          ]);
+          assert.ok(!state.calls.includes('reap'));
+          assert.equal(state.calls.filter(call => call === 'cleanup').length, 1);
+          assert.equal(state.guardians.length, 2);
+          for (const child of state.guardians) {
+            assert.ok(!child.startMessage.args.includes('--skip-expired-claim-reaping'));
+            assert.equal(child.startMessage.env.VONA_TEST_REQUIRE_FRESH_RESOURCES, undefined);
+          }
+          assert.deepEqual(state.guardians[1].startMessage.args, [
+            './packages-cli/cli/src/bin/vona.ts',
+            ':bin:test',
+            '--flavor=normal',
+            '--ci=true',
+            'src/test/example.test.ts',
+          ]);
+          assert.deepEqual(diagnostics, []);
         },
       );
 
