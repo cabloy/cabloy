@@ -37,6 +37,8 @@ const studentSummaryName = 'training_student_summary';
 const studentLookupName = 'training_student_lookup';
 const studentSelectName = 'training_student_select';
 const studentViewName = 'training_student_view';
+const studentGroupName = 'training_student_group';
+const studentAggregateName = 'training_student_aggregate';
 const excludedNames = [
   categoriesName,
   searchName,
@@ -445,6 +447,8 @@ describe('businessHttp.test.ts', { concurrency: false, timeout: 60000 }, () => {
           [studentDeleteName, { id: '1' }],
           [studentSelectName, { name: 'Student', pageNo: 1, pageSize: 1 }],
           [studentLookupName, { name: 'Student' }],
+          [studentGroupName, { name: 'Student' }],
+          [studentAggregateName, { name: 'Student' }],
           [studentViewName, { id: '1' }],
           [studentSummaryName, { id: '1' }],
         ] as const) {
@@ -655,10 +659,14 @@ describe('businessHttp.test.ts', { concurrency: false, timeout: 60000 }, () => {
       t.mock.method(ModelStudent.prototype, 'delete'),
       t.mock.method(ControllerStudent.prototype, 'select'),
       t.mock.method(ControllerStudent.prototype, 'lookup'),
+      t.mock.method(ControllerStudent.prototype, 'group'),
+      t.mock.method(ControllerStudent.prototype, 'aggregate'),
       t.mock.method(ControllerStudent.prototype, 'view'),
       t.mock.method(ControllerStudent.prototype, 'summary'),
       t.mock.method(ServiceStudent.prototype, 'select'),
       t.mock.method(ServiceStudent.prototype, 'lookup'),
+      t.mock.method(ServiceStudent.prototype, 'group'),
+      t.mock.method(ServiceStudent.prototype, 'aggregate'),
       t.mock.method(ServiceStudent.prototype, 'view'),
       t.mock.method(ServiceStudent.prototype, 'summary'),
       t.mock.method(ModelStudent.prototype, 'select'),
@@ -695,22 +703,46 @@ describe('businessHttp.test.ts', { concurrency: false, timeout: 60000 }, () => {
     });
     const states = [
       { permissions: [], names: [] },
-      { permissions: ['select'], names: [studentSelectName, studentLookupName] },
+      {
+        permissions: ['select'],
+        names: [studentSelectName, studentLookupName, studentGroupName, studentAggregateName],
+      },
       { permissions: ['view'], names: [studentViewName, studentSummaryName] },
       {
         permissions: ['select', 'view'],
-        names: [studentSelectName, studentLookupName, studentViewName, studentSummaryName],
+        names: [
+          studentSelectName,
+          studentLookupName,
+          studentGroupName,
+          studentAggregateName,
+          studentViewName,
+          studentSummaryName,
+        ],
       },
       { permissions: ['create'], names: [] },
       { permissions: ['update'], names: [] },
       { permissions: ['delete'], names: [] },
       {
         permissions: ['create', 'select', 'view'],
-        names: [studentSelectName, studentLookupName, studentViewName, studentSummaryName],
+        names: [
+          studentSelectName,
+          studentLookupName,
+          studentGroupName,
+          studentAggregateName,
+          studentViewName,
+          studentSummaryName,
+        ],
       },
       {
         permissions: ['create', 'update', 'delete', 'select', 'view'],
-        names: [studentSelectName, studentLookupName, studentViewName, studentSummaryName],
+        names: [
+          studentSelectName,
+          studentLookupName,
+          studentGroupName,
+          studentAggregateName,
+          studentViewName,
+          studentSummaryName,
+        ],
       },
       { permissions: [], names: [] },
     ];
@@ -749,6 +781,8 @@ describe('businessHttp.test.ts', { concurrency: false, timeout: 60000 }, () => {
               ...(token === allToken ? [`${controller}#create`] : []),
               `${controller}#select`,
               `${controller}#lookup`,
+              `${controller}#group`,
+              `${controller}#aggregate`,
               `${controller}#view`,
               ...(token === allToken ? [`${controller}#update`] : []),
               `${controller}#summary`,
@@ -810,12 +844,21 @@ describe('businessHttp.test.ts', { concurrency: false, timeout: 60000 }, () => {
         const visible = await send('tools/list', {}, options);
         assert.deepEqual(
           visible.body.result.tools.map((tool: any) => tool.name).toSorted(),
-          [studentSelectName, studentLookupName, studentViewName, studentSummaryName].toSorted(),
+          [
+            studentSelectName,
+            studentLookupName,
+            studentGroupName,
+            studentAggregateName,
+            studentViewName,
+            studentSummaryName,
+          ].toSorted(),
         );
         granted = [];
         for (const [name, args] of [
           [studentSelectName, { name: 'unused', pageNo: 1, pageSize: 1 }],
           [studentLookupName, { name: 'unused' }],
+          [studentGroupName, { name: 'unused' }],
+          [studentAggregateName, { name: 'unused' }],
           [studentViewName, { id: '-1' }],
           [studentSummaryName, { id: '-1' }],
         ] as const) {
@@ -2230,7 +2273,7 @@ describe('businessHttp.test.ts', { concurrency: false, timeout: 60000 }, () => {
     }
   });
 
-  it('guards student select/view and independent lookup/summary with current roles across modern/legacy read scopes and instance boundaries', async t => {
+  it('guards student reads and independent lookup/summary with current roles across modern/legacy read scopes and instance boundaries', async t => {
     if (trainingDisabled) return;
     assert.ok(app.meta.modules['training-student']);
     assert.ok(fixtureUserId);
@@ -2322,6 +2365,18 @@ describe('businessHttp.test.ts', { concurrency: false, timeout: 60000 }, () => {
       send(
         'tools/call',
         { name: studentSelectName, arguments: query },
+        { legacy, headers: { authorization: `Bearer ${token}` } },
+      );
+    const group = (query: Record<string, unknown>, token = bearer, legacy = false) =>
+      send(
+        'tools/call',
+        { name: studentGroupName, arguments: query },
+        { legacy, headers: { authorization: `Bearer ${token}` } },
+      );
+    const aggregate = (query: Record<string, unknown>, token = bearer, legacy = false) =>
+      send(
+        'tools/call',
+        { name: studentAggregateName, arguments: query },
         { legacy, headers: { authorization: `Bearer ${token}` } },
       );
     const normalizeSelect = (serialized: Record<string, unknown>) => {
@@ -2511,6 +2566,8 @@ describe('businessHttp.test.ts', { concurrency: false, timeout: 60000 }, () => {
       )) {
         errorResult(await select(token, legacy), 'Action failed');
         errorResult(await lookup({ name }, token, legacy), 'Action failed');
+        errorResult(await group({ name }, token, legacy), 'Action failed');
+        errorResult(await aggregate({ name }, token, legacy), 'Action failed');
         errorResult(await view(studentId, token, legacy), 'Action failed');
         errorResult(await call(studentId, token, legacy), 'Action failed');
         assert.equal(observedCalls.at(-1)!.roleNames.includes('systemAdmin'), false);
@@ -2519,6 +2576,8 @@ describe('businessHttp.test.ts', { concurrency: false, timeout: 60000 }, () => {
       const { ServiceStudent } = await import('vona-module-training-student');
       const studentView = t.mock.method(ServiceStudent.prototype, 'view');
       const summary = t.mock.method(ServiceStudent.prototype, 'summary');
+      const studentGroup = t.mock.method(ServiceStudent.prototype, 'group');
+      const studentAggregate = t.mock.method(ServiceStudent.prototype, 'aggregate');
       const policyCalls: Array<{ action: string; policyActionKey: string }> = [];
       const controllerBeanFullName = 'training-student.controller.student';
       let viewOnly = false;
@@ -2551,6 +2610,13 @@ describe('businessHttp.test.ts', { concurrency: false, timeout: 60000 }, () => {
           [false, true].map(legacy => ({ token, legacy })),
         )) {
           assertSelect(await select(token, legacy));
+          assert.deepEqual(output(await group({ name }, token, legacy)), {
+            result: [{ level, count_all: '1' }],
+          });
+          assert.deepEqual(output(await aggregate({ name }, token, legacy)), {
+            count_all: '1',
+            count_imageId: '1',
+          });
           const foundResponse = await lookup({ name }, token, legacy);
           const found = output(foundResponse);
           assert.deepEqual(found, {
@@ -2581,6 +2647,8 @@ describe('businessHttp.test.ts', { concurrency: false, timeout: 60000 }, () => {
           Array.from({ length: 4 })
             .fill([
               { action: 'select', policyActionKey: `${controllerBeanFullName}#select` },
+              { action: 'group', policyActionKey: `${controllerBeanFullName}#select` },
+              { action: 'aggregate', policyActionKey: `${controllerBeanFullName}#select` },
               { action: 'lookup', policyActionKey: `${controllerBeanFullName}#select` },
               { action: 'view', policyActionKey: `${controllerBeanFullName}#view` },
               { action: 'summary', policyActionKey: `${controllerBeanFullName}#view` },
@@ -2593,6 +2661,8 @@ describe('businessHttp.test.ts', { concurrency: false, timeout: 60000 }, () => {
           [false, true].map(legacy => ({ token, legacy })),
         )) {
           errorResult(await select(token, legacy), 'Action failed');
+          errorResult(await group({ name }, token, legacy), 'Action failed');
+          errorResult(await aggregate({ name }, token, legacy), 'Action failed');
           errorResult(await lookup({ name }, token, legacy), 'Action failed');
           assertView(await view(studentId, token, legacy));
           const independent = output(await call(studentId, token, legacy));
@@ -2605,28 +2675,40 @@ describe('businessHttp.test.ts', { concurrency: false, timeout: 60000 }, () => {
         }
         assert.equal(studentView.mock.callCount(), 4);
         assert.equal(summary.mock.callCount(), 4);
+        assert.equal(studentGroup.mock.callCount(), 4, 'view alone cannot enter group service');
+        assert.equal(
+          studentAggregate.mock.callCount(),
+          4,
+          'view alone cannot enter aggregate service',
+        );
         assert.deepEqual(
-          policyCalls.slice(16),
+          policyCalls.slice(24),
           Array.from({ length: 4 })
             .fill([
               { action: 'select', policyActionKey: `${controllerBeanFullName}#select` },
+              { action: 'group', policyActionKey: `${controllerBeanFullName}#select` },
+              { action: 'aggregate', policyActionKey: `${controllerBeanFullName}#select` },
               { action: 'lookup', policyActionKey: `${controllerBeanFullName}#select` },
               { action: 'view', policyActionKey: `${controllerBeanFullName}#view` },
               { action: 'summary', policyActionKey: `${controllerBeanFullName}#view` },
             ])
             .flat(),
-          'view alone cannot admit select or lookup',
+          'view alone cannot admit select, lookup, group or aggregate',
         );
       } finally {
         off();
         studentView.mock.restore();
         summary.mock.restore();
+        studentGroup.mock.restore();
+        studentAggregate.mock.restore();
       }
       errorResult(await select(), 'Action failed');
       errorResult(await lookup({ name }), 'Action failed');
+      errorResult(await group({ name }), 'Action failed');
+      errorResult(await aggregate({ name }), 'Action failed');
       errorResult(await view(studentId), 'Action failed');
       errorResult(await call(studentId), 'Action failed');
-      assert.equal(policyCalls.length, 32, 'the exact test policy listener was removed');
+      assert.equal(policyCalls.length, 48, 'the exact test policy listener was removed');
       // Basic has no custom grant provider. Exercise its supported unrestricted role
       // through the ordinary membership API, without mutating the shared role itself.
       await app.bean.executor.mockCtx(
@@ -2725,6 +2807,33 @@ describe('businessHttp.test.ts', { concurrency: false, timeout: 60000 }, () => {
           assert.equal(wire.includes(`"${field}"`), false);
         }
       }
+      const groupQuery = { name, level, groups: ['level'], aggrs: { count: ['*', 'imageId'] } };
+      assert.deepEqual(output(await group(groupQuery)), {
+        result: [{ level, count_all: '1', count_imageId: '1' }],
+      });
+      const ormQuery = app.util.getModuleConfigRaw('a-orm')?.rest?.query;
+      const analysisDefaults = {
+        orders: ormQuery?.orders?.default ?? 'createdAt,desc',
+        pageNo: 1,
+        pageSize: ormQuery?.pageSize?.default ?? 20,
+      };
+      assert.deepEqual(observedCalls.at(-1)!.options, {
+        query: { ...analysisDefaults, ...groupQuery },
+        innerAccess: false,
+      });
+      const aggregateQuery = { name, level, aggrs: { count: ['imageId'] } };
+      assert.deepEqual(output(await aggregate(aggregateQuery)), { count_imageId: '1' });
+      assert.deepEqual(observedCalls.at(-1)!.options, {
+        query: { ...analysisDefaults, ...aggregateQuery },
+        innerAccess: false,
+      });
+      for (const id of ['-1', otherStudentId]) {
+        assert.deepEqual(output(await group({ where: { id } })), { result: [] });
+        assert.deepEqual(output(await aggregate({ where: { id } })), {
+          count_all: '0',
+          count_imageId: '0',
+        });
+      }
       const emptyPage = output(await select(bearer, false, selectEmptyPageQuery));
       assert.deepEqual(
         emptyPage,
@@ -2762,7 +2871,13 @@ describe('businessHttp.test.ts', { concurrency: false, timeout: 60000 }, () => {
             'select retains only the explicitly supplied filter/pagination/columns query',
           );
         } else {
-          assert.equal(current.path, '/training/student/lookup');
+          assert.ok(
+            [
+              '/training/student/lookup',
+              '/training/student/group',
+              '/training/student/aggregate',
+            ].includes(String(current.path)),
+          );
           assert.equal((current.options as { innerAccess: boolean }).innerAccess, false);
         }
         assert.equal(current.userId, userId);
@@ -2773,6 +2888,8 @@ describe('businessHttp.test.ts', { concurrency: false, timeout: 60000 }, () => {
           [
             '/training/student',
             '/training/student/lookup',
+            '/training/student/group',
+            '/training/student/aggregate',
             '/training/student/:id',
             '/training/student/summary/:id',
           ].map(path => [path, observedCalls.filter(current => current.path === path).length]),
@@ -2780,12 +2897,14 @@ describe('businessHttp.test.ts', { concurrency: false, timeout: 60000 }, () => {
         {
           '/training/student': 19,
           '/training/student/lookup': 17,
+          '/training/student/group': 16,
+          '/training/student/aggregate': 16,
           '/training/student/:id': 19,
           '/training/student/summary/:id': 19,
         },
-        'every select, lookup, view and summary traverses its fixed guarded action',
+        'every student read traverses its fixed guarded action',
       );
-      assert.equal(observedCalls.length, 74);
+      assert.equal(observedCalls.length, 106);
       await app.bean.executor.mockCtx(
         async () => {
           assert.equal(await app.bean.role.removeUserId(adminRoleId!, userId), true);
@@ -2798,14 +2917,16 @@ describe('businessHttp.test.ts', { concurrency: false, timeout: 60000 }, () => {
       )) {
         errorResult(await select(token, legacy), 'Action failed');
         errorResult(await lookup({ name }, token, legacy), 'Action failed');
+        errorResult(await group({ name }, token, legacy), 'Action failed');
+        errorResult(await aggregate({ name }, token, legacy), 'Action failed');
         errorResult(await view(studentId, token, legacy), 'Action failed');
         errorResult(await call(studentId, token, legacy), 'Action failed');
         assert.equal(observedCalls.at(-1)!.roleNames.includes('systemAdmin'), false);
       }
       assert.equal(
         observedCalls.length,
-        90,
-        'revocation rechecks all four reads on every scope/transport pair',
+        130,
+        'revocation rechecks all six reads on every scope/transport pair',
       );
     } finally {
       try {

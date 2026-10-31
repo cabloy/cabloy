@@ -81,6 +81,12 @@ export class ControllerStudent extends BeanBase {
     return await this.scope.service.student.lookup(query);
   }
 
+  @Mcp.tool({
+    name: 'training_student_group',
+    description:
+      'Group students using your current student-select permission and instance. Supports grouping by level and counting all students or students with an imageId. Defaults to counting all students by level. Uses the existing filters; counts are strings and results are wrapped in result.',
+    readOnly: true,
+  })
   @Web.get('group', { summary: $locale('StudentGroup') })
   @Api.body(v.array(DtoStudentGroupResItem))
   @Passport.rbac({ actionInherit: 'select' })
@@ -91,6 +97,12 @@ export class ControllerStudent extends BeanBase {
     return await this.scope.service.student.group(params);
   }
 
+  @Mcp.tool({
+    name: 'training_student_aggregate',
+    description:
+      'Count students using your current student-select permission and instance. Supports counting all students or students with an imageId. Defaults to both count_all and count_imageId. Uses the existing filters and returns string counts without grouping.',
+    readOnly: true,
+  })
   @Web.get('aggregate', { summary: $locale('StudentAggregate') })
   @Api.body(DtoStudentAggregateRes)
   @Passport.rbac({ actionInherit: 'select' })

@@ -64,8 +64,10 @@ const effectToolName = 'mcp_test_action_effect';
 const scalarToolName = 'mcp_test_action_scalar';
 const arrayToolName = 'mcp_test_action_array';
 const studentToolNames = [
+  'training_student_aggregate',
   'training_student_create',
   'training_student_delete',
+  'training_student_group',
   'training_student_lookup',
   'training_student_select',
   'training_student_summary',
@@ -95,9 +97,17 @@ async function withStudentToolPermissions(fn: () => Promise<void>) {
         app.ctx !== context ||
         app.bean.passport.currentUser?.id !== passport.user!.id ||
         request.action.controllerBeanFullName !== controller ||
-        !['select', 'lookup', 'view', 'summary', 'create', 'update', 'delete'].includes(
-          request.action.action,
-        )
+        ![
+          'select',
+          'lookup',
+          'group',
+          'aggregate',
+          'view',
+          'summary',
+          'create',
+          'update',
+          'delete',
+        ].includes(request.action.action)
       ) {
         return next();
       }
@@ -356,7 +366,7 @@ describe('businessTools.test.ts', { concurrency: false, timeout: 60000 }, () => 
     });
   });
 
-  it('keeps all seven student tools out of default/anonymous discovery and validates their authorized shared contracts', async t => {
+  it('keeps all nine student tools out of default/anonymous discovery and validates their authorized shared contracts', async t => {
     await app.bean.executor.mockCtx(async () => {
       assert.equal(app.bean.passport.isAuthenticated, false);
       const anonymous = await connect(await createSharedBusinessToolServer(app, 'mcp:all'));
@@ -443,10 +453,10 @@ describe('businessTools.test.ts', { concurrency: false, timeout: 60000 }, () => 
           server.diagnostics.filter(
             diagnostic =>
               diagnostic.controller === 'training-student.controller.student' &&
-              diagnostic.action === 'select',
+              ['select', 'group', 'aggregate'].includes(diagnostic.action),
           ),
           [],
-          'the existing filter-backed select contract is representable without diagnostics',
+          'the existing filter-backed select and analysis contracts are representable without diagnostics',
         );
         assert.ok(select);
         assert.equal(select.annotations.readOnlyHint, true);
@@ -1474,6 +1484,148 @@ describe('businessTools.test.ts', { concurrency: false, timeout: 60000 }, () => 
         assert.equal(invalid.result.isError, true);
         assert.equal(invalid.result.structuredContent, undefined);
         assert.deepEqual(invalid.result.content, [{ type: 'text', text: 'Action failed' }]);
+      } finally {
+        action.mock.restore();
+        await client.close();
+      }
+    });
+  });
+
+  it('discovers and binds student analysis defaults, filters and metrics through the existing Actions', async t => {
+    if (!app.meta.modules['training-student']) return;
+    await withStudentToolPermissions(async () => {
+      const server = await createSharedBusinessToolServer(app, 'mcp:read');
+      const client = await connect(server);
+      const ormQuery = app.util.getModuleConfigRaw('a-orm')?.rest?.query;
+      const defaults = {
+        orders: ormQuery?.orders?.default ?? 'createdAt,desc',
+        pageNo: 1,
+        pageSize: ormQuery?.pageSize?.default ?? 20,
+      };
+      let raw: unknown;
+      const action = t.mock.method(
+        app.bean.executor,
+        'performAction',
+        async (..._args: Parameters<typeof app.bean.executor.performAction>) => raw,
+      );
+      try {
+        const listed = await client.request('tools/list');
+        assert.equal(listed.error, undefined);
+        assert.deepEqual(
+          server.diagnostics.filter(diagnostic =>
+            ['group', 'aggregate'].includes(diagnostic.action),
+          ),
+          [],
+        );
+        for (const mode of ['group', 'aggregate'] as const) {
+          const name = `training_student_${mode}`;
+          const tool = listed.result.tools.find((item: any) => item.name === name);
+          assert.ok(tool, `${name} is discoverable with read scope`);
+          assert.equal(tool.annotations.readOnlyHint, true);
+          assert.equal(tool.annotations.destructiveHint, false);
+          assert.equal(tool.inputSchema.additionalProperties, false);
+          assert.deepEqual(Object.keys(tool.inputSchema.properties).sort(), [
+            'aggrs',
+            'columns',
+            'createdAt',
+            ...(mode === 'group' ? ['groups'] : []),
+            'level',
+            'name',
+            'orders',
+            'pageNo',
+            'pageSize',
+            'where',
+          ]);
+          if (mode === 'group') {
+            assert.deepEqual(tool.inputSchema.properties.groups.items.enum, ['level']);
+            assert.equal(tool.outputSchema.properties.result.type, 'array');
+          } else {
+            assert.deepEqual(Object.keys(tool.outputSchema.properties).sort(), [
+              'count_all',
+              'count_imageId',
+            ]);
+            assert.deepEqual(tool.outputSchema.properties.count_all.type, ['string', 'null']);
+          }
+          assert.deepEqual(tool.inputSchema.properties.aggrs.properties.count.items.enum, [
+            '*',
+            'imageId',
+          ]);
+          const call = (args?: Record<string, unknown>) =>
+            client.request('tools/call', { name, arguments: args });
+          raw =
+            mode === 'group'
+              ? [{ level: 2, count_all: '3' }]
+              : { count_all: '3', count_imageId: '1' };
+          const response = await call();
+          assert.equal(response.error, undefined);
+          assert.notEqual(response.result.isError, true);
+          assert.deepEqual(action.mock.calls.at(-1)!.arguments, [
+            'get',
+            `/training/student/${mode}`,
+            {
+              query: {
+                ...defaults,
+                ...(mode === 'group' ? { groups: ['level'] } : {}),
+                aggrs: { count: mode === 'group' ? ['*'] : ['*', 'imageId'] },
+              },
+              innerAccess: false,
+            },
+          ]);
+          const expected = mode === 'group' ? { result: raw } : raw;
+          assert.deepEqual(response.result.structuredContent, expected);
+          assert.deepEqual(JSON.parse(response.result.content[0].text), expected);
+          const filters = {
+            name: 'Student',
+            level: 2,
+            where: { level: { _gte_: 2 } },
+            ...(mode === 'group' ? { groups: ['level'] } : {}),
+            aggrs: { count: ['imageId'] },
+          };
+          raw = mode === 'group' ? [{ level: 2, count_imageId: '1' }] : { count_imageId: '1' };
+          const filtered = await call(filters);
+          assert.equal(filtered.error, undefined);
+          assert.notEqual(filtered.result.isError, true);
+          assert.deepEqual(action.mock.calls.at(-1)!.arguments, [
+            'get',
+            `/training/student/${mode}`,
+            { query: { ...defaults, ...filters }, innerAccess: false },
+          ]);
+          assert.deepEqual(
+            filtered.result.structuredContent,
+            mode === 'group' ? { result: raw } : raw,
+          );
+          const calls = action.mock.callCount();
+          for (const args of [
+            { groups: ['mobile'] },
+            ...(mode === 'aggregate' ? [{ groups: ['level'] }] : []),
+            { aggrs: { count: ['mobile'] } },
+            { aggrs: { sum: ['level'] } },
+            { aggrs: {} },
+            { aggrs: '{"count":["*"]}' },
+            { iid: 'injected' },
+            { innerAccess: true },
+          ]) {
+            const rejected = await call(args);
+            assert.deepEqual(
+              rejected.error,
+              {
+                code: -32602,
+                message: 'Invalid tool arguments',
+              },
+              `${name}: ${JSON.stringify(args)}`,
+            );
+          }
+          assert.equal(action.mock.callCount(), calls, 'invalid controls do not dispatch');
+          raw =
+            mode === 'group'
+              ? [{ level: 2, count_all: { invalid: true } }]
+              : { count_all: { invalid: true } };
+          const invalid = await call();
+          assert.equal(invalid.error, undefined);
+          assert.equal(invalid.result.isError, true);
+          assert.equal(invalid.result.structuredContent, undefined);
+          assert.deepEqual(invalid.result.content, [{ type: 'text', text: 'Action failed' }]);
+        }
       } finally {
         action.mock.restore();
         await client.close();
