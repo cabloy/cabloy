@@ -12,7 +12,8 @@ import { run } from 'node:test';
 import { lcov, spec } from 'node:test/reporters';
 import { fileURLToPath } from 'node:url';
 import { cast, createGeneralApp } from 'vona-core';
-import whyIsNodeRunning from 'why-is-node-running';
+
+import { formatActiveResourceCounts } from './testDiagnostics.ts';
 
 const argv = process.argv.slice(2);
 const projectPath = argv[0];
@@ -70,13 +71,12 @@ async function testRun(projectPath: string, coverage: boolean, patterns: string[
   const closeApplication = async () => {
     const [_, error] = await catchError(() => app.close());
     closeError = error;
-    // handles
+    // resource types only; no stack/source inspection
     if (process.env.TEST_WHYISNODERUNNING === 'true') {
       await sleep(2000);
-      const handles = (process as any)._getActiveHandles();
-      if (handles.length > 3) {
-        whyIsNodeRunning();
-      }
+      console.error(
+        `Active resource counts: ${formatActiveResourceCounts(process.getActiveResourcesInfo())}`,
+      );
     }
   };
   const closeApplicationOnce = () => {

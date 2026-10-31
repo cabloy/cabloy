@@ -232,7 +232,11 @@ function _coerceString(payload: IParsePayload, fn?: Function) {
   if (!isNil(payload.value)) {
     if (payload.value === '') {
       payload.value = undefined;
-    } else if (typeof payload.value !== 'string') {
+    } else if (
+      typeof payload.value === 'number' ||
+      typeof payload.value === 'boolean' ||
+      typeof payload.value === 'bigint'
+    ) {
       payload.value = String(payload.value);
     } else {
       fn?.(payload);

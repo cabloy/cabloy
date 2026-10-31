@@ -53,7 +53,7 @@ const isolationSource = resolve(
   'vona/packages-vona/vona-core/src/lib/core/testIsolation.ts',
 );
 
-test('claim reaping defaults remain enabled and contract opt-out never calls the reaper', async () => {
+test('claim reaping defaults remain enabled and unit/contract opt-outs never call the reaper', async () => {
   const calls: string[] = [];
   const reap = async (projectPath: string) => {
     calls.push(projectPath);
@@ -68,24 +68,33 @@ test('claim reaping defaults remain enabled and contract opt-out never calls the
     '/synthetic/vona',
     '/synthetic/vona',
   ]);
-  await reapBeforeIsolatedRun(
-    'contract',
-    '/synthetic/vona',
-    { skipExpiredClaimReaping: true },
-    async () => {
-      throw new Error('historical reaper must not run');
-    },
-  );
-  for (const kind of ['unit', 'cov', 'e2e'] as const) {
+  const fixture = mkdtempSync(join(realpathSync(tmpdir()), 'cabloy historical sentinel '));
+  const sentinel = join(fixture, 'old-claim.json');
+  let historicalReads = 0;
+  try {
+    writeFileSync(sentinel, '{"syntheticHistoricalClaim":true}');
+    for (const kind of ['unit', 'contract'] as const) {
+      await reapBeforeIsolatedRun(kind, fixture, { skipExpiredClaimReaping: true }, async () => {
+        historicalReads++;
+        readFileSync(sentinel, 'utf8');
+        throw new Error('historical reaper must not run');
+      });
+    }
+    assert.equal(historicalReads, 0);
+    assert.equal(existsSync(sentinel), true);
+  } finally {
+    rmSync(fixture, { recursive: true, force: true });
+  }
+  for (const kind of ['cov', 'e2e'] as const) {
     await assert.rejects(
       reapBeforeIsolatedRun(kind, '/synthetic/vona', { skipExpiredClaimReaping: true }, reap),
-      /supported only for contract generation/,
+      /supported only for unit tests and contract generation/,
     );
   }
   assert.equal(calls.length, 4);
 });
 
-test('public test entrypoints reject contract-only flags before claim reaping', () => {
+test('public test entrypoints validate unit opt-out flags before claim reaping', () => {
   const runnerUrl = new URL('./runIsolatedTest.ts', import.meta.url).href;
   const source = `
     import assert from 'node:assert/strict';
@@ -94,7 +103,10 @@ test('public test entrypoints reject contract-only flags before claim reaping', 
     registerHooks({ resolve(specifier, context, nextResolve) {
       if (context.parentURL === ${JSON.stringify(runnerUrl)} && specifier === './testClaimCleanup.ts') {
         const source = \`
-          export function parseTestClaimTtlSeconds() { return 1; }
+          export function parseTestClaimTtlSeconds() {
+            globalThis.cleanupCalls.push('ttl');
+            return 1;
+          }
           export async function reapExpiredTestClaims() {
             globalThis.cleanupCalls.push('reap');
             throw new Error('unexpected claim reaping');
@@ -106,20 +118,37 @@ test('public test entrypoints reject contract-only flags before claim reaping', 
         \`;
         return { url: 'data:text/javascript,' + encodeURIComponent(source), shortCircuit: true };
       }
+      if (context.parentURL === ${JSON.stringify(runnerUrl)} && specifier === 'node:net') {
+        return { url: 'data:text/javascript,' + encodeURIComponent(
+          'export function createServer() { throw new Error("synthetic allocation boundary"); }'
+        ), shortCircuit: true };
+      }
       return nextResolve(specifier, context);
     } });
     const { runIsolatedTest } = await import(${JSON.stringify(runnerUrl)});
     for (const [kind, args] of [['unit', []], ['unit', ['--coverage']], ['e2e', []]]) {
-      for (const suffix of ['', '=true', '=false', '=']) {
+      for (const suffix of ['=true', '=false', '=', '=other']) {
         await assert.rejects(
           runIsolatedTest(kind, [...args, '--skip-expired-claim-reaping' + suffix]),
-          /--skip-expired-claim-reaping is supported only for contract generation/,
+          /must be a standalone flag/,
         );
         assert.deepEqual(globalThis.cleanupCalls, []);
       }
     }
+    for (const [kind, args] of [['unit', ['--coverage']], ['unit', ['--coverage=true']], ['unit', ['--coverage=false']], ['e2e', []]]) {
+      await assert.rejects(
+        runIsolatedTest(kind, [...args, '--skip-expired-claim-reaping']),
+        /supported only for non-coverage unit tests/,
+      );
+      assert.deepEqual(globalThis.cleanupCalls, []);
+    }
+    await assert.rejects(
+      runIsolatedTest('unit', ['--skip-expired-claim-reaping']),
+      /synthetic allocation boundary/,
+    );
+    assert.deepEqual(globalThis.cleanupCalls, []);
     await assert.rejects(runIsolatedTest('unit', []), /unexpected claim reaping/);
-    assert.deepEqual(globalThis.cleanupCalls, ['reap']);
+    assert.deepEqual(globalThis.cleanupCalls, ['ttl', 'reap']);
   `;
   const result = spawnSync(process.execPath, ['--input-type=module', '-e', source], {
     cwd: ROOT_DIR,
@@ -185,6 +214,39 @@ test('public test scripts delegate to the isolated runner without recursion', ()
     'src/test/example.test.ts',
     '--ci=true',
   ]);
+  const fixture = mkdtempSync(join(realpathSync(tmpdir()), 'cabloy test forwarding '));
+  try {
+    mkdirSync(join(fixture, 'vona'));
+    writeFileSync(
+      join(fixture, 'package.json'),
+      JSON.stringify({ scripts: { test: root.scripts.test } }),
+    );
+    writeFileSync(
+      join(fixture, 'vona/package.json'),
+      JSON.stringify({ scripts: { test: 'node argv.mjs unit' } }),
+    );
+    writeFileSync(
+      join(fixture, 'vona/argv.mjs'),
+      'console.log("FORWARDED=" + JSON.stringify(process.argv.slice(2)));',
+    );
+    const result = spawnSync(
+      process.execPath,
+      [resolveNpmCli(), 'run', 'test', '--', '--', '--skip-expired-claim-reaping'],
+      {
+        cwd: fixture,
+        encoding: 'utf8',
+        timeout: 10_000,
+      },
+    );
+    assert.equal(result.error, undefined);
+    assert.equal(result.status, 0, result.stderr);
+    assert.ok(
+      result.stdout.includes('FORWARDED=["unit","--skip-expired-claim-reaping"]'),
+      result.stdout,
+    );
+  } finally {
+    rmSync(fixture, { recursive: true, force: true });
+  }
 });
 
 test('resolves the npm JavaScript entrypoint without a command shell', () => {

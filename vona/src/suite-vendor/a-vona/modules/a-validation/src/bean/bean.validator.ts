@@ -4,7 +4,7 @@ import type { ISchemaObjectExtensionFieldRest, TypeSchemaScene } from 'vona-modu
 import { isNil } from '@cabloy/utils';
 import { ZodMetadata } from '@cabloy/zod-openapi';
 import { coerceWithNil } from '@cabloy/zod-query';
-import { BeanBase } from 'vona';
+import { BeanBase, runWithZodQueryCoercion } from 'vona';
 import { Bean } from 'vona-module-a-bean';
 import { $schema } from 'vona-module-a-openapiutils';
 import { z } from 'zod';
@@ -56,7 +56,10 @@ export class BeanValidator extends BeanBase {
   ): Promise<V extends undefined ? undefined : V extends null ? null : T> {
     const errorHttpStatusCode = options?.errorHttpStatusCode ?? 400;
     if (!schema) return value as any;
-    const result = await schema?.safeParseAsync(value);
+    const result =
+      options?.queryCoercion === false
+        ? await runWithZodQueryCoercion(false, () => schema.safeParseAsync(value))
+        : await schema.safeParseAsync(value);
     if (result.success) return this._sanitizeReadonly(schema, result.data) as any;
     // error
     if (options?.disableErrorMessages) {

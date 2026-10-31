@@ -130,9 +130,17 @@ For an explicitly authorized contract-generation run that must not reap historic
 npm run contract:generate:isolated -- <module-name> --skip-expired-claim-reaping
 ```
 
-The wrapper consumes this standalone flag rather than forwarding it to Zova; `--skip-expired-claim-reaping=...` is rejected. Without the flag, contract generation retains normal historical-claim reaping. Unit, coverage and E2E defaults are unchanged; the runner rejects their use of this opt-out.
+The wrapper consumes this standalone flag rather than forwarding it to Zova; `--skip-expired-claim-reaping=...` is rejected. Without the flag, contract generation retains normal historical-claim reaping.
 
-The opt-in lane requires strict freshness after application configuration and before module loading: run-owned public/runtime/SQLite directories must be absent or empty, shared and static-isolate database namespaces must be absent, and persistent Redis namespaces must be empty. Read-only discovery failures or preexisting resources fail closed rather than authorizing deletion. Startup requires per-application freshness proof to bypass normal test clearing; database preparation rechecks the namespace, never drops existing databases in this lane, and reuses only a database creation recorded by that application.
+Non-coverage unit tests in Cabloy Basic and Cabloy Start also accept the standalone flag. From the repository root, preserve both npm forwarding boundaries:
+
+```bash
+npm run test -- -- --ci --skip-expired-claim-reaping <test-path>
+```
+
+The unit-test wrapper consumes the flag rather than forwarding it to the test CLI. This skips only historical-claim reaping: it does not enable contract-generation strict freshness or diagnostic suppression, and it preserves current-run isolation, cleanup on success, and resource retention on failure. Unit-test defaults remain unchanged. Coverage and E2E reject the opt-out, and assignment forms such as `--skip-expired-claim-reaping=true` are rejected.
+
+The contract-generation opt-in lane requires strict freshness after application configuration and before module loading: run-owned public/runtime/SQLite directories must be absent or empty, shared and static-isolate database namespaces must be absent, and persistent Redis namespaces must be empty. Read-only discovery failures or preexisting resources fail closed rather than authorizing deletion. Startup requires per-application freshness proof to bypass normal test clearing; database preparation rechecks the namespace, never drops existing databases in this lane, and reuses only a database creation recorded by that application.
 
 In the strict opt-in lane, generated `env.ts` contains a selected-key projection of the bootstrap process environment, not serialized configuration values. The CLI passes its resolved configuration to the bootstrap child in memory, preserving resolved-value precedence without exposing every inherited environment key through `app.meta.env`. Strict generation requires test mode and matching run-owned directories before configuration loading or generated-file writes. Ordinary dev/build/test and default contract generation keep their existing environment generation behavior.
 

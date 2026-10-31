@@ -594,8 +594,10 @@ export async function reapBeforeIsolatedRun(
   reap: typeof reapExpiredTestClaims = reapExpiredTestClaims,
 ): Promise<void> {
   if (options.skipExpiredClaimReaping) {
-    if (kind !== 'contract') {
-      throw new Error('Skipping expired claim reaping is supported only for contract generation');
+    if (kind !== 'unit' && kind !== 'contract') {
+      throw new Error(
+        'Skipping expired claim reaping is supported only for unit tests and contract generation',
+      );
     }
     return;
   }
@@ -616,7 +618,9 @@ export async function withIsolatedRun<T>(
   try {
     return await withIsolatedRunInternal(kind, callback, rootDir, options);
   } catch (error) {
-    throw options.skipExpiredClaimReaping ? strictGenerationFailure('preparation', error) : error;
+    throw kind === 'contract' && options.skipExpiredClaimReaping === true
+      ? strictGenerationFailure('preparation', error)
+      : error;
   }
 }
 
@@ -626,7 +630,7 @@ async function withIsolatedRunInternal<T>(
   rootDir: string,
   options: IsolatedRunOptions,
 ): Promise<T> {
-  const strict = options.skipExpiredClaimReaping === true;
+  const strict = kind === 'contract' && options.skipExpiredClaimReaping === true;
   resolveCabloyEdition(rootDir);
   const vonaDir = resolve(rootDir, 'vona');
   await reapBeforeIsolatedRun(kind, vonaDir, options);
@@ -651,7 +655,7 @@ async function withIsolatedRunInternal<T>(
       META_MODE: 'test',
       VONA_DB_RESET: undefined,
       VONA_TEST_RUN_ID: runId,
-      VONA_TEST_REQUIRE_FRESH_RESOURCES: options.skipExpiredClaimReaping ? 'true' : undefined,
+      VONA_TEST_REQUIRE_FRESH_RESOURCES: strict ? 'true' : undefined,
       VONA_TEST_READY_KEY: undefined,
       VONA_TEST_SERVER_ORIGIN: undefined,
       APP_NAME: `cabtest${runId}`,
@@ -715,9 +719,18 @@ async function withIsolatedRunInternal<T>(
 }
 
 export async function runIsolatedTest(kind: 'unit' | 'e2e', args: string[]) {
-  if (args.some(arg => /^--skip-expired-claim-reaping(?:=|$)/.test(arg))) {
-    throw new Error('--skip-expired-claim-reaping is supported only for contract generation');
+  const skipFlag = '--skip-expired-claim-reaping';
+  if (args.some(arg => arg.startsWith(`${skipFlag}=`))) {
+    throw new Error(`${skipFlag} must be a standalone flag`);
   }
+  const skipExpiredClaimReaping = args.includes(skipFlag);
+  if (
+    skipExpiredClaimReaping &&
+    (kind !== 'unit' || args.some(arg => /^--coverage(?:=|$)/.test(arg)))
+  ) {
+    throw new Error(`${skipFlag} is supported only for non-coverage unit tests`);
+  }
+  args = args.filter(arg => arg !== skipFlag);
   if (process.env.E2E_BASE_URL !== undefined) {
     throw new Error(
       'E2E_BASE_URL is unsupported; the E2E runner manages a local test-mode target.',
@@ -741,6 +754,8 @@ export async function runIsolatedTest(kind: 'unit' | 'e2e', args: string[]) {
         ),
       );
     },
+    ROOT_DIR,
+    { skipExpiredClaimReaping },
   );
 }
 
