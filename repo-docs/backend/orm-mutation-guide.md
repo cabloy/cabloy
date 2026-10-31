@@ -187,6 +187,12 @@ await this.scope.model.order.update(
 );
 ```
 
+For relation-aware updates and deletes, association writes require a parent matching the effective mutation predicate, including the current instance, soft-delete scope, and any additional conditions. An unmatched parent does not create, update, or delete associated rows. Bulk operations apply this check to each parent; unmatched update inputs retain the existing return shape rather than becoming inserts.
+
+A matched parent remains eligible when its scalar values are unchanged or the payload only changes relations. A single update processes nested writes only when exactly one parent matches; it does not fan one nested payload out across multiple parents. The same admission rules apply to static `include`, dynamic `with`, and autoloaded relations, with or without entity caching. Explicit scope options such as `disableDeleted: true` still apply.
+
+Admission is checked before the parent write. It is not an atomic concurrency guarantee and does not automatically add a transaction or lock. When a business operation needs atomic parent-and-child writes or concurrency control, define that boundary explicitly; see the [Transaction Guide](/backend/transaction-guide).
+
 This is one of the strongest reasons mutation guidance must be read together with relation guidance.
 
 ## Relationship to soft deletion

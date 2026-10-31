@@ -346,7 +346,9 @@ That gives the suite a working default even before a scene overrides anything.
 Practical behavior to know:
 
 - it defaults to proxy-signed delivery
-- it can return local static URLs under `/api/static/...`
+- public, unprotected delivery returns absolute URLs with the existing `/api/static/...` path; without an explicit `deliveryBaseUrl`, native delivery dynamically uses the effective `server.serve.protocol` / `host`, then the current request origin, then the framework's HTTP loopback fallback
+- ordinary native delivery does not require a configured static domain; an explicit `deliveryBaseUrl` remains supported, and a persisted image base retains precedence over the client base
+- explicit delivery bases keep their existing path semantics: native delivery appends `public/<instance-id>/...`, so a base for the ordinary static mapping includes `/api/static`, not `/public`; third-party providers retain their own delivery configuration
 - it does not support direct upload and uses the standard authenticated multipart upload flow
 - named variants produce stable variant files such as `__thumbnail`
 - ad hoc transforms produce stable hashed files such as `__t_<hash>`
@@ -354,7 +356,7 @@ Practical behavior to know:
 - when downloading the unsigned original variant, it can return a buffer instead of a URL
 - it still does not implement `uploadUrl(...)` for provider-side remote URL ingestion
 
-These behaviors are demonstrated directly in the native image tests.
+These behaviors are demonstrated directly in the native image tests. Absolute URL construction does not change public/private or audience/signature policy, and does not by itself establish external reachability or inline rendering in an AI client.
 
 ### Cloudflare provider
 

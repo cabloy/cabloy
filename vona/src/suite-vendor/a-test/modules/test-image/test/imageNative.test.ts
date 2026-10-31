@@ -1,3 +1,5 @@
+import type { IImageResource } from 'vona-module-a-image';
+
 import { catchError } from '@cabloy/utils';
 import fse from 'fs-extra';
 import assert from 'node:assert';
@@ -14,133 +16,304 @@ const tinyPng = Buffer.from(
 describe('imageNative.test.ts', { concurrency: false }, () => {
   it('action:image:native private upload/get/delete', async () => {
     await app.bean.executor.mockCtx(async () => {
-      const file = path.join(os.tmpdir(), 'test-image-native.png');
-      await fse.writeFile(file, tinyPng);
-      const image = await app.bean.image.upload(
-        'image-native:native',
-        {
-          file,
-          filename: 'hello.png',
-          contentType: 'image/png',
-        },
-        {
-          clientName: 'default',
-          clientOptions: {
-            variants: {
-              original: {},
-              thumbnail: { width: 64, height: 64, fit: 'cover' },
+      const tempDir = await fse.mkdtemp(path.join(os.tmpdir(), 'test-image-native-private-'));
+      let imageId: IImageResource['id'] | undefined;
+      try {
+        const file = path.join(tempDir, 'input.png');
+        await fse.writeFile(file, tinyPng);
+        const image = await app.bean.image.upload(
+          'image-native:native',
+          {
+            file,
+            filename: 'hello.png',
+            contentType: 'image/png',
+          },
+          {
+            clientName: 'default',
+            clientOptions: {
+              variants: {
+                original: {},
+                thumbnail: { width: 64, height: 64, fit: 'cover' },
+              },
             },
           },
-        },
-      );
-      assert.equal(image.provider, 'image-native:native');
-      assert.equal(image.filename, 'hello.png');
-      assert.equal(image.public, false);
-      assert.deepEqual(image.variants?.thumbnail, { width: 64, height: 64, fit: 'cover' });
-      assert.equal(image.storagePath?.includes(`${path.sep}public${path.sep}`), false);
-      const image2 = await app.bean.image.get(image.id);
-      assert.equal(image2?.resourceId, image.resourceId);
-      const thumbnailPath = path.join(
-        path.dirname(image.storagePath!),
-        `${image.resourceId}__thumbnail${path.extname(image.storagePath!)}`,
-      );
-      assert.equal(await fse.pathExists(thumbnailPath), false);
+        );
+        imageId = image.id;
+        assert.equal(image.provider, 'image-native:native');
+        assert.equal(image.filename, 'hello.png');
+        assert.equal(image.public, false);
+        assert.deepEqual(image.variants?.thumbnail, { width: 64, height: 64, fit: 'cover' });
+        assert.equal(image.storagePath?.includes(`${path.sep}public${path.sep}`), false);
+        const image2 = await app.bean.image.get(image.id);
+        assert.equal(image2?.resourceId, image.resourceId);
+        const thumbnailPath = path.join(
+          path.dirname(image.storagePath!),
+          `${image.resourceId}__thumbnail${path.extname(image.storagePath!)}`,
+        );
+        assert.equal(await fse.pathExists(thumbnailPath), false);
 
-      const originalUrl = await app.bean.image.getVariantUrl(image.id, 'original');
-      const originalUrlParsed = new URL(originalUrl);
-      assert.equal(originalUrlParsed.pathname.endsWith('/image/delivery'), true);
-      assert.equal(originalUrlParsed.searchParams.get('imageId'), String(image.id));
-      assert.equal(originalUrlParsed.searchParams.has('token'), true);
-      const namedUrl = await app.bean.image.getVariantUrl(image.id, 'thumbnail');
-      const namedUrlParsed = new URL(namedUrl);
-      assert.equal(namedUrlParsed.pathname.endsWith('/image/delivery'), true);
-      assert.equal(namedUrlParsed.searchParams.get('imageId'), String(image.id));
-      assert.equal(namedUrlParsed.searchParams.has('token'), true);
-      assert.equal(await fse.pathExists(thumbnailPath), false);
+        const originalUrl = await app.bean.image.getVariantUrl(image.id, 'original');
+        const originalUrlParsed = new URL(originalUrl);
+        assert.equal(originalUrlParsed.pathname.endsWith('/image/delivery'), true);
+        assert.equal(originalUrlParsed.searchParams.get('imageId'), String(image.id));
+        assert.equal(originalUrlParsed.searchParams.has('token'), true);
+        const namedUrl = await app.bean.image.getVariantUrl(image.id, 'thumbnail');
+        const namedUrlParsed = new URL(namedUrl);
+        assert.equal(namedUrlParsed.pathname.endsWith('/image/delivery'), true);
+        assert.equal(namedUrlParsed.searchParams.get('imageId'), String(image.id));
+        assert.equal(namedUrlParsed.searchParams.has('token'), true);
+        assert.equal(await fse.pathExists(thumbnailPath), false);
 
-      const signedUnauthorizedUrl = new URL(namedUrl);
-      signedUnauthorizedUrl.searchParams.delete('token');
-      const signedUnauthorizedRes = await fetch(signedUnauthorizedUrl);
-      assert.equal(signedUnauthorizedRes.status, 401);
-      const signedAuthorizedRes = await fetch(namedUrl);
-      assert.equal(signedAuthorizedRes.ok, true);
-      assert.equal(signedAuthorizedRes.headers.get('content-type')?.includes('image/png'), true);
-      assert.equal(await fse.pathExists(thumbnailPath), true);
+        const signedUnauthorizedUrl = new URL(namedUrl);
+        signedUnauthorizedUrl.searchParams.delete('token');
+        const signedUnauthorizedRes = await fetch(signedUnauthorizedUrl);
+        assert.equal(signedUnauthorizedRes.status, 401);
+        const signedAuthorizedRes = await fetch(namedUrl);
+        assert.equal(signedAuthorizedRes.ok, true);
+        assert.equal(signedAuthorizedRes.headers.get('content-type')?.includes('image/png'), true);
+        assert.equal(await fse.pathExists(thumbnailPath), true);
 
-      await app.bean.passport.signinMock();
-      const audienceView = await app.bean.image.resolveView(image.id, 'thumbnail', undefined, {
-        audience: true,
-      });
-      const passportCode = await app.bean.passport.createTempAuthToken({
-        path: '/api/image/delivery',
-      });
-      const audienceUrl = new URL(audienceView!.url);
-      audienceUrl.searchParams.set('x-vona-passport-code', passportCode);
-      const audienceAuthorizedRes = await fetch(audienceUrl);
-      assert.equal(audienceAuthorizedRes.ok, true);
-      await app.bean.passport.signout();
-      const audienceUnauthorizedRes = await fetch(audienceView!.url);
-      assert.equal(audienceUnauthorizedRes.status, 401);
+        await app.bean.passport.signinMock();
+        const audienceView = await app.bean.image.resolveView(image.id, 'thumbnail', undefined, {
+          audience: true,
+        });
+        const passportCode = await app.bean.passport.createTempAuthToken({
+          path: '/api/image/delivery',
+        });
+        const audienceUrl = new URL(audienceView!.url);
+        audienceUrl.searchParams.set('x-vona-passport-code', passportCode);
+        const audienceAuthorizedRes = await fetch(audienceUrl);
+        assert.equal(audienceAuthorizedRes.ok, true);
+        await app.bean.passport.signout();
+        const audienceUnauthorizedRes = await fetch(audienceView!.url);
+        assert.equal(audienceUnauthorizedRes.status, 401);
 
-      const customUrl = await app.bean.image.getVariantUrl(image.id, {
-        transformOptions: { width: 32, height: 32, fit: 'cover' },
-      });
-      assert.equal(customUrl.includes('/image/delivery?'), true);
-      const customUrl2 = await app.bean.image.getVariantUrl(image.id, {
-        transformOptions: { width: 32, height: 32, fit: 'cover' },
-      });
-      assert.equal(customUrl2.includes('/image/delivery?'), true);
-      const customRes = await fetch(customUrl);
-      assert.equal(customRes.ok, true);
-      assert.equal(customRes.headers.get('content-type')?.includes('image/png'), true);
+        const customUrl = await app.bean.image.getVariantUrl(image.id, {
+          transformOptions: { width: 32, height: 32, fit: 'cover' },
+        });
+        assert.equal(customUrl.includes('/image/delivery?'), true);
+        const customUrl2 = await app.bean.image.getVariantUrl(image.id, {
+          transformOptions: { width: 32, height: 32, fit: 'cover' },
+        });
+        assert.equal(customUrl2.includes('/image/delivery?'), true);
+        const customRes = await fetch(customUrl);
+        assert.equal(customRes.ok, true);
+        assert.equal(customRes.headers.get('content-type')?.includes('image/png'), true);
 
-      const view = await app.bean.image.resolveView(image.id, 'thumbnail');
-      assert.equal(view?.id, image.id);
-      assert.equal(view?.url.includes('/image/delivery?'), true);
-      assert.equal(view?.signed, true);
-      assert.equal('provider' in (view ?? {}), false);
-      assert.equal('resourceId' in (view ?? {}), false);
-      assert.equal('uploadedAt' in (view ?? {}), false);
-      assert.equal('clientName' in (view ?? {}), false);
-      assert.equal('variants' in (view ?? {}), false);
+        const view = await app.bean.image.resolveView(image.id, 'thumbnail');
+        assert.equal(view?.id, image.id);
+        assert.equal(view?.url.includes('/image/delivery?'), true);
+        assert.equal(view?.signed, true);
+        assert.equal('provider' in (view ?? {}), false);
+        assert.equal('resourceId' in (view ?? {}), false);
+        assert.equal('uploadedAt' in (view ?? {}), false);
+        assert.equal('clientName' in (view ?? {}), false);
+        assert.equal('variants' in (view ?? {}), false);
 
-      const signedView = await app.bean.image.resolveView(image.id, 'original', undefined, {
-        expiresIn: 600,
-      });
-      assert.equal(signedView?.url.includes('/image/delivery?'), true);
-      assert.equal(signedView?.url.includes('token='), true);
-      assert.equal(signedView?.signed, true);
+        const signedView = await app.bean.image.resolveView(image.id, 'original', undefined, {
+          expiresIn: 600,
+        });
+        assert.equal(signedView?.url.includes('/image/delivery?'), true);
+        assert.equal(signedView?.url.includes('token='), true);
+        assert.equal(signedView?.signed, true);
 
-      const [viewSceneMismatch, viewSceneMismatchErr] = await catchError(() =>
-        app.bean.image.resolveView(image.id, 'original', 'training-student:studentImage'),
-      );
-      assert.equal(viewSceneMismatch, undefined);
-      assert.equal(viewSceneMismatchErr?.message.includes('image scene mismatch'), true);
+        const [viewSceneMismatch, viewSceneMismatchErr] = await catchError(() =>
+          app.bean.image.resolveView(image.id, 'original', 'training-student:studentImage'),
+        );
+        assert.equal(viewSceneMismatch, undefined);
+        assert.equal(viewSceneMismatchErr?.message.includes('image scene mismatch'), true);
 
-      const resolvedUndefined = await app.bean.image.resolveView(undefined, 'original');
-      assert.equal(resolvedUndefined, undefined);
-      const resolvedViewsUndefined = await app.bean.image.resolveViews(undefined, 'original');
-      assert.equal(resolvedViewsUndefined, undefined);
-      const resolvedViewsEmpty = await app.bean.image.resolveViews([], 'original');
-      assert.deepEqual(resolvedViewsEmpty, []);
-      const resolvedViews = await app.bean.image.resolveViews([image.id, 999999], 'original');
-      assert.equal(resolvedViews?.length, 1);
-      assert.equal(resolvedViews?.[0].id, image.id);
+        const resolvedUndefined = await app.bean.image.resolveView(undefined, 'original');
+        assert.equal(resolvedUndefined, undefined);
+        const resolvedViewsUndefined = await app.bean.image.resolveViews(undefined, 'original');
+        assert.equal(resolvedViewsUndefined, undefined);
+        const resolvedViewsEmpty = await app.bean.image.resolveViews([], 'original');
+        assert.deepEqual(resolvedViewsEmpty, []);
+        const resolvedViews = await app.bean.image.resolveViews([image.id, 999999], 'original');
+        assert.equal(resolvedViews?.length, 1);
+        assert.equal(resolvedViews?.[0].id, image.id);
 
-      const download = await app.bean.image.download(image.id, 'original');
-      assert.equal(download.kind, 'url');
-      assert.equal(download.signed, true);
-      assert.equal(download.url?.includes('/image/delivery?'), true);
+        const download = await app.bean.image.download(image.id, 'original');
+        assert.equal(download.kind, 'url');
+        assert.equal(download.signed, true);
+        assert.equal(download.url?.includes('/image/delivery?'), true);
 
-      const bufferedVariant = await app.bean.image.downloadForDelivery(image.id, 'thumbnail');
-      assert.equal(bufferedVariant.kind, 'buffer');
-      assert.equal(bufferedVariant.contentType, 'image/png');
-      assert.equal((bufferedVariant.buffer?.length ?? 0) > 0, true);
+        const bufferedVariant = await app.bean.image.downloadForDelivery(image.id, 'thumbnail');
+        assert.equal(bufferedVariant.kind, 'buffer');
+        assert.equal(bufferedVariant.contentType, 'image/png');
+        assert.equal((bufferedVariant.buffer?.length ?? 0) > 0, true);
 
-      await app.bean.image.delete(image.id);
-      const image3 = await app.bean.image.get(image.id);
-      assert.equal(image3, undefined);
-      await fse.remove(file);
+        await app.bean.image.delete(image.id);
+        const image3 = await app.bean.image.get(image.id);
+        assert.equal(image3, undefined);
+        assert.equal(await fse.pathExists(image.storagePath!), false);
+        assert.equal(await fse.pathExists(thumbnailPath), false);
+      } finally {
+        try {
+          if (imageId !== undefined) await app.bean.image.delete(imageId);
+        } finally {
+          await fse.remove(tempDir);
+        }
+      }
     });
+  });
+
+  it('action:image:native public URLs use the request origin and preserve static paths', async () => {
+    const req = {
+      headers: { host: 'request.example.test' },
+      method: 'GET',
+      socket: { encrypted: true },
+      url: '/',
+    };
+    await app.bean.executor.mockCtx(
+      async () => {
+        const tempDir = await fse.mkdtemp(path.join(os.tmpdir(), 'test-image-native-public-'));
+        let imageId: IImageResource['id'] | undefined;
+        try {
+          const file = path.join(tempDir, 'input.png');
+          await fse.writeFile(file, tinyPng);
+          const image = await app.bean.image.upload(
+            'image-native:native',
+            {
+              file,
+              filename: 'public.png',
+              contentType: 'image/png',
+              public: true,
+            },
+            {
+              clientName: 'default',
+              clientOptions: {
+                variants: {
+                  original: {},
+                  thumbnail: { width: 64, height: 64, fit: 'cover' },
+                },
+              },
+            },
+          );
+          imageId = image.id;
+          assert.equal(image.provider, 'image-native:native');
+          assert.equal(image.public, true);
+          assert.equal((await app.bean.image.get(image.id))?.resourceId, image.resourceId);
+          assert.equal(await fse.pathExists(image.storagePath!), true);
+          const staticPath = `/api/static/public/${app.ctx.instance.id}/image-native/default`;
+          const originalPath = `${staticPath}/${image.resourceId}.png`;
+          const thumbnailPath = `${staticPath}/${image.resourceId}__thumbnail.png`;
+          const thumbnailFile = path.join(
+            path.dirname(image.storagePath!),
+            `${image.resourceId}__thumbnail.png`,
+          );
+          assert.equal(await fse.pathExists(thumbnailFile), false);
+
+          const originalUrl = await app.bean.image.getVariantUrl(image.id, 'original');
+          const originalParsed = new URL(originalUrl);
+          assert.equal(originalParsed.origin, 'https://request.example.test');
+          assert.equal(originalParsed.pathname, originalPath);
+          assert.equal(originalParsed.search, '');
+          assert.equal(originalUrl, `https://request.example.test${originalPath}`);
+
+          const thumbnailUrl = await app.bean.image.getVariantUrl(image.id, 'thumbnail');
+          const thumbnailParsed = new URL(thumbnailUrl);
+          assert.equal(thumbnailParsed.origin, 'https://request.example.test');
+          assert.equal(thumbnailParsed.pathname, thumbnailPath);
+          assert.equal(thumbnailParsed.search, '');
+          assert.equal(thumbnailUrl, `https://request.example.test${thumbnailPath}`);
+          assert.equal(await fse.pathExists(thumbnailFile), true);
+
+          const originalView = await app.bean.image.resolveView(image.id, 'original');
+          assert.equal(originalView?.id, image.id);
+          assert.equal(originalView?.url, originalUrl);
+          assert.equal(originalView?.public, true);
+          assert.equal(originalView?.signed, false);
+          const thumbnailView = await app.bean.image.resolveView(image.id, 'thumbnail');
+          assert.equal(thumbnailView?.id, image.id);
+          assert.equal(thumbnailView?.url, thumbnailUrl);
+          assert.equal(thumbnailView?.public, true);
+          assert.equal(thumbnailView?.signed, false);
+
+          await app.bean.image.delete(image.id);
+          assert.equal(await app.bean.image.get(image.id), undefined);
+          assert.equal(await fse.pathExists(image.storagePath!), false);
+          assert.equal(await fse.pathExists(thumbnailFile), false);
+        } finally {
+          try {
+            if (imageId !== undefined) await app.bean.image.delete(imageId);
+          } finally {
+            await fse.remove(tempDir);
+          }
+        }
+      },
+      { instanceName: '', req },
+    );
+  });
+
+  it('action:image:native preserves an explicit delivery base with or without a trailing slash', async () => {
+    const req = {
+      headers: { host: 'request.example.test' },
+      method: 'GET',
+      socket: { encrypted: true },
+      url: '/',
+    };
+    await app.bean.executor.mockCtx(
+      async () => {
+        const tempDir = await fse.mkdtemp(path.join(os.tmpdir(), 'test-image-native-base-'));
+        try {
+          const file = path.join(tempDir, 'input.png');
+          await fse.writeFile(file, tinyPng);
+          for (const deliveryBaseUrl of [
+            'https://cdn.example.test/images',
+            'https://cdn.example.test/images/',
+          ]) {
+            let imageId: IImageResource['id'] | undefined;
+            try {
+              const image = await app.bean.image.upload(
+                'image-native:native',
+                {
+                  file,
+                  filename: 'explicit-base.png',
+                  contentType: 'image/png',
+                  public: true,
+                },
+                {
+                  clientName: 'default',
+                  clientOptions: {
+                    deliveryBaseUrl,
+                    variants: {
+                      original: {},
+                      thumbnail: { width: 64, height: 64, fit: 'cover' },
+                    },
+                  },
+                },
+              );
+              imageId = image.id;
+              assert.equal(image.deliveryBaseUrl, deliveryBaseUrl);
+              assert.equal((await app.bean.image.get(image.id))?.deliveryBaseUrl, deliveryBaseUrl);
+              const basePath = `https://cdn.example.test/images/public/${app.ctx.instance.id}/image-native/default`;
+              const originalUrl = `${basePath}/${image.resourceId}.png`;
+              const thumbnailUrl = `${basePath}/${image.resourceId}__thumbnail.png`;
+              const thumbnailFile = path.join(
+                path.dirname(image.storagePath!),
+                `${image.resourceId}__thumbnail.png`,
+              );
+              assert.equal(await app.bean.image.getVariantUrl(image.id, 'original'), originalUrl);
+              assert.equal(await app.bean.image.getVariantUrl(image.id, 'thumbnail'), thumbnailUrl);
+              const view = await app.bean.image.resolveView(image.id, 'thumbnail');
+              assert.equal(view?.url, thumbnailUrl);
+              assert.equal(view?.public, true);
+              assert.equal(view?.signed, false);
+
+              await app.bean.image.delete(image.id);
+              assert.equal(await app.bean.image.get(image.id), undefined);
+              assert.equal(await fse.pathExists(image.storagePath!), false);
+              assert.equal(await fse.pathExists(thumbnailFile), false);
+            } finally {
+              if (imageId !== undefined) await app.bean.image.delete(imageId);
+            }
+          }
+        } finally {
+          await fse.remove(tempDir);
+        }
+      },
+      { instanceName: '', req },
+    );
   });
 });

@@ -25,7 +25,32 @@ import type {
   TypeUtilPrepareColumns,
 } from '../relations.ts';
 
+export const SymbolDtoMutateRelations = Symbol('SymbolDtoMutateRelations');
+
 export type TypeDtoMutateType = 'create' | 'update' | 'mutate';
+
+// Static phantom metadata survives ordinary subclassing without becoming a DTO field.
+// Runtime stores the corresponding resolved relation plans as mapped-class metadata.
+export type TypeDtoMutateClass<
+  ModelLike extends BeanModelMeta | keyof IModelClassRecord,
+  TOptionsRelation,
+  TMutateTypeTopLevel extends TypeDtoMutateType,
+  TColumnsOmitDefault extends string | string[] | undefined = undefined,
+  TTopLevel extends boolean | undefined = undefined,
+> = Constructable<
+  TypeDtoMutateResult<
+    ModelLike,
+    TOptionsRelation,
+    TMutateTypeTopLevel,
+    TColumnsOmitDefault,
+    TTopLevel
+  >
+> & {
+  [SymbolDtoMutateRelations]?: TypeDtoMutateOwnedRelations<
+    TypeModelOfModelLike<ModelLike>,
+    TOptionsRelation
+  >;
+};
 
 export type IDtoMutateParams<ModelLike extends BeanModelMeta | keyof IModelClassRecord> =
   IBuildDtoMutateParams<
@@ -65,100 +90,112 @@ export type TypeDtoMutateRelationResult<
   TTopLevel extends boolean | undefined = undefined,
   TColumns = undefined,
   REFKEY = undefined,
-> = (TOptionsRelation extends { dtoClass: Constructable<infer TDto> }
-  ? TypeDtoMutateRelationResultDto<TDto, TMutateTypeTopLevel, TTopLevel, REFKEY>
-  : TypeDtoMutateRelationResultEntity<
-      TRecord,
-      TColumns extends string | string[] ? TColumns : TypeUtilGetParamsColumns<TOptionsRelation>,
-      TMutateTypeTopLevel,
-      TColumnsOmitDefault,
-      TTopLevel,
-      REFKEY
-    >) &
-  (TModel extends BeanModelMeta
-    ? OmitNever<
-        TypeDtoMutateRelationResultMergeInclude<
-          TMutateTypeTopLevel,
-          TypeUtilGetModelOptions<TModel>,
-          TypeUtilGetParamsInlcude<TOptionsRelation>
-        >
-      > &
-        OmitNever<
-          TypeDtoMutateModelRelationResultMergeWith<
-            TMutateTypeTopLevel,
-            TypeUtilGetParamsWith<TOptionsRelation>
-          >
-        >
-    : {});
-
-type TypeDtoMutateRelationResultMergeInclude<
-  TMutateTypeTopLevel extends TypeDtoMutateType,
-  TModelOptions extends IDecoratorModelOptions,
-  TInclude extends {} | undefined | unknown,
-> = {
-  [RelationName in keyof TModelOptions['relations']]: TInclude extends {}
-    ? TInclude[RelationName] extends {} | boolean
-      ? TypeDtoMutateRelationResultMergeIncludeWrapper<
-          TMutateTypeTopLevel,
-          TModelOptions['relations'][RelationName],
-          TInclude[RelationName]
-        >
-      : TypeDtoMutateRelationResultMergeAutoload<
-          TMutateTypeTopLevel,
-          TModelOptions['relations'][RelationName]
-        >
-    : TypeDtoMutateRelationResultMergeAutoload<
+> = TypeDtoMutateMergeRelations<
+  TOptionsRelation extends { dtoClass: Constructable<infer TDto> }
+    ? TypeDtoMutateRelationResultDto<TDto, TMutateTypeTopLevel, TTopLevel, REFKEY>
+    : TypeDtoMutateRelationResultEntity<
+        TRecord,
+        TColumns extends string | string[] ? TColumns : TypeUtilGetParamsColumns<TOptionsRelation>,
         TMutateTypeTopLevel,
-        TModelOptions['relations'][RelationName]
-      >;
-};
+        TColumnsOmitDefault,
+        TTopLevel,
+        REFKEY
+      >,
+  TypeDtoMutateRelationPlans<TModel, TOptionsRelation>,
+  TMutateTypeTopLevel
+>;
 
-type TypeDtoMutateModelRelationResultMergeWith<
-  TMutateTypeTopLevel extends TypeDtoMutateType,
-  TWith extends {} | undefined | unknown,
-> = TWith extends {}
-  ? {
-      [RelationName in keyof TWith]: TypeDtoMutateRelationResultMergeWithRelation<
-        TMutateTypeTopLevel,
-        TWith[RelationName]
-      >;
-    }
+// Plans describe only declared relations, never arbitrary object/array schema fields.
+// A fresh include/with/autoload selection replaces the whole retained plan of that name.
+type TypeDtoMutateIncludePlans<TModelOptions extends IDecoratorModelOptions, TInclude> = OmitNever<{
+  [Name in keyof TModelOptions['relations']]: TInclude extends {}
+    ? TInclude[Name] extends false
+      ? false
+      : TInclude[Name] extends true
+        ? [TModelOptions['relations'][Name], undefined]
+        : TInclude[Name] extends {}
+          ? [TModelOptions['relations'][Name], TInclude[Name]]
+          : TypeDtoMutateAutoloadPlan<TModelOptions['relations'][Name]>
+    : TypeDtoMutateAutoloadPlan<TModelOptions['relations'][Name]>;
+}>;
+
+type TypeDtoMutateAutoloadPlan<Relation> =
+  TypeUtilGetRelationOptionsAutoload<Relation> extends true ? [Relation, undefined] : never;
+
+type TypeDtoMutateWithPlans<TWith> = TWith extends {}
+  ? OmitNever<{
+      [Name in keyof TWith]: TWith[Name] extends boolean
+        ? never
+        : TWith[Name] extends {}
+          ? [TWith[Name], TypeUtilGetRelationOptions<TWith[Name]>]
+          : never;
+    }>
   : {};
 
-type TypeDtoMutateRelationResultMergeIncludeWrapper<
-  TMutateTypeTopLevel extends TypeDtoMutateType,
-  Relation,
-  IncludeWrapper,
-> = IncludeWrapper extends false
-  ? never
-  : IncludeWrapper extends true
-    ? TypeUtilGetDtoMutateRelationEntityByType<TMutateTypeTopLevel, Relation, undefined>
-    : IncludeWrapper extends {}
-      ? TypeUtilGetDtoMutateRelationEntityByType<TMutateTypeTopLevel, Relation, IncludeWrapper>
-      : never;
+type TypeDtoMutateFreshPlans<
+  TModel extends BeanModelMeta | undefined,
+  TOptionsRelation,
+  TWith = TypeDtoMutateWithPlans<TypeUtilGetParamsWith<TOptionsRelation>>,
+> = Omit<
+  TModel extends BeanModelMeta
+    ? TypeDtoMutateIncludePlans<
+        TypeUtilGetModelOptions<TModel>,
+        TypeUtilGetParamsInlcude<TOptionsRelation>
+      >
+    : {},
+  keyof TWith
+> &
+  TWith;
 
-type TypeDtoMutateRelationResultMergeAutoload<
-  TMutateTypeTopLevel extends TypeDtoMutateType,
-  Relation,
-> =
-  TypeUtilGetRelationOptionsAutoload<Relation> extends true
-    ? TypeUtilGetDtoMutateRelationEntityByType<TMutateTypeTopLevel, Relation, undefined>
-    : never;
-
-type TypeDtoMutateRelationResultMergeWithRelation<
-  TMutateTypeTopLevel extends TypeDtoMutateType,
-  WithRelation,
-> = WithRelation extends false
-  ? never
-  : WithRelation extends true
-    ? never
-    : WithRelation extends {}
-      ? TypeUtilGetDtoMutateRelationEntityByType<
-          TMutateTypeTopLevel,
-          WithRelation,
-          TypeUtilGetRelationOptions<WithRelation>
+type TypeDtoMutateRetainedPlans<TOptionsRelation> = TOptionsRelation extends {
+  dtoClass: infer TClass extends Constructable<unknown>;
+}
+  ? typeof SymbolDtoMutateRelations extends keyof TClass
+    ? Pick<
+        NonNullable<TClass[typeof SymbolDtoMutateRelations]>,
+        Extract<
+          keyof NonNullable<TClass[typeof SymbolDtoMutateRelations]>,
+          keyof InstanceType<TClass>
         >
-      : never;
+      >
+    : {}
+  : {};
+
+type TypeDtoMutateRelationPlans<
+  TModel extends BeanModelMeta | undefined,
+  TOptionsRelation,
+  TFresh = TypeDtoMutateFreshPlans<TModel, TOptionsRelation>,
+> = Omit<TypeDtoMutateRetainedPlans<TOptionsRelation>, keyof TFresh> & TFresh;
+
+type TypeDtoMutateOwnedRelations<
+  TModel extends BeanModelMeta | undefined,
+  TOptionsRelation,
+  TPlans = TypeDtoMutateRelationPlans<TModel, TOptionsRelation>,
+> = OmitNever<{
+  [Name in keyof TPlans]: TPlans[Name] extends [infer Relation, unknown]
+    ? TypeUtilGetRelationType<Relation> extends 'hasOne' | 'hasMany'
+      ? TPlans[Name]
+      : never
+    : never;
+}>;
+
+type TypeDtoMutateProjectRelations<TPlans, TMutateType extends TypeDtoMutateType> = OmitNever<{
+  [Name in keyof TPlans]: TPlans[Name] extends [infer Relation, infer IncludeWrapper]
+    ? TypeUtilGetDtoMutateRelationEntityByType<TMutateType, Relation, IncludeWrapper>
+    : never;
+}>;
+
+type TypeDtoMutateDisabledRelations<TPlans> = {
+  [Name in keyof TPlans]: TPlans[Name] extends false ? Name : never;
+}[keyof TPlans];
+
+type TypeDtoMutateMergeRelations<
+  TBase,
+  TPlans,
+  TMutateType extends TypeDtoMutateType,
+  TRelations = TypeDtoMutateProjectRelations<TPlans, TMutateType>,
+  TDisabled extends keyof TBase = Extract<keyof TBase, TypeDtoMutateDisabledRelations<TPlans>>,
+> = Omit<TBase, keyof TRelations | TDisabled> & Partial<Pick<TBase, TDisabled>> & TRelations;
 
 // Relation options supply the default dtoClass; an include wrapper may override it.
 type TypeUtilGetDtoMutateRelationParams<Relation, IncludeWrapper> = IncludeWrapper extends {
