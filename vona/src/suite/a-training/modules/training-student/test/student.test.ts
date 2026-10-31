@@ -5,7 +5,7 @@ import { randomUUID } from 'node:crypto';
 import { describe, it } from 'node:test';
 import { appMetadata } from 'vona';
 import { app } from 'vona-mock';
-import { SymbolOpenApiOptions } from 'vona-module-a-openapiutils';
+import { $schema, SymbolOpenApiOptions } from 'vona-module-a-openapiutils';
 import {
   DtoStudentCreate,
   DtoStudentSelectResItem,
@@ -66,6 +66,38 @@ describe('student.test.ts', { concurrency: false }, () => {
           ['trainingRecords'],
         );
       }
+    });
+  });
+
+  it('action:student:nestedCreateProjection', async () => {
+    await app.bean.executor.mockCtx(async () => {
+      const input = {
+        name: 'DTO projection',
+        mobile: '13800138000',
+        level: 1,
+        trainingRecords: [
+          {
+            id: 101,
+            deleted: false,
+            name: 'Record',
+            trainingRecordSubjects: [{ id: 102, deleted: false, name: 'Math', score: 95 }],
+          },
+        ],
+      };
+      const created = await $schema(DtoStudentCreate).parseAsync(input);
+      const record = created.trainingRecords?.[0];
+      const subject = record?.trainingRecordSubjects?.[0];
+      assert.ok(subject);
+      assert.equal((record as any).id, undefined);
+      assert.equal((record as any).deleted, undefined);
+      assert.equal((subject as any).id, undefined);
+      assert.equal((subject as any).deleted, undefined);
+      assert.equal(subject.name, 'Math');
+      assert.equal(subject.score, 95);
+      const updated = await $schema(DtoStudentUpdate).parseAsync(input);
+      assert.equal(updated.trainingRecords?.[0]?.id, 101);
+      assert.equal(updated.trainingRecords?.[0]?.trainingRecordSubjects?.[0]?.id, 102);
+      assert.equal(updated.trainingRecords?.[0]?.trainingRecordSubjects?.[0]?.deleted, false);
     });
   });
 
@@ -845,6 +877,305 @@ describe('student.test.ts', { concurrency: false }, () => {
         await app.bean.passport.signout();
       }
     });
+  });
+
+  it('action:student:update admits only an existing current-instance root', async () => {
+    const marker = `__UpdateRoot_${randomUUID()}__`;
+    const ownedIds: string[] = [];
+    let foreignId: string | undefined;
+    try {
+      await app.bean.executor.mockCtx(
+        async () => {
+          const foreign = await app.scope('training-student').service.student.create({
+            name: `${marker}foreign`,
+            mobile: '13812345678',
+            level: 1,
+          } as DtoStudentCreate);
+          foreignId = String(foreign.id);
+        },
+        { instanceName: 'shareTest' as any },
+      );
+      await app.bean.executor.mockCtx(async () => {
+        const scope = app.scope('training-student');
+        const missing = await scope.service.student.create({
+          name: `${marker}missing`,
+          mobile: '13812345678',
+          level: 1,
+        } as DtoStudentCreate);
+        ownedIds.push(String(missing.id));
+        await scope.service.student.deleteForce(missing.id);
+        const deleted = await scope.service.student.create({
+          name: `${marker}deleted`,
+          mobile: '13812345678',
+          level: 1,
+          content: { descriptionMarkdown: 'Original deleted content' },
+        } as DtoStudentCreate);
+        ownedIds.push(String(deleted.id));
+        await scope.service.student.delete(deleted.id);
+        const deletedContent = await scope.model.studentContent.get(
+          { studentId: deleted.id },
+          { disableDeleted: true },
+        );
+        assert.ok(deletedContent?.deleted);
+        assert.ok(foreignId);
+        for (const [kind, id] of [
+          ['missing', String(missing.id)],
+          ['deleted', String(deleted.id)],
+          ['foreign', foreignId],
+        ] as const) {
+          assert.equal(await scope.model.student.getById(id), undefined);
+          await scope.service.student.update(id, {
+            name: `${marker}${kind}changed`,
+            mobile: '13987654321',
+            level: 2,
+            content: { descriptionMarkdown: `Changed ${kind} content` },
+            trainingRecords: [
+              {
+                name: `${marker}${kind}record`,
+                trainingRecordSubjects: [{ name: `${marker}${kind}subject`, score: 88 }],
+              },
+            ],
+          } as DtoStudentUpdate);
+          assert.equal(await scope.model.student.getById(id), undefined);
+          assert.equal(
+            await app
+              .scope('training-record')
+              .model.record.get({ name: `${marker}${kind}record` }, { disableDeleted: true }),
+            undefined,
+          );
+          assert.equal(
+            await app
+              .scope('training-recordsubject')
+              .model.subject.get({ name: `${marker}${kind}subject` }, { disableDeleted: true }),
+            undefined,
+          );
+          const content = await scope.model.studentContent.get(
+            { studentId: id },
+            { disableDeleted: true },
+          );
+          assert.deepEqual(content, kind === 'deleted' ? deletedContent : undefined);
+        }
+      });
+      await app.bean.executor.mockCtx(
+        async () => {
+          const foreign = await app.scope('training-student').service.student.view(foreignId!);
+          assert.equal(foreign?.name, `${marker}foreign`);
+          assert.equal(foreign?.content?.descriptionMarkdown, '');
+          assert.deepEqual(foreign?.trainingRecords, []);
+        },
+        { instanceName: 'shareTest' as any },
+      );
+    } finally {
+      try {
+        await app.bean.executor.mockCtx(async () => {
+          for (const kind of ['foreign', 'deleted', 'missing']) {
+            const subjectModel = app.scope('training-recordsubject').model.subject;
+            const subject = await subjectModel.get(
+              { name: `${marker}${kind}subject` },
+              { disableDeleted: true },
+            );
+            if (subject) await subjectModel.deleteById(subject.id, { disableDeleted: true });
+            const recordModel = app.scope('training-record').model.record;
+            const record = await recordModel.get(
+              { name: `${marker}${kind}record` },
+              { disableDeleted: true },
+            );
+            if (record) await recordModel.deleteById(record.id, { disableDeleted: true });
+          }
+          for (const id of [...ownedIds, ...(foreignId ? [foreignId] : [])].reverse()) {
+            await app
+              .scope('training-student')
+              .model.studentContent.delete({ studentId: id }, { disableDeleted: true });
+          }
+          for (const id of ownedIds.toReversed()) {
+            await app.scope('training-student').service.student.deleteForce(id);
+          }
+        });
+      } finally {
+        if (foreignId) {
+          await app.bean.executor.mockCtx(
+            async () => {
+              await app.scope('training-student').service.student.deleteForce(foreignId!);
+            },
+            { instanceName: 'shareTest' as any },
+          );
+        }
+      }
+    }
+  });
+
+  it('action:student:delete admits only an existing current-instance root', async () => {
+    const marker = `__DeleteRoot_${randomUUID()}__`;
+    type Fixture = {
+      kind: string;
+      rootId?: string;
+      contentId?: string;
+      recordId?: string;
+      subjectId?: string;
+    };
+    const local: Fixture[] = ['missing', 'deleted', 'foreign'].map(kind => ({ kind }));
+    const foreign: Fixture = { kind: 'foreignAggregate' };
+    const createRoot = async (fixture: Fixture) => {
+      const root = await app.scope('training-student').model.student.insert({
+        name: `${marker}${fixture.kind}`,
+        mobile: '13812345678',
+        level: 1,
+      });
+      fixture.rootId = String(root.id);
+    };
+    const createDescendants = async (fixture: Fixture) => {
+      assert.ok(fixture.rootId);
+      const content = await app.scope('training-student').model.studentContent.insert({
+        studentId: fixture.rootId,
+        descriptionMarkdown: `${marker}${fixture.kind} content`,
+        descriptionHtml: `<p>${marker}${fixture.kind} content</p>`,
+      });
+      fixture.contentId = String(content.id);
+      const record = await app.scope('training-record').model.record.insert({
+        studentId: fixture.rootId,
+        name: `${marker}${fixture.kind}record`,
+        subjectCount: 1,
+        totalScore: 88,
+        averageScore: 88,
+      });
+      fixture.recordId = String(record.id);
+      const subject = await app.scope('training-recordsubject').model.subject.insert({
+        recordId: fixture.recordId,
+        name: `${marker}${fixture.kind}subject`,
+        score: 88,
+      });
+      fixture.subjectId = String(subject.id);
+    };
+    const snapshot = async (fixture: Fixture) => ({
+      root: await app.scope('training-student').model.student.getById(fixture.rootId!, {
+        disableDeleted: true,
+      }),
+      content: await app
+        .scope('training-student')
+        .model.studentContent.getById(fixture.contentId!, { disableDeleted: true }),
+      record: await app.scope('training-record').model.record.getById(fixture.recordId!, {
+        disableDeleted: true,
+      }),
+      subject: await app.scope('training-recordsubject').model.subject.getById(fixture.subjectId!, {
+        disableDeleted: true,
+      }),
+    });
+    const cleanup = async (fixtures: Fixture[]) => {
+      const reversed = fixtures.toReversed();
+      // Exact owned names recover inserts that persisted before returning an ID.
+      for (const fixture of reversed) {
+        const model = app.scope('training-recordsubject').model.subject;
+        const id =
+          fixture.subjectId ??
+          (await model.get({ name: `${marker}${fixture.kind}subject` }, { disableDeleted: true }))
+            ?.id;
+        if (id) await model.deleteById(id, { disableDeleted: true });
+      }
+      for (const fixture of reversed) {
+        const model = app.scope('training-record').model.record;
+        const id =
+          fixture.recordId ??
+          (await model.get({ name: `${marker}${fixture.kind}record` }, { disableDeleted: true }))
+            ?.id;
+        if (id) await model.deleteById(id, { disableDeleted: true });
+      }
+      for (const fixture of reversed) {
+        const model = app.scope('training-student').model.studentContent;
+        if (fixture.contentId) {
+          await model.deleteById(fixture.contentId, { disableDeleted: true });
+        } else if (fixture.rootId) {
+          await model.delete({ studentId: fixture.rootId }, { disableDeleted: true });
+        }
+      }
+      for (const fixture of reversed) {
+        // The current-instance foreign reference never owns its root.
+        if (fixture.kind === 'foreign') continue;
+        const model = app.scope('training-student').model.student;
+        const id =
+          fixture.rootId ??
+          (await model.get({ name: `${marker}${fixture.kind}` }, { disableDeleted: true }))?.id;
+        if (id) await model.deleteById(id, { disableDeleted: true });
+      }
+    };
+    let foreignBefore: Awaited<ReturnType<typeof snapshot>> | undefined;
+    try {
+      await app.bean.executor.mockCtx(
+        async () => {
+          await createRoot(foreign);
+          await createDescendants(foreign);
+          foreignBefore = await snapshot(foreign);
+          assert.ok(foreignBefore.root && !foreignBefore.root.deleted);
+          assert.ok(foreignBefore.content && !foreignBefore.content.deleted);
+          assert.ok(foreignBefore.record && !foreignBefore.record.deleted);
+          assert.ok(foreignBefore.subject && !foreignBefore.subject.deleted);
+        },
+        { instanceName: 'shareTest' as any },
+      );
+      await app.bean.executor.mockCtx(async () => {
+        const scope = app.scope('training-student');
+        const [missing, deleted, foreignReference] = local;
+        await createRoot(missing);
+        await scope.model.student.deleteById(missing.rootId!, { disableDeleted: true });
+        assert.equal(
+          await scope.model.student.getById(missing.rootId!, { disableDeleted: true }),
+          undefined,
+          'the missing root is physically absent, not merely soft deleted',
+        );
+        await createRoot(deleted);
+        await scope.model.student.deleteById(deleted.rootId!);
+        const deletedRoot = await scope.model.student.getById(deleted.rootId!, {
+          disableDeleted: true,
+        });
+        assert.ok(deletedRoot?.deleted);
+        assert.ok(foreign.rootId);
+        foreignReference.rootId = foreign.rootId;
+        for (const fixture of local) {
+          // These are active local descendants even though their root is not admitted.
+          await createDescendants(fixture);
+          assert.equal(await scope.model.student.getById(fixture.rootId!), undefined);
+          const before = await snapshot(fixture);
+          assert.deepEqual(before.root, fixture === deleted ? deletedRoot : undefined);
+          assert.ok(before.content && !before.content.deleted);
+          assert.ok(before.record && !before.record.deleted);
+          assert.ok(before.subject && !before.subject.deleted);
+          assert.equal(String(before.content.studentId), fixture.rootId);
+          assert.equal(String(before.record.studentId), fixture.rootId);
+          assert.equal(String(before.subject.recordId), fixture.recordId);
+
+          await scope.service.student.delete(fixture.rootId!);
+
+          assert.equal(await scope.model.student.getById(fixture.rootId!), undefined);
+          assert.deepEqual(
+            await snapshot(fixture),
+            before,
+            `${fixture.kind} root admission must leave all active local descendants unchanged`,
+          );
+        }
+      });
+      await app.bean.executor.mockCtx(
+        async () => {
+          assert.deepEqual(
+            await snapshot(foreign),
+            foreignBefore,
+            'the foreign aggregate remains unchanged in its owning instance',
+          );
+        },
+        { instanceName: 'shareTest' as any },
+      );
+    } finally {
+      try {
+        await app.bean.executor.mockCtx(async () => {
+          await cleanup(local);
+        });
+      } finally {
+        await app.bean.executor.mockCtx(
+          async () => {
+            await cleanup([foreign]);
+          },
+          { instanceName: 'shareTest' as any },
+        );
+      }
+    }
   });
 
   it('action:student:rbacCatalog', async () => {

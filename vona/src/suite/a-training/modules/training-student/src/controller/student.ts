@@ -29,6 +29,12 @@ export interface IControllerOptionsStudent extends IDecoratorControllerOptions {
 })
 @Resource()
 export class ControllerStudent extends BeanBase {
+  @Mcp.tool({
+    name: 'training_student_create',
+    description:
+      'Create a student using your current student-create permission and instance. Uses the existing create contract, including optional content and training records with subjects. Non-idempotent; repeating a call can create additional data.',
+    readOnly: false,
+  })
   @Web.post('', { summary: $locale('StudentCreate') })
   @Api.body(v.tableIdentity())
   @Passport.rbac()
@@ -36,6 +42,12 @@ export class ControllerStudent extends BeanBase {
     return (await this.scope.service.student.create(student)).id;
   }
 
+  @Mcp.tool({
+    name: 'training_student_select',
+    description:
+      'Select students using your current student-select permission and instance. Returns the complete existing paginated select response with serialized row fields, including masked mobile.',
+    readOnly: true,
+  })
   @Web.get('', { summary: $locale('StudentSelect') })
   @Api.body(DtoStudentSelectRes)
   @Core.serializer()
@@ -62,6 +74,12 @@ export class ControllerStudent extends BeanBase {
     return await this.scope.service.student.lookup(query);
   }
 
+  @Mcp.tool({
+    name: 'training_student_view',
+    description:
+      'Read complete student details by ID using your current student-view permission and instance. Returns the existing serialized detail response, including masked mobile, Markdown content, nested training records and subjects, and optional image URL metadata.',
+    readOnly: true,
+  })
   @Web.get(':id', { summary: $locale('StudentView') })
   @Api.body(v.optional(), v.object(DtoStudentView))
   @Core.serializer()
@@ -72,6 +90,12 @@ export class ControllerStudent extends BeanBase {
     return await this.scope.service.student.view(id);
   }
 
+  @Mcp.tool({
+    name: 'training_student_update',
+    description:
+      'Update a student using your current student-update permission and instance. Requires params.id and body.name, body.mobile, body.level. Uses the complete existing aggregate contract, including content and existing/new training records and subjects; declared nested id/deleted controls can delete children. Returns null completion, not existence or read-back proof. Partial writes are possible; do not automatically replay after errors or uncertain responses.',
+    readOnly: false,
+  })
   @Web.patch(':id', { summary: $locale('StudentUpdate') })
   @Api.body(z.null())
   @Passport.rbac()
@@ -107,6 +131,12 @@ export class ControllerStudent extends BeanBase {
     await this.scope.service.student.deleteBulk(command.ids);
   }
 
+  @Mcp.tool({
+    name: 'training_student_delete',
+    description:
+      'Soft-delete a student by ID using your independent current student-delete permission and instance. Destructively includes content, training records and nested subjects. Returns null completion, not existence or read-back proof. Partial deletion is possible; do not automatically replay after errors or uncertain responses.',
+    readOnly: false,
+  })
   @Web.delete(':id', { summary: $locale('StudentDelete') })
   @Api.body(z.null())
   @Passport.rbac()
