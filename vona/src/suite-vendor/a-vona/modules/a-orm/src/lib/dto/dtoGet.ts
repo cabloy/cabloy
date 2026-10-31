@@ -1,7 +1,7 @@
 import type { Constructable } from 'vona';
 
 import { ensureArray, hashkey } from '@cabloy/utils';
-import { $Class, appResource } from 'vona';
+import { $Class, appMetadata, appResource, registerMappedClassMetadataKey } from 'vona';
 import {
   addSchemaDynamic,
   Api,
@@ -24,6 +24,7 @@ import {
   prepareClassModel,
   prepareColumns,
 } from '../../common/utils.ts';
+import { SymbolDtoMutateRelations } from '../../types/dto/dtoMutate.ts';
 import { handleRelationsCollection } from '../utils.ts';
 import { DtoAggregate } from './dtoAggregate.ts';
 import { DtoGroup } from './dtoGroup.ts';
@@ -63,10 +64,33 @@ export function _DtoGet_relations<TRecord extends {}, TModel extends BeanModelMe
   includeWrapper?: IModelRelationIncludeWrapper,
   mutateTypeTopLevel?: TypeDtoMutateType,
 ) {
-  // relations
   const relations = _DtoGet_relations_collection(modelClass, includeWrapper);
-  if (!relations) return;
+  // Mapped-class metadata follows the dtoClass field projection, including pick/omit.
+  registerMappedClassMetadataKey(entityClass.prototype, SymbolDtoMutateRelations, {});
+  const retained = appMetadata.getOwnMetadataMap<string, IRelationItem>(
+    true,
+    SymbolDtoMutateRelations,
+    entityClass.prototype,
+  );
+  if (mutateTypeTopLevel) {
+    const overridden = new Set(relations.map(relation => relation[0]));
+    for (const name in retained) {
+      if (!overridden.has(name)) {
+        _DtoGet_relation_handle(entityClass, retained[name], mutateTypeTopLevel);
+      }
+    }
+  }
   for (const relation of relations) {
+    const [name, definition] = relation;
+    if (
+      mutateTypeTopLevel &&
+      definition !== false &&
+      (definition.type === 'hasOne' || definition.type === 'hasMany')
+    ) {
+      retained[name] = relation;
+    } else {
+      delete retained[name];
+    }
     _DtoGet_relation_handle(entityClass, relation, mutateTypeTopLevel);
   }
 }

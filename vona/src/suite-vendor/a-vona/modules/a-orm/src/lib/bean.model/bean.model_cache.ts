@@ -154,7 +154,7 @@ export class BeanModelCache<TRecord extends {} = {}> extends BeanModelCrud<TReco
     }
     // insert/update
     const itemsInsertNew = await this.__insertBulk_raw(table, itemsInsert, options);
-    await this.__updateBulk_raw(table, itemsUpdate, options);
+    const idsUpdate = await this.__updateBulk_raw(table, itemsUpdate, options);
     const itemsMutate = itemsInsert
       .map((item, index) => {
         return Object.assign({}, item, { id: cast(itemsInsertNew[index]).id });
@@ -162,10 +162,10 @@ export class BeanModelCache<TRecord extends {} = {}> extends BeanModelCrud<TReco
       .concat(itemsUpdate as any);
     let itemsMutateResult = itemsInsertNew.concat(itemsUpdate as any);
     const indexesMutate = indexesInsert.concat(indexesUpdate);
-    itemsMutateResult = await this.relations.handleRelationsMutate(
+    itemsMutateResult = await this.__handleRelationsMutateAdmitted(
       itemsMutateResult,
       itemsMutate as any,
-      options as any,
+      [...itemsInsertNew.map(item => [cast(item).id]), ...idsUpdate],
       options,
     );
     let result: TRecord[] = [];
@@ -588,19 +588,65 @@ export class BeanModelCache<TRecord extends {} = {}> extends BeanModelCrud<TReco
     items: Partial<TRecord>[],
     options?: T,
   ): Promise<Partial<TRecord>[]> {
-    await this.__updateBulk_raw(undefined, items, options);
-    return await this.relations.handleRelationsMutate(items, items, options as any, options);
+    const ids = await this.__updateBulk_raw(undefined, items, options);
+    return await this.__handleRelationsMutateAdmitted(items, items, ids, options);
   }
 
   async __updateBulk_raw<T extends IModelUpdateOptions<TRecord>>(
     table: keyof ITableRecord | undefined,
     items: Partial<TRecord>[],
     options?: T,
-  ): Promise<void> {
-    if (items.length === 0) return;
+  ): Promise<(TableIdentity[] | void)[]> {
+    const ids: (TableIdentity[] | void)[] = [];
     for (const item of items) {
-      await this.__update_raw(table, item, options);
+      ids.push(await this.__update_raw(table, item, options));
     }
+    return ids;
+  }
+
+  private async __handleRelationsMutateAdmitted<TResult extends {}>(
+    results: TResult[],
+    items: Partial<TRecord>[],
+    ids: (TableIdentity[] | void)[],
+    options?: IModelMutateOptions<TRecord>,
+  ): Promise<TResult[]> {
+    const indexes: number[] = [];
+    const itemsAdmitted: Partial<TRecord>[] = [];
+    const resultsAdmitted: TResult[] = [];
+    for (let index = 0; index < items.length; index++) {
+      const idsItem = ids[index];
+      if (!idsItem || idsItem.length !== 1) continue;
+      indexes.push(index);
+      itemsAdmitted.push(Object.assign({}, items[index], { id: idsItem[0] }));
+      resultsAdmitted.push(results[index]);
+    }
+    const resultsMutated = await this.relations.handleRelationsMutate(
+      resultsAdmitted,
+      itemsAdmitted as any,
+      options as any,
+      options,
+    );
+    const result = results.concat();
+    for (let index = 0; index < indexes.length; index++) {
+      result[indexes[index]] = resultsMutated[index];
+    }
+    return result;
+  }
+
+  private __hasWritableRelations(options?: IModelMutateOptions<TRecord>) {
+    return this.relations.handleRelationsCollection(options as any).some(([, relation]) => {
+      return relation !== false && relation.type !== 'belongsTo';
+    });
+  }
+
+  private async __selectMutationIds(
+    table: keyof ITableRecord,
+    where: TypeModelWhere<TRecord> | undefined,
+    options?: IModelMethodOptionsGeneral,
+  ): Promise<TableIdentity[]> {
+    // Admission must use current scoped rows, not cached entities or changed-row counts.
+    const items = await super._select(table, { where, columns: ['id'] as any }, options);
+    return items.map(item => cast(item).id);
   }
 
   async __update_raw(
@@ -611,6 +657,31 @@ export class BeanModelCache<TRecord extends {} = {}> extends BeanModelCrud<TReco
     // table
     table = table || this.getTable(data);
     if (!table) return this.scopeOrm.error.ShouldSpecifyTable.throw();
+    if (this.__hasWritableRelations(options)) {
+      const where = Object.assign({}, options?.where);
+      const dataNew = Object.assign({}, data);
+      let hasId = false;
+      for (const key of ['id', `${table}.id`]) {
+        if (!isNil(dataNew[key])) {
+          cast(where).id = dataNew[key];
+          delete dataNew[key];
+          hasId = true;
+        }
+      }
+      if (!hasId && !options?.where) {
+        throw new Error('id should be specified for update method');
+      }
+      const ids = await this.__selectMutationIds(table, where, options);
+      if (ids.length === 0) return [];
+      await super._update(table, dataNew, {
+        ...options,
+        where: Object.assign({}, where, { id: ids }),
+      });
+      if (!this._checkDisableCacheEntityByOptions(options)) {
+        await this.cacheEntityDel(ids, table);
+      }
+      return ids;
+    }
     // check if cache
     if (this._checkDisableCacheEntityByOptions(options)) {
       await super._update(table, data, options);
@@ -679,8 +750,10 @@ export class BeanModelCache<TRecord extends {} = {}> extends BeanModelCrud<TReco
     options?: T,
   ): Promise<void> {
     if (ids.length === 0) return;
-    await this.__delete_raw(table, { id: ids } as any, options);
-    await this.relations.handleRelationsDelete(ids, options as any, options);
+    const idsDeleted = await this.__delete_raw(table, { id: ids } as any, options);
+    if (idsDeleted) {
+      await this.relations.handleRelationsDelete(idsDeleted, options as any, options);
+    }
   }
 
   async __delete_raw(
@@ -691,6 +764,15 @@ export class BeanModelCache<TRecord extends {} = {}> extends BeanModelCrud<TReco
     // table
     table = table || this.getTable(where);
     if (!table) return this.scopeOrm.error.ShouldSpecifyTable.throw();
+    if (this.__hasWritableRelations(options)) {
+      const ids = await this.__selectMutationIds(table, where, options);
+      if (ids.length === 0) return [];
+      await super._delete(table, Object.assign({}, where, { id: ids }), options);
+      if (!this._checkDisableCacheEntityByOptions(options)) {
+        await this.cacheEntityDel(ids, table);
+      }
+      return ids;
+    }
     // check if cache
     if (this._checkDisableCacheEntityByOptions(options)) {
       return await super._delete(table, where, options);

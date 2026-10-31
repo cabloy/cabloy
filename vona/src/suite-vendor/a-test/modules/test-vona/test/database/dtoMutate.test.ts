@@ -3,6 +3,7 @@ import type { IDecoratorDtoOptions } from 'vona-module-a-web';
 
 import assert from 'node:assert';
 import { describe, it } from 'node:test';
+import { $Class } from 'vona';
 import { app } from 'vona-mock';
 import {
   $makeMetadata,
@@ -108,6 +109,125 @@ describe('dtoMutate.test.ts', () => {
       assert.equal(rules.postContent?.type === 'optional', true);
       assert.equal(rules.user, undefined);
       assert.equal(rules.id, undefined);
+    });
+  });
+
+  it('action:dtoMutate:reuseOwnedRelationsUnderParentOperation', async () => {
+    await app.bean.executor.mockCtx(async () => {
+      class DtoReference {
+        @Api.field(v.tableIdentity())
+        id: number | string;
+      }
+      class DtoContentMutate extends $Dto.mutate('test-vona:postContent', {
+        columns: ['id', 'deleted', 'postId', 'content'],
+      }) {
+        @Api.field(v.object(DtoReference))
+        reference: DtoReference;
+      }
+      const postOptions = {
+        columns: ['id', 'deleted', 'title'] as ['id', 'deleted', 'title'],
+        include: {
+          postContent: { dtoClass: DtoContentMutate, columns: ['content'] as ['content'] },
+        },
+      };
+      class DtoPostMutate extends $Dto.mutate('test-vona:post', postOptions) {
+        @Api.field(v.title('Curated content'), v.description('Nested content metadata'))
+        declare postContent: DtoContentMutate | undefined;
+      }
+      class DtoUserMutate extends $Dto.mutate('test-vona:user', {
+        columns: ['name'],
+        include: { posts: { dtoClass: DtoPostMutate }, roles: true },
+      }) {}
+      const input = {
+        name: 'kevin',
+        posts: [
+          {
+            id: 10,
+            deleted: false,
+            title: 'post1',
+            postContent: {
+              id: 20,
+              deleted: false,
+              postId: 10,
+              content: 'content1',
+              reference: { id: 30 },
+            },
+          },
+        ],
+        roles: [{ id: 40 }],
+      };
+      const DtoCreate = $Dto.create('test-vona:user', { dtoClass: DtoUserMutate });
+      const created = await $schema(DtoCreate).parseAsync(input);
+      assert.deepEqual(created, {
+        name: 'kevin',
+        posts: [
+          {
+            title: 'post1',
+            postContent: { content: 'content1', reference: { id: 30 } },
+          },
+        ],
+        roles: [{ id: 40 }],
+      });
+      for (const DtoParent of [
+        $Dto.update('test-vona:user', { dtoClass: DtoUserMutate }),
+        $Dto.mutate('test-vona:user', { dtoClass: DtoUserMutate }),
+      ]) {
+        const updated = await $schema(DtoParent).parseAsync(input);
+        assert.equal(updated.posts?.[0]?.id, 10);
+        assert.equal(updated.posts?.[0]?.postContent?.id, 20);
+        assert.equal(updated.posts?.[0]?.postContent?.deleted, false);
+        assert.equal((updated.posts?.[0]?.postContent as any)?.postId, undefined);
+        await $schema(DtoParent).parseAsync({
+          name: 'kevin',
+          posts: [
+            {
+              title: 'new post',
+              postContent: {
+                content: 'new content',
+                reference: { id: 30 },
+              },
+            },
+          ],
+        });
+      }
+      // Rebuilding a parent must not mutate the reusable mutation DTO.
+      const original = await $schema(DtoUserMutate).parseAsync(input);
+      assert.equal(original.posts?.[0]?.postContent?.id, 20);
+      const apiJson = await app.bean.openapi.generateJsonOfClass(DtoCreate);
+      // Anonymous DTOs may be emitted inline rather than as separate components.
+      const emitted = JSON.stringify(apiJson);
+      assert.ok(emitted.includes('"title":"Curated content"'));
+      assert.ok(emitted.includes('"description":"Nested content metadata"'));
+
+      // A caller-selected projection replaces the retained one, not intersects with it.
+      const DtoOverride = $Dto.create('test-vona:user', {
+        dtoClass: DtoUserMutate,
+        include: {
+          posts: {
+            columns: ['title'],
+            include: {
+              postContent: { columns: ['content'] },
+            },
+          },
+        },
+      });
+      const overridden = await $schema(DtoOverride).parseAsync(input);
+      assert.deepEqual(overridden.posts, [
+        { title: 'post1', postContent: { content: 'content1' } },
+      ]);
+      const DtoPicked = $Class.pick(DtoUserMutate, ['name']);
+      const picked = await $schema(
+        $Dto.create('test-vona:user', { dtoClass: DtoPicked }),
+      ).parseAsync(input);
+      assert.deepEqual(picked, { name: 'kevin' });
+      // A fresh false selection keeps its existing hidden optional field, without replaying it.
+      const disabled = await $schema(
+        $Dto.create('test-vona:user', {
+          dtoClass: DtoUserMutate,
+          include: { posts: false },
+        }),
+      ).parseAsync(input);
+      assert.equal(disabled.posts?.[0]?.id, 10);
     });
   });
 

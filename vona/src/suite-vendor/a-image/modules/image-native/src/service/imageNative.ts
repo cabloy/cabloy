@@ -271,7 +271,7 @@ export class ServiceImageNative extends BeanBase {
     if (deliveryBaseUrl) {
       return `${deliveryBaseUrl.replace(/\/$/, '')}/${variantPath}`;
     }
-    return this.app.util.combineStaticPath(`/${variantPath}`);
+    return this.app.util.getAbsoluteUrl(this.app.util.combineStaticPath(`/${variantPath}`));
   }
 
   private async _getVariantStaticPath(targetPath: string) {

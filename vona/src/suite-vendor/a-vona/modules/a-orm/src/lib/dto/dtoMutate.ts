@@ -6,7 +6,7 @@ import { getTargetDecoratorRuleColumns } from 'vona-module-a-openapiutils';
 
 import type {
   IDtoMutateParams,
-  TypeDtoMutateResult,
+  TypeDtoMutateClass,
   TypeDtoMutateType,
 } from '../../types/dto/dtoMutate.ts';
 import type { TypeModelColumnsStrict } from '../../types/modelWhere.ts';
@@ -30,7 +30,7 @@ export function DtoMutate<
     ? (() => Constructable<ModelLike>) | Constructable<ModelLike>
     : ModelLike,
   params?: T,
-): Constructable<TypeDtoMutateResult<ModelLike, T, 'mutate', undefined, true>> {
+): TypeDtoMutateClass<ModelLike, T, 'mutate', undefined, true> {
   return _DtoMutate_raw(modelLike, params, 'mutate', undefined, true, undefined);
 }
 

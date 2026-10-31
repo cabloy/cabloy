@@ -48,23 +48,33 @@ Representative capabilities include generating JSON for:
 
 This is important because OpenAPI is treated as a first-class framework service, not as an external afterthought.
 
-## MCP mapping and normal ingress admission
+## MCP tool metadata
 
-In Cabloy Basic, method/class `@Mcp.tool()` metadata opts registered Controller Actions into MCP mapping using their existing request/response contracts. It is independent of ordinary OpenAPI publication: `@Api.exclude()` is not an MCP authorization boundary, and publishing an HTTP action does not opt it into MCP. Decorator opt-in alone does **not** expose an action on normal `/mcp`.
+`vona-module-a-openapiutils` exports `Mcp.tool` so a Controller Action can declare MCP mapping intent alongside its existing request/response contract:
 
-Normal shared ingress is owned by `cabloy-mcp` and accepts recognized dev/test/prod modes through the same OAuth and business-authorization boundary. Production is not rejected solely by mode; unknown modes, not-ready, closing, disabled or invalid required authority configuration still fail closed. Dedicated protected audit, audit-delivery gating and deployment-wide fine-grained quotas are deferred for this two-read MVP, not delivered capabilities or production prerequisites. Enabled-by-default behavior is unchanged: only literal `CABLOY_MCP_ENABLED=false` disables it. Construction admission permits exactly `training-student.controller.student` actions `lookup` and `summary`, for both listing and known-name direct calls. Optional training absent means an empty catalog, without fallback. The three synthetic catalog tools and anonymous standalone entry belong only to the `mcp-test` launcher, not shared `/mcp`.
+```ts
+import { Mcp } from 'vona-module-a-openapiutils';
 
-OAuth scope does not grant business authority. Lookup and summary retain independent student select/view permissions, current-instance reads and minimized output; summary's six-field projection does not change its HTTP DTO. Calls retain ordinary Action guards with `innerAccess: false`.
+// Apply to an existing Controller Action.
+@Mcp.tool({ description: 'Read the resource summary', readOnly: true })
+```
 
-Repository-relative source pointers:
+The decorator records metadata; it does not start an MCP server, register a transport endpoint, or provide authentication and authorization. A separate MCP implementation must consume that metadata and adapt the existing action contract.
 
-- Opt-in metadata: `vona/src/suite-vendor/a-vona/modules/a-openapiutils/src/lib/decorator/mcp.ts`
-- Contract mapper: `vona/src/suite/cabloy-mcp/modules/cabloy-mcp/src/lib/controllerTools.ts`
-- Normal ingress middleware: `vona/src/suite/cabloy-mcp/modules/cabloy-mcp/src/bean/middlewareSystem.mcp.ts`
-- Ingress checks: `vona/src/suite/cabloy-mcp/modules/cabloy-mcp/src/lib/mcpTransport.ts`
-- Authenticated exchange and settlement: `vona/src/suite/cabloy-mcp/modules/cabloy-mcp/src/lib/businessTransport.ts`
-- Exact admission and discovery: `vona/src/suite/cabloy-mcp/modules/cabloy-mcp/src/lib/sharedBusinessTools.ts`
-- Application-close drain: `vona/src/suite/cabloy-mcp/modules/cabloy-mcp/src/monkey.ts`
+- A method-level `@Mcp.tool()` marks that action for mapping.
+- A class-level `@Mcp.tool()` declares controller-level mapping intent and shared options; the MCP implementation resolves eligible registered actions and option precedence.
+- Calling `@Mcp.tool()` without options still records an explicit opt-in marker.
+- `name` is an action-only public tool name override; using it on a controller class is rejected.
+- `description` accepts text or locale metadata. `readOnly` declares the intended read classification, and `output.pick` declares an output field selection. Their runtime interpretation and enforcement belong to the consuming MCP implementation, not the decorator.
+
+MCP metadata is independent of ordinary OpenAPI publication. Publishing an HTTP action does not opt it into MCP, and `@Api.exclude()` is not an MCP authorization boundary. Neither the decorator nor `readOnly: true` grants permission, proves the absence of side effects, or supplies tenant isolation, confirmation, transactions, or replay safety.
+
+Keep the layers separate: OpenAPI utilities own the reusable metadata surface; an MCP integration owns tool discovery, argument/result adaptation, transport, authentication, and guarded dispatch.
+
+The metadata declarations are defined in:
+
+- `vona/src/suite-vendor/a-vona/modules/a-openapiutils/src/lib/decorator/mcp.ts`
+- `vona/src/suite-vendor/a-vona/modules/a-openapiutils/src/types/api.ts` (`IMcpToolOptions`)
 
 ## Validation and OpenAPI are linked
 
