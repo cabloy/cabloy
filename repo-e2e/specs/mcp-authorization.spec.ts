@@ -255,7 +255,12 @@ async function callMcp(
   });
 }
 
-async function verifyStudentTools(page: Page, request: APIRequestContext, token: string) {
+async function verifyStudentTools(
+  page: Page,
+  request: APIRequestContext,
+  token: string,
+  scope: 'mcp:all' | 'mcp:read',
+) {
   const accountToken = (await page.context().cookies()).find(
     cookie => cookie.name === 'token',
   )?.value;
@@ -263,14 +268,36 @@ async function verifyStudentTools(page: Page, request: APIRequestContext, token:
   const headers = { Authorization: `Bearer ${accountToken}` };
   const name = `MCP browser E2E ${randomBytes(12).toString('hex')}`;
   const mobile = '13812345678';
-  const descriptionMarkdown = 'Synthetic MCP browser notes, not part of the tool response.';
+  const descriptionMarkdown =
+    '# Synthetic MCP browser profile\n\nFull **Markdown** belongs only to the authorized view.';
   const level = 1;
+  const trainingRecord = {
+    name: '__MCP browser record__',
+    subjectCount: 1,
+    totalScore: 88,
+    averageScore: 88,
+    trainingTime: '2026-03-10T08:00:00.000Z',
+    description: 'Synthetic browser training record',
+    trainingRecordSubjects: [
+      {
+        name: '__MCP browser math__',
+        score: 95,
+        description: 'Synthetic browser subject',
+      },
+    ],
+  };
   let studentId: string | number | undefined;
   try {
     // Use the existing authenticated REST fixture path, not MCP write authority.
     const created = await page.request.post('/api/training/student', {
       headers,
-      data: { name, mobile, level, content: { descriptionMarkdown } },
+      data: {
+        name,
+        mobile,
+        level,
+        content: { descriptionMarkdown },
+        trainingRecords: [trainingRecord],
+      },
     });
     expect(created.ok()).toBe(true);
     studentId = (await created.json()).data;
@@ -280,7 +307,14 @@ async function verifyStudentTools(page: Page, request: APIRequestContext, token:
     expect(listed.status()).toBe(200);
     expect(
       (await listed.json()).result.tools.map((tool: { name: string }) => tool.name).sort(),
-    ).toEqual(['training_student_lookup', 'training_student_summary']);
+    ).toEqual([
+      ...(scope === 'mcp:all' ? ['training_student_create', 'training_student_delete'] : []),
+      'training_student_lookup',
+      'training_student_select',
+      'training_student_summary',
+      ...(scope === 'mcp:all' ? ['training_student_update'] : []),
+      'training_student_view',
+    ]);
 
     const lookup = await callMcp(
       request,
@@ -298,6 +332,98 @@ async function verifyStudentTools(page: Page, request: APIRequestContext, token:
       pageSize: 10,
       pageCount: 1,
     });
+
+    const query = { name, level, pageNo: 1, pageSize: 1 };
+    const selected = await callMcp(
+      request,
+      'tools/call',
+      { name: 'training_student_select', arguments: query },
+      token,
+    );
+    expect(selected.status()).toBe(200);
+    const complete = (await selected.json()).result;
+    expect(complete.isError === true).toBe(false);
+    const httpSelected = await page.request.get('/api/training/student', {
+      headers,
+      params: query,
+    });
+    expect(httpSelected.ok()).toBe(true);
+    const httpBody = await httpSelected.json();
+    const { list, total, pageNo, pageSize, pageCount } = httpBody;
+    const serialized = { list, total: String(total), pageNo, pageSize, pageCount };
+    // Preserve existing DTO normalization of identities and absent optional SQL values.
+    serialized.list = serialized.list.map((row: Record<string, unknown>) => {
+      row.id = String(row.id);
+      if (row.imageId === null) delete row.imageId;
+      return row;
+    });
+    expect(complete.structuredContent).toEqual(serialized);
+    expect(complete.structuredContent).toMatchObject({
+      list: [{ id: String(studentId), name, mobile: '138****5678', level }],
+      total: '1',
+      pageNo: 1,
+      pageSize: 1,
+      pageCount: 1,
+    });
+    expect(complete.content).toEqual([
+      { type: 'text', text: JSON.stringify(complete.structuredContent) },
+    ]);
+    for (const value of [
+      mobile,
+      descriptionMarkdown,
+      '"descriptionMarkdown"',
+      '"descriptionHtml"',
+    ]) {
+      expect(JSON.stringify(complete).includes(value)).toBe(false);
+    }
+
+    const viewed = await callMcp(
+      request,
+      'tools/call',
+      { name: 'training_student_view', arguments: { id: found.structuredContent.list[0].id } },
+      token,
+    );
+    expect(viewed.status()).toBe(200);
+    const detail = (await viewed.json()).result;
+    expect(detail.isError === true).toBe(false);
+    const httpViewed = await page.request.get(`/api/training/student/${studentId}`, { headers });
+    expect(httpViewed.ok()).toBe(true);
+    // This ordinary HTTP detail is the root object, with no transport metadata.
+    const httpDetail = await httpViewed.json();
+    // Apply only the measured, schema-specific DTO normalization; dates/decimals
+    // remain unchanged and the comparison retains every other detail field.
+    httpDetail.id = String(httpDetail.id);
+    if (httpDetail.imageId === null) delete httpDetail.imageId;
+    // DtoStudentView projects content.descriptionMarkdown, not the SQL content id.
+    delete httpDetail.content.id;
+    expect(httpDetail.trainingRecords).toHaveLength(1);
+    for (const record of httpDetail.trainingRecords) {
+      record.id = String(record.id);
+      // Both nested DTOs retain EntityBaseInner's declared deleted default.
+      if (record.deleted === undefined) record.deleted = false;
+      if (record.sceneImageIds === null) delete record.sceneImageIds;
+      if (record.dossierFileIds === null) delete record.dossierFileIds;
+      expect(record.trainingRecordSubjects).toHaveLength(1);
+      for (const subject of record.trainingRecordSubjects) {
+        subject.id = String(subject.id);
+        if (subject.deleted === undefined) subject.deleted = false;
+      }
+    }
+    expect(detail.structuredContent).toEqual(httpDetail);
+    expect(detail.structuredContent).toMatchObject({
+      id: String(studentId),
+      name,
+      mobile: '138****5678',
+      level,
+      content: { descriptionMarkdown },
+      trainingRecords: [trainingRecord],
+    });
+    expect(detail.structuredContent.trainingRecords).toHaveLength(1);
+    expect(detail.structuredContent.trainingRecords[0].trainingRecordSubjects).toHaveLength(1);
+    expect(detail.content).toEqual([
+      { type: 'text', text: JSON.stringify(detail.structuredContent) },
+    ]);
+    expect(JSON.stringify(detail).includes(mobile)).toBe(false);
 
     const summary = await callMcp(
       request,
@@ -411,7 +537,7 @@ for (const scenario of [
       const discovery = await callMcp(request, 'server/discover', {}, token.access_token);
       expect(discovery.status()).toBe(200);
       expect((await discovery.json()).result.supportedVersions).toContain(protocolVersion);
-      await verifyStudentTools(page, request, token.access_token);
+      await verifyStudentTools(page, request, token.access_token, scenario.expectedScope);
 
       const replay = await redeem(request, authorization, client.clientId, code);
       expect(replay.status()).toBe(400);
