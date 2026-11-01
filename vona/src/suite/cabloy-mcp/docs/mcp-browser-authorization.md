@@ -254,7 +254,7 @@ Existing exact-format opaque access tokens remain usable only through the bounde
 
 ### Server-side refresh evidence
 
-The normal server emits two INFO events through the existing default logger (console and combined log file):
+The server records two DEBUG events through the existing logger. They are visible only when the configured logger and destination transports admit DEBUG; the default INFO threshold filters them out:
 
 - `mcp.oauth.refresh_succeeded`: the server completed refresh rotation, pair signing and Passport attachment.
 - `mcp.oauth.refreshed_access_accepted`: a later protected MCP request successfully authenticated using a refreshed access generation. This is authentication evidence, not evidence that the requested tool succeeded.
@@ -270,7 +270,7 @@ The standard logger may also add timestamp, level, bean, method/canonical pathna
 
 After loading this code into the normal server, perform a read-only client interaction, wait beyond the default 900-second access lifetime, then interact again without manually reauthorizing. Search the server console or its configured combined log for these event names. A refresh event followed by an accepted-access event with the **same family and generation** directly establishes server-side refresh issuance followed by use of that generation. It does not establish client response persistence or business-call success; continued usability alone does not prove refresh. Initial generation 1, legacy opaque access and rejected operations produce no such success records. Each accepted refreshed request may log again.
 
-Existing INFO/child/transport filters, optional request-boundary diagnostic suppression and strict isolated-test suppression remain effective. Normal shared ingress does not install that optional boundary. Missing records are inconclusive if diagnostics are filtered, suppressed or unavailable; do not bypass those policies or collect credentials. Managed regression assertions capture the production logging calls without changing suppression settings; they do not substitute for real-client runtime evidence. Logging is best-effort and does not change authentication outcomes. Do not reset databases or replay a refresh token to obtain evidence.
+Existing logger-level/child/transport filters, optional request-boundary diagnostic suppression and strict isolated-test suppression remain effective. Normal shared ingress does not install that optional boundary. Missing records are inconclusive if diagnostics are filtered, suppressed or unavailable; do not bypass those policies or collect credentials. Managed regression assertions capture the production logging calls without changing suppression settings; they do not substitute for real-client runtime evidence. Logging is best-effort and does not change authentication outcomes. Do not reset databases or replay a refresh token to obtain evidence.
 
 ### Shared Passport implementation boundary
 

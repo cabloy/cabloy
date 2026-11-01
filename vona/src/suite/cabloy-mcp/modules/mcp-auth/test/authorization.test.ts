@@ -431,7 +431,7 @@ describe('authorization.test.ts', { concurrency: false }, () => {
   it('rotates signed refresh grants and revokes the whole family on older refresh replay', async t => {
     const evidence: Array<{ event: string; family: string; generation: number }> = [];
     const logger = t.mock.getter(ServiceAuthorization.prototype as any, '$logger', () => ({
-      info(event: string, message: (typeof evidence)[number]) {
+      debug(event: string, message: (typeof evidence)[number]) {
         assert.equal(event, message.event);
         evidence.push(message);
         if (message.generation === 3) throw new Error('synthetic diagnostic failure');

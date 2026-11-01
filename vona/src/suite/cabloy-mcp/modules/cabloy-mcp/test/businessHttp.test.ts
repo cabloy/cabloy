@@ -3140,7 +3140,7 @@ describe('businessHttp.test.ts', { concurrency: false, timeout: 60000 }, () => {
     if (trainingDisabled) return;
     const evidence: Array<{ event: string; family: string; generation: number }> = [];
     const logger = t.mock.getter(ServiceAuthorization.prototype as any, '$logger', () => ({
-      info(event: string, message: (typeof evidence)[number]) {
+      debug(event: string, message: (typeof evidence)[number]) {
         assert.equal(event, message.event);
         evidence.push(message);
       },
@@ -3336,7 +3336,7 @@ describe('businessHttp.test.ts', { concurrency: false, timeout: 60000 }, () => {
     if (trainingDisabled) return;
     const evidence: unknown[] = [];
     const logger = t.mock.getter(ServiceAuthorization.prototype as any, '$logger', () => ({
-      info: (_event: string, message: unknown) => evidence.push(message),
+      debug: (_event: string, message: unknown) => evidence.push(message),
     }));
     const { ServiceStudent } = await import('vona-module-training-student');
     const original = ServiceStudent.prototype.lookup;

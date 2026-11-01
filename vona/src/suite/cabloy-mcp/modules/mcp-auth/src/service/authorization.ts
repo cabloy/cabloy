@@ -314,7 +314,7 @@ export class ServiceAuthorization extends BeanBase {
         | undefined;
       if (!payload) return;
       const evidence = mcpRefreshEvidence(event, payload);
-      if (evidence) this.$logger.info(evidence.event, evidence);
+      if (evidence) this.$logger.debug(evidence.event, evidence);
     } catch {
       // Observation must not change issuance or admission, or log unsafe errors.
     }
