@@ -90,6 +90,7 @@ for (const operation of ['sign', 'verify'] as const) {
         fieldClient: 'client',
         fieldPath: 'path',
         fieldData: 'data',
+        _getSignOptions: ServiceJwtClient.prototype['_getSignOptions'],
         _signInner: ServiceJwtClient.prototype['_signInner'],
         _verifyInner: ServiceJwtClient.prototype['_verifyInner'],
         _checkVerifyPath: ServiceJwtClient.prototype._checkVerifyPath,

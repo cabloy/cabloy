@@ -1,4 +1,4 @@
-import type { IPayloadData } from 'vona-module-a-jwt';
+import type { IJwtClientRecord, IPayloadData } from 'vona-module-a-jwt';
 
 import type { IAuth } from './auth.ts';
 import type { IRole } from './role.ts';
@@ -21,6 +21,7 @@ declare module 'vona' {
   export interface ContextState {
     passport?: IPassport;
     passportPayloadData?: IPayloadData;
+    passportAuthTokenClient?: keyof IJwtClientRecord;
   }
 
   export interface VonaContext {
