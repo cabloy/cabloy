@@ -1,5 +1,6 @@
 import { catchError, isNil } from '@cabloy/utils';
 import jwt from 'jsonwebtoken';
+import ms from 'ms';
 import { BeanBase, cast, deepExtend } from 'vona';
 import { Service } from 'vona-module-a-bean';
 
@@ -49,6 +50,24 @@ export class ServiceJwtClient extends BeanBase {
     return this.scope.config.field.payload.data;
   }
 
+  getExpiresIn(options?: IJwtSignOptions): number {
+    const expiresIn = this._getSignOptions(options).expiresIn!;
+    return typeof expiresIn === 'string' ? Math.floor(ms(expiresIn) / 1000) : expiresIn;
+  }
+
+  private _getSignOptions(options?: IJwtSignOptions) {
+    return {
+      ...this._clientOptions.signOptions,
+      ...(options?.dev && {
+        expiresIn: this.scope.config.clients.refresh.signOptions.expiresIn,
+      }),
+      ...(options?.temp && {
+        expiresIn: this.scope.config.tempAuthToken.signOptions.expiresIn,
+      }),
+      ...(options?.expiresIn !== undefined && { expiresIn: options.expiresIn }),
+    };
+  }
+
   async sign(payloadData: IPayloadData, options?: IJwtSignOptions): Promise<string> {
     const [res, error] = await catchError(() => {
       return this._signInner(payloadData, options);
@@ -67,26 +86,15 @@ export class ServiceJwtClient extends BeanBase {
       if (options?.path) {
         payload[this.fieldPath] = options.path;
       }
-      let signOptions = this._clientOptions.signOptions;
-      if (options?.dev) {
-        signOptions = Object.assign({}, signOptions, {
-          expiresIn: this.scope.config.clients.refresh.signOptions.expiresIn,
-        });
-      }
-      if (options?.temp) {
-        signOptions = Object.assign({}, signOptions, {
-          expiresIn: this.scope.config.tempAuthToken.signOptions.expiresIn,
-        });
-      }
-      if (options?.expiresIn !== undefined) {
-        signOptions = Object.assign({}, signOptions, {
-          expiresIn: options.expiresIn,
-        });
-      }
-      this._jwtInstance.sign(payload, this._clientOptions.secret!, signOptions, (err, encoded) => {
-        if (err) return reject(err);
-        resolve(encoded!);
-      });
+      this._jwtInstance.sign(
+        payload,
+        this._clientOptions.secret!,
+        this._getSignOptions(options),
+        (err, encoded) => {
+          if (err) return reject(err);
+          resolve(encoded!);
+        },
+      );
     });
   }
 

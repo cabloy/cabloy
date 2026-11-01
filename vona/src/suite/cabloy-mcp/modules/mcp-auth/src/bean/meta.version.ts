@@ -25,6 +25,10 @@ export class MetaVersion extends BeanBase implements IMetaVersionUpdate {
       table.bigInteger(authorization.codeExpiresAt).notNullable();
       table.string(authorization.tokenDigest, 64).notNullable();
       table.bigInteger(authorization.tokenExpiresAt).notNullable();
+      table.integer(authorization.tokenVersion).notNullable().defaultTo(0);
+      table.boolean(authorization.refreshEnabled).notNullable().defaultTo(false);
+      table.integer(authorization.refreshGeneration).notNullable().defaultTo(0);
+      table.bigInteger(authorization.refreshExpiresAt).notNullable().defaultTo(0);
       table.tableIdentity(authorization.userId);
       table.tableIdentity(authorization.authId);
       table.index(['iid', authorization.requestDigest]);
@@ -38,6 +42,10 @@ export class MetaVersion extends BeanBase implements IMetaVersionUpdate {
       table.string(client.clientId, 255).notNullable();
       table.string(client.name, 255).notNullable();
       table.json(client.redirectUris).notNullable();
+      table
+        .json(client.grantTypes)
+        .notNullable()
+        .defaultTo(JSON.stringify(['authorization_code']));
       table.string(client.authentication, 32).notNullable();
       table.string(client.secretSha256, 64).nullable();
       table.string(client.resource, 2048).notNullable();

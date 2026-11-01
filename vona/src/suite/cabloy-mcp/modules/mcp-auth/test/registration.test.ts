@@ -56,6 +56,7 @@ describe('registration.test.ts', { concurrency: false }, () => {
       pendingTtl: 600,
       codeTtl: 60,
       tokenTtl: 900,
+      refreshTokenTtl: 604800,
     } satisfies IMcpAuthConfig);
     resource = resolveMcpResource(app, new URL(getMcpIssuer(app)).host);
   });
@@ -94,6 +95,7 @@ describe('registration.test.ts', { concurrency: false }, () => {
       assert.equal(row.resource, resource.resource);
       assert.equal(row.scope, 'mcp:all');
       assert.equal(row.state, 'active');
+      assert.deepEqual(row.grantTypes, ['authorization_code']);
       assert.equal(row.secretSha256, null);
       const resolved = await service().resolve(response.client_id, resource.resource);
       assert.equal(resolved?.clientId, response.client_id);
@@ -150,7 +152,7 @@ describe('registration.test.ts', { concurrency: false }, () => {
     });
   });
 
-  it('negotiates Codex-style requested grants without granting refresh or broader scope', async () => {
+  it('persists explicit refresh grants canonically without granting broader scope', async () => {
     for (const grant_types of [
       ['authorization_code', 'refresh_token'],
       ['refresh_token', 'authorization_code'],
@@ -168,14 +170,17 @@ describe('registration.test.ts', { concurrency: false }, () => {
         ),
       );
       clientIds.push(response.client_id);
-      assert.deepEqual(response.grant_types, ['authorization_code']);
+      assert.deepEqual(response.grant_types, ['authorization_code', 'refresh_token']);
       assert.deepEqual(response.response_types, ['code']);
       assert.equal(response.scope, 'mcp:read');
       assert.equal('application_type' in response, false);
       assert.equal('refresh_token' in response, false);
       assert.equal('client_secret' in response, false);
       await app.bean.executor.mockCtx(async () => {
+        const row = await model().get({ clientId: response.client_id });
+        assert.deepEqual(row?.grantTypes, ['authorization_code', 'refresh_token']);
         const resolved = await service().resolve(response.client_id, resource.resource);
+        assert.deepEqual(resolved?.grantTypes, ['authorization_code', 'refresh_token']);
         assert.equal(resolved?.scope, 'mcp:read');
         assert.deepEqual(resolved?.resources, [resource.resource]);
       });

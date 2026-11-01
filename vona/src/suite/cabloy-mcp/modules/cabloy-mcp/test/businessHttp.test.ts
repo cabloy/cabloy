@@ -26,6 +26,8 @@ import {
 } from 'vona-module-cabloy-mcp';
 import { getMcpIssuer } from 'vona-module-mcp-auth';
 
+import { ServiceAuthorization } from '../../mcp-auth/src/service/authorization.ts';
+
 const version = '2026-07-28';
 const categoriesName = 'commerce_categories_list';
 const searchName = 'commerce_products_search';
@@ -77,14 +79,14 @@ let fixtureAuthSimpleId: string | undefined;
 let browserToken: string;
 const ownedRequests: string[] = [];
 
-async function redeemBearer(scope: 'mcp:all' | 'mcp:read' = 'mcp:read') {
+async function redeemTokens(scope: 'mcp:all' | 'mcp:read' = 'mcp:read', oauthClientId = clientId) {
   const verifier = randomBytes(32).toString('base64url');
   const requestId = await app.bean.executor.mockCtx(
     async () => {
       return await app.scope('mcp-auth').service.authorization.authorize(
         new URLSearchParams({
           response_type: 'code',
-          client_id: clientId,
+          client_id: oauthClientId,
           redirect_uri: redirectUri,
           resource,
           scope,
@@ -111,7 +113,7 @@ async function redeemBearer(scope: 'mcp:all' | 'mcp:read' = 'mcp:read') {
     headers: { 'content-type': 'application/x-www-form-urlencoded' },
     body: new URLSearchParams({
       grant_type: 'authorization_code',
-      client_id: clientId,
+      client_id: oauthClientId,
       redirect_uri: redirectUri,
       resource,
       code,
@@ -119,10 +121,25 @@ async function redeemBearer(scope: 'mcp:all' | 'mcp:read' = 'mcp:read') {
     }).toString(),
   }).response;
   assert.equal(token.status, 200);
+  assert.equal(token.headers['cache-control'], 'no-store');
   assert.equal(token.body.token_type, 'Bearer');
   assert.equal(token.body.scope, scope);
-  assert.equal('refresh_token' in token.body, false);
-  return token.body.access_token as string;
+  assert.equal(token.body.expires_in, 900);
+  assert.match(token.body.access_token, /^[\w-]+\.[\w-]+\.[\w-]+$/);
+  return token.body as { access_token: string; refresh_token?: string };
+}
+
+async function redeemBearer(scope: 'mcp:all' | 'mcp:read' = 'mcp:read') {
+  const token = await redeemTokens(scope);
+  assert.equal('refresh_token' in token, false);
+  return token.access_token;
+}
+
+async function issuedTokenDigest(token: string) {
+  const verified = await app.bean.jwt.get('mcpAccess').verify(token);
+  assert.ok(verified);
+  const payload = app.scope('mcp-auth').service.authTokenAdapter.payload(verified);
+  return createHash('sha256').update(payload.token).digest('hex');
 }
 
 function openHttp(
@@ -296,7 +313,7 @@ describe('businessHttp.test.ts', { concurrency: false, timeout: 60000 }, () => {
         client_name: 'Managed MCP dynamic test',
         redirect_uris: [redirectUri],
         token_endpoint_auth_method: 'none',
-        grant_types: ['authorization_code', 'refresh_token'],
+        grant_types: ['authorization_code'],
         response_types: ['code'],
         scope: 'mcp:all mcp:read',
       }),
@@ -581,6 +598,7 @@ describe('businessHttp.test.ts', { concurrency: false, timeout: 60000 }, () => {
               pendingTtl: 600,
               codeTtl: 60,
               tokenTtl: 900,
+              refreshTokenTtl: 604800,
               allowLoopbackHttp: true,
             },
           },
@@ -3088,7 +3106,7 @@ describe('businessHttp.test.ts', { concurrency: false, timeout: 60000 }, () => {
     assert.equal(metadata.body.authorization_endpoint, `${resource}/auth`);
     assert.equal(metadata.body.token_endpoint, `${resource}/token`);
     assert.equal(metadata.body.registration_endpoint, `${resource}/register`);
-    assert.deepEqual(metadata.body.grant_types_supported, ['authorization_code']);
+    assert.deepEqual(metadata.body.grant_types_supported, ['authorization_code', 'refresh_token']);
     assert.deepEqual(metadata.body.scopes_supported, ['mcp:all', 'mcp:read']);
     assert.equal(metadata.headers['cache-control'], 'no-store');
 
@@ -3103,19 +3121,141 @@ describe('businessHttp.test.ts', { concurrency: false, timeout: 60000 }, () => {
       }).toString(),
     }).response;
     assert.equal(refresh.status, 400);
-    assert.equal(refresh.body.error, 'invalid_request');
+    assert.equal(refresh.body.error, 'unauthorized_client');
     assert.equal(refresh.headers['cache-control'], 'no-store');
     const unsupportedGrant = await openHttp({
       target: '/mcp/token',
       headers: { 'content-type': 'application/x-www-form-urlencoded' },
       body: new URLSearchParams({
-        grant_type: 'refresh_token',
+        grant_type: 'client_credentials',
         client_id: clientId,
         resource,
       }).toString(),
     }).response;
     assert.equal(unsupportedGrant.status, 400);
     assert.equal(unsupportedGrant.body.error, 'unsupported_grant_type');
+  });
+
+  it('refreshes an explicitly opted-in OAuth grant over HTTP and retains read access after wrong-client refresh attempts', async t => {
+    if (trainingDisabled) return;
+    const evidence: Array<{ event: string; family: string; generation: number }> = [];
+    const logger = t.mock.getter(ServiceAuthorization.prototype as any, '$logger', () => ({
+      info(event: string, message: (typeof evidence)[number]) {
+        assert.equal(event, message.event);
+        evidence.push(message);
+      },
+    }));
+    const clients: string[] = [];
+    const off = allowStudentAction('lookup');
+    try {
+      for (const label of ['owner', 'wrong-client']) {
+        // Own these client fixtures without consuming the DCR boundary test's IP quota.
+        const registration = await app.bean.executor.mockCtx(
+          async () =>
+            app.scope('mcp-auth').service.registration.register(
+              {
+                client_name: `Managed MCP refresh ${label}`,
+                redirect_uris: [redirectUri],
+                token_endpoint_auth_method: 'none',
+                grant_types: ['authorization_code', 'refresh_token'],
+                response_types: ['code'],
+                scope: 'mcp:read',
+              },
+              { resource, instanceName: '' },
+            ),
+          { instanceName: '' },
+        );
+        clients.push(registration.client_id);
+        assert.deepEqual(registration.grant_types, ['authorization_code', 'refresh_token']);
+      }
+      const [owner, wrongClient] = clients;
+      const token = await redeemTokens('mcp:read', owner);
+      assert.ok(token.refresh_token);
+      assert.match(token.refresh_token, /^[\w-]+\.[\w-]+\.[\w-]+$/);
+      const refresh = (oauthClientId: string, refreshToken: string) =>
+        openHttp({
+          target: '/mcp/token',
+          headers: { 'content-type': 'application/x-www-form-urlencoded' },
+          body: new URLSearchParams({
+            grant_type: 'refresh_token',
+            client_id: oauthClientId,
+            refresh_token: refreshToken,
+            resource,
+          }).toString(),
+        }).response;
+      const read = (accessToken: string) =>
+        send(
+          'tools/call',
+          { name: studentLookupName, arguments: { name: `MCP refresh absent ${randomUUID()}` } },
+          { headers: { authorization: `Bearer ${accessToken}` } },
+        );
+      const wrong = await refresh(wrongClient, token.refresh_token);
+      assert.equal(wrong.status, 400);
+      assert.equal(wrong.body.error, 'invalid_grant');
+      assert.equal(wrong.headers['cache-control'], 'no-store');
+      assert.deepEqual(output(await read(token.access_token)).list, []);
+      assert.equal(evidence.length, 0, 'Initial access and wrong-client refresh emit no evidence');
+
+      // Refresh is a direct token request: no second authorization or consent decision.
+      const refreshed = await refresh(owner, token.refresh_token);
+      assert.equal(refreshed.status, 200);
+      assert.equal(refreshed.headers['cache-control'], 'no-store');
+      assert.equal(refreshed.body.token_type, 'Bearer');
+      assert.equal(refreshed.body.scope, 'mcp:read');
+      assert.equal(refreshed.body.expires_in, 900);
+      assert.match(refreshed.body.access_token, /^[\w-]+\.[\w-]+\.[\w-]+$/);
+      assert.match(refreshed.body.refresh_token, /^[\w-]+\.[\w-]+\.[\w-]+$/);
+      assert.equal(refreshed.body.access_token === token.access_token, false);
+      assert.equal(refreshed.body.refresh_token === token.refresh_token, false);
+      assert.equal(evidence.length, 1);
+      const family = evidence[0].family;
+      assert.match(family, /^[a-f0-9]{64}$/);
+      assert.deepEqual(evidence, [{ event: 'mcp.oauth.refresh_succeeded', family, generation: 2 }]);
+      const old = await read(token.access_token);
+      assert.equal(old.status, 401);
+      assert.match(String(old.headers['www-authenticate']), /error="invalid_token"/);
+      assert.equal(evidence.length, 1, 'Rejected old access emits no acceptance');
+      assert.deepEqual(output(await read(refreshed.body.access_token)).list, []);
+      assert.deepEqual(evidence, [
+        { event: 'mcp.oauth.refresh_succeeded', family, generation: 2 },
+        { event: 'mcp.oauth.refreshed_access_accepted', family, generation: 2 },
+      ]);
+
+      // A foreign client presenting a consumed generation must not revoke its owner's family.
+      const wrongReplay = await refresh(wrongClient, token.refresh_token);
+      assert.equal(wrongReplay.status, 400);
+      assert.equal(wrongReplay.body.error, 'invalid_grant');
+      assert.equal(evidence.length, 2);
+      assert.deepEqual(output(await read(refreshed.body.access_token)).list, []);
+      assert.deepEqual(evidence[2], {
+        event: 'mcp.oauth.refreshed_access_accepted',
+        family,
+        generation: 2,
+      });
+      const serialized = JSON.stringify(evidence);
+      for (const secret of [
+        ...clients,
+        token.access_token,
+        token.refresh_token,
+        refreshed.body.access_token,
+        refreshed.body.refresh_token,
+        redirectUri,
+      ]) {
+        assert.equal(serialized.includes(secret), false);
+      }
+    } finally {
+      logger.mock.restore();
+      off();
+      await app.bean.executor.mockCtx(
+        async () => {
+          for (const id of clients.toReversed()) {
+            await app.scope('mcp-auth').model.authorization.delete({ clientId: id });
+            await app.scope('mcp-auth').model.client.delete({ clientId: id });
+          }
+        },
+        { instanceName: '' },
+      );
+    }
   });
 
   it('uses only the automatically resolved canonical instance and rejects conflicting selectors before dispatch', async () => {
@@ -3192,11 +3332,19 @@ describe('businessHttp.test.ts', { concurrency: false, timeout: 60000 }, () => {
     assert.ok(app.server?.listening);
   });
 
-  it('installs current server-owned Passport into approved Actions without forwarding bearer credentials', async t => {
+  it('retains signed and opaque MCP provenance in guarded Actions and rejects ordinary credential conversion', async t => {
     if (trainingDisabled) return;
+    const evidence: unknown[] = [];
+    const logger = t.mock.getter(ServiceAuthorization.prototype as any, '$logger', () => ({
+      info: (_event: string, message: unknown) => evidence.push(message),
+    }));
     const { ServiceStudent } = await import('vona-module-training-student');
     const original = ServiceStudent.prototype.lookup;
     const off = allowStudentAction('lookup');
+    const opaque = randomBytes(32).toString('base64url');
+    const opaqueDigest = createHash('sha256').update(opaque).digest('hex');
+    let legacyRequestDigest: string | undefined;
+    let ordinaryCode: string;
     const observed = t.mock.method(
       ServiceStudent.prototype,
       'lookup',
@@ -3204,24 +3352,98 @@ describe('businessHttp.test.ts', { concurrency: false, timeout: 60000 }, () => {
         this: InstanceType<typeof ServiceStudent>,
         ...args: Parameters<InstanceType<typeof ServiceStudent>['lookup']>
       ) {
-        assert.equal(String(this.bean.passport.currentUser?.id), fixtureUserId);
-        assert.equal(String(this.bean.passport.currentAuth?.id), fixtureAuthId);
-        assert.ok(this.bean.passport.isAuthenticated);
+        const passport = this.bean.passport;
+        const current = passport.current;
+        const payload = this.ctx.state.passportPayloadData;
+        assert.ok(current);
+        assert.ok(payload);
+        assert.equal(this.ctx.state.passportAuthTokenClient, 'mcpAccess');
+        assert.equal(String(passport.currentUser?.id), fixtureUserId);
+        assert.equal(String(passport.currentAuth?.id), fixtureAuthId);
+        assert.ok(passport.isAuthenticated);
         assert.equal(this.ctx.innerAccess, false);
         assert.equal(this.ctx.req.headers.authorization, undefined);
         assert.equal(this.ctx.req.headers.cookie, undefined);
         assert.equal(this.ctx.req.headers['proxy-authorization'], undefined);
+        // A broken admission/issuance guard must fail without signing ordinary credentials.
+        const issue = t.mock.method(this.bean.jwt, 'create', async () =>
+          assert.fail('MCP Action must not issue ordinary access/refresh credentials'),
+        );
+        const temp = t.mock.method(this.bean.jwt, 'createTempAuthToken', async () =>
+          assert.fail('MCP Action must not issue ordinary temporary credentials'),
+        );
+        try {
+          for (const convert of [
+            () => passport.signin(current),
+            () => passport.createTempAuthToken(),
+            () => passport.createAuthTokenFromOauthCode(ordinaryCode),
+          ]) {
+            await assert.rejects(convert, error => error instanceof Error && error.code === 403);
+            assert.equal(passport.current, current);
+            assert.equal(this.ctx.state.passportPayloadData, payload);
+            assert.equal(this.ctx.state.passportAuthTokenClient, 'mcpAccess');
+          }
+          assert.equal(issue.mock.callCount(), 0);
+          assert.equal(temp.mock.callCount(), 0);
+        } finally {
+          issue.mock.restore();
+          temp.mock.restore();
+        }
         return await original.apply(this, args);
       },
     );
     try {
-      output(
-        await send('tools/call', { name: studentLookupName, arguments: { name: randomUUID() } }),
+      const legacySigned = await redeemBearer();
+      ordinaryCode = await app.bean.executor.mockCtx(
+        async () => {
+          const grant = await app.scope('mcp-auth').model.authorization.get({
+            tokenDigest: await issuedTokenDigest(legacySigned),
+          });
+          assert.ok(grant);
+          legacyRequestDigest = grant.requestDigest;
+          // Model a previously issued opaque grant, retaining its real consent/client binding.
+          const count = await app
+            .scope('mcp-auth')
+            .model.authorization.builderSelect()
+            .where({ id: grant.id })
+            .update({ tokenDigest: opaqueDigest, tokenVersion: 0, refreshGeneration: 0 });
+          assert.equal(count, 1);
+          const checked = await app.bean.passport.checkAuthToken(browserToken);
+          assert.ok(checked);
+          const code = await app.bean.jwt.createOauthCode(checked.payloadData);
+          assert.deepEqual(await app.bean.jwt.get('code').verify(code), checked.payloadData);
+          return code;
+        },
+        { instanceName: '' },
       );
-      assert.equal(observed.mock.callCount(), 1);
+      for (const token of [bearer, opaque]) {
+        assert.deepEqual(
+          output(
+            await send(
+              'tools/call',
+              { name: studentLookupName, arguments: { name: randomUUID() } },
+              { headers: { authorization: `Bearer ${token}` } },
+            ),
+          ).list,
+          [],
+        );
+      }
+      assert.equal(observed.mock.callCount(), 2);
+      assert.deepEqual(evidence, [], 'Signed initial and opaque access are not refreshed access');
     } finally {
+      logger.mock.restore();
       off();
       observed.mock.restore();
+      await app.bean.executor.mockCtx(
+        async () => {
+          if (legacyRequestDigest) {
+            await app.scope('mcp-auth').model.authorization.delete({
+              requestDigest: legacyRequestDigest,
+            });
+          }
+        },
+        { instanceName: '' },
+      );
     }
   });
 
@@ -3269,7 +3491,7 @@ describe('businessHttp.test.ts', { concurrency: false, timeout: 60000 }, () => {
               await app
                 .scope('mcp-auth')
                 .model.authorization.builderSelect()
-                .where({ tokenDigest: createHash('sha256').update(token).digest('hex') })
+                .where({ tokenDigest: await issuedTokenDigest(token) })
                 .update({ tokenExpiresAt: Date.now() - 1 });
             }
           },
@@ -3292,7 +3514,7 @@ describe('businessHttp.test.ts', { concurrency: false, timeout: 60000 }, () => {
           await app
             .scope('mcp-auth')
             .model.authorization.builderSelect()
-            .where({ tokenDigest: createHash('sha256').update(insufficient).digest('hex') })
+            .where({ tokenDigest: await issuedTokenDigest(insufficient) })
             .update({ scope: '' });
         },
         { instanceName: '' },
@@ -3302,8 +3524,8 @@ describe('businessHttp.test.ts', { concurrency: false, timeout: 60000 }, () => {
         { name: studentLookupName, arguments: { name: 'Student' } },
         { headers: { authorization: `Bearer ${insufficient}` } },
       );
-      assert.equal(forbidden.status, 403);
-      assert.match(String(forbidden.headers['www-authenticate']), /error="insufficient_scope"/);
+      assert.equal(forbidden.status, 401);
+      assert.match(String(forbidden.headers['www-authenticate']), /error="invalid_token"/);
       assert.equal(held.mock.callCount(), 0);
       const config = app.config.modules['mcp-auth'];
       const contexts = mcpTransportSnapshot(app)?.contexts;

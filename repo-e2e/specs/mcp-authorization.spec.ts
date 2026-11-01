@@ -44,7 +44,7 @@ async function registerClient(
   expect(response.headers()['cache-control']).toBe('no-store');
   const body = await response.json();
   expect(body.token_endpoint_auth_method).toBe('none');
-  expect(body.grant_types).toEqual(['authorization_code']);
+  expect(body.grant_types).toEqual(['authorization_code', 'refresh_token']);
   expect(body).not.toHaveProperty('application_type');
   expect(body).not.toHaveProperty('refresh_token');
   expect(body.response_types).toEqual(['code']);
@@ -58,7 +58,7 @@ async function registerClient(
   };
 }
 
-// OAuth codes, account credentials, and access tokens must not enter retry traces,
+// OAuth codes, account credentials, and access/refresh tokens must not enter retry traces,
 // videos, or screenshots. Callback interception also avoids an external listener.
 test.use({ trace: 'off', video: 'off', screenshot: 'off' });
 
@@ -260,6 +260,7 @@ async function verifyStudentTools(
   request: APIRequestContext,
   token: string,
   scope: 'mcp:all' | 'mcp:read',
+  refresh: () => Promise<string>,
 ) {
   const accountToken = (await page.context().cookies()).find(
     cookie => cookie.name === 'token',
@@ -308,7 +309,9 @@ async function verifyStudentTools(
     expect(
       (await listed.json()).result.tools.map((tool: { name: string }) => tool.name).sort(),
     ).toEqual([
+      'training_student_aggregate',
       ...(scope === 'mcp:all' ? ['training_student_create', 'training_student_delete'] : []),
+      'training_student_group',
       'training_student_lookup',
       'training_student_select',
       'training_student_summary',
@@ -333,6 +336,8 @@ async function verifyStudentTools(
       pageCount: 1,
     });
 
+    // The first real read uses the consent-issued credential; subsequent reads use its rotation.
+    token = await refresh();
     const query = { name, level, pageNo: 1, pageSize: 1 };
     const selected = await callMcp(
       request,
@@ -466,7 +471,7 @@ for (const scenario of [
   { name: 'explicit mcp:read', scope: 'mcp:read', expectedScope: 'mcp:read' },
 ] as const) {
   test(
-    `MCP browser authorization: ${scenario.name}, anonymous login, explicit approval, PKCE exchange and bearer tools`,
+    `MCP browser authorization: ${scenario.name}, anonymous login, explicit approval, PKCE exchange, refresh and bearer tools`,
     { tag: ['@web', '@ssr', '@mcp', '@flow'] },
     async ({ page, request, baseURL }) => {
       test.setTimeout(60_000);
@@ -525,10 +530,14 @@ for (const scenario of [
       expect(token.token_type).toBe('Bearer');
       expect(token.scope).toBe(scenario.expectedScope);
       expect(token.expires_in).toBe(900);
-      expect(token.refresh_token === undefined).toBe(true);
-      expect(typeof token.access_token === 'string' && /^[\w-]{43}$/.test(token.access_token)).toBe(
-        true,
-      );
+      expect(
+        typeof token.refresh_token === 'string' &&
+          /^[\w-]+\.[\w-]+\.[\w-]+$/.test(token.refresh_token),
+      ).toBe(true);
+      expect(
+        typeof token.access_token === 'string' &&
+          /^[\w-]+\.[\w-]+\.[\w-]+$/.test(token.access_token),
+      ).toBe(true);
       expect(token.access_token === code).toBe(false);
 
       const anonymous = await callMcp(request, 'server/discover');
@@ -537,7 +546,59 @@ for (const scenario of [
       const discovery = await callMcp(request, 'server/discover', {}, token.access_token);
       expect(discovery.status()).toBe(200);
       expect((await discovery.json()).result.supportedVersions).toContain(protocolVersion);
-      await verifyStudentTools(page, request, token.access_token, scenario.expectedScope);
+      const callbackUrl = page.url();
+      let authorizationRequests = 0;
+      page.on('request', outgoing => {
+        if (
+          ['/mcp/auth', '/mcp/auth/summary', '/mcp/auth/decision'].includes(
+            new URL(outgoing.url()).pathname,
+          )
+        ) {
+          authorizationRequests++;
+        }
+      });
+      await verifyStudentTools(
+        page,
+        request,
+        token.access_token,
+        scenario.expectedScope,
+        async () => {
+          const response = await request.post('/mcp/token', {
+            form: {
+              grant_type: 'refresh_token',
+              client_id: client.clientId,
+              refresh_token: token.refresh_token,
+              resource: authorization.resource,
+            },
+          });
+          expect(response.status()).toBe(200);
+          expect(response.headers()['cache-control']).toBe('no-store');
+          const refreshed = await response.json();
+          expect(refreshed.token_type).toBe('Bearer');
+          expect(refreshed.scope).toBe(scenario.expectedScope);
+          expect(refreshed.expires_in).toBe(900);
+          expect(
+            typeof refreshed.access_token === 'string' &&
+              /^[\w-]+\.[\w-]+\.[\w-]+$/.test(refreshed.access_token),
+          ).toBe(true);
+          expect(
+            typeof refreshed.refresh_token === 'string' &&
+              /^[\w-]+\.[\w-]+\.[\w-]+$/.test(refreshed.refresh_token),
+          ).toBe(true);
+          // Boolean comparisons keep credential values out of assertion diagnostics.
+          expect(refreshed.access_token === token.access_token).toBe(false);
+          expect(refreshed.refresh_token === token.refresh_token).toBe(false);
+          const oldAccess = await callMcp(request, 'tools/list', {}, token.access_token);
+          expect(oldAccess.status()).toBe(401);
+          expect(oldAccess.headers()['www-authenticate']).toContain('error="invalid_token"');
+          expect(page.url() === callbackUrl).toBe(true);
+          await expect(page.getByRole('heading', { name: 'MCP test callback' })).toBeVisible();
+          await expect(page.getByRole('button', { name: 'Approve', exact: true })).toHaveCount(0);
+          expect(authorizationRequests).toBe(0);
+          return refreshed.access_token as string;
+        },
+      );
+      expect(authorizationRequests).toBe(0);
 
       const replay = await redeem(request, authorization, client.clientId, code);
       expect(replay.status()).toBe(400);

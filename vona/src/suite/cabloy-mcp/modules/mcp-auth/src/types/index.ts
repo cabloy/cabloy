@@ -13,6 +13,15 @@ export interface IMcpAuthResource {
 
 export type TypeMcpScope = 'mcp:all' | 'mcp:read';
 
+declare module 'vona-module-a-jwt' {
+  export interface IJwtClientRecord {
+    mcpAccess: never;
+    mcpRefresh: never;
+  }
+}
+
+export type TypeMcpGrantTypes = ['authorization_code'] | ['authorization_code', 'refresh_token'];
+
 export type TypeMcpClientAuthentication = 'none' | 'client_secret_basic';
 
 export type TypeMcpClientRegistrationState = 'active' | 'revoked';
@@ -40,7 +49,7 @@ export interface IMcpAuthRegistrationResponse {
   client_name: string;
   redirect_uris: string[];
   token_endpoint_auth_method: TypeMcpClientAuthentication;
-  grant_types: ['authorization_code'];
+  grant_types: TypeMcpGrantTypes;
   response_types: ['code'];
   scope: TypeMcpScope;
   client_secret?: string;
@@ -51,6 +60,7 @@ export interface IMcpAuthResolvedClient {
   clientId: string;
   name: string;
   redirectUris: string[];
+  grantTypes: TypeMcpGrantTypes;
   authentication: TypeMcpClientAuthentication;
   secretSha256?: string;
   resources: string[];
@@ -65,6 +75,7 @@ export interface IMcpAuthConfig {
   pendingTtl: number;
   codeTtl: number;
   tokenTtl: number;
+  refreshTokenTtl: number;
   allowLoopbackHttp: boolean;
 }
 

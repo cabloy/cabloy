@@ -159,6 +159,22 @@ export interface IJwtToken {
 
 That paired helper is the normal fit for sign-in flows.
 
+### Explicit pairs and scoped Passport flows
+
+Trusted server code can select registered clients and independent lifetimes through `IJwtCreateOptions`: `accessClient`, `refreshClient`, `accessExpiresIn` and `refreshExpiresIn`. Lifetimes accept numeric seconds or duration strings such as `'15m'`. Without those options, `bean.jwt.create(...)` keeps the ordinary `access`/`refresh` pair and each client's configured defaults. Client selection does not create a new auth provider or authorize a user.
+
+The paired helper does not accept a shared `expiresIn`. Migrate paired `{ expiresIn: value }` calls to `accessExpiresIn`, `refreshExpiresIn`, or both, according to the intended lifetimes. Single-client `sign(...)` retains `expiresIn`.
+
+JWT clients resolve signing options in one place: merged base/client configuration, then `dev` (ordinary refresh lifetime), then `temp` (temporary lifetime), then the explicit expiry override. For paired creation, each independent expiry is that token's explicit override. The returned `expiresIn` is the effective access-token lifetime in seconds, including these overrides, not merely its configured default.
+
+For identity-bearing scoped grants, configure the registered JWT clients' optional `authTokenAdapter` field with a service name rather than treating a signed payload as a login. For example, when `mcp-auth` is installed, both `mcpAccess` and `mcpRefresh` select `mcp-auth:authTokenAdapter`. A client without that field keeps the ordinary Passport adapter. This is static trusted configuration, never a selector taken from token claims or request input; it does not change raw JWT sign/verify behavior.
+
+Passport's `createAuthToken(passport, payloadData, clientName = 'access', input?)`, `checkAuthToken(token, clientName = 'access', options?)` and `refreshAuthToken(token, clientName = 'refresh', input?)` select that service through the named client. Check options contain `path?`, `operation?: 'check' | 'refresh'` and `input?`; refresh verification deliberately does not attach current request state. The adapter may supply fixed auth-token `options`, a fresh `deserialize(payloadData)` implementation and `getJwtOptions(payloadData)` for the pair/lifetimes. Both clients in an issued pair must select the same adapter. Creation or reissue returns the final payload before JWT signing and Passport attachment. Operation `input` is validated data forwarded to adapter creation/verification, not a callback or policy override.
+
+The original `reuse`, `refresh` and `reissue` strategies remain: `refresh` extends stored state, while `reissue` calls the selected adapter's `create(...)` and signs its returned replacement payload. Adapter verification is read-only. Raw JWT verification alone does not establish current grant state or business authority. See [Auth Guide](/backend/auth-guide#auth-token-lifecycle-and-adapter-selection).
+
+MCP uses separate `mcpAccess`/`mcpRefresh` purposes: access defaults to **900 seconds**, and explicitly refresh-enabled grants have a **7-day fixed family deadline** by default. Each successful refresh rotates the pair without extending that deadline and immediately invalidates the old access token; authenticated replay of an older refresh generation revokes the family. Issuance is not retried to recover a lost response. Code-only registrations and legacy opaque access tokens are not upgraded to refresh capability. MCP tokens and ordinary login, refresh, temporary and OAuth credentials are not interchangeable.
+
 ## Temporary auth tokens
 
 Some flows need an access token in a URL query or similarly constrained transport.

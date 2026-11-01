@@ -131,6 +131,38 @@ The `home-user` module exposes out-of-the-box Passport APIs for common account f
 
 In the current repo implementation, these flows live in `home-user/src/controller/passport.ts`, where register/login call `bean.auth.authenticate(...)`, OAuth login uses provider/module path parameters, and token-oriented follow-up endpoints stay concentrated in one controller surface.
 
+### Auth-token lifecycle and adapter selection
+
+Ordinary signin assembles the current Passport, emits the signin event and serializes its user/auth identity. Passport then applies the auth-token policy and signs the resulting payload through the JWT access/refresh pair. Checks verify the selected JWT purpose, deserialize the Passport, reject disabled accounts and, for stateful tokens, verify the adapter's current stored state. Logout removes that state through its owning adapter before clearing the current Passport. Provider/client options and `auth`/`session` mode continue to govern ordinary credentials.
+
+A scoped token flow reuses that lifecycle without adding an auth provider. Trusted application configuration can set `modules['a-jwt'].clients[clientName].authTokenAdapter` to a registered service name, such as `mcp-auth:authTokenAdapter` when that module is installed. Without that field, Passport uses the ordinary adapter selected by `modules['a-user'].adapter.authToken`. Select JWT clients in trusted server code; never let request input choose a client, adapter or identity override.
+
+The Passport entrypoints are:
+
+```typescript
+// Defaults remain the ordinary access and refresh clients.
+await this.bean.passport.createAuthToken(passport, payloadData, clientName, input);
+await this.bean.passport.checkAuthToken(token, clientName, {
+  path,
+  operation: 'check', // Or 'refresh' to verify without attaching current state.
+  input,
+});
+await this.bean.passport.refreshAuthToken(refreshToken, refreshClientName, input);
+```
+
+`createAuthToken(...)` issues from an already validated Passport. Serialized user/auth identity takes precedence over supplied payload fields; this method does not authenticate a provider, create another identity or emit a signin event. `input?: unknown` carries operation data, not executable behavior or configuration. Each adapter must validate any data it accepts.
+
+`IAuthTokenAdapter` keeps its original `create`, `retrieve`, `verify`, `refresh`, `remove` and `removeAll` lifecycle. Optional seams specialize it without a separate token-flow abstraction:
+
+- `options?: Readonly<IAuthTokenOptions>` supplies fixed adapter policy in place of ordinary defaults/provider overrides. For example, MCP uses `{ stateless: false, strategy: 'reissue' }`, so provider stateless settings cannot bypass its stored grant validation and ordinary session mode does not change its grant lifecycle.
+- `deserialize?(payloadData)` reloads identity/authority when the ordinary Passport deserializer is not appropriate.
+- `getJwtOptions?(payloadData)` selects the registered access/refresh pair and independent lifetimes after state creation/rotation. Both clients must select the same adapter.
+- `create(payloadData, ttl?, input?)` returns the payload to sign; `verify(payloadData, { operation, clientName, input })` performs read-only validation. Existing adapters need not consume the added arguments.
+
+Refresh uses the same check pipeline with `operation: 'refresh'`, without attaching current state. It then applies the selected strategy: `reuse` retains the payload, `refresh` extends stored state through `refresh(...): Promise<void>`, and `reissue` calls `create(...)` for a replacement payload. Creation/rotation and JWT signing must succeed before the resulting Passport and payload are attached. A scoped adapter's `create(...)` owns any atomic rotation and replay handling, not its read-only `verify(...)` method.
+
+The attached scalar JWT client name keeps subsequent issuance and logout tied to the selected adapter; clearing current state also clears that provenance and payload. Ordinary signin, refresh, temporary-token and OAuth helpers must not convert a currently attached scoped credential into ordinary login authority. For example, MCP's grant family stays separate from ordinary login/session credentials. See [JWT Guide](/backend/jwt-guide#explicit-pairs-and-scoped-passport-flows) for the token-mechanics boundary.
+
 ## Auth-token mode
 
 The auth-token mode selects how Vona issues, stores, reuses, and refreshes server-side authentication state. By default, logins for the same user and authentication record share one token identity. Applications that need independently managed login sessions can select `session` mode. Ordinary logout revocation follows the selected mode; this is not a logout-only setting.

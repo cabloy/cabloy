@@ -92,20 +92,21 @@ On 2026-10-25, before that replacement, the user reported Codex server `test` di
 
 ## Supported first profile
 
-| Item                               | Boundary                                                              |
-| ---------------------------------- | --------------------------------------------------------------------- |
-| Grant                              | Authorization code with PKCE **S256**, including confidential clients |
-| Client registration                | RFC 7591 DCR only; available with the existing AS/MCP ingress         |
-| Public client authentication       | `none`                                                                |
-| Confidential client authentication | `client_secret_basic`                                                 |
-| Scopes                             | `mcp:all` (new-registration default) and narrower `mcp:read`          |
-| Pending authorization lifetime     | **10 minutes** by default                                             |
-| Authorization code lifetime        | **60 seconds** by default; one use                                    |
-| Access token lifetime              | **15 minutes** by default; opaque MCP-specific token                  |
-| Refresh                            | None; start a new authorization after access-token expiry             |
-| Consent                            | Explicit approve/deny on every request; no remembered consent         |
+| Item                               | Boundary                                                                         |
+| ---------------------------------- | -------------------------------------------------------------------------------- |
+| Grant                              | Authorization code with PKCE **S256**; refresh when explicitly registered        |
+| Client registration                | RFC 7591 DCR only; available with the existing AS/MCP ingress                    |
+| Public client authentication       | `none`                                                                           |
+| Confidential client authentication | `client_secret_basic`                                                            |
+| Scopes                             | `mcp:all` (new-registration default) and narrower `mcp:read`                     |
+| Pending authorization lifetime     | **10 minutes** by default                                                        |
+| Authorization code lifetime        | **60 seconds** by default; one use                                               |
+| Access token lifetime              | **900 seconds (15 minutes)** by default; MCP-specific JWT                        |
+| Refresh family lifetime            | **7 days** by default; fixed at initial issuance, never sliding                  |
+| Refresh rotation                   | Each successful use rotates the pair; older-generation replay revokes the family |
+| Consent                            | Explicit approve/deny on each new authorization; no remembered consent           |
 
-`POST /mcp/register` creates an AS-owned client record whenever the existing AS/MCP ingress is available, and its authorization-server metadata advertises `registration_endpoint`. There is no `registration.enabled` field or separate registration activation step. Registration retains bounded body/redirect limits and rate limiting; availability does not bypass ingress or current client, authorization, configuration and account validity checks. Registration creates only a client identity: it does not authenticate a user, grant Cabloy roles or tenant access, issue an authorization code/token, or bypass explicit consent and PKCE. CIMD, dynamic scopes, remembered consent, refresh tokens, a management UI, and public registration update/delete endpoints remain deferred. No `refresh_token` grant or `offline_access` is advertised. An ordinary Cabloy login JWT, temporary token or browser cookie is not an MCP access token. Configured TTL values and OAuth `expires_in` use seconds; an `expiresAt` timestamp uses epoch milliseconds.
+`POST /mcp/register` creates an AS-owned client record whenever the existing AS/MCP ingress is available, and its authorization-server metadata advertises `registration_endpoint`. There is no `registration.enabled` field or separate registration activation step. Registration retains bounded body/redirect limits and rate limiting; availability does not bypass ingress or current client, authorization, configuration and account validity checks. Registration creates only a client identity: it does not authenticate a user, grant Cabloy roles or tenant access, issue an authorization code/token, or bypass explicit consent and PKCE. Discovery advertises `authorization_code` and `refresh_token`, but refresh capability requires an explicit DCR grant pair. CIMD, dynamic scopes, remembered consent, a management UI, public registration update/delete endpoints and `offline_access` remain unsupported. Ordinary Cabloy login, refresh, temporary and OAuth credentials are not MCP tokens, and MCP credentials cannot become ordinary login credentials. Configured TTL values and OAuth `expires_in` use seconds; an `expiresAt` timestamp uses epoch milliseconds.
 
 ## Endpoints and registration
 
@@ -114,7 +115,7 @@ The initial endpoint paths are:
 | Purpose                                   | Path                                          |
 | ----------------------------------------- | --------------------------------------------- |
 | Begin browser authorization               | `/mcp/auth`                                   |
-| Exchange a code                           | `/mcp/token`                                  |
+| Exchange a code or refresh token          | `/mcp/token`                                  |
 | Dynamic client registration               | `/mcp/register`                               |
 | Authorization-server metadata             | `/.well-known/oauth-authorization-server/mcp` |
 | MCP protected-resource metadata           | `/.well-known/oauth-protected-resource/mcp`   |
@@ -157,11 +158,11 @@ url = "https://mcp.example.com/mcp"
 scopes = ["mcp:read"]
 ```
 
-For clients that request both `authorization_code` and `refresh_token` during DCR, the server accepts the request but registers and returns only `grant_types: ["authorization_code"]`. This remains capability negotiation, not refresh support: discovery advertises only the authorization-code grant, token exchange returns no refresh token, and a refresh grant is rejected. Refresh-only requests, unrelated or duplicate grants, and unsupported scopes (including `offline_access`) remain invalid registration metadata.
+To enable refresh, explicitly register `grant_types: ["authorization_code", "refresh_token"]` (either request order is accepted). The server persists and returns that canonical pair; the initial code exchange then returns both tokens. Omitted `grant_types` or explicit `["authorization_code"]` (as in the example above) remain code-only and return no refresh token. Existing registrations with missing capability, pending grants and legacy opaque tokens are not silently upgraded: obtain a new pair-capable registration and fresh explicit authorization. Refresh-only requests, unrelated or duplicate grants, and unsupported scopes (including `offline_access`) remain invalid registration metadata.
 
 ### Codex native registration compatibility
 
-DCR also accepts an omitted `application_type` or exactly `application_type: "native"` as a request-only compatibility hint. It is validated and discarded, not persisted or echoed as registered metadata. No default application type or OIDC application-type semantics are introduced. Other values (including `web`, null, wrong types, case and whitespace variants) remain `invalid_client_metadata`; unrelated unknown fields remain rejected. Exact redirect validation, authentication, scope ceilings, PKCE and authorization-code-only/no-refresh behavior are unchanged. This bounded profile does not claim unrestricted RFC 7591 metadata support.
+DCR also accepts an omitted `application_type` or exactly `application_type: "native"` as a request-only compatibility hint. It is validated and discarded, not persisted or echoed as registered metadata. No default application type or OIDC application-type semantics are introduced. Other values (including `web`, null, wrong types, case and whitespace variants) remain `invalid_client_metadata`; unrelated unknown fields remain rejected. Exact redirect validation, authentication, scope ceilings and PKCE remain required; refresh capability follows the explicit grant-pair rules above. This bounded profile does not claim unrestricted RFC 7591 metadata support.
 
 The source trace matching bundled Codex `0.163.0-alpha.11.1` is pinned to [Codex's registration builder](https://github.com/openai/codex/blob/680c4ba93ec79c292287fb9e0b627dc7a76e3b5e/codex-rs/rmcp-client/src/oauth_client_registration.rs#L111-L128) and [its rmcp dependency revision](https://github.com/openai/codex/blob/680c4ba93ec79c292287fb9e0b627dc7a76e3b5e/codex-rs/Cargo.toml#L451). The pinned [rmcp manager default](https://github.com/modelcontextprotocol/rust-sdk/blob/4048ac40e958fb1a7d614617a2ae8d26666ee2fa/crates/rmcp/src/transport/auth.rs#L1377-L1392) supplies `native` to its [DCR request builder](https://github.com/modelcontextprotocol/rust-sdk/blob/4048ac40e958fb1a7d614617a2ae8d26666ee2fa/crates/rmcp/src/transport/auth.rs#L1746-L1772). This identifies a concrete field rejected by the previous allowlist, consistent with the observed registration-stage `400 invalid_client_metadata`; it is not a capture of the installed App's full outbound request or proof that no other incompatibility remains. Regression fixtures include native metadata, the requested grant pair and supported scope choices; fixture success alone does not establish real-client success. A later user-reported installed-Codex retry passed authentication and the three-read business journey, as recorded separately below.
 
@@ -192,13 +193,14 @@ config.modules['mcp-auth'] = {
   pendingTtl: 600,
   codeTtl: 60,
   tokenTtl: 900,
+  refreshTokenTtl: 7 * 24 * 60 * 60, // Fixed family lifetime from initial issuance.
   allowLoopbackHttp: true, // Module default; an explicit false is supported.
 };
 ```
 
 Public and confidential clients are created only through `/mcp/register` under the existing AS/MCP ingress; there is no static `clients` configuration. The server owns the generated ID and immutable resource/scope bindings. A confidential registration uses `client_secret_basic`; the server returns the secret only once and stores only its SHA-256 verifier. Never substitute an ordinary login token or publish a real secret/verifier in documentation, browser configuration or retained evidence.
 
-`mcp-auth` keeps `vonaModule.fileVersion: 1`; both the authorization and client tables are created in its version-1 path, separate from `a-auth`. This does not add a version-2 migration, automatically replay version 1 against existing databases, or authorize a database reset. An existing database already recorded at version 1 is not automatically upgraded by editing that path; it needs separate approved treatment if the client table is absent.
+`mcp-auth` keeps `vonaModule.fileVersion: 1`; the existing version-1 path now includes client grant capability and authorization token-version, refresh-capability, generation and fixed-family-deadline fields, separate from `a-auth`. This adds no version-2 migration and does not replay an already-applied version 1. A development database already at version 1 will not acquire those fields from this edit: resetting managed disposable dev data through `npm run db:reset` is a separate destructive operation requiring explicit approval. Managed isolated tests prepare fresh v1 schema, not a development-database upgrade. No reset or live runtime upgrade is claimed here.
 
 Defaults derive authority from the root serve pair or the nonproduction requestless localhost fallback; they do not provision client registrations. TTL fields are seconds. `allowLoopbackHttp` defaults to `true` and may be overridden to `false`; it permits HTTP only for exact `localhost`, `127.0.0.1` or `[::1]`, not arbitrary HTTP, cross-origin federation or public fixture exposure. Production still requires its public serve pair.
 
@@ -234,11 +236,49 @@ Approval returns a server-built registered callback carrying a one-use code and 
 
 At its callback, the client validates `state` and exchanges the code at `/mcp/token`. The exchange uses `grant_type=authorization_code`, the code, original PKCE `code_verifier`, canonical `resource` and **the exact `redirect_uri` used at authorization**. The redirect field is required even though the server already has its binding. Public clients identify themselves with `client_id` and no secret; confidential clients authenticate using HTTP Basic under `client_secret_basic`, not a secret in the URL.
 
-A successful exchange consumes the code and activates the resulting opaque access token in the same conditional database update and committed outcome. Codes cannot be replayed, and a lost response does not enable credential recovery or automatic issuance retry. No refresh token is returned.
+A successful exchange consumes the code and activates generation 1 of the MCP JWT grant family in one committed conditional database update. A refresh-enabled grant returns `access_token` and `refresh_token`; a code-only grant returns only `access_token`. Codes cannot be replayed, and a lost response does not enable credential recovery or automatic issuance retry.
 
 Send the MCP access token only as **one `Authorization: Bearer` header** on the protected shared `/mcp` request. Keep the endpoint's required MCP framing/version/method headers. Do not supply bearer credentials through query parameters, cookies, proxy headers or a framework login-token shortcut. This protected-resource rule does not remove normal cookies from the SSR consent page.
 
 Each protected request checks current expiry, revocation, registration and account validity, then constructs a fresh local Passport projection in the trusted instance. Scope is only one limit: existing controller guards, RBAC, resource ownership and data scope remain authoritative. Missing/invalid bearer receives 401 with the applicable challenge; insufficient scope receives 403. Lookup/configuration failure denies before tool dispatch.
+
+### 5. Refresh without a new browser authorization
+
+A refresh-capable client posts `grant_type=refresh_token`, its current `refresh_token` and the same canonical `resource` to `/mcp/token`, using the same public-client identification or confidential Basic authentication as the code exchange. Do not send code, redirect or PKCE parameters in a refresh request. Optional `scope` may retain the granted scope or narrow it, never expand it or exceed the current registered ceiling. A valid refresh can succeed after access expiry, without another consent page, while the family and current account/client bindings remain valid.
+
+Each successful refresh atomically replaces the nonce digest and generation and returns a new pair. **The old access token becomes invalid immediately**, even before its JWT expiry. The default access lifetime remains 900 seconds; the family's original absolute refresh deadline defaults to 7 days and is never extended by rotation. Cleanup retains refreshable grants through that deadline, not merely access expiry. Revocation invalidates the whole family and both token types.
+
+After client authentication and binding checks, replay of a correctly signed older refresh generation revokes the family, including a concurrent winner's newly issued pair. Clients must serialize refresh and replace both credentials together. Do not automatically retry code or refresh issuance after an uncertain/lost response: credentials are not recoverable, and replay can revoke the family. Expired/revoked families require fresh browser authorization.
+
+Existing exact-format opaque access tokens remain usable only through the bounded legacy lookup until their original expiry; they cannot refresh or be upgraded. JWT verification failure never falls back to legacy authentication.
+
+### Server-side refresh evidence
+
+The normal server emits two INFO events through the existing default logger (console and combined log file):
+
+- `mcp.oauth.refresh_succeeded`: the server completed refresh rotation, pair signing and Passport attachment.
+- `mcp.oauth.refreshed_access_accepted`: a later protected MCP request successfully authenticated using a refreshed access generation. This is authentication evidence, not evidence that the requested tool succeeded.
+
+For example, the application-authored fields of two correlated records are:
+
+```json
+{"event":"mcp.oauth.refresh_succeeded","family":"<same SHA-256 family correlator>","generation":2}
+{"event":"mcp.oauth.refreshed_access_accepted","family":"<same SHA-256 family correlator>","generation":2}
+```
+
+The standard logger may also add timestamp, level, bean, method/canonical pathname and telemetry metadata. The family correlator hashes a domain-separated grant-binding tuple, not a token or nonce. No raw identity/client/grant IDs, credentials, authorization codes, headers, cookies, request bodies or tool arguments/results are included. This is pseudonymous operational correlation, not strong anonymization or a protected audit trail.
+
+After loading this code into the normal server, perform a read-only client interaction, wait beyond the default 900-second access lifetime, then interact again without manually reauthorizing. Search the server console or its configured combined log for these event names. A refresh event followed by an accepted-access event with the **same family and generation** directly establishes server-side refresh issuance followed by use of that generation. It does not establish client response persistence or business-call success; continued usability alone does not prove refresh. Initial generation 1, legacy opaque access and rejected operations produce no such success records. Each accepted refreshed request may log again.
+
+Existing INFO/child/transport filters, optional request-boundary diagnostic suppression and strict isolated-test suppression remain effective. Normal shared ingress does not install that optional boundary. Missing records are inconclusive if diagnostics are filtered, suppressed or unavailable; do not bypass those policies or collect credentials. Managed regression assertions capture the production logging calls without changing suppression settings; they do not substitute for real-client runtime evidence. Logging is best-effort and does not change authentication outcomes. Do not reset databases or replay a refresh token to obtain evidence.
+
+### Shared Passport implementation boundary
+
+MCP reuses the original Passport auth-token lifecycle through static JWT client selection. The registered `mcpAccess` and `mcpRefresh` clients both configure `authTokenAdapter: 'mcp-auth:authTokenAdapter'`; trusted server code passes those client names to `bean.passport.createAuthToken(...)`, `checkAuthToken(...)` and `refreshAuthToken(...)`. No auth provider, signin event or duplicate user identity is introduced. The adapter's optional `deserialize(payloadData)` seam reloads the current user, auth ownership/provider and roles rather than relying on the ordinary deserializer. Its fixed `options: { stateless: false, strategy: 'reissue' }` preserves stateful grant validation regardless of provider stateless overrides or ordinary session mode. Clients without an adapter selection keep their existing ordinary auth/session behavior.
+
+Adapter verification is read-only: access checks require the current generation, while refresh verification can pass an otherwise valid older generation to the shared `reissue` strategy and the selected adapter's `create(...)` for replay revocation. MCP's `create(payloadData, ttl?, input?)` dispatches generation 0 to initial activation and generation 1 or later to atomic rotation; validated operation data in `input` supplies the required resource binding and any requested narrowed scope, not a closure or adapter override. `verify(payloadData, { operation, clientName, input })` checks that data and the selected purpose. Refresh checks defer Passport attachment. The single-winner state change returns the rotated payload, then `getJwtOptions(payloadData)` selects the MCP pair and lifetimes before JWT signing and current Passport attachment.
+
+The existing authorization row is the grant family; only the current nonce digest is stored, not plaintext credentials or a second token-history/identity store. The attached scalar `passportAuthTokenClient` preserves the selected adapter across the MCP Passport handoff and is cleared with current state. Ordinary signin, refresh, temporary-token and OAuth helpers reject conversion from attached MCP authority before replacing current state or accepting an ordinary OAuth code. See [Auth Guide](../../../../../repo-docs/backend/auth-guide.md#auth-token-lifecycle-and-adapter-selection) and [JWT Guide](../../../../../repo-docs/backend/jwt-guide.md#explicit-pairs-and-scoped-passport-flows).
 
 ## Troubleshooting without weakening the boundary
 
@@ -248,10 +288,13 @@ Each protected request checks current expiry, revocation, registration and accou
 - **Consent API calls reach the wrong origin:** inspect explicit Site/module API-origin overrides first. Vona integrated SSR normally supplies runtime API origins; see [Runtime API origins](../../../../../repo-docs/fullstack/ssr-entry-modes.md#runtime-api-origins-in-vona-integrated-ssr). Do not edit environment values merely to match an isolated test listener.
 - **Decision rejected:** check current login/account state, request lifetime and trusted origin. Do not replace an authenticated POST with a GET or introduce CSRF bootstrap to bypass the normal client chain.
 - **Code exchange rejected:** check exact redirect/client/resource binding, the original verifier, expiry and previous use. Reauthorize instead of replaying or recovering a credential.
+- **Refresh rejected or access denied after refresh:** check client/resource binding, current stored pair, family expiry/revocation, scope and account validity. Old access is intentionally invalid after rotation; do not retry an old refresh token or widen scope. A code-only/legacy grant requires a new refresh-capable registration and authorization, not a login-token fallback.
 - **MCP access denied:** distinguish token/scope failure from current local authorization. A valid token does not create a local role or a cross-instance entitlement.
 - **503 or an empty/missing tool list:** normal ingress requires a recognized dev/test/prod mode, enabled and ready application state, no shutdown in progress, and valid required authority configuration (including an explicit public serve pair in production). Unknown modes remain closed; production is not denied solely by mode. Dedicated audit delivery is not an MVP availability gate. An absent training module removes student tools, not necessarily the entire Resource catalog. Check Resource registration, enabled routes, explicit opt-in, supported contracts, scope and each actual Action's current guards. For the student example, select/view authority independently filters the four reads into select + lookup and view + summary; create, update and delete each separately require `mcp:all` and their corresponding student authority. `commerce_*` tools belong only to the standalone launcher, not shared `/mcp`.
 
 ## Verification and operational limits
+
+**Refresh evidence boundary:** the current refresh contract above supersedes historical authorization-code-only/no-refresh statements in the retained reports below; those historical reports do not verify refresh. The [2026-11-01 real-client refresh record](../../../../../repo-specs/cabloy-mcp/evidence/business-ai-client.md#user-provided-real-client-mcp-refresh-runtime-evidence-2026-11-01) separately retains user-provided matching generation-4 refresh/accepted-access events and scoped automated verification. It establishes server-side refresh followed by use of that generation, not tool success, a development-database reset, immutable served-source attestation or production qualification. Managed tests and real-client runtime evidence retain their separate scopes; historical successful login/read journeys alone do not establish refresh.
 
 **Normal ownership migration boundary:** the retained checks and real-client reports below all predate `cabloy-mcp` taking normal `/mcp` ownership and restricting construction to lookup/summary. They do not attest the migrated ingress, its production/unknown-mode gate, or the then-student-only empty-without-training behavior. That historical allowlist is not the current Resource admission rule. This documentation update adds no execution evidence; current ingress and Resource-catalog acceptance must be established separately.
 

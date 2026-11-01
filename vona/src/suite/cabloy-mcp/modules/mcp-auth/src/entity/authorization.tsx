@@ -56,6 +56,18 @@ export class EntityAuthorization extends EntityBase {
   @Api.field()
   tokenExpiresAt: number;
 
+  @Api.field(z.number().int().nonnegative().default(0))
+  tokenVersion: number;
+
+  @Api.field(z.boolean().default(false))
+  refreshEnabled: boolean;
+
+  @Api.field(z.number().int().nonnegative().default(0))
+  refreshGeneration: number;
+
+  @Api.field(z.number().int().nonnegative().default(0))
+  refreshExpiresAt: number;
+
   @Api.field(v.tableIdentity(), v.optional())
   userId?: TableIdentity;
 

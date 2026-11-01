@@ -1,10 +1,4 @@
-import type {
-  IJwtClientRecord,
-  IJwtSignOptions,
-  IJwtToken,
-  IJwtVerifyOptions,
-  IPayloadData,
-} from 'vona-module-a-jwt';
+import type { IJwtClientRecord, IJwtSignOptions, IJwtToken, IPayloadData } from 'vona-module-a-jwt';
 
 import { catchError, isNil } from '@cabloy/utils';
 import { BeanBase, beanFullNameFromOnionName } from 'vona';
@@ -17,7 +11,7 @@ import type {
   ISigninOptions,
   TypeAuthTokenMode,
 } from '../types/auth.ts';
-import type { IAuthTokenAdapter } from '../types/authToken.ts';
+import type { IAuthTokenAdapter, IAuthTokenCheckOptions } from '../types/authToken.ts';
 import type { IPassport, IPassportAdapter } from '../types/passport.ts';
 import type { IRole, IRoleNameRecord } from '../types/role.ts';
 import type { IUser, IUserNameRecord } from '../types/user.ts';
@@ -82,6 +76,7 @@ export class BeanPassport extends BeanBase {
 
   public async setCurrent(passport: IPassport | undefined) {
     this.ctx.state.passportPayloadData = undefined;
+    this.ctx.state.passportAuthTokenClient = undefined;
     this.ctx.state.passport = await this.passportAdapter.setCurrent(passport);
   }
 
@@ -102,41 +97,107 @@ export class BeanPassport extends BeanBase {
   }
 
   public async signin(passport: IPassport, options?: ISigninOptions): Promise<IJwtToken> {
+    this._getAuthTokenAdapter('access', true);
     if (isNil(this.ctx.instanceName)) throw new Error('should specify instance');
     this.ensureAccountActive(passport);
     // current
     await this.setCurrent(passport);
     // event
     await this.scope.event.signin.emit(passport);
-    // serialize: payloadData for client certificate
+    return await this._createAuthToken(passport, {}, 'access', undefined, options?.authToken);
+  }
+
+  public async createAuthToken(
+    passport: IPassport,
+    payloadData: IPayloadData,
+    clientName: keyof IJwtClientRecord = 'access',
+    input?: unknown,
+  ): Promise<IJwtToken> {
+    this._ensureAuthTokenPassport(passport);
+    return await this._createAuthToken(passport, payloadData, clientName, input);
+  }
+
+  private async _createAuthToken(
+    passport: IPassport,
+    seed: IPayloadData,
+    clientName: keyof IJwtClientRecord,
+    input?: unknown,
+    options?: IAuthTokenOptions,
+  ): Promise<IJwtToken> {
+    if (isNil(this.ctx.instanceName)) throw new Error('should specify instance');
+    this.ensureAccountActive(passport);
+    const adapter = this._getAuthTokenAdapter(clientName, true);
     const authTokenOptions = await this._combineAuthTokenOptions(
       passport.auth!.authProviderId,
-      options?.authToken,
+      options,
       {
         stateless: this.scope.config.authToken.stateless,
         strategy: this.scope.config.authToken.strategy.signin,
         ttl: this.scope.config.authToken.ttl,
       },
+      adapter,
     );
-    const payloadData = await this._passportSerialize(passport, authTokenOptions, true);
-    // jwt token
+    const payloadData = await this._passportSerialize(
+      passport,
+      authTokenOptions,
+      true,
+      clientName,
+      seed,
+      input,
+    );
+    return await this._issueAuthToken(
+      passport,
+      payloadData,
+      clientName,
+      adapter === this.authTokenAdapter && passport.auth?.id.toString() === '-1',
+    );
+  }
+
+  private async _issueAuthToken(
+    passport: IPassport,
+    payloadData: IPayloadData,
+    clientName: keyof IJwtClientRecord,
+    dev = false,
+  ): Promise<IJwtToken> {
+    const adapter = this._getAuthTokenAdapter(clientName, true);
+    const options = adapter.getJwtOptions?.(payloadData);
+    const accessClient = options?.accessClient ?? 'access';
+    const refreshClient = options?.refreshClient ?? 'refresh';
+    if (
+      this._getAuthTokenAdapter(accessClient, true) !== adapter ||
+      this._getAuthTokenAdapter(refreshClient, true) !== adapter
+    ) {
+      return this.app.throw(403);
+    }
     const jwt = await this.bean.jwt.create(payloadData, {
-      dev: passport.auth?.id.toString() === '-1',
+      dev,
+      ...options,
     });
-    this.ctx.state.passportPayloadData = payloadData;
+    await this._attachAuthToken(passport, payloadData, accessClient);
     return jwt;
+  }
+
+  private async _attachAuthToken(
+    passport: IPassport,
+    payloadData: IPayloadData,
+    clientName: keyof IJwtClientRecord,
+  ) {
+    if (this.current !== passport) await this.setCurrent(passport);
+    this.ctx.state.passportPayloadData = payloadData;
+    this.ctx.state.passportAuthTokenClient = clientName;
   }
 
   public async signout(): Promise<void> {
     // current
     const passport = this.current;
     if (!passport) return;
+    const adapter = this._getAuthTokenAdapter(this.ctx.state.passportAuthTokenClient ?? 'access');
     // removeAuthToken
     const payloadData =
-      this.authTokenMode === 'session'
-        ? this._getCurrentPayloadData()
-        : await this.passportAdapter.serialize(passport);
-    await this.authTokenAdapter.remove(payloadData);
+      adapter === this.authTokenAdapter && this.authTokenMode === 'auth'
+        ? await this.passportAdapter.serialize(passport)
+        : this._getCurrentPayloadData();
+    await adapter.remove(payloadData);
     // event
     await this.scope.event.signout.emit(passport);
     // ok
@@ -178,47 +239,59 @@ export class BeanPassport extends BeanBase {
 
   public async checkAuthToken(
     accessToken?: string,
-    clientName?: keyof IJwtClientRecord,
-    options?: IJwtVerifyOptions,
+    clientName: keyof IJwtClientRecord = 'access',
+    options?: IAuthTokenCheckOptions,
   ) {
-    clientName = clientName ?? 'access';
     const [payloadData, err] = await catchError(() => {
       return this.bean.jwt.get(clientName).verify(accessToken, options);
     });
     if (err) {
-      if (['access', 'refresh'].includes(clientName)) {
+      if (
+        this.$scope.jwt.config.clients[clientName]?.authTokenAdapter ||
+        ['access', 'refresh'].includes(clientName)
+      ) {
         err.code = 401;
       }
       throw err;
     }
     if (!payloadData) return; // no jwt token
-    const passport = await this.passportAdapter.deserialize(payloadData);
+    const adapter = this._getAuthTokenAdapter(clientName);
+    const passport = adapter.deserialize
+      ? await adapter.deserialize(payloadData)
+      : await this.passportAdapter.deserialize(payloadData);
     if (!passport) return this.app.throw(401);
     this.ensureAccountActive(passport);
-    // verified
     const authTokenOptions = await this._combineAuthTokenOptions(
       passport.auth!.authProviderId,
       undefined,
-      {
-        stateless: this.scope.config.authToken.stateless,
-      },
+      { stateless: this.scope.config.authToken.stateless },
+      adapter,
     );
+    const operation = options?.operation ?? 'check';
     if (!authTokenOptions.stateless) {
-      const verified = await this.authTokenAdapter.verify(payloadData);
+      const verified = await adapter.verify(payloadData, {
+        operation,
+        clientName,
+        input: options?.input,
+      });
       if (!verified) return this.app.throw(401);
     }
-    // setCurrent
-    await this.setCurrent(passport);
-    this.ctx.state.passportPayloadData = payloadData;
+    if (operation !== 'refresh') await this._attachAuthToken(passport, payloadData, clientName);
     return { payloadData, passport };
   }
 
-  public async refreshAuthToken(refreshToken: string) {
-    // checkAuthToken by code
-    const checkRes = await this.checkAuthToken(refreshToken, 'refresh');
+  public async refreshAuthToken(
+    refreshToken: string,
+    clientName: keyof IJwtClientRecord = 'refresh',
+    input?: unknown,
+  ) {
+    const adapter = this._getAuthTokenAdapter(clientName, true);
+    const checkRes = await this.checkAuthToken(refreshToken, clientName, {
+      operation: 'refresh',
+      input,
+    });
     if (!checkRes) return this.app.throw(401);
-    let { payloadData, passport } = checkRes;
-    // refreshAuthToken
+    const { passport } = checkRes;
     const authTokenOptions = await this._combineAuthTokenOptions(
       passport.auth!.authProviderId,
       undefined,
@@ -227,12 +300,15 @@ export class BeanPassport extends BeanBase {
         strategy: this.scope.config.authToken.strategy.refreshAuthToken,
         ttl: this.scope.config.authToken.ttl,
       },
+      adapter,
     );
-    payloadData = await this._handlePayloadData(payloadData, authTokenOptions);
-    // jwt token
-    const jwt = await this.bean.jwt.create(payloadData);
-    this.ctx.state.passportPayloadData = payloadData;
-    return jwt;
+    const payloadData = await this._handlePayloadData(
+      checkRes.payloadData,
+      authTokenOptions,
+      adapter,
+      input,
+    );
+    return await this._issueAuthToken(passport, payloadData, clientName);
   }
 
   // only created by accessToken
@@ -251,7 +327,12 @@ export class BeanPassport extends BeanBase {
     const passport = this.current;
     if (!passport) return this.app.throw(401);
     // payloadData
-    const payloadData = await this._passportSerialize(passport, { strategy: 'reuse' });
+    const payloadData = await this._passportSerialize(
+      passport,
+      { strategy: 'reuse' },
+      false,
+      'oauth',
+    );
     // jwt token
     return await this.bean.jwt.createOauthAuthToken(payloadData, options);
   }
@@ -261,12 +342,18 @@ export class BeanPassport extends BeanBase {
     const passport = this.current;
     if (!passport) return this.app.throw(401);
     // payloadData
-    const payloadData = await this._passportSerialize(passport, { strategy: 'reuse' });
+    const payloadData = await this._passportSerialize(
+      passport,
+      { strategy: 'reuse' },
+      false,
+      'code',
+    );
     // code
     return await this.bean.jwt.createOauthCode(payloadData, options);
   }
 
   public async createOauthCodeFromOauthAuthToken(accessToken: string, options?: IJwtSignOptions) {
+    this._getAuthTokenAdapter('code', true);
     // payloadData
     const payloadData =
       this.authTokenMode === 'session'
@@ -278,12 +365,12 @@ export class BeanPassport extends BeanBase {
   }
 
   public async createAuthTokenFromOauthCode(code: string) {
+    this._getAuthTokenAdapter('access', true);
     // checkAuthToken by code
     const checkRes = await this.checkAuthToken(code, 'code');
     if (!checkRes) return this.app.throw(401);
-    const { payloadData } = checkRes;
-    // jwt token
-    return await this.bean.jwt.create(payloadData);
+    const { payloadData, passport } = checkRes;
+    return await this._issueAuthToken(passport, payloadData, 'access');
   }
 
   public checkRoleName(name: keyof IRoleNameRecord | (keyof IRoleNameRecord)[]) {
@@ -306,6 +393,33 @@ export class BeanPassport extends BeanBase {
     return true;
   }
 
+  private _getAuthTokenAdapter(
+    clientName: keyof IJwtClientRecord,
+    issuance = false,
+  ): IAuthTokenAdapter {
+    const client = this.$scope.jwt.config.clients[clientName];
+    if (!client) throw new Error(`jwt client not found: ${clientName}`);
+    const adapter = client.authTokenAdapter
+      ? (this.bean._getBean(
+          beanFullNameFromOnionName(client.authTokenAdapter, 'service'),
+        ) as IAuthTokenAdapter)
+      : this.authTokenAdapter;
+    if (!adapter) return this.app.throw(401);
+    // Check before callers replace current: scoped authority cannot become ordinary credentials.
+    const source = this.ctx.state.passportAuthTokenClient;
+    if (issuance && source) {
+      const sourceAdapter = this._getAuthTokenAdapter(source);
+      if (sourceAdapter !== this.authTokenAdapter && sourceAdapter !== adapter)
+        return this.app.throw(403);
+    }
+    return adapter;
+  }
+
+  private _ensureAuthTokenPassport(passport: IPassport): void {
+    if (!passport.user || passport.user.anonymous || !passport.auth) return this.app.throw(401);
+    this.ensureAccountActive(passport);
+  }
+
   private _getCurrentPayloadData(): IPayloadData {
     const payloadData = this.ctx.state.passportPayloadData;
     if (!payloadData?.[this.scope.config.payloadData.fields.token]) return this.app.throw(401);
@@ -316,54 +430,57 @@ export class BeanPassport extends BeanBase {
     passport: IPassport,
     authTokenOptions?: IAuthTokenOptions,
     signin = false,
+    clientName: keyof IJwtClientRecord = 'access',
+    seed: IPayloadData = {},
+    input?: unknown,
   ) {
-    if (this.authTokenMode === 'session') {
+    const adapter = this._getAuthTokenAdapter(clientName, true);
+    if (adapter === this.authTokenAdapter && this.authTokenMode === 'session') {
       if (signin) {
-        const payloadData = await this.passportAdapter.serialize(passport);
-        return await this.authTokenAdapter.create(payloadData, authTokenOptions?.ttl);
+        const payloadData = { ...seed, ...(await this.passportAdapter.serialize(passport)) };
+        return await adapter.create(payloadData, authTokenOptions?.ttl, input);
       }
-      return await this._handlePayloadData(this._getCurrentPayloadData(), authTokenOptions);
+      return await this._handlePayloadData(
+        this._getCurrentPayloadData(),
+        authTokenOptions,
+        adapter,
+        input,
+      );
     }
-    // serialize
-    const payloadData = await this.passportAdapter.serialize(passport);
-    return await this._handlePayloadData(payloadData, authTokenOptions);
+    const payloadData =
+      !signin && adapter !== this.authTokenAdapter
+        ? this._getCurrentPayloadData()
+        : { ...seed, ...(await this.passportAdapter.serialize(passport)) };
+    return await this._handlePayloadData(payloadData, authTokenOptions, adapter, input);
   }
 
   private async _handlePayloadData(
     payloadData: IPayloadData,
     authTokenOptions?: IAuthTokenOptions,
+    adapter: IAuthTokenAdapter = this.authTokenAdapter,
+    input?: unknown,
   ) {
-    // auth token
     const stateless = authTokenOptions?.stateless;
     const strategy = authTokenOptions?.strategy ?? 'refresh';
     const ttl = authTokenOptions?.ttl;
-    if (this.authTokenMode === 'session') {
+    if (adapter === this.authTokenAdapter && this.authTokenMode === 'session') {
       if (stateless) throw new Error('Session auth-token mode requires stateful authentication');
       if (strategy === 'reissue') {
         throw new Error('Session auth-token mode does not support the reissue refresh strategy');
       }
-      const verified = await this.authTokenAdapter.verify(payloadData);
+      const verified = await adapter.verify(payloadData);
       if (!verified) return this.app.throw(401);
-      if (strategy === 'refresh') {
-        await this.authTokenAdapter.refresh(payloadData, ttl);
-      }
+      if (strategy === 'refresh') await adapter.refresh(payloadData, ttl);
       return payloadData;
     }
     if (stateless) {
-      // do nothing
       return payloadData;
     } else if (strategy === 'reissue') {
-      return await this.authTokenAdapter.create(payloadData, ttl);
+      return await adapter.create(payloadData, ttl, input);
     } else {
-      const payloadData2 = await this.authTokenAdapter.retrieve(payloadData);
-      if (!payloadData2) {
-        return await this.authTokenAdapter.create(payloadData, ttl);
-      }
-      if (strategy === 'refresh') {
-        await this.authTokenAdapter.refresh(payloadData2, ttl);
-      } else if (strategy === 'reuse') {
-        // do nothing
-      }
+      const payloadData2 = await adapter.retrieve(payloadData);
+      if (!payloadData2) return await adapter.create(payloadData, ttl, input);
+      if (strategy === 'refresh') await adapter.refresh(payloadData2, ttl);
       return payloadData2;
     }
   }
@@ -372,7 +489,9 @@ export class BeanPassport extends BeanBase {
     authProviderId: number | undefined,
     authTokenOptionsCustom: IAuthTokenOptions | undefined,
     authTokenOptionsDefault: IAuthTokenOptions,
+    adapter: IAuthTokenAdapter = this.authTokenAdapter,
   ) {
+    if (adapter.options) return adapter.options;
     let authTokenOptions = authTokenOptionsDefault;
     if (this.authTokenMode === 'session') {
       authTokenOptions = { ...authTokenOptions, ...authTokenOptionsCustom };

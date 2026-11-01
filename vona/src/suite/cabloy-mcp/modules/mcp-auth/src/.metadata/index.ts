@@ -314,6 +314,7 @@ declare module 'vona-module-mcp-auth' {
 }
 /** middlewareSystem: end */
 /** service: begin */
+export * from '../service/authTokenAdapter.ts';
 export * from '../service/authorization.ts';
 export * from '../service/registration.ts';
 
@@ -321,13 +322,24 @@ import 'vona-module-a-bean';
 declare module 'vona-module-a-bean' {
 
     export interface IServiceRecord {
-      'mcp-auth:authorization': never;
+      'mcp-auth:authTokenAdapter': never;
+'mcp-auth:authorization': never;
 'mcp-auth:registration': never;
     }
 
 
 }
 declare module 'vona-module-mcp-auth' {
+
+        export interface ServiceAuthTokenAdapter {
+          /** @internal */
+          get scope(): ScopeModuleMcpAuth;
+        }
+
+          export interface ServiceAuthTokenAdapter {
+            get $beanFullName(): 'mcp-auth.service.authTokenAdapter';
+            get $onionName(): 'mcp-auth:authTokenAdapter';
+          }
 
         export interface ServiceAuthorization {
           /** @internal */
@@ -351,10 +363,12 @@ declare module 'vona-module-mcp-auth' {
 }
 /** service: end */
 /** service: begin */
+import type { ServiceAuthTokenAdapter } from '../service/authTokenAdapter.ts';
 import type { ServiceAuthorization } from '../service/authorization.ts';
 import type { ServiceRegistration } from '../service/registration.ts';
 export interface IModuleService {
-  'authorization': ServiceAuthorization;
+  'authTokenAdapter': ServiceAuthTokenAdapter;
+'authorization': ServiceAuthorization;
 'registration': ServiceRegistration;
 }
 /** service: end */
@@ -363,7 +377,8 @@ export interface IModuleService {
 import 'vona';
 declare module 'vona' {
   export interface IBeanRecordGeneral {
-    'mcp-auth.service.authorization': ServiceAuthorization;
+    'mcp-auth.service.authTokenAdapter': ServiceAuthTokenAdapter;
+'mcp-auth.service.authorization': ServiceAuthorization;
 'mcp-auth.service.registration': ServiceRegistration;
   }
 }
@@ -397,6 +412,9 @@ declare module 'vona-module-mcp-auth' {
 export * from '../config/config.ts';
 import type { config } from '../config/config.ts';
 /** config: end */
+/** monkey: begin */
+export * from '../monkey.ts';
+/** monkey: end */
 /** scope: begin */
 import { BeanScopeBase, type BeanScopeUtil, type TypeModuleConfig } from 'vona';
 import { Scope } from 'vona-module-a-bean';

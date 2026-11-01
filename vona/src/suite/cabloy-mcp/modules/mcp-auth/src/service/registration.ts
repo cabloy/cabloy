@@ -17,6 +17,7 @@ import {
   isMcpScope,
   parseMcpScope,
   resolveMcpResource,
+  resolveMcpGrantTypes,
   OAuthError,
   sha256,
   validateConfiguredRedirectUri,
@@ -51,6 +52,7 @@ export class ServiceRegistration extends BeanBase {
           clientId,
           name: parsed.clientName,
           redirectUris: parsed.redirectUris,
+          grantTypes: parsed.grantTypes,
           authentication: parsed.authentication,
           resource: resource.resource,
           scope: parsed.scope,
@@ -68,7 +70,7 @@ export class ServiceRegistration extends BeanBase {
         client_name: parsed.clientName,
         redirect_uris: parsed.redirectUris,
         token_endpoint_auth_method: parsed.authentication,
-        grant_types: ['authorization_code'],
+        grant_types: parsed.grantTypes,
         response_types: ['code'],
         scope: parsed.scope,
         ...(parsed.secret
@@ -90,10 +92,13 @@ export class ServiceRegistration extends BeanBase {
     ) {
       return undefined;
     }
+    const grantTypes = resolveMcpGrantTypes(client.grantTypes);
+    if (!grantTypes) return undefined;
     return {
       clientId: client.clientId,
       name: client.name,
       redirectUris: client.redirectUris,
+      grantTypes,
       authentication: client.authentication,
       ...(client.secretSha256 ? { secretSha256: client.secretSha256 } : {}),
       resources: [client.resource],
@@ -147,16 +152,8 @@ export class ServiceRegistration extends BeanBase {
         throw new OAuthError('invalid_redirect_uri');
       }
     }
-    if (
-      request.grant_types !== undefined &&
-      (!Array.isArray(request.grant_types) ||
-        request.grant_types.length > 2 ||
-        !request.grant_types.includes('authorization_code') ||
-        new Set(request.grant_types).size !== request.grant_types.length ||
-        request.grant_types.some(
-          grant => grant !== 'authorization_code' && grant !== 'refresh_token',
-        ))
-    ) {
+    const grantTypes = resolveMcpGrantTypes(request.grant_types);
+    if (request.grant_types === null || !grantTypes) {
       throw new OAuthError('invalid_client_metadata');
     }
     if (
@@ -180,6 +177,7 @@ export class ServiceRegistration extends BeanBase {
       clientName: request.client_name,
       scope,
       redirectUris: request.redirect_uris,
+      grantTypes,
       authentication,
       ...(secret ? { secret, secretSha256: sha256(secret) } : {}),
     };

@@ -24,6 +24,13 @@ export interface IJwtSignOptions {
   expiresIn?: StringValue | number;
 }
 
+export interface IJwtCreateOptions extends Omit<IJwtSignOptions, 'expiresIn'> {
+  accessClient?: keyof IJwtClientRecord;
+  refreshClient?: keyof IJwtClientRecord;
+  accessExpiresIn?: IJwtSignOptions['expiresIn'];
+  refreshExpiresIn?: IJwtSignOptions['expiresIn'];
+}
+
 export interface IJwtVerifyOptions {
   path?: string;
 }
@@ -53,7 +60,8 @@ export interface ConfigJwt {
     signOptions: { expiresIn: StringValue | number };
   };
   base: IJwtClientOptions;
-  clients: Record<keyof IJwtClientRecord, IJwtClientOptions>;
+  clients: Record<'access' | 'refresh' | 'oauth' | 'oauthstate' | 'code', IJwtClientOptions> &
+    Partial<Record<keyof IJwtClientRecord, IJwtClientOptions>>;
 }
 
 export interface IPayloadData {}

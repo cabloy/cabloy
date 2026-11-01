@@ -1,10 +1,15 @@
 import type { IAuthenticateStrategyState } from 'vona-module-a-auth';
 
-import ms from 'ms';
 import { BeanBase } from 'vona';
 import { Bean } from 'vona-module-a-bean';
 
-import type { IJwtClientRecord, IJwtSignOptions, IJwtToken, IPayloadData } from '../types/jwt.ts';
+import type {
+  IJwtClientRecord,
+  IJwtCreateOptions,
+  IJwtSignOptions,
+  IJwtToken,
+  IPayloadData,
+} from '../types/jwt.ts';
 
 import { ServiceJwtClient } from '../service/jwtClient.ts';
 
@@ -14,14 +19,20 @@ export class BeanJwt extends BeanBase {
     return this.app.bean._getBeanSelector(ServiceJwtClient, clientName);
   }
 
-  async create(payloadData: IPayloadData, options?: IJwtSignOptions): Promise<IJwtToken> {
+  async create(payloadData: IPayloadData, options?: IJwtCreateOptions): Promise<IJwtToken> {
+    const accessClient = this.get(options?.accessClient ?? 'access');
+    const refreshClient = this.get(options?.refreshClient ?? 'refresh');
+    const signOptions = { path: options?.path, dev: options?.dev, temp: options?.temp };
     // accessToken
-    const accessToken = await this.get('access').sign(payloadData, options);
+    const accessOptions = { ...signOptions, expiresIn: options?.accessExpiresIn };
+    const accessToken = await accessClient.sign(payloadData, accessOptions);
     // refreshToken
-    const refreshToken = await this.get('refresh').sign(payloadData, options);
+    const refreshToken = await refreshClient.sign(payloadData, {
+      ...signOptions,
+      expiresIn: options?.refreshExpiresIn,
+    });
     // expiresIn
-    let expiresIn = this.scope.config.clients.access.signOptions.expiresIn!;
-    if (typeof expiresIn === 'string') expiresIn = Math.floor(ms(expiresIn) / 1000);
+    const expiresIn = accessClient.getExpiresIn(accessOptions);
     // ok
     return {
       accessToken,

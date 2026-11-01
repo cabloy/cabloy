@@ -7,6 +7,7 @@ import { z } from 'zod';
 import type {
   TypeMcpClientAuthentication,
   TypeMcpClientRegistrationState,
+  TypeMcpGrantTypes,
 } from '../types/index.ts';
 
 export interface IEntityOptionsClient extends IDecoratorEntityOptions {}
@@ -21,6 +22,16 @@ export class EntityClient extends EntityBase {
 
   @Api.field(v.array(z.string()))
   redirectUris: string[];
+
+  @Api.field(
+    z
+      .union([
+        z.tuple([z.literal('authorization_code')]),
+        z.tuple([z.literal('authorization_code'), z.literal('refresh_token')]),
+      ])
+      .default(['authorization_code']),
+  )
+  grantTypes: TypeMcpGrantTypes;
 
   @Api.field(z.enum(['none', 'client_secret_basic']))
   authentication: TypeMcpClientAuthentication;

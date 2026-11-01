@@ -1,4 +1,4 @@
-import type { IPayloadData } from 'vona-module-a-jwt';
+import type { IJwtCreateOptions, IPayloadData } from 'vona-module-a-jwt';
 
 import { catchError } from '@cabloy/utils';
 import assert from 'node:assert';
@@ -6,6 +6,38 @@ import { describe, it } from 'node:test';
 import { app } from 'vona-mock';
 
 describe('jwt.test.ts', () => {
+  it('paired expiry is independent and reports the effective access lifetime', async () => {
+    await app.bean.executor.mockCtx(async () => {
+      const bean = app.bean.jwt;
+      const access = bean.get('access');
+      const refresh = bean.get('refresh');
+      const lifetime = (token: string) => {
+        const payload = access.instance.decode(token) as { iat: number; exp: number };
+        return payload.exp - payload.iat;
+      };
+      const accessDefault = access.getExpiresIn();
+      const refreshDefault = refresh.getExpiresIn();
+      const tempDefault = access.getExpiresIn({ temp: true });
+      const cases: Array<[IJwtCreateOptions | undefined, number, number]> = [
+        [undefined, accessDefault, refreshDefault],
+        [{ accessExpiresIn: 37 }, 37, refreshDefault],
+        [{ refreshExpiresIn: '2m' }, accessDefault, 120],
+        [{ accessExpiresIn: '45s', refreshExpiresIn: 91 }, 45, 91],
+        [{ dev: true }, refreshDefault, refreshDefault],
+        [{ dev: true, temp: true }, tempDefault, tempDefault],
+        [{ dev: true, temp: true, accessExpiresIn: 31, refreshExpiresIn: '3m' }, 31, 180],
+      ];
+      for (const [options, accessTtl, refreshTtl] of cases) {
+        const pair = await bean.create({ userId: 1, authId: 1 }, options);
+        assert.equal(lifetime(pair.accessToken), accessTtl);
+        assert.equal(lifetime(pair.refreshToken), refreshTtl);
+        assert.equal(pair.expiresIn, accessTtl);
+      }
+      const temporary = await bean.createTempAuthToken({}, { expiresIn: '25s' });
+      assert.equal(lifetime(temporary), 25);
+    });
+  });
+
   it('action:jwt', async () => {
     await app.bean.executor.mockCtx(async () => {
       // sign

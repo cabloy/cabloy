@@ -46,6 +46,9 @@
   "title": "mcp-auth",
   "vonaModule": {
     "fileVersion": 1,
+    "capabilities": {
+      "monkey": true
+    },
     "dependencies": {
       "a-vona": "5.0.0",
       "a-auth": "5.0.0",

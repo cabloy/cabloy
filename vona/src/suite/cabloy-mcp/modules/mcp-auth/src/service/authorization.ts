@@ -8,6 +8,11 @@ import { Service } from 'vona-module-a-bean';
 import type { DtoAuthorizationSummary } from '../dto/authorizationSummary.ts';
 import type { EntityAuthorization } from '../entity/authorization.tsx';
 import type {
+  IMcpLegacyTokenPayload,
+  IMcpTokenPayload,
+  TypeMcpRefreshEvent,
+} from '../lib/authToken.ts';
+import type {
   IMcpAuthConfig,
   IMcpAuthResource,
   IMcpAuthResolvedClient,
@@ -27,6 +32,7 @@ import {
   sha256,
   validateOAuthParameters,
 } from '../lib/authorization.ts';
+import { mcpRefreshEvidence } from '../lib/authToken.ts';
 
 const opaquePattern = /^[\w-]{43}$/;
 
@@ -78,6 +84,10 @@ export class ServiceAuthorization extends BeanBase {
       codeExpiresAt: 0,
       tokenDigest: '',
       tokenExpiresAt: 0,
+      tokenVersion: 0,
+      refreshEnabled: client.grantTypes.length === 2,
+      refreshGeneration: 0,
+      refreshExpiresAt: 0,
     });
     return request;
   }
@@ -133,24 +143,61 @@ export class ServiceAuthorization extends BeanBase {
     authorization: string | undefined,
   ): Promise<{
     access_token: string;
+    refresh_token?: string;
     token_type: 'Bearer';
     expires_in: number;
     scope: string;
   }> {
     this.ensureAutocommit();
-    validateOAuthParameters(params, [
-      'grant_type',
-      'client_id',
-      'code',
-      'redirect_uri',
-      'resource',
-      'code_verifier',
-    ]);
-    if (params.get('grant_type') !== 'authorization_code')
+    const refresh = params.get('grant_type') === 'refresh_token';
+    if (!refresh && params.get('grant_type') !== 'authorization_code') {
       throw new OAuthError('unsupported_grant_type');
+    }
+    validateOAuthParameters(
+      params,
+      refresh
+        ? ['grant_type', 'client_id', 'refresh_token', 'resource', 'scope']
+        : ['grant_type', 'client_id', 'code', 'redirect_uri', 'resource', 'code_verifier'],
+    );
     const resource = requiredOAuthParameter(params, 'resource');
     const config = this.configForResource(resource);
     const client = await this.authenticateClient(config, params, authorization, resource);
+    if (refresh) {
+      if (client.grantTypes.length !== 2) throw new OAuthError('unauthorized_client');
+      const scope = params.has('scope') ? parseMcpScope(params.get('scope')) : undefined;
+      if (params.has('scope') && (!scope || !mcpScopeIncludes(client.scope, scope))) {
+        throw new OAuthError('invalid_scope');
+      }
+      try {
+        const jwt = await this.bean.passport.refreshAuthToken(
+          requiredOAuthParameter(params, 'refresh_token'),
+          'mcpRefresh',
+          { resource, clientId: client.clientId, scope },
+        );
+        const payload = this.scope.service.authTokenAdapter.payload(
+          this.ctx.state.passportPayloadData!,
+        );
+        this.recordRefreshEvidence('mcp.oauth.refresh_succeeded');
+        return {
+          access_token: jwt.accessToken,
+          refresh_token: jwt.refreshToken,
+          token_type: 'Bearer',
+          expires_in: jwt.expiresIn,
+          scope: payload.mcp.scope,
+        };
+      } catch (error) {
+        if (error instanceof OAuthError) throw error;
+        if (
+          error instanceof Error &&
+          (error.code === 401 ||
+            error.code === 403 ||
+            ['JsonWebTokenError', 'TokenExpiredError', 'NotBeforeError'].includes(error.name))
+        ) {
+          throw new OAuthError('invalid_grant');
+        }
+        throw new OAuthError('server_error', 503);
+      }
+    }
     const code = requiredOAuthParameter(params, 'code');
     const verifier = requiredOAuthParameter(params, 'code_verifier');
     const redirectUri = requiredOAuthParameter(params, 'redirect_uri');
@@ -176,34 +223,33 @@ export class ServiceAuthorization extends BeanBase {
       .first();
     if (!row) throw new OAuthError('invalid_grant');
     await this.validateBindings(row, config);
-    await this.loadPassport(row.userId, row.authId, 'invalid_grant', 400);
-    const token = randomBytes(32).toString('base64url');
-    const now = Date.now();
-    const expiresAt = now + config.tokenTtl * 1000;
-    // Code consumption and token activation commit together, with no issuance retry.
-    const count = await this.scope.model.authorization
-      .builderSelect()
-      .where(this.bindings(row))
-      .where({
-        state: 'codeReady',
-        codeDigest,
-        userId: row.userId!,
-        authId: row.authId!,
-        codeChallenge: challenge,
-      })
-      .where('codeExpiresAt', '>', now)
-      .update({
-        state: 'tokenActive',
-        codeDigest: '',
-        tokenDigest: sha256(token),
-        tokenExpiresAt: expiresAt,
-        expiresAt,
-      });
-    this.ensureWinner(count);
+    const passport = await this.loadPassport(row.userId, row.authId, 'invalid_grant', 400);
+    const payload: IMcpTokenPayload = {
+      userId: row.userId!,
+      authId: row.authId!,
+      token: codeDigest,
+      mcp: {
+        version: 1,
+        grantId: String(row.id),
+        clientId: row.clientId,
+        issuer: row.issuer,
+        resource,
+        instanceName: this.ctx.instanceName!,
+        scope: row.scope as TypeMcpScope,
+        generation: 0,
+        refreshEnabled: Boolean(row.refreshEnabled),
+        refreshExpiresAt: 0,
+      },
+    };
+    const jwt = await this.bean.passport.createAuthToken(passport, payload, 'mcpAccess', {
+      resource,
+      clientId: client.clientId,
+    });
     return {
-      access_token: token,
+      access_token: jwt.accessToken,
+      ...(row.refreshEnabled ? { refresh_token: jwt.refreshToken } : {}),
       token_type: 'Bearer',
-      expires_in: config.tokenTtl,
+      expires_in: jwt.expiresIn,
       scope: row.scope,
     };
   }
@@ -217,22 +263,78 @@ export class ServiceAuthorization extends BeanBase {
     resource: string,
   ): Promise<{ passport: IPassport; scope: TypeMcpScope }> {
     const config = this.configForResource(resource);
-    if (!opaquePattern.test(token)) throw new OAuthError('invalid_token', 401);
+    if (!opaquePattern.test(token)) {
+      try {
+        const checked = await this.bean.passport.checkAuthToken(token, 'mcpAccess', {
+          input: { resource },
+        });
+        if (!checked) throw new OAuthError('invalid_token', 401);
+        const payload = this.scope.service.authTokenAdapter.payload(checked.payloadData);
+        return { passport: checked.passport, scope: payload.mcp.scope };
+      } catch {
+        throw new OAuthError('invalid_token', 401);
+      }
+    }
     const row = await this.scope.model.authorization
       .builderSelect()
-      .where({ tokenDigest: sha256(token), resource, state: 'tokenActive' })
+      .where({ tokenDigest: sha256(token), resource, state: 'tokenActive', tokenVersion: 0 })
       .where('tokenExpiresAt', '>', Date.now())
       .first();
     if (!row) throw new OAuthError('invalid_token', 401);
     if (!isMcpScope(row.scope)) throw new OAuthError('insufficient_scope', 403);
     await this.validateBindings(row, config, 'invalid_token', 401);
     const passport = await this.loadPassport(row.userId, row.authId, 'invalid_token', 401);
+    const payload: IMcpLegacyTokenPayload = {
+      userId: row.userId!,
+      authId: row.authId!,
+      token: row.tokenDigest,
+      mcp: {
+        version: 0,
+        grantId: String(row.id),
+        clientId: row.clientId,
+        issuer: row.issuer,
+        resource: row.resource,
+        instanceName: this.ctx.instanceName!,
+        scope: row.scope,
+      },
+    };
+    await this.bean.passport.setCurrent(passport);
+    this.ctx.state.passportPayloadData = payload;
+    this.ctx.state.passportAuthTokenClient = 'mcpAccess';
     return { passport, scope: row.scope };
+  }
+
+  /** Best-effort diagnostics from already admitted state, never an auth decision. */
+  recordRefreshEvidence(event: TypeMcpRefreshEvent): void {
+    try {
+      if (this.ctx.state.passportAuthTokenClient !== 'mcpAccess') return;
+      const payload = this.ctx.state.passportPayloadData as
+        | IMcpTokenPayload
+        | IMcpLegacyTokenPayload
+        | undefined;
+      if (!payload) return;
+      const evidence = mcpRefreshEvidence(event, payload);
+      if (evidence) this.$logger.info(evidence.event, evidence);
+    } catch {
+      // Observation must not change issuance or admission, or log unsafe errors.
+    }
   }
 
   async revoke(token: string): Promise<void> {
     this.ensureAutocommit();
-    if (!opaquePattern.test(token)) return;
+    if (!opaquePattern.test(token)) {
+      for (const client of ['mcpAccess', 'mcpRefresh'] as const) {
+        let data;
+        try {
+          data = await this.bean.jwt.get(client).verify(token);
+        } catch {
+          continue;
+        }
+        if (data) await this.scope.service.authTokenAdapter.remove(data);
+        return;
+      }
+      return;
+    }
     const row = await this.scope.model.authorization
       .builderSelect()
       .where({ tokenDigest: sha256(token), state: 'tokenActive' })
@@ -268,7 +370,7 @@ export class ServiceAuthorization extends BeanBase {
     }
   }
 
-  private configForResource(resource: string): IMcpAuthConfig {
+  configForResource(resource: string): IMcpAuthConfig {
     const config = getMcpAuthConfig(this.app);
     const issuer = getMcpIssuer(this.app);
     const binding = resolveMcpResource(this.app, new URL(issuer).host);
@@ -282,7 +384,7 @@ export class ServiceAuthorization extends BeanBase {
     return config;
   }
 
-  private async validateBindings(
+  async validateBindings(
     row: EntityAuthorization,
     _config: IMcpAuthConfig,
     error = 'invalid_grant',
@@ -294,14 +396,15 @@ export class ServiceAuthorization extends BeanBase {
       !client ||
       !client.redirectUris.includes(row.redirectUri) ||
       !isMcpScope(row.scope) ||
-      !mcpScopeIncludes(client.scope, row.scope)
+      !mcpScopeIncludes(client.scope, row.scope) ||
+      (row.refreshEnabled && client.grantTypes.length !== 2)
     ) {
       throw new OAuthError(error, status);
     }
     return client;
   }
 
-  private bindings(row: EntityAuthorization) {
+  bindings(row: EntityAuthorization) {
     return {
       id: row.id,
       issuer: row.issuer,
@@ -342,7 +445,7 @@ export class ServiceAuthorization extends BeanBase {
     );
   }
 
-  private async loadPassport(
+  async loadPassport(
     userId: TableIdentity | undefined,
     authId: TableIdentity | undefined,
     error: string,

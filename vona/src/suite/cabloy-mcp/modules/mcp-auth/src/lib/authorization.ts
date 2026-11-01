@@ -6,6 +6,7 @@ import type {
   IMcpAuthConfig,
   IMcpAuthResource,
   IMcpAuthRegistrationConfig,
+  TypeMcpGrantTypes,
   TypeMcpScope,
 } from '../types/index.ts';
 
@@ -37,6 +38,21 @@ export function parseMcpScope(value: unknown): TypeMcpScope | undefined {
     return undefined;
   }
   return scopes.includes('mcp:all') ? 'mcp:all' : 'mcp:read';
+}
+
+/** Legacy absent grants are code-only; malformed persisted authority is never upgraded. */
+export function resolveMcpGrantTypes(value: unknown): TypeMcpGrantTypes | undefined {
+  if (value === undefined || value === null) return ['authorization_code'];
+  if (!Array.isArray(value)) return undefined;
+  if (value.length === 1 && value[0] === 'authorization_code') return ['authorization_code'];
+  if (
+    value.length === 2 &&
+    ((value[0] === 'authorization_code' && value[1] === 'refresh_token') ||
+      (value[0] === 'refresh_token' && value[1] === 'authorization_code'))
+  ) {
+    return ['authorization_code', 'refresh_token'];
+  }
+  return undefined;
 }
 
 export function mcpScopeIncludes(ceiling: TypeMcpScope, scope: TypeMcpScope): boolean {
@@ -99,6 +115,13 @@ export function validateMcpAuthConfig(config: IMcpAuthConfig): IMcpAuthConfig {
   config.registration = registration;
   for (const ttl of [config.pendingTtl, config.codeTtl, config.tokenTtl]) {
     if (!Number.isSafeInteger(ttl) || ttl <= 0 || ttl > 86400) invalid();
+  }
+  if (
+    !Number.isSafeInteger(config.refreshTokenTtl) ||
+    config.refreshTokenTtl <= 0 ||
+    config.refreshTokenTtl > 30 * 24 * 60 * 60
+  ) {
+    invalid();
   }
   if (
     registration.maxBodyBytes < 1024 ||

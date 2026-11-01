@@ -3,14 +3,16 @@ import type { VonaApplication } from 'vona';
 import type { BeanSsrSiteBase, IDecoratorSsrSiteOptions } from 'vona-module-a-ssr';
 
 import assert from 'node:assert/strict';
-import { createHash, randomUUID } from 'node:crypto';
+import { createHash, randomBytes, randomUUID } from 'node:crypto';
 import { before, describe, it } from 'node:test';
 import { acquireTestLock, app } from 'vona-mock';
 
+import type { IMcpTokenPayload } from '../src/lib/authToken.ts';
 import type {
   IMcpAuthConfig,
   IMcpAuthResource,
   TypeMcpClientAuthentication,
+  TypeMcpGrantTypes,
 } from '../src/types/index.ts';
 
 import { MiddlewareSystemAuthorization } from '../src/bean/middlewareSystem.authorization.ts';
@@ -23,6 +25,7 @@ import {
   sha256,
   validateMcpAuthConfig,
 } from '../src/lib/authorization.ts';
+import { ServiceAuthorization } from '../src/service/authorization.ts';
 
 let resource: IMcpAuthResource;
 const verifier = 'v'.repeat(43);
@@ -66,6 +69,20 @@ function tokenParams(clientId: string, code: string) {
     code_verifier: verifier,
   });
 }
+function refreshParams(clientId: string, refreshToken: string, scope?: string) {
+  return new URLSearchParams({
+    grant_type: 'refresh_token',
+    client_id: clientId,
+    refresh_token: refreshToken,
+    resource: resource.resource,
+    ...(scope === undefined ? {} : { scope }),
+  });
+}
+async function accessPayload(token: string): Promise<IMcpTokenPayload> {
+  const payload = await app.bean.jwt.get('mcpAccess').verify(token);
+  assert.ok(payload, 'MCP access signature must verify');
+  return payload as IMcpTokenPayload;
+}
 async function expectOAuth(operation: () => Promise<unknown>, code: string) {
   await assert.rejects(
     operation,
@@ -89,6 +106,7 @@ async function withFixture(
   operation: (fixture: Fixture) => Promise<void>,
   authentication: TypeMcpClientAuthentication = 'none',
   registrationScope?: string,
+  grantTypes: TypeMcpGrantTypes = ['authorization_code'],
 ) {
   // Same lock as the RS tests: both temporarily own the global registration fixture.
   const release = await acquireTestLock('mcp-test');
@@ -105,6 +123,7 @@ async function withFixture(
     pendingTtl: 600,
     codeTtl: 60,
     tokenTtl: 900,
+    refreshTokenTtl: 604800,
     allowLoopbackHttp: true,
   };
   try {
@@ -115,7 +134,7 @@ async function withFixture(
           client_name: 'Test client',
           redirect_uris: [callback],
           token_endpoint_auth_method: authentication,
-          grant_types: ['authorization_code'],
+          grant_types: grantTypes,
           response_types: ['code'],
           ...(registrationScope === undefined ? {} : { scope: registrationScope }),
         },
@@ -154,10 +173,10 @@ async function withFixture(
     }
   }
 }
-async function issueCode(fixture: Fixture) {
-  const request = await app.bean.executor.mockCtx(() =>
-    service().authorize(authorizationParams(fixture.clientId), resource),
-  );
+async function issueCode(fixture: Fixture, scope = 'mcp:read') {
+  const params = authorizationParams(fixture.clientId);
+  params.set('scope', scope);
+  const request = await app.bean.executor.mockCtx(() => service().authorize(params, resource));
   const decision = await asUser(fixture, () => service().decide(request, true));
   const code = new URL(decision.redirectUrl).searchParams.get('code')!;
   return { request, code };
@@ -165,6 +184,11 @@ async function issueCode(fixture: Fixture) {
 async function redeem(fixture: Fixture, code: string) {
   return await app.bean.executor.mockCtx(() =>
     service().exchange(tokenParams(fixture.clientId, code), undefined),
+  );
+}
+async function refresh(fixture: Fixture, token: string, scope?: string) {
+  return await app.bean.executor.mockCtx(() =>
+    service().exchange(refreshParams(fixture.clientId, token, scope), undefined),
   );
 }
 
@@ -187,11 +211,15 @@ describe('authorization.test.ts', { concurrency: false }, () => {
       pendingTtl: 600,
       codeTtl: 60,
       tokenTtl: 900,
+      refreshTokenTtl: 604800,
       allowLoopbackHttp: true,
     });
     assert.equal(validateMcpAuthConfig(config), config);
     for (const patch of [
       { tokenTtl: 0 },
+      { refreshTokenTtl: 0 },
+      { refreshTokenTtl: 1.5 },
+      { refreshTokenTtl: 2592001 },
       { pendingTtl: 86401 },
       { codeTtl: 1.5 },
       { registration: { ...config.registration!, maxRedirectUris: 0 } },
@@ -352,14 +380,25 @@ describe('authorization.test.ts', { concurrency: false }, () => {
       assert.equal(token.token_type, 'Bearer');
       assert.equal(token.expires_in, 900);
       assert.equal(token.scope, 'mcp:read');
+      assert.equal('refresh_token' in token, false);
       await app.bean.executor.mockCtx(async () => {
         const rows = await model().builderSelect().where({ clientId });
         assert.equal(rows.length, 1);
         assert.equal(rows[0].requestDigest, sha256(request));
         assert.equal(rows[0].scope, 'mcp:read');
         assert.equal(rows[0].codeDigest, '');
-        assert.equal(rows[0].tokenDigest, sha256(token.access_token));
+        const payload = await accessPayload(token.access_token);
+        assert.equal(rows[0].tokenVersion, 1);
+        assert.equal(Boolean(rows[0].refreshEnabled), false);
+        assert.equal(rows[0].refreshExpiresAt, 0);
+        assert.equal(rows[0].tokenDigest, sha256(payload.token));
+        assert.ok(rows[0].tokenDigest !== sha256(token.access_token));
         assert.ok(!JSON.stringify(rows).includes(token.access_token));
+        assert.ok(!JSON.stringify(rows).includes(payload.token));
+        await expectOAuth(
+          () => service().exchange(refreshParams(clientId, token.access_token), undefined),
+          'unauthorized_client',
+        );
         const passport = await service().lookup(token.access_token, resource.resource);
         assert.equal(String(passport.user!.id), String(fixture.userId));
         assert.ok(passport.auth);
@@ -385,6 +424,434 @@ describe('authorization.test.ts', { concurrency: false }, () => {
           () => service().lookupContext(token.access_token, resource.resource),
           'invalid_token',
         );
+      });
+    });
+  });
+
+  it('rotates signed refresh grants and revokes the whole family on older refresh replay', async t => {
+    const evidence: Array<{ event: string; family: string; generation: number }> = [];
+    const logger = t.mock.getter(ServiceAuthorization.prototype as any, '$logger', () => ({
+      info(event: string, message: (typeof evidence)[number]) {
+        assert.equal(event, message.event);
+        evidence.push(message);
+        if (message.generation === 3) throw new Error('synthetic diagnostic failure');
+      },
+    }));
+    try {
+      await withFixture(
+        async fixture => {
+          const { request, code } = await issueCode(fixture, 'mcp:all');
+          const initial = await redeem(fixture, code);
+          assert.ok(
+            initial.refresh_token,
+            'Explicit refresh registration must issue a refresh token',
+          );
+          assert.equal(evidence.length, 0, 'Initial issuance is not refresh evidence');
+          const first = await refresh(fixture, initial.refresh_token);
+          assert.ok(first.refresh_token);
+          assert.ok(first.access_token !== initial.access_token);
+          assert.ok(first.refresh_token !== initial.refresh_token);
+          const latest = await refresh(fixture, first.refresh_token, 'mcp:read');
+          assert.ok(latest.refresh_token);
+          assert.equal(evidence.length, 2);
+          assert.match(evidence[0].family, /^[a-f0-9]{64}$/);
+          const family = evidence[0].family;
+          assert.deepEqual(evidence, [
+            { event: 'mcp.oauth.refresh_succeeded', family, generation: 2 },
+            { event: 'mcp.oauth.refresh_succeeded', family, generation: 3 },
+          ]);
+          const serialized = JSON.stringify(evidence);
+          for (const secret of [
+            request,
+            code,
+            fixture.clientId,
+            initial.access_token,
+            initial.refresh_token,
+            first.access_token,
+            first.refresh_token,
+            latest.access_token,
+            latest.refresh_token,
+            callback,
+            password,
+          ]) {
+            assert.equal(serialized.includes(secret), false);
+          }
+          await app.bean.executor.mockCtx(async () => {
+            const payload = await accessPayload(latest.access_token);
+            const row = await model().get({ requestDigest: sha256(request) });
+            assert.ok(row);
+            assert.equal(row.state, 'tokenActive');
+            assert.equal(row.tokenVersion, 1);
+            assert.equal(row.refreshEnabled, true);
+            assert.equal(row.refreshGeneration, 3);
+            assert.equal(row.tokenDigest, sha256(payload.token));
+            assert.equal(payload.mcp.generation, 3);
+            assert.equal(payload.mcp.grantId, String(row.id));
+            assert.equal(payload.mcp.scope, 'mcp:read');
+            assert.equal(
+              String((await service().lookup(latest.access_token, resource.resource)).user!.id),
+              String(fixture.userId),
+            );
+            for (const previous of [initial.access_token, first.access_token]) {
+              await expectOAuth(
+                () => service().lookup(previous, resource.resource),
+                'invalid_token',
+              );
+            }
+          });
+          // Generation 1 remains detectable even after another rotation and a scope narrowing.
+          await expectOAuth(() => refresh(fixture, initial.refresh_token!), 'invalid_grant');
+          await app.bean.executor.mockCtx(async () => {
+            const row = await model().get({ requestDigest: sha256(request) });
+            assert.equal(row?.state, 'revoked');
+            assert.equal(row?.tokenDigest, '');
+            assert.equal(row?.refreshGeneration, 3);
+            await expectOAuth(
+              () => service().lookup(latest.access_token, resource.resource),
+              'invalid_token',
+            );
+          });
+          await expectOAuth(() => refresh(fixture, latest.refresh_token!), 'invalid_grant');
+          assert.equal(evidence.length, 2, 'Rejected refresh must not report success');
+        },
+        'none',
+        undefined,
+        ['authorization_code', 'refresh_token'],
+      );
+    } finally {
+      logger.mock.restore();
+    }
+  });
+
+  it('rejects wrong clients and token purposes without rotating or revoking a valid family', async () => {
+    await withFixture(
+      async fixture => {
+        const { request, code } = await issueCode(fixture);
+        const token = await redeem(fixture, code);
+        assert.ok(token.refresh_token);
+        const other = await app.bean.executor.mockCtx(() =>
+          app.scope('mcp-auth').service.registration.register(
+            {
+              client_name: 'Other refresh client',
+              redirect_uris: [callback],
+              grant_types: ['authorization_code', 'refresh_token'],
+            },
+            resource,
+          ),
+        );
+        try {
+          await app.bean.executor.mockCtx(async () => {
+            const before = await model().get({ requestDigest: sha256(request) });
+            const payload = await accessPayload(token.access_token);
+            const ordinaryAccess = await app.bean.jwt.get('access').sign(payload);
+            const ordinaryRefresh = await app.bean.jwt.get('refresh').sign(payload);
+            for (const candidate of [token.refresh_token!, ordinaryAccess, ordinaryRefresh]) {
+              await expectOAuth(
+                () => service().lookup(candidate, resource.resource),
+                'invalid_token',
+              );
+            }
+            for (const candidate of [token.access_token, ordinaryAccess, ordinaryRefresh]) {
+              await expectOAuth(
+                () => service().exchange(refreshParams(fixture.clientId, candidate), undefined),
+                'invalid_grant',
+              );
+            }
+            await expectOAuth(
+              () =>
+                service().exchange(refreshParams(other.client_id, token.refresh_token!), undefined),
+              'invalid_grant',
+            );
+            for (let index = 0; index < 2; index++) {
+              assert.equal(
+                (await service().lookupContext(token.access_token, resource.resource)).scope,
+                'mcp:read',
+              );
+            }
+            const after = await model().get({ requestDigest: sha256(request) });
+            assert.equal(after?.state, 'tokenActive');
+            assert.equal(after?.tokenDigest, before?.tokenDigest);
+            assert.equal(after?.refreshGeneration, before?.refreshGeneration);
+            assert.equal(after?.refreshExpiresAt, before?.refreshExpiresAt);
+            assert.equal(after?.tokenExpiresAt, before?.tokenExpiresAt);
+            assert.equal(after?.expiresAt, before?.expiresAt);
+          });
+          const rotated = await refresh(fixture, token.refresh_token);
+          assert.ok(rotated.refresh_token);
+          await app.bean.executor.mockCtx(async () => {
+            assert.equal(
+              (await model().get({ requestDigest: sha256(request) }))?.refreshGeneration,
+              2,
+            );
+          });
+          // Even a genuine historical refresh token cannot revoke another client's family.
+          await app.bean.executor.mockCtx(async () => {
+            await expectOAuth(
+              () =>
+                service().exchange(refreshParams(other.client_id, token.refresh_token!), undefined),
+              'invalid_grant',
+            );
+            assert.equal(
+              (await model().get({ requestDigest: sha256(request) }))?.state,
+              'tokenActive',
+            );
+            await service().lookup(rotated.access_token, resource.resource);
+          });
+        } finally {
+          await app.bean.executor.mockCtx(() =>
+            app.scope('mcp-auth').model.client.delete({ clientId: other.client_id }),
+          );
+        }
+      },
+      'none',
+      undefined,
+      ['authorization_code', 'refresh_token'],
+    );
+  });
+
+  it('refreshes after access expiry while cleanup retains the live refresh family', async () => {
+    await withFixture(
+      async fixture => {
+        const { request, code } = await issueCode(fixture);
+        const initial = await redeem(fixture, code);
+        assert.ok(initial.refresh_token);
+        await app.bean.executor.mockCtx(async () => {
+          const payload = await accessPayload(initial.access_token);
+          const expiredAccess = await app.bean.jwt
+            .get('mcpAccess')
+            .sign(payload, { expiresIn: -1 });
+          const row = await model().get({ requestDigest: sha256(request) });
+          assert.ok(row);
+          await model().updateById(row.id, { tokenExpiresAt: Date.now() - 1 });
+          await expectOAuth(
+            () => service().lookup(expiredAccess, resource.resource),
+            'invalid_token',
+          );
+          await expectOAuth(
+            () => service().lookup(initial.access_token, resource.resource),
+            'invalid_token',
+          );
+          await service().cleanupExpired();
+          assert.equal((await model().get({ id: row.id }))?.state, 'tokenActive');
+        });
+        const rotated = await refresh(fixture, initial.refresh_token);
+        assert.equal(rotated.scope, 'mcp:read');
+        assert.ok(rotated.refresh_token);
+        await app.bean.executor.mockCtx(async () => {
+          const row = await model().get({ requestDigest: sha256(request) });
+          assert.equal(row?.refreshGeneration, 2);
+          assert.ok(Number(row?.tokenExpiresAt) > Date.now());
+          await service().lookup(rotated.access_token, resource.resource);
+        });
+      },
+      'none',
+      undefined,
+      ['authorization_code', 'refresh_token'],
+    );
+  });
+
+  it('keeps the original refresh deadline and cleans up only after access and family expiry', async () => {
+    await withFixture(
+      async fixture => {
+        const { request, code } = await issueCode(fixture);
+        const initial = await redeem(fixture, code);
+        assert.ok(initial.refresh_token);
+        const initialPayload = await app.bean.executor.mockCtx(() =>
+          accessPayload(initial.access_token),
+        );
+        const first = await refresh(fixture, initial.refresh_token);
+        assert.ok(first.refresh_token);
+        const latest = await refresh(fixture, first.refresh_token);
+        assert.ok(latest.refresh_token);
+        await app.bean.executor.mockCtx(async () => {
+          const payload = await accessPayload(latest.access_token);
+          const refreshPayload = await app.bean.jwt.get('mcpRefresh').verify(latest.refresh_token);
+          assert.ok(refreshPayload);
+          assert.equal(payload.mcp.refreshExpiresAt, initialPayload.mcp.refreshExpiresAt);
+          const decodedRefresh = app.bean.jwt
+            .get('mcpRefresh')
+            .instance.decode(latest.refresh_token!) as {
+            exp: number;
+          };
+          assert.ok(decodedRefresh.exp * 1000 <= initialPayload.mcp.refreshExpiresAt);
+          assert.equal(
+            (refreshPayload as IMcpTokenPayload).mcp.refreshExpiresAt,
+            initialPayload.mcp.refreshExpiresAt,
+          );
+          const row = await model().get({ requestDigest: sha256(request) });
+          assert.ok(row);
+          assert.equal(Number(row.refreshExpiresAt), initialPayload.mcp.refreshExpiresAt);
+          assert.equal(
+            Number(row.expiresAt),
+            Math.max(Number(row.tokenExpiresAt), Number(row.refreshExpiresAt)),
+          );
+          // Advance only this family's persisted deadline, keeping a valid signed access token.
+          const expiredDeadline = Date.now() - 1;
+          payload.mcp.refreshExpiresAt = expiredDeadline;
+          await model().updateById(row.id, {
+            refreshExpiresAt: expiredDeadline,
+            expiresAt: Number(row.tokenExpiresAt),
+          });
+          const access = await app.bean.jwt.get('mcpAccess').sign(payload, { expiresIn: 900 });
+          const expiredFamilyRefresh = await app.bean.jwt
+            .get('mcpRefresh')
+            .sign(payload, { expiresIn: 900 });
+          await expectOAuth(
+            () =>
+              service().exchange(refreshParams(fixture.clientId, expiredFamilyRefresh), undefined),
+            'invalid_grant',
+          );
+          await service().lookup(access, resource.resource);
+          await service().cleanupExpired();
+          assert.equal((await model().get({ id: row.id }))?.state, 'tokenActive');
+          await model().updateById(row.id, {
+            tokenExpiresAt: expiredDeadline,
+            expiresAt: expiredDeadline,
+          });
+          await service().cleanupExpired();
+          assert.equal(await model().get({ id: row.id }), undefined);
+          await expectOAuth(() => service().lookup(access, resource.resource), 'invalid_token');
+        });
+      },
+      'none',
+      undefined,
+      ['authorization_code', 'refresh_token'],
+    );
+  });
+
+  it('allows refresh scope narrowing but never expands the current family authority', async () => {
+    await withFixture(
+      async fixture => {
+        const { request, code } = await issueCode(fixture, 'mcp:all');
+        const initial = await redeem(fixture, code);
+        assert.ok(initial.refresh_token);
+        const narrowed = await refresh(fixture, initial.refresh_token, 'mcp:read');
+        assert.equal(narrowed.scope, 'mcp:read');
+        assert.ok(narrowed.refresh_token);
+        for (const scope of ['mcp:all', 'mcp:all mcp:read', 'mcp:write', '']) {
+          await expectOAuth(
+            () => refresh(fixture, narrowed.refresh_token!, scope),
+            'invalid_scope',
+          );
+        }
+        await app.bean.executor.mockCtx(async () => {
+          const row = await model().get({ requestDigest: sha256(request) });
+          assert.equal(row?.scope, 'mcp:read');
+          assert.equal(row?.refreshGeneration, 2);
+          assert.equal(row?.state, 'tokenActive');
+          assert.equal(
+            (await service().lookupContext(narrowed.access_token, resource.resource)).scope,
+            'mcp:read',
+          );
+        });
+        const inherited = await refresh(fixture, narrowed.refresh_token);
+        assert.equal(inherited.scope, 'mcp:read');
+        assert.ok(inherited.refresh_token);
+        await app.bean.executor.mockCtx(async () => {
+          assert.equal((await accessPayload(inherited.access_token)).mcp.scope, 'mcp:read');
+          assert.equal(
+            (await model().get({ requestDigest: sha256(request) }))?.refreshGeneration,
+            3,
+          );
+        });
+      },
+      'none',
+      undefined,
+      ['authorization_code', 'refresh_token'],
+    );
+  });
+
+  it('commits concurrent refresh replay revocation across separate contexts', async () => {
+    await withFixture(
+      async fixture => {
+        const { request, code } = await issueCode(fixture);
+        const initial = await redeem(fixture, code);
+        assert.ok(initial.refresh_token);
+        const results = await Promise.allSettled([
+          refresh(fixture, initial.refresh_token),
+          refresh(fixture, initial.refresh_token),
+        ]);
+        const winners = results.filter(result => result.status === 'fulfilled');
+        const losers = results.filter(result => result.status === 'rejected');
+        assert.equal(winners.length, 1);
+        assert.equal(losers.length, 1);
+        assert.ok(
+          losers[0].reason instanceof OAuthError && losers[0].reason.oauthError === 'invalid_grant',
+        );
+        const winner = winners[0].value;
+        assert.ok(winner.refresh_token);
+        // Inspect a fresh context after both competing autocommit operations have settled.
+        await app.bean.executor.mockCtx(async () => {
+          const row = await model().get({ requestDigest: sha256(request) });
+          assert.equal(row?.state, 'revoked');
+          assert.equal(row?.tokenDigest, '');
+          assert.equal(row?.refreshGeneration, 2);
+          await expectOAuth(
+            () => service().lookup(initial.access_token, resource.resource),
+            'invalid_token',
+          );
+          await expectOAuth(
+            () => service().lookup(winner.access_token, resource.resource),
+            'invalid_token',
+          );
+        });
+        await expectOAuth(() => refresh(fixture, winner.refresh_token!), 'invalid_grant');
+      },
+      'none',
+      undefined,
+      ['authorization_code', 'refresh_token'],
+    );
+  });
+
+  it('preserves exact legacy opaque-token lookup, scope checks, expiry and revocation', async () => {
+    await withFixture(async fixture => {
+      const { request } = await issueCode(fixture);
+      const opaque = randomBytes(32).toString('base64url');
+      await app.bean.executor.mockCtx(async () => {
+        const row = await model().get({ requestDigest: sha256(request) });
+        assert.ok(row);
+        const deadline = Date.now() + 900000;
+        await model().updateById(row.id, {
+          state: 'tokenActive',
+          codeDigest: '',
+          tokenDigest: sha256(opaque),
+          tokenVersion: 0,
+          tokenExpiresAt: deadline,
+          expiresAt: deadline,
+          refreshEnabled: false,
+          refreshGeneration: 0,
+          refreshExpiresAt: 0,
+        });
+        assert.equal((await service().lookupContext(opaque, resource.resource)).scope, 'mcp:read');
+        assert.equal(
+          String((await service().lookup(opaque, resource.resource)).user!.id),
+          String(fixture.userId),
+        );
+        for (const scope of ['', 'mcp:write', 'mcp:all mcp:read', 'mcp:read mcp:all']) {
+          await model().updateById(row.id, { scope });
+          await assert.rejects(
+            () => service().lookup(opaque, resource.resource),
+            error =>
+              error instanceof OAuthError &&
+              error.oauthError === 'insufficient_scope' &&
+              error.status === 403,
+          );
+        }
+        await model().updateById(row.id, { scope: 'mcp:read', tokenVersion: 1 });
+        await expectOAuth(() => service().lookup(opaque, resource.resource), 'invalid_token');
+        await model().updateById(row.id, { tokenVersion: 0, tokenExpiresAt: Date.now() - 1 });
+        await expectOAuth(() => service().lookup(opaque, resource.resource), 'invalid_token');
+        await model().updateById(row.id, { tokenExpiresAt: deadline });
+        await service().lookup(opaque, resource.resource);
+        assert.equal(app.ctx.state.passportAuthTokenClient, 'mcpAccess');
+        await app.bean.passport.signout();
+        assert.equal(app.bean.passport.current, undefined);
+        assert.equal(app.ctx.state.passportAuthTokenClient, undefined);
+        assert.equal((await model().get({ id: row.id }))?.state, 'revoked');
+        await model().updateById(row.id, { state: 'tokenActive', tokenDigest: sha256(opaque) });
+        await service().revoke(opaque);
+        assert.equal((await model().get({ id: row.id }))?.state, 'revoked');
+        await expectOAuth(() => service().lookup(opaque, resource.resource), 'invalid_token');
       });
     });
   });
@@ -419,8 +886,9 @@ describe('authorization.test.ts', { concurrency: false }, () => {
           const token = await redeem(fixture, code);
           assert.equal(token.scope, expected);
           await app.bean.executor.mockCtx(async () => {
+            const payload = await accessPayload(token.access_token);
             assert.equal(
-              (await model().get({ tokenDigest: sha256(token.access_token) }))?.scope,
+              (await model().get({ tokenDigest: sha256(payload.token) }))?.scope,
               expected,
             );
             const passport = await service().lookup(token.access_token, resource.resource);
@@ -579,12 +1047,9 @@ describe('authorization.test.ts', { concurrency: false }, () => {
             .builderSelect()
             .where({ requestDigest: sha256(request) })
             .update({ scope });
-          await assert.rejects(
+          await expectOAuth(
             () => service().lookup(token.access_token, resource.resource),
-            error =>
-              error instanceof OAuthError &&
-              error.oauthError === 'insufficient_scope' &&
-              error.status === 403,
+            'invalid_token',
           );
           assert.equal((await model().get({ requestDigest: sha256(request) }))?.scope, scope);
         }
@@ -685,9 +1150,10 @@ describe('authorization.test.ts', { concurrency: false }, () => {
           'invalid_token',
         );
         await app.scope('a-auth').model.auth.updateById(auth!.id, { userId: fixture.userId });
+        const payload = await accessPayload(token.access_token);
         await model()
           .builderSelect()
-          .where({ tokenDigest: sha256(token.access_token) })
+          .where({ tokenDigest: sha256(payload.token) })
           .update({ tokenExpiresAt: Date.now() - 1, expiresAt: Date.now() - 1 });
         await expectOAuth(
           () => service().lookup(token.access_token, resource.resource),
@@ -791,7 +1257,8 @@ describe('authorization.test.ts', { concurrency: false }, () => {
         assert.equal(rows.length, 1);
         assert.equal(rows[0].state, 'tokenActive');
         assert.equal(rows[0].codeDigest, '');
-        assert.equal(rows[0].tokenDigest, sha256(tokens[0].value.access_token));
+        const payload = await accessPayload(tokens[0].value.access_token);
+        assert.equal(rows[0].tokenDigest, sha256(payload.token));
       });
     });
   });
