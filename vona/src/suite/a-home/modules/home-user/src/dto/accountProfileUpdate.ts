@@ -16,15 +16,15 @@ const avatar = z
     value => {
       if (value.startsWith('/api/') || value.startsWith('/public/')) return true;
       try {
-        return new URL(value).protocol === 'https:';
+        return ['http:', 'https:'].includes(new URL(value).protocol);
       } catch {
         return false;
       }
     },
-    { message: 'Avatar URL must be an absolute HTTPS URL or API delivery URL' },
+    { message: 'Avatar URL must be an absolute HTTP(S) URL or API delivery URL' },
   );
 const avatarSchema = avatar.openapi({
-  description: 'Absolute HTTPS avatar URL or API delivery URL',
+  description: 'Absolute HTTP(S) avatar URL or API delivery URL',
 });
 
 @Dto<IDtoOptionsAccountProfileUpdate>()
