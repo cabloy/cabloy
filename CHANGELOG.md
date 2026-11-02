@@ -1,5 +1,17 @@
 # Changelog
 
+## 5.1.252
+
+### Bug Fixes
+- Expose CAPTCHA server time and restrict disclosure of bound tokens.
+
+### Improvements
+- Refactor JWT handling.
+- Refactor ORM DTOs from cabloy-mcp.
+- Enhance SSR site base handling.
+- Skip expired-claim reaping.
+- Clarify backend helper and service placement in documentation.
+
 ## 5.1.251
 
 ## 5.1.250
