@@ -5,6 +5,7 @@ import type { BeanSsrSiteBase, IDecoratorSsrSiteOptions } from 'vona-module-a-ss
 import assert from 'node:assert/strict';
 import { createHash, randomBytes, randomUUID } from 'node:crypto';
 import { before, describe, it } from 'node:test';
+import { setTimeout } from 'node:timers/promises';
 import { acquireTestLock, app } from 'vona-mock';
 
 import type { IMcpTokenPayload } from '../src/lib/authToken.ts';
@@ -122,7 +123,7 @@ async function withFixture(
     registration: { ...defaultConfig(app).registration! },
     pendingTtl: 600,
     codeTtl: 60,
-    tokenTtl: 900,
+    tokenTtl: 2 * 60 * 60,
     refreshTokenTtl: 604800,
     allowLoopbackHttp: true,
   };
@@ -210,7 +211,7 @@ describe('authorization.test.ts', { concurrency: false }, () => {
       },
       pendingTtl: 600,
       codeTtl: 60,
-      tokenTtl: 900,
+      tokenTtl: 2 * 60 * 60,
       refreshTokenTtl: 604800,
       allowLoopbackHttp: true,
     });
@@ -378,7 +379,7 @@ describe('authorization.test.ts', { concurrency: false }, () => {
       });
       const token = await redeem(fixture, code);
       assert.equal(token.token_type, 'Bearer');
-      assert.equal(token.expires_in, 900);
+      assert.equal(token.expires_in, 7200);
       assert.equal(token.scope, 'mcp:read');
       assert.equal('refresh_token' in token, false);
       await app.bean.executor.mockCtx(async () => {
@@ -388,6 +389,12 @@ describe('authorization.test.ts', { concurrency: false }, () => {
         assert.equal(rows[0].scope, 'mcp:read');
         assert.equal(rows[0].codeDigest, '');
         const payload = await accessPayload(token.access_token);
+        const decodedAccess = app.bean.jwt.get('mcpAccess').instance.decode(token.access_token) as {
+          exp: number;
+          iat: number;
+        };
+        assert.equal(decodedAccess.exp - decodedAccess.iat, 7200);
+        assert.equal(app.bean.jwt.get('mcpAccess').getExpiresIn(), 7200);
         assert.equal(rows[0].tokenVersion, 1);
         assert.equal(Boolean(rows[0].refreshEnabled), false);
         assert.equal(rows[0].refreshExpiresAt, 0);
@@ -447,6 +454,10 @@ describe('authorization.test.ts', { concurrency: false }, () => {
             'Explicit refresh registration must issue a refresh token',
           );
           assert.equal(evidence.length, 0, 'Initial issuance is not refresh evidence');
+          const initialPayload = await app.bean.executor.mockCtx(() =>
+            accessPayload(initial.access_token),
+          );
+          await setTimeout(1);
           const first = await refresh(fixture, initial.refresh_token);
           assert.ok(first.refresh_token);
           assert.ok(first.access_token !== initial.access_token);
@@ -486,6 +497,7 @@ describe('authorization.test.ts', { concurrency: false }, () => {
             assert.equal(row.refreshGeneration, 3);
             assert.equal(row.tokenDigest, sha256(payload.token));
             assert.equal(payload.mcp.generation, 3);
+            assert.ok(payload.mcp.refreshExpiresAt > initialPayload.mcp.refreshExpiresAt);
             assert.equal(payload.mcp.grantId, String(row.id));
             assert.equal(payload.mcp.scope, 'mcp:read');
             assert.equal(
@@ -650,37 +662,71 @@ describe('authorization.test.ts', { concurrency: false }, () => {
     );
   });
 
-  it('keeps the original refresh deadline and cleans up only after access and family expiry', async () => {
+  it('renews the refresh deadline and cleans up only after access and renewed family expiry', async () => {
     await withFixture(
       async fixture => {
         const { request, code } = await issueCode(fixture);
         const initial = await redeem(fixture, code);
         assert.ok(initial.refresh_token);
-        const initialPayload = await app.bean.executor.mockCtx(() =>
-          accessPayload(initial.access_token),
-        );
-        const first = await refresh(fixture, initial.refresh_token);
+        // Give only this owned family a near-expiry deadline, without changing the global clock.
+        const originalDeadline = Date.now() + 3000;
+        const nearExpiryRefresh = await app.bean.executor.mockCtx(async () => {
+          const payload = await accessPayload(initial.access_token);
+          payload.mcp.refreshExpiresAt = originalDeadline;
+          const row = await model().get({ requestDigest: sha256(request) });
+          assert.ok(row);
+          await model().updateById(row.id, {
+            refreshExpiresAt: originalDeadline,
+            expiresAt: Math.max(Number(row.tokenExpiresAt), originalDeadline),
+          });
+          return await app.bean.jwt.get('mcpRefresh').sign(payload, { expiresIn: 3 });
+        });
+        const beforeRefresh = Date.now();
+        const first = await refresh(fixture, nearExpiryRefresh);
+        const afterRefresh = Date.now();
+        assert.equal(first.expires_in, 7200);
         assert.ok(first.refresh_token);
+        const firstPayload = await app.bean.executor.mockCtx(async () => {
+          const payload = await accessPayload(first.access_token);
+          const ttl = fixture.config.refreshTokenTtl! * 1000;
+          assert.ok(payload.mcp.refreshExpiresAt >= beforeRefresh + ttl);
+          assert.ok(payload.mcp.refreshExpiresAt <= afterRefresh + ttl);
+          assert.ok(payload.mcp.refreshExpiresAt > originalDeadline);
+          return payload;
+        });
+        await setTimeout(Math.max(0, originalDeadline - Date.now() + 1));
+        await app.bean.executor.mockCtx(async () => {
+          const row = await model().get({ requestDigest: sha256(request) });
+          assert.ok(row);
+          await model().updateById(row.id, {
+            tokenExpiresAt: Date.now() - 1,
+            expiresAt: Number(row.refreshExpiresAt),
+          });
+          await service().cleanupExpired();
+          assert.equal((await model().get({ id: row.id }))?.state, 'tokenActive');
+        });
         const latest = await refresh(fixture, first.refresh_token);
+        assert.equal(latest.expires_in, 7200);
         assert.ok(latest.refresh_token);
         await app.bean.executor.mockCtx(async () => {
           const payload = await accessPayload(latest.access_token);
           const refreshPayload = await app.bean.jwt.get('mcpRefresh').verify(latest.refresh_token);
           assert.ok(refreshPayload);
-          assert.equal(payload.mcp.refreshExpiresAt, initialPayload.mcp.refreshExpiresAt);
+          assert.ok(payload.mcp.refreshExpiresAt > firstPayload.mcp.refreshExpiresAt);
           const decodedRefresh = app.bean.jwt
             .get('mcpRefresh')
             .instance.decode(latest.refresh_token!) as {
             exp: number;
           };
-          assert.ok(decodedRefresh.exp * 1000 <= initialPayload.mcp.refreshExpiresAt);
+          assert.ok(decodedRefresh.exp * 1000 <= payload.mcp.refreshExpiresAt);
+          assert.ok(payload.mcp.refreshExpiresAt - decodedRefresh.exp * 1000 < 2000);
           assert.equal(
             (refreshPayload as IMcpTokenPayload).mcp.refreshExpiresAt,
-            initialPayload.mcp.refreshExpiresAt,
+            payload.mcp.refreshExpiresAt,
           );
           const row = await model().get({ requestDigest: sha256(request) });
           assert.ok(row);
-          assert.equal(Number(row.refreshExpiresAt), initialPayload.mcp.refreshExpiresAt);
+          assert.equal(Number(row.refreshExpiresAt), payload.mcp.refreshExpiresAt);
           assert.equal(
             Number(row.expiresAt),
             Math.max(Number(row.tokenExpiresAt), Number(row.refreshExpiresAt)),

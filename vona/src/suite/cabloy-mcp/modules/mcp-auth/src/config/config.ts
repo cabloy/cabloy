@@ -13,7 +13,7 @@ export function config(app: VonaApplication): IMcpAuthConfig {
     },
     pendingTtl: 600,
     codeTtl: 60,
-    tokenTtl: 900,
+    tokenTtl: 2 * 60 * 60,
     refreshTokenTtl: 7 * 24 * 60 * 60,
     allowLoopbackHttp: true,
   };

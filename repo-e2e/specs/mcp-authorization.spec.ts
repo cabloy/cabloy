@@ -529,7 +529,7 @@ for (const scenario of [
       const token = await exchange.json();
       expect(token.token_type).toBe('Bearer');
       expect(token.scope).toBe(scenario.expectedScope);
-      expect(token.expires_in).toBe(900);
+      expect(token.expires_in).toBe(7200);
       expect(
         typeof token.refresh_token === 'string' &&
           /^[\w-]+\.[\w-]+\.[\w-]+$/.test(token.refresh_token),
@@ -576,7 +576,7 @@ for (const scenario of [
           const refreshed = await response.json();
           expect(refreshed.token_type).toBe('Bearer');
           expect(refreshed.scope).toBe(scenario.expectedScope);
-          expect(refreshed.expires_in).toBe(900);
+          expect(refreshed.expires_in).toBe(7200);
           expect(
             typeof refreshed.access_token === 'string' &&
               /^[\w-]+\.[\w-]+\.[\w-]+$/.test(refreshed.access_token),

@@ -101,8 +101,8 @@ On 2026-10-25, before that replacement, the user reported Codex server `test` di
 | Scopes                             | `mcp:all` (new-registration default) and narrower `mcp:read`                     |
 | Pending authorization lifetime     | **10 minutes** by default                                                        |
 | Authorization code lifetime        | **60 seconds** by default; one use                                               |
-| Access token lifetime              | **900 seconds (15 minutes)** by default; MCP-specific JWT                        |
-| Refresh family lifetime            | **7 days** by default; fixed at initial issuance, never sliding                  |
+| Access token lifetime              | **7200 seconds (2 hours)** by default; MCP-specific JWT                          |
+| Refresh window                     | **7 days** from issuance or each successful refresh by default; no absolute cap  |
 | Refresh rotation                   | Each successful use rotates the pair; older-generation replay revokes the family |
 | Consent                            | Explicit approve/deny on each new authorization; no remembered consent           |
 
@@ -192,15 +192,15 @@ config.modules['mcp-auth'] = {
   },
   pendingTtl: 600,
   codeTtl: 60,
-  tokenTtl: 900,
-  refreshTokenTtl: 7 * 24 * 60 * 60, // Fixed family lifetime from initial issuance.
+  tokenTtl: 7200, // 2-hour access lifetime.
+  refreshTokenTtl: 7 * 24 * 60 * 60, // Sliding window from issuance or each successful refresh.
   allowLoopbackHttp: true, // Module default; an explicit false is supported.
 };
 ```
 
 Public and confidential clients are created only through `/mcp/register` under the existing AS/MCP ingress; there is no static `clients` configuration. The server owns the generated ID and immutable resource/scope bindings. A confidential registration uses `client_secret_basic`; the server returns the secret only once and stores only its SHA-256 verifier. Never substitute an ordinary login token or publish a real secret/verifier in documentation, browser configuration or retained evidence.
 
-`mcp-auth` keeps `vonaModule.fileVersion: 1`; the existing version-1 path now includes client grant capability and authorization token-version, refresh-capability, generation and fixed-family-deadline fields, separate from `a-auth`. This adds no version-2 migration and does not replay an already-applied version 1. A development database already at version 1 will not acquire those fields from this edit: resetting managed disposable dev data through `npm run db:reset` is a separate destructive operation requiring explicit approval. Managed isolated tests prepare fresh v1 schema, not a development-database upgrade. No reset or live runtime upgrade is claimed here.
+`mcp-auth` keeps `vonaModule.fileVersion: 1`; the existing version-1 path now includes client grant capability and authorization token-version, refresh-capability, generation and refresh-deadline fields, separate from `a-auth`. This adds no version-2 migration and does not replay an already-applied version 1. A development database already at version 1 will not acquire those fields from this edit: resetting managed disposable dev data through `npm run db:reset` is a separate destructive operation requiring explicit approval. Managed isolated tests prepare fresh v1 schema, not a development-database upgrade. No reset or live runtime upgrade is claimed here.
 
 Defaults derive authority from the root serve pair or the nonproduction requestless localhost fallback; they do not provision client registrations. TTL fields are seconds. `allowLoopbackHttp` defaults to `true` and may be overridden to `false`; it permits HTTP only for exact `localhost`, `127.0.0.1` or `[::1]`, not arbitrary HTTP, cross-origin federation or public fixture exposure. Production still requires its public serve pair.
 
@@ -246,7 +246,7 @@ Each protected request checks current expiry, revocation, registration and accou
 
 A refresh-capable client posts `grant_type=refresh_token`, its current `refresh_token` and the same canonical `resource` to `/mcp/token`, using the same public-client identification or confidential Basic authentication as the code exchange. Do not send code, redirect or PKCE parameters in a refresh request. Optional `scope` may retain the granted scope or narrow it, never expand it or exceed the current registered ceiling. A valid refresh can succeed after access expiry, without another consent page, while the family and current account/client bindings remain valid.
 
-Each successful refresh atomically replaces the nonce digest and generation and returns a new pair. **The old access token becomes invalid immediately**, even before its JWT expiry. The default access lifetime remains 900 seconds; the family's original absolute refresh deadline defaults to 7 days and is never extended by rotation. Cleanup retains refreshable grants through that deadline, not merely access expiry. Revocation invalidates the whole family and both token types.
+Each successful refresh atomically replaces the nonce digest and generation, advances the refresh deadline and returns a new pair. **The old access token becomes invalid immediately**, even before its JWT expiry. The default access lifetime is 7200 seconds (2 hours). The refresh window defaults to 7 days from initial issuance and resets to 7 days from each successful refresh, with no separate absolute family lifetime cap. Only a successful refresh extends the deadline; ordinary access and failed refresh attempts do not. Cleanup retains refreshable grants through the current refresh deadline, not merely access expiry. Revocation invalidates the whole family and both token types.
 
 After client authentication and binding checks, replay of a correctly signed older refresh generation revokes the family, including a concurrent winner's newly issued pair. Clients must serialize refresh and replace both credentials together. Do not automatically retry code or refresh issuance after an uncertain/lost response: credentials are not recoverable, and replay can revoke the family. Expired/revoked families require fresh browser authorization.
 
@@ -268,7 +268,7 @@ For example, the application-authored fields of two correlated records are:
 
 The standard logger may also add timestamp, level, bean, method/canonical pathname and telemetry metadata. The family correlator hashes a domain-separated grant-binding tuple, not a token or nonce. No raw identity/client/grant IDs, credentials, authorization codes, headers, cookies, request bodies or tool arguments/results are included. This is pseudonymous operational correlation, not strong anonymization or a protected audit trail.
 
-After loading this code into the normal server, perform a read-only client interaction, wait beyond the default 900-second access lifetime, then interact again without manually reauthorizing. Search the server console or its configured combined log for these event names. A refresh event followed by an accepted-access event with the **same family and generation** directly establishes server-side refresh issuance followed by use of that generation. It does not establish client response persistence or business-call success; continued usability alone does not prove refresh. Initial generation 1, legacy opaque access and rejected operations produce no such success records. Each accepted refreshed request may log again.
+After loading this code into the normal server, perform a read-only client interaction, wait beyond the configured access lifetime (7200 seconds / 2 hours by default), then interact again without manually reauthorizing. Search the server console or its configured combined log for these event names. A refresh event followed by an accepted-access event with the **same family and generation** directly establishes server-side refresh issuance followed by use of that generation. It does not establish client response persistence or business-call success; continued usability alone does not prove refresh. Initial generation 1, legacy opaque access and rejected operations produce no such success records. Each accepted refreshed request may log again.
 
 Existing logger-level/child/transport filters, optional request-boundary diagnostic suppression and strict isolated-test suppression remain effective. Normal shared ingress does not install that optional boundary. Missing records are inconclusive if diagnostics are filtered, suppressed or unavailable; do not bypass those policies or collect credentials. Managed regression assertions capture the production logging calls without changing suppression settings; they do not substitute for real-client runtime evidence. Logging is best-effort and does not change authentication outcomes. Do not reset databases or replay a refresh token to obtain evidence.
 
@@ -294,7 +294,7 @@ The existing authorization row is the grant family; only the current nonce diges
 
 ## Verification and operational limits
 
-**Refresh evidence boundary:** the current refresh contract above supersedes historical authorization-code-only/no-refresh statements in the retained reports below; those historical reports do not verify refresh. The [2026-11-01 real-client refresh record](../../../../../repo-specs/cabloy-mcp/evidence/business-ai-client.md#user-provided-real-client-mcp-refresh-runtime-evidence-2026-11-01) separately retains user-provided matching generation-4 refresh/accepted-access events and scoped automated verification. It establishes server-side refresh followed by use of that generation, not tool success, a development-database reset, immutable served-source attestation or production qualification. Managed tests and real-client runtime evidence retain their separate scopes; historical successful login/read journeys alone do not establish refresh.
+**Refresh evidence boundary:** the current refresh contract above supersedes historical authorization-code-only/no-refresh statements in the retained reports below; those historical reports do not verify refresh. The [2026-11-01 real-client refresh record](../../../../../repo-specs/cabloy-mcp/evidence/business-ai-client.md#user-provided-real-client-mcp-refresh-runtime-evidence-2026-11-01) separately retains user-provided matching generation-4 refresh/accepted-access events and scoped automated verification. It establishes server-side refresh followed by use of that generation, not tool success, a development-database reset, immutable served-source attestation or production qualification. That record does not verify the updated 2-hour access default or sliding refresh-window policy. Managed tests and real-client runtime evidence retain their separate scopes; historical successful login/read journeys alone do not establish refresh.
 
 **Normal ownership migration boundary:** the retained checks and real-client reports below all predate `cabloy-mcp` taking normal `/mcp` ownership and restricting construction to lookup/summary. They do not attest the migrated ingress, its production/unknown-mode gate, or the then-student-only empty-without-training behavior. That historical allowlist is not the current Resource admission rule. This documentation update adds no execution evidence; current ingress and Resource-catalog acceptance must be established separately.
 

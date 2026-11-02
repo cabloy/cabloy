@@ -27,6 +27,7 @@ import {
 import { getMcpIssuer } from 'vona-module-mcp-auth';
 
 import { ServiceAuthorization } from '../../mcp-auth/src/service/authorization.ts';
+import { resolveSchema } from '../src/lib/controllerToolSchema.ts';
 
 const version = '2026-07-28';
 const categoriesName = 'commerce_categories_list';
@@ -124,7 +125,7 @@ async function redeemTokens(scope: 'mcp:all' | 'mcp:read' = 'mcp:read', oauthCli
   assert.equal(token.headers['cache-control'], 'no-store');
   assert.equal(token.body.token_type, 'Bearer');
   assert.equal(token.body.scope, scope);
-  assert.equal(token.body.expires_in, 900);
+  assert.equal(token.body.expires_in, 7200);
   assert.match(token.body.access_token, /^[\w-]+\.[\w-]+\.[\w-]+$/);
   return token.body as { access_token: string; refresh_token?: string };
 }
@@ -808,6 +809,30 @@ describe('businessHttp.test.ts', { concurrency: false, timeout: 60000 }, () => {
             ],
             'each list freshly checks registered Actions in order, skipping mutations only on read scope',
           );
+          const levelDescription = '1=Foundation Track; 2=Progress Track; 3=Advanced Workshop';
+          for (const tool of tools) {
+            if (tool.name === studentDeleteName) continue;
+            assert.ok(
+              tool.description.endsWith(`Level values: ${levelDescription}.`),
+              `${tool.name} explains numeric levels even without outputSchema`,
+            );
+            if ([studentCreateName, studentUpdateName].includes(tool.name)) {
+              const schema = tool.inputSchema;
+              const body = resolveSchema(
+                tool.name === studentCreateName ? schema : schema.properties.body,
+                schema.components?.schemas ?? {},
+              );
+              assert.equal(body.properties.level.description, levelDescription);
+            }
+            if ([studentViewName, studentSummaryName, studentSelectName].includes(tool.name)) {
+              const schema = tool.outputSchema;
+              const student =
+                tool.name === studentSelectName
+                  ? resolveSchema(schema.properties.list.items, schema.components?.schemas ?? {})
+                  : schema;
+              assert.equal(student.properties.level.description, levelDescription);
+            }
+          }
           const createTool = tools.find((tool: any) => tool.name === studentCreateName);
           if (createTool) {
             assert.equal(createTool.annotations.readOnlyHint, false);
@@ -3202,7 +3227,7 @@ describe('businessHttp.test.ts', { concurrency: false, timeout: 60000 }, () => {
       assert.equal(refreshed.headers['cache-control'], 'no-store');
       assert.equal(refreshed.body.token_type, 'Bearer');
       assert.equal(refreshed.body.scope, 'mcp:read');
-      assert.equal(refreshed.body.expires_in, 900);
+      assert.equal(refreshed.body.expires_in, 7200);
       assert.match(refreshed.body.access_token, /^[\w-]+\.[\w-]+\.[\w-]+$/);
       assert.match(refreshed.body.refresh_token, /^[\w-]+\.[\w-]+\.[\w-]+$/);
       assert.equal(refreshed.body.access_token === token.access_token, false);

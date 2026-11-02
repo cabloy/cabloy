@@ -161,6 +161,42 @@ describe('student.test.ts', { concurrency: false }, () => {
     });
   });
 
+  it('action:student:levelDescription', async () => {
+    for (const [locale, description] of [
+      ['en-us', '1=Foundation Track; 2=Progress Track; 3=Advanced Workshop'],
+      ['zh-cn', '1=基础班; 2=提升班; 3=高级研修班'],
+    ] as const) {
+      await app.bean.executor.mockCtx(
+        async () => {
+          for (const DtoClass of [
+            DtoStudentCreate,
+            DtoStudentUpdate,
+            DtoStudentSelectResItem,
+            DtoStudentView,
+            DtoStudentSummary,
+          ]) {
+            const apiJson = JSON.parse(
+              JSON.stringify(await app.bean.openapi.generateJsonOfClass(DtoClass, 'V31')),
+            );
+            const component = Object.values(apiJson.components.schemas).find(
+              (item: any) => item.properties?.level,
+            ) as any;
+            assert.ok(component?.properties.level, `${DtoClass.name} level schema is missing`);
+            assert.equal(component.properties.level.description, description);
+          }
+          const student = { name: 'Level semantics', mobile: '13800138000', level: 2 };
+          const parsed = await $schema(DtoStudentCreate).parseAsync(student);
+          assert.equal(parsed.level, 2);
+          assert.equal(
+            (await $schema(DtoStudentCreate).safeParseAsync({ ...student, level: '2' })).success,
+            false,
+          );
+        },
+        { locale },
+      );
+    }
+  });
+
   it('action:student:filterFormLayoutMetadata', async () => {
     await app.bean.executor.mockCtx(async () => {
       const apiJson = await app.bean.openapi.generateJsonOfClass(DtoStudentSelectResItem);

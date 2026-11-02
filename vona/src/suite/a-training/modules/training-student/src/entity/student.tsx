@@ -1,6 +1,7 @@
 import type { TableIdentity } from 'table-identity';
 import type { IDecoratorEntityOptions } from 'vona-module-a-orm';
 
+import { text } from 'vona';
 import { $makeMetadata, Api, v } from 'vona-module-a-openapiutils';
 import { Entity, EntityBase } from 'vona-module-a-orm';
 import z from 'zod';
@@ -13,6 +14,13 @@ export const studentLevelItems = [
   { value: 2, title: $locale('LevelIntermediate') },
   { value: 3, title: $locale('LevelAdvanced') },
 ];
+
+export const studentLevelDescription = studentLevelItems
+  .map(({ value, title }) => {
+    const prefix = `${value}=`;
+    return text`${prefix}${title}`;
+  })
+  .reduce((description, item) => text`${description}; ${item}`);
 
 export interface IEntityOptionsStudent extends IDecoratorEntityOptions {}
 
@@ -88,6 +96,7 @@ export class EntityStudent extends EntityBase {
 
   @Api.field(
     v.title($locale('Level')),
+    v.description(studentLevelDescription),
     v.required(),
     ZovaRender.order(5),
     ZovaRender.column({ align: 'center', width: 140, enableSorting: true }),

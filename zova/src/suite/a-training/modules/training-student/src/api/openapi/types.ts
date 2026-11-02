@@ -4498,7 +4498,10 @@ export interface components {
       mobile: string;
       /** @description Student Image */
       imageId?: number | string | undefined;
-      /** @description Training Stage */
+      /**
+       * Training Stage
+       * @description 1=Foundation Track; 2=Progress Track; 3=Advanced Workshop
+       */
       level: 1 | 2 | 3;
       /** @description Student Training Records */
       trainingRecords?:
@@ -4670,7 +4673,10 @@ export interface components {
       mobile: string;
       /** @description Student Image */
       imageId?: number | string | undefined;
-      /** @description Training Stage */
+      /**
+       * Training Stage
+       * @description 1=Foundation Track; 2=Progress Track; 3=Advanced Workshop
+       */
       level: 1 | 2 | 3;
       image?: components['schemas']['a-image.dto.imageView_a83c3e638bca4b30ec8675860cdc52d66f6a16d1_2d063d28bc7243bed02ebd8bddf1212a93c6305b_efb37794d7c03c65122279f90d79919f009c34e5_1816ff740d81c738ec055c7038bbd93beb9405a7_537cd6552a384183a9457fb6a920bbae337277f6'];
       /** @description Operations */
@@ -4700,11 +4706,17 @@ export interface components {
       id: number | string;
       /** @description Student Name */
       name: string;
-      /** @description Training Stage */
+      /**
+       * Training Stage
+       * @description 1=Foundation Track; 2=Progress Track; 3=Advanced Workshop
+       */
       level: 1 | 2 | 3;
     };
     'training-student.dto.studentGroupResItem': {
-      /** @description Training Stage */
+      /**
+       * Training Stage
+       * @description 1=Foundation Track; 2=Progress Track; 3=Advanced Workshop
+       */
       level?: 1 | 2 | 3 | undefined;
       count_all?: string | undefined;
       count_imageId?: string | undefined;
@@ -4744,7 +4756,10 @@ export interface components {
           mobile: string;
           /** @description Student Image */
           imageId?: number | string | undefined;
-          /** @description Training Stage */
+          /**
+           * Training Stage
+           * @description 1=Foundation Track; 2=Progress Track; 3=Advanced Workshop
+           */
           level: 1 | 2 | 3;
           /** @description Student Training Records */
           trainingRecords: {
@@ -4840,7 +4855,10 @@ export interface components {
       mobile: string;
       /** @description Student Image */
       imageId?: number | string | undefined;
-      /** @description Training Stage */
+      /**
+       * Training Stage
+       * @description 1=Foundation Track; 2=Progress Track; 3=Advanced Workshop
+       */
       level: 1 | 2 | 3;
       /** @description Student Training Records */
       trainingRecords?:
@@ -4944,7 +4962,10 @@ export interface components {
           name: string;
           /** @description Mobile */
           mobile: string;
-          /** @description Training Stage */
+          /**
+           * Training Stage
+           * @description 1=Foundation Track; 2=Progress Track; 3=Advanced Workshop
+           */
           level: 1 | 2 | 3;
           /** @description Description */
           descriptionMarkdown?: string | undefined;
@@ -8427,6 +8448,7 @@ export interface operations {
         pageSize?: number;
         createdAt?: string | undefined;
         name?: string | undefined;
+        /** @description 1=Foundation Track; 2=Progress Track; 3=Advanced Workshop */
         level?: number | undefined;
       };
       header?: never;
@@ -8521,6 +8543,7 @@ export interface operations {
         pageSize?: number;
         createdAt?: string | undefined;
         name?: string | undefined;
+        /** @description 1=Foundation Track; 2=Progress Track; 3=Advanced Workshop */
         level?: number | undefined;
         aggrs?: {
           count?: ('*' | 'imageId')[] | undefined;
@@ -8562,6 +8585,7 @@ export interface operations {
         pageSize?: number;
         createdAt?: string | undefined;
         name?: string | undefined;
+        /** @description 1=Foundation Track; 2=Progress Track; 3=Advanced Workshop */
         level?: number | undefined;
         aggrs?: {
           count?: ('*' | 'imageId')[] | undefined;

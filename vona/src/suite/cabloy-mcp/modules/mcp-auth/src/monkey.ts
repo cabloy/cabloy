@@ -8,7 +8,7 @@ export class Monkey extends BeanSimple {
     if (module.info.relativeName !== 'a-jwt') return;
     // Extend module defaults before project-level configuration is merged.
     config.clients.mcpAccess = {
-      signOptions: { expiresIn: 900 },
+      signOptions: { expiresIn: 2 * 60 * 60 },
       authTokenAdapter: 'mcp-auth:authTokenAdapter',
     };
     config.clients.mcpRefresh = {

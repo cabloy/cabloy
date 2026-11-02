@@ -168,7 +168,6 @@ export class ServiceAuthTokenAdapter extends BeanBase implements IAuthTokenAdapt
     ) {
       throw new OAuthError('invalid_grant');
     }
-    if (Number(row.refreshExpiresAt) - now < 1000) throw new OAuthError('invalid_grant');
     const nextScope = input.scope ?? row.scope;
     if (
       !isMcpScope(nextScope) ||
@@ -177,9 +176,11 @@ export class ServiceAuthTokenAdapter extends BeanBase implements IAuthTokenAdapt
     ) {
       throw new OAuthError('invalid_scope');
     }
-    const next = this.next(payload, row.refreshGeneration + 1, Number(row.refreshExpiresAt));
+    const config = getMcpAuthConfig(this.app);
+    const refreshExpiresAt = now + config.refreshTokenTtl * 1000;
+    const next = this.next(payload, row.refreshGeneration + 1, refreshExpiresAt);
     next.mcp.scope = nextScope;
-    const tokenExpiresAt = now + getMcpAuthConfig(this.app).tokenTtl * 1000;
+    const tokenExpiresAt = now + config.tokenTtl * 1000;
     const count = await this.scope.model.authorization
       .builderSelect()
       .where(this.scope.service.authorization.bindings(row))
@@ -197,9 +198,10 @@ export class ServiceAuthTokenAdapter extends BeanBase implements IAuthTokenAdapt
       .update({
         tokenDigest: sha256(next.token),
         refreshGeneration: next.mcp.generation,
+        refreshExpiresAt,
         tokenExpiresAt,
         scope: nextScope,
-        expiresAt: Math.max(tokenExpiresAt, Number(row.refreshExpiresAt)),
+        expiresAt: Math.max(tokenExpiresAt, refreshExpiresAt),
       });
     if (count !== 1) {
       // Recheck request binding before a concurrent loser can revoke the winning family.
@@ -331,7 +333,9 @@ export class ServiceAuthTokenAdapter extends BeanBase implements IAuthTokenAdapt
       String(row.userId) !== String(payload.userId) ||
       String(row.authId) !== String(payload.authId) ||
       Boolean(row.refreshEnabled) !== mcp.refreshEnabled ||
-      (mcp.generation > 0 && Number(row.refreshExpiresAt) !== mcp.refreshExpiresAt) ||
+      (mcp.generation > 0 &&
+        !(historical && mcp.generation < row.refreshGeneration) &&
+        Number(row.refreshExpiresAt) !== mcp.refreshExpiresAt) ||
       !(historical && mcp.generation < row.refreshGeneration
         ? isMcpScope(row.scope) && mcpScopeIncludes(mcp.scope, row.scope)
         : row.scope === mcp.scope)
