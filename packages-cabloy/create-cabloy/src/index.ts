@@ -95,9 +95,11 @@ async function main() {
   if (initExitCode !== 0) {
     s2.stop('Init failed', 1);
     p.log.error(pc.red('npm run init failed. You can try running it manually.'));
-  } else {
-    s2.stop('Project initialized successfully!');
+    process.exitCode = initExitCode ?? 1;
+    return;
   }
+
+  s2.stop('Project initialized successfully!');
 
   p.outro(
     `${pc.green(' Done! ')}Next steps:\n${pc.dim(`  cd ${result.projectName}\n`)}${pc.dim('  npm run db:reset\n')}${pc.dim('  npm run dev\n')}\nOpen this project in Claude Code and start coding immediately with project-specific guidance.`,

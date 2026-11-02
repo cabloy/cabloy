@@ -16,8 +16,7 @@ import { fileURLToPath } from 'node:url';
 const TAG_PREFIX = 'cabloy@';
 const GITHUB_REPO = 'cabloy/cabloy';
 const COMMIT_CAP = 200;
-const RELEASE_SCRIPT_PATH = fileURLToPath(import.meta.url);
-const ROOT_DIR = resolve(dirname(RELEASE_SCRIPT_PATH), '..');
+const ROOT_DIR = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const VONA_DIR = resolve(ROOT_DIR, 'vona');
 const VONA_PACKAGE_JSON_PATH = resolve(VONA_DIR, 'package.json');
 const VONA_PACKAGE_ORIGINAL_JSON_PATH = resolve(VONA_DIR, 'package.original.json');
@@ -173,24 +172,6 @@ function writeCabloyVersion(version: string): void {
 
 function isValidVersion(version: string): boolean {
   return /^\d+\.\d+\.\d+$/.test(version);
-}
-
-function parseVersion(version: string): [number, number, number] {
-  if (!isValidVersion(version)) {
-    throw new Error(`Invalid version: ${version}`);
-  }
-  const [major, minor, patch] = version.split('.').map(item => Number.parseInt(item, 10));
-  return [major, minor, patch];
-}
-
-function compareVersions(left: string, right: string): number {
-  const leftParts = parseVersion(left);
-  const rightParts = parseVersion(right);
-  for (let i = 0; i < leftParts.length; i++) {
-    if (leftParts[i] > rightParts[i]) return 1;
-    if (leftParts[i] < rightParts[i]) return -1;
-  }
-  return 0;
 }
 
 function getLastTag(): string | null {
@@ -589,73 +570,21 @@ function verifyCompensationPatch(dryRun?: boolean): void {
   execInherited('npm run tsc', dryRun);
 }
 
-function commitCompensationChanges(targetVersion: string, dryRun?: boolean): void {
-  // eslint-disable-next-line
-  console.log('\n📁 Committing compensation changes...');
-  const stageTargets = ['vona/pnpm-workspace.yaml', 'vona/pnpm-lock.yaml', 'vona/patches'];
-  if (existsSync(VONA_PACKAGE_JSON_PATH)) {
-    let trackedPackageJson = false;
-    try {
-      trackedPackageJson =
-        execSync(`git ls-files --error-unmatch "${VONA_PACKAGE_JSON_PATH}"`, {
-          cwd: ROOT_DIR,
-          stdio: 'pipe',
-        })
-          .toString()
-          .trim() !== '';
-    } catch {
-      trackedPackageJson = false;
-    }
-    if (trackedPackageJson) {
-      stageTargets.unshift('vona/package.json');
-    }
+function assertVonaZovaCorePatch(): void {
+  const patchedVersion = readCurrentPatchedZovaCoreVersion();
+  const localVersion = readLocalZovaCoreVersion();
+  if (patchedVersion !== localVersion) {
+    throw new Error(
+      `Vona zova-core patch must match before publishing: patch=${patchedVersion ?? '<missing>'}, local=${localVersion}`,
+    );
   }
-  exec(`git add ${stageTargets.join(' ')}`, dryRun);
-  if (!dryRun) {
-    const staged = execSync(`git diff --cached --name-only -- ${stageTargets.join(' ')}`, {
-      cwd: ROOT_DIR,
-      encoding: 'utf-8',
-    }).trim();
-    if (!staged) {
-      throw new Error('No compensation changes were staged for commit');
-    }
-  }
-  exec(`git commit -m "chore: refresh vona zova-core patch for v${targetVersion}"`, dryRun);
-  exec('git push', dryRun);
+  validateGeneratedZovaCorePatch(localVersion);
+  ensurePatchedLockfileVersion(localVersion);
 }
 
-function rerunPatchReleaseAfterCompensation(noAi?: boolean, dryRun?: boolean): void {
-  const noAiFlag = noAi ? ' --no-ai' : '';
+function prepareVonaZovaCorePatch(dryRun?: boolean): void {
   // eslint-disable-next-line
-  console.log('\n🚀 Running the compensation patch release...');
-  const rerunStageTargets = ['zova/pnpm-lock.yaml'];
-  exec(`git add ${rerunStageTargets.join(' ')}`, dryRun);
-  if (!dryRun) {
-    const staged = execSync(`git diff --cached --name-only -- ${rerunStageTargets.join(' ')}`, {
-      cwd: ROOT_DIR,
-      encoding: 'utf-8',
-    }).trim();
-    if (staged) {
-      exec('git commit -m "chore: refresh zova lockfile after compensation rerun prep"', dryRun);
-      exec('git push', dryRun);
-    }
-  }
-  execInherited(`node "${RELEASE_SCRIPT_PATH}" patch --skip-compensation${noAiFlag}`, dryRun);
-}
-
-async function postReleaseCompensation(options: ReleaseOptions): Promise<void> {
-  if (
-    options.dryRun ||
-    options.changelogOnly ||
-    options.publishOnly ||
-    options.releaseOnly ||
-    options.skipCompensation
-  ) {
-    return;
-  }
-
-  // eslint-disable-next-line
-  console.log('\n🔍 Checking whether zova-core compensation is needed...');
+  console.log('\n🔍 Synchronizing the Vona zova-core patch before the root release...');
 
   const currentPatchedVersion = readCurrentPatchedZovaCoreVersion();
   if (!currentPatchedVersion) {
@@ -663,22 +592,20 @@ async function postReleaseCompensation(options: ReleaseOptions): Promise<void> {
   }
 
   const localZovaCoreVersion = readLocalZovaCoreVersion();
-  // eslint-disable-next-line
-  console.log(`Current Vona zova-core patch target: ${currentPatchedVersion}`);
-  // eslint-disable-next-line
-  console.log(`Local zova-core version: ${localZovaCoreVersion}`);
-
-  if (compareVersions(localZovaCoreVersion, currentPatchedVersion) <= 0) {
-    // eslint-disable-next-line
-    console.log('zova-core patch already matches the local version. Skipping compensation.');
+  if (dryRun) {
+    // Lerna may change the version during a real release, so preview synchronization even if aligned now.
+    regenerateVonaZovaCorePatch(currentPatchedVersion, localZovaCoreVersion, true);
+    refreshVonaLockfile(true);
+    verifyCompensationPatch(true);
     return;
   }
 
-  regenerateVonaZovaCorePatch(currentPatchedVersion, localZovaCoreVersion, options.dryRun);
-  refreshVonaLockfile(options.dryRun);
-  verifyCompensationPatch(options.dryRun);
-  commitCompensationChanges(localZovaCoreVersion, options.dryRun);
-  rerunPatchReleaseAfterCompensation(options.noAi, options.dryRun);
+  if (localZovaCoreVersion !== currentPatchedVersion) {
+    regenerateVonaZovaCorePatch(currentPatchedVersion, localZovaCoreVersion);
+    refreshVonaLockfile();
+    verifyCompensationPatch();
+  }
+  assertVonaZovaCorePatch();
 }
 
 // --- Step 1: Version Bump ---
@@ -866,10 +793,13 @@ async function npmPublish(dryRun?: boolean): Promise<void> {
 
   if (dryRun) {
     // eslint-disable-next-line
+    console.log('  [dry-run] Validate the Vona zova-core patch and lockfile before publishing');
+    // eslint-disable-next-line
     console.log('  [dry-run] npm publish');
     return;
   }
 
+  assertVonaZovaCorePatch();
   execSync('npm publish', { cwd: ROOT_DIR, encoding: 'utf-8', stdio: 'inherit' });
 }
 
@@ -932,7 +862,6 @@ interface ReleaseOptions {
   skipChangelog?: boolean;
   skipPublish?: boolean;
   skipRelease?: boolean;
-  skipCompensation?: boolean;
   noAi?: boolean;
 }
 
@@ -976,9 +905,10 @@ async function release(options: ReleaseOptions): Promise<void> {
     // eslint-disable-next-line
     console.log(`Using current version: ${version}`);
   } else {
-    // Pre-steps: commit pending, release sub-projects, then commit again
+    // Finalize sub-project versions and their patch before committing the root release snapshot.
     commitPendingChanges(options.dryRun);
     subProjectRelease(options.bumpType, options.dryRun);
+    prepareVonaZovaCorePatch(options.dryRun);
     commitPendingChanges(options.dryRun);
 
     version = await versionBump(options.bumpType, options.dryRun);
@@ -999,8 +929,6 @@ async function release(options: ReleaseOptions): Promise<void> {
     await githubRelease(version, options.dryRun);
   }
 
-  await postReleaseCompensation(options);
-
   // eslint-disable-next-line
   console.log('\n✅ Release complete!');
 }
@@ -1015,7 +943,6 @@ const args = minimist(process.argv.slice(2), {
     'skip-changelog',
     'skip-publish',
     'skip-release',
-    'skip-compensation',
     'no-ai',
   ],
   default: {
@@ -1026,7 +953,6 @@ const args = minimist(process.argv.slice(2), {
     'skip-changelog': false,
     'skip-publish': false,
     'skip-release': false,
-    'skip-compensation': false,
     'no-ai': false,
   },
 });
@@ -1047,7 +973,6 @@ release({
   skipChangelog: args['skip-changelog'],
   skipPublish: args['skip-publish'],
   skipRelease: args['skip-release'],
-  skipCompensation: args['skip-compensation'],
   noAi: args['no-ai'],
 }).catch(err => {
   // eslint-disable-next-line
