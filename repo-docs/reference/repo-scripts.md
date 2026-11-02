@@ -138,7 +138,15 @@ Non-coverage unit tests in Cabloy Basic and Cabloy Start also accept the standal
 npm run test -- -- --ci --skip-expired-claim-reaping <test-path>
 ```
 
-The unit-test wrapper consumes the flag rather than forwarding it to the test CLI. This skips only historical-claim reaping: it does not enable contract-generation strict freshness or diagnostic suppression, and it preserves current-run isolation, cleanup on success, and resource retention on failure. Unit-test defaults remain unchanged. Coverage and E2E reject the opt-out, and assignment forms such as `--skip-expired-claim-reaping=true` are rejected.
+The unit-test wrapper consumes the flag rather than forwarding it to the test CLI. This skips only historical-claim reaping: it does not enable contract-generation strict freshness or diagnostic suppression, and it preserves current-run isolation, cleanup on success, and resource retention on failure. Unit-test defaults remain unchanged. Coverage rejects the opt-out in both editions, and assignment forms such as `--skip-expired-claim-reaping=true` are rejected.
+
+Managed E2E in Cabloy Basic and Cabloy Start also accepts the standalone flag for an explicitly authorized run that must not reap historical claims:
+
+```bash
+npm run test:e2e -- <spec-basename> --skip-expired-claim-reaping --grep='<scenario-pattern>' --reporter=line --trace=off --retries=0
+```
+
+The wrapper consumes the flag before forwarding spec selection and Playwright options to the E2E child. It returns before historical TTL parsing or claim enumeration, but keeps current-run allocation, ownership checks, verified shutdown, exact success cleanup, and failed-run retention unchanged. It does not enable contract-generation strict freshness or diagnostic suppression, disable test initialization/seeding, or reuse a dev server. Without the flag, E2E in both editions retains normal historical reaping. Assignment forms and combining the opt-out with `--coverage` or `--coverage=...` are rejected.
 
 The contract-generation opt-in lane requires strict freshness after application configuration and before module loading: run-owned public/runtime/SQLite directories must be absent or empty, shared and static-isolate database namespaces must be absent, and persistent Redis namespaces must be empty. Read-only discovery failures or preexisting resources fail closed rather than authorizing deletion. Startup requires per-application freshness proof to bypass normal test clearing; database preparation rechecks the namespace, never drops existing databases in this lane, and reuses only a database creation recorded by that application.
 
