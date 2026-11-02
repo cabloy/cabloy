@@ -23,7 +23,7 @@ declare module 'zova-module-basic-table' {
 export const ZRowOperations = defineComponent((_props: ZRowOperationsProps) => {
   useController(ControllerRowOperations, undefined, undefined);
   return () => {};
-}, prepareComponentOptions());
+}, prepareComponentOptions(ControllerRowOperations.$componentOptions));
 declare module 'zova-module-a-bean' {
   export interface IVonaComponentRecord {
     'basic-table:rowOperations': ControllerRowOperationsProps;
