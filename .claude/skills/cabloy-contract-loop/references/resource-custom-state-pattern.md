@@ -144,8 +144,9 @@ Use that branch only when all of these are true:
 
 - the Web operations and DTOs are distinct from Admin `select`/`view` semantics;
 - the server derives owner scope from the authenticated user and preserves normal instance scope;
-- the Web model owns only its self-service query keys and purpose-built page state, not Admin Resource schemas, permissions, or generic page state;
-- Web UX or private SSR behavior needs a dedicated admission and post-hydration boundary.
+- the Web model owns only its self-service query keys and purpose-built page state, not Admin Resource schemas, permissions, or generic page state.
+
+Choose admission and SSR timing separately from state ownership. A dedicated Web model can prepare authorized private data during `session` SSR; a post-hydration boundary is needed only for state intentionally omitted from SSR, not as a prerequisite for a separate owner. Follow the rendering-contract branches in [SSR Init Data](../../../../repo-docs/frontend/ssr-init-data.md#hydration-equivalent-initial-render).
 
 This does not justify a parallel owner for a custom Admin endpoint. It establishes a separate Web state domain beside the Admin Resource boundary. Read `../../../../repo-docs/fullstack/admin-resource-and-web-self-service.md` for the complete cross-stack pattern.
 

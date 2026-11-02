@@ -33,7 +33,8 @@ When one persisted domain has both Admin Resource and Web self-service consumers
 - Web requests cannot choose owner or tenant scope; the service applies owner and visibility predicates before count, sorting, and pagination
 - Web DTOs omit owner, tenant, and operational-only fields
 - Admin custom state remains in `ModelResource`; a dedicated Web model owns only the distinct self-service cache domain
-- private Web SSR keeps a hydration-equivalent neutral shell until an explicit admission or post-hydration boundary
+- Web SSR verification follows the chosen rendering contract: authorized `session` SSR may include safe private first-paint data with query-state transfer and equivalent hydration; only intentionally omitted state requires a neutral shell until its explicit client boundary
+- protected session documents without usable authentication redirect through admission; session responses remain private/no-store, and neither HTML nor transferred query state exposes secrets or another user's data
 - targeted Admin and authenticated Web flow checks cover both audiences when both contracts changed
 
 ## Reverse chain verification

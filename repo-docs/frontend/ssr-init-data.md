@@ -48,21 +48,30 @@ For helper selection and the complete passport flow, read [Model State Guide](/f
 
 The server-rendered HTML and the client's hydration-time initial render must be equivalent. Compare the server response with the first client render that hydrates it, not with the browser UI after later client work completes.
 
-Choose one of these strategies for each render-driving state:
+First resolve the effective SSR profile, request authentication, and admission, then choose the intended first-paint contract. **Private data does not by itself require client-only loading.** A `session` profile enables request-cookie-backed Passport recovery; `requiresAuth: true` independently enforces protected admission. A valid authenticated request can render authorized private data on the server. Protected session admission redirects an unauthenticated request to login; Passport recovery errors still follow the guard's error path. `session` alone does not authenticate a request.
+
+See [SSR Env](/frontend/ssr-env#ssr-profile) for profile capabilities and [Navigation Guards Guide](/frontend/navigation-guards-guide#home-base-guard-entrypoint) for admission. Choose one of these strategies for each render-driving state:
 
 ### State required in SSR output
 
-Use the model-owned query on both sides, prepare it in the server-capable initialization path, and let the client reuse the transferred state through the same effective Model, selector, and logical query key. This is the normal approach for public data that must appear in the initial HTML.
+Use the model-owned query on both sides, prepare it in the server-capable initialization path, and let the client reuse the transferred state through the same effective Model, selector, and logical query key. This applies to public first-paint data and to safe, authorized private first-paint data on a `session` route.
+
+For example, a personal records page with `requiresAuth: true` and `ssrProfile: 'session'` can prepare the current user's projected list before rendering. Keep server-side owner/instance enforcement and exclude secrets from both the response and Query Cache transfer. Session documents use `Cache-Control: private, no-store`; this is not permission to serialize credentials or internal fields.
+
+The existing Account page is a concrete specimen: `home-user/src/routes.ts` selects protected session SSR, `home-user/src/model/account.ts` creates the authenticated `current()` query without a client-only guard, and `home-user/src/page/account/controller.tsx` awaits `$QueryEnsureLoaded(() => this.queryCurrent)` in `__init__`. These files live under `zova/src/suite/a-home/modules/`. Its browser timezone detection is separately deferred through `handleDirectOrOnHydrated`; that browser-only work does not move the Account query out of SSR.
+
+Do not add a `clientReady` or `process.env.CLIENT` query guard merely because the data is private. If converting an intentionally deferred implementation to session SSR, align query creation, an explicit readiness wait, safe dehydration, and client query identity together. Removing a single guard does not establish that complete handoff.
 
 ### State intentionally omitted from SSR
 
-For private, cookie-unavailable, or browser-only state, render the same neutral shell or placeholder on the server and during the client's hydration-time initial render. Begin the query, loading state, and private rendered branch only at an explicit client boundary, such as `onHydrated`, `ClientOnly`, completed route admission, a mounted client lifecycle, or user interaction.
+When state is intentionally omitted from SSR—for example, a public profile disables server Cookie use, a value is browser-only, or the UX deliberately loads it after interaction—render the same neutral shell or placeholder on the server and during the client's hydration-time initial render. Begin its query, loading state, and rendered branch only at an explicit client boundary, such as `onHydrated`, `ClientOnly`, completed client route admission, a mounted client lifecycle, or user interaction. This boundary controls timing; it does not replace authentication or server-side authorization.
 
 A `process.env.CLIENT` branch is not sufficient when it changes the first hydration tree. A state transition after hydration is valid; a different hydration-time initial tree is not.
 
 ### Query helper roles
 
 - `$useStateData(...)` owns the query identity, state, cache lifecycle, and hydration reuse.
+- `persister: false` disables browser persistence, not server query execution or SSR handoff. `ssr.dehydrate: false` excludes the query from transferred state, but does not prevent server fetching or rendering. Neither is a client-only admission boundary.
 - `disableSuspenseOnInit: true` skips only `$useStateData(...)`'s automatic first-creation `query.suspense()` kick. It does not prevent query creation, restore, mounted/no-data fetches, or later refetches.
 - `$QueryEnsureLoaded(...)` is an awaited availability gate: it waits only while `query.data === undefined`. Use it at a deliberate boundary that needs loaded data, not to suppress a query during hydration.
 - If a boundary requires domain-valid data rather than merely loaded data, choose `$QueryGetFresh(...)` or `$QueryEnsureFresh(...)` with the model's freshness rule.
@@ -78,5 +87,7 @@ A better default is:
 - use the existing model abstraction
 - prepare data in `__init__`
 - let hydration reuse the server-prepared cache on the client
+
+Verify the selected contract, not an assumption encoded by an earlier test. For session-rendered private data, inspect authenticated raw HTML and transferred query state for the intended safe projection, verify private/no-store caching and unauthenticated admission, then check client reuse and hydration equivalence. For intentionally deferred state, verify its omission and the neutral shell through hydration before the explicit client boundary. In either case, exclude secrets and data outside the current user's authority. Existing assertions that a list is absent from SSR prove omission, not that private data cannot be server-rendered.
 
 That keeps SSR code aligned with Zova’s intended flow.
