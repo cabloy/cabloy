@@ -1,5 +1,11 @@
 # Changelog
 
+## 5.1.255
+
+### Improvements
+
+- Refactor SSR profile skills.
+
 ## 5.1.254
 
 ### Features
