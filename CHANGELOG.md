@@ -1,5 +1,46 @@
 # Changelog
 
+## 5.1.255
+
+### Improvements
+
+- Refactor SSR profile skills.
+
+## 5.1.254
+
+### Features
+
+- Add unspecified feature updates.
+
+## 5.1.253
+
+### Features
+
+- Update existing functionality.
+
+### Bug Fixes
+
+- Fix Cabloy project creation.
+
+### Improvements
+
+- Refresh the Zova lockfile after compensation rerun preparation.
+- Update the Vona zova-core patch for v5.1.97.
+
+## 5.1.252
+
+### Bug Fixes
+
+- Expose CAPTCHA server time and restrict disclosure of bound tokens.
+
+### Improvements
+
+- Refactor JWT handling.
+- Refactor ORM DTOs from cabloy-mcp.
+- Enhance SSR site base handling.
+- Skip expired-claim reaping.
+- Clarify backend helper and service placement in documentation.
+
 ## 5.1.251
 
 ## 5.1.250

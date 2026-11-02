@@ -95,6 +95,22 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  '/api/auth/mock/authorize': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['AuthMock_authorize'];
+    put?: never;
+    post: operations['AuthMock_authorizePost'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   '/api/captcha/create': {
     parameters: {
       query?: never;
@@ -2820,7 +2836,7 @@ export interface components {
       displayName?: string | undefined;
       /**
        * Avatar
-       * @description Absolute HTTPS avatar URL or API delivery URL
+       * @description Absolute HTTP(S) avatar URL or API delivery URL
        */
       avatar?: string | undefined;
       /** @description Locale */
@@ -5848,6 +5864,61 @@ export interface operations {
       cookie?: never;
     };
     requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data?: unknown;
+          };
+        };
+      };
+    };
+  };
+  AuthMock_authorize: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data?: unknown;
+          };
+        };
+      };
+    };
+  };
+  AuthMock_authorizePost: {
+    parameters: {
+      query: {
+        redirect_uri: string;
+        state: string;
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': {
+          username: string;
+        };
+      };
+    };
     responses: {
       200: {
         headers: {

@@ -203,89 +203,146 @@ describe('account.test.ts', { concurrency: false }, () => {
     }
   });
 
-  it('accepts a freshly uploaded avatar during profile update', async () => {
-    let fixture: IAccountFixture | undefined;
-    let imageId: string | number | undefined;
-    const imagePath = path.join(os.tmpdir(), `account-avatar-${crypto.randomUUID()}.png`);
-    await fse.writeFile(imagePath, tinyPng);
-    try {
-      fixture = await createFixture();
-      await app.bean.executor.mockCtx(async () => {
-        await app.bean.passport.signinSystem('mock', -10004 as any, fixture!.name);
-        try {
-          const policy = await app.bean.imageUploadPolicy.resolveUploadPolicy({
-            imageScene: 'home-user:homeUserAvatar',
-            size: tinyPng.length,
-            mimeType: 'image/png',
-          });
-          const uploaded = await app.bean.image.upload(
-            policy.providerName,
-            {
-              file: imagePath,
-              filename: 'avatar.png',
-              contentType: policy.mimeType,
-              public: policy.public,
-            },
-            {
-              clientName: policy.clientName,
-              imageScene: policy.imageScene,
-              meta: policy.meta,
-            },
-          );
-          imageId = uploaded.id;
-          const uploadedResponse = await app.bean.image.createImageActionResponse(uploaded);
-          const uploadedUrl = uploadedResponse.url;
-          const reloaded = await app.scope('a-image').model.image.getById(imageId);
-          assert.strictEqual(reloaded?.public, true);
-          assert.strictEqual(typeof reloaded?.public, 'boolean');
-          assert.equal(reloaded?.imageScene, 'home-user:homeUserAvatar');
-          assert.equal(reloaded?.status, 'ready');
-          assert.equal(reloaded?.meta?.ownerUserId, fixture!.userId);
-          assert.equal(typeof uploadedUrl, 'string');
-          const updated = await app.bean.executor.performAction('patch', profilePath, {
-            innerAccess: false,
-            body: {
-              avatar: uploadedUrl,
-            },
-          });
-          assert.equal(updated.avatar, uploadedUrl);
-          assert.equal(typeof updated.avatar, 'string');
+  for (const protocol of ['http', 'https']) {
+    it(`accepts a freshly uploaded ${protocol.toUpperCase()} avatar during profile update`, async () => {
+      let fixture: IAccountFixture | undefined;
+      let imageId: string | number | undefined;
+      const imagePath = path.join(os.tmpdir(), `account-avatar-${crypto.randomUUID()}.png`);
+      const req = {
+        headers: { host: 'request.example.test:8123' },
+        method: 'GET',
+        socket: { encrypted: protocol === 'https' },
+        url: '/',
+      };
+      await fse.writeFile(imagePath, tinyPng);
+      try {
+        fixture = await createFixture();
+        await app.bean.executor.mockCtx(
+          async () => {
+            await app.bean.passport.signinSystem('mock', -10004 as any, fixture!.name);
+            try {
+              const policy = await app.bean.imageUploadPolicy.resolveUploadPolicy({
+                imageScene: 'home-user:homeUserAvatar',
+                size: tinyPng.length,
+                mimeType: 'image/png',
+              });
+              const uploaded = await app.bean.image.upload(
+                policy.providerName,
+                {
+                  file: imagePath,
+                  filename: 'avatar.png',
+                  contentType: policy.mimeType,
+                  public: policy.public,
+                },
+                {
+                  clientName: policy.clientName,
+                  imageScene: policy.imageScene,
+                  meta: policy.meta,
+                },
+              );
+              imageId = uploaded.id;
+              const uploadedResponse = await app.bean.image.createImageActionResponse(uploaded);
+              const uploadedUrl = uploadedResponse.url;
+              const reloaded = await app.scope('a-image').model.image.getById(imageId);
+              assert.strictEqual(reloaded?.public, true);
+              assert.strictEqual(typeof reloaded?.public, 'boolean');
+              assert.equal(reloaded?.imageScene, 'home-user:homeUserAvatar');
+              assert.equal(reloaded?.status, 'ready');
+              assert.equal(reloaded?.meta?.ownerUserId, fixture!.userId);
+              assert.equal(typeof uploadedUrl, 'string');
+              const parsedUrl = new URL(uploadedUrl);
+              assert.equal(parsedUrl.origin, `${protocol}://request.example.test:8123`);
+              assert.equal(
+                parsedUrl.pathname,
+                `/api/static/public/${app.ctx.instance.id}/image-native/default/${uploaded.resourceId}.png`,
+              );
+              const updated = await app.bean.executor.performAction('patch', profilePath, {
+                innerAccess: false,
+                body: {
+                  avatar: uploadedUrl,
+                },
+              });
+              assert.equal(updated.avatar, uploadedUrl);
+              assert.equal(typeof updated.avatar, 'string');
 
-          const persisted = await app.scope('home-user').model.user.getById(fixture!.userId);
-          assert.equal(persisted?.avatar, uploadedUrl);
+              const persisted = await app.scope('home-user').model.user.getById(fixture!.userId);
+              assert.equal(persisted?.avatar, uploadedUrl);
 
-          const preserved = await app.bean.executor.performAction('patch', profilePath, {
-            innerAccess: false,
-            body: {},
-          });
-          assert.equal(preserved.avatar, uploadedUrl);
+              for (const invalidAvatar of [
+                'javascript:alert(1)',
+                'data:image/png;base64,AA==',
+                'ftp://example.com/avatar.png',
+                '//example.com/avatar.png',
+                'not-a-url',
+                `https://example.com/${'a'.repeat(256)}`,
+              ]) {
+                await assert.rejects(
+                  () =>
+                    app.bean.executor.performAction('patch', profilePath, {
+                      innerAccess: false,
+                      body: { avatar: invalidAvatar },
+                    }),
+                  (error: { code?: number }) => error.code === 422,
+                );
+              }
 
-          const thirdPartyAvatar = 'https://example.com/avatar.png';
-          const thirdPartyUpdated = await app.bean.executor.performAction('patch', profilePath, {
-            innerAccess: false,
-            body: {
-              avatar: thirdPartyAvatar,
-            },
-          });
-          assert.equal(thirdPartyUpdated.avatar, thirdPartyAvatar);
+              const preserved = await app.bean.executor.performAction('patch', profilePath, {
+                innerAccess: false,
+                body: {},
+              });
+              assert.equal(preserved.avatar, uploadedUrl);
 
-          const cleared = await app.bean.executor.performAction('patch', profilePath, {
-            innerAccess: false,
-            body: { avatar: null },
-          });
-          assert.equal(cleared.avatar, undefined);
-        } finally {
-          await app.bean.passport.signout();
-        }
-      });
-    } finally {
-      await app.bean.executor.mockCtx(async () => {
-        if (imageId) await app.bean.image.delete(imageId);
-      });
-      if (fixture) await removeFixture(fixture);
-      await fse.remove(imagePath);
-    }
-  });
+              for (const deliveryUrl of [
+                parsedUrl.pathname,
+                '/public/avatar.png',
+                `${parsedUrl.origin}/api/image/delivery?imageId=${imageId}`,
+              ]) {
+                const deliveryUpdated = await app.bean.executor.performAction(
+                  'patch',
+                  profilePath,
+                  {
+                    innerAccess: false,
+                    body: { avatar: deliveryUrl },
+                  },
+                );
+                assert.equal(deliveryUpdated.avatar, deliveryUrl);
+              }
+
+              for (const thirdPartyAvatar of [
+                'http://example.com/avatar.png',
+                'https://example.com/avatar.png',
+              ]) {
+                const thirdPartyUpdated = await app.bean.executor.performAction(
+                  'patch',
+                  profilePath,
+                  {
+                    innerAccess: false,
+                    body: { avatar: thirdPartyAvatar },
+                  },
+                );
+                assert.equal(thirdPartyUpdated.avatar, thirdPartyAvatar);
+              }
+
+              const cleared = await app.bean.executor.performAction('patch', profilePath, {
+                innerAccess: false,
+                body: { avatar: null },
+              });
+              assert.equal(cleared.avatar, undefined);
+            } finally {
+              await app.bean.passport.signout();
+            }
+          },
+          { instanceName: '', req },
+        );
+      } finally {
+        await app.bean.executor.mockCtx(async () => {
+          if (imageId) await app.bean.image.delete(imageId);
+        });
+        if (fixture) await removeFixture(fixture);
+        await fse.remove(imagePath);
+      }
+    });
+  }
 
   it('rejects an invalid current password without changing the credential', async () => {
     let fixture: IAccountFixture | undefined;

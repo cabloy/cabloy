@@ -10,7 +10,7 @@ import { _DtoMutate_raw } from './dtoMutate.ts';
 
 export function DtoCreate<
   ModelLike extends BeanModelMeta | keyof IModelClassRecord,
-  T extends IDtoMutateParams<ModelLike> | undefined = undefined,
+  const T extends IDtoMutateParams<ModelLike> | undefined = undefined,
 >(
   modelLike: ModelLike extends BeanModelMeta
     ? (() => Constructable<ModelLike>) | Constructable<ModelLike>

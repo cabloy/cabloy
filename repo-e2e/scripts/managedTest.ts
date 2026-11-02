@@ -87,7 +87,7 @@ export function discoverBrowserProfile(spawnargs: readonly string[]): string | u
   return undefined;
 }
 
-/** Exposed for focused tests with fake launchers; application specs use test below. */
+/** Shared by focused fake-launcher tests, approved managed integration proofs, and test below. */
 export async function useManagedBrowser(
   options: ManagedBrowserOptions,
   use: (browser: Browser) => Promise<void>,

@@ -16,8 +16,9 @@ After generating or extending a frontend thread, check which follow-up layers ap
 
 - API service or model alignment
 - SSR init-data needs
-- classify render-driving state as SSR-required or intentionally deferred; server HTML and the hydration-time client render must remain equivalent
-- for intentionally deferred private, cookie-unavailable, or browser-only state, keep the same neutral shell/placeholder through hydration and begin query/load/render work only at an explicit post-hydration, admission, mounted, or interaction boundary
+- resolve the effective SSR profile and server-side Passport/admission before classifying render-driving state as SSR-required or intentionally deferred; server HTML and the hydration-time client render must remain equivalent
+- for authorized `session` SSR, prepare intended first-paint data through the model-owned query and an explicit readiness wait; verify safe query-state transfer and client reuse rather than deferring solely because the data is private
+- for state intentionally omitted from SSR, such as cookie-unavailable or browser-only state, keep the same neutral shell/placeholder through hydration and begin query/load/render work only at an explicit post-hydration, admission, mounted, or interaction boundary
 - `disableSuspenseOnInit` skips only the init-time suspense kick; do not treat it as a no-fetch or hydration-deferral mechanism
 - use `$QueryEnsureLoaded(...)` only where loaded data is explicitly required; choose freshness helpers when the boundary requires domain-valid data
 - OpenAPI SDK or schema-driven layer impact

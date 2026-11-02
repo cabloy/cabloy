@@ -230,15 +230,17 @@ For model-owned remote state and query keys, see [Model State Guide](/frontend/m
 
 ## Private Web SSR needs explicit admission and hydration boundaries
 
-Private customer data must not appear in server HTML when the SSR path cannot establish the customer's authenticated state. The Order specimen keeps a neutral shell through server render and hydration-time initial render, then begins private queries only at an explicit client-side boundary.
+Choose the rendering contract independently of the dedicated Web model. A protected `session` route can recover Passport from request cookies, pass server-side admission, and prepare a safe customer projection for SSR and query-state transfer. Private data alone does not require browser-only loading. Session documents remain private/no-store, and a protected request without usable authentication redirects to login.
 
-The required layers work together:
+Private customer data must not appear in server HTML when the SSR path cannot establish the customer's authenticated state. The Order specimen keeps a neutral shell through server render and hydration-time initial render, then begins private queries only at an explicit client-side boundary. That is an intentionally deferred contract, not a requirement for every self-service page.
 
-1. **Route admission** uses the appropriate protected-route metadata for browser navigation.
-2. **Backend contract enforcement** uses controller guards and service-level owner scope as the authoritative data boundary.
-3. **Model gating** avoids creating the private query until the browser runtime and authenticated Passport are available.
-4. **Page gating** keeps the same neutral shell until the page reaches its post-hydration admission boundary.
-5. **Query behavior** may use `disableSuspenseOnInit: true` where appropriate, but that flag only disables the initialization-time suspense kick.
+The layers work together according to the chosen contract:
+
+1. **Route admission** uses the appropriate protected-route metadata for document requests and browser navigation; resolve the effective SSR profile first.
+2. **Backend contract enforcement** uses controller guards and service-level owner scope as the authoritative data boundary for either rendering strategy.
+3. **Model query creation** can run on the server for authorized session first-paint data; intentionally deferred queries wait for their explicit client-side boundary and authenticated Passport.
+4. **Page rendering** reuses safely transferred model state for SSR-required data, or retains the same neutral shell through hydration for intentionally omitted state.
+5. **Query readiness** is awaited where first-paint data is required; `disableSuspenseOnInit: true` only disables the initialization-time suspense kick and does not choose the SSR strategy.
 
 Do not treat `disableSuspenseOnInit` as proof that a query cannot be created, fetched, or affect hydration. It is not an authorization mechanism or a substitute for an explicit hydration boundary.
 
@@ -272,7 +274,7 @@ Review this pattern at the boundaries where an accidental merge would matter:
 - [ ] Web request and response projections contain no owner, tenant, or operational-only data.
 - [ ] Generated contract output contains every intended Admin and Web operation, and frontend consumers use it without manual generated-file edits.
 - [ ] The Admin menu reaches the intended `presetResource` entry and generic Resource page.
-- [ ] Web SSR and hydration render the same neutral private-data shell until admission; post-hydration behavior is tested separately.
+- [ ] Web raw HTML, transferred query state, and hydration match the chosen contract: safe private first-paint data for authorized session SSR, or the same neutral shell through hydration for intentionally deferred state; admission, private/no-store caching, and exclusion of secrets and foreign data are verified where applicable.
 - [ ] Where the domain has a meaningful customer journey, targeted browser coverage proves the authenticated list/detail flow as well as access denial.
 
 Use [Unit Testing](/backend/unit-testing) for backend test conventions and [SSR Review Checklist](/frontend/ssr-review-checklist) for SSR-specific checks.
@@ -303,7 +305,7 @@ Do not create another Admin resource model/cache owner when the custom Admin ope
 
 ### Hydration flags as privacy controls
 
-Do not assume a suspense or rendering flag prevents private data loading. Use explicit server, browser, authentication, and post-hydration boundaries.
+Do not assume a suspense or rendering flag prevents private data loading. Resolve server authentication and the rendering contract first; use an explicit post-hydration boundary only for state intentionally omitted from SSR.
 
 ### Hand-patched generated contracts
 

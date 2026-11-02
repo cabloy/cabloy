@@ -594,9 +594,9 @@ export async function reapBeforeIsolatedRun(
   reap: typeof reapExpiredTestClaims = reapExpiredTestClaims,
 ): Promise<void> {
   if (options.skipExpiredClaimReaping) {
-    if (kind !== 'unit' && kind !== 'contract') {
+    if (kind !== 'unit' && kind !== 'e2e' && kind !== 'contract') {
       throw new Error(
-        'Skipping expired claim reaping is supported only for unit tests and contract generation',
+        'Skipping expired claim reaping is supported only for unit tests, E2E tests and contract generation',
       );
     }
     return;
@@ -726,9 +726,9 @@ export async function runIsolatedTest(kind: 'unit' | 'e2e', args: string[]) {
   const skipExpiredClaimReaping = args.includes(skipFlag);
   if (
     skipExpiredClaimReaping &&
-    (kind !== 'unit' || args.some(arg => /^--coverage(?:=|$)/.test(arg)))
+    ((kind !== 'unit' && kind !== 'e2e') || args.some(arg => /^--coverage(?:=|$)/.test(arg)))
   ) {
-    throw new Error(`${skipFlag} is supported only for non-coverage unit tests`);
+    throw new Error(`${skipFlag} is supported only for non-coverage unit and E2E tests`);
   }
   args = args.filter(arg => arg !== skipFlag);
   if (process.env.E2E_BASE_URL !== undefined) {

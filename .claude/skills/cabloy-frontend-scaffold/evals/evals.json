@@ -30,6 +30,12 @@
       "prompt": "Help me add a new frontend page thread in Cabloy Start. I want the Zova way first, including what frontend follow-up review is mandatory after generation.",
       "expected_output": "Detects Start or Start-sensitive edition handling, recommends Zova scaffolding first, and treats metadata, routing, API/model or SSR checks, and verification as mandatory frontend follow-up rather than optional extras.",
       "files": []
+    },
+    {
+      "id": 6,
+      "prompt": "A personal authorization-records page uses requiresAuth: true and ssrProfile: 'session'. Its dedicated model currently has process.env.CLIENT and clientReady guards, persister: false, and ssr.dehydrate: false because the data is private. Must it stay post-hydration-only, or can it render the current user's safe list in SSR? Explain the coherent change and verification, including requests without a valid auth cookie and a public-profile or browser-only counterexample.",
+      "expected_output": "Resolves the effective profile, request-cookie Passport recovery, admission, and the intended first-paint contract before choosing query timing. Recognizes that authorized session SSR may prepare safe private data and does not force deferral because of privacy or dedicated Web model ownership. Uses the existing Account model/controller as a source-confirmed specimen where available. Explains that session is not authentication or permission to serialize secrets; protected requests without usable auth redirect, while session documents remain private/no-store. Distinguishes persister: false from ssr.dehydrate: false and query execution, and disableSuspenseOnInit from readiness or no-fetch behavior. If choosing SSR, aligns query creation, an explicit readiness wait, safe dehydration, matching query identity, and hydration rather than merely deleting one guard. Retains neutral-shell/client-boundary handling for intentionally omitted public-profile, cookie-unavailable, or browser-only state. Verifies the chosen contract in raw HTML and transferred state as well as hydrated UI, without treating existing omission assertions as proof that private data cannot SSR.",
+      "files": []
     }
   ]
 }

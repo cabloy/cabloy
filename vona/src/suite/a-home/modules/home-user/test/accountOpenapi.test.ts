@@ -142,10 +142,10 @@ describe('accountOpenapi.test.ts', () => {
           assert.deepEqual(displayName.type, ['string', 'null']);
           assert.equal(displayName.maxLength, 100);
           assert.ok(!displayName.minLength);
-          assert.deepEqual(inlineSchema(schemaResolved.properties?.avatar).type, [
-            'string',
-            'null',
-          ]);
+          const avatar = inlineSchema(schemaResolved.properties?.avatar);
+          assert.deepEqual(avatar.type, ['string', 'null']);
+          assert.equal(avatar.maxLength, 255);
+          assert.equal(avatar.description, 'Absolute HTTP(S) avatar URL or API delivery URL');
           assert.deepEqual(inlineSchema(schemaResolved.properties?.locale).type, [
             'string',
             'null',
