@@ -1,5 +1,20 @@
 # Changelog
 
+## 5.1.253
+
+### Features
+
+- Update existing functionality.
+
+### Bug Fixes
+
+- Fix Cabloy project creation.
+
+### Improvements
+
+- Refresh the Zova lockfile after compensation rerun preparation.
+- Update the Vona zova-core patch for v5.1.97.
+
 ## 5.1.252
 
 ### Bug Fixes
