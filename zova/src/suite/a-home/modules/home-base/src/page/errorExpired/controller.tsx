@@ -15,7 +15,7 @@ export class ControllerPageErrorExpired extends BeanControllerPageBase {
   protected async __init__() {
     if (process.env.CLIENT) {
       // should not use await
-      this._refreshToken();
+      this._refreshToken().catch(error => this.$errorHandler(error));
     }
   }
 
@@ -24,11 +24,17 @@ export class ControllerPageErrorExpired extends BeanControllerPageBase {
     const jwtInfo = await this.$$jwtAdapter.getJwtInfo();
     const refreshToken = jwtInfo?.refreshToken;
     if (!refreshToken) {
-      this.app.$gotoPage(this.sys.env.ROUTER_PAGE_LOGIN, { returnTo, replace: true });
+      await this.$passport.requireRelogin(returnTo ?? false);
       return;
     }
-    await this.$$jwtAdapter.refreshAuthToken(refreshToken);
-    this.app.$gotoReturnTo(returnTo);
+    try {
+      await this.$$jwtAdapter.refreshAuthToken(refreshToken);
+    } catch (error: any) {
+      if (error.code !== 401) throw error;
+      await this.$passport.requireRelogin(returnTo ?? false);
+      return;
+    }
+    await this.app.$gotoReturnTo(returnTo);
   }
 
   protected render() {
