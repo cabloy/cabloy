@@ -120,6 +120,20 @@ describe('resource.test.ts', { concurrency: false }, () => {
 
 This setting controls test scheduling only. It is not a substitute for explicitly creating competing business operations.
 
+## Choose a test double through existing extension points
+
+Before adding test-specific infrastructure, inspect how the dependency is created, configured, resolved, and retained. Prefer an existing supported configuration or dependency-replacement interface when it can express the scenario. Verify that the service, action, or HTTP request under test actually resolves the replacement through that normal path; crossing a request boundary alone does not require new middleware or a registration bridge.
+
+Keep implementation selection separate from scenario state:
+
+- **Configuration selects the implementation.** Use the existing test-mode configuration or supported replacement interface before application initialization or dependency creation, as required by its lifecycle. Do not assume an arbitrary config field can replace a dependency; confirm the owning implementation supports it. See [Config Guide](/backend/config-guide#project-config-is-layered-not-single-file) for configuration layering.
+- **Fixtures own scenario state.** Keep controlled responses, fault switches, observations, and cleanup associated with exact test-owned resources. A configured shared implementation is not permission to share mutable scenario state or clear another test's records. Avoid temporarily mutating app-global configuration between concurrent tests.
+- **Repository tests must be reproducible.** Check deterministic test setup into the repository; do not require private `config.test.local.ts` content for automated tests to work. Local overrides are suitable for deliberate local experiments, not an undocumented prerequisite for checked-in tests.
+- **Keep the selected boundary honest.** Replacing one dependency does not replace authentication, active-instance scope, resource authorization, persistence, or lifecycle checks elsewhere in the tested path. Assert the behavior at the intended service, action, or HTTP boundary rather than treating the test double's call count as the whole outcome.
+- **Prevent unintended external effects.** For tests intended to run without external I/O, verify the effective replacement before invoking the affected operation and make unsupported operations fail explicitly rather than fall back to a real external implementation. Do not read private credentials or contact an external service to compensate for missing setup.
+
+Request-scoped replacement remains appropriate when the contract genuinely needs different implementations per request and ordinary configuration cannot express that requirement. Name that requirement first, then use an existing request-scoped extension point where available; introduce new transport or registration machinery only when necessary, with explicit ownership and cleanup. Do not let untrusted request input select a privileged test implementation.
+
 ## Mock request context
 
 One of the most important Vona testing patterns is simulating a request context.
