@@ -244,15 +244,14 @@ async function loginAndReadConsent(
     page.getByRole('heading', { name: 'Authorize MCP access', exact: true }),
   ).toBeVisible();
   await expect(page.getByText(MCP_E2E_CLIENT_NAME, { exact: true })).toBeVisible();
-  await expect(page.getByText(`${origin}/mcp`, { exact: true })).toBeVisible();
+  await expect(page.getByText('Resource', { exact: true })).toHaveCount(0);
+  await expect(page.getByText(`${origin}/mcp`, { exact: true })).toHaveCount(0);
+  await expect(page.getByText('Request expires', { exact: true })).toHaveCount(0);
+  await expect(page.locator('time')).toHaveCount(0);
   expect((await summaryResponse.json()).data.scope).toBe(scope);
   await expect(page.getByText(scope, { exact: true })).toBeVisible();
-  await expect(
-    page.getByText(scope === 'mcp:all' ? allScopeHelp : readScopeHelp, { exact: true }),
-  ).toBeVisible();
-  await expect(
-    page.getByText(scope === 'mcp:all' ? readScopeHelp : allScopeHelp, { exact: true }),
-  ).toHaveCount(0);
+  await expect(page.getByText(allScopeHelp, { exact: true })).toHaveCount(0);
+  await expect(page.getByText(readScopeHelp, { exact: true })).toHaveCount(0);
   await expect(page.getByRole('button', { name: 'Approve', exact: true })).toBeEnabled();
   await expect(page.getByRole('button', { name: 'Deny', exact: true })).toBeEnabled();
   expect((await page.context().cookies()).some(cookie => cookie.name === 'token')).toBe(true);
@@ -687,6 +686,215 @@ for (const scenario of [
     },
   );
 }
+
+test.describe('MCP consent login recovery', () => {
+  let client: RegisteredClient;
+
+  test.beforeAll(async ({ request, baseURL }) => {
+    if (!baseURL || !process.env.VONA_TEST_RUN_ID) {
+      throw new Error('Managed E2E origin unavailable');
+    }
+    // The cases read one run-owned registration; each creates its own pending request.
+    client = await registerClient(request, new URL(baseURL).origin, 'mcp:read');
+  });
+
+  for (const scenario of [
+    'summary 401',
+    'browser JWT refresh 401 before summary',
+    'decision 401',
+    'errorExpired refresh 401',
+    'errorExpired missing refresh credentials',
+    'real browser JWT refresh',
+  ] as const) {
+    test(
+      `MCP browser authorization recovery: ${scenario}`,
+      { tag: ['@web', '@ssr', '@mcp'] },
+      async ({ page, baseURL }) => {
+        test.setTimeout(60_000);
+        if (!baseURL) throw new Error('Managed E2E origin unavailable');
+        const origin = new URL(baseURL).origin;
+        const authorization = createAuthorization(
+          origin,
+          client.clientId,
+          client.redirectUri,
+          'mcp:read',
+        );
+        const errors = collectBrowserErrors(page);
+        const pendingPath = await beginAnonymousAuthorization(page, authorization);
+        await loginAndReadConsent(page, pendingPath, origin, 'mcp:read');
+
+        const refreshPath = '/api/home/user/passport/refreshAuthToken';
+        const counts = { summary: 0, decision: 0, refresh: 0, callback: 0 };
+        page.on('request', outgoing => {
+          if (outgoing.headers()['x-vona-openapi-schema']) return;
+          const path = new URL(outgoing.url()).pathname;
+          if (path === '/mcp/auth/summary' && outgoing.method() === 'GET') counts.summary++;
+          if (path === '/mcp/auth/decision' && outgoing.method() === 'POST') counts.decision++;
+          if (path === refreshPath && outgoing.method() === 'POST') counts.refresh++;
+          if (path === MCP_E2E_CALLBACK_PATH) counts.callback++;
+        });
+
+        const realRefresh = scenario === 'real browser JWT refresh';
+        const expiredHandoff = scenario.startsWith('errorExpired');
+        const missingRefresh = scenario === 'errorExpired missing refresh credentials';
+        const refreshFailure = scenario.includes('refresh 401');
+        if (realRefresh || refreshFailure) {
+          // a-model's $useStateLocal stores the raw JSON value under the last query-key
+          // segment (storageKeySimplify), not an app-prefixed/dehydrated query envelope.
+          // Change only the browser's persisted deadline; retain genuine JWT credentials.
+          expect(
+            await page.evaluate(() => {
+              const expires = localStorage.getItem('expireTime');
+              if (!expires || typeof JSON.parse(expires) !== 'number') return false;
+              localStorage.setItem('expireTime', JSON.stringify(Date.now() - 60_000));
+              return true;
+            }),
+          ).toBe(true);
+        }
+        if (missingRefresh) {
+          expect(
+            await page.evaluate(() => {
+              const jwt = localStorage.getItem('jwt');
+              if (!jwt || !JSON.parse(jwt)?.refreshToken) return false;
+              localStorage.removeItem('jwt');
+              return localStorage.getItem('passport') !== null;
+            }),
+          ).toBe(true);
+          expect((await page.context().cookies()).some(cookie => cookie.name === 'token')).toBe(
+            true,
+          );
+        }
+
+        let injected = 0;
+        if (!realRefresh && !missingRefresh) {
+          const failurePath = refreshFailure
+            ? refreshPath
+            : scenario === 'decision 401'
+              ? '/mcp/auth/decision'
+              : '/mcp/auth/summary';
+          await page.route(
+            url => url.origin === origin && url.pathname === failurePath,
+            async route => {
+              if (injected || route.request().headers()['x-vona-openapi-schema']) {
+                await route.fallback();
+                return;
+              }
+              injected++;
+              await route.fulfill({
+                status: 401,
+                contentType: 'application/json',
+                headers: { 'cache-control': 'no-store' },
+                body: JSON.stringify({ code: 401, message: 'Unauthorized' }),
+              });
+            },
+          );
+        }
+
+        // Attach before navigation/click: the login helper itself waits for summary.
+        const failedOrRefreshed = missingRefresh
+          ? undefined
+          : waitForApiResponse(
+              page,
+              realRefresh || refreshFailure || scenario === 'decision 401' ? 'POST' : 'GET',
+              realRefresh || refreshFailure
+                ? refreshPath
+                : scenario === 'decision 401'
+                  ? '/mcp/auth/decision'
+                  : '/mcp/auth/summary',
+            );
+        const refreshedSummary = realRefresh
+          ? waitForApiResponse(page, 'GET', '/mcp/auth/summary')
+          : undefined;
+        if (scenario === 'decision 401') {
+          await page.getByRole('button', { name: 'Approve', exact: true }).click();
+        } else if (expiredHandoff) {
+          // Exercise the existing SSR-expiry recovery owner directly: a genuinely
+          // expired document cookie is unnecessary and no JWT is forged for this fixture.
+          await page.goto(
+            `/home/base/errorExpired?${new URLSearchParams({ returnTo: pendingPath })}`,
+            { waitUntil: 'load' },
+          );
+        } else {
+          await page.reload({ waitUntil: 'load' });
+        }
+        if (failedOrRefreshed) {
+          expect((await failedOrRefreshed).status()).toBe(realRefresh ? 200 : 401);
+        }
+
+        if (realRefresh) {
+          // This is Cabloy's real account JWT endpoint, never MCP OAuth /mcp/token.
+          expect((await refreshedSummary!).ok()).toBe(true);
+          await expect(page.getByRole('button', { name: 'Approve', exact: true })).toBeEnabled();
+          expect(new URL(page.url()).pathname + new URL(page.url()).search === pendingPath).toBe(
+            true,
+          );
+          expect(
+            await page.evaluate(() => {
+              const expires = localStorage.getItem('expireTime');
+              return !!expires && JSON.parse(expires) > Date.now();
+            }),
+          ).toBe(true);
+          expect((await page.context().cookies()).some(cookie => cookie.name === 'token')).toBe(
+            true,
+          );
+          expect(counts).toEqual({ summary: 1, decision: 0, refresh: 1, callback: 0 });
+        } else {
+          await expect(page.getByRole('heading', { name: 'Login', exact: true })).toBeVisible();
+          const isPendingLogin = () => {
+            const url = new URL(page.url());
+            return url.pathname === '/login' && url.searchParams.get('returnTo') === pendingPath;
+          };
+          expect(isPendingLogin()).toBe(true);
+          await expect
+            .poll(async () => {
+              return (await page.context().cookies()).some(cookie => cookie.name === 'token');
+            })
+            .toBe(false);
+          expect(
+            await page.evaluate(() => {
+              return ['jwt', 'passport', 'expireTime'].every(
+                key => localStorage.getItem(key) === null,
+              );
+            }),
+          ).toBe(true);
+          await expect(page.getByRole('button', { name: 'Approve', exact: true })).toHaveCount(0);
+          await expect(page.getByRole('alert')).toHaveCount(0);
+          const beforeRelogin = {
+            summary: scenario === 'summary 401' ? 1 : 0,
+            decision: scenario === 'decision 401' ? 1 : 0,
+            refresh: refreshFailure ? 1 : 0,
+            callback: 0,
+          };
+          expect(injected).toBe(missingRefresh ? 0 : 1);
+          expect(counts).toEqual(beforeRelogin);
+
+          // Reloading login cannot revive stale credentials or revisit errorExpired.
+          await page.reload({ waitUntil: 'load' });
+          await expect(page.locator('html')).toHaveAttribute('data-zova-hydrated', 'web');
+          await expect(page.getByRole('heading', { name: 'Login', exact: true })).toBeVisible();
+          expect(isPendingLogin()).toBe(true);
+          expect(counts).toEqual(beforeRelogin);
+          await loginAndReadConsent(page, pendingPath, origin, 'mcp:read');
+          expect(counts).toEqual({ ...beforeRelogin, summary: beforeRelogin.summary + 1 });
+        }
+
+        // Recovery/refresh must leave the same pending request open. Only this explicit
+        // decision consumes it; deny also proves re-login never implicitly approves.
+        const allow = scenario === 'decision 401' || realRefresh;
+        const callback = await decideAndCaptureCallback(page, authorization, allow);
+        expect(callback.searchParams.has('code')).toBe(allow);
+        expect(callback.searchParams.has('error')).toBe(!allow);
+        if (!allow) expect(callback.searchParams.get('error')).toBe('access_denied');
+        expect(counts.decision).toBe(scenario === 'decision 401' ? 2 : 1);
+        expect(counts.callback).toBe(1);
+        expect(errors.page).toBe(0);
+        expect(errors.hydration).toBe(0);
+        // AS records belong only to the managed run's disposable database; no shared
+        // account data was changed and there are no owned application fixtures to remove.
+      },
+    );
+  }
+});
 
 test(
   'MCP personal authorizations: ordinary account discovers, cancels and confirms revoke/delete',

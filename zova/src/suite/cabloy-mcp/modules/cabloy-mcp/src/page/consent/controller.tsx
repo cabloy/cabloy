@@ -16,25 +16,55 @@ export class ControllerPageConsent extends BeanControllerPageBase {
   $$modelAuthorization: ModelAuthorization;
 
   clientReady = false;
+  reloginPending = false;
+  private _querySummary?: ReturnType<ModelAuthorization['summary']>;
 
   protected __init__() {
     this.$ssr.handleDirectOrOnHydrated(() => {
       this.clientReady = true;
     });
+    this.$watch(
+      () => this._querySummary?.error,
+      error => {
+        if (error?.code === 401) {
+          return this.requireRelogin().catch(error => this.$errorHandler(error));
+        }
+      },
+      { immediate: true },
+    );
   }
 
   get querySummary() {
-    if (!this.clientReady) return;
+    if (!this.clientReady || this.reloginPending) return;
     return this.$$modelAuthorization.summary(this.$query.request);
   }
 
+  private async requireRelogin() {
+    if (this.reloginPending) return;
+    const returnTo = this.app.$getCurrentPagePath();
+    this.reloginPending = true;
+    try {
+      await this.$passport.requireRelogin(returnTo);
+    } catch (error) {
+      this.reloginPending = false;
+      throw error;
+    }
+  }
+
   async decide(allow: boolean) {
-    const result = await this.$$modelAuthorization.decision(this.$query.request, allow);
-    window.location.assign(result.redirectUrl);
+    if (this.reloginPending) return;
+    try {
+      const result = await this.$$modelAuthorization.decision(this.$query.request, allow);
+      window.location.assign(result.redirectUrl);
+    } catch (error: any) {
+      if (error.code !== 401) throw error;
+      await this.requireRelogin();
+    }
   }
 
   protected render() {
     const query = this.querySummary;
+    this._querySummary = query;
     const summary = query?.data;
     const scopes = summary?.scope.split(' ').filter(Boolean) ?? [];
     return (
@@ -43,7 +73,10 @@ export class ControllerPageConsent extends BeanControllerPageBase {
           <section class="card w-full max-w-xl border border-base-300 bg-base-100 shadow-sm">
             <div class="card-body gap-6">
               <h1 class="card-title text-2xl">{this.scope.locale.AuthorizeMcpAccess()}</h1>
-              {!this.clientReady || query?.isPending ? (
+              {!this.clientReady ||
+              this.reloginPending ||
+              query?.isPending ||
+              query?.error?.code === 401 ? (
                 <p role="status" class="text-base-content/70">
                   {this.scope.locale.LoadingAuthorizationRequest()}
                 </p>
@@ -53,17 +86,12 @@ export class ControllerPageConsent extends BeanControllerPageBase {
                 </div>
               ) : (
                 <>
-                  <p class="text-base-content/70">{this.scope.locale.AuthorizationConsentHelp()}</p>
                   <dl class="space-y-4">
                     <div>
                       <dt class="text-sm text-base-content/70">
                         {this.scope.locale.Application()}
                       </dt>
                       <dd class="break-words font-medium">{summary.clientName}</dd>
-                    </div>
-                    <div>
-                      <dt class="text-sm text-base-content/70">{this.scope.locale.Resource()}</dt>
-                      <dd class="break-all">{summary.resource}</dd>
                     </div>
                     <div>
                       <dt class="text-sm text-base-content/70">
@@ -79,26 +107,7 @@ export class ControllerPageConsent extends BeanControllerPageBase {
                         </ul>
                       </dd>
                     </div>
-                    <div>
-                      <dt class="text-sm text-base-content/70">
-                        {this.scope.locale.RequestExpires()}
-                      </dt>
-                      <dd>
-                        <time datetime={new Date(summary.expiresAt).toISOString()}>
-                          {new Date(summary.expiresAt).toLocaleString()}
-                        </time>
-                      </dd>
-                    </div>
                   </dl>
-                  {scopes.includes('mcp:all') ? (
-                    <p class="text-sm text-base-content/70">
-                      {this.scope.locale.AuthorizationAllScopeHelp()}
-                    </p>
-                  ) : scopes.includes('mcp:read') ? (
-                    <p class="text-sm text-base-content/70">
-                      {this.scope.locale.AuthorizationReadScopeHelp()}
-                    </p>
-                  ) : null}
                   <div class="card-actions justify-end gap-3">
                     <ZButton class="btn btn-outline" onPerform={() => this.decide(false)}>
                       {this.scope.locale.Deny()}

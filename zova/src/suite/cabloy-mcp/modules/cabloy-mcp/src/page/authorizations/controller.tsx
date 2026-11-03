@@ -99,10 +99,6 @@ export class ControllerPageAuthorizations extends BeanControllerPageBase {
               <dd>{this._status(item.state)}</dd>
             </div>
             <div>
-              <dt class="text-base-content/70">{this.scope.locale.Resource()}</dt>
-              <dd class="break-all">{item.resource}</dd>
-            </div>
-            <div>
               <dt class="text-base-content/70">{this.scope.locale.RequestedScopes()}</dt>
               <dd class="break-words">{item.scope}</dd>
             </div>
