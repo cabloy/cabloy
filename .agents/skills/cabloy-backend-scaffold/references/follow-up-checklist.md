@@ -6,6 +6,7 @@ After generating or extending a backend thread, check which follow-up layers app
 
 - controller path and action shape
 - service ownership of business logic
+- explicit user identity for reusable business services: self-service controllers pass `user.id` from `@Arg.user()`, not query/body identity; retain guard-based HTTP authentication and service-owned business authorization/user filtering within the active instance. See [Pass user identity explicitly](../../../../repo-docs/backend/service-guide.md#pass-user-identity-explicitly).
 - model/entity pairing
 - DTO design
 

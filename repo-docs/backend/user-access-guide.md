@@ -108,6 +108,8 @@ const user = this.ctx.user;
 const passport = this.ctx.passport;
 ```
 
+For reusable business services, prefer passing `user.id` from the controller into an explicit service parameter rather than making the service read the current Passport user. Keep request authentication in the guard and business authorization/user ownership in the service; see [Pass user identity explicitly](/backend/service-guide#pass-user-identity-explicitly).
+
 ## Anonymous user behavior
 
 When anonymous access is allowed, Vona can create an anonymous user object automatically.
