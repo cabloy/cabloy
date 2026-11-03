@@ -1,5 +1,5 @@
 // eslint-disable
-import type { TypeEntityMeta,TypeModelsClassLikeGeneral,TypeSymbolKeyFieldsMore } from 'vona-module-a-orm';
+import type { TypeEntityMeta,TypeModelsClassLikeGeneral,TypeSymbolKeyFieldsMore,IModelRelationBelongsTo } from 'vona-module-a-orm';
 import type { TypeEntityOptionsFields,TypeControllerOptionsActions } from 'vona-module-a-openapi';
 import type { TableIdentity } from 'table-identity';
 /** entity: begin */
@@ -113,7 +113,11 @@ declare module 'vona' {
 import type { IModelGetOptions, IModelMethodOptions, IModelSelectParams, TypeModelSelectAndCount, TypeModelRelationResult, TypeModelWhere, IModelInsertOptions, TypeModelMutateRelationData, IModelDeleteOptions, IModelUpdateOptions, IModelMutateOptions, IModelSelectCountParams, IModelIncrementParams, IModelSelectAggrParams, TypeModelAggrRelationResult, IModelSelectGroupParams, TypeModelGroupRelationResult } from 'vona-module-a-orm';
 import { SymbolKeyEntity, SymbolKeyEntityMeta, SymbolKeyModelOptions } from 'vona-module-a-orm';
 declare module 'vona-module-mcp-auth' {
-
+  export interface IModelOptionsAuthorization {
+        relations: {
+          client: IModelRelationBelongsTo<'mcp-auth:authorization', 'mcp-auth:client', false, 'id'|'oauthClientId'|'name'|'resource'>;
+        };
+      }
   export interface ModelAuthorization {
       [SymbolKeyEntity]: EntityAuthorization;
       [SymbolKeyEntityMeta]: EntityAuthorizationMeta;
@@ -202,9 +206,15 @@ declare module 'vona-module-a-orm' {
 /** model: end */
 /** dto: begin */
 export * from '../dto/authorizationDecision.ts';
+export * from '../dto/authorizationGrant.tsx';
+export * from '../dto/authorizationGrantMineReq.tsx';
+export * from '../dto/authorizationGrantMineRes.tsx';
 export * from '../dto/authorizationRedirect.ts';
 export * from '../dto/authorizationSummary.ts';
 import type { IDtoOptionsAuthorizationDecision } from '../dto/authorizationDecision.ts';
+import type { IDtoOptionsAuthorizationGrant } from '../dto/authorizationGrant.tsx';
+import type { IDtoOptionsAuthorizationGrantMineReq } from '../dto/authorizationGrantMineReq.tsx';
+import type { IDtoOptionsAuthorizationGrantMineRes } from '../dto/authorizationGrantMineRes.tsx';
 import type { IDtoOptionsAuthorizationRedirect } from '../dto/authorizationRedirect.ts';
 import type { IDtoOptionsAuthorizationSummary } from '../dto/authorizationSummary.ts';
 import 'vona-module-a-web';
@@ -212,6 +222,9 @@ declare module 'vona-module-a-web' {
 
     export interface IDtoRecord {
       'mcp-auth:authorizationDecision': IDtoOptionsAuthorizationDecision;
+'mcp-auth:authorizationGrant': IDtoOptionsAuthorizationGrant;
+'mcp-auth:authorizationGrantMineReq': IDtoOptionsAuthorizationGrantMineReq;
+'mcp-auth:authorizationGrantMineRes': IDtoOptionsAuthorizationGrantMineRes;
 'mcp-auth:authorizationRedirect': IDtoOptionsAuthorizationRedirect;
 'mcp-auth:authorizationSummary': IDtoOptionsAuthorizationSummary;
     }
@@ -224,12 +237,27 @@ declare module 'vona-module-mcp-auth' {
 /** dto: end */
 /** dto: begin */
 import type { DtoAuthorizationDecision } from '../dto/authorizationDecision.ts';
+import type { DtoAuthorizationGrant } from '../dto/authorizationGrant.tsx';
+import type { DtoAuthorizationGrantMineReq } from '../dto/authorizationGrantMineReq.tsx';
+import type { DtoAuthorizationGrantMineRes } from '../dto/authorizationGrantMineRes.tsx';
 import type { DtoAuthorizationRedirect } from '../dto/authorizationRedirect.ts';
 import type { DtoAuthorizationSummary } from '../dto/authorizationSummary.ts';
 declare module 'vona-module-mcp-auth' {
 
     export interface IDtoOptionsAuthorizationDecision {
       fields?: TypeEntityOptionsFields<DtoAuthorizationDecision, IDtoOptionsAuthorizationDecision[TypeSymbolKeyFieldsMore]>;
+    }
+
+    export interface IDtoOptionsAuthorizationGrant {
+      fields?: TypeEntityOptionsFields<DtoAuthorizationGrant, IDtoOptionsAuthorizationGrant[TypeSymbolKeyFieldsMore]>;
+    }
+
+    export interface IDtoOptionsAuthorizationGrantMineReq {
+      fields?: TypeEntityOptionsFields<DtoAuthorizationGrantMineReq, IDtoOptionsAuthorizationGrantMineReq[TypeSymbolKeyFieldsMore]>;
+    }
+
+    export interface IDtoOptionsAuthorizationGrantMineRes {
+      fields?: TypeEntityOptionsFields<DtoAuthorizationGrantMineRes, IDtoOptionsAuthorizationGrantMineRes[TypeSymbolKeyFieldsMore]>;
     }
 
     export interface IDtoOptionsAuthorizationRedirect {
@@ -243,12 +271,15 @@ declare module 'vona-module-mcp-auth' {
 /** dto: end */
 /** controller: begin */
 export * from '../controller/authorization.ts';
+export * from '../controller/authorizationGrant.ts';
 import type { IControllerOptionsAuthorization } from '../controller/authorization.ts';
+import type { IControllerOptionsAuthorizationGrant } from '../controller/authorizationGrant.ts';
 import 'vona-module-a-web';
 declare module 'vona-module-a-web' {
 
     export interface IControllerRecord {
       'mcp-auth:authorization': IControllerOptionsAuthorization;
+'mcp-auth:authorizationGrant': IControllerOptionsAuthorizationGrant;
     }
 
 
@@ -265,23 +296,45 @@ declare module 'vona-module-mcp-auth' {
             get $onionName(): 'mcp-auth:authorization';
             get $onionOptions(): IControllerOptionsAuthorization;
           }
+
+        export interface ControllerAuthorizationGrant {
+          /** @internal */
+          get scope(): ScopeModuleMcpAuth;
+        }
+
+          export interface ControllerAuthorizationGrant {
+            get $beanFullName(): 'mcp-auth.controller.authorizationGrant';
+            get $onionName(): 'mcp-auth:authorizationGrant';
+            get $onionOptions(): IControllerOptionsAuthorizationGrant;
+          }
 }
 /** controller: end */
 /** controller: begin */
 // @ts-ignore ignore
 import type { ControllerAuthorization } from '../controller/authorization.ts';
+// @ts-ignore ignore
+import type { ControllerAuthorizationGrant } from '../controller/authorizationGrant.ts';
 declare module 'vona-module-mcp-auth' {
 
     export interface IControllerOptionsAuthorization {
       actions?: TypeControllerOptionsActions<ControllerAuthorization>;
     }
+
+    export interface IControllerOptionsAuthorizationGrant {
+      actions?: TypeControllerOptionsActions<ControllerAuthorizationGrant>;
+    }
 }
 declare module 'vona-module-a-web' {
   export interface IApiPathGetRecord{
         '//mcp/auth/summary': undefined;
+'/mcp/auth/authorizationGrant/mine': undefined;
     }
 export interface IApiPathPostRecord{
         '//mcp/auth/decision': undefined;
+'/mcp/auth/authorizationGrant/revokeMine/:id': undefined;
+    }
+export interface IApiPathDeleteRecord{
+        '/mcp/auth/authorizationGrant/deleteMine/:id': undefined;
     }
 
 }
@@ -316,6 +369,7 @@ declare module 'vona-module-mcp-auth' {
 /** service: begin */
 export * from '../service/authTokenAdapter.ts';
 export * from '../service/authorization.ts';
+export * from '../service/authorizationGrant.ts';
 export * from '../service/registration.ts';
 
 import 'vona-module-a-bean';
@@ -324,6 +378,7 @@ declare module 'vona-module-a-bean' {
     export interface IServiceRecord {
       'mcp-auth:authTokenAdapter': never;
 'mcp-auth:authorization': never;
+'mcp-auth:authorizationGrant': never;
 'mcp-auth:registration': never;
     }
 
@@ -351,6 +406,16 @@ declare module 'vona-module-mcp-auth' {
             get $onionName(): 'mcp-auth:authorization';
           }
 
+        export interface ServiceAuthorizationGrant {
+          /** @internal */
+          get scope(): ScopeModuleMcpAuth;
+        }
+
+          export interface ServiceAuthorizationGrant {
+            get $beanFullName(): 'mcp-auth.service.authorizationGrant';
+            get $onionName(): 'mcp-auth:authorizationGrant';
+          }
+
         export interface ServiceRegistration {
           /** @internal */
           get scope(): ScopeModuleMcpAuth;
@@ -365,10 +430,12 @@ declare module 'vona-module-mcp-auth' {
 /** service: begin */
 import type { ServiceAuthTokenAdapter } from '../service/authTokenAdapter.ts';
 import type { ServiceAuthorization } from '../service/authorization.ts';
+import type { ServiceAuthorizationGrant } from '../service/authorizationGrant.ts';
 import type { ServiceRegistration } from '../service/registration.ts';
 export interface IModuleService {
   'authTokenAdapter': ServiceAuthTokenAdapter;
 'authorization': ServiceAuthorization;
+'authorizationGrant': ServiceAuthorizationGrant;
 'registration': ServiceRegistration;
 }
 /** service: end */
@@ -379,23 +446,37 @@ declare module 'vona' {
   export interface IBeanRecordGeneral {
     'mcp-auth.service.authTokenAdapter': ServiceAuthTokenAdapter;
 'mcp-auth.service.authorization': ServiceAuthorization;
+'mcp-auth.service.authorizationGrant': ServiceAuthorizationGrant;
 'mcp-auth.service.registration': ServiceRegistration;
   }
 }
 /** service: end */
 /** meta: begin */
+export * from '../bean/meta.index.ts';
 export * from '../bean/meta.version.ts';
-
+import type { IMetaOptionsIndex } from 'vona-module-a-index';
 import 'vona-module-a-meta';
 declare module 'vona-module-a-meta' {
 
     export interface IMetaRecord {
-      'mcp-auth:version': never;
+      'mcp-auth:index': IMetaOptionsIndex;
+'mcp-auth:version': never;
     }
 
 
 }
 declare module 'vona-module-mcp-auth' {
+
+        export interface MetaIndex {
+          /** @internal */
+          get scope(): ScopeModuleMcpAuth;
+        }
+
+          export interface MetaIndex {
+            get $beanFullName(): 'mcp-auth.meta.index';
+            get $onionName(): 'mcp-auth:index';
+            get $onionOptions(): IMetaOptionsIndex;
+          }
 
         export interface MetaVersion {
           /** @internal */

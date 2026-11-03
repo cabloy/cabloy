@@ -70,7 +70,8 @@ export class ServiceAuthorization extends BeanBase {
     const deadline = Date.now() + config.pendingTtl * 1000;
     await this.scope.model.authorization.insert({
       requestDigest: sha256(request),
-      clientId: client.clientId,
+      clientId: client.id,
+      oauthClientId: client.clientId,
       issuer: getMcpIssuer(this.app),
       resource: resource.resource,
       redirectUri,
@@ -213,7 +214,8 @@ export class ServiceAuthorization extends BeanBase {
       .builderSelect()
       .where({
         codeDigest,
-        clientId: client.clientId,
+        clientId: client.id,
+        oauthClientId: client.clientId,
         resource,
         redirectUri,
         codeChallenge: challenge,
@@ -231,7 +233,7 @@ export class ServiceAuthorization extends BeanBase {
       mcp: {
         version: 1,
         grantId: String(row.id),
-        clientId: row.clientId,
+        clientId: row.oauthClientId,
         issuer: row.issuer,
         resource,
         instanceName: this.ctx.instanceName!,
@@ -291,7 +293,7 @@ export class ServiceAuthorization extends BeanBase {
       mcp: {
         version: 0,
         grantId: String(row.id),
-        clientId: row.clientId,
+        clientId: row.oauthClientId,
         issuer: row.issuer,
         resource: row.resource,
         instanceName: this.ctx.instanceName!,
@@ -390,10 +392,11 @@ export class ServiceAuthorization extends BeanBase {
     error = 'invalid_grant',
     status = 400,
   ): Promise<IMcpAuthResolvedClient> {
-    const client = await this.resolveClient(row.clientId, row.resource);
+    const client = await this.resolveClient(row.oauthClientId, row.resource);
     if (
       row.issuer !== getMcpIssuer(this.app) ||
       !client ||
+      String(client.id) !== String(row.clientId) ||
       !client.redirectUris.includes(row.redirectUri) ||
       !isMcpScope(row.scope) ||
       !mcpScopeIncludes(client.scope, row.scope) ||
@@ -409,6 +412,7 @@ export class ServiceAuthorization extends BeanBase {
       id: row.id,
       issuer: row.issuer,
       clientId: row.clientId,
+      oauthClientId: row.oauthClientId,
       resource: row.resource,
       redirectUri: row.redirectUri,
       scope: row.scope,

@@ -2,6 +2,7 @@ export default {
   AccountSettings: 'Account Settings',
   AccountProfile: 'Profile',
   AccountSecurity: 'Account Security',
+  AccountMcpAuthorizations: 'MCP authorizations',
   AccountUserName: 'User name',
   AccountDisplayName: 'Display name',
   AccountLocale: 'Locale',

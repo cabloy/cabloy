@@ -1,4 +1,4 @@
-import type { APIRequestContext, Page } from '@playwright/test';
+import type { APIRequestContext, Page, Request } from '@playwright/test';
 
 import { createHash, randomBytes } from 'node:crypto';
 
@@ -7,6 +7,8 @@ import { expect, test } from '../scripts/managedTest.ts';
 const MCP_E2E_CLIENT_NAME = 'Managed MCP browser E2E';
 const MCP_E2E_CALLBACK_PATH = '/__mcp-e2e/callback';
 const consentPath = '/cabloy/mcp/consent';
+const authorizationsPath = '/cabloy/mcp/authorizations';
+const authorizationGrantApiPath = '/api/mcp/auth/authorizationGrant';
 const unavailableText =
   'This authorization request is invalid, expired, or no longer available. Start again from the application.';
 const protocolVersion = '2026-07-28';
@@ -92,6 +94,81 @@ function createAuthorization(
 
 type Authorization = ReturnType<typeof createAuthorization>;
 
+type McpAccount = {
+  id: string | number;
+  username: string;
+  password: string;
+};
+
+type AccountPassportJwt = {
+  passport: { user: { id: McpAccount['id'] }; roles: Array<{ name: string }> };
+  jwt: { accessToken: string };
+};
+
+async function createAccountCaptcha(request: APIRequestContext) {
+  const response = await request.post('/api/captcha/create', {
+    data: { scene: 'captcha-simple:simple' },
+  });
+  expect(response.ok()).toBe(true);
+  const { id, token } = (await response.json()).data;
+  expect(typeof id === 'string' && typeof token === 'string').toBe(true);
+  return { id, token };
+}
+
+async function registerMcpAccount(
+  request: APIRequestContext,
+  origin: string,
+  onRegistered: (account: McpAccount) => void,
+) {
+  // Reuse the Account E2E's existing self-register/activate/removeCurrentFixture flow.
+  const username = `e2e-fixture-mcp-${randomBytes(12).toString('hex')}`;
+  const password = 'account-e2e-password';
+  const response = await request.post('/api/home/user/passport/register', {
+    data: {
+      username,
+      email: `${username}@example.test`,
+      password,
+      passwordConfirm: password,
+      consumerUrl: `${origin}/home/user/activation`,
+      captcha: await createAccountCaptcha(request),
+    },
+  });
+  expect(response.ok()).toBe(true);
+  const registered = (await response.json()).data as AccountPassportJwt;
+  const account = { id: registered.passport.user.id, username, password };
+  onRegistered(account);
+  const activated = await request.post('/api/home/user/passportTest/activateCurrent', {
+    headers: { Authorization: `Bearer ${registered.jwt.accessToken}` },
+  });
+  expect(activated.ok()).toBe(true);
+  // Activation assigns registeredUser; the pre-activation registration passport has no roles.
+  await loginMcpAccount(request, account, true);
+  return account;
+}
+
+async function loginMcpAccount(
+  request: APIRequestContext,
+  account: McpAccount,
+  verifyOrdinaryRoles = false,
+) {
+  const response = await request.post('/api/home/user/passport/login', {
+    data: {
+      username: account.username,
+      password: account.password,
+      captcha: await createAccountCaptcha(request),
+    },
+  });
+  expect(response.ok()).toBe(true);
+  const login = (await response.json()).data as AccountPassportJwt;
+  expect(String(login.passport.user.id) === String(account.id)).toBe(true);
+  if (verifyOrdinaryRoles) {
+    const roles = login.passport.roles.map(role => role.name);
+    expect(roles).toContain('registeredUser');
+    expect(roles).not.toContain('systemAdmin');
+  }
+  return { Accept: 'application/json', Authorization: `Bearer ${login.jwt.accessToken}` };
+}
+
 function collectBrowserErrors(page: Page) {
   // Keep counts rather than retaining URLs, response bodies, or account state.
   const errors = { page: 0, console: 0, hydration: 0 };
@@ -144,14 +221,15 @@ async function loginAndReadConsent(
   pendingPath: string,
   origin: string,
   scope: McpScope = 'mcp:all',
+  account = { username: 'admin', password: '123456' },
 ) {
-  // Read-only shared account fixture already used by the existing Basic E2Es.
+  // Existing scenarios use the read-only seed; personal management owns an ordinary account.
   const username = page.getByPlaceholder('Your Username');
   const password = page.getByPlaceholder('Your Password');
-  await username.fill('admin');
-  await password.fill('123456');
-  await expect(username).toHaveValue('admin');
-  await expect(password).toHaveValue('123456');
+  await username.fill(account.username);
+  await password.fill(account.password);
+  await expect(username).toHaveValue(account.username);
+  await expect(password).toHaveValue(account.password);
   await expect(page.getByPlaceholder('Please input captcha')).not.toHaveValue('');
   const login = waitForApiResponse(page, 'POST', '/api/home/user/passport/login');
   const summary = waitForApiResponse(page, 'GET', '/mcp/auth/summary');
@@ -609,6 +687,257 @@ for (const scenario of [
     },
   );
 }
+
+test(
+  'MCP personal authorizations: ordinary account discovers, cancels and confirms revoke/delete',
+  { tag: ['@web', '@ssr', '@mcp', '@flow', '@account'] },
+  async ({ page, request, baseURL }) => {
+    test.setTimeout(60_000);
+    if (!baseURL) throw new Error('Managed E2E origin unavailable');
+    const origin = new URL(baseURL).origin;
+    let account: McpAccount | undefined;
+    let client: RegisteredClient | undefined;
+    try {
+      account = await registerMcpAccount(request, origin, registered => {
+        account = registered;
+      });
+      client = await registerClient(request, origin, 'mcp:read');
+      const errors = collectBrowserErrors(page);
+
+      // Session admission protects the document before private query data can load.
+      const anonymousDocument = await request.get(authorizationsPath, { maxRedirects: 0 });
+      expect(anonymousDocument.status()).toBeGreaterThanOrEqual(300);
+      expect(anonymousDocument.status()).toBeLessThan(400);
+      const loginDestination = new URL(anonymousDocument.headers().location, origin);
+      expect(loginDestination.pathname).toBe('/login');
+      expect(loginDestination.searchParams.get('returnTo')).toBe(authorizationsPath);
+      await page.goto(authorizationsPath, { waitUntil: 'load' });
+      await expect(page.locator('html')).toHaveAttribute('data-zova-hydrated', 'web');
+      expect(new URL(page.url()).pathname).toBe('/login');
+      expect(new URL(page.url()).searchParams.get('returnTo')).toBe(authorizationsPath);
+      await expect(
+        page.getByRole('heading', { name: 'MCP authorizations', exact: true }),
+      ).toHaveCount(0);
+
+      const authorization = createAuthorization(
+        origin,
+        client.clientId,
+        client.redirectUri,
+        'mcp:read',
+      );
+      const pendingPath = await beginAnonymousAuthorization(page, authorization);
+      await loginAndReadConsent(page, pendingPath, origin, 'mcp:read', account);
+      const callback = await decideAndCaptureCallback(page, authorization, true);
+      const code = callback.searchParams.get('code');
+      if (!code) throw new Error('Approval callback did not contain an authorization code');
+      const exchange = await redeem(request, authorization, client.clientId, code);
+      expect(exchange.status()).toBe(200);
+      const token = await exchange.json();
+      const liveAccess = await callMcp(request, 'tools/list', {}, token.access_token);
+      expect(liveAccess.status()).toBe(200);
+
+      // Account data can arrive in session SSR; do not require a duplicate browser query.
+      await page.goto('/home/user/account', { waitUntil: 'load' });
+      await expect(page.locator('html')).toHaveAttribute('data-zova-hydrated', 'web');
+      await expect(
+        page.getByRole('heading', { name: 'Account Settings', exact: true }),
+      ).toBeVisible();
+      const authorizationsLink = page.getByRole('link', {
+        name: 'MCP authorizations',
+        exact: true,
+      });
+      await expect(authorizationsLink).toHaveAttribute('href', authorizationsPath);
+      const mineResponse = await request.get(`${authorizationGrantApiPath}/mine`, {
+        headers: await loginMcpAccount(request, account),
+      });
+      await authorizationsLink.click();
+      expect(mineResponse.ok()).toBe(true);
+      expect(mineResponse.headers()['cache-control']).toContain('no-store');
+      const grants = (await mineResponse.json()).data.list as Array<{
+        id: string | number;
+        clientId: string;
+        clientName: string;
+      }>;
+      const owned = grants.filter(grant => grant.clientId === client!.clientId);
+      expect(owned).toHaveLength(1);
+      expect(owned[0].clientName).toBe(MCP_E2E_CLIENT_NAME);
+      const grantId = String(owned[0].id);
+      const entry = page.locator(`article[data-authorization-id="${grantId}"]`);
+      await expect(page).toHaveURL(authorizationsPath);
+      await expect(
+        page.getByRole('heading', { name: 'MCP authorizations', exact: true }),
+      ).toBeVisible();
+      await expect(
+        entry.getByRole('heading', { name: MCP_E2E_CLIENT_NAME, exact: true }),
+      ).toBeVisible();
+      await expect(entry.getByRole('button', { name: 'Revoke', exact: true })).toBeEnabled();
+      await expect(entry.getByRole('button', { name: 'Delete', exact: true })).toBeEnabled();
+
+      const document = await page.request.get(authorizationsPath);
+      expect(document.ok()).toBe(true);
+      expect(document.headers()['cache-control']).toBe('private, no-store');
+      const html = await document.text();
+      expect(html).toContain(`data-authorization-id="${grantId}"`);
+      expect(html).toContain(MCP_E2E_CLIENT_NAME);
+      expect(html).not.toContain('data-zova-hydrated');
+      const queryState = html.match(
+        /<script[^>]*id="ssr-state-defer-init"[^>]*>([\s\S]*?)<\/script>/,
+      )?.[1];
+      expect(queryState !== undefined).toBe(true);
+      expect(queryState?.includes(MCP_E2E_CLIENT_NAME)).toBe(true);
+      expect(queryState?.includes(client.clientId)).toBe(true);
+      expect(
+        /\b(?:requestDigest|codeDigest|tokenDigest|codeChallenge):/.test(queryState ?? ''),
+      ).toBe(false);
+      // Boolean checks prevent credential values or the full SSR state entering diagnostics.
+      expect(html.includes(token.access_token)).toBe(false);
+      expect(html.includes(token.refresh_token)).toBe(false);
+      let hydrationFetches = 0;
+      const observeHydrationFetch = (outgoing: Request) => {
+        if (
+          outgoing.method() === 'GET' &&
+          new URL(outgoing.url()).pathname === `${authorizationGrantApiPath}/mine` &&
+          !outgoing.headers()['x-vona-openapi-schema']
+        ) {
+          hydrationFetches++;
+        }
+      };
+      page.on('request', observeHydrationFetch);
+      await page.reload({ waitUntil: 'load' });
+      await expect(page.locator('html')).toHaveAttribute('data-zova-hydrated', 'web');
+      await expect(
+        entry.getByRole('heading', { name: MCP_E2E_CLIENT_NAME, exact: true }),
+      ).toBeVisible();
+      page.off('request', observeHydrationFetch);
+      expect(hydrationFetches).toBe(0);
+
+      // The same ordinary account reaches the shared page through the Admin shell too.
+      await page.goto('/admin/', { waitUntil: 'load' });
+      await expect(page.locator('html')).toHaveAttribute('data-zova-hydrated', 'admin');
+      const adminUserMenu = page.locator('details').filter({
+        has: page.getByText('Logout', { exact: true }),
+      });
+      await adminUserMenu.locator('summary').click();
+      await adminUserMenu.getByText('Account Settings', { exact: true }).click();
+      await expect(
+        page.getByRole('heading', { name: 'Account Settings', exact: true }),
+      ).toBeVisible();
+      await expect(page.locator('html')).toHaveAttribute('data-zova-hydrated', 'admin');
+      const adminAuthorizationsLink = page.getByRole('link', {
+        name: 'MCP authorizations',
+        exact: true,
+      });
+      await expect(adminAuthorizationsLink).toHaveAttribute('href', authorizationsPath);
+      await adminAuthorizationsLink.click();
+      await expect(page).toHaveURL(authorizationsPath);
+      await expect(
+        page.getByRole('heading', { name: 'MCP authorizations', exact: true }),
+      ).toBeVisible();
+      await expect(
+        entry.getByRole('heading', { name: MCP_E2E_CLIENT_NAME, exact: true }),
+      ).toBeVisible();
+      // The canonical Account link performs a document handoff to the protected Web page.
+      await expect(page.locator('html')).toHaveAttribute('data-zova-hydrated', 'web');
+
+      const revokePath = `${authorizationGrantApiPath}/revokeMine/${grantId}`;
+      const deletePath = `${authorizationGrantApiPath}/deleteMine/${grantId}`;
+      const mutations = { revoke: 0, delete: 0 };
+      page.on('request', outgoing => {
+        const path = new URL(outgoing.url()).pathname;
+        if (outgoing.method() === 'POST' && path === revokePath) mutations.revoke++;
+        if (outgoing.method() === 'DELETE' && path === deletePath) mutations.delete++;
+      });
+      const dialog = page.getByRole('dialog');
+      await entry.getByRole('button', { name: 'Revoke', exact: true }).click();
+      await expect(dialog).toBeVisible();
+      await dialog.getByRole('button', { name: 'No', exact: true }).click();
+      await expect(dialog).toHaveCount(0);
+      await expect(entry.getByRole('button', { name: 'Revoke', exact: true })).toBeEnabled();
+      const afterCancel = await callMcp(request, 'tools/list', {}, token.access_token);
+      expect(afterCancel.status()).toBe(200);
+      expect(mutations.revoke).toBe(0);
+
+      await entry.getByRole('button', { name: 'Revoke', exact: true }).click();
+      const revoked = waitForApiResponse(page, 'POST', revokePath);
+      await dialog.getByRole('button', { name: 'Yes', exact: true }).click();
+      expect((await revoked).ok()).toBe(true);
+      await expect(dialog).toHaveCount(0);
+      await expect(entry.getByRole('button', { name: 'Revoke', exact: true })).toHaveCount(0);
+      await expect(entry.getByRole('button', { name: 'Delete', exact: true })).toBeEnabled();
+      expect(mutations.revoke).toBe(1);
+      const rejectedAccess = await callMcp(request, 'tools/list', {}, token.access_token);
+      expect(rejectedAccess.status()).toBe(401);
+      expect(rejectedAccess.headers()['www-authenticate']).toContain('error="invalid_token"');
+      const rejectedRefresh = await request.post('/mcp/token', {
+        form: {
+          grant_type: 'refresh_token',
+          client_id: client.clientId,
+          refresh_token: token.refresh_token,
+          resource: authorization.resource,
+        },
+      });
+      expect(rejectedRefresh.status()).toBe(400);
+      expect((await rejectedRefresh.json()).error).toBe('invalid_grant');
+
+      await entry.getByRole('button', { name: 'Delete', exact: true }).click();
+      await expect(dialog).toBeVisible();
+      await dialog.getByRole('button', { name: 'No', exact: true }).click();
+      await expect(dialog).toHaveCount(0);
+      await expect(
+        entry.getByRole('heading', { name: MCP_E2E_CLIENT_NAME, exact: true }),
+      ).toBeVisible();
+      expect(mutations.delete).toBe(0);
+      await entry.getByRole('button', { name: 'Delete', exact: true }).click();
+      const deleted = waitForApiResponse(page, 'DELETE', deletePath);
+      await dialog.getByRole('button', { name: 'Yes', exact: true }).click();
+      expect((await deleted).ok()).toBe(true);
+      await expect(dialog).toHaveCount(0);
+      await expect(entry).toHaveCount(0);
+      expect(mutations.delete).toBe(1);
+      const remaining = await page.request.get(`${authorizationGrantApiPath}/mine`, {
+        headers: await loginMcpAccount(request, account),
+      });
+      expect(remaining.ok()).toBe(true);
+      expect(
+        (await remaining.json()).data.list.some(
+          (grant: { clientId: string }) => grant.clientId === client!.clientId,
+        ),
+      ).toBe(false);
+      expect(errors).toEqual({ page: 0, console: 0, hydration: 0 });
+    } finally {
+      if (account) {
+        const headers = await loginMcpAccount(request, account);
+        try {
+          if (client) {
+            // This new user owns at most this one grant. Locate it even if UI admission failed.
+            const mine = await request.get(`${authorizationGrantApiPath}/mine`, { headers });
+            expect(mine.ok()).toBe(true);
+            const grants = (await mine.json()).data.list as Array<{
+              id: string | number;
+              clientId: string;
+            }>;
+            for (const grant of grants.filter(grant => grant.clientId === client!.clientId)) {
+              const deleted = await request.delete(
+                `${authorizationGrantApiPath}/deleteMine/${grant.id}`,
+                {
+                  headers,
+                },
+              );
+              expect(deleted.ok()).toBe(true);
+            }
+          }
+        } finally {
+          const removed = await request.delete('/api/home/user/passportTest/removeCurrentFixture', {
+            headers,
+          });
+          expect(removed.ok()).toBe(true);
+        }
+      }
+      // No client-delete endpoint: registration/pending/code rows remain exclusively in the
+      // root-run-owned disposable AS database, removed by the managed runner as before.
+    }
+  },
+);
 
 test(
   'MCP browser authorization: denial returns only access_denied and closes the pending request',

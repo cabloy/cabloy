@@ -65,7 +65,7 @@ describe('registration.test.ts', { concurrency: false }, () => {
     try {
       await app.bean.executor.mockCtx(async () => {
         for (const clientId of clientIds) {
-          await model().builderSelect().where({ clientId }).delete();
+          await model().builderSelect().where({ oauthClientId: clientId }).delete();
         }
       });
     } finally {
@@ -89,7 +89,7 @@ describe('registration.test.ts', { concurrency: false }, () => {
     assert.equal('client_secret' in response, false);
 
     await app.bean.executor.mockCtx(async () => {
-      const row = await model().get({ clientId: response.client_id });
+      const row = await model().get({ oauthClientId: response.client_id });
       assert.ok(row);
       assert.equal(row.name, publicRequest.client_name);
       assert.equal(row.resource, resource.resource);
@@ -97,7 +97,10 @@ describe('registration.test.ts', { concurrency: false }, () => {
       assert.equal(row.state, 'active');
       assert.deepEqual(row.grantTypes, ['authorization_code']);
       assert.equal(row.secretSha256, null);
+      assert.equal(row.oauthClientId, response.client_id);
+      assert.notEqual(String(row.id), response.client_id);
       const resolved = await service().resolve(response.client_id, resource.resource);
+      assert.equal(String(resolved?.id), String(row.id));
       assert.equal(resolved?.clientId, response.client_id);
       assert.equal(resolved?.scope, 'mcp:all');
       assert.deepEqual(resolved?.redirectUris, [redirectUri]);
@@ -129,7 +132,7 @@ describe('registration.test.ts', { concurrency: false }, () => {
       assert.equal(response.scope, expected);
       assert.equal('application_type' in response, false);
       await app.bean.executor.mockCtx(async () => {
-        assert.equal((await model().get({ clientId: response.client_id }))?.scope, expected);
+        assert.equal((await model().get({ oauthClientId: response.client_id }))?.scope, expected);
         assert.equal(
           (await service().resolve(response.client_id, resource.resource))?.scope,
           expected,
@@ -145,9 +148,12 @@ describe('registration.test.ts', { concurrency: false }, () => {
     clientIds.push(response.client_id);
     await app.bean.executor.mockCtx(async () => {
       for (const scope of ['', 'mcp:write', 'mcp:all mcp:read', 'mcp:read mcp:all']) {
-        await model().builderSelect().where({ clientId: response.client_id }).update({ scope });
+        await model()
+          .builderSelect()
+          .where({ oauthClientId: response.client_id })
+          .update({ scope });
         assert.equal(await service().resolve(response.client_id, resource.resource), undefined);
-        assert.equal((await model().get({ clientId: response.client_id }))?.scope, scope);
+        assert.equal((await model().get({ oauthClientId: response.client_id }))?.scope, scope);
       }
     });
   });
@@ -177,7 +183,7 @@ describe('registration.test.ts', { concurrency: false }, () => {
       assert.equal('refresh_token' in response, false);
       assert.equal('client_secret' in response, false);
       await app.bean.executor.mockCtx(async () => {
-        const row = await model().get({ clientId: response.client_id });
+        const row = await model().get({ oauthClientId: response.client_id });
         assert.deepEqual(row?.grantTypes, ['authorization_code', 'refresh_token']);
         const resolved = await service().resolve(response.client_id, resource.resource);
         assert.deepEqual(resolved?.grantTypes, ['authorization_code', 'refresh_token']);
@@ -318,7 +324,7 @@ describe('registration.test.ts', { concurrency: false }, () => {
     const rows = await app.bean.executor.mockCtx(() =>
       model().builderSelect().where({ resource: resource.resource }),
     );
-    assert.deepEqual(rows.map(row => row.clientId).sort(), clientIds.toSorted());
+    assert.deepEqual(rows.map(row => row.oauthClientId).sort(), clientIds.toSorted());
   });
 
   it('allows loopback redirects by default and persists confidential secret digests', async () => {
@@ -347,7 +353,7 @@ describe('registration.test.ts', { concurrency: false }, () => {
     assert.match(confidential.client_secret ?? '', /^[\w-]{43}$/);
     assert.equal(confidential.client_secret_expires_at, 0);
     await app.bean.executor.mockCtx(async () => {
-      const row = await model().get({ clientId: confidential.client_id });
+      const row = await model().get({ oauthClientId: confidential.client_id });
       assert.ok(row?.secretSha256);
       assert.equal(row.secretSha256, sha256(confidential.client_secret!));
       assert.notEqual(row.secretSha256, confidential.client_secret);

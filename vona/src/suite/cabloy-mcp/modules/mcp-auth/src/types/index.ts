@@ -1,3 +1,4 @@
+import type { TableIdentity } from 'table-identity';
 import type { ISsrSiteRecord } from 'vona-module-a-ssr';
 
 declare module 'vona' {
@@ -57,6 +58,7 @@ export interface IMcpAuthRegistrationResponse {
 }
 
 export interface IMcpAuthResolvedClient {
+  id: TableIdentity;
   clientId: string;
   name: string;
   redirectUris: string[];

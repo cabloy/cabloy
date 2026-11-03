@@ -45,11 +45,11 @@ export class ServiceRegistration extends BeanBase {
     const issuedAt = Math.floor(Date.now() / 1000);
     for (let attempt = 0; attempt < 3; attempt++) {
       const clientId = randomBytes(32).toString('base64url');
-      const existing = await this.scope.model.client.get({ clientId });
+      const existing = await this.scope.model.client.get({ oauthClientId: clientId });
       if (existing) continue;
       try {
         await this.scope.model.client.insert({
-          clientId,
+          oauthClientId: clientId,
           name: parsed.clientName,
           redirectUris: parsed.redirectUris,
           grantTypes: parsed.grantTypes,
@@ -83,7 +83,7 @@ export class ServiceRegistration extends BeanBase {
 
   async resolve(clientId: string, resource: string): Promise<IMcpAuthResolvedClient | undefined> {
     getMcpAuthConfig(this.app);
-    const client = await this.scope.model.client.get({ clientId });
+    const client = await this.scope.model.client.get({ oauthClientId: clientId });
     if (
       !client ||
       client.state !== 'active' ||
@@ -95,7 +95,8 @@ export class ServiceRegistration extends BeanBase {
     const grantTypes = resolveMcpGrantTypes(client.grantTypes);
     if (!grantTypes) return undefined;
     return {
-      clientId: client.clientId,
+      id: client.id,
+      clientId: client.oauthClientId,
       name: client.name,
       redirectUris: client.redirectUris,
       grantTypes,
@@ -111,7 +112,7 @@ export class ServiceRegistration extends BeanBase {
   async disable(clientId: string): Promise<void> {
     await this.scope.model.client
       .builderSelect()
-      .where({ clientId, state: 'active' })
+      .where({ oauthClientId: clientId, state: 'active' })
       .update({ state: 'revoked' });
   }
 

@@ -11,7 +11,8 @@ export class MetaVersion extends BeanBase implements IMetaVersionUpdate {
     await this.bean.model.createTable(authorization.$table, table => {
       table.basicFields();
       table.string(authorization.requestDigest, 64).notNullable();
-      table.string(authorization.clientId, 255).notNullable();
+      table.tableIdentity(authorization.clientId).notNullable();
+      table.string(authorization.oauthClientId, 255).notNullable();
       table.string(authorization.issuer, 2048).notNullable();
       table.string(authorization.resource, 2048).notNullable();
       table.string(authorization.redirectUri, 2048).notNullable();
@@ -31,15 +32,11 @@ export class MetaVersion extends BeanBase implements IMetaVersionUpdate {
       table.bigInteger(authorization.refreshExpiresAt).notNullable().defaultTo(0);
       table.tableIdentity(authorization.userId);
       table.tableIdentity(authorization.authId);
-      table.index(['iid', authorization.requestDigest]);
-      table.index(['iid', authorization.codeDigest]);
-      table.index(['iid', authorization.tokenDigest]);
-      table.index(['iid', authorization.expiresAt]);
     });
     const client = this.scope.entity.client;
     await this.bean.model.createTable(client.$table, table => {
       table.basicFields();
-      table.string(client.clientId, 255).notNullable();
+      table.string(client.oauthClientId, 255).notNullable();
       table.string(client.name, 255).notNullable();
       table.json(client.redirectUris).notNullable();
       table
@@ -52,8 +49,6 @@ export class MetaVersion extends BeanBase implements IMetaVersionUpdate {
       table.string(client.scope, 255).notNullable();
       table.string(client.state, 32).notNullable();
       table.bigInteger(client.clientIdIssuedAt).notNullable();
-      table.index(['iid', client.clientId]);
-      table.index(['iid', client.resource, client.state]);
     });
   }
 }

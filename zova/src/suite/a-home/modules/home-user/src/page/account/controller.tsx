@@ -288,11 +288,17 @@ export class ControllerPageAccount extends BeanControllerPageBase {
   }
 
   private _renderSecurityCard(current: AccountCurrent) {
+    const authorizationsPath = this.$router.getPagePath('/cabloy/mcp/authorizations');
     return (
       <section class="card border border-base-300 bg-base-100 shadow-sm">
         <div class="card-body gap-4">
           <h2 class="card-title">{this.scope.locale.AccountSecurity()}</h2>
           {current.hasSimpleAuth ? this._renderChangePassword() : this._renderSetPassword(current)}
+          {authorizationsPath && (
+            <a class="link link-primary" href={authorizationsPath}>
+              {this.scope.locale.AccountMcpAuthorizations()}
+            </a>
+          )}
         </div>
       </section>
     );

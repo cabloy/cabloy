@@ -370,7 +370,7 @@ describe('businessHttp.test.ts', { concurrency: false, timeout: 60000 }, () => {
             });
           }
           if (dynamicClientId) {
-            await app.scope('mcp-auth').model.client.delete({ clientId: dynamicClientId });
+            await app.scope('mcp-auth').model.client.delete({ oauthClientId: dynamicClientId });
           }
           if (browserToken) {
             await app.bean.passport.checkAuthToken(browserToken);
@@ -3274,8 +3274,8 @@ describe('businessHttp.test.ts', { concurrency: false, timeout: 60000 }, () => {
       await app.bean.executor.mockCtx(
         async () => {
           for (const id of clients.toReversed()) {
-            await app.scope('mcp-auth').model.authorization.delete({ clientId: id });
-            await app.scope('mcp-auth').model.client.delete({ clientId: id });
+            await app.scope('mcp-auth').model.authorization.delete({ oauthClientId: id });
+            await app.scope('mcp-auth').model.client.delete({ oauthClientId: id });
           }
         },
         { instanceName: '' },

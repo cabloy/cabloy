@@ -15,7 +15,7 @@ export interface IEntityOptionsClient extends IDecoratorEntityOptions {}
 @Entity<IEntityOptionsClient>('mcpAuthClient')
 export class EntityClient extends EntityBase {
   @Api.field()
-  clientId: string;
+  oauthClientId: string;
 
   @Api.field()
   name: string;

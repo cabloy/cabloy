@@ -157,8 +157,8 @@ async function withFixture(
     try {
       await app.bean.executor.mockCtx(async () => {
         if (clientId !== undefined) {
-          await model().builderSelect().where({ clientId }).delete();
-          await app.scope('mcp-auth').model.client.delete({ clientId });
+          await model().builderSelect().where({ oauthClientId: clientId }).delete();
+          await app.scope('mcp-auth').model.client.delete({ oauthClientId: clientId });
         }
         if (authId !== undefined) await app.scope('a-auth').model.auth.deleteById(authId);
         if (profileId !== undefined)
@@ -356,10 +356,14 @@ describe('authorization.test.ts', { concurrency: false }, () => {
         expectOAuth(() => service().decide(request, true), 'access_denied'),
       );
       await app.bean.executor.mockCtx(async () => {
-        const client = await app.scope('mcp-auth').model.client.get({ clientId });
-        assert.equal(client?.scope, 'mcp:all');
+        const client = await app.scope('mcp-auth').model.client.get({ oauthClientId: clientId });
+        assert.ok(client);
+        assert.equal(client.scope, 'mcp:all');
         const pending = await model().get({ requestDigest: sha256(request) });
-        assert.equal(pending?.scope, 'mcp:read');
+        assert.ok(pending);
+        assert.equal(String(pending.clientId), String(client.id));
+        assert.equal(pending.oauthClientId, clientId);
+        assert.equal(pending.scope, 'mcp:read');
       });
       const decision = await asUser(fixture, async () => {
         const summary = await service().summary(request);
@@ -383,7 +387,7 @@ describe('authorization.test.ts', { concurrency: false }, () => {
       assert.equal(token.scope, 'mcp:read');
       assert.equal('refresh_token' in token, false);
       await app.bean.executor.mockCtx(async () => {
-        const rows = await model().builderSelect().where({ clientId });
+        const rows = await model().builderSelect().where({ oauthClientId: clientId });
         assert.equal(rows.length, 1);
         assert.equal(rows[0].requestDigest, sha256(request));
         assert.equal(rows[0].scope, 'mcp:read');
@@ -433,6 +437,108 @@ describe('authorization.test.ts', { concurrency: false }, () => {
         );
       });
     });
+  });
+
+  it('rejects tampered internal client references and cannot rebind a grant to a recreated external identifier', async () => {
+    await withFixture(
+      async fixture => {
+        const other = await app.bean.executor.mockCtx(() =>
+          app
+            .scope('mcp-auth')
+            .service.registration.register(
+              { client_name: 'Other internal client', redirect_uris: [callback] },
+              resource,
+            ),
+        );
+        try {
+          const request = await app.bean.executor.mockCtx(async () => {
+            const client = await app
+              .scope('mcp-auth')
+              .model.client.get({ oauthClientId: fixture.clientId });
+            const otherClient = await app
+              .scope('mcp-auth')
+              .model.client.get({ oauthClientId: other.client_id });
+            assert.ok(client && otherClient);
+            const request = await service().authorize(
+              authorizationParams(fixture.clientId),
+              resource,
+            );
+            const row = await model().get({ requestDigest: sha256(request) });
+            assert.ok(row);
+            assert.equal(String(row.clientId), String(client.id));
+            assert.equal(row.oauthClientId, fixture.clientId);
+            await model().updateById(row.id, { clientId: otherClient.id });
+            return { request, row, client, otherClient };
+          });
+          await asUser(fixture, async () => {
+            await expectOAuth(() => service().summary(request.request), 'invalid_grant');
+            await expectOAuth(() => service().decide(request.request, true), 'invalid_grant');
+          });
+          await app.bean.executor.mockCtx(() =>
+            model().updateById(request.row.id, { clientId: request.client.id }),
+          );
+          const decision = await asUser(fixture, () => service().decide(request.request, true));
+          const code = new URL(decision.redirectUrl).searchParams.get('code')!;
+          await app.bean.executor.mockCtx(() =>
+            model().updateById(request.row.id, { clientId: request.otherClient.id }),
+          );
+          await expectOAuth(() => redeem(fixture, code), 'invalid_grant');
+          await app.bean.executor.mockCtx(() =>
+            model().updateById(request.row.id, { clientId: request.client.id }),
+          );
+          const token = await redeem(fixture, code);
+          assert.ok(token.refresh_token);
+          for (const binding of [
+            { clientId: request.otherClient.id, oauthClientId: fixture.clientId },
+            { clientId: request.client.id, oauthClientId: other.client_id },
+          ]) {
+            await app.bean.executor.mockCtx(async () => {
+              await model().updateById(request.row.id, binding);
+              await expectOAuth(
+                () => service().lookup(token.access_token, resource.resource),
+                'invalid_token',
+              );
+            });
+            await expectOAuth(() => refresh(fixture, token.refresh_token!), 'invalid_grant');
+          }
+          await app.bean.executor.mockCtx(async () => {
+            await model().updateById(request.row.id, {
+              clientId: request.client.id,
+              oauthClientId: fixture.clientId,
+            });
+            await service().lookup(token.access_token, resource.resource);
+            await app.scope('mcp-auth').model.client.deleteById(request.client.id, {
+              disableDeleted: true,
+            });
+            const recreated = await app.scope('mcp-auth').model.client.insert({
+              ...request.client,
+              id: undefined,
+            });
+            assert.notEqual(String(recreated.id), String(request.client.id));
+            const resolved = await app
+              .scope('mcp-auth')
+              .service.registration.resolve(fixture.clientId, resource.resource);
+            assert.equal(String(resolved?.id), String(recreated.id));
+            await expectOAuth(
+              () => service().lookup(token.access_token, resource.resource),
+              'invalid_token',
+            );
+          });
+          await expectOAuth(() => refresh(fixture, token.refresh_token!), 'invalid_grant');
+        } finally {
+          await app.bean.executor.mockCtx(async () => {
+            // A failed assertion may leave this owned grant's external snapshot tampered.
+            await model().delete({ oauthClientId: other.client_id }, { disableDeleted: true });
+            await app
+              .scope('mcp-auth')
+              .model.client.delete({ oauthClientId: other.client_id }, { disableDeleted: true });
+          });
+        }
+      },
+      'none',
+      undefined,
+      ['authorization_code', 'refresh_token'],
+    );
   });
 
   it('rotates signed refresh grants and revokes the whole family on older refresh replay', async t => {
@@ -611,7 +717,7 @@ describe('authorization.test.ts', { concurrency: false }, () => {
           });
         } finally {
           await app.bean.executor.mockCtx(() =>
-            app.scope('mcp-auth').model.client.delete({ clientId: other.client_id }),
+            app.scope('mcp-auth').model.client.delete({ oauthClientId: other.client_id }),
           );
         }
       },
@@ -964,7 +1070,7 @@ describe('authorization.test.ts', { concurrency: false }, () => {
             await expectOAuth(() => service().authorize(params, resource), 'invalid_scope');
           }
           assert.equal(
-            (await model().builderSelect().where({ clientId: fixture.clientId })).length,
+            (await model().builderSelect().where({ oauthClientId: fixture.clientId })).length,
             0,
           );
           assert.equal(
@@ -993,7 +1099,7 @@ describe('authorization.test.ts', { concurrency: false }, () => {
           await app
             .scope('mcp-auth')
             .model.client.builderSelect()
-            .where({ clientId })
+            .where({ oauthClientId: clientId })
             .update({ scope });
         });
       };
@@ -1143,7 +1249,7 @@ describe('authorization.test.ts', { concurrency: false }, () => {
             }),
           'invalid_target',
         );
-        assert.equal((await model().builderSelect().where({ clientId })).length, 0);
+        assert.equal((await model().builderSelect().where({ oauthClientId: clientId })).length, 0);
       });
       const { code } = await issueCode(fixture);
       await app.bean.executor.mockCtx(async () => {
@@ -1248,7 +1354,7 @@ describe('authorization.test.ts', { concurrency: false }, () => {
           );
         });
         await service().cleanupExpired();
-        assert.equal((await model().builderSelect().where({ clientId })).length, 0);
+        assert.equal((await model().builderSelect().where({ oauthClientId: clientId })).length, 0);
       });
     });
   });
@@ -1260,7 +1366,9 @@ describe('authorization.test.ts', { concurrency: false }, () => {
       const { code } = await issueCode(fixture);
       const params = tokenParams(fixture.clientId, code);
       await app.bean.executor.mockCtx(async () => {
-        const client = await app.scope('mcp-auth').model.client.get({ clientId: fixture.clientId });
+        const client = await app
+          .scope('mcp-auth')
+          .model.client.get({ oauthClientId: fixture.clientId });
         assert.equal(client!.secretSha256, sha256(secret));
         assert.notEqual(client!.secretSha256, secret);
         await expectOAuth(() => service().exchange(params, undefined), 'invalid_client');
@@ -1299,7 +1407,7 @@ describe('authorization.test.ts', { concurrency: false }, () => {
       const tokens = redemptions.filter(result => result.status === 'fulfilled');
       assert.equal(tokens.length, 1);
       await app.bean.executor.mockCtx(async () => {
-        const rows = await model().builderSelect().where({ clientId });
+        const rows = await model().builderSelect().where({ oauthClientId: clientId });
         assert.equal(rows.length, 1);
         assert.equal(rows[0].state, 'tokenActive');
         assert.equal(rows[0].codeDigest, '');

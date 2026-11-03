@@ -246,7 +246,7 @@ export class ServiceAuthTokenAdapter extends BeanBase implements IAuthTokenAdapt
       .builderSelect()
       .where({
         id: mcp.grantId,
-        clientId: mcp.clientId,
+        oauthClientId: mcp.clientId,
         issuer: mcp.issuer,
         resource: mcp.resource,
         scope: mcp.scope,
@@ -327,7 +327,7 @@ export class ServiceAuthTokenAdapter extends BeanBase implements IAuthTokenAdapt
     );
     if (
       !row ||
-      row.clientId !== mcp.clientId ||
+      row.oauthClientId !== mcp.clientId ||
       row.issuer !== mcp.issuer ||
       row.resource !== mcp.resource ||
       String(row.userId) !== String(payload.userId) ||
@@ -367,6 +367,7 @@ export class ServiceAuthTokenAdapter extends BeanBase implements IAuthTokenAdapt
       .where({
         id: row.id,
         clientId: row.clientId,
+        oauthClientId: row.oauthClientId,
         resource: row.resource,
         issuer: row.issuer,
         userId: row.userId!,

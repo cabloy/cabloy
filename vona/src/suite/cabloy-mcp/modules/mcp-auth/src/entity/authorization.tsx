@@ -14,8 +14,11 @@ export class EntityAuthorization extends EntityBase {
   @Api.field()
   requestDigest: string;
 
+  @Api.field(v.tableIdentity())
+  clientId: TableIdentity;
+
   @Api.field()
-  clientId: string;
+  oauthClientId: string;
 
   @Api.field()
   issuer: string;
