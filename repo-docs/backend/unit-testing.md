@@ -134,6 +134,17 @@ Keep implementation selection separate from scenario state:
 
 Request-scoped replacement remains appropriate when the contract genuinely needs different implementations per request and ordinary configuration cannot express that requirement. Name that requirement first, then use an existing request-scoped extension point where available; introduce new transport or registration machinery only when necessary, with explicit ownership and cleanup. Do not let untrusted request input select a privileged test implementation.
 
+### Configuration selection versus runtime decisions
+
+Prefer existing configuration for static composition, such as candidate lists and implementation selection. Before adding or retaining an availability callback, check whether it merely repeats choices the supported configuration can already express. Remove that duplication rather than inventing another boolean or moving the same hardcoded predicate into a configuration callback. This is configuration-first, not a requirement to make every business condition configurable.
+
+Keep these responsibilities distinct:
+
+- **Configuration owns static composition.** Use the existing supported options to declare the intended candidates and defaults. Verify precedence, merge behavior, and array handling in the owning implementation; an override may replace a list rather than append to it, requiring the complete intended list.
+- **Runtime business logic owns contextual decisions.** Retain a callback when the decision genuinely depends on the current user, resource state, or request context. Candidate membership alone does not establish authorization or lifecycle eligibility.
+- **Each implementation owns its required-parameter validation.** Selecting an implementation does not prove that it is ready to execute. Test fixtures still own effective test-double checks, controlled scenario state, and cleanup; configuration is not proof of network isolation.
+- **Removing a hardcoded restriction can change configuration authority.** State whether a later explicit override can now enable a previously prohibited choice. Verify the intended defaults and effective test composition, and distinguish those observations from untested configurations. Do not report configuration-driven selection as an immutable code-level prohibition.
+
 ## Mock request context
 
 One of the most important Vona testing patterns is simulating a request context.
