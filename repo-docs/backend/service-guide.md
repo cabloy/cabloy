@@ -186,6 +186,58 @@ A better default is:
 
 That keeps backend access patterns aligned with Vona’s actual architecture instead of using one access style everywhere by habit.
 
+### Pass user identity explicitly
+
+For reusable business services, prefer an explicit `userId` parameter over reading `this.bean.passport.currentUser` inside the service. This keeps the capability usable from another service, a job, or a test without requiring a signed-in HTTP Passport context.
+
+Keep the responsibilities separate:
+
+- the HTTP Passport guard enforces authentication, activation, and account policy; `@Arg.user()` injects the resolved user but does not itself authenticate the request
+- a self-service controller obtains the current user with `@Arg.user() user: IUser` and passes `user.id`, not a caller-authored identity from query or body
+- the service enforces business authorization and user ownership in its reads and writes, within the active instance's Model scope
+
+For a module with a `record` Model whose rows belong to a `userId`, a representative controller/service handoff is:
+
+```typescript
+import type { TableIdentity } from 'table-identity';
+import type { IUser } from 'vona-module-a-user';
+
+import { BeanBase } from 'vona';
+import { v } from 'vona-module-a-openapiutils';
+import { Passport } from 'vona-module-a-user';
+import { Arg, Controller, Web } from 'vona-module-a-web';
+
+@Controller('record')
+@Passport.public(false)
+export class ControllerRecord extends BeanBase {
+  @Web.delete('deleteMine/:id')
+  async deleteMine(
+    @Arg.user() user: IUser,
+    @Arg.param('id', v.tableIdentity()) id: TableIdentity,
+  ): Promise<void> {
+    await this.scope.service.record.deleteForUser(user.id, id);
+  }
+}
+```
+
+```typescript
+import type { TableIdentity } from 'table-identity';
+
+import { BeanBase } from 'vona';
+import { Service } from 'vona-module-a-bean';
+
+@Service()
+export class ServiceRecord extends BeanBase {
+  async deleteForUser(userId: TableIdentity, id: TableIdentity): Promise<void> {
+    await this.scope.model.record.delete({ id, userId });
+  }
+}
+```
+
+Explicit identity is not proof of authority: each non-HTTP caller must establish the permitted identity for its operation, and the service must retain any additional business permission checks. Automatic instance scoping does not replace user-ownership filtering. This pattern removes an implicit login-state dependency, not the Vona operation context; scoped tests still need `app.bean.executor.mockCtx(...)`.
+
+This is a default for reusable business capabilities, not a ban on Passport access. Authentication, session, and other deliberately current-login-context services may use Passport when that context is part of their responsibility. See [User Access Guide](/backend/user-access-guide#current-user-and-current-roles) for identity access paths and [Controller AOP Guide](/backend/controller-aop-guide#passport-inheritance-and-action-policy) for request authentication policy.
+
 ## Where to read next
 
 If your next question is how service orchestration hands off to the persistence and contract layers in one real module, continue with:

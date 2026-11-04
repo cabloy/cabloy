@@ -6,6 +6,7 @@ After generating or extending a backend thread, check which follow-up layers app
 
 - controller path and action shape
 - service ownership of business logic
+- explicit user identity for reusable business services: self-service controllers pass `user.id` from `@Arg.user()`, not query/body identity; retain guard-based HTTP authentication and service-owned business authorization/user filtering within the active instance. See [Pass user identity explicitly](../../../../repo-docs/backend/service-guide.md#pass-user-identity-explicitly).
 - model/entity pairing
 - DTO design
 
@@ -42,7 +43,7 @@ When the active edition and installed modules provide `@Passport.rbac(...)` and 
 
 - migration/version changes
 - `meta.version`
-- field indexes; in shared-database multitenancy, preserve ordinary lookup indexes and enforce business uniqueness in tenant-aware business logic rather than with `table.unique(...)`
+- field indexes: declare ordinary lookup/query-performance indexes in `src/bean/meta.index.ts`, not as `table.index(...)` in `meta.version.ts`; explicitly plan and verify changes to existing physical indexes rather than assuming metadata edits replace them. In shared-database multitenancy, enforce business uniqueness in tenant-aware business logic rather than with `table.unique(...)`.
 - when editing or generating `meta.index`, consolidate each table's specifications into one declaration instead of adding another same-table `$tableColumns` spread; check for leading-column name collisions, effective metadata, and physical index definitions using the [Field Indexes guide](../../../../repo-docs/backend/field-indexes.md)
 - relations: define stable, reusable business relationships on the Model (`hasOne`, `belongsTo`, `hasMany`, `belongsToMany`); for CRUD reads, load only the relations the endpoint needs via `include`, and align the `$Dto.*` relation projection with the ORM query. Use dynamic `with` for situational relations; when related rows determine which parents appear, filter the parent query rather than relying on `include`. See [Relations Guide](../../../../repo-docs/backend/relations-guide.md) and [ORM Select Guide](../../../../repo-docs/backend/orm-select-guide.md).
 - datasource choice

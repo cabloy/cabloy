@@ -1,5 +1,15 @@
 # Changelog
 
+## 5.1.256
+
+### Features
+
+- Apply feature updates (details not specified in commit messages).
+
+### Improvements
+
+- Improve expired-error handling.
+
 ## 5.1.255
 
 ### Improvements

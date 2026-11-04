@@ -3,7 +3,7 @@ import type { TableIdentity } from 'table-identity';
 import { isNil } from '@cabloy/utils';
 import { parseFirstWord, toLowerCaseFirstChar } from '@cabloy/word-utils';
 import BigNumber from 'bignumber.js';
-import { cast, deepExtend, disposeInstance } from 'vona';
+import { cast, deepExtend, disposeInstance, getTestAsyncCompletion } from 'vona';
 
 import type { TypeQueueDoubleDeleteJobData } from '../../bean/queue.doubleDelete.ts';
 import type { ServiceDb } from '../../service/db_.ts';
@@ -913,8 +913,15 @@ export class BeanModelCache<TRecord extends {} = {}> extends BeanModelCrud<TReco
   private _shardingCacheDoubleDelete(jobData: TypeQueueDoubleDeleteJobData) {
     const doubleDelete = this.scopeOrm.config.sharding.cache.doubleDelete;
     if (!doubleDelete) return;
+    const owner = getTestAsyncCompletion(this.app);
     this.db.commit(() => {
-      this.scopeOrm.queue.doubleDelete.push(jobData);
+      if (owner) {
+        void owner
+          .track('ORM double-delete', () => this.scopeOrm.queue.doubleDelete.pushAsync(jobData))
+          .catch(() => {});
+      } else {
+        this.scopeOrm.queue.doubleDelete.push(jobData);
+      }
     });
   }
 

@@ -12,6 +12,10 @@ That is important because indexing is not treated as an afterthought. It is part
 
 Vona uses a bean named `meta.index` to configure a module’s field indexes.
 
+Declare ordinary lookup and query-performance indexes in the owning module's `src/bean/meta.index.ts`, rather than adding `table.index(...)` to table creation or alteration in `meta.version.ts`. Keep the index declarations together in module metadata; table and field schema evolution belongs in `meta.version.ts`.
+
+This placement rule does not replace migration planning for existing physical indexes. The current reconciler creates missing declared indexes but does not compare complete existing definitions or automatically drop, replace, or rebuild them. Changing or removing an existing physical index requires an explicit migration plan and verification; do not mechanically rewrite applied historical migrations. See [Migration and Changes](/backend/migration-and-changes).
+
 Create it with:
 
 ```bash
@@ -104,7 +108,7 @@ When changing persistence design, do not stop at entity fields and model methods
 Also ask:
 
 1. does this access pattern need an index?
-2. should the index belong in `meta.index`?
+2. are ordinary lookup/query-performance indexes declared in `src/bean/meta.index.ts`, rather than as `table.index(...)` in `meta.version.ts`?
 3. does a business key need tenant-scoped uniqueness, to be enforced in tenant-aware business logic rather than with `table.unique(...)`?
 4. is the typed style a better fit than raw string declarations?
 5. does each table have one effective declaration containing every intended index specification, without conflicting leading columns?

@@ -10,7 +10,7 @@ export interface TypeBroadcastMemClearJobData {
   cacheOptions: IDecoratorCacheMemOptions;
 }
 
-@Broadcast()
+@Broadcast({ instance: false })
 export class BroadcastMemClear
   extends BeanBroadcastBase<TypeBroadcastMemClearJobData>
   implements IBroadcastExecute<TypeBroadcastMemClearJobData>

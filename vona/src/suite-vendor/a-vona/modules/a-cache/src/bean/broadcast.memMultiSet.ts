@@ -15,7 +15,7 @@ export interface TypeBroadcastMemMultiSetJobData {
   options: ICacheMemSetOptions;
 }
 
-@Broadcast()
+@Broadcast({ instance: false })
 export class BroadcastMemMultiSet
   extends BeanBroadcastBase<TypeBroadcastMemMultiSetJobData>
   implements IBroadcastExecute<TypeBroadcastMemMultiSetJobData>

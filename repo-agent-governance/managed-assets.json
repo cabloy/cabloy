@@ -18,14 +18,14 @@
     {
       "adapter": "codex",
       "category": "skill",
-      "sha256": "5b5aaee730fbc585388840327de41cd8cdfd2fc6419a1dc99a9c32c2fa9676bb",
+      "sha256": "7a90333f6adba04b804bd889536226ea94b24110d6e4ec86028095d38a5f4526",
       "source": "skills/cabloy-backend-scaffold/references/follow-up-checklist.md",
       "target": ".agents/skills/cabloy-backend-scaffold/references/follow-up-checklist.md"
     },
     {
       "adapter": "codex",
       "category": "skill",
-      "sha256": "ad7d88df6dc9bd7196ce894883f292537754aefe7c037d05330d6c02d0420e98",
+      "sha256": "c27742ac71138c1271d575f0b1d3cb30682229e750956b017b437be410daa0ce",
       "source": "skills/cabloy-backend-scaffold/SKILL.md",
       "target": ".agents/skills/cabloy-backend-scaffold/SKILL.md"
     },
@@ -354,14 +354,14 @@
     {
       "adapter": "claude",
       "category": "skill",
-      "sha256": "5b5aaee730fbc585388840327de41cd8cdfd2fc6419a1dc99a9c32c2fa9676bb",
+      "sha256": "7a90333f6adba04b804bd889536226ea94b24110d6e4ec86028095d38a5f4526",
       "source": "skills/cabloy-backend-scaffold/references/follow-up-checklist.md",
       "target": ".claude/skills/cabloy-backend-scaffold/references/follow-up-checklist.md"
     },
     {
       "adapter": "claude",
       "category": "skill",
-      "sha256": "ad7d88df6dc9bd7196ce894883f292537754aefe7c037d05330d6c02d0420e98",
+      "sha256": "c27742ac71138c1271d575f0b1d3cb30682229e750956b017b437be410daa0ce",
       "source": "skills/cabloy-backend-scaffold/SKILL.md",
       "target": ".claude/skills/cabloy-backend-scaffold/SKILL.md"
     },
@@ -683,7 +683,7 @@
     {
       "adapter": "cursor",
       "category": "policy",
-      "sha256": "9c335fad685270381b899083758a4ce0fc85ff5b613ac2564125608d9a8185d0",
+      "sha256": "461596191fd5fd03a0338ca6be0eb1dc6f33c91436457e1f83f8b9ee6e6b6b79",
       "source": "policies/repository.md",
       "target": ".cursor/rules/cabloy-governance.mdc"
     },
@@ -704,14 +704,14 @@
     {
       "adapter": "cursor",
       "category": "skill",
-      "sha256": "5b5aaee730fbc585388840327de41cd8cdfd2fc6419a1dc99a9c32c2fa9676bb",
+      "sha256": "7a90333f6adba04b804bd889536226ea94b24110d6e4ec86028095d38a5f4526",
       "source": "skills/cabloy-backend-scaffold/references/follow-up-checklist.md",
       "target": ".cursor/skills/cabloy-backend-scaffold/references/follow-up-checklist.md"
     },
     {
       "adapter": "cursor",
       "category": "skill",
-      "sha256": "ad7d88df6dc9bd7196ce894883f292537754aefe7c037d05330d6c02d0420e98",
+      "sha256": "c27742ac71138c1271d575f0b1d3cb30682229e750956b017b437be410daa0ce",
       "source": "skills/cabloy-backend-scaffold/SKILL.md",
       "target": ".cursor/skills/cabloy-backend-scaffold/SKILL.md"
     },
@@ -1005,14 +1005,14 @@
     {
       "adapter": "codex",
       "category": "policy",
-      "sha256": "d517d16275f78002e17daf7d3ad5e6d023d7f4c511752c47bc9a03d0665aa1d3",
+      "sha256": "237312e4551157f39e64dcc052dc5b77643ccf5c7deb31111d94811f79184c1a",
       "source": "policies/repository.md",
       "target": "AGENTS.md"
     },
     {
       "adapter": "claude",
       "category": "policy",
-      "sha256": "d517d16275f78002e17daf7d3ad5e6d023d7f4c511752c47bc9a03d0665aa1d3",
+      "sha256": "237312e4551157f39e64dcc052dc5b77643ccf5c7deb31111d94811f79184c1a",
       "source": "policies/repository.md",
       "target": "CLAUDE.md"
     }
