@@ -519,6 +519,14 @@ export type ApiSchemaMcpAuthDtoAuthorizationDecision =
   components['schemas']['mcp-auth.dto.authorizationDecision'];
 export type ApiSchemaMcpAuthDtoAuthorizationDecisionPartial =
   Partial<ApiSchemaMcpAuthDtoAuthorizationDecision>;
+export type ApiSchemaMcpAuthDtoAuthorizationGrantMineRes =
+  components['schemas']['mcp-auth.dto.authorizationGrantMineRes'];
+export type ApiSchemaMcpAuthDtoAuthorizationGrantMineResPartial =
+  Partial<ApiSchemaMcpAuthDtoAuthorizationGrantMineRes>;
+export type ApiSchemaMcpAuthDtoAuthorizationGrant =
+  components['schemas']['mcp-auth.dto.authorizationGrant'];
+export type ApiSchemaMcpAuthDtoAuthorizationGrantPartial =
+  Partial<ApiSchemaMcpAuthDtoAuthorizationGrant>;
 export type ApiSchemaMcpTestDtoCategoryPublicSelectRes =
   components['schemas']['mcp-test.dto.categoryPublicSelectRes'];
 export type ApiSchemaMcpTestDtoCategoryPublicSelectResPartial =

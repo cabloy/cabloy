@@ -6,7 +6,7 @@ import type {
 } from 'vona-module-a-orm';
 import type { IDecoratorControllerOptions } from 'vona-module-a-web';
 
-import { BeanBase, text } from 'vona';
+import { BeanBase } from 'vona';
 import { Core } from 'vona-module-a-core';
 import { Api, Mcp, Resource, v } from 'vona-module-a-openapiutils';
 import { Passport } from 'vona-module-a-user';
@@ -28,7 +28,6 @@ import { DtoStudentSelectRes } from '../dto/studentSelectRes.tsx';
 import { DtoStudentSummary } from '../dto/studentSummary.tsx';
 import { DtoStudentUpdate } from '../dto/studentUpdate.tsx';
 import { DtoStudentView } from '../dto/studentView.tsx';
-import { studentLevelDescription } from '../entity/student.tsx';
 
 export interface IControllerOptionsStudent extends IDecoratorControllerOptions {}
 
@@ -39,7 +38,8 @@ export interface IControllerOptionsStudent extends IDecoratorControllerOptions {
 export class ControllerStudent extends BeanBase {
   @Mcp.tool({
     name: 'training_student_create',
-    description: text`Create a student using your current student-create permission and instance. Uses the existing create contract, including optional content and training records with subjects. Non-idempotent; repeating a call can create additional data. Level values: ${studentLevelDescription}.`,
+    description:
+      'Create a student using your current student-create permission and instance. Uses the existing create contract, including optional content and training records with subjects. Non-idempotent; repeating a call can create additional data.',
     readOnly: false,
   })
   @Web.post('', { summary: $locale('StudentCreate') })
@@ -51,7 +51,8 @@ export class ControllerStudent extends BeanBase {
 
   @Mcp.tool({
     name: 'training_student_select',
-    description: text`Select students using your current student-select permission and instance. Returns the complete existing paginated select response with serialized row fields, including masked mobile. Level values: ${studentLevelDescription}.`,
+    description:
+      'Select students using your current student-select permission and instance. Returns the complete existing paginated select response with serialized row fields, including masked mobile.',
     readOnly: true,
   })
   @Web.get('', { summary: $locale('StudentSelect') })
@@ -66,7 +67,8 @@ export class ControllerStudent extends BeanBase {
 
   @Mcp.tool({
     name: 'training_student_lookup',
-    description: text`Find students by a literal name substring using your current student-select permission and instance. Returns only ID, name and level; summary access requires student-view permission separately. Level values: ${studentLevelDescription}.`,
+    description:
+      'Find students by a literal name substring using your current student-select permission and instance. Returns only ID, name and level; summary access requires student-view permission separately.',
     readOnly: true,
   })
   @Web.get('lookup', { summary: $locale('StudentLookup') })
@@ -81,7 +83,8 @@ export class ControllerStudent extends BeanBase {
 
   @Mcp.tool({
     name: 'training_student_group',
-    description: text`Group students using your current student-select permission and instance. Supports grouping by level and counting all students or students with an imageId. Defaults to counting all students by level. Uses the existing filters; counts are strings and results are wrapped in result. Level values: ${studentLevelDescription}.`,
+    description:
+      'Group students using your current student-select permission and instance. Supports grouping by level and counting all students or students with an imageId. Defaults to counting all students by level. Uses the existing filters; counts are strings and results are wrapped in result.',
     readOnly: true,
   })
   @Web.get('group', { summary: $locale('StudentGroup') })
@@ -96,7 +99,8 @@ export class ControllerStudent extends BeanBase {
 
   @Mcp.tool({
     name: 'training_student_aggregate',
-    description: text`Count students using your current student-select permission and instance. Supports counting all students or students with an imageId. Defaults to both count_all and count_imageId. Uses the existing filters and returns string counts without grouping. Level values: ${studentLevelDescription}.`,
+    description:
+      'Count students using your current student-select permission and instance. Supports counting all students or students with an imageId. Defaults to both count_all and count_imageId. Uses the existing filters and returns string counts without grouping.',
     readOnly: true,
   })
   @Web.get('aggregate', { summary: $locale('StudentAggregate') })
@@ -111,7 +115,8 @@ export class ControllerStudent extends BeanBase {
 
   @Mcp.tool({
     name: 'training_student_view',
-    description: text`Read complete student details by ID using your current student-view permission and instance. Returns the existing serialized detail response, including masked mobile, Markdown content, nested training records and subjects, and optional image URL metadata. Level values: ${studentLevelDescription}.`,
+    description:
+      'Read complete student details by ID using your current student-view permission and instance. Returns the existing serialized detail response, including masked mobile, Markdown content, nested training records and subjects, and optional image URL metadata.',
     readOnly: true,
   })
   @Web.get(':id', { summary: $locale('StudentView') })
@@ -126,7 +131,8 @@ export class ControllerStudent extends BeanBase {
 
   @Mcp.tool({
     name: 'training_student_update',
-    description: text`Update a student using your current student-update permission and instance. Requires params.id and body.name, body.mobile, body.level. Uses the complete existing aggregate contract, including content and existing/new training records and subjects; declared nested id/deleted controls can delete children. Returns null completion, not existence or read-back proof. Partial writes are possible; do not automatically replay after errors or uncertain responses. Level values: ${studentLevelDescription}.`,
+    description:
+      'Update a student using your current student-update permission and instance. Requires params.id and body.name, body.mobile, body.level. Uses the complete existing aggregate contract, including content and existing/new training records and subjects; declared nested id/deleted controls can delete children. Returns null completion, not existence or read-back proof. Partial writes are possible; do not automatically replay after errors or uncertain responses.',
     readOnly: false,
   })
   @Web.patch(':id', { summary: $locale('StudentUpdate') })
@@ -141,7 +147,8 @@ export class ControllerStudent extends BeanBase {
 
   @Mcp.tool({
     name: 'training_student_summary',
-    description: text`Read a student summary by ID using your current student-view permission and instance. Excludes mobile and full notes. Level values: ${studentLevelDescription}.`,
+    description:
+      'Read a student summary by ID using your current student-view permission and instance. Excludes mobile and full notes.',
     output: {
       pick: ['id', 'name', 'level', 'levelTitle', 'descriptionLength', 'summaryText'],
     },

@@ -95,22 +95,6 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
-  '/api/auth/mock/authorize': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get: operations['AuthMock_authorize'];
-    put?: never;
-    post: operations['AuthMock_authorizePost'];
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
   '/api/captcha/create': {
     parameters: {
       query?: never;
@@ -1478,6 +1462,54 @@ export interface paths {
     put?: never;
     post: operations['Authorization_decision'];
     delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/mcp/auth/authorizationGrant/mine': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['McpAuthAuthorizationGrant_mine'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/mcp/auth/authorizationGrant/revokeMine/{id}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['McpAuthAuthorizationGrant_revokeMine'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/mcp/auth/authorizationGrant/deleteMine/{id}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post?: never;
+    delete: operations['McpAuthAuthorizationGrant_deleteMine'];
     options?: never;
     head?: never;
     patch?: never;
@@ -5038,6 +5070,34 @@ export interface components {
       request: string;
       allow: boolean;
     };
+    'mcp-auth.dto.authorizationGrantMineRes': {
+      list: components['schemas']['mcp-auth.dto.authorizationGrant'][];
+      total: string;
+      pageCount: number;
+      pageSize: number;
+      pageNo: number;
+    };
+    'mcp-auth.dto.authorizationGrant': {
+      /**
+       * Format: date-time
+       * @description Created At
+       */
+      createdAt: Date;
+      /** @description ID */
+      id: number | string;
+      resource: string;
+      scope: string;
+      /** @enum {string} */
+      state: 'pending' | 'codeReady' | 'tokenActive' | 'denied' | 'revoked';
+      expiresAt: number;
+      tokenExpiresAt: number;
+      /** @default false */
+      refreshEnabled?: boolean;
+      /** @default 0 */
+      refreshExpiresAt?: number;
+      clientId: string;
+      clientName: string;
+    };
     'mcp-test.dto.categoryPublicSelectRes': {
       list: components['schemas']['mcp-test.dto.categoryPublic'][];
       total: string;
@@ -5864,61 +5924,6 @@ export interface operations {
       cookie?: never;
     };
     requestBody?: never;
-    responses: {
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          'application/json': {
-            code: string;
-            message: string;
-            data?: unknown;
-          };
-        };
-      };
-    };
-  };
-  AuthMock_authorize: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          'application/json': {
-            code: string;
-            message: string;
-            data?: unknown;
-          };
-        };
-      };
-    };
-  };
-  AuthMock_authorizePost: {
-    parameters: {
-      query: {
-        redirect_uri: string;
-        state: string;
-      };
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    requestBody: {
-      content: {
-        'application/json': {
-          username: string;
-        };
-      };
-    };
     responses: {
       200: {
         headers: {
@@ -8520,7 +8525,7 @@ export interface operations {
         createdAt?: string | undefined;
         name?: string | undefined;
         /** @description 1=Foundation Track; 2=Progress Track; 3=Advanced Workshop */
-        level?: number | undefined;
+        level?: 1 | 2 | 3 | undefined;
       };
       header?: never;
       path?: never;
@@ -8615,7 +8620,7 @@ export interface operations {
         createdAt?: string | undefined;
         name?: string | undefined;
         /** @description 1=Foundation Track; 2=Progress Track; 3=Advanced Workshop */
-        level?: number | undefined;
+        level?: 1 | 2 | 3 | undefined;
         aggrs?: {
           count?: ('*' | 'imageId')[] | undefined;
         };
@@ -8657,7 +8662,7 @@ export interface operations {
         createdAt?: string | undefined;
         name?: string | undefined;
         /** @description 1=Foundation Track; 2=Progress Track; 3=Advanced Workshop */
-        level?: number | undefined;
+        level?: 1 | 2 | 3 | undefined;
         aggrs?: {
           count?: ('*' | 'imageId')[] | undefined;
         };
@@ -8923,6 +8928,85 @@ export interface operations {
     };
     authToken: true;
   };
+  McpAuthAuthorizationGrant_mine: {
+    parameters: {
+      query?: {
+        pageNo?: number;
+        pageSize?: number;
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data: components['schemas']['mcp-auth.dto.authorizationGrantMineRes'];
+          };
+        };
+      };
+    };
+    authToken: true;
+  };
+  McpAuthAuthorizationGrant_revokeMine: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: number | string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data?: unknown;
+          };
+        };
+      };
+    };
+    authToken: true;
+  };
+  McpAuthAuthorizationGrant_deleteMine: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: number | string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data?: unknown;
+          };
+        };
+      };
+    };
+    authToken: true;
+  };
   McpTestCatalog_categories: {
     parameters: {
       query?: {
@@ -9040,6 +9124,8 @@ export interface operations {
       content: {
         'application/json': {
           amount: number;
+          priority?: number | undefined;
+          note?: string | undefined;
         };
       };
     };
@@ -9055,6 +9141,8 @@ export interface operations {
             data: {
               count: number;
               label: string;
+              priority?: number | undefined;
+              note?: string | undefined;
             };
           };
         };

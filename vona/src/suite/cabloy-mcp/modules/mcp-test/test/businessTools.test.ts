@@ -459,6 +459,9 @@ describe('businessTools.test.ts', { concurrency: false, timeout: 60000 }, () => 
           [],
           'the existing filter-backed select and analysis contracts are representable without diagnostics',
         );
+        for (const tool of listed.result.tools) {
+          assert.ok(!tool.description.includes('Level values:'), tool.name);
+        }
         assert.ok(select);
         assert.equal(select.annotations.readOnlyHint, true);
         assert.deepEqual(Object.keys(select.inputSchema.properties).sort(), [
@@ -474,9 +477,12 @@ describe('businessTools.test.ts', { concurrency: false, timeout: 60000 }, () => 
         assert.equal(select.inputSchema.additionalProperties, false);
         assert.equal(select.inputSchema.properties.name.type, 'string');
         assert.equal(select.inputSchema.properties.name.maxLength, undefined);
-        assert.equal(select.inputSchema.properties.level.type, 'number');
-        assert.equal(select.inputSchema.properties.level.minimum, undefined);
-        assert.equal(select.inputSchema.properties.level.maximum, undefined);
+        assert.ok(!select.inputSchema.required?.includes('level'));
+        const selectCheck = fromJsonSchema(select.inputSchema)['~standard'];
+        assert.equal((await selectCheck.validate({})).issues, undefined);
+        for (const level of [1, 2, 3]) {
+          assert.equal((await selectCheck.validate({ level })).issues, undefined);
+        }
         const ormQuery = app.util.getModuleConfigRaw('a-orm')?.rest?.query;
         assert.equal(select.inputSchema.properties.pageNo.type, 'number');
         assert.equal(select.inputSchema.properties.pageNo.minimum, 1);
@@ -528,8 +534,19 @@ describe('businessTools.test.ts', { concurrency: false, timeout: 60000 }, () => 
           assert.ok(selectItem.properties[field], `full select output retains ${field}`);
         }
         assert.equal(selectItem.properties.mobile.type, 'string');
+        assert.ok(selectItem.properties.level.description);
+        assert.equal(
+          select.inputSchema.properties.level.description,
+          selectItem.properties.level.description,
+        );
+        assert.equal(select.inputSchema.properties.level.title, selectItem.properties.level.title);
+        assert.equal(
+          select.inputSchema.properties.level.rest.form.render,
+          'basic-select:formFieldSelect',
+        );
         assert.ok(!selectItem.required.includes('imageId'));
         for (const args of [
+          ...[null, '1', 1.5, 0, 4].map(level => ({ level })),
           { pageNo: 0 },
           { pageSize: '1' },
           { where: 'not-an-object' },
@@ -1468,7 +1485,7 @@ describe('businessTools.test.ts', { concurrency: false, timeout: 60000 }, () => 
         assert.deepEqual(JSON.parse(response.result.content[0].text), raw);
         const filters = {
           name: '  Student  ',
-          level: 1.5,
+          level: 2,
           columns: ['id', 'name', 'mobile', 'level'],
           where: { name: 'Student' },
           orders: [['name', 'asc']],
@@ -1607,6 +1624,8 @@ describe('businessTools.test.ts', { concurrency: false, timeout: 60000 }, () => 
             { aggrs: { sum: ['level'] } },
             { aggrs: {} },
             { aggrs: '{"count":["*"]}' },
+            { level: 1.5 },
+            { level: 4 },
             { iid: 'injected' },
             { innerAccess: true },
           ]) {
