@@ -1,5 +1,12 @@
 # Changelog
 
+## 5.1.258
+
+### Improvements
+- Synchronize the zova-core patch with the root release.
+- Update the dependency lockfile.
+- Clarify transaction and concurrency decision criteria in the documentation.
+
 ## 5.1.257
 
 ### Features
