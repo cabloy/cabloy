@@ -154,7 +154,7 @@ export interface ICaptchaProviderOptionsSms extends IDecoratorCaptchaProviderOpt
 @CaptchaProvider<ICaptchaProviderOptionsSms>({
   enable: true,
   ttl: 300000,
-  cooldown: app.meta.isTest ? 3000 : 60000,
+  cooldown: app.meta.isTest ? 3000 : 30000,
 })
 export class CaptchaProviderSms extends BeanBase {
   // Provider methods consume the effective options supplied by the framework.
