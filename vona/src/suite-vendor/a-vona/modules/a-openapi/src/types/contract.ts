@@ -22,4 +22,5 @@ export interface IControllerActionContract {
 
 export interface IGenerateJsonOfControllerActionOptions {
   includeExcluded?: boolean;
+  schemaTarget?: 'http' | 'mcp';
 }

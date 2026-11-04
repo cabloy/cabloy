@@ -76,6 +76,23 @@ The metadata declarations are defined in:
 - `vona/src/suite-vendor/a-vona/modules/a-openapiutils/src/lib/decorator/mcp.ts`
 - `vona/src/suite-vendor/a-vona/modules/a-openapiutils/src/types/api.ts` (`IMcpToolOptions`)
 
+### Generate an Action contract for MCP JSON arguments
+
+The Controller-to-tool adapter reuses the Action's DTO and validation metadata rather than maintaining separate tool field definitions. Its single-Action extraction selects an explicit schema target:
+
+```ts
+const document = await this.bean.openapi.generateJsonOfControllerAction(
+  ControllerExample,
+  'lookup',
+  'V31',
+  { includeExcluded: true, schemaTarget: 'mcp' },
+);
+```
+
+`schemaTarget` defaults to `'http'`, preserving ordinary HTTP generation behavior. The `'mcp'` target disables HTTP query coercion while collecting and generating the contract. This matters because schema generation probes the validators: an optional field permits omission, but does not permit `null` unless the field is also nullable. For example, `z.number().int().optional()` must not advertise `null` merely because the HTTP query adapter can normalize it to an omitted value. Explicitly nullable fields retain their null support, and default values remain part of the shared DTO contract.
+
+The single-Action cache separates HTTP and MCP targets as well as locale, OpenAPI version, Action, and exclusion mode. This option still returns an OpenAPI document for the adapter to consume; it does not itself return a complete MCP tool definition or start a server. The integration remains responsible for argument grouping, response adaptation, discovery, authorization, and guarded dispatch. Native validators remain authoritative for constraints that JSON Schema cannot express.
+
 ## Validation and OpenAPI are linked
 
 A major theme is that the same validation-oriented declaration surface also drives OpenAPI metadata generation.
