@@ -1,5 +1,21 @@
 # Changelog
 
+## 5.1.257
+
+### Features
+
+- Add `__parseLiteral` support.
+
+### Bug Fixes
+
+- Keep async completion independent of ORM type augmentation.
+
+### Improvements
+
+- Refactor CAPTCHA handling.
+- Enhance async completion tests.
+- Update the configuration guide.
+
 ## 5.1.256
 
 ### Features
