@@ -26,6 +26,8 @@ function __parseAdapter(inst: z.ZodType, parse) {
         return __parseString(inst, parse, payload, _);
       case 'number':
         return __parseNumber(inst, parse, payload, _);
+      case 'literal':
+        return __parseLiteral(inst as z.ZodLiteral, parse, payload, _);
       case 'bigint':
         return __parseBigInt(inst, parse, payload, _);
       case 'boolean':
@@ -81,6 +83,25 @@ function __parseNumber(_inst, parse, payload: IParsePayload, _) {
   _coerceWithNil(payload, () => {
     payload.value = Number(payload.value);
   });
+  return parse(payload, _);
+}
+
+/////////////////////////////////////////
+/////////////////////////////////////////
+/// ///////                     /////////
+/// ///////      ZodLiteral     /////////
+/// ///////                     /////////
+/////////////////////////////////////////
+/////////////////////////////////////////
+
+function __parseLiteral(inst: z.ZodLiteral, parse, payload: IParsePayload, _) {
+  if (
+    typeof payload.value === 'string' &&
+    !inst.values.has(payload.value) &&
+    [...inst.values].some(value => typeof value === 'number')
+  ) {
+    return __parseNumber(inst, parse, payload, _);
+  }
   return parse(payload, _);
 }
 

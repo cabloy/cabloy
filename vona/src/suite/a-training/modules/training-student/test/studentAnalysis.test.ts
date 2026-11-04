@@ -201,6 +201,38 @@ describe('studentAnalysis.test.ts', { concurrency: false }, () => {
         });
         assert.deepEqual(await readAnalysis({ name: `${name}-absent` }), empty);
 
+        // URL query values are strings even when the inherited field contract is numeric.
+        for (const level of [undefined, 1, 2, 3, 4, 1.5]) {
+          const url = new URL(app.util.getAbsoluteUrlByApiPath('/training/student'));
+          url.searchParams.set('name', name);
+          url.searchParams.set('pageNo', '1');
+          url.searchParams.set('pageSize', '20');
+          url.searchParams.set('where', '{}');
+          if (level !== undefined) url.searchParams.set('level', String(level));
+          const response = await fetch(url, {
+            headers: {
+              Accept: 'application/json',
+              Authorization: `Bearer ${jwt.accessToken}`,
+            },
+          });
+          const body = await response.json();
+          if (level === 4 || level === 1.5) {
+            assert.equal(response.status, 422);
+            assert.equal(body.code, 422);
+          } else {
+            assert.equal(response.status, 200);
+            assert.equal(body.code, 0, JSON.stringify(body));
+            const expectedIds = ids.filter(
+              (_, index) => level === undefined || level === (index === 2 ? 2 : 1),
+            );
+            assert.equal(body.data.total, String(expectedIds.length));
+            assert.deepEqual(body.data.list.map(item => item.id).sort(), expectedIds.toSorted());
+            if (level !== undefined) {
+              assert.ok(body.data.list.every(item => item.level === level));
+            }
+          }
+        }
+
         // Dispatch concrete URLs through the HTTP router, where /:id could otherwise win.
         for (const [action, expected] of [
           ['group', initial.groups],

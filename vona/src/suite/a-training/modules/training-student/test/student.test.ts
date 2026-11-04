@@ -3,7 +3,7 @@ import type { DtoStudentSelectRes, EntityStudent } from 'vona-module-training-st
 import assert from 'node:assert';
 import { randomUUID } from 'node:crypto';
 import { describe, it } from 'node:test';
-import { appMetadata } from 'vona';
+import { appMetadata, runWithZodQueryCoercion } from 'vona';
 import { app } from 'vona-mock';
 import { $schema, SymbolOpenApiOptions } from 'vona-module-a-openapiutils';
 import {
@@ -188,7 +188,11 @@ describe('student.test.ts', { concurrency: false }, () => {
           const parsed = await $schema(DtoStudentCreate).parseAsync(student);
           assert.equal(parsed.level, 2);
           assert.equal(
-            (await $schema(DtoStudentCreate).safeParseAsync({ ...student, level: '2' })).success,
+            (
+              await runWithZodQueryCoercion(false, () =>
+                $schema(DtoStudentCreate).safeParseAsync({ ...student, level: '2' }),
+              )
+            ).success,
             false,
           );
         },
