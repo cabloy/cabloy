@@ -37,7 +37,7 @@ describe('permission.test.ts', { concurrency: false }, () => {
       } as IPassport;
       const permission = app.bean.permission;
       const controller = 'training-student.controller.student';
-      const action = app.bean.rbacCatalog.getCatalog().get(`${controller}#lookup`);
+      const action = app.bean.rbacCatalog.getCatalog().get(`${controller}#group`);
       assert.ok(action);
       assert.equal(action.actionInheritKey, `${controller}#select`);
       assert.equal(Boolean(action.options.dataScope), false);
@@ -72,17 +72,17 @@ describe('permission.test.ts', { concurrency: false }, () => {
         });
         try {
           assert.equal(
-            await permission.checkPermissionActionGuards('training-student:student', 'lookup'),
+            await permission.checkPermissionActionGuards('training-student:student', 'group'),
             true,
           );
           allowed = false;
           assert.equal(
-            await permission.checkPermissionActionGuards('training-student:student', 'lookup'),
+            await permission.checkPermissionActionGuards('training-student:student', 'group'),
             false,
           );
           allowed = true;
           assert.equal(
-            await permission.checkPermissionActionGuards('training-student:student', 'lookup'),
+            await permission.checkPermissionActionGuards('training-student:student', 'group'),
             true,
           );
           assert.equal(projection.mock.callCount(), 0);
@@ -96,17 +96,17 @@ describe('permission.test.ts', { concurrency: false }, () => {
             false,
           );
           assert.equal(
-            await permission.checkPermissionActionGuards('unknown:resource' as never, 'lookup'),
+            await permission.checkPermissionActionGuards('unknown:resource' as never, 'group'),
             false,
           );
           assert.equal(
-            await permission.checkPermissionActionGuards('toString' as never, 'lookup'),
+            await permission.checkPermissionActionGuards('toString' as never, 'group'),
             false,
           );
           assert.equal(policyCalls.length, 4);
           app.ctx.state.passport = undefined;
           assert.equal(
-            await permission.checkPermissionActionGuards('training-student:student', 'lookup'),
+            await permission.checkPermissionActionGuards('training-student:student', 'group'),
             false,
           );
           assert.equal(policyCalls.length, 4, 'Passport admission precedes policy evaluation');
@@ -139,7 +139,7 @@ describe('permission.test.ts', { concurrency: false }, () => {
       const permission = app.bean.permission;
       const action = app.bean.rbacCatalog
         .getCatalog()
-        .get('training-student.controller.student#lookup');
+        .get('training-student.controller.student#group');
       assert.ok(action);
       const decision: IRbacPolicyDecision = { allowed: true, actionKey: action.actionKey, action };
       const guard = app.bean._getBean(GuardRbac);
@@ -152,7 +152,7 @@ describe('permission.test.ts', { concurrency: false }, () => {
       try {
         setRbacDecision(app.ctx, decision);
         assert.equal(
-          await permission.checkPermissionActionGuards('training-student:student', 'lookup'),
+          await permission.checkPermissionActionGuards('training-student:student', 'group'),
           false,
         );
         assert.equal(
@@ -171,20 +171,20 @@ describe('permission.test.ts', { concurrency: false }, () => {
         ]) {
           currentDecision = invalid;
           assert.equal(
-            await permission.checkPermissionActionGuards('training-student:student', 'lookup'),
+            await permission.checkPermissionActionGuards('training-student:student', 'group'),
             false,
           );
           assert.equal(getRbacDecision(app.ctx), decision);
         }
         currentDecision = decision;
         assert.equal(
-          await permission.checkPermissionActionGuards('training-student:student', 'lookup'),
+          await permission.checkPermissionActionGuards('training-student:student', 'group'),
           true,
         );
         const catalog = t.mock.method(app.bean.rbacCatalog, 'getAction', () => undefined);
         try {
           assert.equal(
-            await permission.checkPermissionActionGuards('training-student:student', 'lookup'),
+            await permission.checkPermissionActionGuards('training-student:student', 'group'),
             false,
           );
         } finally {
@@ -215,7 +215,7 @@ describe('permission.test.ts', { concurrency: false }, () => {
       const permission = app.bean.permission;
       const action = app.bean.rbacCatalog
         .getCatalog()
-        .get('training-student.controller.student#lookup');
+        .get('training-student.controller.student#group');
       assert.ok(action);
       const decision: IRbacPolicyDecision = { allowed: true, actionKey: action.actionKey, action };
       const guard = app.bean._getBean(GuardRbac);
@@ -266,12 +266,12 @@ describe('permission.test.ts', { concurrency: false }, () => {
             outcome = result;
             if (result === failure) {
               await assert.rejects(
-                () => permission.checkPermissionActionGuards('training-student:student', 'lookup'),
+                () => permission.checkPermissionActionGuards('training-student:student', 'group'),
                 error => error === failure,
               );
             } else {
               assert.equal(
-                await permission.checkPermissionActionGuards('training-student:student', 'lookup'),
+                await permission.checkPermissionActionGuards('training-student:student', 'group'),
                 result === true,
               );
             }

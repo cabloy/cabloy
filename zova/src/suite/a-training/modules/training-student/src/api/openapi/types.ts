@@ -1298,23 +1298,6 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
-  '/api/training/student/lookup': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /** Find Students */
-    get: operations['TrainingStudent_lookup'];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
   '/api/training/student/group': {
     parameters: {
       query?: never;
@@ -4742,24 +4725,6 @@ export interface components {
           signed?: boolean;
         }
       | undefined;
-    'training-student.dto.studentLookupRes': {
-      list: components['schemas']['training-student.dto.studentLookupItem'][];
-      total: string;
-      pageCount: number;
-      pageSize: number;
-      pageNo: number;
-    };
-    'training-student.dto.studentLookupItem': {
-      /** @description ID */
-      id: number | string;
-      /** @description Student Name */
-      name: string;
-      /**
-       * Training Stage
-       * @description 1=Foundation Track; 2=Progress Track; 3=Advanced Workshop
-       */
-      level: 1 | 2 | 3;
-    };
     'training-student.dto.studentGroupResItem': {
       /**
        * Training Stage
@@ -8570,35 +8535,6 @@ export interface operations {
             code: string;
             message: string;
             data: number | string;
-          };
-        };
-      };
-    };
-    authToken: true;
-  };
-  TrainingStudent_lookup: {
-    parameters: {
-      query: {
-        name: string;
-        level?: number | undefined;
-        pageNo?: number;
-        pageSize?: number;
-      };
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          'application/json': {
-            code: string;
-            message: string;
-            data: components['schemas']['training-student.dto.studentLookupRes'];
           };
         };
       };

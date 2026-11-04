@@ -592,3 +592,9 @@ Acceptance checks:
 - [A-MCP ADR 0007 (proposed)](./decisions/0007-mcp-context-passport-executor.md)
 - [A-MCP ADR 0008 (proposed)](./decisions/0008-mcp-limits-audit-telemetry-redaction.md)
 - [A-MCP ADR 0009 (accepted design-only amendment)](./decisions/0009-mcp-as-state-boundary.md)
+
+## Approved Student Lookup Retirement (2026-11-04)
+
+The [approved retirement supersession](./srs.md#approved-student-lookup-retirement-2026-11-04) replaces earlier delivery instructions to retain Student lookup or route name discovery through it. The nine-tool pre-retirement catalog becomes eight: select/group/aggregate/view/summary reads and create/update/delete writes. Guidance uses select → matching returned ID → independently authorized summary/view. Select keeps existing LIKE wildcard behavior for `%`/`_`, complete serialized rows including masked mobile and existing pagination, not lookup's literal escaping, three-field minimization or dedicated page bounds; summary keeps its six-field projection.
+
+The approved retirement removes the redundant Student lookup flow and updates its current guidance; these notes record that scope without rewriting historical approvals/evidence or changing WBS status and ATP closure. Token lookup is unaffected. Retirement implementation and verification require their own revision-bound evidence, not inference from earlier lookup approvals. See the [retirement index](./README.md#approved-student-lookup-retirement-2026-11-04) and [prospective verification boundary](./test-plan.md#approved-student-lookup-retirement-2026-11-04).

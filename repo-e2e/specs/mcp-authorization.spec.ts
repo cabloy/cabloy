@@ -389,33 +389,37 @@ async function verifyStudentTools(
       'training_student_aggregate',
       ...(scope === 'mcp:all' ? ['training_student_create', 'training_student_delete'] : []),
       'training_student_group',
-      'training_student_lookup',
       'training_student_select',
       'training_student_summary',
       ...(scope === 'mcp:all' ? ['training_student_update'] : []),
       'training_student_view',
     ]);
 
-    const lookup = await callMcp(
+    const query = { name, level, pageNo: 1, pageSize: 1 };
+    const initialSelect = await callMcp(
       request,
       'tools/call',
-      { name: 'training_student_lookup', arguments: { name, level } },
+      { name: 'training_student_select', arguments: query },
       token,
     );
-    expect(lookup.status()).toBe(200);
-    const found = (await lookup.json()).result;
-    expect(found.isError === true).toBe(false);
-    expect(found.structuredContent).toEqual({
-      list: [{ id: String(studentId), name, level }],
+    expect(initialSelect.status()).toBe(200);
+    const initial = (await initialSelect.json()).result;
+    expect(initial.isError === true).toBe(false);
+    expect(initial.structuredContent).toMatchObject({
+      list: [{ id: String(studentId), name, mobile: '138****5678', level }],
       total: '1',
       pageNo: 1,
-      pageSize: 10,
+      pageSize: 1,
       pageCount: 1,
     });
+    expect(initial.structuredContent.list).toHaveLength(1);
+    expect(initial.content).toEqual([
+      { type: 'text', text: JSON.stringify(initial.structuredContent) },
+    ]);
+    const selectedId = initial.structuredContent.list[0].id;
 
     // The first real read uses the consent-issued credential; subsequent reads use its rotation.
     token = await refresh();
-    const query = { name, level, pageNo: 1, pageSize: 1 };
     const selected = await callMcp(
       request,
       'tools/call',
@@ -439,6 +443,7 @@ async function verifyStudentTools(
       if (row.imageId === null) delete row.imageId;
       return row;
     });
+    expect(initial.structuredContent).toEqual(serialized);
     expect(complete.structuredContent).toEqual(serialized);
     expect(complete.structuredContent).toMatchObject({
       list: [{ id: String(studentId), name, mobile: '138****5678', level }],
@@ -462,7 +467,7 @@ async function verifyStudentTools(
     const viewed = await callMcp(
       request,
       'tools/call',
-      { name: 'training_student_view', arguments: { id: found.structuredContent.list[0].id } },
+      { name: 'training_student_view', arguments: { id: selectedId } },
       token,
     );
     expect(viewed.status()).toBe(200);
@@ -510,7 +515,7 @@ async function verifyStudentTools(
     const summary = await callMcp(
       request,
       'tools/call',
-      { name: 'training_student_summary', arguments: { id: found.structuredContent.list[0].id } },
+      { name: 'training_student_summary', arguments: { id: selectedId } },
       token,
     );
     expect(summary.status()).toBe(200);
@@ -524,14 +529,12 @@ async function verifyStudentTools(
       descriptionLength: descriptionMarkdown.length,
       summaryText: `${name} is in level ${level}. Description length: ${descriptionMarkdown.length}.`,
     });
-    for (const response of [found, result]) {
-      const wire = JSON.stringify(response);
-      for (const privateValue of [mobile, '138****5678', descriptionMarkdown]) {
-        expect(wire.includes(privateValue)).toBe(false);
-      }
-      for (const privateField of ['mobile', 'descriptionMarkdown', 'descriptionHtml']) {
-        expect(wire.includes(`"${privateField}"`)).toBe(false);
-      }
+    const wire = JSON.stringify(result);
+    for (const privateValue of [mobile, '138****5678', descriptionMarkdown]) {
+      expect(wire.includes(privateValue)).toBe(false);
+    }
+    for (const privateField of ['mobile', 'descriptionMarkdown', 'descriptionHtml']) {
+      expect(wire.includes(`"${privateField}"`)).toBe(false);
     }
   } finally {
     if (studentId !== undefined) {

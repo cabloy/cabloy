@@ -601,3 +601,9 @@ Catalog generation, tool listing, and calls have explicit bounded work, response
 - [A-MCP ADR 0007 (proposed)](./decisions/0007-mcp-context-passport-executor.md)
 - [A-MCP ADR 0008 (proposed)](./decisions/0008-mcp-limits-audit-telemetry-redaction.md)
 - [A-MCP ADR 0009 (accepted design-only amendment)](./decisions/0009-mcp-as-state-boundary.md)
+
+## Approved Student Lookup Retirement (2026-11-04)
+
+The approved retirement of `training_student_lookup` supersedes earlier requirements to retain that Student action/tool or use its literal-substring, three-field, dedicated-page-bound contract for name discovery. Nine pre-retirement Student tools become eight: select/group/aggregate/view/summary reads and create/update/delete writes. Use select's existing LIKE name filter (`%` and `_` retain wildcard meaning, without literal escaping), choose a matching `list` row's returned `id`, then call summary or view only with independent student-view authority. Select returns complete serialized rows, including masked mobile; neither lookup's ID/name/level-only minimization nor its dedicated page bounds carries over. Existing select pagination applies. Summary remains exactly `id`, `name`, `level`, `levelTitle`, `descriptionLength` and `summaryText`.
+
+See the [retirement index](./README.md#approved-student-lookup-retirement-2026-11-04) and [legacy select guidance](../../vona/src/suite/cabloy-mcp/docs/mcp-controller-tools.md#example-complete-student-select). Token lookup and unrelated authorization contracts are unaffected. Earlier approvals/evidence remain historical and unchanged; this contract supersession does not itself supply runtime proof or acceptance closure.

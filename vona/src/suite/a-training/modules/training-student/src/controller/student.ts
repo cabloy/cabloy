@@ -21,8 +21,6 @@ import { DtoStudentAggregateRes } from '../dto/studentAggregateRes.tsx';
 import { DtoStudentCreate } from '../dto/studentCreate.tsx';
 import { DtoStudentDeleteBulk } from '../dto/studentDeleteBulk.tsx';
 import { DtoStudentGroupResItem } from '../dto/studentGroupResItem.tsx';
-import { DtoStudentLookupReq } from '../dto/studentLookupReq.tsx';
-import { DtoStudentLookupRes } from '../dto/studentLookupRes.tsx';
 import { DtoStudentSelectReq } from '../dto/studentSelectReq.tsx';
 import { DtoStudentSelectRes } from '../dto/studentSelectRes.tsx';
 import { DtoStudentSummary } from '../dto/studentSummary.tsx';
@@ -63,22 +61,6 @@ export class ControllerStudent extends BeanBase {
     @Arg.filter(DtoStudentSelectReq) params: IQueryParams<ModelStudent>,
   ): Promise<DtoStudentSelectRes> {
     return await this.scope.service.student.select(params);
-  }
-
-  @Mcp.tool({
-    name: 'training_student_lookup',
-    description:
-      'Find students by a literal name substring using your current student-select permission and instance. Returns only ID, name and level; summary access requires student-view permission separately.',
-    readOnly: true,
-  })
-  @Web.get('lookup', { summary: $locale('StudentLookup') })
-  @Api.body(DtoStudentLookupRes)
-  @Core.serializer()
-  @Passport.rbac({ actionInherit: 'select' })
-  async lookup(
-    @Arg.query(v.object(DtoStudentLookupReq, { strict: true })) query: DtoStudentLookupReq,
-  ): Promise<DtoStudentLookupRes> {
-    return await this.scope.service.student.lookup(query);
   }
 
   @Mcp.tool({

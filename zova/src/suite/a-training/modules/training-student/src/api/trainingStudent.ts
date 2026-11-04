@@ -24,15 +24,6 @@ export type ApiApiTrainingStudentcreateRequestBody =
 export type ApiApiTrainingStudentcreateResponseBody =
   paths[ApiApiTrainingStudentcreatePath][ApiApiTrainingStudentcreateMethod]['responses']['200']['content']['application/json']['data'];
 
-/** TrainingStudent_lookup */
-export const ApiApiTrainingStudentlookupPath = '/api/training/student/lookup';
-export type ApiApiTrainingStudentlookupPath = '/api/training/student/lookup';
-export type ApiApiTrainingStudentlookupMethod = 'get';
-export type ApiApiTrainingStudentlookupRequestQuery =
-  paths[ApiApiTrainingStudentlookupPath][ApiApiTrainingStudentlookupMethod]['parameters']['query'];
-export type ApiApiTrainingStudentlookupResponseBody =
-  paths[ApiApiTrainingStudentlookupPath][ApiApiTrainingStudentlookupMethod]['responses']['200']['content']['application/json']['data'];
-
 /** TrainingStudent_group */
 export const ApiApiTrainingStudentgroupPath = '/api/training/student/group';
 export type ApiApiTrainingStudentgroupPath = '/api/training/student/group';
@@ -126,18 +117,6 @@ export class ApiTrainingStudent extends BeanApiBase {
     return this.$fetch.post<any, ApiApiTrainingStudentcreateResponseBody>(
       ApiApiTrainingStudentcreatePath,
       body,
-      this.$configPrepare(OpenApiBaseURL(this.sys), options, true),
-    );
-  }
-
-  /** Find Students */
-  lookup(
-    options: {
-      query: ApiApiTrainingStudentlookupRequestQuery;
-    } & IApiActionOptions,
-  ) {
-    return this.$fetch.get<any, ApiApiTrainingStudentlookupResponseBody>(
-      ApiApiTrainingStudentlookupPath,
       this.$configPrepare(OpenApiBaseURL(this.sys), options, true),
     );
   }

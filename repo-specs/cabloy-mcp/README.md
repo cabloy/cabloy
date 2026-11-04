@@ -232,3 +232,9 @@ Exact declaration-level links use `PRD-MCP-*`, `SRS-MCP-*`, `WBS-MCP-*`, and `AT
 - [MCP Streamable HTTP transport](https://modelcontextprotocol.io/specification/2026-07-28/basic/transports/streamable-http)
 - [MCP authorization](https://modelcontextprotocol.io/specification/2026-07-28/basic/authorization)
 - [MCP server tools](https://modelcontextprotocol.io/specification/2026-07-28/server/tools)
+
+## Approved Student Lookup Retirement (2026-11-04)
+
+The approved retirement of `training_student_lookup` supersedes earlier current-catalog and lookup-based journey guidance only. The source catalog before retirement has nine Student tools, not the stale seven; retirement leaves eight: select/group/aggregate/view/summary reads and create/update/delete writes. Name → returned ID → summary/view uses select, with independent view permission for the final read. Select keeps its existing LIKE filter (`%`/`_` are not literal-escaped), complete serialized rows including masked mobile, and existing pagination—not lookup's three-field minimization or dedicated page bounds. Summary retains its six fields.
+
+See the [SRS supersession](./srs.md#approved-student-lookup-retirement-2026-11-04), [test-plan boundary](./test-plan.md#approved-student-lookup-retirement-2026-11-04), [delivery boundary](./pdp-wbs.md#approved-student-lookup-retirement-2026-11-04) and [legacy suite reference](../../vona/src/suite/cabloy-mcp/docs/mcp-guide.md#student-read-examples). Historical approvals and evidence remain unchanged; this retirement amendment does not itself establish new runtime evidence, ATP closure or deployment qualification. Token lookup is unaffected.

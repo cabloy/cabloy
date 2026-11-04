@@ -69,7 +69,6 @@ const studentToolNames = [
   'training_student_create',
   'training_student_delete',
   'training_student_group',
-  'training_student_lookup',
   'training_student_select',
   'training_student_summary',
   'training_student_update',
@@ -98,17 +97,9 @@ async function withStudentToolPermissions(fn: () => Promise<void>) {
         app.ctx !== context ||
         app.bean.passport.currentUser?.id !== passport.user!.id ||
         request.action.controllerBeanFullName !== controller ||
-        ![
-          'select',
-          'lookup',
-          'group',
-          'aggregate',
-          'view',
-          'summary',
-          'create',
-          'update',
-          'delete',
-        ].includes(request.action.action)
+        !['select', 'group', 'aggregate', 'view', 'summary', 'create', 'update', 'delete'].includes(
+          request.action.action,
+        )
       ) {
         return next();
       }
@@ -367,7 +358,7 @@ describe('businessTools.test.ts', { concurrency: false, timeout: 60000 }, () => 
     });
   });
 
-  it('keeps all nine student tools out of default/anonymous discovery and validates their authorized shared contracts', async t => {
+  it('keeps all eight student tools out of default/anonymous discovery and validates their authorized shared contracts', async t => {
     await app.bean.executor.mockCtx(async () => {
       assert.equal(app.bean.passport.isAuthenticated, false);
       const anonymous = await connect(await createSharedBusinessToolServer(app, 'mcp:all'));
@@ -396,16 +387,13 @@ describe('businessTools.test.ts', { concurrency: false, timeout: 60000 }, () => 
         for (const name of studentToolNames) {
           const rejected = await standalone.request('tools/call', {
             name,
-            arguments:
-              name === 'training_student_lookup'
-                ? { name: 'Student' }
-                : [
-                      'training_student_summary',
-                      'training_student_view',
-                      'training_student_delete',
-                    ].includes(name)
-                  ? { id: '1' }
-                  : {},
+            arguments: [
+              'training_student_summary',
+              'training_student_view',
+              'training_student_delete',
+            ].includes(name)
+              ? { id: '1' }
+              : {},
           });
           assert.equal(rejected.error.code, -32602);
         }
@@ -431,9 +419,6 @@ describe('businessTools.test.ts', { concurrency: false, timeout: 60000 }, () => 
         const student = listed.result.tools.find(
           (tool: any) => tool.name === 'training_student_summary',
         );
-        const lookup = listed.result.tools.find(
-          (tool: any) => tool.name === 'training_student_lookup',
-        );
         const view = listed.result.tools.find((tool: any) => tool.name === 'training_student_view');
         const create = listed.result.tools.find(
           (tool: any) => tool.name === 'training_student_create',
@@ -447,7 +432,6 @@ describe('businessTools.test.ts', { concurrency: false, timeout: 60000 }, () => 
           assert.equal(view, undefined);
           assert.equal(select, undefined);
           assert.equal(student, undefined);
-          assert.equal(lookup, undefined);
           return;
         }
         assert.deepEqual(
@@ -566,108 +550,6 @@ describe('businessTools.test.ts', { concurrency: false, timeout: 60000 }, () => 
             { code: -32602, message: 'Invalid tool arguments' },
             JSON.stringify(args),
           );
-        }
-        assert.ok(lookup);
-        assert.deepEqual(Object.keys(lookup.inputSchema.properties).sort(), [
-          'level',
-          'name',
-          'pageNo',
-          'pageSize',
-        ]);
-        assert.deepEqual(lookup.inputSchema.required, ['name']);
-        assert.equal(lookup.inputSchema.additionalProperties, false);
-        assert.equal(lookup.inputSchema.properties.name.type, 'string');
-        assert.equal(lookup.inputSchema.properties.name.minLength, 1);
-        assert.equal(lookup.inputSchema.properties.name.maxLength, 100);
-        assert.equal(lookup.inputSchema.properties.level.type, 'integer');
-        assert.equal(lookup.inputSchema.properties.level.minimum, 1);
-        assert.equal(lookup.inputSchema.properties.level.maximum, 3);
-        assert.equal(lookup.inputSchema.properties.pageNo.type, 'integer');
-        assert.equal(lookup.inputSchema.properties.pageNo.minimum, 1);
-        assert.equal(lookup.inputSchema.properties.pageNo.default, 1);
-        assert.equal(lookup.inputSchema.properties.pageSize.type, 'integer');
-        assert.equal(lookup.inputSchema.properties.pageSize.minimum, 1);
-        assert.equal(lookup.inputSchema.properties.pageSize.maximum, 20);
-        assert.equal(lookup.inputSchema.properties.pageSize.default, 10);
-        assert.equal(lookup.annotations.readOnlyHint, true);
-        const lookupCheck = fromJsonSchema(lookup.inputSchema)['~standard'];
-        assert.equal((await lookupCheck.validate({ name: 'Student' })).issues, undefined);
-        for (const level of [null, '1', 1.5, 0, 4]) {
-          assert.ok((await lookupCheck.validate({ name: 'Student', level })).issues);
-        }
-        assert.deepEqual(Object.keys(lookup.outputSchema.properties).sort(), [
-          'list',
-          'pageCount',
-          'pageNo',
-          'pageSize',
-          'total',
-        ]);
-        assert.equal(lookup.outputSchema.properties.total.type, 'string');
-        assert.equal(lookup.outputSchema.properties.list.type, 'array');
-        const item =
-          lookup.outputSchema.components.schemas['training-student.dto.studentLookupItem'];
-        assert.equal(
-          lookup.outputSchema.properties.list.items.$ref,
-          '#/components/schemas/training-student.dto.studentLookupItem',
-        );
-        assert.deepEqual(Object.keys(item.properties).sort(), ['id', 'level', 'name']);
-        assert.deepEqual(item.required.toSorted(), ['id', 'level', 'name']);
-        for (const field of ['mobile', 'notes', 'descriptionMarkdown', 'descriptionHtml', 'rest']) {
-          assert.equal(
-            JSON.stringify(lookup.inputSchema).includes(`"${field}"`),
-            false,
-            `lookup input schema excludes ${field}`,
-          );
-          assert.equal(
-            JSON.stringify(lookup.outputSchema).includes(`"${field}"`),
-            false,
-            `lookup output schema excludes ${field}`,
-          );
-        }
-        for (const args of [
-          undefined,
-          {},
-          { name: null },
-          { name: true },
-          { name: 1 },
-          { name: [] },
-          { name: {} },
-          { name: '' },
-          { name: '   ' },
-          { name: 'x'.repeat(101) },
-          { name: 'Student', level: 0 },
-          { name: 'Student', level: 4 },
-          { name: 'Student', level: 1.5 },
-          { name: 'Student', level: null },
-          { name: 'Student', level: '1' },
-          { name: 'Student', pageNo: 0 },
-          { name: 'Student', pageNo: 1.5 },
-          { name: 'Student', pageNo: '1' },
-          { name: 'Student', pageSize: 0 },
-          { name: 'Student', pageSize: 21 },
-          { name: 'Student', pageSize: 1.5 },
-          { name: 'Student', pageSize: true },
-          ...[
-            'unknown',
-            'where',
-            'columns',
-            'orders',
-            'executor',
-            'disableInstance',
-            'iid',
-            'route',
-            'method',
-            'headers',
-            'innerAccess',
-            'instanceName',
-            'userId',
-          ].map(key => ({ name: 'Student', [key]: 'injected' })),
-        ]) {
-          const rejected = await shared.request('tools/call', {
-            name: lookup.name,
-            arguments: args,
-          });
-          assert.equal(rejected.error?.code, -32602, JSON.stringify(args));
         }
         assert.ok(view);
         assert.equal(view.annotations.readOnlyHint, true);
@@ -1747,73 +1629,39 @@ describe('businessTools.test.ts', { concurrency: false, timeout: 60000 }, () => 
     });
   });
 
-  it('normalizes authorized lookup queries and projects nested student output', async t => {
-    if (!app.meta.modules['training-student']) return;
+  it('rejects the retired student lookup tool without dispatching an Action', async t => {
     await withStudentToolPermissions(async () => {
-      const client = await connect(await createSharedBusinessToolServer(app, 'mcp:read'));
-      const raw = {
-        list: [
-          {
-            id: '123',
-            name: '__MCP lookup__',
-            level: 2,
-            mobile: 'private-mobile',
-            notes: 'private-notes',
-            descriptionMarkdown: 'private-markdown',
-            descriptionHtml: '<p>private-notes</p>',
-            rest: { render: 'private-renderer' },
-          },
-        ],
-        total: '1',
-        pageCount: 1,
-        pageNo: 1,
-        pageSize: 10,
-      };
-      // Isolate query binding and output parsing; real permissions remain covered by businessHttp.
-      const action = t.mock.method(
-        app.bean.executor,
-        'performAction',
-        async (..._args: Parameters<typeof app.bean.executor.performAction>) => raw,
-      );
+      const clients: Awaited<ReturnType<typeof connect>>[] = [];
+      const action = t.mock.method(app.bean.executor, 'performAction', async () => {
+        assert.fail('retired tool calls must not dispatch business Actions');
+      });
       try {
-        const response = await client.request('tools/call', {
-          name: 'training_student_lookup',
-          arguments: { name: '  Student  ' },
-        });
-        assert.equal(response.error, undefined);
-        assert.notEqual(response.result.isError, true);
-        assert.deepEqual(action.mock.calls[0].arguments, [
-          'get',
-          '/training/student/lookup',
-          { query: { name: 'Student', pageNo: 1, pageSize: 10 }, innerAccess: false },
-        ]);
-        assert.deepEqual(response.result.structuredContent, {
-          list: [{ id: '123', name: '__MCP lookup__', level: 2 }],
-          total: '1',
-          pageCount: 1,
-          pageNo: 1,
-          pageSize: 10,
-        });
-        assert.deepEqual(
-          JSON.parse(response.result.content[0].text),
-          response.result.structuredContent,
-        );
-        for (const level of [1, 2, 3]) {
-          const args = { name: 'x'.repeat(100), level, pageNo: 2, pageSize: level === 1 ? 1 : 20 };
-          const accepted = await client.request('tools/call', {
-            name: 'training_student_lookup',
-            arguments: args,
-          });
-          assert.equal(accepted.error, undefined);
-          assert.notEqual(accepted.result.isError, true);
-          assert.deepEqual(action.mock.calls.at(-1)!.arguments[2], {
-            query: args,
-            innerAccess: false,
-          });
+        clients.push(await connect(await createBusinessToolServer(app)));
+        for (const scope of ['mcp:read', 'mcp:all'] as const) {
+          clients.push(await connect(await createSharedBusinessToolServer(app, scope)));
         }
+        for (const client of clients) {
+          const listed = await client.request('tools/list');
+          assert.equal(listed.error, undefined);
+          assert.equal(
+            listed.result.tools.some((tool: any) => tool.name === 'training_student_lookup'),
+            false,
+          );
+          for (const args of [undefined, {}, { name: 'Student' }]) {
+            const rejected = await client.request('tools/call', {
+              name: 'training_student_lookup',
+              arguments: args,
+            });
+            assert.deepEqual(rejected.error, {
+              code: -32602,
+              message: client === clients[0] ? 'Unknown tool' : 'Tool unavailable',
+            });
+          }
+        }
+        assert.equal(action.mock.callCount(), 0, 'retired names never reach performAction');
       } finally {
         action.mock.restore();
-        await client.close();
+        for (const client of clients) await client.close();
       }
     });
   });

@@ -8,7 +8,7 @@ The normal authenticated endpoint is shared `/mcp`, owned by `cabloy-mcp`. Recog
 
 Shared construction admits registered Resource controllers, not a Student action whitelist. A tool must have an enabled registered route, explicit method/class `@Mcp.tool()` opt-in and a supported contract. The implementation derives the Resource from the controller identity and requires its own entry in `recordResourceNameToRoutePath`. Nonresource fixtures are excluded from both listing and known-name direct calls.
 
-The optional training suite currently supplies seven Student examples: create, select, lookup, view, update, summary and delete. These are not a catalog ceiling. Without training, Student tools disappear; other eligible Resource tools may remain. The three synthetic tools and anonymous standalone entry of the `mcp-test` launcher are not the shared endpoint.
+The optional training suite supplies eight Student examples after lookup retirement: select, group, aggregate, view and summary reads, plus create, update and delete writes. These are not a catalog ceiling. Without training, Student tools disappear; other eligible Resource tools may remain. The three synthetic tools and anonymous standalone entry of the `mcp-test` launcher are not the shared endpoint.
 
 ## Authorization is checked independently
 
@@ -40,14 +40,15 @@ Method options override class defaults; `output.pick` arrays replace inherited a
 
 ## Student read examples
 
-| Tool                       | Required business authority | Existing response contract                                                                                                                   |
-| -------------------------- | --------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------- |
-| `training_student_select`  | Student select              | Paginated `list`, string `total`, `pageNo`, `pageSize`, `pageCount`; serialized rows and masked mobile                                       |
-| `training_student_lookup`  | Student select              | Minimized ID, name and level                                                                                                                 |
-| `training_student_view`    | Student view                | Complete serialized detail, including Markdown content, training records with nested subjects, optional image presentation and masked mobile |
-| `training_student_summary` | Student view                | Six-field projection: `id`, `name`, `level`, `levelTitle`, `descriptionLength`, `summaryText`                                                |
+| Tool                         | Required business authority | Existing response contract                                                                                                                   |
+| ---------------------------- | --------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------- |
+| `training_student_select`    | Student select              | Paginated `list`, string `total`, `pageNo`, `pageSize`, `pageCount`; serialized rows and masked mobile                                       |
+| `training_student_group`     | Student select              | Grouped counts by level; string counts, wrapped in `result`                                                                                  |
+| `training_student_aggregate` | Student select              | Ungrouped string counts                                                                                                                      |
+| `training_student_view`      | Student view                | Complete serialized detail, including Markdown content, training records with nested subjects, optional image presentation and masked mobile |
+| `training_student_summary`   | Student view                | Six-field projection: `id`, `name`, `level`, `levelTitle`, `descriptionLength`, `summaryText`                                                |
 
-Select and view authority do not imply each other. All four reads are current-instance scoped. Select reuses the existing filter/query contract, including pagination; it is not an unbounded export. Full detail does not add detail joins to select or expand lookup/summary disclosure.
+Select and view authority do not imply each other. All five reads are current-instance scoped. For name → ID → summary/view, call select with flat query arguments such as `{ "name": "Student", "pageNo": 1, "pageSize": 10 }`, choose the matching `list` row's returned `id`, then call summary or view with `{ "id": "<returned student ID>" }` only with independent view permission. Select uses the existing LIKE name filter: `%` and `_` retain wildcard meaning and are not literal-escaped. It returns complete serialized rows, including masked mobile, not the retired lookup's three-field projection or its dedicated page bounds. Pagination follows the existing select contract; full detail does not add detail joins to select or expand summary's six-field projection.
 
 Image presentation is existing URL data, not an MCP image block or UI resource. Absolute URLs do not guarantee external reachability or inline rendering in a client.
 
@@ -94,7 +95,7 @@ Root admission pre-reads are not atomic against concurrent deletion. Aggregate w
 
 There is no automatic retry, deduplication, replay-safety or rollback-on-response-failure guarantee. Errors, timeouts, lost responses and output failures do not prove that no write occurred. **Do not automatically replay uncertain mutations.**
 
-The named Student create, update and delete tools add no new server-side per-call confirmation gate. Client approval is not a server-verifiable grant. Dedicated protected audit, audit-outage availability gating and deployment-wide fine-grained quotas are deferred for these named tools and the four reads. Ordinary logs are not protected audit or compliance proof. Existing authorization, per-worker bounds, actual-work settlement and shutdown drain remain; this guide claims neither audit compliance nor deployment/release qualification.
+The named Student create, update and delete tools add no new server-side per-call confirmation gate. Client approval is not a server-verifiable grant. Dedicated protected audit, audit-outage availability gating and deployment-wide fine-grained quotas are deferred for these named tools and the five reads. Ordinary logs are not protected audit or compliance proof. Existing authorization, per-worker bounds, actual-work settlement and shutdown drain remain; this guide claims neither audit compliance nor deployment/release qualification.
 
 ## Source reading pointers
 

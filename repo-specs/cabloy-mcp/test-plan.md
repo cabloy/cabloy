@@ -829,3 +829,9 @@ Release is blocked until:
 - [A-MCP ADR 0007 (proposed)](./decisions/0007-mcp-context-passport-executor.md)
 - [A-MCP ADR 0008 (proposed)](./decisions/0008-mcp-limits-audit-telemetry-redaction.md)
 - [A-MCP ADR 0009 (accepted design-only amendment)](./decisions/0009-mcp-as-state-boundary.md)
+
+## Approved Student Lookup Retirement (2026-11-04)
+
+For the approved retirement, the [SRS supersession](./srs.md#approved-student-lookup-retirement-2026-11-04) replaces prospective Student lookup catalog/call expectations: nine pre-retirement tools become eight (five reads: select/group/aggregate/view/summary; three writes: create/update/delete). Future name → ID → summary/view checks use select's returned `list` row ID and separately authorized view/summary, not the retired lookup. Expect existing LIKE wildcard semantics for `%`/`_`, complete serialized select rows including masked mobile and existing select pagination, not literal escaping, three-field minimization or lookup-specific page bounds. Summary must still contain exactly `id`, `name`, `level`, `levelTitle`, `descriptionLength` and `summaryText`.
+
+See the [legacy read-only manual journey](../../vona/src/suite/cabloy-mcp/docs/mcp-browser-authorization.md#business-reads). Historical approvals, procedures and evidence above retain their original revision scope; this retirement amendment does not itself establish new test results or change ATP/release status. Retirement verification must retain its own revision-bound evidence. Token-lookup coverage is unaffected.
