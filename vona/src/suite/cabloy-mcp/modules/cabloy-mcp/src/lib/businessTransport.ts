@@ -222,7 +222,8 @@ export function createBusinessTransport(
               },
               {
                 legacy: 'reject',
-                responseMode: 'json',
+                // Current tools emit no mid-call notifications, so auto retains JSON.
+                responseMode: 'auto',
                 keepAliveMs: 0,
                 maxRequestBodySize: 16 * 1024,
                 onerror: () => {},

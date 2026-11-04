@@ -313,7 +313,8 @@ describe('localHttp.test.ts', { concurrency: false, timeout: 60000 }, () => {
   });
 
   for (const legacy of [false, true]) {
-    it(`${legacy ? 'legacy' : 'modern'}: categories → returned IDs → search/detail with DTO/text projection, strict inputs and scoped absence`, async () => {
+    it(`${legacy ? 'legacy' : 'modern'}: categories → returned IDs → search/detail with DTO/text projection, strict inputs and scoped absence`, async t => {
+      const warnings = t.mock.method(console, 'warn');
       const local = await startLocalTransport(app);
       const exchange = (method: string, params?: Record<string, unknown>) =>
         send(local, method, params, legacy);
@@ -505,8 +506,21 @@ describe('localHttp.test.ts', { concurrency: false, timeout: 60000 }, () => {
           { type: 'text', text: 'Product not found' },
         ]);
         assert.equal(missing.body.result.structuredContent, undefined);
+        assert.equal(
+          warnings.mock.calls.some(call =>
+            String(call.arguments[0]).startsWith(
+              "responseMode: 'json' drops mid-call notifications.",
+            ),
+          ),
+          false,
+          'JSON tool exchanges do not emit the SDK lossy-response-mode warning',
+        );
       } finally {
-        await local.close();
+        try {
+          await local.close();
+        } finally {
+          warnings.mock.restore();
+        }
       }
     });
   }
