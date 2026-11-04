@@ -32,6 +32,7 @@ export {
   runWithRequestBoundary,
 } from './requestBoundary.ts';
 export * from './resource.ts';
+export * from './testAsyncCompletion.ts';
 export * from './testClaim.ts';
 export * from './testIsolation.ts';
 export * from './testFreshness.ts';

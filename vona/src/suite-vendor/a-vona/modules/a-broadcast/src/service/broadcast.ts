@@ -1,7 +1,8 @@
 import type { Redis } from 'ioredis';
+import type { TestAsyncCompletion, TestAsyncCompletionTicket } from 'vona';
 
 import { isNil } from '@cabloy/utils';
-import { BeanBase } from 'vona';
+import { BeanBase, getTestAsyncCompletion, uuidv4 } from 'vona';
 import { Service } from 'vona-module-a-bean';
 import { getRedisClientKeyPrefix } from 'vona-module-a-redis';
 
@@ -13,6 +14,11 @@ export class ServiceBroadcast extends BeanBase {
   private __channelName: string;
   private __sub: Redis;
   private __pub: Redis;
+  private __subReady: Promise<void>;
+  private readonly __ownedDeliveries = new Map<
+    string,
+    { owner: TestAsyncCompletion; ticket: TestAsyncCompletionTicket }
+  >();
 
   protected __init__() {
     const app = this.app;
@@ -20,15 +26,35 @@ export class ServiceBroadcast extends BeanBase {
     this.__channelName = getRedisClientKeyPrefix('broadcast', this.app);
     this.__pub = app.bean.redis.get('broadcast').duplicate();
     this.__sub = app.bean.redis.get('broadcast').duplicate();
-    this.__sub.subscribe(this.__channelName, () => {});
-    this.__sub.on('message', (_channel, info) => {
-      this._performTask(JSON.parse(info))
-        .then(() => {
-          // do nothing
-        })
-        .catch((err: Error) => {
+    this.__subReady = new Promise<void>((resolve, reject) => {
+      this.__sub.subscribe(this.__channelName, err => {
+        if (err) reject(err);
+        else resolve();
+      });
+    });
+    void this.__subReady.catch(err => this.app.handleError(err));
+    this.__sub.on('message', (_channel, payload) => {
+      const info: IBroadcastJobContext<unknown> = JSON.parse(payload);
+      const delivery =
+        info.callerId === this.__callerId && info.testCompletionId
+          ? this.__ownedDeliveries.get(info.testCompletionId)
+          : undefined;
+      const execute = async () => {
+        delivery?.owner.assertScope(info.options);
+        await this._performTask(info);
+      };
+      const task = delivery ? delivery.owner.bind(execute) : execute();
+      void task.then(
+        () => {
+          delivery?.ticket.complete();
+          if (delivery) this.__ownedDeliveries.delete(info.testCompletionId!);
+        },
+        err => {
+          delivery?.ticket.complete(err);
+          if (delivery) this.__ownedDeliveries.delete(info.testCompletionId!);
           this.app.handleError(err);
-        });
+        },
+      );
     });
   }
 
@@ -63,6 +89,32 @@ export class ServiceBroadcast extends BeanBase {
           telemetry: telemetry.injectCarrier(telemetry.createContext(span)),
         },
       };
+    }
+    const owner = getTestAsyncCompletion(this.app);
+    if (owner) {
+      owner.assertScope(info.options);
+      const deliveryId = uuidv4();
+      const ticket = owner.reserve(`broadcast receipt: ${String(info.broadcastName)}`);
+      this.__ownedDeliveries.set(deliveryId, { owner, ticket });
+      const ownedInfo = { ...infoWithCaller, testCompletionId: deliveryId };
+      void owner
+        .track(`broadcast publish: ${String(info.broadcastName)}`, async () => {
+          try {
+            await this.__subReady;
+          } catch (err) {
+            this.__ownedDeliveries.delete(deliveryId);
+            ticket.complete(err);
+            throw err;
+          }
+          // A transport failure can follow delivery; only receipt can settle its ticket.
+          await this.__pub.publish(this.__channelName, JSON.stringify(ownedInfo));
+        })
+        .catch(err => {
+          if (span) telemetry.recordException(span, err);
+          this.app.handleError(err);
+        })
+        .finally(() => span?.end());
+      return;
     }
     this.__pub
       .publish(this.__channelName, JSON.stringify(infoWithCaller))
@@ -100,6 +152,9 @@ export class ServiceBroadcast extends BeanBase {
     try {
       // check
       if ((!isNil(instanceName) || instance) && !this.app.meta.appReady) {
+        if (info.testCompletionId && info.callerId === this.__callerId) {
+          throw new Error('Owned broadcast requires a ready application');
+        }
         // ignore
         return;
       }

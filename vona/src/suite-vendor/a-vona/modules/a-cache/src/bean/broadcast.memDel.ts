@@ -12,7 +12,7 @@ export interface TypeBroadcastMemDelJobData {
   key: unknown;
 }
 
-@Broadcast()
+@Broadcast({ instance: false })
 export class BroadcastMemDel
   extends BeanBroadcastBase<TypeBroadcastMemDelJobData>
   implements IBroadcastExecute<TypeBroadcastMemDelJobData>

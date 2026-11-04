@@ -19,6 +19,7 @@ export interface IBroadcastJobContext<DATA> {
   data?: DATA;
   options?: IBroadcastEmitOptions;
   callerId?: string;
+  testCompletionId?: string;
 }
 
 export interface IBroadcastRecord {}

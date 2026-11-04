@@ -4,6 +4,7 @@ import type { VonaApplication } from 'vona-core';
 import { parseModuleInfo, ParseModuleNameLevelInit } from '@cabloy/module-info-pro';
 import { useApp } from 'vona-core';
 
+export * from './lib/testAsyncCompletion.ts';
 export { acquireTestLock } from './lib/testLock.ts';
 
 const ParseModuleNameLevel = ParseModuleNameLevelInit + 2;
