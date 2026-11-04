@@ -5,14 +5,26 @@ import { app } from 'vona-mock';
 import { z } from 'zod';
 
 const query = z.object({ count: z.number(), title: z.string().optional() });
+const level = z.union([z.literal(1), z.literal(2), z.literal(3)]);
 
 function assertQuery() {
   assert.deepEqual(query.parse({ count: '2', title: '' }), { count: 2, title: undefined });
+  for (const value of [1, 2, 3]) {
+    assert.equal(level.parse(String(value)), value);
+    assert.equal(level.parse(value), value);
+  }
+  for (const value of ['4', '1.5', 'invalid', 4, 1.5, true, [1], null, undefined]) {
+    assert.equal(level.safeParse(value).success, false);
+  }
 }
 
 function assertNative() {
   assert.equal(query.safeParse({ count: '2' }).success, false);
   assert.deepEqual(query.parse({ count: 2, title: '' }), { count: 2, title: '' });
+  for (const value of [1, 2, 3]) {
+    assert.equal(level.safeParse(String(value)).success, false);
+    assert.equal(level.parse(value), value);
+  }
 }
 
 describe('zodQueryScope.test.ts', () => {
@@ -46,6 +58,31 @@ describe('zodQueryScope.test.ts', () => {
         assertNative();
       });
       assertQuery();
+    });
+  });
+
+  it('adapts numeric literals without changing string literals or union order', async () => {
+    await app.bean.executor.mockCtx(async () => {
+      await runWithZodQueryCoercion(true, async () => {
+        assert.equal(z.literal([1, 2, 3]).parse('2'), 2);
+        for (const value of ['', 'null', 'undefined', '2']) {
+          assert.equal(z.literal(value).parse(value), value);
+        }
+        const mixed = z.literal([1, '1', 'auto']);
+        assert.equal(mixed.parse('1'), '1');
+        assert.equal(mixed.parse(1), 1);
+        assert.equal(mixed.parse('auto'), 'auto');
+        assert.equal(z.union([z.literal('1'), z.literal(1)]).parse('1'), '1');
+        assert.equal(z.union([z.literal(1), z.literal('1')]).parse('1'), 1);
+        for (const value of ['', 'null', 'undefined', false, []]) {
+          assert.equal(z.literal(0).safeParse(value).success, false);
+        }
+        assert.equal(level.optional().parse(undefined), undefined);
+      });
+      await runWithZodQueryCoercion(false, async () => {
+        assert.equal(z.literal([1, 2, 3]).safeParse('2').success, false);
+        assert.equal(z.union([z.literal(1), z.literal('1')]).parse('1'), '1');
+      });
     });
   });
 
