@@ -1,5 +1,29 @@
 # Changelog
 
+## 5.1.258
+
+### Improvements
+
+- Synchronize the zova-core patch with the root release.
+- Update the dependency lockfile.
+- Clarify transaction and concurrency decision criteria in the documentation.
+
+## 5.1.257
+
+### Features
+
+- Add `__parseLiteral` support.
+
+### Bug Fixes
+
+- Keep async completion independent of ORM type augmentation.
+
+### Improvements
+
+- Refactor CAPTCHA handling.
+- Enhance async completion tests.
+- Update the configuration guide.
+
 ## 5.1.256
 
 ### Features

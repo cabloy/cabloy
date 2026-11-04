@@ -227,9 +227,16 @@ export function findTestAsyncCompletion(
 }
 
 function getDatabaseIdentity(app: VonaApplication, clientName: string) {
-  const client = app.bean.database.getClient(
-    clientName as keyof typeof app.config.database.clients,
-  );
+  const bean = app.bean as typeof app.bean & {
+    database: {
+      getClient(clientName: string): {
+        clientName: string;
+        clientConfig: Parameters<typeof assertIsolatedTestDatabaseClient>[2];
+        getDatabaseName(): string;
+      };
+    };
+  };
+  const client = bean.database.getClient(clientName);
   if (client.clientName !== clientName) {
     throw new Error('Test async completion requires a resolved database client name');
   }
