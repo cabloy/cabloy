@@ -3,7 +3,7 @@ import type { ICachingActionKeyInfo } from 'vona-module-a-caching';
 import type { IOpenapiObject } from 'vona-module-a-openapiutils';
 
 import { OpenApiGeneratorV3, OpenApiGeneratorV31, OpenAPIRegistry } from '@cabloy/zod-to-openapi';
-import { appResource, BeanBase, beanFullNameFromOnionName } from 'vona';
+import { appResource, BeanBase, beanFullNameFromOnionName, runWithZodQueryCoercion } from 'vona';
 import { Bean } from 'vona-module-a-bean';
 import { Caching } from 'vona-module-a-caching';
 import { $schema } from 'vona-module-a-openapiutils';
@@ -71,7 +71,7 @@ export class BeanOpenapi extends BeanBase {
     const beanOptions = appResource.getBean(controller)!;
     const beanFullName = beanOptions.beanFullName;
     const locale = this.ctx.locale;
-    return `${info.prop}_${beanFullName}_${actionKey}_${version ?? 'V31'}_${locale}_${options?.includeExcluded === true}`;
+    return `${info.prop}_${beanFullName}_${actionKey}_${version ?? 'V31'}_${locale}_${options?.includeExcluded === true}_${options?.schemaTarget ?? 'http'}`;
   }
 
   @Caching.get({ cacheName: 'a-openapi:json', cacheKeyFn: 'generateJsonCacheKey' })
@@ -98,22 +98,26 @@ export class BeanOpenapi extends BeanBase {
     version: K = 'V31' as any,
     options: IGenerateJsonOfControllerActionOptions = {},
   ): Promise<IOpenapiObject[K]> {
-    const registry = new OpenAPIRegistry();
-    const beanOptions = appResource.getBean(controller);
-    if (!beanOptions) throw new Error('invalid controller');
-    this.scope.service.openapi.collectController(
-      registry,
-      beanOptions.module,
-      controller,
-      actionKey,
-      options,
-    );
-    const generator =
-      version === 'V30'
-        ? new OpenApiGeneratorV3(registry.definitions)
-        : new OpenApiGeneratorV31(registry.definitions);
-    const apiObj = generator.generateDocument(this.scope.config.generateDocument[version]);
-    this.scope.service.openapi.translate(apiObj, 'rest');
-    return apiObj as IOpenapiObject[K];
+    const generate = () => {
+      const registry = new OpenAPIRegistry();
+      const beanOptions = appResource.getBean(controller);
+      if (!beanOptions) throw new Error('invalid controller');
+      this.scope.service.openapi.collectController(
+        registry,
+        beanOptions.module,
+        controller,
+        actionKey,
+        options,
+      );
+      const generator =
+        version === 'V30'
+          ? new OpenApiGeneratorV3(registry.definitions)
+          : new OpenApiGeneratorV31(registry.definitions);
+      const apiObj = generator.generateDocument(this.scope.config.generateDocument[version]);
+      this.scope.service.openapi.translate(apiObj, 'rest');
+      return apiObj as IOpenapiObject[K];
+    };
+    // MCP JSON arguments must not inherit HTTP query coercion during schema probes.
+    return options.schemaTarget === 'mcp' ? runWithZodQueryCoercion(false, generate) : generate();
   }
 }
