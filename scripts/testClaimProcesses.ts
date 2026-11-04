@@ -98,7 +98,7 @@ export async function isTestClaimInactive(
   ) {
     return { inactive: false, reason: 'POSIX process ownership cannot be inspected on Windows' };
   }
-  const snapshots = inspect
+  const snapshots: TestProcessSnapshot[] = inspect
     ? await inspect()
     : process.platform === 'win32'
       ? await inspectWindowsProcesses([
