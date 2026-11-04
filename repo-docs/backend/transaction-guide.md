@@ -39,6 +39,18 @@ Ask what the business operation must guarantee:
 - **A shared invariant depends on previously read state:** define the competing operations and required outcome, then select a concurrency strategy. Depending on the operation, that may be an atomic conditional update, optimistic version check, suitable isolation with retry, or a pessimistic row lock inside a transaction. For a read-modify-write balance or a check-then-insert path, a transaction alone may still allow a lost update or duplicate first insert.
 - **No cross-write or contention guarantee is required:** leave the CRUD operation without an additional explicit transaction or pessimistic lock. This is a decision about application-level guarantees, not a claim that the database never locks rows while executing writes.
 
+### Decide by failure consequences, not business labels
+
+Multiple `await` calls, a read-then-write flow, or multiple writes alone are not reasons to add a transaction. Describe what remains if a later step fails: if partial success is acceptable and there is a defined recovery path, an additional explicit transaction is not required. For example, two independent preference updates may remain separate if the application accepts one succeeding while the other fails and lets the user retry the failed update. Do not assume that retry is safe when an earlier step has non-idempotent effects.
+
+Conversely, a business operation requiring an order and a balance deduction to succeed or fail together needs an atomic boundary even if the feature is described as small or noncritical. Use concrete failure consequences and required guarantees, not a critical/noncritical label. Simplification must preserve authorization, financial, and data-integrity requirements; unacceptable partial success or concurrent outcomes are not made safe by omitting a transaction.
+
+Treat the mechanisms as separate decisions, not a default bundle:
+
+- **Transaction:** required writes must commit or roll back together.
+- **Concurrency control:** competing operations must preserve a defined invariant; choose only the control needed for that outcome.
+- **Retry:** a specific transient failure is replay-safe; define the retry boundary and allowed errors separately. A transaction or lock does not automatically justify retrying, especially across external side effects.
+
 For an optional one-to-one companion, updating parent fields and companion content together can justify a transaction. If concurrent first writes must leave exactly one companion, locking an existing companion row cannot protect its first insertion: a parent-row serialization point or another deliberate strategy is needed. Once all competing writers use the same parent-row serialization point, an additional companion-row lock on that path may be redundant; verify that no writer bypasses the serialization point before removing it. Test the required combined durable outcome under competing operations. See [One-to-One Companion Resource Guide](/fullstack/one-to-one-companion-resource-guide#consistency-modes-and-concurrency) and [Unit Testing](/backend/unit-testing).
 
 ## Manual transactions
