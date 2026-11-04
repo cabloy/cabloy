@@ -1,6 +1,4 @@
-import type { DtoAuth, IAuthenticateOptions, IAuthProviderRecord } from 'vona-module-a-auth';
-import type { IJwtToken } from 'vona-module-a-jwt';
-import type { IUser } from 'vona-module-a-user';
+import type { IAuthenticateOptions, IAuthProviderRecord } from 'vona-module-a-auth';
 import type { IDecoratorControllerOptions } from 'vona-module-a-web';
 
 import { BeanBase } from 'vona';
@@ -11,7 +9,6 @@ import { Passport } from 'vona-module-a-user';
 import { Arg, Controller, Web } from 'vona-module-a-web';
 import { z } from 'zod';
 
-import type { EntityRole } from '../entity/role.ts';
 import type { EntityUser } from '../entity/user.ts';
 
 import { DtoLogin } from '../dto/login.ts';
@@ -27,7 +24,7 @@ export class ControllerPassport extends BeanBase {
   @Passport.public()
   @Api.body(v.optional(), v.object(DtoPassport))
   async current(): Promise<DtoPassport | undefined> {
-    return await this._combineDtoPassport();
+    return await this.scope.service.passport.combineDtoPassport();
   }
 
   @Web.post('logout')
@@ -50,7 +47,7 @@ export class ControllerPassport extends BeanBase {
     if (user && !user.activated && user.email) {
       await this.scope.service.account.issueActivationLink(user.id, data.consumerUrl);
     }
-    return this._combineDtoPassportJwt(jwt);
+    return this.scope.service.passport.combineDtoPassportJwt(jwt);
   }
 
   @Web.post('login')
@@ -63,7 +60,7 @@ export class ControllerPassport extends BeanBase {
       state: { intention: 'login' },
       clientName: 'default',
     });
-    return this._combineDtoPassportJwt(jwt);
+    return this.scope.service.passport.combineDtoPassportJwt(jwt);
   }
 
   @Web.get('login/:module/:providerName/:clientName?')
@@ -97,7 +94,7 @@ export class ControllerPassport extends BeanBase {
       state: { intention: 'associate', redirect },
       clientName,
     });
-    return this._combineDtoPassportJwt(jwt);
+    return this.scope.service.passport.combineDtoPassportJwt(jwt);
   }
 
   @Web.get('migrate/:module/:providerName/:clientName?')
@@ -114,7 +111,7 @@ export class ControllerPassport extends BeanBase {
       state: { intention: 'migrate', redirect },
       clientName,
     });
-    return this._combineDtoPassportJwt(jwt);
+    return this.scope.service.passport.combineDtoPassportJwt(jwt);
   }
 
   @Web.post('refreshAuthToken')
@@ -129,46 +126,12 @@ export class ControllerPassport extends BeanBase {
   @Api.body(v.object(DtoPassportJwt))
   async createPassportJwtFromOauthCode(@Arg.body('code') code: string): Promise<DtoPassportJwt> {
     const jwt = await this.bean.passport.createAuthTokenFromOauthCode(code);
-    return this._combineDtoPassportJwt(jwt);
+    return this.scope.service.passport.combineDtoPassportJwt(jwt);
   }
 
   @Web.post('createTempAuthToken')
   @Api.body(z.string())
   async createTempAuthToken(@Arg.query('path', v.optional()) path?: string): Promise<string> {
     return await this.bean.passport.createTempAuthToken({ path });
-  }
-
-  private async _combineDtoPassportJwt(jwt?: IJwtToken): Promise<DtoPassportJwt> {
-    if (!jwt) this.app.throw(403);
-    const passport = await this._combineDtoPassport();
-    if (!passport) this.app.throw(403);
-    return {
-      passport,
-      jwt: jwt as DtoJwtToken,
-    };
-  }
-
-  private async _combineDtoPassport(): Promise<DtoPassport | undefined> {
-    const passport = this.bean.passport.current;
-    const user = passport?.user as (EntityUser & IUser) | undefined;
-    if (!passport || !passport.auth || !user) return;
-    return {
-      instanceId: this.ctx.instance?.id ?? null,
-      user: {
-        id: user.id,
-        name: user.name,
-        displayName: user.displayName,
-        avatar: user.avatar,
-        email: user.email,
-        mobile: user.mobile,
-        activated: user.activated,
-        accountStatus: user.accountStatus,
-        locale: user.locale,
-        tz: user.tz,
-        anonymous: user.anonymous,
-      },
-      auth: passport.auth as DtoAuth,
-      roles: passport.roles as EntityRole[],
-    };
   }
 }

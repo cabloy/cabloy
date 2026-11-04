@@ -8,6 +8,8 @@ import type { ICaptchaProviderRecord } from '../types/captchaProvider.ts';
 
 export interface IDtoOptionsCaptchaData extends IDecoratorDtoOptions {}
 
+const captchaStatusSchema = z.enum(['accepted', 'rejected', 'unknown', 'limited']);
+
 @Dto<IDtoOptionsCaptchaData>()
 export class DtoCaptchaData {
   @Api.field()
@@ -21,4 +23,23 @@ export class DtoCaptchaData {
 
   @Api.field()
   payload: unknown;
+
+  @Api.field(
+    v.openapi({ type: 'string', enum: captchaStatusSchema.options }),
+    v.optional(),
+    captchaStatusSchema,
+  )
+  status?: 'accepted' | 'rejected' | 'unknown' | 'limited';
+
+  @Api.field(v.openapi({ type: 'number' }), v.optional(), z.number())
+  serverNow?: number;
+
+  @Api.field(v.openapi({ type: 'number' }), v.optional(), z.number())
+  expiresAt?: number;
+
+  @Api.field(v.openapi({ type: 'number' }), v.optional(), z.number())
+  resendAt?: number;
+
+  @Api.field(v.openapi({ type: 'number' }), v.optional(), z.number())
+  retryAt?: number;
 }

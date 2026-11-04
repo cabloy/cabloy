@@ -6,6 +6,7 @@ import { combineQueries, isNil } from '@cabloy/utils';
 import { TableIdentity } from 'table-identity';
 import { BeanBase } from 'vona';
 import { Service } from 'vona-module-a-bean';
+import { Core } from 'vona-module-a-core';
 
 import type { EntityAuthProvider } from '../entity/authProvider.ts';
 import type { StrategyBase } from '../lib/strategyBase.ts';
@@ -54,6 +55,7 @@ export class ServiceAuth extends BeanBase {
     return jwtToken;
   }
 
+  @Core.transaction()
   async issuePassport(
     profileUser: IAuthUserProfile,
     entityAuthProvider: EntityAuthProvider,

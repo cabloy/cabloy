@@ -40,10 +40,12 @@ npm run vona :create:bean captchaScene simple -- --module=captcha-simple
 
 The main operations are:
 
-- `create`
-- `refresh`
-- `verify`
-- `verifyImmediate`
+- `create(scene, payload?)`
+- `refresh(id, scene, payload?)`
+- `verify(id, token, scene, payload?)`
+- `verifyImmediate(id, token)`
+
+`payload` is provider-specific request input. Public create/refresh requests use the field `payload`, not `data`. Provider defaults and scene overrides are merged automatically as the sole server-owned policy; payload is passed separately and is never merged into options. There is no public `bound`, `context`, `publicData`, `prepare` or `authorize` protocol, or `ICaptchaAuthorization` contract.
 
 ### Create captcha
 
@@ -87,9 +89,23 @@ A representative provider can implement image-text captcha with fields such as:
 - `fontPath`
 - `opts`
 
-That makes captcha providers extensible rather than hardcoded to one built-in shape.
+The provider lifecycle is uniform for every provider:
 
-The image-text example is a good mental model: provider code decides how to create and verify one captcha mechanism, while scene code decides when and why that mechanism should be chosen.
+- `create(options, payload?, previousToken?)` returns an opaque `token` reference to provider-owned proof state, plus public presentation `payload` and optional timing/status metadata. It never returns the answer as the private reference.
+- `verify(token, tokenInput, options, payload?)` returns `true` only after verification and one-time consumption have atomically committed. The provider owns the sole consume transition; generic captcha adds no second consume CAS.
+- Optional `verifyImmediate(token, tokenInput, options)` and `updateToken(token, tokenInput, options)` implement provider-specific immediate verification and token updates. `bean.captcha.verifyImmediate` and `updateCaptchaToken` only delegate; unsupported operations return `false` and fail with 403 respectively.
+
+There is no `verification` mode. Generic captcha owns only scene/provider resolution, automatically merged server options, payload forwarding and opaque-reference routing; it never owns proof state or normal/secondary verification. The image provider owns normal and secondary proof, immediate verification, token updates and refresh CAS, preserving existing image behavior.
+
+Refresh reuses `create(options, payload?, previousToken?)`, not a separate provider refresh hook. `previousToken` comes only from the internal cached reference; it is not caller authority or a source of request input. Returning the same reference preserves the public captcha ID; returning a new reference produces a new ID. Missing routing records fall back to create with fresh payload validation. If image private state is already absent at the start of provider create, create a new reference/ID; this supports the existing image field's refresh on form error even after proof was consumed. If the image snapshot existed but is consumed during generation, refresh CAS still fails with 403.
+
+Internal `routingExpiresAt` controls routing retention, not proof validity. For images it reserves the primary TTL plus the secondary TTL snapshotted at creation/refresh, so late immediate verification can still route secondary proof. Public `expiresAt` describes the actual proof deadline; routing retention never extends that deadline or exposes `routingExpiresAt`.
+
+Generic cache stores scene/provider/opaque reference only, with internal routing retention, not provider-owned proof state. Provider decorator defaults and scene overrides supply server-owned policy; request payload never overrides that policy.
+
+Public `token` can come only from the separate `tokenPublic` under `showToken`; the opaque private reference is never exposed, even for images or with `showToken` enabled. Issuance responses remain `no-store`.
+
+Provider code implements the mechanism and validates payload; scene code selects it and supplies server policy.
 
 ## Scene model
 

@@ -22,14 +22,33 @@ function createPassport(): IPassport {
   } as IPassport;
 }
 
+async function withPassportFixture(
+  fn: () => Promise<void>,
+  options?: Parameters<typeof app.bean.executor.mockCtx>[1],
+) {
+  await app.bean.executor.mockCtx(async () => {
+    const findOne = mock.method(app.bean.auth, 'findOne', async () => ({
+      id: 'passport-response-auth',
+      profileId: 'passport-response-profile',
+      authProvider: { id: 1, providerName: 'auth-simple:simple', clientName: 'default' },
+    }));
+    try {
+      await fn();
+    } finally {
+      findOne.mock.restore();
+    }
+  }, options);
+}
+
 const jwt = {
   accessToken: 'passport-response-access',
   refreshToken: 'passport-response-refresh',
+  expiresIn: 3600,
 };
 
 describe('passport.test.ts', { concurrency: false }, () => {
   it('current returns the authoritative request instance, not persisted passport identities', async () => {
-    await app.bean.executor.mockCtx(async () => {
+    await withPassportFixture(async () => {
       const passport = createPassport();
       app.ctx.state.passport = passport;
       const instanceId = app.ctx.instance.id;
@@ -41,14 +60,16 @@ describe('passport.test.ts', { concurrency: false }, () => {
       assert.equal(result.user.id, passport.user!.id);
       assert.equal(result.user.name, passport.user!.name);
       assert.equal(result.user.displayName, passport.user!.displayName);
-      assert.equal(result.auth, passport.auth);
-      assert.equal(result.roles, passport.roles);
+      assert.deepEqual(Object.keys(result.auth).sort(), ['authProvider', 'id', 'profileId']);
+      assert.equal(result.auth.id, passport.auth!.id);
+      assert.deepEqual(result.roles, []);
+      assert.equal('instanceId' in result.auth, false);
       assert.equal('instanceId' in result.user, false);
     });
   });
 
   it('current leaves an absent displayName unset instead of falling back to the username', async () => {
-    await app.bean.executor.mockCtx(async () => {
+    await withPassportFixture(async () => {
       const passport = createPassport();
       delete passport.user!.displayName;
       app.ctx.state.passport = passport;
@@ -60,7 +81,7 @@ describe('passport.test.ts', { concurrency: false }, () => {
   });
 
   it('current returns explicit null when the request has no instance', async () => {
-    await app.bean.executor.mockCtx(
+    await withPassportFixture(
       async () => {
         app.ctx.state.passport = createPassport();
         assert.equal(app.ctx.instance, undefined);
@@ -74,7 +95,7 @@ describe('passport.test.ts', { concurrency: false }, () => {
   });
 
   it('current preserves the absent-passport and incomplete-passport behavior', async () => {
-    await app.bean.executor.mockCtx(async () => {
+    await withPassportFixture(async () => {
       const controller = app.bean._getBean(ControllerPassport);
       for (const passport of [undefined, {}, { user: createPassport().user }, { auth: jwt }]) {
         app.ctx.state.passport = passport as IPassport | undefined;
@@ -83,9 +104,22 @@ describe('passport.test.ts', { concurrency: false }, () => {
     });
   });
 
+  it('Passport/JWT assembly rejects a missing JWT or incomplete Passport with 401', async () => {
+    await withPassportFixture(async () => {
+      const service = app.scope('home-user').service.passport;
+      const unauthorized = (error: { code?: number }) => error.code === 401;
+      app.ctx.state.passport = createPassport();
+      await assert.rejects(() => service.combineDtoPassportJwt(), unauthorized);
+      for (const passport of [undefined, {}, { user: createPassport().user }, { auth: jwt }]) {
+        app.ctx.state.passport = passport as IPassport | undefined;
+        await assert.rejects(() => service.combineDtoPassportJwt(jwt), unauthorized);
+      }
+    });
+  });
+
   it('every Passport/JWT response uses the same authoritative instance projection', async () => {
     for (const instanceName of ['', null] as const) {
-      await app.bean.executor.mockCtx(
+      await withPassportFixture(
         async () => {
           app.ctx.state.passport = createPassport();
           const controller = app.bean._getBean(ControllerPassport);

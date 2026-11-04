@@ -1,6 +1,84 @@
 // eslint-disable
 import type { TypeSymbolKeyFieldsMore } from 'vona-module-a-orm';
 import type { TypeEntityOptionsFields,TypeControllerOptionsActions } from 'vona-module-a-openapi';
+/** dto: begin */
+export * from '../dto/captchaData.ts';
+export * from '../dto/captchaVerify.ts';
+import type { IDtoOptionsCaptchaData } from '../dto/captchaData.ts';
+import type { IDtoOptionsCaptchaVerify } from '../dto/captchaVerify.ts';
+import 'vona-module-a-web';
+declare module 'vona-module-a-web' {
+
+    export interface IDtoRecord {
+      'a-captcha:captchaData': IDtoOptionsCaptchaData;
+'a-captcha:captchaVerify': IDtoOptionsCaptchaVerify;
+    }
+
+
+}
+declare module 'vona-module-a-captcha' {
+
+}
+/** dto: end */
+/** dto: begin */
+import type { DtoCaptchaData } from '../dto/captchaData.ts';
+import type { DtoCaptchaVerify } from '../dto/captchaVerify.ts';
+declare module 'vona-module-a-captcha' {
+
+    export interface IDtoOptionsCaptchaData {
+      fields?: TypeEntityOptionsFields<DtoCaptchaData, IDtoOptionsCaptchaData[TypeSymbolKeyFieldsMore]>;
+    }
+
+    export interface IDtoOptionsCaptchaVerify {
+      fields?: TypeEntityOptionsFields<DtoCaptchaVerify, IDtoOptionsCaptchaVerify[TypeSymbolKeyFieldsMore]>;
+    }
+}
+/** dto: end */
+/** controller: begin */
+export * from '../controller/captcha.ts';
+import type { IControllerOptionsCaptcha } from '../controller/captcha.ts';
+import 'vona-module-a-web';
+declare module 'vona-module-a-web' {
+
+    export interface IControllerRecord {
+      'a-captcha:captcha': IControllerOptionsCaptcha;
+    }
+
+
+}
+declare module 'vona-module-a-captcha' {
+
+        export interface ControllerCaptcha {
+          /** @internal */
+          get scope(): ScopeModuleACaptcha;
+        }
+
+          export interface ControllerCaptcha {
+            get $beanFullName(): 'a-captcha.controller.captcha';
+            get $onionName(): 'a-captcha:captcha';
+            get $onionOptions(): IControllerOptionsCaptcha;
+          }
+}
+/** controller: end */
+/** controller: begin */
+// @ts-ignore ignore
+import type { ControllerCaptcha } from '../controller/captcha.ts';
+declare module 'vona-module-a-captcha' {
+
+    export interface IControllerOptionsCaptcha {
+      actions?: TypeControllerOptionsActions<ControllerCaptcha>;
+    }
+}
+declare module 'vona-module-a-web' {
+  export interface IApiPathPostRecord{
+        '/captcha/create': undefined;
+'/captcha/refresh': undefined;
+'/captcha/verifyImmediate': undefined;
+    }
+
+}
+
+/** controller: end */
 /** interceptor: begin */
 export * from '../bean/interceptor.captchaVerify.ts';
 import type { IInterceptorOptionsCaptchaVerify } from '../bean/interceptor.captchaVerify.ts';
@@ -121,84 +199,6 @@ declare module 'vona-module-a-captcha' {
           }
 }
 /** hmr: end */
-/** dto: begin */
-export * from '../dto/captchaData.ts';
-export * from '../dto/captchaVerify.ts';
-import type { IDtoOptionsCaptchaData } from '../dto/captchaData.ts';
-import type { IDtoOptionsCaptchaVerify } from '../dto/captchaVerify.ts';
-import 'vona-module-a-web';
-declare module 'vona-module-a-web' {
-
-    export interface IDtoRecord {
-      'a-captcha:captchaData': IDtoOptionsCaptchaData;
-'a-captcha:captchaVerify': IDtoOptionsCaptchaVerify;
-    }
-
-
-}
-declare module 'vona-module-a-captcha' {
-
-}
-/** dto: end */
-/** dto: begin */
-import type { DtoCaptchaData } from '../dto/captchaData.ts';
-import type { DtoCaptchaVerify } from '../dto/captchaVerify.ts';
-declare module 'vona-module-a-captcha' {
-
-    export interface IDtoOptionsCaptchaData {
-      fields?: TypeEntityOptionsFields<DtoCaptchaData, IDtoOptionsCaptchaData[TypeSymbolKeyFieldsMore]>;
-    }
-
-    export interface IDtoOptionsCaptchaVerify {
-      fields?: TypeEntityOptionsFields<DtoCaptchaVerify, IDtoOptionsCaptchaVerify[TypeSymbolKeyFieldsMore]>;
-    }
-}
-/** dto: end */
-/** controller: begin */
-export * from '../controller/captcha.ts';
-import type { IControllerOptionsCaptcha } from '../controller/captcha.ts';
-import 'vona-module-a-web';
-declare module 'vona-module-a-web' {
-
-    export interface IControllerRecord {
-      'a-captcha:captcha': IControllerOptionsCaptcha;
-    }
-
-
-}
-declare module 'vona-module-a-captcha' {
-
-        export interface ControllerCaptcha {
-          /** @internal */
-          get scope(): ScopeModuleACaptcha;
-        }
-
-          export interface ControllerCaptcha {
-            get $beanFullName(): 'a-captcha.controller.captcha';
-            get $onionName(): 'a-captcha:captcha';
-            get $onionOptions(): IControllerOptionsCaptcha;
-          }
-}
-/** controller: end */
-/** controller: begin */
-// @ts-ignore ignore
-import type { ControllerCaptcha } from '../controller/captcha.ts';
-declare module 'vona-module-a-captcha' {
-
-    export interface IControllerOptionsCaptcha {
-      actions?: TypeControllerOptionsActions<ControllerCaptcha>;
-    }
-}
-declare module 'vona-module-a-web' {
-  export interface IApiPathPostRecord{
-        '/captcha/create': undefined;
-'/captcha/refresh': undefined;
-'/captcha/verifyImmediate': undefined;
-    }
-
-}
-
-/** controller: end */
 /** config: begin */
 export * from '../config/config.ts';
 import type { config } from '../config/config.ts';

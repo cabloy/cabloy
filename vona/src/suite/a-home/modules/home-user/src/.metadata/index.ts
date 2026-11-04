@@ -548,6 +548,7 @@ declare module 'vona-module-home-user' {
 /** imageScene: end */
 /** service: begin */
 export * from '../service/account.ts';
+export * from '../service/passport.ts';
 export * from '../service/passportAdapter.ts';
 export * from '../service/roleAdapter.ts';
 export * from '../service/userAdapter.ts';
@@ -557,6 +558,7 @@ declare module 'vona-module-a-bean' {
 
     export interface IServiceRecord {
       'home-user:account': never;
+'home-user:passport': never;
 'home-user:passportAdapter': never;
 'home-user:roleAdapter': never;
 'home-user:userAdapter': never;
@@ -574,6 +576,16 @@ declare module 'vona-module-home-user' {
           export interface ServiceAccount {
             get $beanFullName(): 'home-user.service.account';
             get $onionName(): 'home-user:account';
+          }
+
+        export interface ServicePassport {
+          /** @internal */
+          get scope(): ScopeModuleHomeUser;
+        }
+
+          export interface ServicePassport {
+            get $beanFullName(): 'home-user.service.passport';
+            get $onionName(): 'home-user:passport';
           }
 
         export interface ServicePassportAdapter {
@@ -609,11 +621,13 @@ declare module 'vona-module-home-user' {
 /** service: end */
 /** service: begin */
 import type { ServiceAccount } from '../service/account.ts';
+import type { ServicePassport } from '../service/passport.ts';
 import type { ServicePassportAdapter } from '../service/passportAdapter.ts';
 import type { ServiceRoleAdapter } from '../service/roleAdapter.ts';
 import type { ServiceUserAdapter } from '../service/userAdapter.ts';
 export interface IModuleService {
   'account': ServiceAccount;
+'passport': ServicePassport;
 'passportAdapter': ServicePassportAdapter;
 'roleAdapter': ServiceRoleAdapter;
 'userAdapter': ServiceUserAdapter;
@@ -625,6 +639,7 @@ import 'vona';
 declare module 'vona' {
   export interface IBeanRecordGeneral {
     'home-user.service.account': ServiceAccount;
+'home-user.service.passport': ServicePassport;
 'home-user.service.passportAdapter': ServicePassportAdapter;
 'home-user.service.roleAdapter': ServiceRoleAdapter;
 'home-user.service.userAdapter': ServiceUserAdapter;

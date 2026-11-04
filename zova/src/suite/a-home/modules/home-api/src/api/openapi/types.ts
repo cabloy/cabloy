@@ -95,22 +95,6 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
-  '/api/auth/mock/authorize': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get: operations['AuthMock_authorize'];
-    put?: never;
-    post: operations['AuthMock_authorizePost'];
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
   '/api/captcha/create': {
     parameters: {
       query?: never;
@@ -2457,6 +2441,12 @@ export interface components {
       provider: string;
       token?: unknown;
       payload?: unknown;
+      /** @enum {string} */
+      status?: 'accepted' | 'rejected' | 'unknown' | 'limited';
+      serverNow?: number;
+      expiresAt?: number;
+      resendAt?: number;
+      retryAt?: number;
     };
     'a-pay.dto.paymentSessionView': {
       id: number | string;
@@ -5605,61 +5595,6 @@ export interface operations {
       };
     };
   };
-  AuthMock_authorize: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          'application/json': {
-            code: string;
-            message: string;
-            data?: unknown;
-          };
-        };
-      };
-    };
-  };
-  AuthMock_authorizePost: {
-    parameters: {
-      query: {
-        redirect_uri: string;
-        state: string;
-      };
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    requestBody: {
-      content: {
-        'application/json': {
-          username: string;
-        };
-      };
-    };
-    responses: {
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          'application/json': {
-            code: string;
-            message: string;
-            data?: unknown;
-          };
-        };
-      };
-    };
-  };
   Captcha_create: {
     parameters: {
       query?: never;
@@ -5671,6 +5606,7 @@ export interface operations {
       content: {
         'application/json': {
           scene: string;
+          payload?: unknown;
         };
       };
     };
@@ -5699,8 +5635,9 @@ export interface operations {
     requestBody: {
       content: {
         'application/json': {
-          id: string;
+          id?: string | undefined;
           scene: string;
+          payload?: unknown;
         };
       };
     };

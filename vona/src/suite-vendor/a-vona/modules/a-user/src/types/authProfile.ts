@@ -16,6 +16,7 @@ export interface IAuthUserProfile {
   name?: IAuthUserProfileName;
   gender?: string; // male/female
   profileUrl?: string;
+  mobile?: string;
   emails?: IAuthUserProfilePropSlice[];
   photos?: IAuthUserProfilePropSlice[];
   locale?: keyof ILocaleRecord;

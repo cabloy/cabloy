@@ -1,22 +1,11 @@
-import type { ICaptchaBinding, ICaptchaProviderRecord } from './captchaProvider.ts';
+import type { ICaptchaProviderRecord } from './captchaProvider.ts';
 import type { ICaptchaSceneRecord } from './captchaScene.ts';
 import 'vona';
 
 export interface ICaptchaDataCache {
   scene: keyof ICaptchaSceneRecord;
   provider: keyof ICaptchaProviderRecord;
-  token?: unknown;
-  token2?: string;
-  revision?: string;
-  bound?: {
-    binding: ICaptchaBinding;
-    scope: string;
-    state: 'pending' | 'active';
-    expiresAt: number;
-    resendAt: number;
-    attemptsRemaining: number;
-    version: number;
-  };
+  token: string;
 }
 
 export interface ICaptchaData {

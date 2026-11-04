@@ -7,4 +7,9 @@ export interface ICaptchaData {
   provider: keyof ICaptchaProviderRecord | string;
   token?: unknown;
   payload?: unknown;
+  status?: 'accepted' | 'rejected' | 'unknown' | 'limited';
+  serverNow?: number;
+  expiresAt?: number;
+  resendAt?: number;
+  retryAt?: number;
 }

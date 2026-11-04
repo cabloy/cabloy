@@ -175,10 +175,10 @@ function _buildWhereColumnOpNormal<TRecord>(
   } else if (op === Op.notEq) {
     builder[having ? 'having' : 'where'](column, '<>', value);
   } else if (op === Op.eqI) {
-    builder[_getOpILikeReal(having, db)](column, value);
+    builder[_getOpILikeReal(having, db)](column, _literalILikeValue(db, value));
   } else if (op === Op.notEqI) {
     builder[having ? 'havingNot' : 'whereNot']((builder: Knex.QueryBuilder) => {
-      builder[_getOpILikeReal(having, db)](column, value);
+      builder[_getOpILikeReal(false, db)](column, _literalILikeValue(db, value));
     });
   } else if (op === Op.gt) {
     builder[having ? 'having' : 'where'](column, '>', value);
@@ -215,6 +215,11 @@ function _buildWhereColumnOpNormal<TRecord>(
   } else if (op === Op.ref) {
     builder[having ? 'having' : 'where'](column, '=', db.connection.ref(value));
   }
+}
+
+function _literalILikeValue(db: ServiceDb, value: any) {
+  if (typeof value !== 'string') return value;
+  return db.connection.raw("? escape '!'", [value.replace(/[!%_]/g, '!$&')]);
 }
 
 function _getOpLikeReal(having: boolean, db: ServiceDb) {

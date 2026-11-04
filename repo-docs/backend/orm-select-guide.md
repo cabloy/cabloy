@@ -128,6 +128,12 @@ A practical operator-family reading is:
 - composition/subquery: `_and_`, `_or_`, `_not_`, `_exists_`, `_notExists_`
 - identifier helper: `_ref_`
 
+### Literal strings in `_eqI_` and `_notEqI_`
+
+For ordinary string values, `_eqI_` / `_notEqI_` (EqI / notEqI) match the whole literal value: `!`, `%`, and `_` are escaped with `!` and SQL `ESCAPE '!'`, so caller-supplied wildcard characters do not become patterns. These operators preserve Knex's native dialect-specific LIKE/ILIKE case behavior; they do not provide uniform database-independent case folding or Unicode normalization. In particular, SQLite does not guarantee that `é` and `É` compare as equivalent. They do not trim values.
+
+Pattern operators such as `_startsWith_`, `_endsWith_`, `_includes_` and their case-insensitive variants retain their existing behavior. Raw/ref expression operands are unchanged; the literal-string escaping contract does not reinterpret SQL expressions.
+
 ### Absent, `undefined`, and `null` in `where`
 
 A direct `where` object distinguishes omitted conditions from SQL `NULL` checks:
