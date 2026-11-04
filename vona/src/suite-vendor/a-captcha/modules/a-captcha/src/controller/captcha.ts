@@ -15,15 +15,24 @@ export class ControllerCaptcha extends BeanBase {
   @Web.post('create')
   @Api.body(DtoCaptchaData)
   @Passport.public()
-  async create(@Arg.body('scene') scene: string) {
-    return await this.bean.captcha.create(scene as any);
+  async create(
+    @Arg.body('scene') scene: string,
+    @Arg.body('payload', z.unknown().optional()) payload?: unknown,
+  ) {
+    this.ctx.set('Cache-Control', 'no-store');
+    return await this.bean.captcha.create(scene as any, payload);
   }
 
   @Web.post('refresh')
   @Api.body(DtoCaptchaData)
   @Passport.public()
-  async refresh(@Arg.body('id') id: string, @Arg.body('scene') scene: string) {
-    return await this.bean.captcha.refresh(id, scene as any);
+  async refresh(
+    @Arg.body('id', z.string().optional()) id: string | undefined,
+    @Arg.body('scene') scene: string,
+    @Arg.body('payload', z.unknown().optional()) payload?: unknown,
+  ) {
+    this.ctx.set('Cache-Control', 'no-store');
+    return await this.bean.captcha.refresh(id, scene as any, payload);
   }
 
   @Web.post('verifyImmediate')

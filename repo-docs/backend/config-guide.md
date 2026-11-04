@@ -133,6 +133,50 @@ This is the key ownership rule:
 - module config defines reusable defaults close to the module
 - project config overrides those defaults for the current backend application
 
+## Environment-specific decorator defaults
+
+Reusable backend decorator/onion option defaults belong to the provider or bean that declares them. When those defaults differ by runtime mode, use module-level `const app = useApp()` and select the default directly in the decorator configuration, rather than adding an application `config.test.ts` entry just to supply the capability's own default behavior.
+
+Representative SMS captcha provider configuration (cooldown values are in milliseconds):
+
+```typescript
+import type { IDecoratorCaptchaProviderOptions } from 'vona-module-a-captcha';
+
+import { BeanBase, useApp } from 'vona';
+import { CaptchaProvider } from 'vona-module-a-captcha';
+
+const app = useApp();
+
+export interface ICaptchaProviderOptionsSms extends IDecoratorCaptchaProviderOptions {
+  cooldown?: number;
+}
+
+@CaptchaProvider<ICaptchaProviderOptionsSms>({
+  enable: true,
+  ttl: 300000,
+  cooldown: app.meta.isTest ? 3000 : 30000,
+})
+export class CaptchaProviderSms extends BeanBase {
+  // Provider methods consume the effective options supplied by the framework.
+}
+```
+
+The example shows the default configuration, not a complete provider implementation. A provider method reads `options.cooldown` from its effective options; the framework's configuration merging still allows explicit overrides, including `cooldown: 0`.
+
+This keeps three responsibilities separate:
+
+- the decorator owns the reusable baseline, including the test-mode default
+- execution methods consume the effective options instead of supplying a second environment-dependent fallback
+- application configuration, including `config.test.ts`, remains available for intentional overrides and test integration choices, such as enabling a scene or selecting a Mock provider
+
+Do not turn this into a ban on test configuration or infer that every test-mode policy should be relaxed. Only move a value into the decorator when it is genuinely the provider's intended environment-specific default; keep security and business constraints intact. See [Controller and AOP Guide](/backend/controller-aop-guide#shared-configuration-patterns) for onion configuration and override patterns.
+
+### Startup-time evaluation boundary
+
+Decorator expressions are evaluated when the module is loaded, not on each request. This pattern is for backend bean modules loaded through the normal Vona application lifecycle, after the application has been created. `useApp()` returns the current application; it does not create it or wait for initialization.
+
+Use startup-stable metadata such as `app.meta.isTest` here. Do not capture request, user, current-instance, or dynamically changing configuration in module-level defaults, and do not assume services are already ready. Scripts or standalone tests that import such modules must establish the application lifecycle first; bootstrap/config-loading code should use its supplied application argument rather than assume module-level `useApp()` is available.
+
 ## App config vs instance-merged config
 
 One important Vona distinction is:

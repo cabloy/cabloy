@@ -232,24 +232,30 @@ async function registerWithActivationLink(): Promise<IRegistration> {
   try {
     const passport = await app.bean.executor.mockCtx(async () => {
       const captcha = await app.bean.captcha.create('captcha-simple:simple');
-      const captchaData = await app.bean.captcha.getCaptchaData(captcha.id);
-      if (!captchaData?.token) throw new Error('registration CAPTCHA token not found');
-      return await app.bean.executor.performAction('post', '/home/user/passport/register', {
-        innerAccess: false,
-        onions: {
-          interceptor: {
-            'a-ratelimit:rateLimit': { enable: false },
+      const captchaKeys = [captcha.id];
+      try {
+        const captchaData = await app.bean.captcha.getCaptchaData(captcha.id);
+        if (captchaData) captchaKeys.push(captchaData.token);
+        if (!captcha.token) throw new Error('registration CAPTCHA token not found');
+        return await app.bean.executor.performAction('post', '/home/user/passport/register', {
+          innerAccess: false,
+          onions: {
+            interceptor: {
+              'a-ratelimit:rateLimit': { enable: false },
+            },
           },
-        },
-        body: {
-          username,
-          email,
-          password: 'initial-password',
-          passwordConfirm: 'initial-password',
-          consumerUrl: activationConsumerUrl,
-          captcha: { id: captcha.id, token: captchaData.token },
-        },
-      });
+          body: {
+            username,
+            email,
+            password: 'initial-password',
+            passwordConfirm: 'initial-password',
+            consumerUrl: activationConsumerUrl,
+            captcha: { id: captcha.id, token: captcha.token },
+          },
+        });
+      } finally {
+        await app.scope('a-captcha').cacheRedis.captcha.mdel(captchaKeys);
+      }
     });
     if (typeof text !== 'string') throw new Error('activation email text not found');
     const url = new URL(text.match(/https?:\/\/\S+/)?.[0] ?? '');

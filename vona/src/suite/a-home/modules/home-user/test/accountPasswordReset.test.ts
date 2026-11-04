@@ -553,21 +553,27 @@ async function requestPasswordResetWithCaptcha(
 ) {
   return await app.bean.executor.mockCtx(async () => {
     const captcha = await app.bean.captcha.create('captcha-simple:simple');
-    const captchaData = await app.bean.captcha.getCaptchaData(captcha.id);
-    if (!captchaData?.token) throw new Error('password-reset CAPTCHA token not found');
-    return await app.bean.executor.performAction('post', passwordResetRequestPath, {
-      innerAccess: false,
-      onions: {
-        interceptor: {
-          'a-ratelimit:rateLimit': { enable: false },
+    const captchaKeys = [captcha.id];
+    try {
+      const captchaData = await app.bean.captcha.getCaptchaData(captcha.id);
+      if (captchaData) captchaKeys.push(captchaData.token);
+      if (!captcha.token) throw new Error('password-reset CAPTCHA token not found');
+      return await app.bean.executor.performAction('post', passwordResetRequestPath, {
+        innerAccess: false,
+        onions: {
+          interceptor: {
+            'a-ratelimit:rateLimit': { enable: false },
+          },
         },
-      },
-      body: {
-        email,
-        consumerUrl,
-        captcha: { id: captcha.id, token: valid ? captchaData.token : `${captchaData.token}!` },
-      },
-    });
+        body: {
+          email,
+          consumerUrl,
+          captcha: { id: captcha.id, token: valid ? captcha.token : `${captcha.token}!` },
+        },
+      });
+    } finally {
+      await app.scope('a-captcha').cacheRedis.captcha.mdel(captchaKeys);
+    }
   });
 }
 

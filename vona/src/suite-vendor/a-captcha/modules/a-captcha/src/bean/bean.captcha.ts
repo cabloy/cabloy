@@ -4,9 +4,8 @@ import { getRandomInt } from '@cabloy/utils';
 import { BeanBase, beanFullNameFromOnionName, uuidv4 } from 'vona';
 import { Bean } from 'vona-module-a-bean';
 
-import type { ICaptchaData, ICaptchaDataCache } from '../types/captcha.ts';
+import type { ICaptchaData } from '../types/captcha.ts';
 import type {
-  ICaptchaAuthorization,
   ICaptchaProviderData,
   ICaptchaProviderExecute,
   ICaptchaProviderRecord,
@@ -16,312 +15,105 @@ import type {
   ICaptchaSceneOptionsResolverResult,
   ICaptchaSceneRecord,
 } from '../types/captchaScene.ts';
-import type { ICaptchaSnapshot } from './cacheRedis.captcha.ts';
 
 @Bean()
 export class BeanCaptcha extends BeanBase {
-  async create(sceneName: keyof ICaptchaSceneRecord, context?: unknown): Promise<ICaptchaData> {
+  async create(sceneName: keyof ICaptchaSceneRecord, payload?: unknown): Promise<ICaptchaData> {
     const provider = await this._resolveProvider(sceneName);
     if (!provider) throw new Error(`not found captcha provider for scene: ${sceneName}`);
-    const beanInstance = this._getProviderInstance(provider.name);
-    if (beanInstance.bound === true)
-      return await this._createBound(sceneName, provider, beanInstance, context);
-    const captcha = await beanInstance.create(provider.options);
-    const id = uuidv4();
-    const data: ICaptchaDataCache = {
-      scene: sceneName,
-      provider: provider.name,
-      token: captcha.token,
-      revision: uuidv4(),
-    };
-    const created = await this.scope.cacheRedis.captcha.createImage(
-      id,
-      data,
-      provider.options.ttl ?? this.scope.config.captchaProvider.ttl,
+    const captcha = await this._getProviderInstance(provider.name).create(
+      provider.options,
+      payload,
     );
-    if (!created) throw new Error('captcha identity collision');
-    const result: ICaptchaData = { id, provider: provider.name, payload: captcha.payload };
-    if (this.scope.config.captcha.showToken) result.token = captcha.token;
-    return result;
+    return this._create(sceneName, provider, captcha);
   }
 
-  private async _createBound(
+  private async _create(
     sceneName: keyof ICaptchaSceneRecord,
     provider: ICaptchaSceneOptionsResolverResult,
-    beanInstance: ICaptchaProviderExecute,
-    context: unknown,
+    captcha: ICaptchaProviderData,
+    id = uuidv4(),
   ): Promise<ICaptchaData> {
-    const authorization = await this._authorize(beanInstance, context, 'issue', sceneName);
-    if (!authorization) return this.app.throw(403);
-    const cache = this.scope.cacheRedis.captcha;
-    const id = `${cache.boundPrefix()}${uuidv4()}`;
-    const pending: ICaptchaDataCache = {
-      scene: sceneName,
-      provider: provider.name,
-      bound: {
-        binding: authorization.binding,
-        scope: authorization.scope,
-        state: 'pending',
-        expiresAt: 0,
-        resendAt: 0,
-        attemptsRemaining: authorization.maxAttempts,
-        version: 0,
-      },
-    };
-    const reservation = await cache.reserveBound(id, pending, authorization);
-    if (!reservation.reserved) {
-      return {
-        id: '',
-        provider: provider.name,
-        payload: undefined,
-        status: 'limited',
-        serverNow: reservation.serverNow,
-        resendAt: reservation.resendAt || undefined,
-        retryAt: reservation.retryAt,
-      };
+    const result: ICaptchaData = { id: '', provider: provider.name, payload: captcha.payload };
+    if (captcha.status !== undefined) result.status = captcha.status;
+    for (const key of ['serverNow', 'expiresAt', 'resendAt', 'retryAt'] as const) {
+      if (captcha[key] !== undefined) result[key] = captcha[key];
     }
-    const snapshot = reservation.snapshot;
-    const timing = {
-      expiresAt: snapshot.data.bound!.expiresAt,
-      resendAt: snapshot.data.bound!.resendAt,
-    };
-    let captcha: ICaptchaProviderData;
-    try {
-      // A reservation authorizes exactly one external attempt. Never retry sends.
-      captcha = await beanInstance.create(provider.options, context);
-    } catch {
-      const finalized = await cache.finalizeBound(id, snapshot);
-      return {
-        id: '',
-        provider: provider.name,
-        payload: undefined,
-        status: 'unknown',
-        serverNow: finalized.serverNow,
-        ...timing,
-      };
-    }
-    const outcome = captcha.outcome ?? 'accepted';
-    if (outcome !== 'accepted' || captcha.token === undefined || captcha.token === null) {
-      const finalized = await cache.finalizeBound(id, snapshot);
-      return {
-        id: '',
-        provider: provider.name,
-        payload: undefined,
-        status: outcome === 'rejected' ? 'rejected' : 'unknown',
-        serverNow: finalized.serverNow,
-        ...timing,
-      };
-    }
-    const active: ICaptchaDataCache = {
-      ...snapshot.data,
-      token: captcha.token,
-      bound: { ...snapshot.data.bound!, state: 'active', version: 1 },
-    };
-    const finalized = await cache.finalizeBound(id, snapshot, active);
-    if (!finalized.finalized) {
-      return {
-        id: '',
-        provider: provider.name,
-        payload: undefined,
-        status: 'unknown',
-        serverNow: finalized.serverNow,
-        ...timing,
-      };
-    }
-    const result: ICaptchaData = {
+    if (captcha.status !== undefined && captcha.status !== 'accepted') return result;
+    if (typeof captcha.token !== 'string' || !captcha.token)
+      throw new Error('missing captcha reference');
+    if (captcha.expiresAt === undefined) throw new Error('missing captcha expiry');
+    const published = await this.scope.cacheRedis.captcha.publish(
       id,
-      provider: provider.name,
-      payload: captcha.payload,
-      status: 'accepted',
-      serverNow: finalized.serverNow,
-      ...timing,
-    };
-    // Bound providers must also authorize disclosure for their actual transport.
-    if (this.scope.config.captcha.showToken && captcha.exposeToken === true)
-      result.token = captcha.token;
+      { scene: sceneName, provider: provider.name, token: captcha.token },
+      captcha.routingExpiresAt ?? captcha.expiresAt,
+    );
+    result.serverNow = published.serverNow;
+    if (!published.published) return { ...result, status: 'unknown' };
+    result.id = id;
+    if (this.scope.config.captcha.showToken) result.token = captcha.tokenPublic;
     return result;
   }
 
-  async refresh(id: string, sceneName: keyof ICaptchaSceneRecord) {
-    const cache = this.scope.cacheRedis.captcha;
-    const snapshot = await cache.snapshot(id);
-    if (!snapshot) return await this.create(sceneName);
-    const data = snapshot.data;
+  async refresh(
+    id: string | undefined,
+    sceneName: keyof ICaptchaSceneRecord,
+    payload?: unknown,
+  ): Promise<ICaptchaData> {
+    const data = id ? await this.getCaptchaData(id) : undefined;
+    if (!data) return this.create(sceneName, payload);
     if (data.scene !== sceneName) return this.app.throw(403);
-    const beanInstance = this._getProviderInstance(data.provider);
-    if (data.bound || beanInstance.bound === true) return this.app.throw(403);
     const options = this._getProviderOptions(data.scene, data.provider);
     if (!options) return this.app.throw(403);
-    const captcha = await beanInstance.create(options);
-    const next = {
-      scene: sceneName,
-      provider: data.provider,
-      token: captcha.token,
-      revision: uuidv4(),
-    };
-    if (
-      !(await cache.compareAndSet(
-        id,
-        snapshot,
-        next,
-        options.ttl ?? this.scope.config.captchaProvider.ttl,
-      ))
-    ) {
-      return this.app.throw(403);
-    }
-    const result: ICaptchaData = { id, provider: data.provider, payload: captcha.payload };
-    if (this.scope.config.captcha.showToken) result.token = captcha.token;
-    return result;
+    const captcha = await this._getProviderInstance(data.provider).create(
+      options,
+      payload,
+      data.token,
+    );
+    return this._create(
+      sceneName,
+      { name: data.provider, options },
+      captcha,
+      captcha.token === data.token ? id : undefined,
+    );
   }
 
   async verify(
     id: string,
     token: unknown,
     sceneName: keyof ICaptchaSceneRecord,
-    context?: unknown,
+    payload?: unknown,
   ): Promise<boolean> {
-    const cache = this.scope.cacheRedis.captcha;
-    const snapshot = await cache.snapshot(id);
-    if (!snapshot || snapshot.data.scene !== sceneName) return false;
-    const data = snapshot.data;
-    const beanInstance = this._getProviderInstance(data.provider);
-    if (data.bound || beanInstance.bound === true) {
-      if (!data.bound || beanInstance.bound !== true) return false;
-      const authorization = await this._authorize(beanInstance, context, 'consume', sceneName);
-      if (!authorization) return false;
-      return await this._verifyBound(id, token, sceneName, beanInstance, authorization, snapshot);
-    }
-    if (data.token2) {
-      const consumed = await cache.compareAndSet(id, snapshot);
-      return consumed && data.token2 === token;
-    }
+    const data = await this.getCaptchaData(id);
+    if (!data || data.scene !== sceneName) return false;
     const options = this._getProviderOptions(data.scene, data.provider);
-    if (!options || !data.token) return false;
-    const verified = await beanInstance.verify(data.token, token, options);
-    const changed = await cache.compareAndSet(
-      id,
-      snapshot,
-      verified ? undefined : { ...data, token: undefined, revision: uuidv4() },
-    );
-    return verified && changed;
-  }
-
-  private async _verifyBound(
-    id: string,
-    token: unknown,
-    sceneName: keyof ICaptchaSceneRecord,
-    beanInstance: ICaptchaProviderExecute,
-    authorization: ICaptchaAuthorization,
-    original: ICaptchaSnapshot,
-  ): Promise<boolean> {
-    const cache = this.scope.cacheRedis.captcha;
-    let snapshot: ICaptchaSnapshot | undefined = original;
-    // At most five competing wrong writes exist for this generation. A stale
-    // wrong verdict is retried against the new snapshot, never a new generation.
-    for (let retry = 0; retry < 5 && snapshot; retry++) {
-      const data = snapshot.data;
-      const bound = data.bound;
-      if (
-        !bound ||
-        bound.state !== 'active' ||
-        bound.attemptsRemaining <= 0 ||
-        data.scene !== sceneName ||
-        data.provider !== original.data.provider ||
-        bound.scope !== authorization.scope ||
-        !this._bindingMatches(bound.binding, authorization.binding)
-      ) {
-        return false;
-      }
-      const options = this._getProviderOptions(sceneName, data.provider);
-      if (!options || data.token === undefined) return false;
-      const verified = await beanInstance.verify(data.token, token, options);
-      const committed = await cache.consumeBound(id, snapshot, verified);
-      if (committed !== -1 || verified) return verified && committed === 1;
-      snapshot = await cache.snapshot(id);
-    }
-    return false;
+    if (!options) return false;
+    return this._getProviderInstance(data.provider).verify(data.token, token, options, payload);
   }
 
   async verifyImmediate(id: string, token: unknown): Promise<false | string> {
-    const cache = this.scope.cacheRedis.captcha;
-    const snapshot = await cache.snapshot(id);
-    if (!snapshot) return false;
-    const data = snapshot.data;
-    const beanInstance = this._getProviderInstance(data.provider);
-    if (data.bound || beanInstance.bound === true || !data.token) return false;
+    const data = await this.getCaptchaData(id);
+    if (!data) return false;
     const options = this._getProviderOptions(data.scene, data.provider);
     if (!options) return false;
-    const verified = await beanInstance.verify(data.token, token, options);
-    if (!verified) {
-      await cache.compareAndSet(id, snapshot, { ...data, token: undefined, revision: uuidv4() });
-      return false;
-    }
-    const tokenSecondary = uuidv4();
-    const next = { ...data, token: undefined, token2: tokenSecondary, revision: uuidv4() };
-    const changed = await cache.compareAndSet(
-      id,
-      snapshot,
-      next,
-      options.ttlSecondary ?? this.scope.config.captchaProvider.ttlSecondary,
-    );
-    return changed ? tokenSecondary : false;
+    const provider = this._getProviderInstance(data.provider);
+    return provider.verifyImmediate ? provider.verifyImmediate(data.token, token, options) : false;
   }
 
   async getCaptchaData(id: string) {
-    return await this.scope.cacheRedis.captcha.get(id, { updateAgeOnGet: false });
+    return this.scope.cacheRedis.captcha.get(id, { updateAgeOnGet: false });
   }
 
   async updateCaptchaToken(id: string, token: unknown) {
-    const cache = this.scope.cacheRedis.captcha;
-    const snapshot = await cache.snapshot(id);
-    if (!snapshot) return this.app.throw(403);
-    const data = snapshot.data;
-    const beanInstance = this._getProviderInstance(data.provider);
-    if (data.bound || beanInstance.bound === true) return this.app.throw(403);
+    const data = await this.getCaptchaData(id);
+    if (!data) return this.app.throw(403);
     const options = this._getProviderOptions(data.scene, data.provider);
-    if (!options) return this.app.throw(403);
-    if (
-      !(await cache.compareAndSet(
-        id,
-        snapshot,
-        { ...data, token, revision: uuidv4() },
-        options.ttl ?? this.scope.config.captchaProvider.ttl,
-      ))
-    ) {
-      return this.app.throw(403);
-    }
-  }
-
-  private async _authorize(
-    provider: ICaptchaProviderExecute,
-    context: unknown,
-    operation: 'issue' | 'consume',
-    sceneName: keyof ICaptchaSceneRecord,
-  ): Promise<ICaptchaAuthorization | undefined> {
-    const authorization = await provider.authorize?.(context, operation, sceneName);
-    if (!authorization) return;
-    this.scope.cacheRedis.captcha.validateAuthorization(authorization);
-    // Snapshot only the server-authorized contract; later provider work cannot
-    // mutate the binding/policy already used for this issuance or consumption.
-    return {
-      ...authorization,
-      binding: {
-        recipient: authorization.binding.recipient,
-        purpose: authorization.binding.purpose,
-        ...(authorization.binding.subject === undefined
-          ? {}
-          : { subject: authorization.binding.subject }),
-      },
-      recipientLimits: authorization.recipientLimits.map(limit => ({ ...limit })),
-      ipLimits: authorization.ipLimits.map(limit => ({ ...limit })),
-    };
-  }
-
-  private _bindingMatches(
-    a: ICaptchaAuthorization['binding'],
-    b: ICaptchaAuthorization['binding'],
-  ) {
-    return a.recipient === b.recipient && a.purpose === b.purpose && a.subject === b.subject;
+    const provider = this._getProviderInstance(data.provider);
+    if (!options || !provider.updateToken) return this.app.throw(403);
+    const captcha = await provider.updateToken(data.token, token, options);
+    if (captcha.token !== data.token) throw new Error('captcha update changed reference');
+    const result = await this._create(data.scene, { name: data.provider, options }, captcha, id);
+    if (!result.id) return this.app.throw(403);
   }
 
   private _getProviderInstance(providerName: keyof ICaptchaProviderRecord) {

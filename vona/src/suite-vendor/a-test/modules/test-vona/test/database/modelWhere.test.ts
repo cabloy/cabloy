@@ -1,11 +1,96 @@
 import type { Knex } from 'knex';
 
 import assert from 'node:assert';
+import { randomUUID } from 'node:crypto';
 import { describe, it } from 'node:test';
 import { app } from 'vona-mock';
 import { Op } from 'vona-module-a-orm';
 
-describe('modelWhere.test.ts', () => {
+describe('modelWhere.test.ts', { concurrency: false }, () => {
+  it('matches literal EqI predicates and their complements on the active dialect', async () => {
+    await app.bean.executor.mockCtx(async () => {
+      const model = app.scope('test-vona').model.user;
+      const prefix = `modelWhere:${randomUUID()}:`;
+      const name = `${prefix}MiXeD%_!\\'`;
+      const names = [name, `${prefix}MixedExtraX!\\'`, `${prefix}Other`];
+      try {
+        const users = await model.insertBulk(names.map(name => ({ name })));
+        const ids = users.map(item => item.id);
+        const value = name.toUpperCase();
+        const equal = await model.select({ where: { id: ids, name: { _eqI_: value } } });
+        assert.deepEqual(
+          equal.map(item => item.name),
+          [name],
+        );
+        const different = await model.select({
+          where: { id: ids, name: { _notEqI_: value } },
+        });
+        assert.deepEqual(different.map(item => item.name).sort(), names.slice(1).sort());
+        const nested = await model.select({
+          where: {
+            id: ids,
+            _not_: { _or_: { name: { _notEqI_: value }, id: -1 } },
+          },
+        });
+        assert.deepEqual(
+          nested.map(item => item.name),
+          [name],
+        );
+
+        const qualified = model.builder().select('name').whereIn('id', ids);
+        model.buildWhere(qualified, { 'testVonaUser.name': { _eqI_: value } } as any);
+        assert.deepEqual(
+          (await qualified).map(item => item.name),
+          [name],
+        );
+
+        const grouped = await model.group({
+          groups: ['name'],
+          aggrs: { count: '*' },
+          where: { id: ids },
+          having: { name: { _eqI_: value } },
+        });
+        assert.deepEqual(
+          grouped.map(item => item.name),
+          [name],
+        );
+        const groupedDifferent = await model.group({
+          groups: ['name'],
+          aggrs: { count: '*' },
+          where: { id: ids },
+          having: { name: { _notEqI_: value } },
+        });
+        assert.deepEqual(groupedDifferent.map(item => item.name).sort(), names.slice(1).sort());
+
+        // Trusted raw/ref operands retain pattern semantics rather than being escaped.
+        const pattern = await model.select({
+          where: { id: ids, name: { _eqI_: model.raw('?', [`${prefix}%`]) as any } },
+        });
+        assert.equal(pattern.length, names.length);
+        const referenced = await model.select({
+          where: { id: users[2].id, name: { _eqI_: model.ref('name') as any } },
+        });
+        assert.deepEqual(
+          referenced.map(item => item.name),
+          [names[2]],
+        );
+        const startsWith = await model.select({
+          where: { id: ids, name: { _startsWith_: prefix } },
+        });
+        assert.equal(startsWith.length, names.length);
+        const includes = await model.select({
+          where: { id: ids, name: { _includes_: 'Other' } },
+        });
+        assert.deepEqual(
+          includes.map(item => item.name),
+          [names[2]],
+        );
+      } finally {
+        await model.delete({ name: names });
+      }
+    });
+  });
+
   it('action:modelWhere', async () => {
     await app.bean.executor.mockCtx(async () => {
       if (app.bean.database.current.dialectName !== 'pg') return;

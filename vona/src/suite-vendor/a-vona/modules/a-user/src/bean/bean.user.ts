@@ -2,6 +2,7 @@ import type { TableIdentity } from 'table-identity';
 
 import { BeanBase, beanFullNameFromOnionName } from 'vona';
 import { Bean } from 'vona-module-a-bean';
+import { Core } from 'vona-module-a-core';
 
 import type { IAuthUserProfile } from '../types/authProfile.ts';
 import type { IUser, IUserAdapter } from '../types/user.ts';
@@ -18,12 +19,14 @@ export class BeanUser extends BeanBase {
     return this._userAdapter;
   }
 
+  @Core.transaction()
   async activate(user: IUser) {
     await this.scope.event.activate.emit(user, async user => {
       await this.userAdapter.setActivated(user.id, true);
     });
   }
 
+  @Core.transaction()
   async register(
     user: Partial<IUser>,
     confirmed?: boolean,

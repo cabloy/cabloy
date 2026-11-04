@@ -12,6 +12,7 @@ export type ApiApiCaptchacreatePath = '/api/captcha/create';
 export type ApiApiCaptchacreateMethod = 'post';
 export type ApiApiCaptchacreateRequestBody = {
   scene: string;
+  payload?: unknown;
 };
 export type ApiApiCaptchacreateResponseBody =
   paths[ApiApiCaptchacreatePath][ApiApiCaptchacreateMethod]['responses']['200']['content']['application/json']['data'];
@@ -21,8 +22,9 @@ export const ApiApiCaptcharefreshPath = '/api/captcha/refresh';
 export type ApiApiCaptcharefreshPath = '/api/captcha/refresh';
 export type ApiApiCaptcharefreshMethod = 'post';
 export type ApiApiCaptcharefreshRequestBody = {
-  id: string;
+  id?: string | undefined;
   scene: string;
+  payload?: unknown;
 };
 export type ApiApiCaptcharefreshResponseBody =
   paths[ApiApiCaptcharefreshPath][ApiApiCaptcharefreshMethod]['responses']['200']['content']['application/json']['data'];
