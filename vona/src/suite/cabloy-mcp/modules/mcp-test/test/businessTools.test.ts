@@ -7,6 +7,7 @@ import assert from 'node:assert/strict';
 import { after, before, describe, it } from 'node:test';
 import { appMetadata, appResource, runWithZodQueryCoercion } from 'vona';
 import { acquireTestLock, app } from 'vona-mock';
+import { getKeyHash } from 'vona-module-a-cache';
 import { $schema, Mcp, SymbolMcpOptions } from 'vona-module-a-openapiutils';
 import { recordResourceNameToRoutePath } from 'vona-module-a-web';
 import { createControllerToolServer, createSharedBusinessToolServer } from 'vona-module-cabloy-mcp';
@@ -471,9 +472,9 @@ describe('businessTools.test.ts', { concurrency: false, timeout: 60000 }, () => 
           'where',
         ]);
         assert.equal(select.inputSchema.additionalProperties, false);
-        assert.deepEqual(select.inputSchema.properties.name.type, ['string', 'null']);
+        assert.equal(select.inputSchema.properties.name.type, 'string');
         assert.equal(select.inputSchema.properties.name.maxLength, undefined);
-        assert.deepEqual(select.inputSchema.properties.level.type, ['number', 'null']);
+        assert.equal(select.inputSchema.properties.level.type, 'number');
         assert.equal(select.inputSchema.properties.level.minimum, undefined);
         assert.equal(select.inputSchema.properties.level.maximum, undefined);
         const ormQuery = app.util.getModuleConfigRaw('a-orm')?.rest?.query;
@@ -561,8 +562,7 @@ describe('businessTools.test.ts', { concurrency: false, timeout: 60000 }, () => 
         assert.equal(lookup.inputSchema.properties.name.type, 'string');
         assert.equal(lookup.inputSchema.properties.name.minLength, 1);
         assert.equal(lookup.inputSchema.properties.name.maxLength, 100);
-        // OpenAPI represents an optional property with null; runtime input still rejects null.
-        assert.deepEqual(lookup.inputSchema.properties.level.type, ['integer', 'null']);
+        assert.equal(lookup.inputSchema.properties.level.type, 'integer');
         assert.equal(lookup.inputSchema.properties.level.minimum, 1);
         assert.equal(lookup.inputSchema.properties.level.maximum, 3);
         assert.equal(lookup.inputSchema.properties.pageNo.type, 'integer');
@@ -573,6 +573,11 @@ describe('businessTools.test.ts', { concurrency: false, timeout: 60000 }, () => 
         assert.equal(lookup.inputSchema.properties.pageSize.maximum, 20);
         assert.equal(lookup.inputSchema.properties.pageSize.default, 10);
         assert.equal(lookup.annotations.readOnlyHint, true);
+        const lookupCheck = fromJsonSchema(lookup.inputSchema)['~standard'];
+        assert.equal((await lookupCheck.validate({ name: 'Student' })).issues, undefined);
+        for (const level of [null, '1', 1.5, 0, 4]) {
+          assert.ok((await lookupCheck.validate({ name: 'Student', level })).issues);
+        }
         assert.deepEqual(Object.keys(lookup.outputSchema.properties).sort(), [
           'list',
           'pageCount',
@@ -1544,7 +1549,7 @@ describe('businessTools.test.ts', { concurrency: false, timeout: 60000 }, () => 
               'count_all',
               'count_imageId',
             ]);
-            assert.deepEqual(tool.outputSchema.properties.count_all.type, ['string', 'null']);
+            assert.equal(tool.outputSchema.properties.count_all.type, 'string');
           }
           assert.deepEqual(tool.inputSchema.properties.aggrs.properties.count.items.enum, [
             '*',
@@ -1823,7 +1828,20 @@ describe('businessTools.test.ts', { concurrency: false, timeout: 60000 }, () => 
         assert.deepEqual(Object.keys(effect.inputSchema.properties).sort(), ['body', 'params']);
         assert.deepEqual(effect.inputSchema.required.toSorted(), ['body', 'params']);
         assert.equal(effect.inputSchema.additionalProperties, false);
+        const body = effect.inputSchema.properties.body;
+        assert.equal(body.properties.priority.type, 'integer');
+        assert.deepEqual(body.properties.note.type, ['string', 'null']);
+        assert.ok(!body.required.includes('priority'));
+        assert.ok(!body.required.includes('note'));
+        assert.equal(effect.outputSchema.properties.priority.type, 'integer');
+        assert.deepEqual(effect.outputSchema.properties.note.type, ['string', 'null']);
+        const inputCheck = fromJsonSchema(effect.inputSchema)['~standard'];
+        const outputCheck = fromJsonSchema(effect.outputSchema)['~standard'];
         const args = { params: { label: 'scope-proof' }, body: { amount: 2 } };
+        assert.equal((await inputCheck.validate(args)).issues, undefined);
+        assert.ok(
+          (await inputCheck.validate({ ...args, body: { amount: 2, priority: null } })).issues,
+        );
         const denied = await read.request('tools/call', { name: effectToolName, arguments: args });
         assert.equal(denied.error?.code, -32602);
         assert.equal(toolFixtureState.count, initial, 'denied calls do not reach the controller');
@@ -1836,6 +1854,7 @@ describe('businessTools.test.ts', { concurrency: false, timeout: 60000 }, () => 
           { label: 'scope-proof', amount: 2 },
           { params: { label: 'scope-proof', innerAccess: true }, body: { amount: 2 } },
           { params: { label: 'scope-proof' }, body: { amount: 4 } },
+          { params: { label: 'scope-proof' }, body: { amount: 2, priority: null } },
           { ...args, innerAccess: true },
         ]) {
           const rejected = await all.request('tools/call', {
@@ -1853,8 +1872,34 @@ describe('businessTools.test.ts', { concurrency: false, timeout: 60000 }, () => 
           count: initial + 2,
           label: 'scope-proof',
         });
+        assert.equal(
+          (await outputCheck.validate(accepted.result.structuredContent)).issues,
+          undefined,
+        );
+        const nullableArgs = { ...args, body: { amount: 1, priority: 3, note: null } };
+        assert.equal((await inputCheck.validate(nullableArgs)).issues, undefined);
+        const nullable = await all.request('tools/call', {
+          name: effectToolName,
+          arguments: nullableArgs,
+        });
+        assert.equal(nullable.error, undefined);
+        assert.notEqual(nullable.result.isError, true);
+        assert.deepEqual(nullable.result.structuredContent, {
+          count: initial + 3,
+          label: 'scope-proof',
+          priority: 3,
+          note: null,
+        });
+        assert.equal(
+          (await outputCheck.validate(nullable.result.structuredContent)).issues,
+          undefined,
+        );
+        assert.ok(
+          (await outputCheck.validate({ ...nullable.result.structuredContent, priority: null }))
+            .issues,
+        );
         const current = await read.request('tools/call', { name: statusToolName });
-        assert.deepEqual(current.result.structuredContent, { count: initial + 2 });
+        assert.deepEqual(current.result.structuredContent, { count: initial + 3 });
       } finally {
         toolFixtureState.count = initial;
         await read.close();
@@ -2047,6 +2092,83 @@ describe('businessTools.test.ts', { concurrency: false, timeout: 60000 }, () => 
         metadata.mock.restore();
       }
     });
+  });
+
+  it('isolates HTTP and MCP schema targets in either cache warm-up order', async t => {
+    await app.bean.executor.mockCtx(() =>
+      runWithZodQueryCoercion(true, async () => {
+        const openapi = app.bean.openapi;
+        const cache = app.bean.summer.cache('a-openapi.summerCache.json');
+        const targets = ['http', 'mcp'] as const;
+        const keys = targets.map(schemaTarget =>
+          getKeyHash(
+            (openapi as any).generateJsonOfControllerActionCacheKey({
+              prop: 'generateJsonOfControllerAction',
+              args: [ControllerToolFixture, 'effect', 'V31', { schemaTarget }],
+            }),
+          ),
+        );
+        const collect = t.mock.method(app.scope('a-openapi').service.openapi, 'collectController');
+        try {
+          for (const order of [targets, targets.toReversed()]) {
+            await cache.mdel(keys);
+            collect.mock.resetCalls();
+            for (const schemaTarget of [...order, ...order]) {
+              const document = await openapi.generateJsonOfControllerAction(
+                ControllerToolFixture,
+                'effect',
+                'V31',
+                { schemaTarget },
+              );
+              const schemas = document.components?.schemas ?? {};
+              const resolve = (schema: any): any =>
+                schema.$ref
+                  ? resolve(schemas[schema.$ref.slice('#/components/schemas/'.length)])
+                  : schema;
+              const operation = Object.values(document.paths ?? {})
+                .map(path => (path as any).post)
+                .find(Boolean);
+              assert.ok(operation);
+              const body = resolve(operation.requestBody!.content['application/json'].schema);
+              const envelope = resolve(
+                operation.responses['200'].content['application/json'].schema,
+              );
+              const output = resolve(envelope.properties.data);
+              for (const schema of [body, output]) {
+                assert.deepEqual(
+                  schema.properties.priority.type,
+                  schemaTarget === 'mcp' ? 'integer' : ['integer', 'null'],
+                );
+                assert.deepEqual(schema.properties.note.type, ['string', 'null']);
+                assert.ok(!schema.required.includes('priority'));
+                assert.ok(!schema.required.includes('note'));
+              }
+            }
+            assert.equal(
+              collect.mock.callCount(),
+              2,
+              'each target generates once, then hits cache',
+            );
+            const implicit = await openapi.generateJsonOfControllerAction(
+              ControllerToolFixture,
+              'effect',
+              'V31',
+            );
+            const explicit = await openapi.generateJsonOfControllerAction(
+              ControllerToolFixture,
+              'effect',
+              'V31',
+              { schemaTarget: 'http' },
+            );
+            assert.deepEqual(implicit, explicit);
+            assert.equal(collect.mock.callCount(), 2, 'omitted target shares the HTTP cache');
+          }
+        } finally {
+          collect.mock.restore();
+          await cache.mdel(keys);
+        }
+      }),
+    );
   });
 
   it('keeps excluded Action contracts out of public caches, wraps scalar/array output and diagnoses unsupported Actions', async () => {

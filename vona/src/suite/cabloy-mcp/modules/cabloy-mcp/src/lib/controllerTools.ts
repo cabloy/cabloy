@@ -134,7 +134,7 @@ export async function createControllerToolServer(
             route.controller,
             route.action,
             'V31',
-            { includeExcluded: true },
+            { includeExcluded: true, schemaTarget: 'mcp' },
           );
           const operation = Object.values(document.paths ?? {})
             .map(path => (path as any)?.[route.routeMethod])

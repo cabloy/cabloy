@@ -23,14 +23,33 @@ export class ControllerToolFixture extends BeanBase {
 
   @Mcp.tool({ name: 'mcp_test_action_effect' })
   @Web.post('effect/:label')
-  @Api.body(z.object({ count: z.number().int(), label: z.string() }))
+  @Api.body(
+    z.object({
+      count: z.number().int(),
+      label: z.string(),
+      priority: z.number().int().optional(),
+      note: z.string().nullable().optional(),
+    }),
+  )
   @Passport.public()
   effect(
     @Arg.param('label', z.string().min(1)) label: string,
-    @Arg.body(z.object({ amount: z.number().int().min(1).max(3) })) body: { amount: number },
-  ): { count: number; label: string } {
+    @Arg.body(
+      z.object({
+        amount: z.number().int().min(1).max(3),
+        priority: z.number().int().optional(),
+        note: z.string().nullable().optional(),
+      }),
+    )
+    body: { amount: number; priority?: number; note?: string | null },
+  ): { count: number; label: string; priority?: number; note?: string | null } {
     toolFixtureState.count += body.amount;
-    return { count: toolFixtureState.count, label };
+    return {
+      count: toolFixtureState.count,
+      label,
+      ...(body.priority === undefined ? {} : { priority: body.priority }),
+      ...(body.note === undefined ? {} : { note: body.note }),
+    };
   }
 
   @Mcp.tool({ name: 'mcp_test_action_scalar' })
