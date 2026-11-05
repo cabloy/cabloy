@@ -48,27 +48,28 @@ export default {
   Save: 'Save',
   Cancel: 'Cancel',
   Edit: 'Edit',
-  McpPersonalScopes: 'Personal MCP scopes',
+  McpPersonalScopes: 'MCP scopes',
   McpManageScopes: 'Manage scopes',
-  McpPersonalScopesHelp:
-    'Choose reusable sets of tools for your own MCP authorizations. Your account permissions still apply.',
+  McpPersonalScopesHelp: 'Choose reusable sets of tools for your own MCP authorizations.',
   McpScopeCreate: 'Create scope',
   McpScopeEdit: 'Edit scope',
+  McpScopeNameHelp:
+    'Use 1–100 letters (A–Z, a–z), digits, underscores, or hyphens. Surrounding whitespace is trimmed and case is preserved. For example, test becomes mcp:custom:test.',
   McpScopeTools: 'Tools',
-  McpScopeToolsHelp:
-    'Select exact tools by name, controller, and action. Only currently available tools can be saved.',
+  McpScopeToolsHelp: 'Select exact tools by name, controller, and action.',
   McpScopeToolSearch: 'Search tools',
   McpScopeSelectedTools: 'Selected tools: %s',
   McpScopeNoTools: 'No tools available.',
+  McpScopeOtherTools: 'Other tools',
   McpToolReadOnly: 'Read-only',
   McpToolWrites: 'May change data',
   McpToolMissing: 'Unavailable in current catalog',
   McpScopeMissingToolsHelp:
     'Some selected tools are no longer available. Remove them before saving; a reused tool name does not replace its original action.',
-  McpScopeToolsChangeWarning:
-    'Changing the tool selection revokes existing authorizations using this scope. Editing only the name or description does not.',
-  McpScopeToolsChangeConfirm:
-    'Change the tools in this scope? Existing authorizations using it will be revoked, including their tokens and authorization codes.',
+  McpScopeAccessChangeWarning:
+    'Renaming changes the scope identifier. Changing the name or tool selection revokes existing authorizations using this scope. Editing only the description does not.',
+  McpScopeAccessChangeConfirm:
+    'Change the name or tools in this scope? Existing authorizations using it will be revoked, including their tokens and authorization codes.',
   McpScopeDeleteConfirm:
     'Delete this scope? Existing authorizations using it will be revoked, including their tokens and authorization codes.',
   McpScopesLoading: 'Loading personal MCP scopes…',

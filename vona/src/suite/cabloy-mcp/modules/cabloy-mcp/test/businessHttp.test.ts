@@ -1027,13 +1027,17 @@ describe('businessHttp.test.ts', { concurrency: false, timeout: 60000 }, () => {
         'catalog includes multiple independently usable reads',
       );
       assert.equal(selected.readOnly, true);
+      assert.equal(selected.summary, 'List Students');
+      assert.equal(sibling.summary, 'Group Students');
+      assert.equal(selected.controllerSummary, 'Student Management');
+      assert.equal(sibling.controllerSummary, selected.controllerSummary);
       const binding = ({ name, controller, action }: IMcpToolIdentity) => ({
         name,
         controller,
         action,
       });
       const definition = {
-        name: `MCP exact subset ${randomUUID()}`,
+        name: `MCP-exact-subset-${randomUUID()}`,
         description: 'One authorized student read, not the read-tool family',
         tools: [binding(selected)],
       };
@@ -1042,7 +1046,7 @@ describe('businessHttp.test.ts', { concurrency: false, timeout: 60000 }, () => {
       assert.ok(created.body.data.id, 'personal scope create returns its persisted identity');
       scopeId = String(created.body.data.id);
       const scope = created.body.data.scope as TypeMcpScope;
-      assert.match(scope, /^mcp:custom:[\w-]{43}$/);
+      assert.equal(scope, `mcp:custom:${definition.name}`);
       assert.deepEqual(created.body.data.tools, definition.tools);
       assert.equal(dispatched.mock.callCount(), 0, 'catalog and scope creation execute no Actions');
       assert.equal(select.mock.callCount(), 0);

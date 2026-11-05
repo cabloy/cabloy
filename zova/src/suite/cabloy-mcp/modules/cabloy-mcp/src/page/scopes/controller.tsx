@@ -96,6 +96,7 @@ export class ControllerPageScopes extends BeanControllerPageBase {
               render="basic-input:formFieldInput"
               options={{ type: 'text' }}
             />
+            <p class="text-sm text-base-content/70">{this.scope.locale.McpScopeNameHelp()}</p>
             <ZFormFieldPreset
               name="description"
               render="basic-input:formFieldInput"
@@ -112,7 +113,7 @@ export class ControllerPageScopes extends BeanControllerPageBase {
               }}
             />
             {item && (
-              <p class="text-sm text-warning">{this.scope.locale.McpScopeToolsChangeWarning()}</p>
+              <p class="text-sm text-warning">{this.scope.locale.McpScopeAccessChangeWarning()}</p>
             )}
           </ZForm>
         ),
@@ -129,9 +130,12 @@ export class ControllerPageScopes extends BeanControllerPageBase {
     if (item) {
       const before = item.tools.map(toolIdentityKey).sort();
       const after = data.value.tools.map(toolIdentityKey).sort();
-      if (JSON.stringify(before) !== JSON.stringify(after)) {
+      if (
+        item.name.trim() !== data.value.name.trim() ||
+        JSON.stringify(before) !== JSON.stringify(after)
+      ) {
         const confirmed = await this.$performCommand('basic-commands:confirm', {
-          text: this.scope.locale.McpScopeToolsChangeConfirm(),
+          text: this.scope.locale.McpScopeAccessChangeConfirm(),
         });
         if (!confirmed) return;
       }
@@ -152,7 +156,7 @@ export class ControllerPageScopes extends BeanControllerPageBase {
     return (
       <div class="min-w-0 space-y-1">
         <div class="flex flex-wrap items-center gap-2">
-          <span class="break-all font-mono text-sm">{tool.name}</span>
+          <span class="break-words text-sm">{details?.summary?.trim() || tool.name}</span>
           {details ? (
             <span class="badge badge-outline badge-sm">
               {details.readOnly
@@ -178,18 +182,31 @@ export class ControllerPageScopes extends BeanControllerPageBase {
     const keys = new Set(selected.map(toolIdentityKey));
     const available = new Set(catalog.map(toolIdentityKey));
     const missing = selected.filter(tool => !available.has(toolIdentityKey(tool)));
+    const summaries = new Map(catalog.map(tool => [tool.controller, tool.controllerSummary]));
     const search = this.toolSearch.trim().toLowerCase();
     const tools = [...missing, ...catalog].filter(
       tool =>
         !search ||
-        [tool.name, tool.controller, tool.action, 'description' in tool ? tool.description : '']
+        [
+          tool.name,
+          'summary' in tool ? tool.summary : '',
+          tool.controller,
+          summaries.get(tool.controller),
+          tool.action,
+          'description' in tool ? tool.description : '',
+        ]
           .join(' ')
           .toLowerCase()
           .includes(search),
     );
+    const groups = new Map<string, typeof tools>();
+    for (const tool of tools) {
+      const group = groups.get(tool.controller);
+      if (group) group.push(tool);
+      else groups.set(tool.controller, [tool]);
+    }
     return (
-      <fieldset class="space-y-3" data-mcp-tool-picker>
-        <legend class="font-medium">{this.scope.locale.McpScopeTools()}</legend>
+      <div class="space-y-3" data-mcp-tool-picker>
         <p class="text-sm text-base-content/70">{this.scope.locale.McpScopeToolsHelp()}</p>
         <label class="form-control gap-2">
           <span class="label-text">{this.scope.locale.McpScopeToolSearch()}</span>
@@ -201,44 +218,55 @@ export class ControllerPageScopes extends BeanControllerPageBase {
             {this.scope.locale.McpScopeMissingToolsHelp()}
           </p>
         )}
-        <div class="max-h-80 space-y-2 overflow-y-auto">
-          {tools.map(tool => {
-            const key = toolIdentityKey(tool);
-            const details = catalog.find(entry => toolIdentityKey(entry) === key);
-            return (
-              <label
-                key={key}
-                class="flex cursor-pointer items-start gap-3 rounded-box border border-base-300 p-3"
-              >
-                <input
-                  class="checkbox checkbox-primary mt-1"
-                  type="checkbox"
-                  aria-label={`${tool.name} (${tool.controller} / ${tool.action})`}
-                  data-tool-name={tool.name}
-                  data-tool-controller={tool.controller}
-                  data-tool-action={tool.action}
-                  checked={keys.has(key)}
-                  onChange={event => {
-                    const checked = (event.target as HTMLInputElement).checked;
-                    change(
-                      checked
-                        ? [
-                            ...selected.filter(entry => toolIdentityKey(entry) !== key),
-                            { name: tool.name, controller: tool.controller, action: tool.action },
-                          ]
-                        : selected.filter(entry => toolIdentityKey(entry) !== key),
-                    );
-                  }}
-                />
-                {this._renderToolIdentity(tool, details)}
-              </label>
-            );
-          })}
+        <div class="max-h-80 space-y-4 overflow-y-auto">
+          {Array.from(groups, ([controller, group]) => (
+            <fieldset key={controller} class="min-w-0 space-y-2" data-mcp-tool-group={controller}>
+              <legend class="break-words text-sm font-medium">
+                {summaries.get(controller)?.trim() || this.scope.locale.McpScopeOtherTools()}
+              </legend>
+              {group.map(tool => {
+                const key = toolIdentityKey(tool);
+                const details = catalog.find(entry => toolIdentityKey(entry) === key);
+                return (
+                  <label
+                    key={key}
+                    class="flex cursor-pointer items-start gap-3 rounded-box border border-base-300 p-3"
+                  >
+                    <input
+                      class="checkbox checkbox-primary mt-1"
+                      type="checkbox"
+                      aria-label={details?.summary?.trim() || tool.name}
+                      data-tool-name={tool.name}
+                      data-tool-controller={tool.controller}
+                      data-tool-action={tool.action}
+                      checked={keys.has(key)}
+                      onChange={event => {
+                        const checked = (event.target as HTMLInputElement).checked;
+                        change(
+                          checked
+                            ? [
+                                ...selected.filter(entry => toolIdentityKey(entry) !== key),
+                                {
+                                  name: tool.name,
+                                  controller: tool.controller,
+                                  action: tool.action,
+                                },
+                              ]
+                            : selected.filter(entry => toolIdentityKey(entry) !== key),
+                        );
+                      }}
+                    />
+                    {this._renderToolIdentity(tool, details)}
+                  </label>
+                );
+              })}
+            </fieldset>
+          ))}
           {tools.length === 0 && (
             <p class="text-sm text-base-content/70">{this.scope.locale.McpScopeNoTools()}</p>
           )}
         </div>
-      </fieldset>
+      </div>
     );
   }
 

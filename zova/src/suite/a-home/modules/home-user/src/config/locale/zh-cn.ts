@@ -3,7 +3,7 @@ export default {
   AccountProfile: '个人资料',
   AccountSecurity: '账户安全',
   AccountMcpAuthorizations: 'MCP授权记录',
-  AccountMcpScopes: '个人 MCP 权限范围',
+  AccountMcpScopes: 'MCP 权限范围',
   AccountUserName: '用户名',
   AccountDisplayName: '显示名称',
   AccountLocale: '语言区域',

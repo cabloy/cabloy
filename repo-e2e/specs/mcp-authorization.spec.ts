@@ -19,6 +19,10 @@ const readScopeHelp =
   'mcp:read allows read-only MCP tools. Your existing account permissions still apply.';
 const allScopeHelp =
   'mcp:all allows all MCP capabilities, including changes to data, within your existing account permissions. It does not grant administrator access.';
+const scopeNameHelp =
+  'Use 1–100 letters (A–Z, a–z), digits, underscores, or hyphens. Surrounding whitespace is trimmed and case is preserved. For example, test becomes mcp:custom:test.';
+const scopeAccessChangeConfirm =
+  'Change the name or tools in this scope? Existing authorizations using it will be revoked, including their tokens and authorization codes.';
 
 type McpScope = 'mcp:all' | 'mcp:read';
 
@@ -212,7 +216,8 @@ async function createPersonalMcpScope(
   });
   expect(created.ok()).toBe(true);
   const scope = (await created.json()).data as PersonalMcpScope;
-  expect(scope.scope).toMatch(/^mcp:custom:[\w-]{43}$/);
+  expect(scope.name).toBe(name.trim());
+  expect(scope.scope).toBe(`mcp:custom:${name.trim()}`);
   expect(scope.tools).toEqual(selected);
   return scope;
 }
@@ -1246,8 +1251,8 @@ test(
     test.setTimeout(60_000);
     if (!baseURL) throw new Error('Managed E2E origin unavailable');
     const origin = new URL(baseURL).origin;
-    const name = `MCP scope E2E ${randomBytes(12).toString('hex')}`;
-    const renamed = `${name} renamed`;
+    const name = `MCP_scope-E2E-${randomBytes(12).toString('hex')}`;
+    const renamed = `${name}-renamed`;
     const scopeNames = new Set([name, renamed]);
     const clientIds = new Set<string>();
     const errors = collectBrowserErrors(page);
@@ -1266,33 +1271,41 @@ test(
 
       await page.goto('/home/user/account', { waitUntil: 'load' });
       await expect(page.locator('html')).toHaveAttribute('data-zova-hydrated', 'web');
-      const scopesLink = page.getByRole('link', { name: 'Personal MCP scopes', exact: true });
+      const scopesLink = page.getByRole('link', { name: 'MCP scopes', exact: true });
       await expect(scopesLink).toHaveAttribute('href', scopesPath);
       await scopesLink.click();
       await expect(page.locator('html')).toHaveAttribute('data-zova-hydrated', 'web');
-      await expect(
-        page.getByRole('heading', { name: 'Personal MCP scopes', exact: true }),
-      ).toBeVisible();
+      await expect(page.getByRole('heading', { name: 'MCP scopes', exact: true })).toBeVisible();
       await page.getByRole('button', { name: 'Create scope', exact: true }).click();
       const dialog = page.getByRole('dialog');
       await expect(dialog.getByText('Create scope', { exact: true })).toBeVisible();
+      await expect(dialog.getByText(scopeNameHelp, { exact: true })).toBeVisible();
       await dialog
         .getByRole('group', { name: /^Name(?: \*)?$/ })
         .getByRole('textbox')
-        .fill(name);
+        .fill(`  ${name}  `);
       await dialog
         .getByRole('group', { name: /^Description(?: \*)?$/ })
         .getByRole('textbox')
         .fill('Created by the managed browser test');
-      await dialog
-        .locator('input[type="checkbox"][data-tool-name="training_student_select"]')
-        .check();
+      const studentTools = dialog.getByRole('group', { name: 'Student Management', exact: true });
+      await expect(studentTools.locator('legend')).toHaveText('Student Management');
+      await dialog.getByRole('searchbox', { name: 'Search tools' }).fill('Student Management');
+      const selectTool = studentTools.getByRole('checkbox', { name: 'List Students', exact: true });
+      await expect(selectTool.locator('..')).toContainText('List Students');
+      await dialog.getByRole('searchbox', { name: 'Search tools' }).fill('List Students');
+      await selectTool.check();
+      await dialog.getByRole('searchbox', { name: 'Search tools' }).fill('');
+      await expect(
+        studentTools.locator('input[type="checkbox"][data-tool-name="training_student_select"]'),
+      ).toBeChecked();
       const created = waitForApiResponse(page, 'POST', `${customScopeApiPath}/createMine`);
       await dialog.getByRole('button', { name: 'Save', exact: true }).click();
       const createResponse = await created;
       expect(createResponse.ok()).toBe(true);
       const scope = (await createResponse.json()).data as PersonalMcpScope;
-      expect(scope.scope).toMatch(/^mcp:custom:[\w-]{43}$/);
+      expect(scope.name).toBe(name);
+      expect(scope.scope).toBe(`mcp:custom:${name}`);
       expect(scope.tools.map(tool => tool.name)).toEqual(['training_student_select']);
       await expect(dialog).toHaveCount(0);
       const entry = page.locator(`article[data-mcp-scope="${scope.scope}"]`);
@@ -1304,9 +1317,7 @@ test(
       const html = await document.text();
       expect(html).toContain(`data-mcp-scope="${scope.scope}"`);
       expect(html).toContain(`<h2 class="card-title break-words">${name}</h2>`);
-      expect(html).toContain(
-        '<span class="break-all font-mono text-sm">training_student_select</span>',
-      );
+      expect(html).toContain('<span class="break-words text-sm">List Students</span>');
       expect(html).not.toContain('data-zova-hydrated');
       const queryState = html.match(
         /<script[^>]*id="ssr-state-defer-init"[^>]*>([\s\S]*?)<\/script>/,
@@ -1352,23 +1363,35 @@ test(
         `${customScopeApiPath}/updateMine/${scope.id}`,
       );
       await dialog.getByRole('button', { name: 'Save', exact: true }).click();
-      expect((await updated).ok()).toBe(true);
+      const confirmation = page.getByRole('dialog').filter({
+        hasText: scopeAccessChangeConfirm,
+      });
+      await expect(confirmation.getByText(scopeAccessChangeConfirm, { exact: true })).toBeVisible();
+      await confirmation.getByRole('button', { name: 'Yes', exact: true }).click();
+      const updateResponse = await updated;
+      expect(updateResponse.ok()).toBe(true);
+      const updatedScope = (await updateResponse.json()).data as PersonalMcpScope;
+      expect(updatedScope.scope).toBe(`mcp:custom:${renamed}`);
+      expect(updatedScope.name).toBe(renamed);
       await expect(dialog).toHaveCount(0);
+      await expect(entry).toHaveCount(0);
+      const renamedEntry = page.locator(`article[data-mcp-scope="mcp:custom:${renamed}"]`);
+      await expect(renamedEntry.getByRole('heading', { name: renamed, exact: true })).toBeVisible();
       await page.reload({ waitUntil: 'load' });
       await expect(page.locator('html')).toHaveAttribute('data-zova-hydrated', 'web');
-      await expect(entry.getByRole('heading', { name: renamed, exact: true })).toBeVisible();
-      await expect(entry.getByText('Edited and persisted', { exact: true })).toBeVisible();
+      await expect(renamedEntry.getByRole('heading', { name: renamed, exact: true })).toBeVisible();
+      await expect(renamedEntry.getByText('Edited and persisted', { exact: true })).toBeVisible();
       const persisted = (
         await readPersonalMcpScopes(request, await loginMcpAccount(request, seededMcpAccount))
       ).find(item => String(item.id) === String(scope.id));
       expect(persisted).toMatchObject({
-        scope: scope.scope,
+        scope: `mcp:custom:${renamed}`,
         name: renamed,
         description: 'Edited and persisted',
         tools: scope.tools,
       });
 
-      await entry.getByRole('button', { name: 'Delete', exact: true }).click();
+      await renamedEntry.getByRole('button', { name: 'Delete', exact: true }).click();
       await expect(dialog).toBeVisible();
       const deleted = waitForApiResponse(
         page,
@@ -1378,11 +1401,11 @@ test(
       await dialog.getByRole('button', { name: 'Yes', exact: true }).click();
       expect((await deleted).ok()).toBe(true);
       await expect(dialog).toHaveCount(0);
-      await expect(entry).toHaveCount(0);
+      await expect(renamedEntry).toHaveCount(0);
       await page.reload({ waitUntil: 'load' });
       await expect(page.locator('html')).toHaveAttribute('data-zova-hydrated', 'web');
       await expect(page.getByRole('button', { name: 'Create scope', exact: true })).toBeEnabled();
-      await expect(entry).toHaveCount(0);
+      await expect(renamedEntry).toHaveCount(0);
       expect(errors).toEqual({ page: 0, console: 0, hydration: 0 });
     } finally {
       await cleanupPersonalMcpFixtures(request, scopeNames, clientIds);
@@ -1397,8 +1420,9 @@ test(
     test.setTimeout(60_000);
     if (!baseURL) throw new Error('Managed E2E origin unavailable');
     const origin = new URL(baseURL).origin;
-    const name = `MCP select-only E2E ${randomBytes(12).toString('hex')}`;
-    const scopeNames = new Set([name]);
+    const name = `MCP_select-only-E2E-${randomBytes(12).toString('hex')}`;
+    const renamed = `${name}-renamed`;
+    const scopeNames = new Set([name, renamed]);
     const clientIds = new Set<string>();
     const errors = collectBrowserErrors(page);
     try {
@@ -1476,6 +1500,63 @@ test(
       await page.goto(authorizationsPath, { waitUntil: 'load' });
       const entry = page.locator(`article[data-authorization-id="${grant.id}"]`);
       await expect(entry.getByText(scope.scope, { exact: true })).toBeVisible();
+
+      await page.goto(scopesPath, { waitUntil: 'load' });
+      await expect(page.locator('html')).toHaveAttribute('data-zova-hydrated', 'web');
+      const scopeEntry = page.locator(`article[data-mcp-scope="${scope.scope}"]`);
+      const dialog = page.getByRole('dialog');
+      const updatePath = `${customScopeApiPath}/updateMine/${scope.id}`;
+      await scopeEntry.getByRole('button', { name: 'Edit', exact: true }).click();
+      await dialog
+        .getByRole('group', { name: /^Name(?: \*)?$/ })
+        .getByRole('textbox')
+        .fill(`  ${name}  `);
+      await dialog
+        .getByRole('group', { name: /^Description(?: \*)?$/ })
+        .getByRole('textbox')
+        .fill('Description-only edit keeps the existing grant');
+      const described = waitForApiResponse(page, 'POST', updatePath);
+      await dialog.getByRole('button', { name: 'Save', exact: true }).click();
+      expect((await described).ok()).toBe(true);
+      await expect(dialog).toHaveCount(0);
+      const stillActive = await callMcp(request, 'tools/list', {}, token.access_token);
+      expect(stillActive.status()).toBe(200);
+
+      // Keep a real pending request to test a stale client selecting the old scope.
+      const staleAuthorization = createAuthorization(origin, client.clientId, client.redirectUri);
+      const pending = await page.request.get(staleAuthorization.path, { maxRedirects: 0 });
+      expect(pending.status()).toBe(302);
+      const staleRequest = new URL(pending.headers().location, origin).searchParams.get('request');
+      expect(Boolean(staleRequest)).toBe(true);
+
+      await scopeEntry.getByRole('button', { name: 'Edit', exact: true }).click();
+      await dialog
+        .getByRole('group', { name: /^Name(?: \*)?$/ })
+        .getByRole('textbox')
+        .fill(renamed);
+      await dialog.getByRole('button', { name: 'Save', exact: true }).click();
+      const confirmation = page.getByRole('dialog').filter({ hasText: scopeAccessChangeConfirm });
+      await expect(confirmation.getByText(scopeAccessChangeConfirm, { exact: true })).toBeVisible();
+      const updated = waitForApiResponse(page, 'POST', updatePath);
+      await confirmation.getByRole('button', { name: 'Yes', exact: true }).click();
+      const updatedResponse = await updated;
+      expect(updatedResponse.ok()).toBe(true);
+      expect((await updatedResponse.json()).data.scope).toBe(`mcp:custom:${renamed}`);
+      await expect(dialog).toHaveCount(0);
+      await expect(scopeEntry).toHaveCount(0);
+      await expect(
+        page
+          .locator(`article[data-mcp-scope="mcp:custom:${renamed}"]`)
+          .getByRole('heading', { name: renamed, exact: true }),
+      ).toBeVisible();
+      const rejectedAccess = await callMcp(request, 'tools/list', {}, token.access_token);
+      expect(rejectedAccess.status()).toBe(401);
+      expect(rejectedAccess.headers()['www-authenticate']).toContain('error="invalid_token"');
+      const rejectedScope = await page.request.post('/mcp/auth/decision', {
+        headers: { ...headers, Origin: origin },
+        data: { request: staleRequest, allow: true, scope: scope.scope },
+      });
+      expect(rejectedScope.status()).toBe(400);
       expect(errors).toEqual({ page: 0, console: 0, hydration: 0 });
     } finally {
       await cleanupPersonalMcpFixtures(request, scopeNames, clientIds);
@@ -1490,7 +1571,7 @@ test(
     test.setTimeout(60_000);
     if (!baseURL) throw new Error('Managed E2E origin unavailable');
     const origin = new URL(baseURL).origin;
-    const name = `MCP write-only E2E ${randomBytes(12).toString('hex')}`;
+    const name = `MCP_write-only-E2E-${randomBytes(12).toString('hex')}`;
     const scopeNames = new Set([name]);
     const clientIds = new Set<string>();
     const errors = collectBrowserErrors(page);

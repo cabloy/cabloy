@@ -2734,6 +2734,12 @@ export interface components {
       provider: string;
       token?: unknown;
       payload?: unknown;
+      /** @enum {string} */
+      status?: 'accepted' | 'rejected' | 'unknown' | 'limited';
+      serverNow?: number;
+      expiresAt?: number;
+      resendAt?: number;
+      retryAt?: number;
     };
     'a-pay.dto.paymentSessionView': {
       id: number | string;
@@ -5132,6 +5138,8 @@ export interface components {
       name: string;
       controller: string;
       action: string;
+      controllerSummary: string;
+      summary: string;
       description: string;
       readOnly: boolean;
       available: boolean;
@@ -5142,7 +5150,7 @@ export interface components {
     'mcp-auth.dto.authorizationDecision': {
       request: string;
       allow: boolean;
-      scope?: string | undefined;
+      scope?: ('mcp:all' | 'mcp:read') | string | undefined;
     };
     'mcp-auth.dto.authorizationGrantMineRes': {
       list: components['schemas']['mcp-auth.dto.authorizationGrant'][];
@@ -5191,7 +5199,10 @@ export interface components {
       /** @description ID */
       id: number | string;
       scope: string;
-      /** @description Name */
+      /**
+       * Name
+       * @description Use 1–100 letters, digits, underscores or hyphens. Names are case-sensitive; test becomes mcp:custom:test.
+       */
       name: string;
       /** @description Description */
       description: string;
@@ -5207,11 +5218,16 @@ export interface components {
       name: string;
       controller: string;
       action: string;
+      controllerSummary: string;
+      summary: string;
       description: string;
       readOnly: boolean;
     };
     'mcp-auth.dto.customScopeCreate_1ff20af69286149eb0b25291d9450172f7bd0054': {
-      /** @description Name */
+      /**
+       * Name
+       * @description Use 1–100 letters, digits, underscores or hyphens. Names are case-sensitive; test becomes mcp:custom:test.
+       */
       name: string;
       /** @description Description */
       description: string;
@@ -6070,6 +6086,7 @@ export interface operations {
       content: {
         'application/json': {
           scene: string;
+          payload?: unknown;
         };
       };
     };
@@ -6098,8 +6115,9 @@ export interface operations {
     requestBody: {
       content: {
         'application/json': {
-          id: string;
+          id?: string | undefined;
           scene: string;
+          payload?: unknown;
         };
       };
     };

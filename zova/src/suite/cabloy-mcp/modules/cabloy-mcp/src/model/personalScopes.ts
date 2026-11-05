@@ -36,7 +36,7 @@ export class ModelPersonalScopes extends BeanModelBase {
   catalog() {
     if (!this.$passport.isAuthenticated) return;
     return this.$useStateData({
-      queryKey: ['catalog', this.$passport.user?.id],
+      queryKey: ['catalog', this.$passport.user?.id, this.app.meta.locale.current],
       queryFn: () => this.scope.api.mcpAuthCustomScope.catalog(),
       meta: {
         persister: false,

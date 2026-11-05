@@ -9,6 +9,7 @@ import type { IMcpToolIdentity, TypeMcpCustomScope } from '../types/index.ts';
 
 import { $locale } from '../.metadata/locales.ts';
 import { DtoMcpToolIdentity } from '../dto/mcpTool.ts';
+import { mcpCustomScopePattern } from '../lib/authorization.ts';
 
 export interface IEntityOptionsCustomScope extends IDecoratorEntityOptions {}
 
@@ -17,10 +18,18 @@ export class EntityCustomScope extends EntityBase {
   @Api.field(v.tableIdentity())
   userId: TableIdentity;
 
-  @Api.field(z.string().regex(/^mcp:custom:[\w-]{43}$/))
+  @Api.field(z.string().regex(mcpCustomScopePattern))
   scope: TypeMcpCustomScope;
 
-  @Api.field(v.title($locale('Name')), z.string().trim().min(1).max(100))
+  @Api.field(
+    v.title($locale('Name')),
+    v.description($locale('CustomScopeNameHelp')),
+    // OpenAPI carries the raw-input pattern, but not Zod's trim transform.
+    z
+      .string()
+      .regex(/^\s*[\w-]{1,100}\s*$/)
+      .trim(),
+  )
   name: string;
 
   @Api.field(v.title($locale('Description')), z.string().max(1000))

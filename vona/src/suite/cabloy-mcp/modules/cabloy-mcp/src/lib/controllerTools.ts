@@ -36,6 +36,8 @@ export interface IControllerToolIdentity {
 
 export interface IControllerToolCatalogEntry extends IControllerToolIdentity {
   name: string;
+  controllerSummary: string;
+  summary: string;
   description: string;
   readOnly: boolean;
 }
@@ -50,6 +52,8 @@ export interface IControllerToolServerOptions {
 
 interface IControllerTool {
   identity: IControllerToolIdentity;
+  controllerSummary: string;
+  summary: string;
   tool: Tool;
   readOnly: boolean;
   call(args: Record<string, unknown>): Promise<CallToolResult>;
@@ -277,6 +281,10 @@ export async function createControllerToolServer(
           };
           tools.set(name, {
             identity: { controller: controller.beanOptions.beanFullName, action: route.action },
+            controllerSummary: controller.beanOptions.options?.summary
+              ? app.meta.text(controller.beanOptions.options.summary)
+              : '',
+            summary: operation.summary ?? '',
             tool,
             readOnly,
             async call(args) {
@@ -392,6 +400,8 @@ export async function createControllerToolServer(
         return (await visibleTools()).map(item => ({
           ...item.identity,
           name: item.tool.name,
+          controllerSummary: item.controllerSummary,
+          summary: item.summary,
           description: item.tool.description ?? '',
           readOnly: item.readOnly,
         }));

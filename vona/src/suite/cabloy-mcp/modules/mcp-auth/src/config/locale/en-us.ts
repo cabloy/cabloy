@@ -7,5 +7,7 @@ export default {
   CustomScopeDelete: 'Delete personal MCP scope',
   Description: 'Description',
   Name: 'Name',
+  CustomScopeNameHelp:
+    'Use 1–100 letters, digits, underscores or hyphens. Names are case-sensitive; test becomes mcp:custom:test.',
   Tools: 'Tools',
 };

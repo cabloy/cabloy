@@ -29,6 +29,7 @@ import {
   isMcpScope,
   isMcpBuiltinScope,
   isMcpCustomScope,
+  isCanonicalMcpCustomScope,
   mcpScopeIncludes,
   parseMcpRequestedScope,
   resolveMcpResource,
@@ -566,7 +567,7 @@ export class ServiceAuthorization extends BeanBase {
         description: '',
         tools: catalog.filter(tool => tool.readOnly),
       },
-      ...mine.list,
+      ...mine.list.filter(isCanonicalMcpCustomScope),
     ];
     const options: DtoMcpScopeOption[] = [];
     for (const candidate of candidates) {
@@ -576,6 +577,8 @@ export class ServiceAuthorization extends BeanBase {
           name: tool.name,
           controller: tool.controller,
           action: tool.action,
+          controllerSummary: current?.controllerSummary ?? '',
+          summary: current?.summary ?? '',
           description: current?.description ?? '',
           readOnly: current?.readOnly ?? false,
           available: Boolean(current),

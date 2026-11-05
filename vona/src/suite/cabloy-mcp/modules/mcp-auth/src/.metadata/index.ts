@@ -585,6 +585,7 @@ declare module 'vona' {
 /** service: end */
 /** meta: begin */
 export * from '../bean/meta.index.ts';
+export * from '../bean/meta.redlock.ts';
 export * from '../bean/meta.version.ts';
 import type { IMetaOptionsIndex } from 'vona-module-a-index';
 import 'vona-module-a-meta';
@@ -592,6 +593,7 @@ declare module 'vona-module-a-meta' {
 
     export interface IMetaRecord {
       'mcp-auth:index': IMetaOptionsIndex;
+'mcp-auth:redlock': never;
 'mcp-auth:version': never;
     }
 
@@ -610,6 +612,16 @@ declare module 'vona-module-mcp-auth' {
             get $onionOptions(): IMetaOptionsIndex;
           }
 
+        export interface MetaRedlock {
+          /** @internal */
+          get scope(): ScopeModuleMcpAuth;
+        }
+
+          export interface MetaRedlock {
+            get $beanFullName(): 'mcp-auth.meta.redlock';
+            get $onionName(): 'mcp-auth:redlock';
+          }
+
         export interface MetaVersion {
           /** @internal */
           get scope(): ScopeModuleMcpAuth;
@@ -621,6 +633,9 @@ declare module 'vona-module-mcp-auth' {
           }
 }
 /** meta: end */
+/** meta redlock: begin */
+import type { MetaRedlock } from '../bean/meta.redlock.ts';
+/** meta redlock: end */
 /** config: begin */
 export * from '../config/config.ts';
 import type { config } from '../config/config.ts';
@@ -645,6 +660,7 @@ locale: TypeModuleLocales<(typeof locales)[TypeLocaleBase]>;
 entity: IModuleEntity;
 model: IModuleModel;
 service: IModuleService;
+redlock: MetaRedlock;
 }
 
 import 'vona';

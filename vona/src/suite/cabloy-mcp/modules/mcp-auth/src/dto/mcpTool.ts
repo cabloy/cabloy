@@ -21,6 +21,12 @@ export class DtoMcpToolIdentity {
 @Dto()
 export class DtoMcpTool extends DtoMcpToolIdentity {
   @Api.field()
+  controllerSummary: string;
+
+  @Api.field()
+  summary: string;
+
+  @Api.field()
   description: string;
 
   @Api.field()

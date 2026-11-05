@@ -1,6 +1,5 @@
 import type { TableIdentity } from 'table-identity';
 
-import { randomBytes } from 'node:crypto';
 import { BeanBase } from 'vona';
 import { Service } from 'vona-module-a-bean';
 
@@ -9,7 +8,12 @@ import type { DtoCustomScopeMineRes, DtoCustomScopeView } from '../dto/customSco
 import type { EntityCustomScope } from '../entity/customScope.tsx';
 import type { IMcpToolCatalogItem, IMcpToolIdentity, TypeMcpScope } from '../types/index.ts';
 
-import { isMcpCustomScope, OAuthError } from '../lib/authorization.ts';
+import {
+  isCanonicalMcpCustomScope,
+  isMcpCustomScope,
+  mcpCustomScopeNamePattern,
+  OAuthError,
+} from '../lib/authorization.ts';
 
 export function toolIdentityKey(tool: IMcpToolIdentity): string {
   return JSON.stringify([tool.name, tool.controller, tool.action]);
@@ -89,11 +93,11 @@ export class ServiceCustomScope extends BeanBase {
   }
 
   async createMine(userId: TableIdentity, data: DtoCustomScopeCreate): Promise<EntityCustomScope> {
-    const parsed = await this.validate(data);
-    return await this.scope.model.customScope.insert({
-      ...parsed,
-      userId,
-      scope: `mcp:custom:${randomBytes(32).toString('base64url')}`,
+    return await this.withOwnerLock(userId, async () => {
+      const parsed = await this.validate(data);
+      const scope = `mcp:custom:${parsed.name}` as const;
+      await this.ensureUniqueName(userId, parsed.name);
+      return await this.scope.model.customScope.insert({ ...parsed, userId, scope });
     });
   }
 
@@ -102,29 +106,37 @@ export class ServiceCustomScope extends BeanBase {
     id: TableIdentity,
     data: DtoCustomScopeCreate,
   ): Promise<EntityCustomScope> {
-    const row = await this.scope.model.customScope.get({ id, userId });
-    if (!row) this.app.throw(404);
-    const parsed = await this.validate(data);
-    if (!sameTools(row.tools, parsed.tools)) await this.revokeLinked(userId, row.scope);
-    await this.scope.model.customScope.update({ id, userId, ...parsed });
-    const updated = (await this.scope.model.customScope
-      .builderSelect()
-      .where({ id, userId })
-      .first())!;
-    return { ...updated, tools: normalizeToolIdentities(updated.tools) };
+    return await this.withOwnerLock(userId, async () => {
+      const row = await this.scope.model.customScope.get({ id, userId });
+      if (!row) this.app.throw(404);
+      const parsed = await this.validate(data);
+      const scope = `mcp:custom:${parsed.name}` as const;
+      await this.ensureUniqueName(userId, parsed.name, id);
+      if (row.scope !== scope || !sameTools(row.tools, parsed.tools))
+        await this.revokeLinked(userId, row.scope);
+      await this.scope.model.customScope.update({ id, userId, ...parsed, scope });
+      const updated = (await this.scope.model.customScope
+        .builderSelect()
+        .where({ id, userId })
+        .first())!;
+      return { ...updated, tools: normalizeToolIdentities(updated.tools) };
+    });
   }
 
   async deleteMine(userId: TableIdentity, id: TableIdentity): Promise<void> {
-    const row = await this.scope.model.customScope.get({ id, userId });
-    if (!row) return;
-    await this.revokeLinked(userId, row.scope);
-    await this.scope.model.customScope.delete({ id, userId });
+    await this.withOwnerLock(userId, async () => {
+      const row = await this.scope.model.customScope.get({ id, userId });
+      if (!row) return;
+      await this.revokeLinked(userId, row.scope);
+      await this.scope.model.customScope.delete({ id, userId });
+    });
   }
 
   async resolve(userId: TableIdentity, scope: TypeMcpScope): Promise<EntityCustomScope> {
     if (!isMcpCustomScope(scope)) throw new OAuthError('invalid_scope');
-    const row = await this.scope.model.customScope.builderSelect().where({ scope, userId }).first();
-    if (!row) throw new OAuthError('invalid_scope');
+    const rows = await this.scope.model.customScope.builderSelect().where({ scope, userId });
+    const row = rows.find(row => row.scope === scope);
+    if (!row || !isCanonicalMcpCustomScope(row)) throw new OAuthError('invalid_scope');
     return { ...row, tools: normalizeToolIdentities(row.tools) };
   }
 
@@ -134,20 +146,19 @@ export class ServiceCustomScope extends BeanBase {
     scopes: TypeMcpScope[],
     operation: () => Promise<T>,
   ): Promise<T> {
-    for (const scope of Array.from(new Set(scopes.filter(isMcpCustomScope))).toSorted()) {
-      const row = await this.scope.model.customScope.get({ scope, userId });
-      if (!row) throw new OAuthError('invalid_scope');
-      normalizeToolIdentities(row.tools);
-    }
-    return await operation();
+    return await this.withOwnerLock(userId, async () => {
+      for (const scope of new Set(scopes.filter(isMcpCustomScope))) {
+        await this.resolve(userId, scope);
+      }
+      return await operation();
+    });
   }
 
   private async validate(data: DtoCustomScopeCreate): Promise<DtoCustomScopeCreate> {
     if (
       !data ||
       typeof data.name !== 'string' ||
-      !data.name.trim() ||
-      data.name.trim().length > 100 ||
+      !mcpCustomScopeNamePattern.test(data.name.trim()) ||
       typeof data.description !== 'string' ||
       data.description.length > 1000 ||
       Object.keys(data).some(key => !['name', 'description', 'tools'].includes(key))
@@ -162,11 +173,44 @@ export class ServiceCustomScope extends BeanBase {
     return { name: data.name.trim(), description: data.description, tools };
   }
 
+  private async ensureUniqueName(
+    userId: TableIdentity,
+    name: string,
+    id?: TableIdentity,
+  ): Promise<void> {
+    const scope = `mcp:custom:${name}` as const;
+    const rows = await this.scope.model.customScope
+      .builderSelect()
+      .where({ userId })
+      .where(builder => builder.where({ name }).orWhere({ scope }));
+    if (
+      rows.some(row => String(row.id) !== String(id) && (row.name === name || row.scope === scope))
+    ) {
+      throw new OAuthError('invalid_request');
+    }
+  }
+
+  private async withOwnerLock<T>(userId: TableIdentity, operation: () => Promise<T>): Promise<T> {
+    return await this.scope.redlock.lock(
+      `customScope.owner.${encodeURIComponent(String(userId))}`,
+      operation,
+    );
+  }
+
   private async revokeLinked(userId: TableIdentity, scope: TypeMcpScope): Promise<void> {
-    await this.scope.model.authorization
+    const rows = await this.scope.model.authorization
       .builderSelect()
       .where({ userId })
       .where(builder => builder.where({ scope }).orWhere({ requestedScope: scope }))
+      .whereIn('state', ['codeReady', 'tokenActive']);
+    const ids = rows
+      .filter(row => row.scope === scope || row.requestedScope === scope)
+      .map(row => row.id);
+    if (!ids.length) return;
+    await this.scope.model.authorization
+      .builderSelect()
+      .where({ userId })
+      .whereIn('id', ids)
       .whereIn('state', ['codeReady', 'tokenActive'])
       .update({ state: 'revoked', codeDigest: '', tokenDigest: '', expiresAt: Date.now() });
   }

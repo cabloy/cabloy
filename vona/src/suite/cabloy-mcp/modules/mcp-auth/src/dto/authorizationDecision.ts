@@ -4,6 +4,8 @@ import { Api } from 'vona-module-a-openapiutils';
 import { Dto } from 'vona-module-a-web';
 import { z } from 'zod';
 
+import { mcpCustomScopePattern, mcpSupportedScopes } from '../lib/authorization.ts';
+
 export interface IDtoOptionsAuthorizationDecision extends IDecoratorDtoOptions {}
 
 @Dto<IDtoOptionsAuthorizationDecision>()
@@ -15,10 +17,7 @@ export class DtoAuthorizationDecision {
   allow: boolean;
 
   @Api.field(
-    z
-      .string()
-      .regex(/^(?:mcp:(?:all|read)|mcp:custom:[\w-]{43})$/)
-      .optional(),
+    z.union([z.enum(mcpSupportedScopes), z.string().regex(mcpCustomScopePattern)]).optional(),
   )
   scope?: string;
 }

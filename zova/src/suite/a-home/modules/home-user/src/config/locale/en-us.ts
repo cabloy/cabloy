@@ -3,7 +3,7 @@ export default {
   AccountProfile: 'Profile',
   AccountSecurity: 'Account Security',
   AccountMcpAuthorizations: 'MCP authorizations',
-  AccountMcpScopes: 'Personal MCP scopes',
+  AccountMcpScopes: 'MCP scopes',
   AccountUserName: 'User name',
   AccountDisplayName: 'Display name',
   AccountLocale: 'Locale',

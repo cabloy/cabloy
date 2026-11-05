@@ -23,6 +23,8 @@ export interface IMcpToolIdentity {
 }
 
 export interface IMcpToolCatalogItem extends IMcpToolIdentity {
+  controllerSummary: string;
+  summary: string;
   description: string;
   readOnly: boolean;
 }

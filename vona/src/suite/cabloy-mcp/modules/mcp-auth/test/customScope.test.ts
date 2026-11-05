@@ -3,9 +3,11 @@ import type { TableIdentity } from 'table-identity';
 import assert from 'node:assert/strict';
 import { createHash, randomUUID } from 'node:crypto';
 import { before, describe, it } from 'node:test';
+import { setTimeout as delay } from 'node:timers/promises';
 import { acquireTestLock, app } from 'vona-mock';
 
 import type { DtoCustomScopeCreate } from '../src/dto/customScopeCreate.tsx';
+import type { IMcpTokenPayload } from '../src/lib/authToken.ts';
 import type { IMcpAuthResource, IMcpToolIdentity, TypeMcpScope } from '../src/types/index.ts';
 
 import { getMcpIssuer, OAuthError, resolveMcpResource, sha256 } from '../src/lib/authorization.ts';
@@ -239,9 +241,9 @@ describe('customScope.test.ts', { concurrency: false }, () => {
   it('keeps personal exact identities owner/instance scoped and resolves remembered custom scopes only after login', async () => {
     if (trainingDisabled) return;
     await withFixture(async fixture => {
-      const body = definition('Personal reads', [fixture.select, fixture.select]);
+      const body = definition('Personal_reads', [fixture.select, fixture.select]);
       const owned = await asUser(fixture.owner, () => scopes().createMine(fixture.owner.id, body));
-      assert.match(owned.scope, /^mcp:custom:[\w-]{43}$/);
+      assert.equal(owned.scope, 'mcp:custom:Personal_reads');
       assert.deepEqual(owned.tools, [fixture.select], 'deduplicate exact Action identities');
       await asUser(fixture.owner, async () => {
         assert.deepEqual(
@@ -252,7 +254,7 @@ describe('customScope.test.ts', { concurrency: false }, () => {
           () =>
             scopes().createMine(
               fixture.owner.id,
-              definition('Wrong Action binding', [{ ...fixture.select, action: 'create' }]),
+              definition('Wrong-Action-binding', [{ ...fixture.select, action: 'create' }]),
             ),
           'invalid_scope',
         );
@@ -283,8 +285,149 @@ describe('customScope.test.ts', { concurrency: false }, () => {
           fixture.select,
         ]);
       });
+      await asUser(fixture.other, async () => {
+        const other = await scopes().createMine(
+          fixture.other.id,
+          definition(body.name, [fixture.view]),
+        );
+        assert.notEqual(String(other.id), String(owned.id));
+        assert.equal(other.scope, owned.scope, 'different owners can use the same public name');
+        assert.deepEqual((await scopes().resolve(fixture.other.id, other.scope)).tools, [
+          fixture.view,
+        ]);
+        const summary = await auth().summary(remembered);
+        assert.deepEqual(
+          summary.options
+            .find(option => option.scope === other.scope)
+            ?.tools.map(tool => ({
+              name: tool.name,
+              controller: tool.controller,
+              action: tool.action,
+            })),
+          [fixture.view],
+          "the logged-in owner selects their own definition, not another owner's tools",
+        );
+      });
       const code = await approve(fixture, remembered);
       assert.equal((await redeem(fixture.clientId, code)).scope, owned.scope);
+      await context(async () => {
+        const row = await grants().get({ requestDigest: sha256(remembered) });
+        assert.equal(String(row?.userId), String(fixture.owner.id));
+        assert.deepEqual(row?.scopeTools, [fixture.select]);
+      });
+    });
+  });
+
+  it('trims case-preserved slug names and rejects invalid or duplicate owner names without changing rows', async () => {
+    if (trainingDisabled) return;
+    await withFixture(async fixture => {
+      await asUser(fixture.owner, async () => {
+        const owned = await scopes().createMine(
+          fixture.owner.id,
+          definition('  Personal_Reads-1  ', [fixture.select]),
+        );
+        assert.equal(owned.name, 'Personal_Reads-1');
+        assert.equal(owned.scope, 'mcp:custom:Personal_Reads-1');
+        const other = await scopes().createMine(
+          fixture.owner.id,
+          definition('Another', [fixture.view]),
+        );
+        for (const name of [
+          '',
+          '   ',
+          'two words',
+          'has.dot',
+          'has:colon',
+          '中文',
+          'a'.repeat(101),
+        ]) {
+          await expectOAuth(
+            () => scopes().createMine(fixture.owner.id, definition(name, [fixture.select])),
+            'invalid_request',
+          );
+          await expectOAuth(
+            () => scopes().updateMine(fixture.owner.id, other.id, definition(name, [fixture.view])),
+            'invalid_request',
+          );
+        }
+        await expectOAuth(
+          () =>
+            scopes().createMine(fixture.owner.id, definition(' Personal_Reads-1 ', [fixture.view])),
+          'invalid_request',
+        );
+        await expectOAuth(
+          () =>
+            scopes().updateMine(fixture.owner.id, other.id, definition(owned.name, [fixture.view])),
+          'invalid_request',
+        );
+        const unchanged = await scopes().updateMine(
+          fixture.owner.id,
+          owned.id,
+          definition(` ${owned.name} `, [fixture.select]),
+        );
+        assert.equal(
+          unchanged.scope,
+          owned.scope,
+          'an unchanged name does not conflict with itself',
+        );
+        assert.deepEqual(
+          (await scopes().mine(fixture.owner.id)).list.map(row => [row.name, row.scope]).toSorted(),
+          [
+            ['Another', 'mcp:custom:Another'],
+            [owned.name, owned.scope],
+          ].toSorted(),
+          'rejected writes leave both owner definitions unchanged',
+        );
+        for (const name of ['a', 'A'.repeat(100), 'personal_reads-1']) {
+          const valid = await scopes().createMine(
+            fixture.owner.id,
+            definition(name, [fixture.select]),
+          );
+          assert.equal(valid.name, name);
+          assert.equal(valid.scope, `mcp:custom:${name}`);
+          assert.equal((await scopes().resolve(fixture.owner.id, valid.scope)).name, name);
+        }
+        await expectOAuth(
+          () => scopes().resolve(fixture.owner.id, 'mcp:custom:PERSONAL_READS-1'),
+          'invalid_scope',
+        );
+      });
+    });
+  });
+
+  it('allows exactly one concurrent create for the same owner name across independent contexts', async () => {
+    if (trainingDisabled) return;
+    await withFixture(async fixture => {
+      const ready = Promise.withResolvers<void>();
+      const contexts: unknown[] = [];
+      const create = () =>
+        asUser(fixture.owner, async () => {
+          contexts.push(app.ctx);
+          if (contexts.length === 2) ready.resolve();
+          await ready.promise;
+          return await scopes().createMine(
+            fixture.owner.id,
+            definition('Concurrent', [fixture.select]),
+          );
+        });
+      const results = await Promise.allSettled([create(), create()]);
+      assert.notEqual(
+        contexts[0],
+        contexts[1],
+        'competing operations own separate mockCtx boundaries',
+      );
+      assert.equal(results.filter(result => result.status === 'fulfilled').length, 1);
+      const rejected = results.filter(result => result.status === 'rejected');
+      assert.equal(rejected.length, 1);
+      assert.ok(rejected[0].reason instanceof OAuthError);
+      assert.equal(rejected[0].reason.oauthError, 'invalid_request');
+      await context(async () => {
+        const rows = await app.scope('mcp-auth').model.customScope.select({
+          where: { userId: fixture.owner.id, name: 'Concurrent' },
+        });
+        assert.equal(rows.length, 1, 'owner uniqueness is durable, not just a promise outcome');
+        assert.equal(rows[0].scope, 'mcp:custom:Concurrent');
+      });
     });
   });
 
@@ -294,15 +437,15 @@ describe('customScope.test.ts', { concurrency: false }, () => {
       const [read, write, mixed] = await asUser(fixture.owner, async () => [
         await scopes().createMine(
           fixture.owner.id,
-          definition('Read exact subset', [fixture.select]),
+          definition('Read-exact-subset', [fixture.select]),
         ),
         await scopes().createMine(
           fixture.owner.id,
-          definition('Write exact subset', [fixture.create]),
+          definition('Write-exact-subset', [fixture.create]),
         ),
         await scopes().createMine(
           fixture.owner.id,
-          definition('Mixed request ceiling', [fixture.select, fixture.create]),
+          definition('Mixed-request-ceiling', [fixture.select, fixture.create]),
         ),
       ]);
       const all = await issue(fixture, 'mcp:all', read.scope);
@@ -361,21 +504,21 @@ describe('customScope.test.ts', { concurrency: false }, () => {
       const owned = await asUser(fixture.owner, () =>
         scopes().createMine(
           fixture.owner.id,
-          definition('Original personal subset', [fixture.select]),
+          definition('Original-personal-subset', [fixture.select]),
         ),
       );
       const active = await issue(fixture, 'mcp:all', owned.scope);
       const codeRequest = await request(fixture.clientId, 'mcp:all');
       const unredeemed = await approve(fixture, codeRequest, owned.scope);
       await asUser(fixture.owner, async () => {
-        const renamed = await scopes().updateMine(fixture.owner.id, owned.id, {
-          name: 'Renamed personal subset',
+        const described = await scopes().updateMine(fixture.owner.id, owned.id, {
+          name: owned.name,
           description: 'Metadata edit only',
           tools: [fixture.select],
         });
-        assert.equal(renamed.scope, owned.scope);
-        assert.equal(renamed.name, 'Renamed personal subset');
-        assert.equal(renamed.description, 'Metadata edit only');
+        assert.equal(described.scope, owned.scope);
+        assert.equal(described.name, owned.name);
+        assert.equal(described.description, 'Metadata edit only');
       });
       await context(async () => {
         assert.equal(
@@ -413,7 +556,7 @@ describe('customScope.test.ts', { concurrency: false }, () => {
         scopes().updateMine(
           fixture.owner.id,
           owned.id,
-          definition('Changed personal subset', [fixture.select, fixture.view]),
+          definition(owned.name, [fixture.select, fixture.view]),
         ),
       );
       await context(async () => {
@@ -432,6 +575,8 @@ describe('customScope.test.ts', { concurrency: false }, () => {
       await expectOAuth(() => refresh(fixture.clientId, inherited.refresh_token!), 'invalid_grant');
       const replacement = await issue(fixture, 'mcp:all', owned.scope);
       assert.ok(replacement.token.refresh_token);
+      const deletionRequest = await request(fixture.clientId, 'mcp:all');
+      const deletionCode = await approve(fixture, deletionRequest, owned.scope);
       await asUser(fixture.owner, () => scopes().deleteMine(fixture.owner.id, owned.id));
       await context(async () => {
         assert.equal(
@@ -448,6 +593,276 @@ describe('customScope.test.ts', { concurrency: false }, () => {
         () => refresh(fixture.clientId, replacement.token.refresh_token!),
         'invalid_grant',
       );
+      const recreated = await asUser(fixture.owner, () =>
+        scopes().createMine(
+          fixture.owner.id,
+          definition(owned.name, [fixture.select, fixture.view]),
+        ),
+      );
+      assert.notEqual(String(recreated.id), String(owned.id));
+      assert.equal(recreated.scope, owned.scope, 'the same owner may reuse a deleted name');
+      await context(async () => {
+        await expectOAuth(
+          () => auth().lookupContext(replacement.token.access_token, resource.resource),
+          'invalid_token',
+        );
+        assert.equal(
+          (await grants().get({ requestDigest: sha256(replacement.requestId) }))?.state,
+          'revoked',
+        );
+      });
+      await expectOAuth(() => redeem(fixture.clientId, deletionCode), 'invalid_grant');
+      await expectOAuth(
+        () => refresh(fixture.clientId, replacement.token.refresh_token!),
+        'invalid_grant',
+      );
+      assert.equal((await issue(fixture, 'mcp:all', recreated.scope)).token.scope, recreated.scope);
+    });
+  });
+
+  it('changes scope on rename and revokes effective and requested custom code/access/refresh grants', async () => {
+    if (trainingDisabled) return;
+    await withFixture(async fixture => {
+      const [broad, narrow, caseSibling] = await asUser(fixture.owner, async () => [
+        await scopes().createMine(
+          fixture.owner.id,
+          definition('Before-Rename', [fixture.select, fixture.view]),
+        ),
+        await scopes().createMine(fixture.owner.id, definition('Narrow', [fixture.select])),
+        await scopes().createMine(fixture.owner.id, definition('before-rename', [fixture.select])),
+      ]);
+      const unaffected = await issue(fixture, 'mcp:all', caseSibling.scope);
+      const effective = await issue(fixture, 'mcp:all', broad.scope);
+      const requested = await issue(fixture, broad.scope, narrow.scope);
+      const effectiveRequest = await request(fixture.clientId, 'mcp:all');
+      const effectiveCode = await approve(fixture, effectiveRequest, broad.scope);
+      const requestedRequest = await request(fixture.clientId, broad.scope);
+      const requestedCode = await approve(fixture, requestedRequest, narrow.scope);
+      const pending = await request(fixture.clientId, broad.scope);
+      const renamed = await asUser(fixture.owner, () =>
+        scopes().updateMine(
+          fixture.owner.id,
+          broad.id,
+          definition(' After_Rename ', [fixture.select, fixture.view]),
+        ),
+      );
+      assert.equal(String(renamed.id), String(broad.id));
+      assert.equal(renamed.name, 'After_Rename');
+      assert.equal(renamed.scope, 'mcp:custom:After_Rename');
+      assert.notEqual(renamed.scope, broad.scope);
+      await context(async () => {
+        await expectOAuth(() => scopes().resolve(fixture.owner.id, broad.scope), 'invalid_scope');
+        assert.deepEqual(
+          (await scopes().resolve(fixture.owner.id, renamed.scope)).tools,
+          broad.tools,
+        );
+        for (const requestId of [
+          effective.requestId,
+          requested.requestId,
+          effectiveRequest,
+          requestedRequest,
+        ]) {
+          const row = await grants().get({ requestDigest: sha256(requestId) });
+          assert.equal(row?.state, 'revoked');
+          assert.equal(row?.codeDigest, '');
+          assert.equal(row?.tokenDigest, '');
+        }
+        for (const issued of [effective, requested]) {
+          await expectOAuth(
+            () => auth().lookupContext(issued.token.access_token, resource.resource),
+            'invalid_token',
+          );
+        }
+      });
+      for (const code of [effectiveCode, requestedCode]) {
+        await expectOAuth(() => redeem(fixture.clientId, code), 'invalid_grant');
+      }
+      for (const issued of [effective, requested]) {
+        assert.ok(issued.token.refresh_token);
+        await expectOAuth(
+          () => refresh(fixture.clientId, issued.token.refresh_token!),
+          'invalid_grant',
+        );
+      }
+      await asUser(fixture.owner, async () => {
+        await expectOAuth(() => auth().summary(pending), 'invalid_scope');
+        await expectOAuth(() => auth().decide(pending, true), 'invalid_scope');
+      });
+      assert.equal((await issue(fixture, 'mcp:all', renamed.scope)).token.scope, renamed.scope);
+      await context(async () => {
+        assert.equal(
+          (await grants().get({ requestDigest: sha256(unaffected.requestId) }))?.state,
+          'tokenActive',
+        );
+        assert.equal(
+          (await auth().lookupContext(unaffected.token.access_token, resource.resource)).scope,
+          caseSibling.scope,
+        );
+      });
+      assert.ok(unaffected.token.refresh_token);
+      assert.equal(
+        (await refresh(fixture.clientId, unaffected.token.refresh_token)).scope,
+        caseSibling.scope,
+        'renaming a differently cased sibling does not revoke this family',
+      );
+    });
+  });
+
+  it('rejects noncanonical persisted definitions and old credentials but keeps the owner row manageable', async () => {
+    if (trainingDisabled) return;
+    await withFixture(async fixture => {
+      const owned = await asUser(fixture.owner, () =>
+        scopes().createMine(
+          fixture.owner.id,
+          definition('Legacy-personal-subset', [fixture.select]),
+        ),
+      );
+      const active = await issue(fixture, owned.scope);
+      const codeRequest = await request(fixture.clientId, owned.scope);
+      const code = await approve(fixture, codeRequest);
+      const pending = await request(fixture.clientId, owned.scope);
+      const legacyScope = `mcp:custom:${'L'.repeat(43)}` as const;
+      const legacy = await context(async () => {
+        // Model an already-persisted random identifier and its matching issued credentials.
+        // Signing the matching payload proves rejection is canonical-definition validation,
+        // rather than a mismatch between an otherwise-valid JWT and its grant row.
+        await app.scope('mcp-auth').model.customScope.updateById(owned.id, { scope: legacyScope });
+        for (const requestId of [active.requestId, codeRequest, pending]) {
+          const row = await grants().get({ requestDigest: sha256(requestId) });
+          assert.ok(row);
+          await grants().updateById(row.id, { scope: legacyScope, requestedScope: legacyScope });
+        }
+        const verified = await app.bean.jwt.get('mcpAccess').verify(active.token.access_token);
+        assert.ok(verified);
+        const payload = app
+          .scope('mcp-auth')
+          .service.authTokenAdapter.payload(verified) as IMcpTokenPayload;
+        payload.mcp.scope = legacyScope;
+        return {
+          access: await app.bean.jwt.get('mcpAccess').sign(payload),
+          refresh: await app.bean.jwt.get('mcpRefresh').sign(payload),
+        };
+      });
+      const all = await request(fixture.clientId, 'mcp:all');
+      await asUser(fixture.owner, async () => {
+        const mine = (await scopes().mine(fixture.owner.id)).list;
+        assert.equal(mine.length, 1);
+        assert.equal(String(mine[0].id), String(owned.id));
+        assert.equal(mine[0].scope, legacyScope);
+        const summary = await auth().summary(all);
+        assert.equal(
+          summary.options.some(option => option.scope === legacyScope),
+          false,
+        );
+        await expectOAuth(() => auth().summary(pending), 'invalid_scope');
+        await expectOAuth(() => auth().decide(pending, true), 'invalid_scope');
+        await expectOAuth(() => scopes().resolve(fixture.owner.id, legacyScope), 'invalid_scope');
+        await expectOAuth(
+          () =>
+            scopes().withDefinitions(fixture.owner.id, [legacyScope], async () => {
+              assert.fail('noncanonical definitions must not reach the linking callback');
+            }),
+          'invalid_scope',
+        );
+      });
+      await context(async () => {
+        await expectOAuth(
+          () => auth().lookupContext(legacy.access, resource.resource),
+          'invalid_token',
+        );
+        await expectOAuth(
+          () => auth().resolveToolAccess(legacyScope, fixture.owner.id),
+          'invalid_scope',
+        );
+      });
+      await expectOAuth(() => redeem(fixture.clientId, code), 'invalid_grant');
+      await expectOAuth(() => refresh(fixture.clientId, legacy.refresh), 'invalid_grant');
+      await asUser(fixture.owner, async () => {
+        const repaired = await scopes().updateMine(
+          fixture.owner.id,
+          owned.id,
+          definition(owned.name, [fixture.select]),
+        );
+        assert.equal(
+          repaired.scope,
+          owned.scope,
+          'the owner can explicitly repair a legacy definition',
+        );
+        await scopes().deleteMine(fixture.owner.id, owned.id);
+        assert.deepEqual((await scopes().mine(fixture.owner.id)).list, []);
+      });
+    });
+  });
+
+  it('serializes definition linkage against deletion across independent contexts', async () => {
+    if (trainingDisabled) return;
+    await withFixture(async fixture => {
+      const owned = await asUser(fixture.owner, () =>
+        scopes().createMine(
+          fixture.owner.id,
+          definition('Link-delete-contention', [fixture.select]),
+        ),
+      );
+      const pending = await request(fixture.clientId, 'mcp:all');
+      const entered = Promise.withResolvers<void>();
+      const releaseLink = Promise.withResolvers<void>();
+      const deleteStarted = Promise.withResolvers<void>();
+      let linkContext: unknown;
+      let deleteContext: unknown;
+      let deleted = false;
+      const linking = context(() =>
+        scopes().withDefinitions(fixture.owner.id, [owned.scope], async () => {
+          linkContext = app.ctx;
+          entered.resolve();
+          await releaseLink.promise;
+          const row = await grants().get({ requestDigest: sha256(pending) });
+          assert.ok(row);
+          await grants().updateById(row.id, {
+            userId: fixture.owner.id,
+            authId: fixture.owner.authId,
+            scope: owned.scope,
+            scopeTools: [fixture.select],
+            state: 'codeReady',
+            codeDigest: sha256('owned-link-delete-code'),
+            codeExpiresAt: Date.now() + 60000,
+          });
+        }),
+      );
+      let deletion: Promise<void> | undefined;
+      try {
+        await Promise.race([
+          entered.promise,
+          linking.then(() => assert.fail('link callback must run')),
+        ]);
+        deletion = context(async () => {
+          deleteContext = app.ctx;
+          deleteStarted.resolve();
+          await scopes().deleteMine(fixture.owner.id, owned.id);
+          deleted = true;
+        });
+        await deleteStarted.promise;
+        await delay(50);
+        assert.notEqual(linkContext, deleteContext);
+        assert.equal(deleted, false, 'delete waits for the protected definition-link callback');
+        releaseLink.resolve();
+        await Promise.all([linking, deletion]);
+        await context(async () => {
+          assert.equal(await app.scope('mcp-auth').model.customScope.getById(owned.id), undefined);
+          const row = await grants().get({ requestDigest: sha256(pending) });
+          assert.equal(row?.state, 'revoked', 'delete sees and revokes the completed linkage');
+          assert.equal(row?.codeDigest, '');
+          await expectOAuth(
+            () =>
+              scopes().withDefinitions(fixture.owner.id, [owned.scope], async () => {
+                assert.fail('a deleted definition cannot link another grant');
+              }),
+            'invalid_scope',
+          );
+        });
+      } finally {
+        releaseLink.resolve();
+        await Promise.allSettled([linking, ...(deletion ? [deletion] : [])]);
+      }
     });
   });
 
@@ -457,21 +872,17 @@ describe('customScope.test.ts', { concurrency: false }, () => {
       const [broad, narrow] = await asUser(fixture.owner, async () => [
         await scopes().createMine(
           fixture.owner.id,
-          definition('Requested broad subset', [fixture.select, fixture.view]),
+          definition('Requested-broad-subset', [fixture.select, fixture.view]),
         ),
         await scopes().createMine(
           fixture.owner.id,
-          definition('Approved narrow subset', [fixture.select]),
+          definition('Approved-narrow-subset', [fixture.select]),
         ),
       ]);
       const linked = await issue(fixture, broad.scope, narrow.scope);
       assert.equal(linked.token.scope, narrow.scope);
       await asUser(fixture.owner, () =>
-        scopes().updateMine(
-          fixture.owner.id,
-          broad.id,
-          definition('Requested definition edited', [fixture.view]),
-        ),
+        scopes().updateMine(fixture.owner.id, broad.id, definition(broad.name, [fixture.view])),
       );
       await context(async () => {
         const row = await grants().get({ requestDigest: sha256(linked.requestId) });

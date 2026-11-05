@@ -1777,7 +1777,7 @@ describe('businessTools.test.ts', { concurrency: false, timeout: 60000 }, () => 
 
   it('matches custom scope tools by exact compiled name and Action identity for discovery and calls', async () => {
     await app.bean.executor.mockCtx(async () => {
-      const scope = `mcp:custom:${'a'.repeat(43)}` as const;
+      const scope = 'mcp:custom:Exact_action-status' as const;
       await assert.rejects(
         () => createControllerToolServer(app, scope),
         /MCP authorization scope required/,

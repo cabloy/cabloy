@@ -23,13 +23,24 @@ export class OAuthError extends Error {
 }
 
 export const mcpSupportedScopes = ['mcp:all', 'mcp:read'] as const;
+export const mcpCustomScopeNamePattern = /^[\w-]{1,100}$/;
+export const mcpCustomScopePattern = /^mcp:custom:[\w-]{1,100}$/;
+
+export function isCanonicalMcpCustomScope(value: { name: string; scope: string }): boolean {
+  return (
+    typeof value.name === 'string' &&
+    value.name === value.name.trim() &&
+    mcpCustomScopeNamePattern.test(value.name) &&
+    value.scope === `mcp:custom:${value.name}`
+  );
+}
 
 export function isMcpBuiltinScope(value: unknown): value is TypeMcpBuiltinScope {
   return value === 'mcp:all' || value === 'mcp:read';
 }
 
 export function isMcpCustomScope(value: unknown): value is TypeMcpCustomScope {
-  return typeof value === 'string' && /^mcp:custom:[\w-]{43}$/.test(value);
+  return typeof value === 'string' && value === value.trim() && mcpCustomScopePattern.test(value);
 }
 
 /** Syntax only. Custom authority must also resolve a live owner-scoped definition. */
