@@ -179,6 +179,7 @@ export class ControllerPageConsent extends BeanControllerPageBase {
     const summary = query?.data;
     const scopes = summary?.scope.split(' ').filter(Boolean) ?? [];
     const selected = summary && this._effectiveOption(summary);
+    const scopesPath = this.$router.getPagePath('/cabloy/mcp/scopes');
     return (
       <ZPage>
         <main class="flex min-h-screen items-center justify-center bg-base-200 px-4 py-10">
@@ -224,9 +225,21 @@ export class ControllerPageConsent extends BeanControllerPageBase {
                     <legend class="mb-2 font-medium">
                       {this.scope.locale.McpEffectiveScope()}
                     </legend>
-                    <p class="text-sm text-base-content/70">
-                      {this.scope.locale.McpEffectiveScopeHelp()}
-                    </p>
+                    <div class="flex flex-wrap items-center justify-between gap-2">
+                      <p class="text-sm text-base-content/70">
+                        {this.scope.locale.McpEffectiveScopeHelp()}
+                      </p>
+                      {scopesPath && (
+                        <a
+                          class="link link-primary text-sm"
+                          href={scopesPath}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
+                          {this.scope.locale.McpManageScopes()}
+                        </a>
+                      )}
+                    </div>
                     {summary.options.map(option => this._renderOption(option, selected?.scope))}
                     {!selected && (
                       <p role="alert" class="text-sm text-warning">

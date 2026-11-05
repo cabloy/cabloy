@@ -49,6 +49,7 @@ export default {
   Cancel: 'Cancel',
   Edit: 'Edit',
   McpPersonalScopes: 'Personal MCP scopes',
+  McpManageScopes: 'Manage scopes',
   McpPersonalScopesHelp:
     'Choose reusable sets of tools for your own MCP authorizations. Your account permissions still apply.',
   McpScopeCreate: 'Create scope',

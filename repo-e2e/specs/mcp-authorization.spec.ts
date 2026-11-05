@@ -336,6 +336,11 @@ async function loginAndReadConsent(
   ).toBeVisible();
   await expect(page.getByText(allScopeHelp, { exact: true })).toHaveCount(0);
   await expect(page.getByText(readScopeHelp, { exact: true })).toHaveCount(0);
+  const manageScopes = page.getByRole('link', { name: 'Manage scopes', exact: true });
+  await expect(manageScopes).toBeVisible();
+  await expect(manageScopes).toHaveAttribute('href', scopesPath);
+  await expect(manageScopes).toHaveAttribute('target', '_blank');
+  await expect(manageScopes).toHaveAttribute('rel', 'noopener noreferrer');
   await expect(page.getByRole('button', { name: 'Approve', exact: true })).toBeEnabled();
   await expect(page.getByRole('button', { name: 'Deny', exact: true })).toBeEnabled();
   expect((await page.context().cookies()).some(cookie => cookie.name === 'token')).toBe(true);

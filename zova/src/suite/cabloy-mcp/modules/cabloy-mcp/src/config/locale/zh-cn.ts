@@ -45,6 +45,7 @@ export default {
   Cancel: '取消',
   Edit: '编辑',
   McpPersonalScopes: '个人 MCP 权限范围',
+  McpManageScopes: '管理权限范围',
   McpPersonalScopesHelp: '为自己的 MCP 授权设置可重复使用的工具集合。现有账户权限仍然生效。',
   McpScopeCreate: '新建权限范围',
   McpScopeEdit: '编辑权限范围',
