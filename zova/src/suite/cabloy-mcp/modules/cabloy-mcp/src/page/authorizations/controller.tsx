@@ -99,8 +99,12 @@ export class ControllerPageAuthorizations extends BeanControllerPageBase {
               <dd>{this._status(item.state)}</dd>
             </div>
             <div>
-              <dt class="text-base-content/70">{this.scope.locale.RequestedScopes()}</dt>
+              <dt class="text-base-content/70">{this.scope.locale.McpGrantedScope()}</dt>
               <dd class="break-words">{item.scope}</dd>
+            </div>
+            <div>
+              <dt class="text-base-content/70">{this.scope.locale.RequestedScopes()}</dt>
+              <dd class="break-words">{item.requestedScope}</dd>
             </div>
             <div>
               <dt class="text-base-content/70">{this.scope.locale.McpAuthorizationCreated()}</dt>

@@ -7,6 +7,7 @@ import { fromJsonSchema, ProtocolError, Server } from '@modelcontextprotocol/ser
 import { appMetadata, runWithZodQueryCoercion } from 'vona';
 import { SymbolMcpOptions } from 'vona-module-a-openapiutils';
 import { getCacheControllerRoutes } from 'vona-module-a-web';
+import { isMcpScope } from 'vona-module-mcp-auth';
 import z from 'zod';
 
 import type { ToolSchema } from './controllerToolSchema.ts';
@@ -33,9 +34,18 @@ export interface IControllerToolIdentity {
   action: string;
 }
 
+export interface IControllerToolCatalogEntry extends IControllerToolIdentity {
+  name: string;
+  description: string;
+  readOnly: boolean;
+}
+
 export interface IControllerToolServerOptions {
   includeTool?(identity: IControllerToolIdentity): boolean;
   isToolVisible?(identity: IControllerToolIdentity): Promise<boolean>;
+  /** Exact consented bindings, not names alone or a dynamic include expression. */
+  toolAccess?: ReadonlyArray<IControllerToolIdentity & { name: string }>;
+  toolAccessReadOnly?: boolean;
 }
 
 interface IControllerTool {
@@ -67,7 +77,7 @@ export async function createControllerToolServer(
   scope?: TypeMcpScope,
   serverOptions: IControllerToolServerOptions = {},
 ) {
-  if (scope !== 'mcp:read' && scope !== 'mcp:all') {
+  if (!isMcpScope(scope) || (scope.startsWith('mcp:custom:') && !serverOptions.toolAccess)) {
     throw new Error('MCP authorization scope required');
   }
   return runWithZodQueryCoercion(true, async () => {
@@ -330,31 +340,42 @@ export async function createControllerToolServer(
       );
       return pending;
     }
-    const allowed = (tool: IControllerTool) => scope === 'mcp:all' || tool.readOnly;
+    const bindingKey = (name: string, identity: IControllerToolIdentity) =>
+      JSON.stringify([name, identity.controller, identity.action]);
+    const exactTools = new Set(serverOptions.toolAccess?.map(tool => bindingKey(tool.name, tool)));
+    const allowed = (item: IControllerTool) =>
+      scope === 'mcp:all' ||
+      (scope === 'mcp:read'
+        ? item.readOnly
+        : exactTools.has(bindingKey(item.tool.name, item.identity)) &&
+          (!serverOptions.toolAccessReadOnly || item.readOnly));
+    async function visibleTools(): Promise<IControllerTool[]> {
+      if (!app.ctx) throw new ProtocolError(-32603, 'Request context required');
+      const visible: IControllerTool[] = [];
+      try {
+        // Guard checks temporarily own route state on this context, so never fan them out.
+        for (const item of tools.values()) {
+          if (!allowed(item)) continue;
+          if (
+            serverOptions.isToolVisible &&
+            !(await serverOptions.isToolVisible({ ...item.identity }))
+          ) {
+            continue;
+          }
+          visible.push(item);
+        }
+      } catch {
+        throw new ProtocolError(-32603, 'Tool discovery failed');
+      }
+      return visible;
+    }
     const server = new Server(
       { name: 'cabloy-mcp-actions', version: '0.1.0' },
       { capabilities: { tools: {} } },
     );
     server.setRequestHandler('tools/list', () =>
       track(async () => {
-        if (!app.ctx) throw new ProtocolError(-32603, 'Request context required');
-        const visible: Tool[] = [];
-        try {
-          // Guard checks temporarily own route state on this context, so never fan them out.
-          for (const item of tools.values()) {
-            if (!allowed(item)) continue;
-            if (
-              serverOptions.isToolVisible &&
-              !(await serverOptions.isToolVisible({ ...item.identity }))
-            ) {
-              continue;
-            }
-            visible.push(item.tool);
-          }
-        } catch {
-          throw new ProtocolError(-32603, 'Tool discovery failed');
-        }
-        return { tools: visible };
+        return { tools: (await visibleTools()).map(item => item.tool) };
       }),
     );
     server.setRequestHandler('tools/call', request =>
@@ -367,6 +388,14 @@ export async function createControllerToolServer(
     );
     return Object.assign(server, {
       diagnostics,
+      async catalog(): Promise<IControllerToolCatalogEntry[]> {
+        return (await visibleTools()).map(item => ({
+          ...item.identity,
+          name: item.tool.name,
+          description: item.tool.description ?? '',
+          readOnly: item.readOnly,
+        }));
+      },
       async settleWork() {
         while (work.size) await Promise.allSettled([...work]);
       },

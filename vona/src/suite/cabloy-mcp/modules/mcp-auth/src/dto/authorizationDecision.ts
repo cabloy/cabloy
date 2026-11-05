@@ -13,4 +13,12 @@ export class DtoAuthorizationDecision {
 
   @Api.field(z.boolean())
   allow: boolean;
+
+  @Api.field(
+    z
+      .string()
+      .regex(/^(?:mcp:(?:all|read)|mcp:custom:[\w-]{43})$/)
+      .optional(),
+  )
+  scope?: string;
 }

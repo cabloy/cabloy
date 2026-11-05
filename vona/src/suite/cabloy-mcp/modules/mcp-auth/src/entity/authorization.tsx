@@ -5,7 +5,9 @@ import { Api, v } from 'vona-module-a-openapiutils';
 import { Entity, EntityBase } from 'vona-module-a-orm';
 import { z } from 'zod';
 
-import type { TypeMcpAuthorizationState } from '../types/index.ts';
+import type { IMcpToolIdentity, TypeMcpAuthorizationState } from '../types/index.ts';
+
+import { DtoMcpToolIdentity } from '../dto/mcpTool.ts';
 
 export interface IEntityOptionsAuthorization extends IDecoratorEntityOptions {}
 
@@ -31,6 +33,15 @@ export class EntityAuthorization extends EntityBase {
 
   @Api.field()
   scope: string;
+
+  @Api.field(z.string().default(''))
+  requestedScope: string;
+
+  @Api.field(v.array(v.object(DtoMcpToolIdentity)), v.default([]))
+  scopeTools: IMcpToolIdentity[];
+
+  @Api.field(z.boolean().default(false))
+  scopeReadOnly: boolean;
 
   @Api.field()
   oauthState: string;

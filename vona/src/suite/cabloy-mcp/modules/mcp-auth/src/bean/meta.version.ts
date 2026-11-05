@@ -17,6 +17,9 @@ export class MetaVersion extends BeanBase implements IMetaVersionUpdate {
       table.string(authorization.resource, 2048).notNullable();
       table.string(authorization.redirectUri, 2048).notNullable();
       table.string(authorization.scope, 255).notNullable();
+      table.string(authorization.requestedScope, 255).notNullable().defaultTo('');
+      table.json(authorization.scopeTools).notNullable().defaultTo('[]');
+      table.boolean(authorization.scopeReadOnly).notNullable().defaultTo(false);
       table.string(authorization.oauthState, 2048).notNullable();
       table.string(authorization.codeChallenge, 43).notNullable();
       table.string(authorization.state, 32).notNullable();
@@ -49,6 +52,16 @@ export class MetaVersion extends BeanBase implements IMetaVersionUpdate {
       table.string(client.scope, 255).notNullable();
       table.string(client.state, 32).notNullable();
       table.bigInteger(client.clientIdIssuedAt).notNullable();
+    });
+    // Approved unreleased schema: keep fileVersion=1 and create on a fresh managed database.
+    const customScope = this.scope.entity.customScope;
+    await this.bean.model.createTable(customScope.$table, table => {
+      table.basicFields();
+      table.tableIdentity(customScope.userId).notNullable();
+      table.string(customScope.scope, 255).notNullable();
+      table.string(customScope.name, 100).notNullable();
+      table.string(customScope.description, 1000).notNullable();
+      table.json(customScope.tools).notNullable();
     });
   }
 }

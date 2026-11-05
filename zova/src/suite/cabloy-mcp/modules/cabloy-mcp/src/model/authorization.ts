@@ -20,7 +20,7 @@ export class ModelAuthorization extends BeanModelBase {
     });
   }
 
-  decision(request: string, allow: boolean) {
-    return this.scope.api.authorization.decision({ request, allow });
+  decision(request: string, allow: boolean, scope?: string) {
+    return this.scope.api.authorization.decision({ request, allow, scope });
   }
 }

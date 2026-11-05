@@ -5,6 +5,7 @@ import type {
   ServerResponse,
 } from 'node:http';
 import type { VonaApplication } from 'vona';
+import type { IMcpToolCatalogItem, IMcpToolIdentity, TypeMcpScope } from 'vona-module-mcp-auth';
 import type { DtoStudentCreate, DtoStudentUpdate } from 'vona-module-training-student';
 
 import fse from 'fs-extra';
@@ -79,7 +80,11 @@ let fixtureAuthSimpleId: string | undefined;
 let browserToken: string;
 const ownedRequests: string[] = [];
 
-async function redeemTokens(scope: 'mcp:all' | 'mcp:read' = 'mcp:read', oauthClientId = clientId) {
+async function redeemTokens(
+  scope: 'mcp:all' | 'mcp:read' = 'mcp:read',
+  oauthClientId = clientId,
+  effectiveScope?: TypeMcpScope,
+) {
   const verifier = randomBytes(32).toString('base64url');
   const requestId = await app.bean.executor.mockCtx(
     async () => {
@@ -102,7 +107,7 @@ async function redeemTokens(scope: 'mcp:all' | 'mcp:read' = 'mcp:read', oauthCli
   const decided = await openHttp({
     target: '/mcp/auth/decision',
     headers: { authorization: `Bearer ${browserToken}`, origin },
-    body: JSON.stringify({ request: requestId, allow: true }),
+    body: JSON.stringify({ request: requestId, allow: true, scope: effectiveScope }),
   }).response;
   assert.equal(decided.status, 200);
   const callback = new URL(decided.body.data.redirectUrl);
@@ -123,7 +128,7 @@ async function redeemTokens(scope: 'mcp:all' | 'mcp:read' = 'mcp:read', oauthCli
   assert.equal(token.status, 200);
   assert.equal(token.headers['cache-control'], 'no-store');
   assert.equal(token.body.token_type, 'Bearer');
-  assert.equal(token.body.scope, scope);
+  assert.equal(token.body.scope, effectiveScope ?? scope);
   assert.equal(token.body.expires_in, 7200);
   assert.match(token.body.access_token, /^[\w-]+\.[\w-]+\.[\w-]+$/);
   return token.body as { access_token: string; refresh_token?: string };
@@ -930,6 +935,216 @@ describe('businessHttp.test.ts', { concurrency: false, timeout: 60000 }, () => {
     }
     const after = await send('tools/list', {}, { headers: { authorization: `Bearer ${bearer}` } });
     assert.deepEqual(after.body.result.tools, [], 'test policy was removed');
+  });
+
+  it('enforces a personal custom scope exact subset through consent, Action checks and edit/delete invalidation', async t => {
+    if (trainingDisabled) return;
+    const { ServiceStudent } = await import('vona-module-training-student');
+    let scopeId: string | undefined;
+    let oauthClientId: string | undefined;
+    let selectAllowed = true;
+    const off = app.scope('a-rbac').event.resolvePolicy.on((request, next) => {
+      if (
+        String(app.bean.passport.currentUser?.id) !== fixtureUserId ||
+        app.ctx.instanceName !== '' ||
+        request.action.controllerBeanFullName !== 'training-student.controller.student'
+      ) {
+        return next();
+      }
+      assert.equal(String(app.bean.passport.currentAuth?.id), fixtureAuthId);
+      return {
+        allowed:
+          request.policyActionKey === 'training-student.controller.student#view' ||
+          (selectAllowed &&
+            request.policyActionKey === 'training-student.controller.student#select'),
+        actionKey: request.action.actionKey,
+        action: request.action,
+      };
+    });
+    const select = t.mock.method(ServiceStudent.prototype, 'select');
+    const executor = app.bean.executor;
+    const original = executor.performAction;
+    const dispatched = t.mock.method(
+      executor,
+      'performAction',
+      async function (this: BeanExecutor, ...args: Parameters<BeanExecutor['performAction']>) {
+        assert.equal(String(this.bean.passport.currentUser?.id), fixtureUserId);
+        assert.equal(String(this.bean.passport.currentAuth?.id), fixtureAuthId);
+        assert.equal(
+          this.bean.passport.currentRoles?.some(role => role.name === 'systemAdmin'),
+          false,
+        );
+        assert.equal(args[0], 'get');
+        assert.equal(args[1], '/training/student');
+        assert.equal(args[2]?.innerAccess, false);
+        return await original.apply(this, args);
+      },
+    );
+    const personal = (action: string, method = 'GET', body?: object) =>
+      openHttp({
+        target: app.util.combineApiPath(`/mcp/auth/customScope/${action}`, '', true, true),
+        method,
+        headers: { authorization: `Bearer ${browserToken}`, origin },
+        body: body === undefined ? undefined : JSON.stringify(body),
+      }).response;
+    const options = (token: string) => ({ headers: { authorization: `Bearer ${token}` } });
+    const refresh = (token: string) =>
+      openHttp({
+        target: '/mcp/token',
+        headers: { 'content-type': 'application/x-www-form-urlencoded' },
+        body: new URLSearchParams({
+          grant_type: 'refresh_token',
+          client_id: oauthClientId!,
+          refresh_token: token,
+          resource,
+        }).toString(),
+      }).response;
+    const assertInvalidated = async (token: { access_token: string; refresh_token?: string }) => {
+      const before = dispatched.mock.callCount();
+      const denied = await send(
+        'tools/call',
+        { name: studentSelectName, arguments: {} },
+        options(token.access_token),
+      );
+      assert.equal(denied.status, 401);
+      assert.match(String(denied.headers['www-authenticate']), /error="invalid_token"/);
+      assert.equal(dispatched.mock.callCount(), before, 'invalidated bearer never dispatches');
+      assert.ok(token.refresh_token);
+      const rejected = await refresh(token.refresh_token);
+      assert.equal(rejected.status, 400);
+      assert.equal(rejected.body.error, 'invalid_grant');
+      assert.equal(rejected.headers['cache-control'], 'no-store');
+    };
+    try {
+      const catalog = await personal('catalog');
+      assert.equal(catalog.status, 200, `personal scope catalog: ${JSON.stringify(catalog.body)}`);
+      const tools = catalog.body.data as IMcpToolCatalogItem[];
+      const selected = tools.find(tool => tool.name === studentSelectName);
+      const sibling = tools.find(tool => tool.name === studentGroupName);
+      const view = tools.find(tool => tool.name === studentViewName);
+      assert.ok(
+        selected && sibling && view,
+        'catalog includes multiple independently usable reads',
+      );
+      assert.equal(selected.readOnly, true);
+      const binding = ({ name, controller, action }: IMcpToolIdentity) => ({
+        name,
+        controller,
+        action,
+      });
+      const definition = {
+        name: `MCP exact subset ${randomUUID()}`,
+        description: 'One authorized student read, not the read-tool family',
+        tools: [binding(selected)],
+      };
+      const created = await personal('createMine', 'POST', definition);
+      assert.equal(created.status, 200, `personal scope create: ${JSON.stringify(created.body)}`);
+      assert.ok(created.body.data.id, 'personal scope create returns its persisted identity');
+      scopeId = String(created.body.data.id);
+      const scope = created.body.data.scope as TypeMcpScope;
+      assert.match(scope, /^mcp:custom:[\w-]{43}$/);
+      assert.deepEqual(created.body.data.tools, definition.tools);
+      assert.equal(dispatched.mock.callCount(), 0, 'catalog and scope creation execute no Actions');
+      assert.equal(select.mock.callCount(), 0);
+      const registration = await app.bean.executor.mockCtx(
+        async () =>
+          app.scope('mcp-auth').service.registration.register(
+            {
+              client_name: 'Managed MCP exact custom scope',
+              redirect_uris: [redirectUri],
+              token_endpoint_auth_method: 'none',
+              grant_types: ['authorization_code', 'refresh_token'],
+              response_types: ['code'],
+              scope: 'mcp:all',
+            },
+            { resource, instanceName: '' },
+          ),
+        { instanceName: '' },
+      );
+      oauthClientId = registration.client_id;
+      // The helper asserts the token response is custom, never the requested all ceiling.
+      const initial = await redeemTokens('mcp:all', oauthClientId, scope);
+      assert.ok(initial.refresh_token);
+      const renewed = await refresh(initial.refresh_token);
+      assert.equal(renewed.status, 200);
+      assert.equal(renewed.body.scope, scope, 'refresh retains the exact approved subset');
+      assert.ok(renewed.body.refresh_token);
+      const token = renewed.body as { access_token: string; refresh_token: string };
+      const listed = await send('tools/list', {}, options(token.access_token));
+      assert.equal(listed.status, 200);
+      assert.equal(listed.body.error, undefined);
+      assert.deepEqual(
+        listed.body.result.tools.map((tool: any) => tool.name),
+        [studentSelectName],
+      );
+      const excluded = await send(
+        'tools/call',
+        { name: sibling.name, arguments: {} },
+        options(token.access_token),
+      );
+      assert.equal(excluded.status, 200);
+      assert.equal(excluded.body.error?.code, -32602);
+      assert.equal(excluded.body.result, undefined);
+      assert.equal(dispatched.mock.callCount(), 0, 'authorized sibling is rejected predispatch');
+      const query = { name: `MCP custom scope absent ${randomUUID()}`, pageNo: 1, pageSize: 1 };
+      const call = () =>
+        send(
+          'tools/call',
+          { name: studentSelectName, arguments: query },
+          options(token.access_token),
+        );
+      assert.deepEqual(output(await call()).list, []);
+      assert.equal(dispatched.mock.callCount(), 1);
+      assert.equal(select.mock.callCount(), 1, 'allowed tool executes its ordinary service');
+      selectAllowed = false;
+      const denied = await call();
+      assert.equal(denied.status, 200);
+      assert.equal(denied.body.error, undefined);
+      assert.equal(denied.body.result.isError, true);
+      assert.equal(denied.body.result.structuredContent, undefined);
+      assert.deepEqual(denied.body.result.content, [{ type: 'text', text: 'Action failed' }]);
+      assert.equal(
+        dispatched.mock.callCount(),
+        2,
+        'custom scope does not replace current Action checks',
+      );
+      assert.equal(select.mock.callCount(), 1, 'current permission denial prevents service work');
+      selectAllowed = true;
+      const edited = await personal(`updateMine/${scopeId}`, 'POST', {
+        ...definition,
+        tools: [binding(view)],
+      });
+      assert.equal(edited.status, 200, `personal scope update: ${JSON.stringify(edited.body)}`);
+      assert.equal(edited.body.data.scope, scope);
+      assert.deepEqual(edited.body.data.tools, [binding(view)]);
+      await assertInvalidated(token);
+      const replacement = await redeemTokens('mcp:all', oauthClientId, scope);
+      const replacedList = await send('tools/list', {}, options(replacement.access_token));
+      assert.equal(replacedList.status, 200);
+      assert.deepEqual(
+        replacedList.body.result.tools.map((tool: any) => tool.name),
+        [studentViewName],
+      );
+      const deleted = await personal(`deleteMine/${scopeId}`, 'DELETE');
+      assert.equal(deleted.status, 200, `personal scope delete: ${JSON.stringify(deleted.body)}`);
+      await assertInvalidated(replacement);
+    } finally {
+      off();
+      dispatched.mock.restore();
+      select.mock.restore();
+      await app.bean.executor.mockCtx(
+        async () => {
+          if (oauthClientId) {
+            await app.scope('mcp-auth').model.authorization.delete({ oauthClientId });
+          }
+          if (scopeId) await app.scope('mcp-auth').model.customScope.deleteById(scopeId);
+          if (oauthClientId) {
+            await app.scope('mcp-auth').model.client.delete({ oauthClientId });
+          }
+        },
+        { instanceName: '' },
+      );
+    }
   });
 
   it('creates one owned student aggregate only with all scope and independent current create authority', async t => {

@@ -1498,6 +1498,91 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  '/api/mcp/auth/customScope/mine': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** List personal MCP scopes */
+    get: operations['McpAuthCustomScope_mine'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/mcp/auth/customScope/catalog': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Available MCP tools */
+    get: operations['McpAuthCustomScope_catalog'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/mcp/auth/customScope/createMine': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** Create personal MCP scope */
+    post: operations['McpAuthCustomScope_createMine'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/mcp/auth/customScope/updateMine/{id}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** Update personal MCP scope */
+    post: operations['McpAuthCustomScope_updateMine'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/mcp/auth/customScope/deleteMine/{id}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post?: never;
+    /** Delete personal MCP scope */
+    delete: operations['McpAuthCustomScope_deleteMine'];
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   '/api/mcp/test/catalog/categories': {
     parameters: {
       query?: never;
@@ -5026,7 +5111,30 @@ export interface components {
       clientName: string;
       resource: string;
       scope: string;
+      options: components['schemas']['mcp-auth.dto.mcpScopeOption'][];
       expiresAt: number;
+    };
+    'mcp-auth.dto.mcpScopeOption': {
+      scope: string;
+      name: string;
+      description: string;
+      tools: components['schemas']['mcp-auth.dto.mcpScopeTool'][];
+      allowed: boolean;
+      /** @enum {string|null} */
+      reason?:
+        | 'outside_requested_scope'
+        | 'outside_client_scope'
+        | 'tools_unavailable'
+        | null
+        | undefined;
+    };
+    'mcp-auth.dto.mcpScopeTool': {
+      name: string;
+      controller: string;
+      action: string;
+      description: string;
+      readOnly: boolean;
+      available: boolean;
     };
     'mcp-auth.dto.authorizationRedirect': {
       redirectUrl: string;
@@ -5034,6 +5142,7 @@ export interface components {
     'mcp-auth.dto.authorizationDecision': {
       request: string;
       allow: boolean;
+      scope?: string | undefined;
     };
     'mcp-auth.dto.authorizationGrantMineRes': {
       list: components['schemas']['mcp-auth.dto.authorizationGrant'][];
@@ -5052,6 +5161,8 @@ export interface components {
       id: number | string;
       resource: string;
       scope: string;
+      /** @default  */
+      requestedScope?: string;
       /** @enum {string} */
       state: 'pending' | 'codeReady' | 'tokenActive' | 'denied' | 'revoked';
       expiresAt: number;
@@ -5062,6 +5173,50 @@ export interface components {
       refreshExpiresAt?: number;
       clientId: string;
       clientName: string;
+    };
+    'mcp-auth.dto.customScopeMineRes': {
+      list: components['schemas']['mcp-auth.dto.customScopeView'][];
+    };
+    'mcp-auth.dto.customScopeView': {
+      /**
+       * Format: date-time
+       * @description Created At
+       */
+      createdAt: Date;
+      /**
+       * Format: date-time
+       * @description Updated At
+       */
+      updatedAt: Date;
+      /** @description ID */
+      id: number | string;
+      scope: string;
+      /** @description Name */
+      name: string;
+      /** @description Description */
+      description: string;
+      /** @description Tools */
+      tools: components['schemas']['mcp-auth.dto.mcpToolIdentity'][];
+    };
+    'mcp-auth.dto.mcpToolIdentity': {
+      name: string;
+      controller: string;
+      action: string;
+    };
+    'mcp-auth.dto.mcpTool': {
+      name: string;
+      controller: string;
+      action: string;
+      description: string;
+      readOnly: boolean;
+    };
+    'mcp-auth.dto.customScopeCreate_1ff20af69286149eb0b25291d9450172f7bd0054': {
+      /** @description Name */
+      name: string;
+      /** @description Description */
+      description: string;
+      /** @description Tools */
+      tools: components['schemas']['mcp-auth.dto.mcpToolIdentity'][];
     };
     'mcp-test.dto.categoryPublicSelectRes': {
       list: components['schemas']['mcp-test.dto.categoryPublic'][];
@@ -8918,6 +9073,138 @@ export interface operations {
     authToken: true;
   };
   McpAuthAuthorizationGrant_deleteMine: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: number | string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data?: unknown;
+          };
+        };
+      };
+    };
+    authToken: true;
+  };
+  McpAuthCustomScope_mine: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data: components['schemas']['mcp-auth.dto.customScopeMineRes'];
+          };
+        };
+      };
+    };
+    authToken: true;
+  };
+  McpAuthCustomScope_catalog: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data: components['schemas']['mcp-auth.dto.mcpTool'][];
+          };
+        };
+      };
+    };
+    authToken: true;
+  };
+  McpAuthCustomScope_createMine: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['mcp-auth.dto.customScopeCreate_1ff20af69286149eb0b25291d9450172f7bd0054'];
+      };
+    };
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data: components['schemas']['mcp-auth.dto.customScopeView'];
+          };
+        };
+      };
+    };
+    authToken: true;
+  };
+  McpAuthCustomScope_updateMine: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: number | string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['mcp-auth.dto.customScopeCreate_1ff20af69286149eb0b25291d9450172f7bd0054'];
+      };
+    };
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data: components['schemas']['mcp-auth.dto.customScopeView'];
+          };
+        };
+      };
+    };
+    authToken: true;
+  };
+  McpAuthCustomScope_deleteMine: {
     parameters: {
       query?: never;
       header?: never;

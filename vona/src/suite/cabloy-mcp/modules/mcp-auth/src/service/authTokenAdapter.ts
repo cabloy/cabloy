@@ -17,15 +17,17 @@ import type {
   IMcpLegacyTokenPayload,
   IMcpTokenPayload,
 } from '../lib/authToken.ts';
+import type { IMcpToolIdentity, TypeMcpScope } from '../types/index.ts';
 
+import { isMcpCustomScope } from '../lib/authorization.ts';
 import {
   equalDigest,
   getMcpAuthConfig,
   isMcpScope,
-  mcpScopeIncludes,
   OAuthError,
   sha256,
 } from '../lib/authorization.ts';
+import { normalizeToolIdentities } from './customScope.ts';
 
 @Service()
 export class ServiceAuthTokenAdapter extends BeanBase implements IAuthTokenAdapter {
@@ -76,27 +78,34 @@ export class ServiceAuthTokenAdapter extends BeanBase implements IAuthTokenAdapt
     const refreshExpiresAt = row.refreshEnabled ? now + config.refreshTokenTtl * 1000 : 0;
     const next = this.next(payload, 1, refreshExpiresAt);
     const tokenExpiresAt = now + config.tokenTtl * 1000;
-    const count = await this.scope.model.authorization
-      .builderSelect()
-      .where(this.scope.service.authorization.bindings(row))
-      .where({
-        state: 'codeReady',
-        codeDigest: row.codeDigest,
-        userId: row.userId!,
-        authId: row.authId!,
-        refreshEnabled: row.refreshEnabled,
-      })
-      .where('codeExpiresAt', '>', now)
-      .update({
-        state: 'tokenActive',
-        codeDigest: '',
-        tokenVersion: 1,
-        tokenDigest: sha256(next.token),
-        tokenExpiresAt,
-        refreshGeneration: 1,
-        refreshExpiresAt,
-        expiresAt: Math.max(tokenExpiresAt, refreshExpiresAt),
-      });
+    const activate = async () =>
+      await this.scope.model.authorization
+        .builderSelect()
+        .where(this.scope.service.authorization.bindings(row))
+        .where({
+          state: 'codeReady',
+          codeDigest: row.codeDigest,
+          userId: row.userId!,
+          authId: row.authId!,
+          refreshEnabled: row.refreshEnabled,
+        })
+        .where('codeExpiresAt', '>', now)
+        .update({
+          state: 'tokenActive',
+          codeDigest: '',
+          tokenVersion: 1,
+          tokenDigest: sha256(next.token),
+          tokenExpiresAt,
+          refreshGeneration: 1,
+          refreshExpiresAt,
+          expiresAt: Math.max(tokenExpiresAt, refreshExpiresAt),
+        });
+    const count = isMcpCustomScope(row.scope)
+      ? await this.scope.service.customScope.withDefinitions(row.userId!, [row.scope], async () => {
+          await this.scope.service.authorization.validateBindings(row, config);
+          return await activate();
+        })
+      : await activate();
     if (count !== 1) throw new OAuthError('invalid_grant');
     return next;
   }
@@ -169,40 +178,112 @@ export class ServiceAuthTokenAdapter extends BeanBase implements IAuthTokenAdapt
       throw new OAuthError('invalid_grant');
     }
     const nextScope = input.scope ?? row.scope;
-    if (
-      !isMcpScope(nextScope) ||
-      !isMcpScope(row.scope) ||
-      !mcpScopeIncludes(row.scope, nextScope)
-    ) {
-      throw new OAuthError('invalid_scope');
-    }
+    if (!isMcpScope(nextScope) || !isMcpScope(row.scope)) throw new OAuthError('invalid_scope');
+    let scopeTools: IMcpToolIdentity[] = isMcpCustomScope(row.scope)
+      ? normalizeToolIdentities(row.scopeTools)
+      : [];
+    let scopeReadOnly = Boolean(row.scopeReadOnly) || row.scope === 'mcp:read';
+    const link = async (update: () => Promise<number>) => {
+      await this.scope.service.authorization.validateBindings(row, getMcpAuthConfig(this.app));
+      // Existing custom inheritance needs no visibility re-consent; new selections do.
+      if (nextScope !== row.scope) {
+        const passport = await this.scope.service.authorization.loadPassport(
+          row.userId,
+          row.authId,
+          'invalid_grant',
+          400,
+        );
+        await this.bean.passport.setCurrent(passport);
+        const catalog = await this.scope.service.customScope.catalog();
+        if (
+          !(await this.scope.service.authorization.scopeContains(
+            row.scope as TypeMcpScope,
+            nextScope,
+            row.userId!,
+            catalog,
+          ))
+        ) {
+          throw new OAuthError('invalid_scope');
+        }
+        const client = await this.scope.service.authorization.validateBindings(
+          row,
+          getMcpAuthConfig(this.app),
+        );
+        if (
+          !(await this.scope.service.authorization.scopeContains(
+            client.scope,
+            nextScope,
+            row.userId!,
+            catalog,
+          ))
+        ) {
+          throw new OAuthError('invalid_scope');
+        }
+        scopeTools = isMcpCustomScope(nextScope)
+          ? normalizeToolIdentities(
+              (await this.scope.service.customScope.resolve(row.userId!, nextScope)).tools,
+            )
+          : [];
+        scopeReadOnly ||= client.scope === 'mcp:read';
+        const available = new Map(
+          catalog.map(tool => [JSON.stringify([tool.name, tool.controller, tool.action]), tool]),
+        );
+        if (
+          scopeTools.some(tool => {
+            const current = available.get(
+              JSON.stringify([tool.name, tool.controller, tool.action]),
+            );
+            return !current || (scopeReadOnly && !current.readOnly);
+          })
+        ) {
+          throw new OAuthError('invalid_scope');
+        }
+      }
+      return await update();
+    };
     const config = getMcpAuthConfig(this.app);
     const refreshExpiresAt = now + config.refreshTokenTtl * 1000;
     const next = this.next(payload, row.refreshGeneration + 1, refreshExpiresAt);
     next.mcp.scope = nextScope;
     const tokenExpiresAt = now + config.tokenTtl * 1000;
-    const count = await this.scope.model.authorization
-      .builderSelect()
-      .where(this.scope.service.authorization.bindings(row))
-      .where({
-        state: 'tokenActive',
-        tokenVersion: 1,
-        tokenDigest: row.tokenDigest,
-        refreshEnabled: true,
-        refreshGeneration: row.refreshGeneration,
-        refreshExpiresAt: row.refreshExpiresAt,
-        userId: row.userId!,
-        authId: row.authId!,
-      })
-      .where('refreshExpiresAt', '>', now)
-      .update({
-        tokenDigest: sha256(next.token),
-        refreshGeneration: next.mcp.generation,
-        refreshExpiresAt,
-        tokenExpiresAt,
-        scope: nextScope,
-        expiresAt: Math.max(tokenExpiresAt, refreshExpiresAt),
-      });
+    const update = async () =>
+      await this.scope.model.authorization
+        .builderSelect<
+          Omit<EntityAuthorization, 'scopeTools' | 'scopeReadOnly'> & {
+            scopeTools: string;
+            scopeReadOnly: number;
+          }
+        >()
+        .where(this.scope.service.authorization.bindings(row))
+        .where({
+          state: 'tokenActive',
+          tokenVersion: 1,
+          tokenDigest: row.tokenDigest,
+          refreshEnabled: true,
+          refreshGeneration: row.refreshGeneration,
+          refreshExpiresAt: row.refreshExpiresAt,
+          userId: row.userId!,
+          authId: row.authId!,
+        })
+        .where('refreshExpiresAt', '>', now)
+        .update({
+          tokenDigest: sha256(next.token),
+          refreshGeneration: next.mcp.generation,
+          refreshExpiresAt,
+          tokenExpiresAt,
+          scope: nextScope,
+          scopeTools: JSON.stringify(scopeTools),
+          scopeReadOnly: Number(scopeReadOnly),
+          expiresAt: Math.max(tokenExpiresAt, refreshExpiresAt),
+        });
+    const count =
+      isMcpCustomScope(nextScope) || isMcpCustomScope(row.scope)
+        ? await this.scope.service.customScope.withDefinitions(
+            row.userId!,
+            [nextScope, row.scope as TypeMcpScope],
+            () => link(update),
+          )
+        : await link(update);
     if (count !== 1) {
       // Recheck request binding before a concurrent loser can revoke the winning family.
       this.input(payload, input, true);
@@ -337,7 +418,7 @@ export class ServiceAuthTokenAdapter extends BeanBase implements IAuthTokenAdapt
         !(historical && mcp.generation < row.refreshGeneration) &&
         Number(row.refreshExpiresAt) !== mcp.refreshExpiresAt) ||
       !(historical && mcp.generation < row.refreshGeneration
-        ? isMcpScope(row.scope) && mcpScopeIncludes(mcp.scope, row.scope)
+        ? isMcpScope(row.scope)
         : row.scope === mcp.scope)
     ) {
       throw new OAuthError('invalid_grant');

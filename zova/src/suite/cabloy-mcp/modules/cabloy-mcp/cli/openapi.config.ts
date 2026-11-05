@@ -9,6 +9,11 @@ export default function (): ZovaOpenapiConfigModule {
         'McpAuthAuthorizationGrant_mine',
         'McpAuthAuthorizationGrant_revokeMine',
         'McpAuthAuthorizationGrant_deleteMine',
+        'McpAuthCustomScope_mine',
+        'McpAuthCustomScope_catalog',
+        'McpAuthCustomScope_createMine',
+        'McpAuthCustomScope_updateMine',
+        'McpAuthCustomScope_deleteMine',
       ],
     },
   };

@@ -6,6 +6,7 @@ import { BeanBase } from 'vona';
 import { Service } from 'vona-module-a-bean';
 
 import type { DtoAuthorizationSummary } from '../dto/authorizationSummary.ts';
+import type { DtoMcpScopeOption } from '../dto/mcpTool.ts';
 import type { EntityAuthorization } from '../entity/authorization.tsx';
 import type {
   IMcpLegacyTokenPayload,
@@ -16,6 +17,8 @@ import type {
   IMcpAuthConfig,
   IMcpAuthResource,
   IMcpAuthResolvedClient,
+  IMcpResolvedToolAccess,
+  IMcpToolCatalogItem,
   TypeMcpScope,
 } from '../types/index.ts';
 
@@ -24,8 +27,10 @@ import {
   getMcpAuthConfig,
   getMcpIssuer,
   isMcpScope,
+  isMcpBuiltinScope,
+  isMcpCustomScope,
   mcpScopeIncludes,
-  parseMcpScope,
+  parseMcpRequestedScope,
   resolveMcpResource,
   OAuthError,
   requiredOAuthParameter,
@@ -33,6 +38,7 @@ import {
   validateOAuthParameters,
 } from '../lib/authorization.ts';
 import { mcpRefreshEvidence } from '../lib/authToken.ts';
+import { normalizeToolIdentities, sameTools, toolIdentityKey } from './customScope.ts';
 
 const opaquePattern = /^[\w-]{43}$/;
 
@@ -59,8 +65,10 @@ export class ServiceAuthorization extends BeanBase {
     if (!client || !client.redirectUris.includes(redirectUri)) {
       throw new OAuthError('invalid_request');
     }
-    const scope = params.has('scope') ? parseMcpScope(params.get('scope')) : client.scope;
-    if (!scope || !mcpScopeIncludes(client.scope, scope)) throw new OAuthError('invalid_scope');
+    const scope = params.has('scope') ? parseMcpRequestedScope(params.get('scope')) : client.scope;
+    if (!scope || (isMcpBuiltinScope(scope) && !mcpScopeIncludes(client.scope, scope))) {
+      throw new OAuthError('invalid_scope');
+    }
     const challenge = requiredOAuthParameter(params, 'code_challenge');
     if (params.get('code_challenge_method') !== 'S256' || !opaquePattern.test(challenge)) {
       throw new OAuthError('invalid_request');
@@ -76,6 +84,9 @@ export class ServiceAuthorization extends BeanBase {
       resource: resource.resource,
       redirectUri,
       scope,
+      requestedScope: scope,
+      scopeTools: [],
+      scopeReadOnly: false,
       oauthState: params.get('state') ?? '',
       codeChallenge: challenge,
       state: 'pending',
@@ -94,43 +105,81 @@ export class ServiceAuthorization extends BeanBase {
   }
 
   async summary(request: string): Promise<DtoAuthorizationSummary> {
-    await this.currentPassport();
+    const passport = await this.currentPassport();
     const row = await this.pending(request);
     const config = this.configForResource(row.resource);
     const client = await this.validateBindings(row, config);
+    const options = await this.scopeOptions(row, client, passport.user!.id);
     return {
       clientName: client.name,
       resource: row.resource,
-      scope: row.scope,
+      scope: row.requestedScope || row.scope,
+      options,
       expiresAt: Number(row.pendingExpiresAt),
     };
   }
 
-  async decide(request: string, allow: boolean): Promise<{ redirectUrl: string }> {
+  async decide(
+    request: string,
+    allow: boolean,
+    selectedScope?: string,
+  ): Promise<{ redirectUrl: string }> {
     this.ensureAutocommit();
     if (typeof allow !== 'boolean') throw new OAuthError('invalid_request');
     const passport = await this.currentPassport();
     const row = await this.pending(request);
     const config = this.configForResource(row.resource);
-    await this.validateBindings(row, config);
+    const client = await this.validateBindings(row, config);
+    const requested = row.requestedScope || row.scope;
+    const selected = selectedScope ?? requested;
+    if (allow && !isMcpScope(selected)) throw new OAuthError('invalid_scope');
     const now = Date.now();
     const code = allow ? randomBytes(32).toString('base64url') : '';
     const expiresAt = allow ? now + config.codeTtl * 1000 : now;
-    // A single tenant-scoped full-predicate UPDATE proves the sole decision winner.
-    const count = await this.scope.model.authorization
-      .builderSelect()
-      .where(this.bindings(row))
-      .where({ state: 'pending', requestDigest: sha256(request) })
-      .where('pendingExpiresAt', '>', now)
-      .update({
-        state: allow ? 'codeReady' : 'denied',
-        userId: passport.user!.id,
-        authId: passport.auth!.id,
-        codeDigest: allow ? sha256(code) : '',
-        codeExpiresAt: allow ? expiresAt : 0,
-        expiresAt,
-      });
-    this.ensureWinner(count);
+    const link = async () => {
+      const option = allow
+        ? (await this.scopeOptions(row, client, passport.user!.id)).find(
+            option => option.scope === selected,
+          )
+        : undefined;
+      if (allow && !option?.allowed) throw new OAuthError('invalid_scope');
+      const count = await this.scope.model.authorization
+        .builderSelect<
+          Omit<EntityAuthorization, 'scopeTools' | 'scopeReadOnly'> & {
+            scopeTools: string;
+            scopeReadOnly: number;
+          }
+        >()
+        .where(this.bindings(row))
+        .where({ state: 'pending', requestDigest: sha256(request) })
+        .where('pendingExpiresAt', '>', Date.now())
+        .update({
+          state: allow ? 'codeReady' : 'denied',
+          userId: passport.user!.id,
+          authId: passport.auth!.id,
+          scope: allow ? selected : row.scope,
+          scopeTools: JSON.stringify(
+            allow && isMcpCustomScope(selected)
+              ? option!.tools.map(({ name, controller, action }) => ({ name, controller, action }))
+              : [],
+          ),
+          scopeReadOnly: Number(allow && (requested === 'mcp:read' || client.scope === 'mcp:read')),
+          codeDigest: allow ? sha256(code) : '',
+          codeExpiresAt: allow ? expiresAt : 0,
+          expiresAt,
+        });
+      this.ensureWinner(count);
+    };
+    // Commit the definition lock + link before the authorization code can leave this method.
+    if (allow && (isMcpCustomScope(selected) || isMcpCustomScope(requested))) {
+      await this.scope.service.customScope.withDefinitions(
+        passport.user!.id,
+        [selected as TypeMcpScope, requested as TypeMcpScope],
+        link,
+      );
+    } else {
+      await link();
+    }
     const redirect = new URL(row.redirectUri);
     if (allow) redirect.searchParams.set('code', code);
     else redirect.searchParams.set('error', 'access_denied');
@@ -165,8 +214,11 @@ export class ServiceAuthorization extends BeanBase {
     const client = await this.authenticateClient(config, params, authorization, resource);
     if (refresh) {
       if (client.grantTypes.length !== 2) throw new OAuthError('unauthorized_client');
-      const scope = params.has('scope') ? parseMcpScope(params.get('scope')) : undefined;
-      if (params.has('scope') && (!scope || !mcpScopeIncludes(client.scope, scope))) {
+      const scope = params.has('scope') ? parseMcpRequestedScope(params.get('scope')) : undefined;
+      if (
+        params.has('scope') &&
+        (!scope || (isMcpBuiltinScope(scope) && !mcpScopeIncludes(client.scope, scope)))
+      ) {
         throw new OAuthError('invalid_scope');
       }
       try {
@@ -399,12 +451,156 @@ export class ServiceAuthorization extends BeanBase {
       String(client.id) !== String(row.clientId) ||
       !client.redirectUris.includes(row.redirectUri) ||
       !isMcpScope(row.scope) ||
-      !mcpScopeIncludes(client.scope, row.scope) ||
+      (isMcpBuiltinScope(row.scope) && !mcpScopeIncludes(client.scope, row.scope)) ||
       (row.refreshEnabled && client.grantTypes.length !== 2)
     ) {
       throw new OAuthError(error, status);
     }
+    if (row.state !== 'pending' && isMcpCustomScope(row.scope)) {
+      try {
+        if (
+          row.userId === undefined ||
+          !sameTools(
+            (await this.scope.service.customScope.resolve(row.userId, row.scope)).tools,
+            row.scopeTools,
+          ) ||
+          (client.scope === 'mcp:read' && !row.scopeReadOnly)
+        ) {
+          throw new OAuthError(error, status);
+        }
+      } catch {
+        throw new OAuthError(error, status);
+      }
+    }
     return client;
+  }
+
+  /** Runtime custom authority is a live owned definition AND the admitted grant's exact snapshot. */
+  async resolveToolAccess(
+    scope: TypeMcpScope,
+    userId: TableIdentity,
+  ): Promise<IMcpResolvedToolAccess> {
+    if (!isMcpScope(scope)) throw new OAuthError('invalid_scope');
+    if (isMcpBuiltinScope(scope))
+      return { scope, tools: undefined, readOnly: scope === 'mcp:read' };
+    const definition = await this.scope.service.customScope.resolve(userId, scope);
+    let tools = normalizeToolIdentities(definition.tools);
+    let readOnly = false;
+    if (this.ctx.state.passportAuthTokenClient === 'mcpAccess') {
+      const payload = this.ctx.state.passportPayloadData as
+        | IMcpTokenPayload
+        | IMcpLegacyTokenPayload
+        | undefined;
+      if (!payload || payload.mcp.scope !== scope || String(payload.userId) !== String(userId)) {
+        throw new OAuthError('invalid_scope');
+      }
+      const row = await this.scope.model.authorization
+        .builderSelect()
+        .where({
+          id: payload.mcp.grantId,
+          userId,
+          scope,
+          state: 'tokenActive',
+          oauthClientId: payload.mcp.clientId,
+          issuer: payload.mcp.issuer,
+          resource: payload.mcp.resource,
+        })
+        .where('tokenExpiresAt', '>', Date.now())
+        .first();
+      if (
+        !row ||
+        !sameTools(row.scopeTools, tools) ||
+        (payload.mcp.version === 1 &&
+          (row.refreshGeneration !== payload.mcp.generation ||
+            !equalDigest(row.tokenDigest, sha256(payload.token))))
+      ) {
+        throw new OAuthError('invalid_scope');
+      }
+      await this.validateBindings(row, this.configForResource(row.resource), 'invalid_scope');
+      tools = normalizeToolIdentities(row.scopeTools);
+      readOnly = Boolean(row.scopeReadOnly);
+    }
+    return { scope, tools, readOnly };
+  }
+
+  async scopeContains(
+    ceiling: TypeMcpScope,
+    selected: TypeMcpScope,
+    userId: TableIdentity,
+    catalog: IMcpToolCatalogItem[],
+  ): Promise<boolean> {
+    if (ceiling === 'mcp:all') return true;
+    if (isMcpBuiltinScope(selected)) return ceiling === selected;
+    const tools = normalizeToolIdentities(
+      (await this.scope.service.customScope.resolve(userId, selected)).tools,
+    );
+    if (ceiling === 'mcp:read') {
+      const byIdentity = new Map(catalog.map(tool => [toolIdentityKey(tool), tool]));
+      return tools.every(tool => byIdentity.get(toolIdentityKey(tool))?.readOnly === true);
+    }
+    const allowed = new Set(
+      normalizeToolIdentities(
+        (await this.scope.service.customScope.resolve(userId, ceiling)).tools,
+      ).map(toolIdentityKey),
+    );
+    return tools.every(tool => allowed.has(toolIdentityKey(tool)));
+  }
+
+  private async scopeOptions(
+    row: EntityAuthorization,
+    client: IMcpAuthResolvedClient,
+    userId: TableIdentity,
+  ): Promise<DtoMcpScopeOption[]> {
+    const requested = row.requestedScope || row.scope;
+    if (!isMcpScope(requested)) throw new OAuthError('invalid_scope');
+    if (isMcpCustomScope(requested))
+      await this.scope.service.customScope.resolve(userId, requested);
+    const catalog = await this.scope.service.customScope.catalog();
+    const byIdentity = new Map(catalog.map(tool => [toolIdentityKey(tool), tool]));
+    const mine = await this.scope.service.customScope.mine(userId);
+    const candidates = [
+      { scope: 'mcp:all' as TypeMcpScope, name: 'mcp:all', description: '', tools: catalog },
+      {
+        scope: 'mcp:read' as TypeMcpScope,
+        name: 'mcp:read',
+        description: '',
+        tools: catalog.filter(tool => tool.readOnly),
+      },
+      ...mine.list,
+    ];
+    const options: DtoMcpScopeOption[] = [];
+    for (const candidate of candidates) {
+      const tools = candidate.tools.map(tool => {
+        const current = byIdentity.get(toolIdentityKey(tool));
+        return {
+          name: tool.name,
+          controller: tool.controller,
+          action: tool.action,
+          description: current?.description ?? '',
+          readOnly: current?.readOnly ?? false,
+          available: Boolean(current),
+        };
+      });
+      let reason: DtoMcpScopeOption['reason'];
+      if (tools.some(tool => !tool.available)) reason = 'tools_unavailable';
+      else if (
+        !(await this.scopeContains(requested, candidate.scope as TypeMcpScope, userId, catalog))
+      )
+        reason = 'outside_requested_scope';
+      else if (
+        !(await this.scopeContains(client.scope, candidate.scope as TypeMcpScope, userId, catalog))
+      )
+        reason = 'outside_client_scope';
+      options.push({
+        scope: candidate.scope,
+        name: candidate.name,
+        description: candidate.description,
+        tools,
+        allowed: reason === undefined,
+        ...(reason ? { reason } : {}),
+      });
+    }
+    return options;
   }
 
   bindings(row: EntityAuthorization) {

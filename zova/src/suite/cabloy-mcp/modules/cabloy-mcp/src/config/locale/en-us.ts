@@ -45,4 +45,42 @@ export default {
   Delete: 'Delete',
   Previous: 'Previous',
   Next: 'Next',
+  Save: 'Save',
+  Cancel: 'Cancel',
+  Edit: 'Edit',
+  McpPersonalScopes: 'Personal MCP scopes',
+  McpPersonalScopesHelp:
+    'Choose reusable sets of tools for your own MCP authorizations. Your account permissions still apply.',
+  McpScopeCreate: 'Create scope',
+  McpScopeEdit: 'Edit scope',
+  McpScopeTools: 'Tools',
+  McpScopeToolsHelp:
+    'Select exact tools by name, controller, and action. Only currently available tools can be saved.',
+  McpScopeToolSearch: 'Search tools',
+  McpScopeSelectedTools: 'Selected tools: %s',
+  McpScopeNoTools: 'No tools available.',
+  McpToolReadOnly: 'Read-only',
+  McpToolWrites: 'May change data',
+  McpToolMissing: 'Unavailable in current catalog',
+  McpScopeMissingToolsHelp:
+    'Some selected tools are no longer available. Remove them before saving; a reused tool name does not replace its original action.',
+  McpScopeToolsChangeWarning:
+    'Changing the tool selection revokes existing authorizations using this scope. Editing only the name or description does not.',
+  McpScopeToolsChangeConfirm:
+    'Change the tools in this scope? Existing authorizations using it will be revoked, including their tokens and authorization codes.',
+  McpScopeDeleteConfirm:
+    'Delete this scope? Existing authorizations using it will be revoked, including their tokens and authorization codes.',
+  McpScopesLoading: 'Loading personal MCP scopes…',
+  McpScopesLoadFailed: 'Personal scopes or the tool catalog could not be loaded. Please try again.',
+  McpScopesEmpty: 'You have no personal MCP scopes yet.',
+  McpEffectiveScope: 'Scope to grant',
+  McpEffectiveScopeHelp:
+    'Choose one scope within the requested and application limits. The application receives only the selected scope.',
+  McpScopeOutsideRequested: 'This option exceeds the requested scope.',
+  McpScopeOutsideClient: 'This option exceeds the application’s registered scope.',
+  McpScopeUnavailable: 'One or more tools in this scope are no longer available.',
+  McpScopeNotAllowed: 'This option is not available for this authorization request.',
+  McpScopeNoAllowedOption:
+    'No scope can be granted for this request. Deny it and start a new request from the application.',
+  McpGrantedScope: 'Granted scope',
 };

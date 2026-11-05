@@ -2,6 +2,7 @@ import { IModuleRoute } from 'zova-module-a-router';
 
 import { ZPageAuthorizations } from './.metadata/page/authorizations.ts';
 import { ZPageConsent } from './.metadata/page/consent.ts';
+import { ZPageScopes } from './.metadata/page/scopes.ts';
 
 export const routes: IModuleRoute[] = [
   {
@@ -12,6 +13,11 @@ export const routes: IModuleRoute[] = [
   {
     path: 'authorizations',
     component: ZPageAuthorizations,
+    meta: { requiresAuth: true, ssrProfile: 'session' },
+  },
+  {
+    path: 'scopes',
+    component: ZPageScopes,
     meta: { requiresAuth: true, ssrProfile: 'session' },
   },
 ];

@@ -29,6 +29,7 @@ export class ServiceAuthorizationGrant extends BeanBase {
         clientId: row.oauthClientId,
         resource: row.resource,
         scope: row.scope,
+        requestedScope: row.requestedScope || row.scope,
         state: row.state,
         createdAt: row.createdAt,
         tokenExpiresAt: row.tokenExpiresAt,

@@ -32,6 +32,6 @@ export class ControllerAuthorization extends BeanBase {
     if (!this.bean.security.checkOriginExact(origin, issuer.host)) {
       throw new OAuthError('access_denied', 403);
     }
-    return await this.scope.service.authorization.decide(data.request, data.allow);
+    return await this.scope.service.authorization.decide(data.request, data.allow, data.scope);
   }
 }

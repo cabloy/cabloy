@@ -1775,6 +1775,79 @@ describe('businessTools.test.ts', { concurrency: false, timeout: 60000 }, () => 
     });
   });
 
+  it('matches custom scope tools by exact compiled name and Action identity for discovery and calls', async () => {
+    await app.bean.executor.mockCtx(async () => {
+      const scope = `mcp:custom:${'a'.repeat(43)}` as const;
+      await assert.rejects(
+        () => createControllerToolServer(app, scope),
+        /MCP authorization scope required/,
+      );
+      const catalogServer = await createControllerToolServer(app, 'mcp:all');
+      let catalog;
+      try {
+        catalog = await catalogServer.catalog();
+      } finally {
+        await catalogServer.close();
+      }
+      const status = catalog.find(item => item.name === statusToolName);
+      assert.ok(status);
+      assert.equal(status.readOnly, true);
+      assert.ok(status.description);
+      const exact = await connect(
+        await createControllerToolServer(app, scope, {
+          toolAccess: [status],
+        }),
+      );
+      const rebound = await connect(
+        await createControllerToolServer(app, scope, {
+          toolAccess: [{ ...status, action: `${status.action}Other` }],
+        }),
+      );
+      const effect = catalog.find(item => item.name === effectToolName);
+      assert.ok(effect);
+      assert.equal(effect.readOnly, false);
+      const readBound = await connect(
+        await createControllerToolServer(app, scope, {
+          toolAccess: [status, effect],
+          toolAccessReadOnly: true,
+        }),
+      );
+      const initial = toolFixtureState.count;
+      try {
+        assert.deepEqual(
+          (await readBound.request('tools/list')).result.tools.map((item: any) => item.name),
+          [statusToolName],
+        );
+        assert.equal(
+          (await readBound.request('tools/call', { name: effectToolName })).error?.code,
+          -32602,
+          'a read-bound custom grant never gains a now-write Action',
+        );
+        assert.deepEqual(
+          (await exact.request('tools/list')).result.tools.map((item: any) => item.name),
+          [statusToolName],
+        );
+        assert.deepEqual((await rebound.request('tools/list')).result.tools, []);
+        const allowed = await exact.request('tools/call', { name: statusToolName });
+        assert.deepEqual(allowed.result.structuredContent, { count: initial });
+        for (const name of [effectToolName, scalarToolName, arrayToolName]) {
+          const denied = await exact.request('tools/call', { name, arguments: {} });
+          assert.equal(denied.error?.code, -32602, 'custom is not an alias for all read tools');
+        }
+        assert.equal(
+          (await rebound.request('tools/call', { name: statusToolName })).error?.code,
+          -32602,
+          'a name reused by a different Action never inherits an old grant',
+        );
+        assert.equal(toolFixtureState.count, initial);
+      } finally {
+        await readBound.close();
+        await exact.close();
+        await rebound.close();
+      }
+    });
+  });
+
   it('inherits class opt-in defaults, retains local names and rejects invalid exposure configuration', async t => {
     await app.bean.executor.mockCtx(async () => {
       const original = appMetadata.getMetadata;

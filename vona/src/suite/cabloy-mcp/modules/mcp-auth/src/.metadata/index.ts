@@ -5,14 +5,17 @@ import type { TableIdentity } from 'table-identity';
 /** entity: begin */
 export * from '../entity/authorization.tsx';
 export * from '../entity/client.tsx';
+export * from '../entity/customScope.tsx';
 import type { IEntityOptionsAuthorization } from '../entity/authorization.tsx';
 import type { IEntityOptionsClient } from '../entity/client.tsx';
+import type { IEntityOptionsCustomScope } from '../entity/customScope.tsx';
 import 'vona-module-a-orm';
 declare module 'vona-module-a-orm' {
 
     export interface IEntityRecord {
       'mcp-auth:authorization': IEntityOptionsAuthorization;
 'mcp-auth:client': IEntityOptionsClient;
+'mcp-auth:customScope': IEntityOptionsCustomScope;
     }
 
 
@@ -24,20 +27,25 @@ declare module 'vona-module-mcp-auth' {
 /** entity: begin */
 import type { EntityAuthorization } from '../entity/authorization.tsx';
 import type { EntityClient } from '../entity/client.tsx';
+import type { EntityCustomScope } from '../entity/customScope.tsx';
 export interface IModuleEntity {
   'authorization': EntityAuthorizationMeta;
 'client': EntityClientMeta;
+'customScope': EntityCustomScopeMeta;
 }
 /** entity: end */
 /** entity: begin */
 export type EntityAuthorizationTableName = 'mcpAuthAuthorization';
 export type EntityClientTableName = 'mcpAuthClient';
+export type EntityCustomScopeTableName = 'mcpAuthCustomScope';
 export type EntityAuthorizationMeta=TypeEntityMeta<EntityAuthorization,EntityAuthorizationTableName>;
 export type EntityClientMeta=TypeEntityMeta<EntityClient,EntityClientTableName>;
+export type EntityCustomScopeMeta=TypeEntityMeta<EntityCustomScope,EntityCustomScopeTableName>;
 declare module 'vona-module-a-orm' {
   export interface ITableRecord {
     'mcpAuthAuthorization': EntityAuthorizationMeta;
 'mcpAuthClient': EntityClientMeta;
+'mcpAuthCustomScope': EntityCustomScopeMeta;
   }
 }
 declare module 'vona-module-mcp-auth' {
@@ -49,19 +57,26 @@ declare module 'vona-module-mcp-auth' {
     export interface IEntityOptionsClient {
       fields?: TypeEntityOptionsFields<EntityClient, IEntityOptionsClient[TypeSymbolKeyFieldsMore]>;
     }
+
+    export interface IEntityOptionsCustomScope {
+      fields?: TypeEntityOptionsFields<EntityCustomScope, IEntityOptionsCustomScope[TypeSymbolKeyFieldsMore]>;
+    }
 }
 /** entity: end */
 /** model: begin */
 export * from '../model/authorization.ts';
 export * from '../model/client.ts';
+export * from '../model/customScope.ts';
 import type { IModelOptionsAuthorization } from '../model/authorization.ts';
 import type { IModelOptionsClient } from '../model/client.ts';
+import type { IModelOptionsCustomScope } from '../model/customScope.ts';
 import 'vona-module-a-orm';
 declare module 'vona-module-a-orm' {
 
     export interface IModelRecord {
       'mcp-auth:authorization': IModelOptionsAuthorization;
 'mcp-auth:client': IModelOptionsClient;
+'mcp-auth:customScope': IModelOptionsCustomScope;
     }
 
 
@@ -89,14 +104,27 @@ declare module 'vona-module-mcp-auth' {
             get $onionName(): 'mcp-auth:client';
             get $onionOptions(): IModelOptionsClient;
           }
+
+        export interface ModelCustomScope {
+          /** @internal */
+          get scope(): ScopeModuleMcpAuth;
+        }
+
+          export interface ModelCustomScope {
+            get $beanFullName(): 'mcp-auth.model.customScope';
+            get $onionName(): 'mcp-auth:customScope';
+            get $onionOptions(): IModelOptionsCustomScope;
+          }
 }
 /** model: end */
 /** model: begin */
 import type { ModelAuthorization } from '../model/authorization.ts';
 import type { ModelClient } from '../model/client.ts';
+import type { ModelCustomScope } from '../model/customScope.ts';
 export interface IModuleModel {
   'authorization': ModelAuthorization;
 'client': ModelClient;
+'customScope': ModelCustomScope;
 }
 /** model: end */
 /** model: begin */
@@ -106,6 +134,7 @@ declare module 'vona' {
   export interface IBeanRecordGeneral {
     'mcp-auth.model.authorization': ModelAuthorization;
 'mcp-auth.model.client': ModelClient;
+'mcp-auth.model.customScope': ModelCustomScope;
   }
 }
 /** model: end */
@@ -196,11 +225,53 @@ getByNameEqI<T extends IModelGetOptions<EntityClient,ModelClient>>(name?: string
 selectByName<T extends IModelSelectParams<EntityClient,ModelClient,ModelJoins>, ModelJoins extends TypeModelsClassLikeGeneral | undefined = undefined>(name?: string, params?: T, options?: IModelMethodOptions, modelJoins?: ModelJoins): Promise<TypeModelRelationResult<EntityClient, ModelClient, T>[]>;
 selectByNameEqI<T extends IModelSelectParams<EntityClient,ModelClient,ModelJoins>, ModelJoins extends TypeModelsClassLikeGeneral | undefined = undefined>(name?: string, params?: T, options?: IModelMethodOptions, modelJoins?: ModelJoins): Promise<TypeModelRelationResult<EntityClient, ModelClient, T>[]>;
     }
+export interface ModelCustomScope {
+      [SymbolKeyEntity]: EntityCustomScope;
+      [SymbolKeyEntityMeta]: EntityCustomScopeMeta;
+      [SymbolKeyModelOptions]: IModelOptionsCustomScope;
+      get<T extends IModelGetOptions<EntityCustomScope,ModelCustomScope>>(where: TypeModelWhere<EntityCustomScope>, options?: T): Promise<TypeModelRelationResult<EntityCustomScope, ModelCustomScope, T> | undefined>;
+      /**
+       * Retrieves one matching primary row with a pessimistic FOR UPDATE lock.
+       * Requires an active transaction. The lock is released when that transaction completes.
+       * Entity and query caches are bypassed.
+       */
+      getForUpdate<T extends IModelGetOptions<EntityCustomScope,ModelCustomScope>>(where: TypeModelWhere<EntityCustomScope>, options?: T): Promise<TypeModelRelationResult<EntityCustomScope, ModelCustomScope, T> | undefined>;
+      /**
+       * Retrieves a primary row by ID with the same pessimistic FOR UPDATE lock semantics.
+       * Requires an active transaction. The lock is released when that transaction completes.
+       * Entity and query caches are bypassed.
+       */
+      getByIdForUpdate<T extends IModelGetOptions<EntityCustomScope,ModelCustomScope>>(id: TableIdentity, options?: T): Promise<TypeModelRelationResult<EntityCustomScope, ModelCustomScope, T> | undefined>;
+      mget<T extends IModelGetOptions<EntityCustomScope,ModelCustomScope>>(ids: TableIdentity[], options?: T): Promise<TypeModelRelationResult<EntityCustomScope, ModelCustomScope, T>[]>;
+      selectAndCount<T extends IModelSelectParams<EntityCustomScope,ModelCustomScope,ModelJoins>, ModelJoins extends TypeModelsClassLikeGeneral | undefined = undefined>(params?: T, options?: IModelMethodOptions, modelJoins?: ModelJoins): Promise<TypeModelSelectAndCount<EntityCustomScope, ModelCustomScope, T>>;
+      select<T extends IModelSelectParams<EntityCustomScope,ModelCustomScope,ModelJoins>, ModelJoins extends TypeModelsClassLikeGeneral | undefined = undefined>(params?: T, options?: IModelMethodOptions, modelJoins?: ModelJoins): Promise<TypeModelRelationResult<EntityCustomScope, ModelCustomScope, T>[]>;
+      insert<T extends IModelInsertOptions<EntityCustomScope,ModelCustomScope>>(data?: TypeModelMutateRelationData<EntityCustomScope,ModelCustomScope, T>, options?: T): Promise<TypeModelMutateRelationData<EntityCustomScope,ModelCustomScope, T, true>>;
+      insertBulk<T extends IModelInsertOptions<EntityCustomScope,ModelCustomScope>>(items: TypeModelMutateRelationData<EntityCustomScope,ModelCustomScope, T>[], options?: T): Promise<TypeModelMutateRelationData<EntityCustomScope,ModelCustomScope, T, true>[]>;
+      update<T extends IModelUpdateOptions<EntityCustomScope,ModelCustomScope>>(data: TypeModelMutateRelationData<EntityCustomScope,ModelCustomScope, T>, options?: T): Promise<TypeModelMutateRelationData<EntityCustomScope,ModelCustomScope, T>>;
+      updateBulk<T extends IModelUpdateOptions<EntityCustomScope,ModelCustomScope>>(items: TypeModelMutateRelationData<EntityCustomScope,ModelCustomScope, T>[], options?: T): Promise<TypeModelMutateRelationData<EntityCustomScope,ModelCustomScope, T>[]>;
+      delete<T extends IModelDeleteOptions<EntityCustomScope,ModelCustomScope>>(where?: TypeModelWhere<EntityCustomScope>, options?: T): Promise<void>;
+      deleteBulk<T extends IModelDeleteOptions<EntityCustomScope,ModelCustomScope>>(ids: TableIdentity[], options?: T): Promise<void>;
+      mutate<T extends IModelMutateOptions<EntityCustomScope,ModelCustomScope>>(data?: TypeModelMutateRelationData<EntityCustomScope,ModelCustomScope, T>, options?: T): Promise<TypeModelMutateRelationData<EntityCustomScope,ModelCustomScope, T>>;
+      mutateBulk<T extends IModelMutateOptions<EntityCustomScope,ModelCustomScope>>(items: TypeModelMutateRelationData<EntityCustomScope,ModelCustomScope, T>[], options?: T): Promise<TypeModelMutateRelationData<EntityCustomScope,ModelCustomScope, T>[]>;
+      count<T extends IModelSelectCountParams<EntityCustomScope,ModelCustomScope,ModelJoins>, ModelJoins extends TypeModelsClassLikeGeneral | undefined = undefined>(params?: T, options?: IModelMethodOptions, modelJoins?: ModelJoins): Promise<string | undefined>;
+      increment<T extends IModelIncrementParams<EntityCustomScope,ModelCustomScope,ModelJoins>, ModelJoins extends TypeModelsClassLikeGeneral | undefined = undefined>(params?: T, options?: IModelMethodOptions, modelJoins?: ModelJoins): Promise<number>;
+      decrement<T extends IModelIncrementParams<EntityCustomScope,ModelCustomScope,ModelJoins>, ModelJoins extends TypeModelsClassLikeGeneral | undefined = undefined>(params?: T, options?: IModelMethodOptions, modelJoins?: ModelJoins): Promise<number>;
+      aggregate<T extends IModelSelectAggrParams<EntityCustomScope,ModelCustomScope,ModelJoins>, ModelJoins extends TypeModelsClassLikeGeneral | undefined = undefined>(params?: T, options?: IModelMethodOptions, modelJoins?: ModelJoins): Promise<TypeModelAggrRelationResult<T>>;
+      group<T extends IModelSelectGroupParams<EntityCustomScope,ModelCustomScope,ModelJoins>, ModelJoins extends TypeModelsClassLikeGeneral | undefined = undefined>(params?: T, options?: IModelMethodOptions, modelJoins?: ModelJoins): Promise<TypeModelGroupRelationResult<EntityCustomScope, T>[]>;
+      getById<T extends IModelGetOptions<EntityCustomScope,ModelCustomScope>>(id: TableIdentity, options?: T): Promise<TypeModelRelationResult<EntityCustomScope, ModelCustomScope, T> | undefined>;
+updateById<T extends IModelUpdateOptions<EntityCustomScope,ModelCustomScope>>(id: TableIdentity, data: TypeModelMutateRelationData<EntityCustomScope,ModelCustomScope, T>, options?: T): Promise<TypeModelMutateRelationData<EntityCustomScope,ModelCustomScope, T>>;
+deleteById<T extends IModelDeleteOptions<EntityCustomScope,ModelCustomScope>>(id: TableIdentity, options?: T): Promise<void>;
+getByName<T extends IModelGetOptions<EntityCustomScope,ModelCustomScope>>(name?: string, options?: T): Promise<TypeModelRelationResult<EntityCustomScope, ModelCustomScope, T> | undefined>;
+getByNameEqI<T extends IModelGetOptions<EntityCustomScope,ModelCustomScope>>(name?: string, options?: T): Promise<TypeModelRelationResult<EntityCustomScope, ModelCustomScope, T> | undefined>;
+selectByName<T extends IModelSelectParams<EntityCustomScope,ModelCustomScope,ModelJoins>, ModelJoins extends TypeModelsClassLikeGeneral | undefined = undefined>(name?: string, params?: T, options?: IModelMethodOptions, modelJoins?: ModelJoins): Promise<TypeModelRelationResult<EntityCustomScope, ModelCustomScope, T>[]>;
+selectByNameEqI<T extends IModelSelectParams<EntityCustomScope,ModelCustomScope,ModelJoins>, ModelJoins extends TypeModelsClassLikeGeneral | undefined = undefined>(name?: string, params?: T, options?: IModelMethodOptions, modelJoins?: ModelJoins): Promise<TypeModelRelationResult<EntityCustomScope, ModelCustomScope, T>[]>;
+    }
 }
 declare module 'vona-module-a-orm' {
   export interface IModelClassRecord {
     'mcp-auth:authorization': ModelAuthorization;
 'mcp-auth:client': ModelClient;
+'mcp-auth:customScope': ModelCustomScope;
   }
 }
 /** model: end */
@@ -211,13 +282,16 @@ export * from '../dto/authorizationGrantMineReq.tsx';
 export * from '../dto/authorizationGrantMineRes.tsx';
 export * from '../dto/authorizationRedirect.ts';
 export * from '../dto/authorizationSummary.ts';
+export * from '../dto/customScopeCreate.tsx';
+export * from '../dto/customScopeView.tsx';
+export * from '../dto/mcpTool.ts';
 import type { IDtoOptionsAuthorizationDecision } from '../dto/authorizationDecision.ts';
 import type { IDtoOptionsAuthorizationGrant } from '../dto/authorizationGrant.tsx';
 import type { IDtoOptionsAuthorizationGrantMineReq } from '../dto/authorizationGrantMineReq.tsx';
 import type { IDtoOptionsAuthorizationGrantMineRes } from '../dto/authorizationGrantMineRes.tsx';
 import type { IDtoOptionsAuthorizationRedirect } from '../dto/authorizationRedirect.ts';
 import type { IDtoOptionsAuthorizationSummary } from '../dto/authorizationSummary.ts';
-import 'vona-module-a-web';
+import { type IDecoratorDtoOptions } from 'vona-module-a-web';
 declare module 'vona-module-a-web' {
 
     export interface IDtoRecord {
@@ -227,6 +301,9 @@ declare module 'vona-module-a-web' {
 'mcp-auth:authorizationGrantMineRes': IDtoOptionsAuthorizationGrantMineRes;
 'mcp-auth:authorizationRedirect': IDtoOptionsAuthorizationRedirect;
 'mcp-auth:authorizationSummary': IDtoOptionsAuthorizationSummary;
+'mcp-auth:customScopeCreate': IDecoratorDtoOptions;
+'mcp-auth:customScopeView': IDecoratorDtoOptions;
+'mcp-auth:mcpTool': IDecoratorDtoOptions;
     }
 
 
@@ -242,6 +319,9 @@ import type { DtoAuthorizationGrantMineReq } from '../dto/authorizationGrantMine
 import type { DtoAuthorizationGrantMineRes } from '../dto/authorizationGrantMineRes.tsx';
 import type { DtoAuthorizationRedirect } from '../dto/authorizationRedirect.ts';
 import type { DtoAuthorizationSummary } from '../dto/authorizationSummary.ts';
+import type { DtoCustomScopeCreate } from '../dto/customScopeCreate.tsx';
+import type { DtoCustomScopeView } from '../dto/customScopeView.tsx';
+import type { DtoMcpTool } from '../dto/mcpTool.ts';
 declare module 'vona-module-mcp-auth' {
 
     export interface IDtoOptionsAuthorizationDecision {
@@ -267,19 +347,34 @@ declare module 'vona-module-mcp-auth' {
     export interface IDtoOptionsAuthorizationSummary {
       fields?: TypeEntityOptionsFields<DtoAuthorizationSummary, IDtoOptionsAuthorizationSummary[TypeSymbolKeyFieldsMore]>;
     }
+
+    export interface IDtoOptionsCustomScopeCreate {
+      fields?: TypeEntityOptionsFields<DtoCustomScopeCreate, IDtoOptionsCustomScopeCreate[TypeSymbolKeyFieldsMore]>;
+    }
+
+    export interface IDtoOptionsCustomScopeView {
+      fields?: TypeEntityOptionsFields<DtoCustomScopeView, IDtoOptionsCustomScopeView[TypeSymbolKeyFieldsMore]>;
+    }
+
+    export interface IDtoOptionsMcpTool {
+      fields?: TypeEntityOptionsFields<DtoMcpTool, IDtoOptionsMcpTool[TypeSymbolKeyFieldsMore]>;
+    }
 }
 /** dto: end */
 /** controller: begin */
 export * from '../controller/authorization.ts';
 export * from '../controller/authorizationGrant.ts';
+export * from '../controller/customScope.ts';
 import type { IControllerOptionsAuthorization } from '../controller/authorization.ts';
 import type { IControllerOptionsAuthorizationGrant } from '../controller/authorizationGrant.ts';
+import type { IControllerOptionsCustomScope } from '../controller/customScope.ts';
 import 'vona-module-a-web';
 declare module 'vona-module-a-web' {
 
     export interface IControllerRecord {
       'mcp-auth:authorization': IControllerOptionsAuthorization;
 'mcp-auth:authorizationGrant': IControllerOptionsAuthorizationGrant;
+'mcp-auth:customScope': IControllerOptionsCustomScope;
     }
 
 
@@ -307,6 +402,17 @@ declare module 'vona-module-mcp-auth' {
             get $onionName(): 'mcp-auth:authorizationGrant';
             get $onionOptions(): IControllerOptionsAuthorizationGrant;
           }
+
+        export interface ControllerCustomScope {
+          /** @internal */
+          get scope(): ScopeModuleMcpAuth;
+        }
+
+          export interface ControllerCustomScope {
+            get $beanFullName(): 'mcp-auth.controller.customScope';
+            get $onionName(): 'mcp-auth:customScope';
+            get $onionOptions(): IControllerOptionsCustomScope;
+          }
 }
 /** controller: end */
 /** controller: begin */
@@ -314,6 +420,8 @@ declare module 'vona-module-mcp-auth' {
 import type { ControllerAuthorization } from '../controller/authorization.ts';
 // @ts-ignore ignore
 import type { ControllerAuthorizationGrant } from '../controller/authorizationGrant.ts';
+// @ts-ignore ignore
+import type { ControllerCustomScope } from '../controller/customScope.ts';
 declare module 'vona-module-mcp-auth' {
 
     export interface IControllerOptionsAuthorization {
@@ -323,18 +431,27 @@ declare module 'vona-module-mcp-auth' {
     export interface IControllerOptionsAuthorizationGrant {
       actions?: TypeControllerOptionsActions<ControllerAuthorizationGrant>;
     }
+
+    export interface IControllerOptionsCustomScope {
+      actions?: TypeControllerOptionsActions<ControllerCustomScope>;
+    }
 }
 declare module 'vona-module-a-web' {
   export interface IApiPathGetRecord{
         '//mcp/auth/summary': undefined;
 '/mcp/auth/authorizationGrant/mine': undefined;
+'/mcp/auth/customScope/mine': undefined;
+'/mcp/auth/customScope/catalog': undefined;
     }
 export interface IApiPathPostRecord{
         '//mcp/auth/decision': undefined;
 '/mcp/auth/authorizationGrant/revokeMine/:id': undefined;
+'/mcp/auth/customScope/createMine': undefined;
+'/mcp/auth/customScope/updateMine/:id': undefined;
     }
 export interface IApiPathDeleteRecord{
         '/mcp/auth/authorizationGrant/deleteMine/:id': undefined;
+'/mcp/auth/customScope/deleteMine/:id': undefined;
     }
 
 }
@@ -370,6 +487,7 @@ declare module 'vona-module-mcp-auth' {
 export * from '../service/authTokenAdapter.ts';
 export * from '../service/authorization.ts';
 export * from '../service/authorizationGrant.ts';
+export * from '../service/customScope.ts';
 export * from '../service/registration.ts';
 
 import 'vona-module-a-bean';
@@ -379,6 +497,7 @@ declare module 'vona-module-a-bean' {
       'mcp-auth:authTokenAdapter': never;
 'mcp-auth:authorization': never;
 'mcp-auth:authorizationGrant': never;
+'mcp-auth:customScope': never;
 'mcp-auth:registration': never;
     }
 
@@ -416,6 +535,16 @@ declare module 'vona-module-mcp-auth' {
             get $onionName(): 'mcp-auth:authorizationGrant';
           }
 
+        export interface ServiceCustomScope {
+          /** @internal */
+          get scope(): ScopeModuleMcpAuth;
+        }
+
+          export interface ServiceCustomScope {
+            get $beanFullName(): 'mcp-auth.service.customScope';
+            get $onionName(): 'mcp-auth:customScope';
+          }
+
         export interface ServiceRegistration {
           /** @internal */
           get scope(): ScopeModuleMcpAuth;
@@ -431,11 +560,13 @@ declare module 'vona-module-mcp-auth' {
 import type { ServiceAuthTokenAdapter } from '../service/authTokenAdapter.ts';
 import type { ServiceAuthorization } from '../service/authorization.ts';
 import type { ServiceAuthorizationGrant } from '../service/authorizationGrant.ts';
+import type { ServiceCustomScope } from '../service/customScope.ts';
 import type { ServiceRegistration } from '../service/registration.ts';
 export interface IModuleService {
   'authTokenAdapter': ServiceAuthTokenAdapter;
 'authorization': ServiceAuthorization;
 'authorizationGrant': ServiceAuthorizationGrant;
+'customScope': ServiceCustomScope;
 'registration': ServiceRegistration;
 }
 /** service: end */
@@ -447,6 +578,7 @@ declare module 'vona' {
     'mcp-auth.service.authTokenAdapter': ServiceAuthTokenAdapter;
 'mcp-auth.service.authorization': ServiceAuthorization;
 'mcp-auth.service.authorizationGrant': ServiceAuthorizationGrant;
+'mcp-auth.service.customScope': ServiceCustomScope;
 'mcp-auth.service.registration': ServiceRegistration;
   }
 }
@@ -493,11 +625,14 @@ declare module 'vona-module-mcp-auth' {
 export * from '../config/config.ts';
 import type { config } from '../config/config.ts';
 /** config: end */
+/** locale: begin */
+import { locales } from './locales.ts';
+/** locale: end */
 /** monkey: begin */
 export * from '../monkey.ts';
 /** monkey: end */
 /** scope: begin */
-import { BeanScopeBase, type BeanScopeUtil, type TypeModuleConfig } from 'vona';
+import { BeanScopeBase, type BeanScopeUtil, type TypeModuleConfig, type TypeModuleLocales, type TypeLocaleBase } from 'vona';
 import { Scope } from 'vona-module-a-bean';
 
 @Scope()
@@ -506,6 +641,7 @@ export class ScopeModuleMcpAuth extends BeanScopeBase {}
 export interface ScopeModuleMcpAuth {
   util: BeanScopeUtil;
 config: TypeModuleConfig<typeof config>;
+locale: TypeModuleLocales<(typeof locales)[TypeLocaleBase]>;
 entity: IModuleEntity;
 model: IModuleModel;
 service: IModuleService;
@@ -525,7 +661,9 @@ declare module 'vona' {
     'mcp-auth': ReturnType<typeof config>;
   }
 
-
+  export interface IBeanScopeLocale {
+    'mcp-auth': (typeof locales)[TypeLocaleBase];
+  }
 
 
 }

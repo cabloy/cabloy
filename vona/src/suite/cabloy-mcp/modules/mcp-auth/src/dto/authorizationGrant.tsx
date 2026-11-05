@@ -12,6 +12,7 @@ export const authorizationGrantColumns = [
   'id',
   'resource',
   'scope',
+  'requestedScope',
   'state',
   'createdAt',
   'tokenExpiresAt',

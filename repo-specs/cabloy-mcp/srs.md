@@ -110,7 +110,7 @@ Apply the [finite WBS contribution](./pdp-wbs.md#student-select-extension-dossie
 - Remove `registration.enabled`: RFC 7591 DCR and metadata advertisement follow existing AS/MCP ingress availability with body/redirect and rate limits retained. Public/confidential `none`/`client_secret_basic`, exact redirects, PKCE S256, explicit consent and existing identity remain unchanged; registration grants no user or tenant authority.
 - The approved dual-scope amendment supports `mcp:all` and `mcp:read`. A new DCR request omitting `scope` registers `mcp:all`; either explicit scope is supported, and valid space-separated `mcp:all mcp:read` or `mcp:read mcp:all` canonicalizes to `mcp:all`. Explicit authorization scope uses the same supported values and list canonicalization; omitted authorization scope inherits the client's registered ceiling. An `mcp:all` registration permits `mcp:all` or narrowed `mcp:read`; an `mcp:read` registration cannot authorize `mcp:all`. Bind the approved scope through consent, code exchange and token validation. Existing `mcp:read` registrations, grants and tokens are not promoted: broader access requires new registration and fresh authorization, not persisted-binding rewrites.
 - Both scopes remain subject to current local RBAC, ownership, data scope and tenant/instance boundaries. The existing three tools remain read-only and accept either scope; this amendment adds no mutation or dispatch registry. Future actual mutation tools must enforce their required scope at dispatch and deny `mcp:read`; that enforcement is a future exposure requirement, not a claim of an implemented mutation dispatcher.
-- No refresh support is added. DCR retains compatibility with a requested `authorization_code`/`refresh_token` pair but registers/returns only `authorization_code`; discovery advertises no refresh grant, token exchange issues no refresh token, and refresh grants remain rejected. No scope configuration is needed for the new-registration default; Codex can request narrower authorization with top-level `scopes = ["mcp:read"]` in its server table, not HTTP headers. Unsupported scopes, including `offline_access`, remain rejected.
+- Current refresh behavior supersedes the original no-refresh profile: refresh-enabled registrations use MCP JWT access/refresh pairs with AS-only atomic generation rotation, current binding checks and replay-family revocation; code-only grants and bounded legacy opaque access do not gain refresh. Refresh scope inherits or narrows the grant and current client ceiling. See [current refresh guidance](../../vona/src/suite/cabloy-mcp/docs/mcp-browser-authorization.md#5-refresh-without-a-new-browser-authorization) and the [existing runtime record](./evidence/business-ai-client.md#user-provided-real-client-mcp-refresh-runtime-evidence-2026-11-01); neither establishes personal custom scope proof. No scope configuration is needed for the new-registration default; Codex can request narrower authorization with top-level `scopes = ["mcp:read"]` in its server table, not HTTP headers. `offline_access` remains unsupported.
 - `allowLoopbackHttp` defaults to `true`, supports explicit `false`, and permits HTTP only for exact `localhost`, `127.0.0.1` or `[::1]`, not arbitrary HTTP. Canonical AS metadata is `/.well-known/oauth-authorization-server/mcp`; endpoints remain `/mcp/auth`, `/mcp/token`, `/mcp/register`, and PRM remains `/.well-known/oauth-protected-resource/mcp`.
 - Schema and `mcp-auth` `fileVersion: 1` remain unchanged by this simplification. Old origin-only issuer grants/codes/tokens fail exact comparison and need new authorization, not reset or persisted-state rewriting. The prior v1 creation-path decision does not automatically upgrade existing v1 databases.
 - Remove the special E2E backend configuration injection/helper; use normal module defaults and the managed listener's requestless origin for the connected flow. Required checks remain prospective here; this contract update supplies no new passing tests, WBS/ATP advancement or release qualification.
@@ -236,6 +236,8 @@ The accepted first increment introduces no MCP resource-module-owned registry, c
 
 ### SRS-MCP-AUTH-01: OAuth resource-server validation
 
+Approved personal custom scopes (2026-11-04): current MCP access validation carries the actual effective all/read/custom scope and its immutable authorization-time exact-tool ceiling; it does not reinterpret a custom identifier as all/read or accept a refresh credential at `/mcp`. Unknown, deleted, foreign-owner/instance or invalid linked scope state fails closed. Existing refresh-enabled JWT validation supersedes the historical opaque/no-refresh first-profile assumptions below, without ordinary-login JWT acceptance. Traceability: `PRD-MCP-IDENTITY-01`, `WBS-MCP-20-05`, `ATP-MCP-AUTH-01`.
+
 Traceability: `PRD-MCP-IDENTITY-01`, `WBS-MCP-20-02`, `ATP-MCP-AUTH-01`.
 
 Every protected MCP request that reaches protocol handling or tool discovery/call must validate a Bearer access token as an OAuth resource server. For the preferred opaque profile, the approved token service must confirm current profile, issuer, client/grant, resource binding, expiry/activation, revocation, bound instance relation, subject, and required scope; a separately selected signed-token profile would also require signature, algorithm, and applicable claim checks. The public protected-resource metadata endpoint identifies the resource and authorization-server issuer discovery information without making tool access public. Invalid, missing, expired, wrong-issuer, wrong-resource, malformed, or insufficiently scoped access tokens never fall through to anonymous or inner access; the failure class follows the approved nondiagnostic HTTP policy.
@@ -270,6 +272,8 @@ The [later explicit correction](./decisions/0002-mcp-transport.md#accepted-share
 
 ### SRS-MCP-AUTH-02: Subject mapping and authorization intersection
 
+Approved personal custom scopes (2026-11-04): exact custom-tool membership is an additional intersection, not a role, permission or read classification. Both fresh guard-only `tools/list` and direct known-name `tools/call` must enforce it together with current registry eligibility, client/grant ceilings, Passport/RBAC, ownership and active-instance data scope. No business reads or trial calls during listing. Traceability: `PRD-MCP-ACCESS-02`, `PRD-MCP-IDENTITY-03`, `WBS-MCP-20-05`, `ATP-MCP-AUTH-02`.
+
 Approved delete contribution (2026-10-30): apply the [seventh-tool supplement](#approved-student-delete-seventh-tool-extension-2026-10-30) to require `mcp:all` AND independent current delete authority in the active instance; no select/view/create/update inference in either direction. Discovery remains fresh sequential guard-only, with no business reads/trial deletes and safe whole-list failure. Traceability: `WBS-MCP-30-02`, `ATP-MCP-AUTH-02`.
 
 Traceability: `PRD-MCP-IDENTITY-03`, `PRD-MCP-ACCESS-02`, `WBS-MCP-30-02`, `ATP-MCP-AUTH-02`.
@@ -287,6 +291,8 @@ A broader OAuth scope cannot elevate local authority. A local administrator role
 
 ### SRS-MCP-AUTH-03: Call-time authorization
 
+Approved personal custom scopes (2026-11-04): enforce the same exact custom membership on a known-name call even without a prior list, before fixed guarded dispatch. A cached list, preset label or broader local role cannot bypass current scope/revocation checks; an allowed member still requires its own current business guards and resource ownership. Traceability: `PRD-MCP-ACCESS-02`, `PRD-MCP-IDENTITY-03`, `WBS-MCP-20-05`, `ATP-MCP-AUTH-02`, `ATP-MCP-CALL-02`.
+
 Approved delete contribution (2026-10-30): the [seventh-tool supplement](#approved-student-delete-seventh-tool-extension-2026-10-30) retains advisory-only discovery and independent guarded call reauthorization, including revocation; `mcp:read` hides/rejects known-name delete before dispatch. Only this named delete is individually accepted without a new server per-call confirmation gate; no caller confirmation flag or client prompt is a grant. Traceability: `WBS-MCP-30-02`, `WBS-MCP-40-01`, `ATP-MCP-AUTH-02`, `ATP-MCP-CALL-01`, `ATP-MCP-CALL-02`.
 
 Traceability: `PRD-MCP-ACCESS-02`, `PRD-MCP-IDENTITY-03`, `WBS-MCP-30-02`, `WBS-MCP-40-01`, `ATP-MCP-AUTH-02`, `ATP-MCP-CALL-01`.
@@ -294,6 +300,10 @@ Traceability: `PRD-MCP-ACCESS-02`, `PRD-MCP-IDENTITY-03`, `WBS-MCP-30-02`, `WBS-
 The result of `tools/list` is advisory visibility, not a capability token. `tools/call` repeats token, instance, subject, tool-policy, scope, RBAC, data-scope, and operation-risk checks immediately before dispatch. Argument values are validated against the published schema and any server-side resource policy; an argument cannot choose a different user, tenant, host, route, method, or authorization context. If visibility depends on an argument-specific row, listing may indicate only that a subject can attempt the operation; actual row ownership remains the guarded domain operation's decision. A confirmation-required operation remains unavailable without the separately approved server-verifiable grant described by the proposed ADR 0006, not a caller-provided flag.
 
 ### SRS-MCP-AUTH-04: Authorization-server/token-service prerequisite (design accepted; delivery blocked)
+
+Approved personal custom scopes (2026-11-04): `mcp-auth` owns user-and-active-instance-scoped presets, random non-name-derived `mcp:custom:<id>` identifiers, exact stable tool identities/names and grant linkage. Personal CRUD cannot read or mutate another owner's/instance's presets; derive user identity from authenticated context, not body/query. Preserve original requested scope separately from effective approved scope. Consent selects exactly one all/read/custom value; compute effective tools as a subset of both original request and current registered client ceiling, never a union or silent promotion. Return actual effective scope at code exchange and refresh. Resolve custom scope ownership only for the authenticated approving user, without exposing presets in public discovery/DCR or making registration a user grant.
+
+Refresh inherits or narrows the issued effective tool ceiling and cannot gain tools by rereading an edited preset. Tool-set edit/delete atomically revokes all linked code/access/refresh authority; metadata-only edits do not. Serialize or conditionally fence preset revisions and consent/code/token/refresh linkage so an edit racing issuance either invalidates the resulting linkage or prevents issuance; no stale valid credential escapes. Keep `mcp-auth` `fileVersion: 1`, folding persistence into the v1 creation path with ordinary metadata-owned lookup indexes, no business UNIQUE constraint, v2 migration, automatic existing-v1 replay or reset. The delivered refresh profile and ADR 0010 supersede incompatible original no-refresh/owner apparatus below only within this bounded slice; unrelated blocked parent and deployment gates remain. Traceability: `PRD-MCP-IDENTITY-01`, `PRD-MCP-IDENTITY-03`, `WBS-MCP-20-05`, `ATP-MCP-AUTH-03`, `ATP-MCP-INSTANCE-01`.
 
 Traceability: `PRD-MCP-IDENTITY-01`, `WBS-MCP-20-04`, `ATP-MCP-AUTH-03`.
 
@@ -384,6 +394,8 @@ The bounded options are description, read classification, top-level object `outp
 
 ### SRS-MCP-CATALOG-03: Eligibility and risk classification
 
+Approved personal custom scopes (2026-11-04): custom membership only narrows already eligible tools; it cannot opt in an Action, bypass read-only request/client ceilings, reclassify effects or waive any existing confirmation requirement. A selected mutation remains unavailable under a read ceiling and without its own business authority. Traceability: `PRD-MCP-ACCESS-02`, `WBS-MCP-20-05`, `ATP-MCP-AUTH-02`, `ATP-MCP-CONTRACT-01`.
+
 Approved delete contribution (2026-10-30): the [seventh-tool supplement](#approved-student-delete-seventh-tool-extension-2026-10-30) individually accepts destructive aggregate soft deletion without a new server per-call confirmation gate and explicitly defers protected-audit/outage/fleet quotas. Conservative mutation hints, partial-effect/no-recovery/no-replay limits and all unchanged controls remain mandatory; this does not relax other operations' confirmation requirements or accept whole Proposed ADRs. Traceability: `WBS-MCP-30-02`, `ATP-MCP-CONTRACT-03`.
 
 Traceability: `PRD-MCP-CONTRACT-03`, `PRD-MCP-SAFETY-03`, `WBS-MCP-30-02`, `ATP-MCP-CONTRACT-03`.
@@ -395,6 +407,8 @@ Eligibility requires a JSON object-root input schema with deterministic declared
 A client `confirm` argument, risk hint, or previous list entry is not a trusted approval. Any per-call-confirmation-required mutation remains disabled until the subject/client/instance/tool/arguments are bound to an independently approved, replay-safe, server-verifiable confirmation channel; client-side prompts and optional MCP elicitation do not automatically provide one. Explicitly reviewed reversible mutations without that requirement still need current OAuth scope, deployment policy, local authorization and domain ownership, plus audit. The confirmation mechanism and actual tool list remain `TODO(confirm)`; this proposal creates no MCP-owned consent database or UI.
 
 ### SRS-MCP-CATALOG-04: Stable server-owned tool registry
+
+Approved personal custom scopes (2026-11-04): store exact stable tool identity/name selections, not wildcards, route patterns, categories, nested presets or dynamically expanding queries. The same restricted registry projection governs list and direct call. New, renamed, disabled or missing tools cannot silently widen an existing grant; preserve public names deliberately and require a new approved selection/authorization for additions. This is preset persistence, not a persisted dispatch registry. Traceability: `PRD-MCP-ACCESS-02`, `WBS-MCP-20-05`, `ATP-MCP-AUTH-02`, `ATP-MCP-CONTRACT-01`.
 
 Approved delete contribution (2026-10-30): the [seventh-tool supplement](#approved-student-delete-seventh-tool-extension-2026-10-30) adds only ordinary delete to the exact seven-name map shared by list/direct call. Training absent means empty/all seven unavailable; standalone remains three synthetic reads. No new registry/cache/fleet foundation. Traceability: `WBS-MCP-30-01`, `ATP-MCP-CONTRACT-02`.
 
@@ -530,6 +544,8 @@ Configuration must distinguish resource metadata, issuer/trust keys, host-instan
 
 ### SRS-MCP-API-01: Vona contract truth and generated consumers
 
+Approved personal custom scopes (2026-11-04): `mcp-auth` supplies authenticated personal list/read/create/update/delete and eligible exact-tool selection contracts plus requested/effective consent DTO truth. Owner and instance are server-bound; missing foreign resources remain absent without cross-instance probes. Scope metadata/tool-set updates remain distinguishable for revocation. Regenerate Zova consumers from backend DTO/OpenAPI truth, then use paired affected SSR/REST builds and `deps:vona`; never hand-patch generated consumers or reinstall/reset as part of this amendment. Traceability: `PRD-MCP-IDENTITY-03`, `WBS-MCP-20-05`, `ATP-MCP-CONTRACT-01`.
+
 Approved delete contribution (2026-10-30): preserve DELETE/table-identity/RBAC/declared-null/void truth under the [seventh-tool supplement](#approved-student-delete-seventh-tool-extension-2026-10-30). No DTO/OpenAPI shape or frontend contract change, generation, paired builds, dependency sync or reinstall. Traceability: `WBS-MCP-30-01`, `ATP-MCP-CONTRACT-01`.
 
 Traceability: `PRD-MCP-CONTRACT-01`, `WBS-MCP-30-01`, `ATP-MCP-CONTRACT-01`.
@@ -546,11 +562,15 @@ The implementation must define when the catalog is rebuilt, how schema/metadata 
 
 ### SRS-MCP-UI-01: MCP resource-server frontend boundary and AS interaction exception
 
+Approved personal custom scopes (2026-11-04): extend existing Zova `cabloy-mcp` presentation with authenticated personal preset CRUD and one all/read/custom consent selector; retain original requested scope display separately from effective choice. Disable/reject choices that exceed request/client ceilings and let the AS remain final authority. Reuse existing shared Site/login/admission and consent navigation; no independent Site/flavor, operator UI, remembered consent or new browser identity mechanism. This is the narrow exception to the historical management-UI exclusion below. Traceability: `PRD-MCP-IDENTITY-03`, `WBS-MCP-20-05`, `ATP-MCP-AUTH-03`, `ATP-MCP-CONTRACT-01`.
+
 Traceability: `PRD-MCP-SAFETY-04`, `WBS-MCP-50-02`, `ATP-MCP-OPS-02`.
 
 The MCP resource-server module and remote Vona endpoint have no Zova page, SSR route, Web/Admin flavor, or independent MCP site. Separately, ADR 0009 selects a narrowly scoped **Zova-presented AS authorization interaction** for explicit per-request approval/denial; it does not select Web versus Admin versus a new site, a route/flavor, or the site-admission/SSR/session/CSRF implementation. That AS interaction belongs to blocked `WBS-MCP-20-04`, not the MCP resource module or deferred Admin/Web management UI. The AS keeps server-side pending-request, identity, approval, code/token and final-redirect authority; a Zova page cannot promote a frontend authentication flag or client-supplied bindings into an authorization decision. A general-purpose OAuth UI, operator configuration UI and independent management site remain deferred. The browser and site choice must be approved and verified separately before implementation.
 
 ### SRS-MCP-UI-02: Future audience split rule
+
+Approved personal custom scopes (2026-11-04): personal preset/query/mutation state belongs to the existing Zova model/resource owner, with no persistence/dehydration of private scope or pending consent state. Preserve neutral SSR/hydration shell and authenticated post-hydration loading. Reuse generated API contracts and `ZButton` async action ownership; UI hiding is not authorization. Any route with dynamic params must be named and regenerated; static routes remain unnamed absent a documented requirement. No audience-specific domain or new Site is created. Traceability: `PRD-MCP-IDENTITY-03`, `WBS-MCP-20-05`, `ATP-MCP-AUTH-03`, `ATP-MCP-CONTRACT-01`.
 
 Traceability: `PRD-MCP-SAFETY-04`, `WBS-MCP-50-02`, `ATP-MCP-OPS-02`.
 
@@ -578,13 +598,14 @@ Catalog generation, tool listing, and calls have explicit bounded work, response
 
 ## Acceptance Mapping
 
-| Contract family                      | Primary PRD                                   | Primary WBS                                       | Primary ATP                                                  |
-| ------------------------------------ | --------------------------------------------- | ------------------------------------------------- | ------------------------------------------------------------ |
-| Transport, AS and protected resource | `PRD-MCP-ACCESS-01`, `PRD-MCP-IDENTITY-01`    | `WBS-MCP-20-01`, `WBS-MCP-20-02`, `WBS-MCP-20-04` | `ATP-MCP-TRANSPORT-01`, `ATP-MCP-AUTH-01`, `ATP-MCP-AUTH-03` |
-| Instance and subject authorization   | `PRD-MCP-IDENTITY-02`–`03`                    | `WBS-MCP-20-03`, `WBS-MCP-30-02`                  | `ATP-MCP-INSTANCE-01`, `ATP-MCP-AUTH-02`                     |
-| Catalog/schema governance            | `PRD-MCP-CONTRACT-01`–`03`                    | `WBS-MCP-30-01`, `WBS-MCP-30-02`                  | `ATP-MCP-CONTRACT-01`–`03`                                   |
-| Dispatch/context isolation           | `PRD-MCP-ACCESS-03`, `PRD-MCP-SAFETY-01`–`02` | `WBS-MCP-40-01`, `WBS-MCP-40-02`                  | `ATP-MCP-CALL-01`–`03`                                       |
-| Limits/audit/disablement             | `PRD-MCP-SAFETY-03`–`04`                      | `WBS-MCP-50-01`, `WBS-MCP-50-02`                  | `ATP-MCP-OPS-01`–`02`                                        |
+| Contract family                      | Primary PRD                                                       | Primary WBS                                       | Primary ATP                                                                             |
+| ------------------------------------ | ----------------------------------------------------------------- | ------------------------------------------------- | --------------------------------------------------------------------------------------- |
+| Personal custom scopes               | `PRD-MCP-ACCESS-02`, `PRD-MCP-IDENTITY-01`, `PRD-MCP-IDENTITY-03` | `WBS-MCP-20-05`                                   | `ATP-MCP-AUTH-01`–`03`, `ATP-MCP-CALL-02`, `ATP-MCP-INSTANCE-01`, `ATP-MCP-CONTRACT-01` |
+| Transport, AS and protected resource | `PRD-MCP-ACCESS-01`, `PRD-MCP-IDENTITY-01`                        | `WBS-MCP-20-01`, `WBS-MCP-20-02`, `WBS-MCP-20-04` | `ATP-MCP-TRANSPORT-01`, `ATP-MCP-AUTH-01`, `ATP-MCP-AUTH-03`                            |
+| Instance and subject authorization   | `PRD-MCP-IDENTITY-02`–`03`                                        | `WBS-MCP-20-03`, `WBS-MCP-30-02`                  | `ATP-MCP-INSTANCE-01`, `ATP-MCP-AUTH-02`                                                |
+| Catalog/schema governance            | `PRD-MCP-CONTRACT-01`–`03`                                        | `WBS-MCP-30-01`, `WBS-MCP-30-02`                  | `ATP-MCP-CONTRACT-01`–`03`                                                              |
+| Dispatch/context isolation           | `PRD-MCP-ACCESS-03`, `PRD-MCP-SAFETY-01`–`02`                     | `WBS-MCP-40-01`, `WBS-MCP-40-02`                  | `ATP-MCP-CALL-01`–`03`                                                                  |
+| Limits/audit/disablement             | `PRD-MCP-SAFETY-03`–`04`                                          | `WBS-MCP-50-01`, `WBS-MCP-50-02`                  | `ATP-MCP-OPS-01`–`02`                                                                   |
 
 ## Related Records
 

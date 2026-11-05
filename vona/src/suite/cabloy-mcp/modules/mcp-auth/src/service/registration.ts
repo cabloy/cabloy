@@ -14,7 +14,7 @@ import type {
 import {
   getMcpAuthConfig,
   getMcpIssuer,
-  isMcpScope,
+  isMcpBuiltinScope,
   parseMcpScope,
   resolveMcpResource,
   resolveMcpGrantTypes,
@@ -88,7 +88,7 @@ export class ServiceRegistration extends BeanBase {
       !client ||
       client.state !== 'active' ||
       client.resource !== resource ||
-      !isMcpScope(client.scope)
+      !isMcpBuiltinScope(client.scope)
     ) {
       return undefined;
     }

@@ -7,6 +7,8 @@ import type {
   IMcpAuthResource,
   IMcpAuthRegistrationConfig,
   TypeMcpGrantTypes,
+  TypeMcpBuiltinScope,
+  TypeMcpCustomScope,
   TypeMcpScope,
 } from '../types/index.ts';
 
@@ -22,22 +24,36 @@ export class OAuthError extends Error {
 
 export const mcpSupportedScopes = ['mcp:all', 'mcp:read'] as const;
 
-export function isMcpScope(value: unknown): value is TypeMcpScope {
+export function isMcpBuiltinScope(value: unknown): value is TypeMcpBuiltinScope {
   return value === 'mcp:all' || value === 'mcp:read';
 }
 
-/** Normalize only supported OAuth scope lists, never unknown or malformed tokens. */
-export function parseMcpScope(value: unknown): TypeMcpScope | undefined {
+export function isMcpCustomScope(value: unknown): value is TypeMcpCustomScope {
+  return typeof value === 'string' && /^mcp:custom:[\w-]{43}$/.test(value);
+}
+
+/** Syntax only. Custom authority must also resolve a live owner-scoped definition. */
+export function isMcpScope(value: unknown): value is TypeMcpScope {
+  return isMcpBuiltinScope(value) || isMcpCustomScope(value);
+}
+
+/** Registration and anonymous discovery only support built-in ceilings. */
+export function parseMcpScope(value: unknown): TypeMcpBuiltinScope | undefined {
   if (typeof value !== 'string') return undefined;
   const scopes = value.split(' ');
   if (
     scopes.length > 2 ||
-    scopes.some(scope => !isMcpScope(scope)) ||
+    scopes.some(scope => !isMcpBuiltinScope(scope)) ||
     new Set(scopes).size !== scopes.length
   ) {
     return undefined;
   }
   return scopes.includes('mcp:all') ? 'mcp:all' : 'mcp:read';
+}
+
+/** Custom remembered identifiers are admitted syntactically before login, never resolved anonymously. */
+export function parseMcpRequestedScope(value: unknown): TypeMcpScope | undefined {
+  return isMcpCustomScope(value) ? value : parseMcpScope(value);
 }
 
 /** Legacy absent grants are code-only; malformed persisted authority is never upgraded. */

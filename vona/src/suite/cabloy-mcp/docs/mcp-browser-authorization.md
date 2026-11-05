@@ -10,7 +10,7 @@ MCP client → /mcp/auth → existing SSR Site → consent page
           → registered client callback → /mcp/token → Bearer-authenticated /mcp
 ```
 
-Backend `mcp-auth` in the `cabloy-mcp` suite owns OAuth authorization state, decisions, codes and tokens. Backend `cabloy-mcp` now owns normal shared `/mcp`: its `middlewareSystem.mcp.ts` delegates to `mcpTransport.ts`, `businessTransport.ts` owns authenticated exchanges and settlement, the shared business-tool service composes Resource-backed tool admission, and `monkey.ts` drains transport work on application close. `mcp-test` is not the normal endpoint owner. The consent page belongs to Zova's `cabloy-mcp` suite/module; no management console is introduced.
+Backend `mcp-auth` in the `cabloy-mcp` suite owns OAuth authorization state, decisions, codes and tokens. Backend `cabloy-mcp` now owns normal shared `/mcp`: its `middlewareSystem.mcp.ts` delegates to `mcpTransport.ts`, `businessTransport.ts` owns authenticated exchanges and settlement, the shared business-tool service composes Resource-backed tool admission, and `monkey.ts` drains transport work on application close. `mcp-test` is not the normal endpoint owner. The consent page and personal scope management belong to Zova's `cabloy-mcp` suite/module; no general management console is introduced.
 
 Normal `/mcp` accepts recognized **dev/test/prod** modes through the same authenticated, permission-checked boundary. Production is no longer rejected solely by mode. Unknown modes, not-ready, closing and disabled ingress still return 503; production also requires the explicit trusted public serve pair described below. Enabled-by-default behavior is unchanged: only the literal environment value `CABLOY_MCP_ENABLED=false` disables `cabloy-mcp`. Dedicated protected audit, audit-outage availability gating and deployment-wide fine-grained quotas are deferred for the five reads and individually admitted Student create, update and delete tools, not implemented capabilities or production prerequisites. Existing per-worker bounds, actual-work settlement and shutdown drain remain; no audit compliance or actual deployment qualification is claimed.
 
@@ -19,6 +19,8 @@ Shared construction admission accepts registered Resource controllers, not a stu
 For the independent anonymous, credential-rejecting standalone fixture, use [Local MCP Test Catalog](./mcp-commerce-local.md). Do not send OAuth tokens to that launcher.
 
 ## Student create, update, delete and business reads
+
+The all/read examples below describe built-in scopes. A personal custom scope additionally admits only its exact selected tools: a selected write can run only when the original request and client ceiling permit writes, and its independent business permission still applies. Custom scope selection never grants `mcp:all` authority or bypasses any business guard.
 
 ### Student create
 
@@ -92,21 +94,21 @@ On 2026-10-25, before that replacement, the user reported Codex server `test` di
 
 ## Supported first profile
 
-| Item                               | Boundary                                                                         |
-| ---------------------------------- | -------------------------------------------------------------------------------- |
-| Grant                              | Authorization code with PKCE **S256**; refresh when explicitly registered        |
-| Client registration                | RFC 7591 DCR only; available with the existing AS/MCP ingress                    |
-| Public client authentication       | `none`                                                                           |
-| Confidential client authentication | `client_secret_basic`                                                            |
-| Scopes                             | `mcp:all` (new-registration default) and narrower `mcp:read`                     |
-| Pending authorization lifetime     | **10 minutes** by default                                                        |
-| Authorization code lifetime        | **60 seconds** by default; one use                                               |
-| Access token lifetime              | **7200 seconds (2 hours)** by default; MCP-specific JWT                          |
-| Refresh window                     | **7 days** from issuance or each successful refresh by default; no absolute cap  |
-| Refresh rotation                   | Each successful use rotates the pair; older-generation replay revokes the family |
-| Consent                            | Explicit approve/deny on each new authorization; no remembered consent           |
+| Item                               | Boundary                                                                                     |
+| ---------------------------------- | -------------------------------------------------------------------------------------------- |
+| Grant                              | Authorization code with PKCE **S256**; refresh when explicitly registered                    |
+| Client registration                | RFC 7591 DCR only; available with the existing AS/MCP ingress                                |
+| Public client authentication       | `none`                                                                                       |
+| Confidential client authentication | `client_secret_basic`                                                                        |
+| Scopes                             | Registered `mcp:all`/`mcp:read` ceilings; consent may narrow to a personal `mcp:custom:<id>` |
+| Pending authorization lifetime     | **10 minutes** by default                                                                    |
+| Authorization code lifetime        | **60 seconds** by default; one use                                                           |
+| Access token lifetime              | **7200 seconds (2 hours)** by default; MCP-specific JWT                                      |
+| Refresh window                     | **7 days** from issuance or each successful refresh by default; no absolute cap              |
+| Refresh rotation                   | Each successful use rotates the pair; older-generation replay revokes the family             |
+| Consent                            | Explicit approve/deny on each new authorization; no remembered consent                       |
 
-`POST /mcp/register` creates an AS-owned client record whenever the existing AS/MCP ingress is available, and its authorization-server metadata advertises `registration_endpoint`. There is no `registration.enabled` field or separate registration activation step. Registration retains bounded body/redirect limits and rate limiting; availability does not bypass ingress or current client, authorization, configuration and account validity checks. Registration creates only a client identity: it does not authenticate a user, grant Cabloy roles or tenant access, issue an authorization code/token, or bypass explicit consent and PKCE. Discovery advertises `authorization_code` and `refresh_token`, but refresh capability requires an explicit DCR grant pair. CIMD, dynamic scopes, remembered consent, a management UI, public registration update/delete endpoints and `offline_access` remain unsupported. Ordinary Cabloy login, refresh, temporary and OAuth credentials are not MCP tokens, and MCP credentials cannot become ordinary login credentials. Configured TTL values and OAuth `expires_in` use seconds; an `expiresAt` timestamp uses epoch milliseconds.
+`POST /mcp/register` creates an AS-owned client record whenever the existing AS/MCP ingress is available, and its authorization-server metadata advertises `registration_endpoint`. There is no `registration.enabled` field or separate registration activation step. Registration retains bounded body/redirect limits and rate limiting; availability does not bypass ingress or current client, authorization, configuration and account validity checks. Registration creates only a client identity: it does not authenticate a user, grant Cabloy roles or tenant access, issue an authorization code/token, or bypass explicit consent and PKCE. Discovery advertises `authorization_code` and `refresh_token`, but refresh capability requires an explicit DCR grant pair. Personal exact-tool scopes and their account page are supported as described below; shared/role/nested scopes, a generalized scope policy engine, CIMD, remembered consent, general management UI, public registration update/delete endpoints and `offline_access` remain unsupported. Ordinary Cabloy login, refresh, temporary and OAuth credentials are not MCP tokens, and MCP credentials cannot become ordinary login credentials. Configured TTL values and OAuth `expires_in` use seconds; an `expiresAt` timestamp uses epoch milliseconds.
 
 ## Endpoints and registration
 
@@ -146,7 +148,7 @@ The response is direct JSON with HTTP `201`, a server-issued opaque `client_id`,
 ### Scope ceiling and client configuration
 
 - **New DCR registration:** omitted `scope` defaults to `mcp:all`. Explicit `mcp:all` and `mcp:read` are supported. A valid space-separated list `mcp:all mcp:read` or `mcp:read mcp:all` is accepted and canonicalized to `mcp:all`.
-- **Authorization:** explicit `scope` uses the same supported values and list canonicalization; omitted `scope` inherits that client's registered ceiling, not an unconditional `mcp:all` default. An `mcp:all` registration may authorize either `mcp:all` or narrowed `mcp:read`; an `mcp:read` registration cannot authorize `mcp:all`. The approved scope remains bound through consent, code exchange and token use.
+- **Authorization:** omitted `scope` requests the client's registered ceiling, not an unconditional `mcp:all` default. Explicit built-in scopes use the same list canonicalization; a request may also name one existing personal `mcp:custom:<id>`, resolved only for the signed-in owner. Consent chooses one allowed all/read/custom scope within both the original request and registered ceiling; it never combines them to widen access. The actual approved scope remains bound through code exchange and token use.
 - **Existing clients and tokens:** existing `mcp:read` registrations, grants and tokens are not promoted by the new default. Requesting broader access requires a new `mcp:all` registration and fresh explicit authorization; do not rewrite persisted bindings.
 - **Local authority:** both scopes remain bounded by the current user's RBAC, resource ownership, data scope and tenant/instance. `mcp:all` is not administrator or cross-tenant authority. The mapper enforces scope at both `tools/list` and `tools/call`: `mcp:read` lists/calls only tools classified read-only; `mcp:all` permits both classifications only within the constructed catalog, without bypassing business guards. Normal construction requires a registered Resource controller, an enabled route, explicit method/class opt-in and a supported contract. In the student example, create, update and delete are non-read-only and each requires `mcp:all` plus its independent current business authority. Student `deleteForce` and bulk actions lack opt-in; nonresource synthetic/test fixtures fail shared Resource admission. Classification uses action `readOnly`, then controller default, then GET inference; GET is a convention, not proof of no side effects. Mapping opt-in is closed by default, and there is no decorator exclusion option after class opt-in; decorate selected methods for narrower mapping eligibility. Opt-in does not bypass Resource registration, contract, scope or authorization requirements; class opt-in on a registered Resource controller can include future supported actions.
 
@@ -159,6 +161,20 @@ scopes = ["mcp:read"]
 ```
 
 To enable refresh, explicitly register `grant_types: ["authorization_code", "refresh_token"]` (either request order is accepted). The server persists and returns that canonical pair; the initial code exchange then returns both tokens. Omitted `grant_types` or explicit `["authorization_code"]` (as in the example above) remain code-only and return no refresh token. Existing registrations with missing capability, pending grants and legacy opaque tokens are not silently upgraded: obtain a new pair-capable registration and fresh explicit authorization. Refresh-only requests, unrelated or duplicate grants, and unsupported scopes (including `offline_access`) remain invalid registration metadata.
+
+### Personal scopes from account security
+
+1. Sign in and open **Account → Security → Personal MCP scopes**. This opens the current Site's `/cabloy/mcp/scopes` page through normal protected navigation; it is not a new SSR Site or an OAuth callback.
+2. Create a preset with a name, description and selected tools. Search the tool catalog and choose the exact tools needed, reviewing their read/write classification. Each preset receives a random `mcp:custom:<id>` scope identifier; its name is only a label. Presets belong to your user in the active instance and cannot be managed by another user or reused across instances.
+3. During a fresh authorization, review the original requested scope and choose **one** allowed option: all, read, or a personal preset. Options outside the original request or registered client ceiling, or with unavailable tools, cannot be approved. For example, a read request cannot approve a preset containing a write tool. The selected scope is not added to the requested scope: it only narrows access.
+
+A preset stores exact tool identities/names, not a wildcard, category or expanding query. Newly exposed tools do not join an existing preset automatically. Custom authorization applies the same restriction to `tools/list` and a direct known-name `tools/call`; knowing an unselected tool's name does not permit calling it. Selected tools still require current business permissions, resource ownership and instance scope. Selection does not grant those permissions or promise access to every record.
+
+Code and refresh token responses report the **actual effective `scope`**, which may be the selected `mcp:custom:<id>` rather than the original all/read request. Clients must honor that returned value instead of assuming their requested scope was granted. Refresh can retain or narrow the grant, never widen it or pick up newly added preset tools.
+
+**Editing has authorization consequences:** changing the selected tool set or deleting a preset revokes its linked authorization codes, access tokens and refresh tokens. Affected clients need fresh browser authorization; refresh cannot recover the old grant. Changing only the name or description preserves existing grants. Review the selected tools before saving, especially when removing or adding write capabilities. A scope identifier is not a bearer credential or a way to bypass login/consent; keep actual credentials and credential-bearing callbacks private.
+
+DCR and public discovery still expose only the built-in all/read ceilings, not users' personal presets. No shared, role-based or nested scope management is provided.
 
 ### Codex native registration compatibility
 
@@ -200,7 +216,7 @@ config.modules['mcp-auth'] = {
 
 Public and confidential clients are created only through `/mcp/register` under the existing AS/MCP ingress; there is no static `clients` configuration. The server owns the generated ID and immutable resource/scope bindings. A confidential registration uses `client_secret_basic`; the server returns the secret only once and stores only its SHA-256 verifier. Never substitute an ordinary login token or publish a real secret/verifier in documentation, browser configuration or retained evidence.
 
-`mcp-auth` keeps `vonaModule.fileVersion: 1`; the existing version-1 path now includes client grant capability and authorization token-version, refresh-capability, generation and refresh-deadline fields, separate from `a-auth`. This adds no version-2 migration and does not replay an already-applied version 1. A development database already at version 1 will not acquire those fields from this edit: resetting managed disposable dev data through `npm run db:reset` is a separate destructive operation requiring explicit approval. Managed isolated tests prepare fresh v1 schema, not a development-database upgrade. No reset or live runtime upgrade is claimed here.
+`mcp-auth` keeps `vonaModule.fileVersion: 1`; the existing version-1 path now includes personal scope storage and requested/effective authorization scope bindings as well as client grant capability and authorization token-version, refresh-capability, generation and refresh-deadline fields, separate from `a-auth`. This adds no version-2 migration and does not replay an already-applied version 1. An existing database already at version 1 will not automatically acquire the personal scope table or new fields from this edit. Fresh databases initialize the current v1 schema; an existing-v1 database needs a separately approved upgrade or disposable-data strategy. Resetting managed disposable dev data through `npm run db:reset` is a separate destructive operation requiring explicit approval, never an automatic follow-up. Managed isolated tests prepare fresh v1 schema, not a development-database upgrade. No reset or live runtime upgrade is claimed here.
 
 Defaults derive authority from the root serve pair or the nonproduction requestless localhost fallback; they do not provision client registrations. TTL fields are seconds. `allowLoopbackHttp` defaults to `true` and may be overridden to `false`; it permits HTTP only for exact `localhost`, `127.0.0.1` or `[::1]`, not arbitrary HTTP, cross-origin federation or public fixture exposure. Production still requires its public serve pair.
 
@@ -226,7 +242,7 @@ The consent page uses the session SSR profile. Private summary data is loaded th
 
 ### 3. Approve or deny explicitly
 
-Review the application, resource and requested scope. Every request requires an explicit choice, even when the user is already signed in.
+Review the application, resource and original requested scope, then select one allowed all/read/personal-custom option as described in [Personal scopes from account security](#personal-scopes-from-account-security). The original request stays visible separately from your effective choice; disabled options explain a request/client ceiling or unavailable-tool restriction. Every request requires explicit approval or denial, even when already signed in. The server rechecks the selection; changing a browser value cannot widen access.
 
 Approve/deny is an authenticated POST, not a GET link or page-load side effect. It applies the existing backend origin check against trusted configured origin input and a single-winner pending transition. This is **not** a claim that stock CSRF-token enforcement is enabled: the existing helper also has development/loopback exceptions. Do not weaken Site admission, API-origin configuration or CORS/Origin policy to make the flow work.
 

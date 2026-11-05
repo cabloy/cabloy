@@ -12,7 +12,28 @@ export interface IMcpAuthResource {
   instanceName: string;
 }
 
-export type TypeMcpScope = 'mcp:all' | 'mcp:read';
+export type TypeMcpBuiltinScope = 'mcp:all' | 'mcp:read';
+export type TypeMcpCustomScope = `mcp:custom:${string}`;
+export type TypeMcpScope = TypeMcpBuiltinScope | TypeMcpCustomScope;
+
+export interface IMcpToolIdentity {
+  name: string;
+  controller: string;
+  action: string;
+}
+
+export interface IMcpToolCatalogItem extends IMcpToolIdentity {
+  description: string;
+  readOnly: boolean;
+}
+
+export interface IMcpResolvedToolAccess {
+  scope: TypeMcpScope;
+  /** Undefined only for built-in scopes; custom scopes always carry exact identities. */
+  tools: IMcpToolIdentity[] | undefined;
+  /** Preserve a granted read ceiling against current Action annotation changes. */
+  readOnly?: boolean;
+}
 
 declare module 'vona-module-a-jwt' {
   export interface IJwtClientRecord {
@@ -52,7 +73,7 @@ export interface IMcpAuthRegistrationResponse {
   token_endpoint_auth_method: TypeMcpClientAuthentication;
   grant_types: TypeMcpGrantTypes;
   response_types: ['code'];
-  scope: TypeMcpScope;
+  scope: TypeMcpBuiltinScope;
   client_secret?: string;
   client_secret_expires_at?: 0;
 }
@@ -66,7 +87,7 @@ export interface IMcpAuthResolvedClient {
   authentication: TypeMcpClientAuthentication;
   secretSha256?: string;
   resources: string[];
-  scope: TypeMcpScope;
+  scope: TypeMcpBuiltinScope;
   state: TypeMcpClientRegistrationState;
   clientIdIssuedAt?: number;
 }

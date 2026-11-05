@@ -8,7 +8,10 @@ const MCP_E2E_CLIENT_NAME = 'Managed MCP browser E2E';
 const MCP_E2E_CALLBACK_PATH = '/__mcp-e2e/callback';
 const consentPath = '/cabloy/mcp/consent';
 const authorizationsPath = '/cabloy/mcp/authorizations';
+const scopesPath = '/cabloy/mcp/scopes';
 const authorizationGrantApiPath = '/api/mcp/auth/authorizationGrant';
+const customScopeApiPath = '/api/mcp/auth/customScope';
+const seededMcpAccount = { username: 'admin', password: '123456' };
 const unavailableText =
   'This authorization request is invalid, expired, or no longer available. Start again from the application.';
 const protocolVersion = '2026-07-28';
@@ -148,7 +151,7 @@ async function registerMcpAccount(
 
 async function loginMcpAccount(
   request: APIRequestContext,
-  account: McpAccount,
+  account: Pick<McpAccount, 'username' | 'password'> & Partial<Pick<McpAccount, 'id'>>,
   verifyOrdinaryRoles = false,
 ) {
   const response = await request.post('/api/home/user/passport/login', {
@@ -160,13 +163,92 @@ async function loginMcpAccount(
   });
   expect(response.ok()).toBe(true);
   const login = (await response.json()).data as AccountPassportJwt;
-  expect(String(login.passport.user.id) === String(account.id)).toBe(true);
+  if (account.id !== undefined) {
+    expect(String(login.passport.user.id) === String(account.id)).toBe(true);
+  }
   if (verifyOrdinaryRoles) {
     const roles = login.passport.roles.map(role => role.name);
     expect(roles).toContain('registeredUser');
     expect(roles).not.toContain('systemAdmin');
   }
   return { Accept: 'application/json', Authorization: `Bearer ${login.jwt.accessToken}` };
+}
+
+type PersonalMcpScope = {
+  id: string | number;
+  scope: string;
+  name: string;
+  description?: string;
+  tools: Array<{ name: string; controller: string; action: string }>;
+};
+
+async function readPersonalMcpScopes(
+  request: APIRequestContext,
+  headers: Record<string, string>,
+): Promise<PersonalMcpScope[]> {
+  const response = await request.get(`${customScopeApiPath}/mine`, { headers });
+  expect(response.ok()).toBe(true);
+  expect(response.headers()['cache-control']).toContain('no-store');
+  return (await response.json()).data.list;
+}
+
+async function createPersonalMcpScope(
+  request: APIRequestContext,
+  headers: Record<string, string>,
+  name: string,
+  toolNames: string[],
+): Promise<PersonalMcpScope> {
+  const catalog = await request.get(`${customScopeApiPath}/catalog`, { headers });
+  expect(catalog.ok()).toBe(true);
+  const tools = (await catalog.json()).data as Array<PersonalMcpScope['tools'][number]>;
+  const selected = toolNames.map(name => {
+    const tool = tools.find(tool => tool.name === name);
+    if (!tool) throw new Error(`Seeded account MCP catalog is missing ${name}`);
+    return { name: tool.name, controller: tool.controller, action: tool.action };
+  });
+  const created = await request.post(`${customScopeApiPath}/createMine`, {
+    headers,
+    data: { name, description: 'Test-owned personal MCP scope', tools: selected },
+  });
+  expect(created.ok()).toBe(true);
+  const scope = (await created.json()).data as PersonalMcpScope;
+  expect(scope.scope).toMatch(/^mcp:custom:[\w-]{43}$/);
+  expect(scope.tools).toEqual(selected);
+  return scope;
+}
+
+async function cleanupPersonalMcpFixtures(
+  request: APIRequestContext,
+  scopeNames: Set<string>,
+  clientIds: Set<string>,
+) {
+  const headers = await loginMcpAccount(request, seededMcpAccount);
+  try {
+    const mine = await request.get(`${authorizationGrantApiPath}/mine`, { headers });
+    expect(mine.ok()).toBe(true);
+    const grants = (await mine.json()).data.list as Array<{
+      id: string | number;
+      clientId: string;
+    }>;
+    for (const grant of grants.filter(grant => clientIds.has(grant.clientId))) {
+      const deleted = await request.delete(`${authorizationGrantApiPath}/deleteMine/${grant.id}`, {
+        headers,
+      });
+      expect(deleted.ok()).toBe(true);
+    }
+  } finally {
+    // Names are randomized and recorded before mutations, so cleanup can locate an
+    // owned row even when a UI save succeeds but its subsequent assertion fails.
+    const scopes = await readPersonalMcpScopes(request, headers);
+    for (const scope of scopes.filter(scope => scopeNames.has(scope.name))) {
+      const deleted = await request.delete(`${customScopeApiPath}/deleteMine/${scope.id}`, {
+        headers,
+      });
+      expect(deleted.ok()).toBe(true);
+    }
+  }
+  // Dynamic registration has no delete endpoint. Only those AS rows remain for
+  // removal with the root-managed disposable database; no shared seed is edited.
 }
 
 function collectBrowserErrors(page: Page) {
@@ -249,7 +331,9 @@ async function loginAndReadConsent(
   await expect(page.getByText('Request expires', { exact: true })).toHaveCount(0);
   await expect(page.locator('time')).toHaveCount(0);
   expect((await summaryResponse.json()).data.scope).toBe(scope);
-  await expect(page.getByText(scope, { exact: true })).toBeVisible();
+  await expect(
+    page.locator('[data-mcp-requested-scope]').getByText(scope, { exact: true }),
+  ).toBeVisible();
   await expect(page.getByText(allScopeHelp, { exact: true })).toHaveCount(0);
   await expect(page.getByText(readScopeHelp, { exact: true })).toHaveCount(0);
   await expect(page.getByRole('button', { name: 'Approve', exact: true })).toBeEnabled();
@@ -1146,6 +1230,304 @@ test(
       }
       // No client-delete endpoint: registration/pending/code rows remain exclusively in the
       // root-run-owned disposable AS database, removed by the managed runner as before.
+    }
+  },
+);
+
+test(
+  'MCP personal custom scopes: create, edit and delete persist across reload',
+  { tag: ['@web', '@ssr', '@mcp', '@flow'] },
+  async ({ page, request, baseURL }) => {
+    test.setTimeout(60_000);
+    if (!baseURL) throw new Error('Managed E2E origin unavailable');
+    const origin = new URL(baseURL).origin;
+    const name = `MCP scope E2E ${randomBytes(12).toString('hex')}`;
+    const renamed = `${name} renamed`;
+    const scopeNames = new Set([name, renamed]);
+    const clientIds = new Set<string>();
+    const errors = collectBrowserErrors(page);
+    try {
+      const client = await registerClient(request, origin, 'mcp:read');
+      clientIds.add(client.clientId);
+      const authorization = createAuthorization(
+        origin,
+        client.clientId,
+        client.redirectUri,
+        'mcp:read',
+      );
+      const pendingPath = await beginAnonymousAuthorization(page, authorization);
+      await loginAndReadConsent(page, pendingPath, origin, 'mcp:read');
+      await decideAndCaptureCallback(page, authorization, false);
+
+      await page.goto('/home/user/account', { waitUntil: 'load' });
+      await expect(page.locator('html')).toHaveAttribute('data-zova-hydrated', 'web');
+      const scopesLink = page.getByRole('link', { name: 'Personal MCP scopes', exact: true });
+      await expect(scopesLink).toHaveAttribute('href', scopesPath);
+      await scopesLink.click();
+      await expect(
+        page.getByRole('heading', { name: 'Personal MCP scopes', exact: true }),
+      ).toBeVisible();
+      await page.getByRole('button', { name: 'Create scope', exact: true }).click();
+      const dialog = page.getByRole('dialog');
+      await expect(dialog.getByText('Create scope', { exact: true })).toBeVisible();
+      await dialog
+        .getByRole('group', { name: /^Name(?: \*)?$/ })
+        .getByRole('textbox')
+        .fill(name);
+      await dialog
+        .getByRole('group', { name: /^Description(?: \*)?$/ })
+        .getByRole('textbox')
+        .fill('Created by the managed browser test');
+      await dialog
+        .locator('input[type="checkbox"][data-tool-name="training_student_select"]')
+        .check();
+      const created = waitForApiResponse(page, 'POST', `${customScopeApiPath}/createMine`);
+      await dialog.getByRole('button', { name: 'Save', exact: true }).click();
+      const createResponse = await created;
+      expect(createResponse.ok()).toBe(true);
+      const scope = (await createResponse.json()).data as PersonalMcpScope;
+      expect(scope.scope).toMatch(/^mcp:custom:[\w-]{43}$/);
+      expect(scope.tools.map(tool => tool.name)).toEqual(['training_student_select']);
+      await expect(dialog).toHaveCount(0);
+      const entry = page.locator(`article[data-mcp-scope="${scope.scope}"]`);
+      await expect(entry.getByRole('heading', { name, exact: true })).toBeVisible();
+
+      let mine = waitForApiResponse(page, 'GET', `${customScopeApiPath}/mine`);
+      await page.reload({ waitUntil: 'load' });
+      expect((await mine).ok()).toBe(true);
+      await expect(page.locator('html')).toHaveAttribute('data-zova-hydrated', 'web');
+      await expect(entry.getByRole('heading', { name, exact: true })).toBeVisible();
+      await entry.getByRole('button', { name: 'Edit', exact: true }).click();
+      await expect(dialog.getByText('Edit scope', { exact: true })).toBeVisible();
+      await expect(
+        dialog.locator('input[type="checkbox"][data-tool-name="training_student_select"]'),
+      ).toBeChecked();
+      await dialog
+        .getByRole('group', { name: /^Name(?: \*)?$/ })
+        .getByRole('textbox')
+        .fill(renamed);
+      await dialog
+        .getByRole('group', { name: /^Description(?: \*)?$/ })
+        .getByRole('textbox')
+        .fill('Edited and persisted');
+      const updated = waitForApiResponse(
+        page,
+        'POST',
+        `${customScopeApiPath}/updateMine/${scope.id}`,
+      );
+      await dialog.getByRole('button', { name: 'Save', exact: true }).click();
+      expect((await updated).ok()).toBe(true);
+      await expect(dialog).toHaveCount(0);
+      mine = waitForApiResponse(page, 'GET', `${customScopeApiPath}/mine`);
+      await page.reload({ waitUntil: 'load' });
+      expect((await mine).ok()).toBe(true);
+      await expect(entry.getByRole('heading', { name: renamed, exact: true })).toBeVisible();
+      await expect(entry.getByText('Edited and persisted', { exact: true })).toBeVisible();
+      const persisted = (
+        await readPersonalMcpScopes(request, await loginMcpAccount(request, seededMcpAccount))
+      ).find(item => String(item.id) === String(scope.id));
+      expect(persisted).toMatchObject({
+        scope: scope.scope,
+        name: renamed,
+        description: 'Edited and persisted',
+        tools: scope.tools,
+      });
+
+      await entry.getByRole('button', { name: 'Delete', exact: true }).click();
+      await expect(dialog).toBeVisible();
+      const deleted = waitForApiResponse(
+        page,
+        'DELETE',
+        `${customScopeApiPath}/deleteMine/${scope.id}`,
+      );
+      await dialog.getByRole('button', { name: 'Yes', exact: true }).click();
+      expect((await deleted).ok()).toBe(true);
+      await expect(dialog).toHaveCount(0);
+      await expect(entry).toHaveCount(0);
+      mine = waitForApiResponse(page, 'GET', `${customScopeApiPath}/mine`);
+      await page.reload({ waitUntil: 'load' });
+      expect((await mine).ok()).toBe(true);
+      await expect(page.getByRole('button', { name: 'Create scope', exact: true })).toBeEnabled();
+      await expect(entry).toHaveCount(0);
+      expect(errors).toEqual({ page: 0, console: 0, hydration: 0 });
+    } finally {
+      await cleanupPersonalMcpFixtures(request, scopeNames, clientIds);
+    }
+  },
+);
+
+test(
+  'MCP personal custom scopes: consent narrows all to custom and enforces actual token tools',
+  { tag: ['@web', '@ssr', '@mcp', '@flow'] },
+  async ({ page, request, baseURL }) => {
+    test.setTimeout(60_000);
+    if (!baseURL) throw new Error('Managed E2E origin unavailable');
+    const origin = new URL(baseURL).origin;
+    const name = `MCP select-only E2E ${randomBytes(12).toString('hex')}`;
+    const scopeNames = new Set([name]);
+    const clientIds = new Set<string>();
+    const errors = collectBrowserErrors(page);
+    try {
+      const headers = await loginMcpAccount(request, seededMcpAccount);
+      const scope = await createPersonalMcpScope(request, headers, name, [
+        'training_student_select',
+      ]);
+      const client = await registerClient(request, origin, 'mcp:all');
+      clientIds.add(client.clientId);
+      const authorization = createAuthorization(
+        origin,
+        client.clientId,
+        client.redirectUri,
+        'mcp:all',
+      );
+      const pendingPath = await beginAnonymousAuthorization(page, authorization);
+      await loginAndReadConsent(page, pendingPath, origin, 'mcp:all');
+      const option = page.locator(`[data-mcp-scope-option="${scope.scope}"]`);
+      const radio = option.getByRole('radio', { name, exact: true });
+      await expect(radio).toBeEnabled();
+      await radio.check();
+      await expect(radio).toBeChecked();
+      const callback = await decideAndCaptureCallback(page, authorization, true);
+      const code = callback.searchParams.get('code');
+      if (!code) throw new Error('Custom approval did not contain an authorization code');
+      const exchange = await redeem(request, authorization, client.clientId, code);
+      expect(exchange.status()).toBe(200);
+      const token = await exchange.json();
+      expect(token.scope).toBe(scope.scope);
+      const listed = await callMcp(request, 'tools/list', {}, token.access_token);
+      expect(listed.status()).toBe(200);
+      expect((await listed.json()).result.tools.map((tool: { name: string }) => tool.name)).toEqual(
+        ['training_student_select'],
+      );
+      const selected = await callMcp(
+        request,
+        'tools/call',
+        {
+          name: 'training_student_select',
+          arguments: { name, pageNo: 1, pageSize: 1 },
+        },
+        token.access_token,
+      );
+      expect(selected.status()).toBe(200);
+      const selectedResult = (await selected.json()).result;
+      expect(selectedResult.isError === true).toBe(false);
+      expect(selectedResult.structuredContent).toMatchObject({
+        list: [],
+        total: '0',
+        pageNo: 1,
+        pageSize: 1,
+      });
+      const excluded = await callMcp(
+        request,
+        'tools/call',
+        {
+          name: 'training_student_group',
+          arguments: {},
+        },
+        token.access_token,
+      );
+      expect(excluded.status()).toBe(200);
+      expect((await excluded.json()).error).toMatchObject({
+        code: -32602,
+        message: 'Invalid params',
+      });
+
+      // Personal grants display what was approved, not the original all ceiling.
+      const mine = await request.get(`${authorizationGrantApiPath}/mine`, { headers });
+      expect(mine.ok()).toBe(true);
+      const grant = (await mine.json()).data.list.find(
+        (item: { clientId: string }) => item.clientId === client.clientId,
+      );
+      expect(grant).toMatchObject({ scope: scope.scope, requestedScope: 'mcp:all' });
+      await page.goto(authorizationsPath, { waitUntil: 'load' });
+      const entry = page.locator(`article[data-authorization-id="${grant.id}"]`);
+      await expect(entry.getByText(scope.scope, { exact: true })).toBeVisible();
+      expect(errors).toEqual({ page: 0, console: 0, hydration: 0 });
+    } finally {
+      await cleanupPersonalMcpFixtures(request, scopeNames, clientIds);
+    }
+  },
+);
+
+test(
+  'MCP personal custom scopes: read consent cannot select write scope or escalate tools',
+  { tag: ['@web', '@ssr', '@mcp', '@flow'] },
+  async ({ page, request, baseURL }) => {
+    test.setTimeout(60_000);
+    if (!baseURL) throw new Error('Managed E2E origin unavailable');
+    const origin = new URL(baseURL).origin;
+    const name = `MCP write-only E2E ${randomBytes(12).toString('hex')}`;
+    const scopeNames = new Set([name]);
+    const clientIds = new Set<string>();
+    const errors = collectBrowserErrors(page);
+    try {
+      const headers = await loginMcpAccount(request, seededMcpAccount);
+      const scope = await createPersonalMcpScope(request, headers, name, [
+        'training_student_create',
+      ]);
+      const client = await registerClient(request, origin, 'mcp:all');
+      clientIds.add(client.clientId);
+      const authorization = createAuthorization(
+        origin,
+        client.clientId,
+        client.redirectUri,
+        'mcp:read',
+      );
+      const pendingPath = await beginAnonymousAuthorization(page, authorization);
+      await loginAndReadConsent(page, pendingPath, origin, 'mcp:read');
+      const writeOption = page.locator(`[data-mcp-scope-option="${scope.scope}"]`);
+      await expect(writeOption.getByRole('radio', { name, exact: true })).toBeDisabled();
+      await expect(
+        writeOption.getByText('This option exceeds the requested scope.', { exact: true }),
+      ).toBeVisible();
+      await expect(
+        page.locator('input[name="mcp-effective-scope"][value="mcp:all"]'),
+      ).toBeDisabled();
+      const readOption = page.locator('input[name="mcp-effective-scope"][value="mcp:read"]');
+      await expect(readOption).toBeChecked();
+      // The client permits all, but the request ceiling still rejects a forged
+      // write-custom decision. This must leave the real pending request usable.
+      const pendingRequest = new URL(pendingPath, origin).searchParams.get('request');
+      const forged = await page.request.post('/mcp/auth/decision', {
+        headers: { ...headers, Origin: origin },
+        data: { request: pendingRequest, allow: true, scope: scope.scope },
+      });
+      expect(forged.status()).toBe(400);
+      const callback = await decideAndCaptureCallback(page, authorization, true);
+      const code = callback.searchParams.get('code');
+      if (!code) throw new Error('Read approval did not contain an authorization code');
+      const exchange = await redeem(request, authorization, client.clientId, code);
+      expect(exchange.status()).toBe(200);
+      const token = await exchange.json();
+      expect(token.scope).toBe('mcp:read');
+      const listed = await callMcp(request, 'tools/list', {}, token.access_token);
+      expect(listed.status()).toBe(200);
+      const names = (await listed.json()).result.tools.map((tool: { name: string }) => tool.name);
+      expect(names).toContain('training_student_select');
+      for (const write of [
+        'training_student_create',
+        'training_student_update',
+        'training_student_delete',
+      ]) {
+        expect(names).not.toContain(write);
+      }
+      const excluded = await callMcp(
+        request,
+        'tools/call',
+        {
+          name: 'training_student_create',
+          arguments: {},
+        },
+        token.access_token,
+      );
+      expect(excluded.status()).toBe(200);
+      expect((await excluded.json()).error).toMatchObject({
+        code: -32602,
+        message: 'Invalid params',
+      });
+      expect(errors).toEqual({ page: 0, console: 0, hydration: 0 });
+    } finally {
+      await cleanupPersonalMcpFixtures(request, scopeNames, clientIds);
     }
   },
 );
