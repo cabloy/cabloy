@@ -69,6 +69,20 @@ Do not introduce custom source-evaluation loaders or extensive fake dependencies
 
 This preference does not relax applicable SSR/hydration, authentication, authorization, contract, or acceptance requirements, and UI coverage never replaces server-side enforcement. Managed E2E resource isolation remains required. If runtime verification is unavailable or not authorized, report the gap rather than adding substitute test machinery; live Provider and destructive operations retain their separate authorization boundaries.
 
+### Attribute failures and keep diagnostics focused
+
+Business E2E should observe normal user actions, visible business outcomes, and persistence after save/reload. Do not make ordinary business journeys depend on DOM-to-Controller/IoC instance lookup, temporary method wrappers, or Query/cache internals. Internal assertions belong to an explicit architecture/framework acceptance contract or a focused regression, preferably at the smallest suitable test layer.
+
+First identify where verification stopped: test preparation/observation, user interaction, request/response, or business-result assertions. A failed test-side probe does not establish a defect in the page Controller; conversely, a timeout alone does not prove the test mechanism is wrong. Separate observed facts, possible causes, and what remains unproved:
+
+- A completed browser `click()` is not proof that the business asynchronous action completed.
+- No matching request observed within a wait window does not prove that the callback never ran or that an eligibility guard rejected it. Check the observation boundary before drawing that conclusion.
+- A source branch or a correctly connected action chain does not establish its runtime disposition or passing acceptance.
+
+Before adding diagnostics or repeating a failed attempt, name the concrete hypothesis, the smallest check that distinguishes it from alternatives, and the expected new information. Prefer existing user-visible output and request/response observations; register relevant waits before the action and do not filter out error responses when diagnosing whether a response occurred. Narrow or reject the hypothesis from the result rather than repeatedly extending an internal probe that fails before the target behavior. Keep diagnostic output minimal and redacted; do not collect raw credentials, headers, bodies, or private framework state by default.
+
+Do not force clicks, bypass the UI with a direct API call, remove eligibility/security guards, weaken business assertions, or increase timeouts merely to make the scenario pass. A timeout change needs evidence of the actual readiness or duration contract. Preserve required checks and report the remaining evidence gap when no justified next check is available. Diagnostic value does not authorize retries, private-artifact access, cleanup, or external operations outside the approved scope.
+
 ## Vona integrated SSR browser acceptance
 
 The default Basic Web and Admin sites have browser smoke commands that exercise Vona integrated SSR through Vona SSR dispatch at the managed run's dynamically allocated test listener, not through the ordinary Vona development listener (`7102` by default) or the Zova standalone SSR development-server port. Vona supplies the API origin at runtime, so no Zova `.env` change or rebuild is needed solely for the test port; see [Runtime API origins in Vona integrated SSR](/fullstack/ssr-entry-modes#runtime-api-origins-in-vona-integrated-ssr).
