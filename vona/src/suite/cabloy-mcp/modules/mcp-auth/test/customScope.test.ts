@@ -197,9 +197,9 @@ async function withFixture(operation: (fixture: Fixture) => Promise<void>) {
       other: users[1],
       clientId: clients[0],
       readClientId: clients[1],
-      select: binding('training_student_select'),
-      view: binding('training_student_view'),
-      create: binding('training_student_create'),
+      select: binding('training-student_student_select'),
+      view: binding('training-student_student_view'),
+      create: binding('training-student_student_create'),
     });
   } finally {
     off();

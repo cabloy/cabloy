@@ -34,26 +34,22 @@ export interface IControllerOptionsStudent extends IDecoratorControllerOptions {
 })
 @Resource()
 export class ControllerStudent extends BeanBase {
-  @Mcp.tool({
-    name: 'training_student_create',
-    description:
-      'Create a student using your current student-create permission and instance. Uses the existing create contract, including optional content and training records with subjects. Non-idempotent; repeating a call can create additional data.',
-    readOnly: false,
+  @Mcp.tool({ readOnly: false })
+  @Web.post('', {
+    summary: $locale('StudentCreate'),
+    description: $locale('StudentCreateDescription'),
   })
-  @Web.post('', { summary: $locale('StudentCreate') })
   @Api.body(v.tableIdentity())
   @Passport.rbac()
   async create(@Arg.body() student: DtoStudentCreate): Promise<TableIdentity> {
     return (await this.scope.service.student.create(student)).id;
   }
 
-  @Mcp.tool({
-    name: 'training_student_select',
-    description:
-      'Select students using your current student-select permission and instance. Returns the complete existing paginated select response with serialized row fields, including masked mobile.',
-    readOnly: true,
+  @Mcp.tool({ readOnly: true })
+  @Web.get('', {
+    summary: $locale('StudentSelect'),
+    description: $locale('StudentSelectDescription'),
   })
-  @Web.get('', { summary: $locale('StudentSelect') })
   @Api.body(DtoStudentSelectRes)
   @Core.serializer()
   @Passport.rbac()
@@ -63,13 +59,11 @@ export class ControllerStudent extends BeanBase {
     return await this.scope.service.student.select(params);
   }
 
-  @Mcp.tool({
-    name: 'training_student_group',
-    description:
-      'Group students using your current student-select permission and instance. Supports grouping by level and counting all students or students with an imageId. Defaults to counting all students by level. Uses the existing filters; counts are strings and results are wrapped in result.',
-    readOnly: true,
+  @Mcp.tool({ readOnly: true })
+  @Web.get('group', {
+    summary: $locale('StudentGroup'),
+    description: $locale('StudentGroupDescription'),
   })
-  @Web.get('group', { summary: $locale('StudentGroup') })
   @Api.body(v.array(DtoStudentGroupResItem))
   @Passport.rbac({ actionInherit: 'select' })
   async group(
@@ -79,13 +73,11 @@ export class ControllerStudent extends BeanBase {
     return await this.scope.service.student.group(params);
   }
 
-  @Mcp.tool({
-    name: 'training_student_aggregate',
-    description:
-      'Count students using your current student-select permission and instance. Supports counting all students or students with an imageId. Defaults to both count_all and count_imageId. Uses the existing filters and returns string counts without grouping.',
-    readOnly: true,
+  @Mcp.tool({ readOnly: true })
+  @Web.get('aggregate', {
+    summary: $locale('StudentAggregate'),
+    description: $locale('StudentAggregateDescription'),
   })
-  @Web.get('aggregate', { summary: $locale('StudentAggregate') })
   @Api.body(DtoStudentAggregateRes)
   @Passport.rbac({ actionInherit: 'select' })
   async aggregate(
@@ -95,13 +87,11 @@ export class ControllerStudent extends BeanBase {
     return await this.scope.service.student.aggregate(params);
   }
 
-  @Mcp.tool({
-    name: 'training_student_view',
-    description:
-      'Read complete student details by ID using your current student-view permission and instance. Returns the existing serialized detail response, including masked mobile, Markdown content, nested training records and subjects, and optional image URL metadata.',
-    readOnly: true,
+  @Mcp.tool({ readOnly: true })
+  @Web.get(':id', {
+    summary: $locale('StudentView'),
+    description: $locale('StudentViewDescription'),
   })
-  @Web.get(':id', { summary: $locale('StudentView') })
   @Api.body(v.optional(), v.object(DtoStudentView))
   @Core.serializer()
   @Passport.rbac()
@@ -111,13 +101,11 @@ export class ControllerStudent extends BeanBase {
     return await this.scope.service.student.view(id);
   }
 
-  @Mcp.tool({
-    name: 'training_student_update',
-    description:
-      'Update a student using your current student-update permission and instance. Requires params.id and body.name, body.mobile, body.level. Uses the complete existing aggregate contract, including content and existing/new training records and subjects; declared nested id/deleted controls can delete children. Returns null completion, not existence or read-back proof. Partial writes are possible; do not automatically replay after errors or uncertain responses.',
-    readOnly: false,
+  @Mcp.tool({ readOnly: false })
+  @Web.patch(':id', {
+    summary: $locale('StudentUpdate'),
+    description: $locale('StudentUpdateDescription'),
   })
-  @Web.patch(':id', { summary: $locale('StudentUpdate') })
   @Api.body(z.null())
   @Passport.rbac()
   async update(
@@ -128,14 +116,14 @@ export class ControllerStudent extends BeanBase {
   }
 
   @Mcp.tool({
-    name: 'training_student_summary',
-    description:
-      'Read a student summary by ID using your current student-view permission and instance. Excludes mobile and full notes.',
     output: {
       pick: ['id', 'name', 'level', 'levelTitle', 'descriptionLength', 'summaryText'],
     },
   })
-  @Web.get('summary/:id', { summary: $locale('StudentSummary') })
+  @Web.get('summary/:id', {
+    summary: $locale('StudentSummary'),
+    description: $locale('StudentSummaryDescription'),
+  })
   @Api.body(v.optional(), v.object(DtoStudentSummary))
   @Core.serializer()
   @Passport.rbac({ actionInherit: 'view' })
@@ -152,13 +140,11 @@ export class ControllerStudent extends BeanBase {
     await this.scope.service.student.deleteBulk(command.ids);
   }
 
-  @Mcp.tool({
-    name: 'training_student_delete',
-    description:
-      'Soft-delete a student by ID using your independent current student-delete permission and instance. Destructively includes content, training records and nested subjects. Returns null completion, not existence or read-back proof. Partial deletion is possible; do not automatically replay after errors or uncertain responses.',
-    readOnly: false,
+  @Mcp.tool({ readOnly: false })
+  @Web.delete(':id', {
+    summary: $locale('StudentDelete'),
+    description: $locale('StudentDeleteDescription'),
   })
-  @Web.delete(':id', { summary: $locale('StudentDelete') })
   @Api.body(z.null())
   @Passport.rbac()
   async delete(@Arg.param('id', v.tableIdentity()) id: TableIdentity): Promise<void> {

@@ -1287,10 +1287,16 @@ export interface paths {
       path?: never;
       cookie?: never;
     };
-    /** List Students */
+    /**
+     * List Students
+     * @description Select students using your current student-select permission and instance. Returns the complete existing paginated select response with serialized row fields, including masked mobile.
+     */
     get: operations['TrainingStudent_select'];
     put?: never;
-    /** Create Student */
+    /**
+     * Create Student
+     * @description Create a student using your current student-create permission and instance. Uses the existing create contract, including optional content and training records with subjects. Non-idempotent; repeating a call can create additional data.
+     */
     post: operations['TrainingStudent_create'];
     delete?: never;
     options?: never;
@@ -1305,7 +1311,10 @@ export interface paths {
       path?: never;
       cookie?: never;
     };
-    /** Group Students */
+    /**
+     * Group Students
+     * @description Group students using your current student-select permission and instance. Supports grouping by level and counting all students or students with an imageId. Defaults to counting all students by level. Uses the existing filters; counts are strings and results are wrapped in result.
+     */
     get: operations['TrainingStudent_group'];
     put?: never;
     post?: never;
@@ -1322,7 +1331,10 @@ export interface paths {
       path?: never;
       cookie?: never;
     };
-    /** Aggregate Students */
+    /**
+     * Aggregate Students
+     * @description Count students using your current student-select permission and instance. Supports counting all students or students with an imageId. Defaults to both count_all and count_imageId. Uses the existing filters and returns string counts without grouping.
+     */
     get: operations['TrainingStudent_aggregate'];
     put?: never;
     post?: never;
@@ -1339,15 +1351,24 @@ export interface paths {
       path?: never;
       cookie?: never;
     };
-    /** View Student */
+    /**
+     * View Student
+     * @description Read complete student details by ID using your current student-view permission and instance. Returns the existing serialized detail response, including masked mobile, Markdown content, nested training records and subjects, and optional image URL metadata.
+     */
     get: operations['TrainingStudent_view'];
     put?: never;
     post?: never;
-    /** Delete Student */
+    /**
+     * Delete Student
+     * @description Soft-delete a student by ID using your independent current student-delete permission and instance. Destructively includes content, training records and nested subjects. Returns null completion, not existence or read-back proof. Partial deletion is possible; do not automatically replay after errors or uncertain responses.
+     */
     delete: operations['TrainingStudent_delete'];
     options?: never;
     head?: never;
-    /** Update Student */
+    /**
+     * Update Student
+     * @description Update a student using your current student-update permission and instance. Requires params.id and body.name, body.mobile, body.level. Uses the complete existing aggregate contract, including content and existing/new training records and subjects; declared nested id/deleted controls can delete children. Returns null completion, not existence or read-back proof. Partial writes are possible; do not automatically replay after errors or uncertain responses.
+     */
     patch: operations['TrainingStudent_update'];
     trace?: never;
   };
@@ -1358,7 +1379,10 @@ export interface paths {
       path?: never;
       cookie?: never;
     };
-    /** View Student Summary */
+    /**
+     * View Student Summary
+     * @description Read a student summary by ID using your current student-view permission and instance. Excludes mobile and full notes.
+     */
     get: operations['TrainingStudent_summary'];
     put?: never;
     post?: never;
@@ -1498,6 +1522,91 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  '/api/mcp/auth/customScope/mine': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** List personal MCP scopes */
+    get: operations['McpAuthCustomScope_mine'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/mcp/auth/customScope/catalog': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Available MCP tools */
+    get: operations['McpAuthCustomScope_catalog'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/mcp/auth/customScope/createMine': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** Create personal MCP scope */
+    post: operations['McpAuthCustomScope_createMine'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/mcp/auth/customScope/updateMine/{id}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** Update personal MCP scope */
+    post: operations['McpAuthCustomScope_updateMine'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/mcp/auth/customScope/deleteMine/{id}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post?: never;
+    /** Delete personal MCP scope */
+    delete: operations['McpAuthCustomScope_deleteMine'];
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   '/api/mcp/test/catalog/categories': {
     parameters: {
       query?: never;
@@ -1553,6 +1662,10 @@ export interface paths {
       path?: never;
       cookie?: never;
     };
+    /**
+     * Action Web summary
+     * @description Action Web description
+     */
     get: operations['McpTestToolFixture_status'];
     put?: never;
     post?: never;
@@ -1617,6 +1730,7 @@ export interface paths {
       path?: never;
       cookie?: never;
     };
+    /** Action Web summary */
     get: operations['McpTestToolFixture_closed'];
     put?: never;
     post?: never;
@@ -2649,6 +2763,12 @@ export interface components {
       provider: string;
       token?: unknown;
       payload?: unknown;
+      /** @enum {string} */
+      status?: 'accepted' | 'rejected' | 'unknown' | 'limited';
+      serverNow?: number;
+      expiresAt?: number;
+      resendAt?: number;
+      retryAt?: number;
     };
     'a-pay.dto.paymentSessionView': {
       id: number | string;
@@ -5026,7 +5146,32 @@ export interface components {
       clientName: string;
       resource: string;
       scope: string;
+      options: components['schemas']['mcp-auth.dto.mcpScopeOption'][];
       expiresAt: number;
+    };
+    'mcp-auth.dto.mcpScopeOption': {
+      scope: string;
+      name: string;
+      description: string;
+      tools: components['schemas']['mcp-auth.dto.mcpScopeTool'][];
+      allowed: boolean;
+      /** @enum {string|null} */
+      reason?:
+        | 'outside_requested_scope'
+        | 'outside_client_scope'
+        | 'tools_unavailable'
+        | null
+        | undefined;
+    };
+    'mcp-auth.dto.mcpScopeTool': {
+      name: string;
+      controller: string;
+      action: string;
+      controllerSummary: string;
+      summary: string;
+      description: string;
+      readOnly: boolean;
+      available: boolean;
     };
     'mcp-auth.dto.authorizationRedirect': {
       redirectUrl: string;
@@ -5034,6 +5179,7 @@ export interface components {
     'mcp-auth.dto.authorizationDecision': {
       request: string;
       allow: boolean;
+      scope?: ('mcp:all' | 'mcp:read') | string | undefined;
     };
     'mcp-auth.dto.authorizationGrantMineRes': {
       list: components['schemas']['mcp-auth.dto.authorizationGrant'][];
@@ -5052,6 +5198,8 @@ export interface components {
       id: number | string;
       resource: string;
       scope: string;
+      /** @default  */
+      requestedScope?: string;
       /** @enum {string} */
       state: 'pending' | 'codeReady' | 'tokenActive' | 'denied' | 'revoked';
       expiresAt: number;
@@ -5062,6 +5210,58 @@ export interface components {
       refreshExpiresAt?: number;
       clientId: string;
       clientName: string;
+    };
+    'mcp-auth.dto.customScopeMineRes': {
+      list: components['schemas']['mcp-auth.dto.customScopeView'][];
+    };
+    'mcp-auth.dto.customScopeView': {
+      /**
+       * Format: date-time
+       * @description Created At
+       */
+      createdAt: Date;
+      /**
+       * Format: date-time
+       * @description Updated At
+       */
+      updatedAt: Date;
+      /** @description ID */
+      id: number | string;
+      scope: string;
+      /**
+       * Name
+       * @description Use 1–100 letters, digits, underscores or hyphens. Names are case-sensitive; test becomes mcp:custom:test.
+       */
+      name: string;
+      /** @description Description */
+      description: string;
+      /** @description Tools */
+      tools: components['schemas']['mcp-auth.dto.mcpToolIdentity'][];
+    };
+    'mcp-auth.dto.mcpToolIdentity': {
+      name: string;
+      controller: string;
+      action: string;
+    };
+    'mcp-auth.dto.mcpTool': {
+      name: string;
+      controller: string;
+      action: string;
+      controllerSummary: string;
+      summary: string;
+      description: string;
+      readOnly: boolean;
+    };
+    'mcp-auth.dto.customScopeCreate_1ff20af69286149eb0b25291d9450172f7bd0054': {
+      /**
+       * Name
+       * @description Use 1–100 letters, digits, underscores or hyphens. Names are case-sensitive; test becomes mcp:custom:test.
+       */
+      name: string;
+      /** @description Description */
+      description: string;
+      /** @description Tools */
+      tools: components['schemas']['mcp-auth.dto.mcpToolIdentity'][];
     };
     'mcp-test.dto.categoryPublicSelectRes': {
       list: components['schemas']['mcp-test.dto.categoryPublic'][];
@@ -5915,6 +6115,7 @@ export interface operations {
       content: {
         'application/json': {
           scene: string;
+          payload?: unknown;
         };
       };
     };
@@ -5943,8 +6144,9 @@ export interface operations {
     requestBody: {
       content: {
         'application/json': {
-          id: string;
+          id?: string | undefined;
           scene: string;
+          payload?: unknown;
         };
       };
     };
@@ -8918,6 +9120,138 @@ export interface operations {
     authToken: true;
   };
   McpAuthAuthorizationGrant_deleteMine: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: number | string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data?: unknown;
+          };
+        };
+      };
+    };
+    authToken: true;
+  };
+  McpAuthCustomScope_mine: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data: components['schemas']['mcp-auth.dto.customScopeMineRes'];
+          };
+        };
+      };
+    };
+    authToken: true;
+  };
+  McpAuthCustomScope_catalog: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data: components['schemas']['mcp-auth.dto.mcpTool'][];
+          };
+        };
+      };
+    };
+    authToken: true;
+  };
+  McpAuthCustomScope_createMine: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['mcp-auth.dto.customScopeCreate_1ff20af69286149eb0b25291d9450172f7bd0054'];
+      };
+    };
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data: components['schemas']['mcp-auth.dto.customScopeView'];
+          };
+        };
+      };
+    };
+    authToken: true;
+  };
+  McpAuthCustomScope_updateMine: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: number | string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['mcp-auth.dto.customScopeCreate_1ff20af69286149eb0b25291d9450172f7bd0054'];
+      };
+    };
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data: components['schemas']['mcp-auth.dto.customScopeView'];
+          };
+        };
+      };
+    };
+    authToken: true;
+  };
+  McpAuthCustomScope_deleteMine: {
     parameters: {
       query?: never;
       header?: never;

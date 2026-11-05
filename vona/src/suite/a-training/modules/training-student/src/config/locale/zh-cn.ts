@@ -21,13 +21,29 @@ export default {
   Summary: '摘要',
   StudentController: '学生管理',
   StudentCreate: '创建学生',
+  StudentCreateDescription:
+    '使用当前学生创建权限，在当前实例中创建学生。沿用现有创建契约，包括可选的内容、培训记录及其明细。此操作不具备幂等性，重复调用可能创建额外数据。',
   StudentSelect: '查询学生列表',
+  StudentSelectDescription:
+    '使用当前学生查询权限，在当前实例中查询学生。返回现有的完整分页查询响应，包含序列化后的记录字段，其中手机号已脱敏。',
   StudentGroup: '学生分组统计',
+  StudentGroupDescription:
+    '使用当前学生查询权限，在当前实例中对学生进行分组统计。支持按 level 分组，并统计全部学生或具有 imageId 的学生数量。默认按 level 分组统计全部学生。沿用现有筛选条件；计数为字符串，结果封装在 result 中。',
   StudentAggregate: '学生统计',
+  StudentAggregateDescription:
+    '使用当前学生查询权限，在当前实例中统计学生数量。支持统计全部学生或具有 imageId 的学生数量。默认同时返回 count_all 和 count_imageId。沿用现有筛选条件，返回字符串计数，不进行分组。',
   StudentView: '查看学生',
+  StudentViewDescription:
+    '使用当前学生查看权限，在当前实例中按 ID 读取完整学生详情。返回现有的序列化详情响应，包括脱敏手机号、Markdown 内容、嵌套培训记录及其明细，以及可选的图片 URL 元数据。',
   StudentUpdate: '更新学生',
+  StudentUpdateDescription:
+    '使用当前学生更新权限，在当前实例中更新学生。必须提供 params.id 及 body.name、body.mobile、body.level。沿用现有的完整聚合契约，包括内容、已有或新增的培训记录及其明细；已声明的嵌套 id/deleted 控制字段可删除子记录。返回 null 仅表示操作完成，不证明记录存在或已读回验证。可能发生部分写入；遇到错误或响应不确定时，不得自动重放。',
   StudentSummary: '查看学生摘要',
+  StudentSummaryDescription:
+    '使用当前学生查看权限，在当前实例中按 ID 读取学生摘要。不包含手机号和完整备注内容。',
   StudentDelete: '删除学生',
+  StudentDeleteDescription:
+    '使用独立的当前学生删除权限，在当前实例中按 ID 软删除学生。此破坏性操作同时删除内容、培训记录及其嵌套明细。返回 null 仅表示操作完成，不证明记录存在或已读回验证。可能发生部分删除；遇到错误或响应不确定时，不得自动重放。',
   StudentDeleteForce: '永久删除学生',
   StudentDeleteBulk: '批量删除学生',
   LevelTitle: '阶段名称',

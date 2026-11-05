@@ -14,7 +14,10 @@ export const toolFixtureState = { count: 0 };
 @Controller<IControllerOptionsToolFixture>({ path: '/mcp/test/actions', meta: { mode: 'test' } })
 export class ControllerToolFixture extends BeanBase {
   @Mcp.tool({ name: 'mcp_test_action_status' })
-  @Web.get('status')
+  @Web.get('status', {
+    description: 'Action Web description',
+    summary: 'Action Web summary',
+  })
   @Api.body(z.object({ count: z.number().int() }))
   @Passport.public()
   status(): { count: number } {
@@ -78,7 +81,7 @@ export class ControllerToolFixture extends BeanBase {
     return 'not a JSON Action';
   }
 
-  @Web.get('closed')
+  @Web.get('closed', { summary: 'Action Web summary' })
   @Api.body(z.object({ count: z.number().int() }))
   @Passport.public()
   closed(): { count: number } {

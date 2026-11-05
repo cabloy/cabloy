@@ -36,17 +36,17 @@ Unknown arguments and undeclared controls are rejected before dispatch. Schema-d
 
 Object responses become structured content directly. Scalar and array responses use `{ "result": value }`; declared null completion becomes `{ "result": null }`. JSON text represents the same structured object. Output is validated, not replaced with raw action output after a validation failure. An undefined result or a missing object resource represented by null produces safe `Resource not found`; authorization, action and output-validation failures produce safe `Action failed`. Invalid arguments are protocol errors.
 
-Method options override class defaults; `output.pick` arrays replace inherited arrays. The mapper applies this top-level output field allowlist to the runtime result and advertised schema without changing the HTTP DTO. Projection minimizes fields; it is not anonymization or authorization.
+Method `readOnly` and `output.pick` options override class defaults; `output.pick` arrays replace inherited arrays. Tool descriptions never inherit a class description: they use the Action's MCP description, then its OpenAPI description, summary or controller/Action identity. The mapper applies this top-level output field allowlist to the runtime result and advertised schema without changing the HTTP DTO. Projection minimizes fields; it is not anonymization or authorization.
 
 ## Student read examples
 
-| Tool                         | Required business authority | Existing response contract                                                                                                                   |
-| ---------------------------- | --------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------- |
-| `training_student_select`    | Student select              | Paginated `list`, string `total`, `pageNo`, `pageSize`, `pageCount`; serialized rows and masked mobile                                       |
-| `training_student_group`     | Student select              | Grouped counts by level; string counts, wrapped in `result`                                                                                  |
-| `training_student_aggregate` | Student select              | Ungrouped string counts                                                                                                                      |
-| `training_student_view`      | Student view                | Complete serialized detail, including Markdown content, training records with nested subjects, optional image presentation and masked mobile |
-| `training_student_summary`   | Student view                | Six-field projection: `id`, `name`, `level`, `levelTitle`, `descriptionLength`, `summaryText`                                                |
+| Tool                                 | Required business authority | Existing response contract                                                                                                                   |
+| ------------------------------------ | --------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------- |
+| `training-student_student_select`    | Student select              | Paginated `list`, string `total`, `pageNo`, `pageSize`, `pageCount`; serialized rows and masked mobile                                       |
+| `training-student_student_group`     | Student select              | Grouped counts by level; string counts, wrapped in `result`                                                                                  |
+| `training-student_student_aggregate` | Student select              | Ungrouped string counts                                                                                                                      |
+| `training-student_student_view`      | Student view                | Complete serialized detail, including Markdown content, training records with nested subjects, optional image presentation and masked mobile |
+| `training-student_student_summary`   | Student view                | Six-field projection: `id`, `name`, `level`, `levelTitle`, `descriptionLength`, `summaryText`                                                |
 
 Select and view authority do not imply each other. All five reads are current-instance scoped. For name → ID → summary/view, call select with flat query arguments such as `{ "name": "Student", "pageNo": 1, "pageSize": 10 }`, choose the matching `list` row's returned `id`, then call summary or view with `{ "id": "<returned student ID>" }` only with independent view permission. Select uses the existing LIKE name filter: `%` and `_` retain wildcard meaning and are not literal-escaped. It returns complete serialized rows, including masked mobile, not the retired lookup's three-field projection or its dedicated page bounds. Pagination follows the existing select contract; full detail does not add detail joins to select or expand summary's six-field projection.
 
@@ -58,7 +58,7 @@ Each mutation requires `mcp:all` and its own current Student business permission
 
 ### Create
 
-`training_student_create` binds flat arguments to the existing `DtoStudentCreate` body of guarded `POST /training/student`:
+`training-student_student_create` binds flat arguments to the existing `DtoStudentCreate` body of guarded `POST /training/student`:
 
 ```json
 { "name": "Synthetic student", "mobile": "13812345678", "level": 1 }
@@ -68,7 +68,7 @@ The aggregate contract also supports optional Markdown content and training reco
 
 ### Update
 
-`training_student_update` binds grouped arguments to guarded `PATCH /training/student/:id`:
+`training-student_student_update` binds grouped arguments to guarded `PATCH /training/student/:id`:
 
 ```json
 {
@@ -83,7 +83,7 @@ The service first reads the root through ordinary current-instance Model scope. 
 
 ### Delete
 
-`training_student_delete` takes flat params `{ "id": "<existing student ID>" }` and targets guarded `DELETE /training/student/:id`. No undeclared body, route, method, instance, identity, executor or confirmation controls are accepted.
+`training-student_student_delete` takes flat params `{ "id": "<existing student ID>" }` and targets guarded `DELETE /training/student/:id`. No undeclared body, route, method, instance, identity, executor or confirmation controls are accepted.
 
 This is destructive aggregate soft deletion of Student, content, training records and nested subjects, not root-only deletion. Soft deletion promises neither recoverability nor indefinite retention; later pruning may remove rows. No attachment/blob deletion or restore capability is promised. `deleteForce` and bulk actions are not opted in for this example; that is not a blanket exclusion of other eligible Resource mutations.
 

@@ -65,14 +65,14 @@ const effectToolName = 'mcp_test_action_effect';
 const scalarToolName = 'mcp_test_action_scalar';
 const arrayToolName = 'mcp_test_action_array';
 const studentToolNames = [
-  'training_student_aggregate',
-  'training_student_create',
-  'training_student_delete',
-  'training_student_group',
-  'training_student_select',
-  'training_student_summary',
-  'training_student_update',
-  'training_student_view',
+  'training-student_student_aggregate',
+  'training-student_student_create',
+  'training-student_student_delete',
+  'training-student_student_group',
+  'training-student_student_select',
+  'training-student_student_summary',
+  'training-student_student_update',
+  'training-student_student_view',
 ];
 
 async function withStudentToolPermissions(fn: () => Promise<void>) {
@@ -388,9 +388,9 @@ describe('businessTools.test.ts', { concurrency: false, timeout: 60000 }, () => 
           const rejected = await standalone.request('tools/call', {
             name,
             arguments: [
-              'training_student_summary',
-              'training_student_view',
-              'training_student_delete',
+              'training-student_student_summary',
+              'training-student_student_view',
+              'training-student_student_delete',
             ].includes(name)
               ? { id: '1' }
               : {},
@@ -406,25 +406,35 @@ describe('businessTools.test.ts', { concurrency: false, timeout: 60000 }, () => 
         assert.fail('discovery and invalid arguments must not dispatch business Actions');
       });
       try {
-        const listed = await shared.request('tools/list');
+        const listed = JSON.parse(JSON.stringify(await shared.request('tools/list')));
         assert.equal(listed.error, undefined);
         assert.equal(action.mock.callCount(), 0, 'discovery runs guards without business Actions');
         assert.deepEqual(
           listed.result.tools.map((tool: any) => tool.name).sort(),
           (app.meta.modules['training-student'] ? [...studentToolNames] : []).sort(),
         );
+        for (const name of studentToolNames) {
+          const rejected = await shared.request('tools/call', {
+            name: name.replace('training-student_student_', 'training_student_'),
+            arguments: {},
+          });
+          assert.deepEqual(rejected.error, { code: -32602, message: 'Tool unavailable' });
+        }
+        assert.equal(action.mock.callCount(), 0, 'old explicit names do not dispatch Actions');
         const select = listed.result.tools.find(
-          (tool: any) => tool.name === 'training_student_select',
+          (tool: any) => tool.name === 'training-student_student_select',
         );
         const student = listed.result.tools.find(
-          (tool: any) => tool.name === 'training_student_summary',
+          (tool: any) => tool.name === 'training-student_student_summary',
         );
-        const view = listed.result.tools.find((tool: any) => tool.name === 'training_student_view');
+        const view = listed.result.tools.find(
+          (tool: any) => tool.name === 'training-student_student_view',
+        );
         const create = listed.result.tools.find(
-          (tool: any) => tool.name === 'training_student_create',
+          (tool: any) => tool.name === 'training-student_student_create',
         );
         const update = listed.result.tools.find(
-          (tool: any) => tool.name === 'training_student_update',
+          (tool: any) => tool.name === 'training-student_student_update',
         );
         if (!app.meta.modules['training-student']) {
           assert.equal(update, undefined);
@@ -443,8 +453,33 @@ describe('businessTools.test.ts', { concurrency: false, timeout: 60000 }, () => 
           [],
           'the existing filter-backed select and analysis contracts are representable without diagnostics',
         );
+        const controller = recordResourceNameToRoutePath['training-student:student'].controller;
+        const methods: Record<string, string> = {
+          create: 'post',
+          update: 'patch',
+          delete: 'delete',
+        };
         for (const tool of listed.result.tools) {
           assert.ok(!tool.description.includes('Level values:'), tool.name);
+          const actionName = tool.name.slice('training-student_student_'.length);
+          const metadata = appMetadata.getMetadata<IMcpToolOptions>(
+            SymbolMcpOptions,
+            controller.prototype,
+            actionName,
+          );
+          assert.ok(metadata, `${actionName} retains explicit MCP opt-in`);
+          assert.equal(metadata.description, undefined, 'shared descriptions belong to Web');
+          const document = JSON.parse(
+            JSON.stringify(
+              await app.bean.openapi.generateJsonOfControllerAction(controller, actionName, 'V31'),
+            ),
+          );
+          const method = methods[actionName] ?? 'get';
+          const operation = Object.values(document.paths ?? {})
+            .map(path => (path as any)[method])
+            .find(Boolean);
+          assert.ok(operation?.description, `${actionName} emits its HTTP OpenAPI description`);
+          assert.equal(tool.description, operation.description, tool.name);
         }
         assert.ok(select);
         assert.equal(select.annotations.readOnlyHint, true);
@@ -838,6 +873,76 @@ describe('businessTools.test.ts', { concurrency: false, timeout: 60000 }, () => 
     });
   });
 
+  it('localizes all eight Student descriptions consistently for HTTP OpenAPI and MCP', async () => {
+    if (!app.meta.modules['training-student']) return;
+    const { default: enUS } =
+      await import('../../../../a-training/modules/training-student/src/config/locale/en-us.ts');
+    const { default: zhCN } =
+      await import('../../../../a-training/modules/training-student/src/config/locale/zh-cn.ts');
+    const dictionaries = { 'en-us': enUS, 'zh-cn': zhCN };
+    const descriptions = {
+      create: { key: 'StudentCreateDescription', method: 'post' },
+      select: { key: 'StudentSelectDescription', method: 'get' },
+      group: { key: 'StudentGroupDescription', method: 'get' },
+      aggregate: { key: 'StudentAggregateDescription', method: 'get' },
+      view: { key: 'StudentViewDescription', method: 'get' },
+      update: { key: 'StudentUpdateDescription', method: 'patch' },
+      summary: { key: 'StudentSummaryDescription', method: 'get' },
+      delete: { key: 'StudentDeleteDescription', method: 'delete' },
+    } as const;
+    await withStudentToolPermissions(async () => {
+      const previousLocale = app.meta.locale.current;
+      const controller = recordResourceNameToRoutePath['training-student:student'].controller;
+      const snapshots: string[][] = [];
+      try {
+        for (const locale of ['en-us', 'zh-cn', 'en-us'] as const) {
+          app.meta.locale.current = locale;
+          const client = await connect(await createSharedBusinessToolServer(app, 'mcp:all'));
+          try {
+            const listed = JSON.parse(JSON.stringify(await client.request('tools/list')));
+            assert.equal(listed.error, undefined);
+            assert.deepEqual(
+              listed.result.tools.map((tool: any) => tool.name).sort(),
+              studentToolNames.toSorted(),
+            );
+            const snapshot: string[] = [];
+            for (const [actionName, { key, method }] of Object.entries(descriptions)) {
+              const name = `training-student_student_${actionName}`;
+              const tool = listed.result.tools.find((tool: any) => tool.name === name);
+              const document = JSON.parse(
+                JSON.stringify(
+                  await app.bean.openapi.generateJsonOfControllerAction(
+                    controller,
+                    actionName,
+                    'V31',
+                  ),
+                ),
+              );
+              const operation = Object.values(document.paths ?? {})
+                .map(path => (path as any)[method])
+                .find(Boolean);
+              assert.equal(tool.description, dictionaries[locale][key], `${locale}: ${name}`);
+              assert.equal(operation?.description, tool.description, `${locale}: ${name}`);
+              assert.notEqual(enUS[key], zhCN[key], `${key} has a Chinese translation`);
+              snapshot.push(tool.description);
+            }
+            snapshots.push(snapshot);
+          } finally {
+            await client.close();
+          }
+        }
+        assert.notDeepEqual(snapshots[0], snapshots[1]);
+        assert.deepEqual(
+          snapshots[2],
+          snapshots[0],
+          'returning to English reuses the correct locale',
+        );
+      } finally {
+        app.meta.locale.current = previousLocale;
+      }
+    });
+  });
+
   it('normalizes declared JSON dates before native request binding without broad coercion', async t => {
     if (!app.meta.modules['training-student']) return;
     await withStudentToolPermissions(async () => {
@@ -866,14 +971,14 @@ describe('businessTools.test.ts', { concurrency: false, timeout: 60000 }, () => 
       };
       try {
         const valid = await server.request('tools/call', {
-          name: 'training_student_create',
+          name: 'training-student_student_create',
           arguments: body,
         });
         assert.equal(valid.error, undefined);
         assert.deepEqual(valid.result.structuredContent, { result: 'date-normalized' });
         assert.equal(action.mock.callCount(), 1);
         const invalid = await server.request('tools/call', {
-          name: 'training_student_create',
+          name: 'training-student_student_create',
           arguments: {
             ...body,
             trainingRecords: [{ ...body.trainingRecords[0], trainingTime: 'not-a-date' }],
@@ -927,16 +1032,16 @@ describe('businessTools.test.ts', { concurrency: false, timeout: 60000 }, () => 
             .filter(
               name =>
                 ![
-                  'training_student_create',
-                  'training_student_update',
-                  'training_student_delete',
+                  'training-student_student_create',
+                  'training-student_student_update',
+                  'training-student_student_delete',
                 ].includes(name),
             )
             .toSorted(),
         );
         assert.equal(action.mock.callCount(), 0, 'discovery never trial-creates');
         const denied = await read.request('tools/call', {
-          name: 'training_student_create',
+          name: 'training-student_student_create',
           arguments: body,
         });
         assert.deepEqual(denied.error, { code: -32602, message: 'Tool unavailable' });
@@ -946,7 +1051,7 @@ describe('businessTools.test.ts', { concurrency: false, timeout: 60000 }, () => 
           'read scope rejects the known name before dispatch',
         );
         const call = () =>
-          all.request('tools/call', { name: 'training_student_create', arguments: body });
+          all.request('tools/call', { name: 'training-student_student_create', arguments: body });
         const accepted = await call();
         assert.equal(accepted.error, undefined);
         assert.notEqual(accepted.result.isError, true);
@@ -1030,22 +1135,22 @@ describe('businessTools.test.ts', { concurrency: false, timeout: 60000 }, () => 
             .filter(
               name =>
                 ![
-                  'training_student_create',
-                  'training_student_update',
-                  'training_student_delete',
+                  'training-student_student_create',
+                  'training-student_student_update',
+                  'training-student_student_delete',
                 ].includes(name),
             )
             .toSorted(),
         );
         assert.equal(action.mock.callCount(), 0, 'discovery never trial-updates');
         const denied = await read.request('tools/call', {
-          name: 'training_student_update',
+          name: 'training-student_student_update',
           arguments: args,
         });
         assert.deepEqual(denied.error, { code: -32602, message: 'Tool unavailable' });
         assert.equal(action.mock.callCount(), 0, 'read scope rejects known update before dispatch');
         const unknown = await all.request('tools/call', {
-          name: 'training_student_update_unknown',
+          name: 'training-student_student_update_unknown',
           arguments: args,
         });
         assert.deepEqual(unknown.error, { code: -32602, message: 'Tool unavailable' });
@@ -1120,7 +1225,7 @@ describe('businessTools.test.ts', { concurrency: false, timeout: 60000 }, () => 
           ]),
         ]) {
           const rejected = await all.request('tools/call', {
-            name: 'training_student_update',
+            name: 'training-student_student_update',
             arguments: invalidArgs,
           });
           assert.deepEqual(
@@ -1131,7 +1236,7 @@ describe('businessTools.test.ts', { concurrency: false, timeout: 60000 }, () => 
         }
         assert.equal(action.mock.callCount(), 0, 'unknown and invalid input never dispatch');
         const call = () =>
-          all.request('tools/call', { name: 'training_student_update', arguments: args });
+          all.request('tools/call', { name: 'training-student_student_update', arguments: args });
         const accepted = await call();
         assert.equal(accepted.error, undefined);
         assert.notEqual(accepted.result.isError, true);
@@ -1204,7 +1309,7 @@ describe('businessTools.test.ts', { concurrency: false, timeout: 60000 }, () => 
         const listed = await all.request('tools/list');
         assert.equal(listed.error, undefined);
         const tool = listed.result.tools.find(
-          (tool: any) => tool.name === 'training_student_delete',
+          (tool: any) => tool.name === 'training-student_student_delete',
         );
         assert.ok(tool);
         assert.equal(tool.annotations.readOnlyHint, false);
@@ -1225,9 +1330,9 @@ describe('businessTools.test.ts', { concurrency: false, timeout: 60000 }, () => 
             .filter(
               name =>
                 ![
-                  'training_student_create',
-                  'training_student_update',
-                  'training_student_delete',
+                  'training-student_student_create',
+                  'training-student_student_update',
+                  'training-student_student_delete',
                 ].includes(name),
             )
             .toSorted(),
@@ -1240,9 +1345,9 @@ describe('businessTools.test.ts', { concurrency: false, timeout: 60000 }, () => 
         assert.deepEqual(denied.error, { code: -32602, message: 'Tool unavailable' });
         assert.equal(action.mock.callCount(), 0, 'read scope rejects known delete before dispatch');
         for (const name of [
-          'training_student_delete_unknown',
-          'training_student_deleteForce',
-          'training_student_deleteBulk',
+          'training-student_student_delete_unknown',
+          'training-student_student_deleteForce',
+          'training-student_student_deleteBulk',
         ]) {
           const rejected = await all.request('tools/call', { name, arguments: params });
           assert.deepEqual(rejected.error, { code: -32602, message: 'Tool unavailable' });
@@ -1354,7 +1459,10 @@ describe('businessTools.test.ts', { concurrency: false, timeout: 60000 }, () => 
       );
       try {
         const call = (args?: Record<string, unknown>) =>
-          client.request('tools/call', { name: 'training_student_select', arguments: args });
+          client.request('tools/call', {
+            name: 'training-student_student_select',
+            arguments: args,
+          });
         const response = await call();
         assert.equal(response.error, undefined);
         assert.notEqual(response.result.isError, true);
@@ -1422,7 +1530,7 @@ describe('businessTools.test.ts', { concurrency: false, timeout: 60000 }, () => 
           [],
         );
         for (const mode of ['group', 'aggregate'] as const) {
-          const name = `training_student_${mode}`;
+          const name = `training-student_student_${mode}`;
           const tool = listed.result.tools.find((item: any) => item.name === name);
           assert.ok(tool, `${name} is discoverable with read scope`);
           assert.equal(tool.annotations.readOnlyHint, true);
@@ -1594,7 +1702,7 @@ describe('businessTools.test.ts', { concurrency: false, timeout: 60000 }, () => 
       try {
         const call = () =>
           client.request('tools/call', {
-            name: 'training_student_view',
+            name: 'training-student_student_view',
             arguments: { id: '123' },
           });
         const response = await call();
@@ -1848,7 +1956,7 @@ describe('businessTools.test.ts', { concurrency: false, timeout: 60000 }, () => 
     });
   });
 
-  it('inherits class opt-in defaults, retains local names and rejects invalid exposure configuration', async t => {
+  it('inherits class defaults except descriptions, retains local names and rejects invalid exposure configuration', async t => {
     await app.bean.executor.mockCtx(async () => {
       const original = appMetadata.getMetadata;
       let configuration:
@@ -1899,7 +2007,7 @@ describe('businessTools.test.ts', { concurrency: false, timeout: 60000 }, () => 
         try {
           const tools = (await client.request('tools/list')).result.tools;
           const status = tools.find((tool: any) => tool.name === statusToolName);
-          assert.equal(status.description, 'Fixture class default');
+          assert.equal(status.description, 'Action Web description');
           assert.equal(
             status.annotations.readOnlyHint,
             true,
@@ -1907,8 +2015,10 @@ describe('businessTools.test.ts', { concurrency: false, timeout: 60000 }, () => 
           );
           const closed = tools.find((tool: any) => tool.name === 'mcp-test_toolFixture_closed');
           assert.ok(closed, 'class opt-in exposes representable sibling Actions');
-          assert.equal(closed.description, 'Fixture class default');
+          assert.equal(closed.description, 'Action Web summary');
           assert.equal(closed.annotations.readOnlyHint, false);
+          const effect = tools.find((tool: any) => tool.name === effectToolName);
+          assert.equal(effect.description, 'mcp-test.controller.toolFixture#effect');
         } finally {
           await client.close();
         }
@@ -2196,7 +2306,7 @@ describe('businessTools.test.ts', { concurrency: false, timeout: 60000 }, () => 
       try {
         const call = () =>
           client.request('tools/call', {
-            name: 'training_student_summary',
+            name: 'training-student_student_summary',
             arguments: { id: '123' },
           });
         const response = await call();

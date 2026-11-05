@@ -503,6 +503,11 @@ export type ApiSchemaMcpAuthDtoAuthorizationSummary =
   components['schemas']['mcp-auth.dto.authorizationSummary'];
 export type ApiSchemaMcpAuthDtoAuthorizationSummaryPartial =
   Partial<ApiSchemaMcpAuthDtoAuthorizationSummary>;
+export type ApiSchemaMcpAuthDtoMcpScopeOption =
+  components['schemas']['mcp-auth.dto.mcpScopeOption'];
+export type ApiSchemaMcpAuthDtoMcpScopeOptionPartial = Partial<ApiSchemaMcpAuthDtoMcpScopeOption>;
+export type ApiSchemaMcpAuthDtoMcpScopeTool = components['schemas']['mcp-auth.dto.mcpScopeTool'];
+export type ApiSchemaMcpAuthDtoMcpScopeToolPartial = Partial<ApiSchemaMcpAuthDtoMcpScopeTool>;
 export type ApiSchemaMcpAuthDtoAuthorizationRedirect =
   components['schemas']['mcp-auth.dto.authorizationRedirect'];
 export type ApiSchemaMcpAuthDtoAuthorizationRedirectPartial =
@@ -519,6 +524,22 @@ export type ApiSchemaMcpAuthDtoAuthorizationGrant =
   components['schemas']['mcp-auth.dto.authorizationGrant'];
 export type ApiSchemaMcpAuthDtoAuthorizationGrantPartial =
   Partial<ApiSchemaMcpAuthDtoAuthorizationGrant>;
+export type ApiSchemaMcpAuthDtoCustomScopeMineRes =
+  components['schemas']['mcp-auth.dto.customScopeMineRes'];
+export type ApiSchemaMcpAuthDtoCustomScopeMineResPartial =
+  Partial<ApiSchemaMcpAuthDtoCustomScopeMineRes>;
+export type ApiSchemaMcpAuthDtoCustomScopeView =
+  components['schemas']['mcp-auth.dto.customScopeView'];
+export type ApiSchemaMcpAuthDtoCustomScopeViewPartial = Partial<ApiSchemaMcpAuthDtoCustomScopeView>;
+export type ApiSchemaMcpAuthDtoMcpToolIdentity =
+  components['schemas']['mcp-auth.dto.mcpToolIdentity'];
+export type ApiSchemaMcpAuthDtoMcpToolIdentityPartial = Partial<ApiSchemaMcpAuthDtoMcpToolIdentity>;
+export type ApiSchemaMcpAuthDtoMcpTool = components['schemas']['mcp-auth.dto.mcpTool'];
+export type ApiSchemaMcpAuthDtoMcpToolPartial = Partial<ApiSchemaMcpAuthDtoMcpTool>;
+export type ApiSchemaMcpAuthDtoCustomScopeCreate_1ff20af69286149eb0b25291d9450172f7bd0054 =
+  components['schemas']['mcp-auth.dto.customScopeCreate_1ff20af69286149eb0b25291d9450172f7bd0054'];
+export type ApiSchemaMcpAuthDtoCustomScopeCreate_1ff20af69286149eb0b25291d9450172f7bd0054Partial =
+  Partial<ApiSchemaMcpAuthDtoCustomScopeCreate_1ff20af69286149eb0b25291d9450172f7bd0054>;
 export type ApiSchemaMcpTestDtoCategoryPublicSelectRes =
   components['schemas']['mcp-test.dto.categoryPublicSelectRes'];
 export type ApiSchemaMcpTestDtoCategoryPublicSelectResPartial =

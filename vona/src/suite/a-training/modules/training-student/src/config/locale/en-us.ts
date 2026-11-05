@@ -21,13 +21,29 @@ export default {
   Summary: 'Summary',
   StudentController: 'Student Management',
   StudentCreate: 'Create Student',
+  StudentCreateDescription:
+    'Create a student using your current student-create permission and instance. Uses the existing create contract, including optional content and training records with subjects. Non-idempotent; repeating a call can create additional data.',
   StudentSelect: 'List Students',
+  StudentSelectDescription:
+    'Select students using your current student-select permission and instance. Returns the complete existing paginated select response with serialized row fields, including masked mobile.',
   StudentGroup: 'Group Students',
+  StudentGroupDescription:
+    'Group students using your current student-select permission and instance. Supports grouping by level and counting all students or students with an imageId. Defaults to counting all students by level. Uses the existing filters; counts are strings and results are wrapped in result.',
   StudentAggregate: 'Aggregate Students',
+  StudentAggregateDescription:
+    'Count students using your current student-select permission and instance. Supports counting all students or students with an imageId. Defaults to both count_all and count_imageId. Uses the existing filters and returns string counts without grouping.',
   StudentView: 'View Student',
+  StudentViewDescription:
+    'Read complete student details by ID using your current student-view permission and instance. Returns the existing serialized detail response, including masked mobile, Markdown content, nested training records and subjects, and optional image URL metadata.',
   StudentUpdate: 'Update Student',
+  StudentUpdateDescription:
+    'Update a student using your current student-update permission and instance. Requires params.id and body.name, body.mobile, body.level. Uses the complete existing aggregate contract, including content and existing/new training records and subjects; declared nested id/deleted controls can delete children. Returns null completion, not existence or read-back proof. Partial writes are possible; do not automatically replay after errors or uncertain responses.',
   StudentSummary: 'View Student Summary',
+  StudentSummaryDescription:
+    'Read a student summary by ID using your current student-view permission and instance. Excludes mobile and full notes.',
   StudentDelete: 'Delete Student',
+  StudentDeleteDescription:
+    'Soft-delete a student by ID using your independent current student-delete permission and instance. Destructively includes content, training records and nested subjects. Returns null completion, not existence or read-back proof. Partial deletion is possible; do not automatically replay after errors or uncertain responses.',
   StudentDeleteForce: 'Permanently Delete Student',
   StudentDeleteBulk: 'Bulk Delete Students',
   LevelTitle: 'Level Title',

@@ -34,14 +34,14 @@ const version = '2026-07-28';
 const categoriesName = 'commerce_categories_list';
 const searchName = 'commerce_products_search';
 const detailName = 'commerce_product_detail';
-const studentCreateName = 'training_student_create';
-const studentUpdateName = 'training_student_update';
-const studentDeleteName = 'training_student_delete';
-const studentSummaryName = 'training_student_summary';
-const studentSelectName = 'training_student_select';
-const studentViewName = 'training_student_view';
-const studentGroupName = 'training_student_group';
-const studentAggregateName = 'training_student_aggregate';
+const studentCreateName = 'training-student_student_create';
+const studentUpdateName = 'training-student_student_update';
+const studentDeleteName = 'training-student_student_delete';
+const studentSummaryName = 'training-student_student_summary';
+const studentSelectName = 'training-student_student_select';
+const studentViewName = 'training-student_student_view';
+const studentGroupName = 'training-student_student_group';
+const studentAggregateName = 'training-student_student_aggregate';
 const excludedNames = [
   categoriesName,
   searchName,
@@ -52,9 +52,9 @@ const excludedNames = [
   'mcp_test_action_array',
   'mcp_test_action_unsupported',
   'mcp-test_toolFixture_closed',
-  'training-student_student_select',
-  'training_student_deleteForce',
-  'training_student_deleteBulk',
+  'training_student_select',
+  'training-student_student_deleteForce',
+  'training-student_student_deleteBulk',
 ];
 const trainingDisabled = (process.env.PROJECT_DISABLED_SUITES ?? '')
   .split(',')

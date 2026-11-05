@@ -267,8 +267,8 @@ export async function createControllerToolServer(
             : undefined;
           const tool: Tool = {
             name,
-            description: options.description
-              ? app.meta.text(options.description)
+            description: local?.description
+              ? app.meta.text(local.description)
               : operation.description ||
                 operation.summary ||
                 `${controller.beanOptions.beanFullName}#${route.action}`,

@@ -480,20 +480,22 @@ async function verifyStudentTools(
     expect(
       (await listed.json()).result.tools.map((tool: { name: string }) => tool.name).sort(),
     ).toEqual([
-      'training_student_aggregate',
-      ...(scope === 'mcp:all' ? ['training_student_create', 'training_student_delete'] : []),
-      'training_student_group',
-      'training_student_select',
-      'training_student_summary',
-      ...(scope === 'mcp:all' ? ['training_student_update'] : []),
-      'training_student_view',
+      'training-student_student_aggregate',
+      ...(scope === 'mcp:all'
+        ? ['training-student_student_create', 'training-student_student_delete']
+        : []),
+      'training-student_student_group',
+      'training-student_student_select',
+      'training-student_student_summary',
+      ...(scope === 'mcp:all' ? ['training-student_student_update'] : []),
+      'training-student_student_view',
     ]);
 
     const query = { name, level, pageNo: 1, pageSize: 1 };
     const initialSelect = await callMcp(
       request,
       'tools/call',
-      { name: 'training_student_select', arguments: query },
+      { name: 'training-student_student_select', arguments: query },
       token,
     );
     expect(initialSelect.status()).toBe(200);
@@ -517,7 +519,7 @@ async function verifyStudentTools(
     const selected = await callMcp(
       request,
       'tools/call',
-      { name: 'training_student_select', arguments: query },
+      { name: 'training-student_student_select', arguments: query },
       token,
     );
     expect(selected.status()).toBe(200);
@@ -561,7 +563,7 @@ async function verifyStudentTools(
     const viewed = await callMcp(
       request,
       'tools/call',
-      { name: 'training_student_view', arguments: { id: selectedId } },
+      { name: 'training-student_student_view', arguments: { id: selectedId } },
       token,
     );
     expect(viewed.status()).toBe(200);
@@ -609,7 +611,7 @@ async function verifyStudentTools(
     const summary = await callMcp(
       request,
       'tools/call',
-      { name: 'training_student_summary', arguments: { id: selectedId } },
+      { name: 'training-student_student_summary', arguments: { id: selectedId } },
       token,
     );
     expect(summary.status()).toBe(200);
@@ -1297,7 +1299,9 @@ test(
       await selectTool.check();
       await dialog.getByRole('searchbox', { name: 'Search tools' }).fill('');
       await expect(
-        studentTools.locator('input[type="checkbox"][data-tool-name="training_student_select"]'),
+        studentTools.locator(
+          'input[type="checkbox"][data-tool-name="training-student_student_select"]',
+        ),
       ).toBeChecked();
       const created = waitForApiResponse(page, 'POST', `${customScopeApiPath}/createMine`);
       await dialog.getByRole('button', { name: 'Save', exact: true }).click();
@@ -1306,7 +1310,7 @@ test(
       const scope = (await createResponse.json()).data as PersonalMcpScope;
       expect(scope.name).toBe(name);
       expect(scope.scope).toBe(`mcp:custom:${name}`);
-      expect(scope.tools.map(tool => tool.name)).toEqual(['training_student_select']);
+      expect(scope.tools.map(tool => tool.name)).toEqual(['training-student_student_select']);
       await expect(dialog).toHaveCount(0);
       const entry = page.locator(`article[data-mcp-scope="${scope.scope}"]`);
       await expect(entry.getByRole('heading', { name, exact: true })).toBeVisible();
@@ -1325,7 +1329,7 @@ test(
       expect(queryState !== undefined).toBe(true);
       expect(queryState?.includes(scope.scope)).toBe(true);
       expect(queryState?.includes(name)).toBe(true);
-      expect(queryState?.includes('training_student_select')).toBe(true);
+      expect(queryState?.includes('training-student_student_select')).toBe(true);
       let hydrationFetches = 0;
       const observeHydrationFetch = (outgoing: Request) => {
         if (
@@ -1347,7 +1351,7 @@ test(
       await entry.getByRole('button', { name: 'Edit', exact: true }).click();
       await expect(dialog.getByText('Edit scope', { exact: true })).toBeVisible();
       await expect(
-        dialog.locator('input[type="checkbox"][data-tool-name="training_student_select"]'),
+        dialog.locator('input[type="checkbox"][data-tool-name="training-student_student_select"]'),
       ).toBeChecked();
       await dialog
         .getByRole('group', { name: /^Name(?: \*)?$/ })
@@ -1428,7 +1432,7 @@ test(
     try {
       const headers = await loginMcpAccount(request, seededMcpAccount);
       const scope = await createPersonalMcpScope(request, headers, name, [
-        'training_student_select',
+        'training-student_student_select',
       ]);
       const client = await registerClient(request, origin, 'mcp:all');
       clientIds.add(client.clientId);
@@ -1455,13 +1459,13 @@ test(
       const listed = await callMcp(request, 'tools/list', {}, token.access_token);
       expect(listed.status()).toBe(200);
       expect((await listed.json()).result.tools.map((tool: { name: string }) => tool.name)).toEqual(
-        ['training_student_select'],
+        ['training-student_student_select'],
       );
       const selected = await callMcp(
         request,
         'tools/call',
         {
-          name: 'training_student_select',
+          name: 'training-student_student_select',
           arguments: { name, pageNo: 1, pageSize: 1 },
         },
         token.access_token,
@@ -1479,7 +1483,7 @@ test(
         request,
         'tools/call',
         {
-          name: 'training_student_group',
+          name: 'training-student_student_group',
           arguments: {},
         },
         token.access_token,
@@ -1578,7 +1582,7 @@ test(
     try {
       const headers = await loginMcpAccount(request, seededMcpAccount);
       const scope = await createPersonalMcpScope(request, headers, name, [
-        'training_student_create',
+        'training-student_student_create',
       ]);
       const client = await registerClient(request, origin, 'mcp:all');
       clientIds.add(client.clientId);
@@ -1618,11 +1622,11 @@ test(
       const listed = await callMcp(request, 'tools/list', {}, token.access_token);
       expect(listed.status()).toBe(200);
       const names = (await listed.json()).result.tools.map((tool: { name: string }) => tool.name);
-      expect(names).toContain('training_student_select');
+      expect(names).toContain('training-student_student_select');
       for (const write of [
-        'training_student_create',
-        'training_student_update',
-        'training_student_delete',
+        'training-student_student_create',
+        'training-student_student_update',
+        'training-student_student_delete',
       ]) {
         expect(names).not.toContain(write);
       }
@@ -1630,7 +1634,7 @@ test(
         request,
         'tools/call',
         {
-          name: 'training_student_create',
+          name: 'training-student_student_create',
           arguments: {},
         },
         token.access_token,

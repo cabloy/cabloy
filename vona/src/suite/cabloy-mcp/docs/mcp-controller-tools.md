@@ -13,23 +13,24 @@ import { Mcp } from 'vona-module-a-openapiutils';
 Mapping is **closed by default**:
 
 - A method-level `@Mcp.tool()` opts in only that registered Controller Action.
-- A class-level `@Mcp.tool()` opts in all supported, registered actions on that controller, with optional shared defaults. It does not expose arbitrary helper methods.
+- A class-level `@Mcp.tool()` opts in all supported, registered actions on that controller, with optional shared `readOnly` and `output.pick` defaults. Tool descriptions are Action-scoped and do not inherit a class-level description. It does not expose arbitrary helper methods.
 - There is **no decorator exclusion/opt-out option**. For narrower mapping eligibility, leave the class undecorated and decorate selected methods instead. Class opt-in also includes future supported actions added to that controller; on a registered Resource controller, these can enter normal ingress subject to the same scope and authorization boundary.
 
 Normal shared composition uses the factory's construction-time `includeTool` callback to admit registered Resource controllers, not a student controller/action whitelist. It derives the resource with `onionNameFromBeanFullName(controller)` and requires an own entry in `recordResourceNameToRoutePath`. The factory still requires an enabled registered route, explicit method/class `@Mcp.tool()` opt-in and a supported contract. Nonresource controllers, including synthetic fixtures, never enter the shared tool map and cannot be listed or directly called by name. The eight student actions after lookup retirement (`select`, `group`, `aggregate`, `view` and `summary` reads; `create`, `update` and `delete` writes) are examples, not a catalog ceiling. Training is optional: its absence removes student tools, not necessarily other eligible Resource tools, and does not enable fixture fallback.
 
 MCP metadata is independent of `@Api.*` metadata. `@Api.exclude()` controls ordinary OpenAPI publication, not MCP mapping: an explicitly opted-in, admitted action can still become a tool, and an ordinary published HTTP action does not become a tool without MCP opt-in.
 
+The Student Actions put shared descriptions in their `@Web.xxx()` options so HTTP OpenAPI and MCP use the same Action-owned text. Their `$locale('Student<Action>Description')` references use the backend `training-student` module's `src/config/locale/en-us.ts` and `src/config/locale/zh-cn.ts` resources, resolved in the current request locale. `@Mcp.tool()` retains the opt-in, read classification and output projection; a method-level MCP `description` is still available when a tool-specific override is needed.
+
 ## Example: student create
 
-`training_student_create` opts in only the existing `create()` Action:
+`training-student_student_create` opts in only the existing `create()` Action:
 
 ```ts
-@Mcp.tool({
-  name: 'training_student_create',
-  description:
-    'Create a student using your current student-create permission and instance. Uses the existing create contract, including optional content and training records with subjects. Non-idempotent; repeating a call can create additional data.',
-  readOnly: false,
+@Mcp.tool({ readOnly: false })
+@Web.post('', {
+  summary: $locale('StudentCreate'),
+  description: $locale('StudentCreateDescription'),
 })
 ```
 
@@ -41,7 +42,7 @@ This is a non-idempotent persisted aggregate write. Repeating a call can create 
 
 **Local update regression (2026-10-30):** the complete grouped aggregate passes authenticated HTTP verification, including nested creation/update/deletion, independently authorized read-back, null completion and root/child ownership boundaries. The separately approved shared-reader correction accepts value depth 9 (root = 1), retaining the eight-container parser ceiling and all other byte/node/key/array/string/duplicate-key bounds; exact edge regressions pass. This supersedes the earlier depth-8 qualification stop without erasing its failure history. Local proof is not actual-client, deployment or release qualification; do not bypass ingress or automatically replay an uncertain mutation.
 
-`training_student_update` opts in only the existing `update()` Action and is one of the current student tools in normal shared composition. It requires `mcp:all` and independent current student-update permission in the active instance. Create, select and view authority do not grant update; update authority does not grant those other actions. `mcp:read` hides update and rejects known-name calls before dispatch.
+`training-student_student_update` opts in only the existing `update()` Action and is one of the current student tools in normal shared composition. It requires `mcp:all` and independent current student-update permission in the active instance. Create, select and view authority do not grant update; update authority does not grant those other actions. `mcp:read` hides update and rejects known-name calls before dispatch.
 
 The fixed target remains guarded `PATCH /training/student/:id` with `innerAccess: false`. Unlike create's flat body, update uses **grouped params/body arguments**:
 
@@ -62,7 +63,7 @@ Update adds no automatic retry, deduplication or rollback-on-response-failure. I
 
 ## Example: student delete
 
-`training_student_delete` is one of the current normal authenticated student tools. It requires **`mcp:all` and independent current student-delete permission** in the active instance. Create, update, select and view authority do not grant delete; delete grants none of them. `mcp:read` hides all three mutations and rejects their known-name calls before dispatch. Discovery checks current guards only, without row probes or trial deletion; calls independently reauthorize.
+`training-student_student_delete` is one of the current normal authenticated student tools. It requires **`mcp:all` and independent current student-delete permission** in the active instance. Create, update, select and view authority do not grant delete; delete grants none of them. `mcp:read` hides all three mutations and rejects their known-name calls before dispatch. Discovery checks current guards only, without row probes or trial deletion; calls independently reauthorize.
 
 Delete takes a **flat params contract**, unlike grouped update:
 
@@ -78,14 +79,13 @@ Delete is individually accepted **without a new server-side per-call confirmatio
 
 ## Example: complete student select
 
-`training_student_select` exposes the existing `select()` Action without an MCP output projection:
+`training-student_student_select` exposes the existing `select()` Action without an MCP output projection:
 
 ```ts
-@Mcp.tool({
-  name: 'training_student_select',
-  description:
-    'Select students using your current student-select permission and instance. Returns the complete existing paginated select response with serialized row fields, including masked mobile.',
-  readOnly: true,
+@Mcp.tool({ readOnly: true })
+@Web.get('', {
+  summary: $locale('StudentSelect'),
+  description: $locale('StudentSelectDescription'),
 })
 ```
 
@@ -95,7 +95,7 @@ The result retains the complete existing `DtoStudentSelectRes`: `list`, string `
 
 ## Example: complete student view
 
-`training_student_view` exposes the existing `view()` Action without an MCP output projection. Call it with `{ "id": "<existing student ID>" }`; the ID binds to the existing `GET :id` path parameter and retains `v.tableIdentity()` validation. The optional `DtoStudentView`, serializer, student-view RBAC and instance-scoped service remain unchanged.
+`training-student_student_view` exposes the existing `view()` Action without an MCP output projection. Call it with `{ "id": "<existing student ID>" }`; the ID binds to the existing `GET :id` path parameter and retains `v.tableIdentity()` validation. The optional `DtoStudentView`, serializer, student-view RBAC and instance-scoped service remain unchanged.
 
 The result retains the complete existing serialized `DtoStudentView`, including full `content.descriptionMarkdown`, `trainingRecords` with nested `trainingRecordSubjects`, optional `image` URL presentation and masked mobile. Full Markdown and these nested details are intentionally available under the existing view authority; this does not extend summary's six-field disclosure or add detail joins to select. Missing or out-of-instance students return the same safe not-found result described below.
 
@@ -107,14 +107,14 @@ The existing `training-student` summary action adds the following decorator with
 
 ```ts
 @Mcp.tool({
-  name: 'training_student_summary',
-  description:
-    'Read a student summary by ID using your current student-view permission and instance. Excludes mobile and full notes.',
   output: {
     pick: ['id', 'name', 'level', 'levelTitle', 'descriptionLength', 'summaryText'],
   },
 })
-@Web.get('summary/:id', { summary: $locale('StudentSummary') })
+@Web.get('summary/:id', {
+  summary: $locale('StudentSummary'),
+  description: $locale('StudentSummaryDescription'),
+})
 @Api.body(v.optional(), v.object(DtoStudentSummary))
 @Core.serializer()
 @Passport.rbac({ actionInherit: 'view' })
@@ -125,7 +125,7 @@ async summary(
 }
 ```
 
-Call `training_student_summary` with `{ "id": "<existing student ID>" }`. The result contains exactly `id`, `name`, `level`, `levelTitle`, `descriptionLength` and `summaryText`. Mobile and full Markdown/HTML notes are absent from both the runtime result and the advertised output schema, including its reachable schema definitions. Projection is field minimization, not anonymization: the name and summary remain business data.
+Call `training-student_student_summary` with `{ "id": "<existing student ID>" }`. The result contains exactly `id`, `name`, `level`, `levelTitle`, `descriptionLength` and `summaryText`. Mobile and full Markdown/HTML notes are absent from both the runtime result and the advertised output schema, including its reachable schema definitions. Projection is field minimization, not anonymization: the name and summary remain business data.
 
 Use an existing student the signed-in account may already view. MCP opt-in does not grant student-view permission, change the HTTP response contract or turn this action into owner-only self-service.
 
@@ -134,11 +134,13 @@ Use an existing student the signed-in account may already view. MCP opt-in does 
 | Option        | Meaning                                                                                                                                                                                                                                        |
 | ------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `name`        | Method-only public tool name override. Otherwise the stable default is `module_controller_action`, with unsupported characters in the controller identity replaced by `_`. Names must be unique and contain 1–128 letters, digits, `_` or `-`. |
-| `description` | Tool description; accepts text or locale metadata. Falls back to the action's OpenAPI description, summary, then controller/action identity.                                                                                                   |
+| `description` | Action-scoped tool description; accepts text or locale metadata. Falls back to the same Action's OpenAPI description, summary, then controller/action identity. Never inherits a class-level description.                                      |
 | `readOnly`    | Explicit read classification. Otherwise inherited from the controller, then inferred as `true` for GET and `false` for other methods.                                                                                                          |
 | `output.pick` | Top-level object response field allowlist, applied to runtime validation/projection and the advertised schema closure. It does not alter the HTTP DTO.                                                                                         |
 
-Method options override class defaults. Arrays such as `output.pick` **replace**, rather than append to, inherited arrays. Unknown projection fields, invalid names and duplicate names are configuration errors, not a reason to fall back to unvalidated output.
+The Student examples omit `name` and use the default `training-student_student_<action>`, derived from `training-student.controller.student`. Hyphens in the module name are preserved. Existing clients must refresh tool discovery after a name change; a personal custom scope bound to the old exact name does not automatically admit the renamed tool and must be updated and authorized again.
+
+Method `readOnly` and `output.pick` options override class defaults. Arrays such as `output.pick` **replace**, rather than append to, inherited arrays. An Action's `name` and `description` are resolved independently of class defaults. Unknown projection fields, invalid names and duplicate names are configuration errors, not a reason to fall back to unvalidated output.
 
 GET-based read inference is a convention, not proof that an action has no side effects. Classify actual behavior accurately; a misleading `readOnly: true` would weaken the read-only scope boundary.
 
@@ -177,7 +179,7 @@ Pass the validated authorization scope, `mcp:read` or `mcp:all`, and dispatch wi
 
 ### Resource permission-aware discovery (student example)
 
-On the authenticated shared endpoint, `training_student_select` and `training_student_view` are listed only when the current request passes their existing select and view Action guards respectively. `training_student_group` and `training_student_aggregate` inherit student-select permission; `training_student_summary` inherits student-view permission. Neither permission implies the other. The read-only portion after lookup retirement is:
+On the authenticated shared endpoint, `training-student_student_select` and `training-student_student_view` are listed only when the current request passes their existing select and view Action guards respectively. `training-student_student_group` and `training-student_student_aggregate` inherit student-select permission; `training-student_student_summary` inherits student-view permission. Neither permission implies the other. The read-only portion after lookup retirement is:
 
 | Current student read authority | Read tools listed           |
 | ------------------------------ | --------------------------- |
@@ -186,7 +188,7 @@ On the authenticated shared endpoint, `training_student_select` and `training_st
 | View only                      | View and summary            |
 | Both                           | All five reads              |
 
-Independent create, update and delete authority respectively add `training_student_create`, `training_student_update` and `training_student_delete` only under `mcp:all`. No mutation permission grants reads or another mutation. With all corresponding student business authority, `mcp:all` lists the eight student tools and `mcp:read` lists the five student reads; other eligible Resource tools may also appear. `mcp:read` filters all three mutations before visibility checks and rejects their direct calls before dispatch.
+Independent create, update and delete authority respectively add `training-student_student_create`, `training-student_student_update` and `training-student_student_delete` only under `mcp:all`. No mutation permission grants reads or another mutation. With all corresponding student business authority, `mcp:all` lists the eight student tools and `mcp:read` lists the five student reads; other eligible Resource tools may also appear. `mcp:read` filters all three mutations before visibility checks and rejects their direct calls before dispatch.
 
 All five read tools remain eligible under `mcp:read` and `mcp:all`; OAuth scopes are ceilings, not business-permission grants. Every list checks the current Passport and registered Actions afresh, sequentially on its request context, without executing student Actions, trial writes or student-row queries. Visibility means Action admission, not that a matching student exists. Call-time guards still run independently, so revocation after a list denies a known-name call.
 
