@@ -23,27 +23,23 @@ export interface IModelOptionsPersonalScopes extends IDecoratorModelOptions {}
 @Model<IModelOptionsPersonalScopes>()
 export class ModelPersonalScopes extends BeanModelBase {
   mine() {
-    if (!process.env.CLIENT || !this.$passport.isAuthenticated) return;
+    if (!this.$passport.isAuthenticated) return;
     return this.$useStateData({
       queryKey: ['mine', this.$passport.user?.id],
       queryFn: () => this.scope.api.mcpAuthCustomScope.mine(),
       meta: {
-        disableSuspenseOnInit: true,
         persister: false,
-        ssr: { dehydrate: false },
       },
     });
   }
 
   catalog() {
-    if (!process.env.CLIENT || !this.$passport.isAuthenticated) return;
+    if (!this.$passport.isAuthenticated) return;
     return this.$useStateData({
       queryKey: ['catalog', this.$passport.user?.id],
       queryFn: () => this.scope.api.mcpAuthCustomScope.catalog(),
       meta: {
-        disableSuspenseOnInit: true,
         persister: false,
-        ssr: { dehydrate: false },
       },
     });
   }

@@ -3,7 +3,7 @@ import type { TypeFormOnSubmitData } from 'zova-module-a-form';
 import { BeanControllerPageBase, Use } from 'zova';
 import { Controller } from 'zova-module-a-bean';
 import { ZForm, ZFormField, ZFormFieldPreset } from 'zova-module-a-form';
-import { $QueryEnsureLoaded } from 'zova-module-a-model';
+import { $QueriesEnsureLoaded, $QueryEnsureLoaded } from 'zova-module-a-model';
 import { ZButton } from 'zova-module-basic-button';
 import { ZPage } from 'zova-module-home-base';
 
@@ -22,21 +22,19 @@ export class ControllerPageScopes extends BeanControllerPageBase {
   $$modelPersonalScopes: ModelPersonalScopes;
 
   toolSearch = '';
-  clientReady = false;
 
-  protected __init__() {
-    this.$ssr.handleDirectOrOnHydrated(() => {
-      this.clientReady = true;
-    });
+  protected async __init__() {
+    await $QueriesEnsureLoaded(
+      () => this.queryScopes,
+      () => this.queryCatalog,
+    );
   }
 
   get queryScopes() {
-    if (!this.clientReady) return;
     return this.$$modelPersonalScopes.mine();
   }
 
   get queryCatalog() {
-    if (!this.clientReady) return;
     return this.$$modelPersonalScopes.catalog();
   }
 
@@ -303,11 +301,7 @@ export class ControllerPageScopes extends BeanControllerPageBase {
               <h1 class="text-3xl font-semibold">{this.scope.locale.McpPersonalScopes()}</h1>
               <p class="mt-2 text-base-content/70">{this.scope.locale.McpPersonalScopesHelp()}</p>
             </div>
-            <ZButton
-              class="btn btn-primary"
-              disabled={!this.clientReady}
-              onPerform={() => this.openEditor()}
-            >
+            <ZButton class="btn btn-primary" onPerform={() => this.openEditor()}>
               {this.scope.locale.McpScopeCreate()}
             </ZButton>
           </div>

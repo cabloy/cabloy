@@ -1264,6 +1264,7 @@ test(
       const scopesLink = page.getByRole('link', { name: 'Personal MCP scopes', exact: true });
       await expect(scopesLink).toHaveAttribute('href', scopesPath);
       await scopesLink.click();
+      await expect(page.locator('html')).toHaveAttribute('data-zova-hydrated', 'web');
       await expect(
         page.getByRole('heading', { name: 'Personal MCP scopes', exact: true }),
       ).toBeVisible();
@@ -1292,11 +1293,41 @@ test(
       const entry = page.locator(`article[data-mcp-scope="${scope.scope}"]`);
       await expect(entry.getByRole('heading', { name, exact: true })).toBeVisible();
 
-      let mine = waitForApiResponse(page, 'GET', `${customScopeApiPath}/mine`);
+      const document = await page.request.get(scopesPath);
+      expect(document.ok()).toBe(true);
+      expect(document.headers()['cache-control']).toBe('private, no-store');
+      const html = await document.text();
+      expect(html).toContain(`data-mcp-scope="${scope.scope}"`);
+      expect(html).toContain(`<h2 class="card-title break-words">${name}</h2>`);
+      expect(html).toContain(
+        '<span class="break-all font-mono text-sm">training_student_select</span>',
+      );
+      expect(html).not.toContain('data-zova-hydrated');
+      const queryState = html.match(
+        /<script[^>]*id="ssr-state-defer-init"[^>]*>([\s\S]*?)<\/script>/,
+      )?.[1];
+      expect(queryState !== undefined).toBe(true);
+      expect(queryState?.includes(scope.scope)).toBe(true);
+      expect(queryState?.includes(name)).toBe(true);
+      expect(queryState?.includes('training_student_select')).toBe(true);
+      let hydrationFetches = 0;
+      const observeHydrationFetch = (outgoing: Request) => {
+        if (
+          outgoing.method() === 'GET' &&
+          [`${customScopeApiPath}/mine`, `${customScopeApiPath}/catalog`].includes(
+            new URL(outgoing.url()).pathname,
+          ) &&
+          !outgoing.headers()['x-vona-openapi-schema']
+        ) {
+          hydrationFetches++;
+        }
+      };
+      page.on('request', observeHydrationFetch);
       await page.reload({ waitUntil: 'load' });
-      expect((await mine).ok()).toBe(true);
       await expect(page.locator('html')).toHaveAttribute('data-zova-hydrated', 'web');
       await expect(entry.getByRole('heading', { name, exact: true })).toBeVisible();
+      page.off('request', observeHydrationFetch);
+      expect(hydrationFetches).toBe(0);
       await entry.getByRole('button', { name: 'Edit', exact: true }).click();
       await expect(dialog.getByText('Edit scope', { exact: true })).toBeVisible();
       await expect(
@@ -1318,9 +1349,8 @@ test(
       await dialog.getByRole('button', { name: 'Save', exact: true }).click();
       expect((await updated).ok()).toBe(true);
       await expect(dialog).toHaveCount(0);
-      mine = waitForApiResponse(page, 'GET', `${customScopeApiPath}/mine`);
       await page.reload({ waitUntil: 'load' });
-      expect((await mine).ok()).toBe(true);
+      await expect(page.locator('html')).toHaveAttribute('data-zova-hydrated', 'web');
       await expect(entry.getByRole('heading', { name: renamed, exact: true })).toBeVisible();
       await expect(entry.getByText('Edited and persisted', { exact: true })).toBeVisible();
       const persisted = (
@@ -1344,9 +1374,8 @@ test(
       expect((await deleted).ok()).toBe(true);
       await expect(dialog).toHaveCount(0);
       await expect(entry).toHaveCount(0);
-      mine = waitForApiResponse(page, 'GET', `${customScopeApiPath}/mine`);
       await page.reload({ waitUntil: 'load' });
-      expect((await mine).ok()).toBe(true);
+      await expect(page.locator('html')).toHaveAttribute('data-zova-hydrated', 'web');
       await expect(page.getByRole('button', { name: 'Create scope', exact: true })).toBeEnabled();
       await expect(entry).toHaveCount(0);
       expect(errors).toEqual({ page: 0, console: 0, hydration: 0 });
