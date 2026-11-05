@@ -334,19 +334,9 @@ export default defineConfig({
             { text: 'Rate Limit Guide', link: '/backend/rate-limit-guide' },
             { text: 'Demonstration Mode Guide', link: '/backend/demonstration-mode-guide' },
             { text: 'User Access Guide', link: '/backend/user-access-guide' },
+            { text: 'Shared RBAC Architecture', link: '/backend/shared-rbac-architecture' },
             { text: 'JWT Guide', link: '/backend/jwt-guide' },
             { text: 'Validation Guide', link: '/backend/validation-guide' },
-          ],
-        },
-        {
-          text: 'System Management',
-          items: [
-            { text: 'User Management', link: '/backend/user-management' },
-            { text: 'Role Management', link: '/backend/role-management' },
-            { text: 'Department Management', link: '/backend/department-management' },
-            { text: 'Shared RBAC Architecture', link: '/backend/shared-rbac-architecture' },
-            { text: 'RBAC Authorization', link: '/backend/rbac-authorization' },
-            { text: 'Menu Authorization', link: '/backend/menu-authorization' },
           ],
         },
         {

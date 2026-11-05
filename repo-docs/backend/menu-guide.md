@@ -108,7 +108,7 @@ roles / role-menu -> which admitted subject may discover a menu leaf
 Passport / RBAC   -> which backend actions or data the subject may use
 ```
 
-See [Menu Authorization](/backend/menu-authorization) for the site-admission, navigation-disclosure, and backend-authority boundaries.
+See [Static menu visibility](#static-menu-visibility) for navigation disclosure and [Shared RBAC Architecture](/backend/shared-rbac-architecture) for backend action and data authority.
 
 ## Static menu visibility
 
