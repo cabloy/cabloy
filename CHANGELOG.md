@@ -1,5 +1,11 @@
 # Changelog
 
+## 5.1.262
+
+### Features
+
+- Update functionality.
+
 ## 5.1.261
 
 ### Features
