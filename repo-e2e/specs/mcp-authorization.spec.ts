@@ -1,4 +1,4 @@
-import type { APIRequestContext, Page, Request } from '@playwright/test';
+import type { APIRequestContext, Page, Request, Route } from '@playwright/test';
 
 import { createHash, randomBytes } from 'node:crypto';
 
@@ -1350,9 +1350,54 @@ test(
       expect(hydrationFetches).toBe(0);
       await entry.getByRole('button', { name: 'Edit', exact: true }).click();
       await expect(dialog.getByText('Edit scope', { exact: true })).toBeVisible();
+      const selectedStudentTool = dialog.locator(
+        'input[type="checkbox"][data-tool-name="training-student_student_select"]',
+      );
+      const createStudentTool = dialog.locator(
+        'input[type="checkbox"][data-tool-name="training-student_student_create"]',
+      );
+      await expect(selectedStudentTool).toBeChecked();
+      await createStudentTool.check();
+      await expect(selectedStudentTool).toBeChecked();
+      await expect(createStudentTool).toBeChecked();
+      const toolsUpdated = waitForApiResponse(
+        page,
+        'POST',
+        `${customScopeApiPath}/updateMine/${scope.id}`,
+      );
+      await dialog.getByRole('button', { name: 'Save', exact: true }).click();
+      const toolsConfirmation = page.getByRole('dialog').filter({
+        hasText: scopeAccessChangeConfirm,
+      });
       await expect(
-        dialog.locator('input[type="checkbox"][data-tool-name="training-student_student_select"]'),
-      ).toBeChecked();
+        toolsConfirmation.getByText(scopeAccessChangeConfirm, { exact: true }),
+      ).toBeVisible();
+      await toolsConfirmation.getByRole('button', { name: 'Yes', exact: true }).click();
+      const toolsResponse = await toolsUpdated;
+      const expectedTools = [
+        ...scope.tools,
+        {
+          name: 'training-student_student_create',
+          controller: 'training-student.controller.student',
+          action: 'create',
+        },
+      ];
+      expect(toolsResponse.request().postDataJSON()).toEqual({
+        name,
+        description: scope.description,
+        tools: expectedTools,
+      });
+      expect(toolsResponse.ok()).toBe(true);
+      const toolsScope = (await toolsResponse.json()).data as PersonalMcpScope;
+      expect(toolsScope.tools).toHaveLength(expectedTools.length);
+      expect(toolsScope.tools).toEqual(expect.arrayContaining(expectedTools));
+      await expect(dialog).toHaveCount(0);
+      await page.reload({ waitUntil: 'load' });
+      await expect(page.locator('html')).toHaveAttribute('data-zova-hydrated', 'web');
+      await entry.getByRole('button', { name: 'Edit', exact: true }).click();
+      await expect(dialog.getByText('Edit scope', { exact: true })).toBeVisible();
+      await expect(selectedStudentTool).toBeChecked();
+      await expect(createStudentTool).toBeChecked();
       await dialog
         .getByRole('group', { name: /^Name(?: \*)?$/ })
         .getByRole('textbox')
@@ -1377,6 +1422,7 @@ test(
       const updatedScope = (await updateResponse.json()).data as PersonalMcpScope;
       expect(updatedScope.scope).toBe(`mcp:custom:${renamed}`);
       expect(updatedScope.name).toBe(renamed);
+      expect(updatedScope.tools).toEqual(toolsScope.tools);
       await expect(dialog).toHaveCount(0);
       await expect(entry).toHaveCount(0);
       const renamedEntry = page.locator(`article[data-mcp-scope="mcp:custom:${renamed}"]`);
@@ -1392,8 +1438,86 @@ test(
         scope: `mcp:custom:${renamed}`,
         name: renamed,
         description: 'Edited and persisted',
-        tools: scope.tools,
+        tools: toolsScope.tools,
       });
+
+      const catalogPath = `${customScopeApiPath}/catalog`;
+      const updatePath = `${customScopeApiPath}/updateMine/${scope.id}`;
+      const catalogMatch = (url: URL) => url.origin === origin && url.pathname === catalogPath;
+      let catalogOverrides = 0;
+      let pruningUpdates = 0;
+      const observePruningUpdate = (outgoing: Request) => {
+        if (
+          outgoing.method() === 'POST' &&
+          new URL(outgoing.url()).pathname === updatePath &&
+          !outgoing.headers()['x-vona-openapi-schema']
+        ) {
+          pruningUpdates++;
+        }
+      };
+      const omitMissingTool = async (route: Route) => {
+        if (
+          catalogOverrides ||
+          route.request().method() !== 'GET' ||
+          route.request().headers()['x-vona-openapi-schema']
+        ) {
+          await route.fallback();
+          return;
+        }
+        const response = await route.fetch();
+        expect(response.ok()).toBe(true);
+        const body = await response.json();
+        body.data = body.data.filter(
+          (tool: PersonalMcpScope['tools'][number]) =>
+            !scope.tools.some(
+              selected =>
+                selected.name === tool.name &&
+                selected.controller === tool.controller &&
+                selected.action === tool.action,
+            ),
+        );
+        catalogOverrides++;
+        await route.fulfill({ response, json: body });
+      };
+      page.on('request', observePruningUpdate);
+      await page.route(catalogMatch, omitMissingTool);
+      try {
+        await renamedEntry.getByRole('button', { name: 'Edit', exact: true }).click();
+        await expect(dialog.getByText('Edit scope', { exact: true })).toBeVisible();
+        expect(catalogOverrides).toBe(1);
+        await expect(selectedStudentTool).toHaveCount(0);
+        await expect(createStudentTool).toBeChecked();
+        expect(pruningUpdates).toBe(0);
+        const pruned = waitForApiResponse(page, 'POST', updatePath);
+        await dialog.getByRole('button', { name: 'Save', exact: true }).click();
+        const pruningConfirmation = page.getByRole('dialog').filter({
+          hasText: scopeAccessChangeConfirm,
+        });
+        await expect(
+          pruningConfirmation.getByText(scopeAccessChangeConfirm, { exact: true }),
+        ).toBeVisible();
+        await pruningConfirmation.getByRole('button', { name: 'Yes', exact: true }).click();
+        const pruneResponse = await pruned;
+        const retainedTools = expectedTools.filter(tool => tool.action === 'create');
+        expect(pruneResponse.request().postDataJSON()).toEqual({
+          name: renamed,
+          description: 'Edited and persisted',
+          tools: retainedTools,
+        });
+        expect(pruneResponse.ok()).toBe(true);
+        expect((await pruneResponse.json()).data.tools).toEqual(retainedTools);
+        expect(pruningUpdates).toBe(1);
+        await expect(dialog).toHaveCount(0);
+      } finally {
+        await page.unroute(catalogMatch, omitMissingTool);
+        page.off('request', observePruningUpdate);
+      }
+      await page.reload({ waitUntil: 'load' });
+      await expect(page.locator('html')).toHaveAttribute('data-zova-hydrated', 'web');
+      const prunedScope = (
+        await readPersonalMcpScopes(request, await loginMcpAccount(request, seededMcpAccount))
+      ).find(item => String(item.id) === String(scope.id));
+      expect(prunedScope?.tools).toEqual(expectedTools.filter(tool => tool.action === 'create'));
 
       await renamedEntry.getByRole('button', { name: 'Delete', exact: true }).click();
       await expect(dialog).toBeVisible();

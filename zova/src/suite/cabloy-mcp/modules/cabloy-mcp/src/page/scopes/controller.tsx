@@ -46,13 +46,20 @@ export class ControllerPageScopes extends BeanControllerPageBase {
 
   async openEditor(item?: PersonalScope) {
     await $QueryEnsureLoaded(() => this._apiSchemas(!!item).sdk);
-    await this.queryCatalog?.refetch({ throwOnError: true });
+    const queryCatalog = this.queryCatalog;
+    if (!queryCatalog) return;
+    await queryCatalog.refetch({ throwOnError: true });
+    const catalog = queryCatalog.data;
+    if (!catalog) return;
+    const available = new Set(catalog.map(toolIdentityKey));
     this.toolSearch = '';
     const draft: PersonalScopeDraft = item
       ? {
           name: item.name,
           description: item.description,
-          tools: item.tools.map(tool => ({ ...tool })),
+          tools: item.tools
+            .filter(tool => available.has(toolIdentityKey(tool)))
+            .map(tool => ({ ...tool })),
         }
       : { name: '', description: '', tools: [] };
     this.$appModal.dialog(
