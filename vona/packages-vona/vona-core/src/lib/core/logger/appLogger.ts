@@ -58,7 +58,8 @@ export class AppLogger extends BeanSimple {
     const envName = `LOGGER_CLIENT_${clientName.toUpperCase()}`;
     const level = this.app.meta.env[envName];
     if (level === 'false') return false;
-    if (level === 'true' || !level) return 'info';
+    if (level === 'true') return 'info';
+    if (!level) return this.app.meta.isTest ? 'debug' : 'info';
     return level as LoggerLevel;
   }
 

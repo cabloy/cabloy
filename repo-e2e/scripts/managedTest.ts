@@ -30,8 +30,14 @@ import {
   sendTestClaimEvent,
 } from '../../vona/packages-vona/vona-core/src/lib/core/testClaim.ts';
 import { assertTestRunOwner } from '../../vona/packages-vona/vona-core/src/lib/core/testIsolation.ts';
+import { BrowserDiagnostics } from './browserDiagnostics.ts';
 
 const projectPath = fileURLToPath(new URL('../../vona', import.meta.url));
+
+// Worker tests are sequential. Observe an existing or lazily requested browser
+// without making API-only tests launch one just to collect diagnostics.
+let workerBrowser: Browser | undefined;
+let activeDiagnostics: BrowserDiagnostics | undefined;
 
 interface ManagedBrowserType {
   launchServer: BrowserType['launchServer'];
@@ -231,12 +237,36 @@ export async function useManagedBrowser(
   }
 }
 
-// Unmanaged invocations keep Playwright's exact original fixtures, including
-// remote connections, test options, and additional browser.newContext() calls.
+export interface ManagedTestOptions {
+  browserDiagnosticEvents: readonly string[];
+}
+
+type ManagedTestFixtures = ManagedTestOptions & {
+  browserDiagnostics: Pick<BrowserDiagnostics, 'hasEvent'>;
+};
+
+// Unmanaged invocations keep Playwright's exact original fixtures. The option is
+// consumed/defaulted only in managed mode; callers may define their own override.
 export const test =
   process.env.VONA_TEST_RUN_ID === undefined
-    ? baseTest
-    : baseTest.extend({
+    ? (baseTest as ReturnType<typeof baseTest.extend<ManagedTestFixtures>>)
+    : baseTest.extend<ManagedTestFixtures>({
+        browserDiagnosticEvents: [[], { option: true }],
+        browserDiagnostics: [
+          async ({ browserDiagnosticEvents }, use, testInfo) => {
+            const diagnostics = new BrowserDiagnostics(browserDiagnosticEvents);
+            activeDiagnostics = diagnostics;
+            if (workerBrowser) diagnostics.observeBrowser(workerBrowser);
+            try {
+              await use({ hasEvent: (page, event) => diagnostics.hasEvent(page, event) });
+            } finally {
+              activeDiagnostics = undefined;
+              diagnostics.dispose();
+              await diagnostics.report(testInfo, process.env.VONA_TEST_RUN_ID!);
+            }
+          },
+          { auto: true },
+        ],
         browser: [
           async (
             { playwright, browserName, launchOptions, headless, channel, connectOptions },
@@ -250,7 +280,15 @@ export const test =
                 channel,
                 connectOptions,
               },
-              use,
+              async browser => {
+                workerBrowser = browser;
+                activeDiagnostics?.observeBrowser(browser);
+                try {
+                  await use(browser);
+                } finally {
+                  workerBrowser = undefined;
+                }
+              },
             );
           },
           { scope: 'worker', timeout: 0 },

@@ -57,6 +57,26 @@ function fixture() {
   };
 }
 
+test('test logging defaults to debug without overriding explicit client levels', () => {
+  for (const isTest of [false, true]) {
+    for (const [level, expected] of [
+      [undefined, isTest ? 'debug' : 'info'],
+      ['', isTest ? 'debug' : 'info'],
+      ['false', false],
+      ['true', 'info'],
+      ['info', 'info'],
+      ['debug', 'debug'],
+      ['silly', 'silly'],
+    ] as const) {
+      const factory = new AppLogger();
+      Object.defineProperty(factory, 'app', {
+        value: { meta: { isTest, env: { LOGGER_CLIENT_DEFAULT: level } } },
+      });
+      assert.equal(factory.getFilterLevel(), expected);
+    }
+  }
+});
+
 function payloadProbe() {
   let reads = 0;
   return {

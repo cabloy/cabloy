@@ -18,12 +18,21 @@ export class ControllerPaymentSession extends BeanBase {
     @Arg.user() user: IUser,
     @Arg.param('id', v.tableIdentity()) id: TableIdentity,
   ): Promise<DtoPaymentSessionView> {
-    const session = await this.scope.model.paymentSession.getById(id);
-    if (!session || String(session.userId) !== String(user.id)) {
-      this.app.throw(404, 'payment session not found');
+    this.$logger.debug('payment.session.start received');
+    try {
+      const session = await this.scope.model.paymentSession.getById(id);
+      if (!session || String(session.userId) !== String(user.id)) {
+        this.$logger.debug('payment.session.start unavailable');
+        this.app.throw(404, 'payment session not found');
+      }
+      this.$logger.debug('payment.session.start authorized');
+      const started = await this.scope.service.paymentSession.start(session.id);
+      this.$logger.debug('payment.session.start completed');
+      return this._toView(started);
+    } catch (error) {
+      this.$logger.debug('payment.session.start failed');
+      throw error;
     }
-    const started = await this.scope.service.paymentSession.start(session.id);
-    return this._toView(started);
   }
 
   @Web.post(':id/reconcile')

@@ -192,6 +192,10 @@ export class BeanSsrSiteBase<
           ? 'development'
           : 'production';
       const baseUrl = `${this.app.util.protocol}://${this.app.util.host}`;
+      const LOGGER_TEST_ENABLED = this.app.meta.isTest ? 'true' : 'false';
+      const LOGGER_CLIENT_DEFAULT = this.app.meta.isTest
+        ? this.app.meta.env.LOGGER_CLIENT_DEFAULT
+        : undefined;
       this._siteOptions = deepExtend(
         {
           envServer: {
@@ -200,6 +204,7 @@ export class BeanSsrSiteBase<
             SSR_PROD_HOST: this.app.util.host,
             SSR_WITH_VONA,
             META_MODE,
+            ...(LOGGER_CLIENT_DEFAULT === undefined ? {} : { LOGGER_CLIENT_DEFAULT }),
           },
           envClient: {
             API_BASE_URL: baseUrl,
@@ -207,6 +212,7 @@ export class BeanSsrSiteBase<
             SSR_PROD_HOST: this.app.util.host,
             SSR_WITH_VONA,
             META_MODE,
+            ...(LOGGER_CLIENT_DEFAULT === undefined ? {} : { LOGGER_CLIENT_DEFAULT }),
           },
         },
         this.$scope.ssr.config.site.default,
@@ -214,9 +220,11 @@ export class BeanSsrSiteBase<
         {
           envServer: {
             SITE_ID: onionOptions.siteId,
+            LOGGER_TEST_ENABLED,
           },
           envClient: {
             SITE_ID: onionOptions.siteId,
+            LOGGER_TEST_ENABLED,
           },
         },
       );

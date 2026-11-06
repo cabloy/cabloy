@@ -34,7 +34,17 @@ export class ModelPaymentSession extends BeanModelBase {
     return this.$useMutationData({
       mutationKey: ['start', id],
       mutationFn: async () => {
-        return await this.scope.api.payPaymentSession.start(undefined, { params: { id } });
+        this.$logger.debug('payment.session.start.request started');
+        try {
+          const session = await this.scope.api.payPaymentSession.start(undefined, {
+            params: { id },
+          });
+          this.$logger.debug('payment.session.start.request completed');
+          return session;
+        } catch (error) {
+          this.$logger.debug('payment.session.start.request failed');
+          throw error;
+        }
       },
       onSuccess: async () => {
         await this.$invalidateQueries({ queryKey: ['view', id] });
