@@ -38,7 +38,7 @@ The framework model is shared, but the exact flavor names, site baselines, UI la
 | Frontend metadata/resource handoff to an existing backend consumer                          | Reverse contract loop; rebuild every affected existing flavor pair, then run `npm run deps:vona`. |
 | New deployable URL mount, SSR admission policy, assets, or independent frontend composition | New independent flavor and Vona SSR site; continue with this guide.                               |
 
-A new site is an ownership decision, not a convenient alias for an existing Admin or Web surface.
+A new site is an ownership decision, not a convenient alias for an existing Admin or Web surface. A new suite does not require its own flavor when its pages fit an existing site's deployment and configuration boundary.
 
 ## Define the identity tuple
 
@@ -99,25 +99,62 @@ Choose layouts, title, locales, assets, route exclusions, `requiresAuth`, and re
 
 ### 3. Add durable scripts and root wrappers
 
-Inspect the active root `package.json` and `zova/package.json` first. Add lower-level Zova scripts in the durable source manifest, normally including:
+Inspect the active root `package.json`, authored `zova/package.original.json`, and generated working `zova/package.json`. Directory-isolated application builds are a shared capability and the default workflow in **Cabloy Basic and Cabloy Start**; use the isolated coordinator for normal application builds and new-flavor wrappers in either edition. The shared runner is `scripts/buildZovaIsolated.ts`, with `--operation pair|ssr|rest|spa`; bare flavor arguments default to `pair`. Retain edition-specific flavors, UI, suite availability and output paths when adding the new site's script map.
 
-```text
-dev:ssr:<site-flavor>
-build:ssr:<site-flavor>
-build:rest:<site-flavor>
-preview:ssr:<site-flavor>
+The following are valid JSON fragments to merge into the existing authored manifests, not replacements for the whole files. `exampleWeb` and `exampleAdmin` are proposed example flavors, not built-in commands; create only the surfaces required by the approved site boundaries.
+
+**Root `package.json`:** use a single runner invocation per build wrapper, passing one flavor or the suite's selected flavors:
+
+```json
+{
+  "scripts": {
+    "dev:zova:example:web": "cd zova && npm run dev:ssr:exampleWeb",
+    "dev:zova:example:admin": "cd zova && npm run dev:ssr:exampleAdmin",
+    "build:zova:example": "node scripts/buildZovaIsolated.ts exampleWeb exampleAdmin",
+    "build:zova:example:web": "node scripts/buildZovaIsolated.ts exampleWeb",
+    "build:zova:example:admin": "node scripts/buildZovaIsolated.ts exampleAdmin"
+  }
+}
 ```
 
-The SSR and REST scripts must pass the same flavor. Add a paired batch and an explicit root build wrapper that runs both outputs in order:
+These root build wrappers produce SSR/REST pairs, not SSR alone. For each flavor, the runner compiles SSR and then REST and publishes neither artifact until both succeed. Multiple flavors run sequentially under one build lock; an earlier successfully published pair remains published if a later flavor fails. Do **not** implement a paired wrapper by concatenating separate `build:ssr:*` and `build:rest:*` invocations: the first invocation would publish SSR before REST succeeds.
+
+**`zova/package.original.json`:** retain the shared `build:isolated` coordinator and add the required per-flavor development, SSR-only, REST-only, and preview scripts. This fragment shows the Web surface; add corresponding entries for `exampleAdmin` only when that surface exists:
+
+```json
+{
+  "scripts": {
+    "build:isolated": "node ../scripts/buildZovaIsolated.ts",
+    "dev:ssr:exampleWeb": "npm run prerun && quasar dev --mode ssr --flavor exampleWeb",
+    "build:ssr:exampleWeb": "npm run build:isolated -- --operation ssr exampleWeb",
+    "build:rest:exampleWeb": "npm run build:isolated -- --operation rest exampleWeb",
+    "preview:ssr:exampleWeb": "concurrently \"node ./dist-mock/index.js\" \"node ./dist/ssr-exampleWeb/index.js\""
+  }
+}
+```
+
+The preview example follows the current Basic mock-enabled convention; use it only when the site's mock output and runtime contract require it. Keep SSR and REST flavor spelling identical. Add SPA scripts only if the site actually needs SPA delivery; its build entry must use the same coordinator, for example `"build:spa:exampleWeb": "npm run build:isolated -- --operation spa exampleWeb"`. Do not automatically add every mode or an extra nested batch alias.
+
+Use the paired root wrapper for normal site-level builds and the Vona site's diagnostics command. A suite-level aggregate such as `build:zova:example` is a focused wrapper, not automatic membership in `build:zova:all`. Add a new flavor to `build:zova:all` only when it explicitly belongs to the edition's default shipped artifact set; a new suite alone is not enough.
+
+#### Synchronize scripts without replacing the dependency closure
+
+Root `package.json` and `zova/package.original.json` are the authored sources. After a scripts-only change, synchronize only the `scripts` field into the existing generated `zova/package.json`, preserving its generated dependencies and every other field. From the repository root:
 
 ```bash
-npm run build:ssr:<site-flavor>
-npm run build:rest:<site-flavor>
+node --input-type=module -e '
+import { readFileSync, writeFileSync } from "node:fs";
+const source = JSON.parse(readFileSync("zova/package.original.json", "utf8"));
+const targetPath = "zova/package.json";
+const target = JSON.parse(readFileSync(targetPath, "utf8"));
+target.scripts = source.scripts;
+writeFileSync(targetPath, JSON.stringify(target, null, 2) + "\n");
+'
 ```
 
-Use the root wrapper for normal site-level builds and in Vona diagnostics. Add the flavor to an aggregate build only when it belongs to that edition’s default shipped artifact set.
+This is a scripts-only projection into an already prepared workspace, not permission to author generated dependency state. Do not copy the whole original manifest over the working manifest, hand-edit generated REST output or copied bundles, or run `npm run init` or reinstall dependencies merely to synchronize scripts.
 
-Edit durable manifests such as root `package.json` and `zova/package.original.json`; do not hand-edit generated `zova/package.json`, generated REST output, copied bundles, or generated dependency state. Do not run `npm run init` merely to synchronize a manifest.
+Isolated application builds consume prepared source and dependencies: they do not run build-only `prerun`, install dependencies, or generate shared metadata. If source/dependency/metadata changes require preparation, run root `npm run deps:zova` explicitly **before** building; this is separate from scripts-only synchronization. Development scripts retain their existing `prerun`. Keep source, dependencies, and metadata stable throughout the build and allow only one application-build invocation per checkout. See [Frontend build isolation](/reference/repo-scripts#frontend-build-isolation) for publication and runtime guarantees.
 
 ## Register the Vona SSR site
 

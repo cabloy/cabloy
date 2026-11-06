@@ -22,7 +22,7 @@ After a contract-loop change, verify the branch that actually applies.
 - generated SDK or schema outputs are updated
 - thin model facades and downstream consumers still align with the regenerated contract
 - `npm run tsc`
-- relevant builds: in Basic AI workflows, default to `npm run build:zova:isolated -- <affected-flavor> [...]`, then `npm run build:vona` when needed; resolve Start commands from its active scripts
+- relevant builds: in both Basic and Start, use directory-isolated builds through source-confirmed paired root wrappers such as `npm run build:zova:admin`, `npm run build:zova:web`, or `npm run build:zova`; resolve flavor selection, output paths and coordinator mapping from the active scripts. Prepare inputs explicitly with `npm run deps:zova` when needed, then keep them stable during the build; use `npm run build:vona` when needed
 
 ### Dual-audience resource verification
 
@@ -47,7 +47,7 @@ When one persisted domain has both Admin Resource and Web self-service consumers
 - backend consumers can resolve the refreshed frontend-generated handoff
 - prefer visible proof under `zova/src/**/.metadata/**` when it is available
 - this repo does not rely on a contract-loop pre-commit gate; Claude Code, Codex, and Cursor each use a provider-specific adapter over the same classifier
-- if the change was a high-confidence Zova reverse-source edit through a supported hook path, confirm whether the hook already auto-ran the edition-specific Admin build (`npm run build:zova:isolated -- cabloyBasicAdmin` in Basic, existing `npm run build:zova:admin` in Start) and `npm run deps:vona`; explicitly build other affected flavors before the final dependency sync
+- if the change was a high-confidence Zova reverse-source edit through a supported hook path, confirm whether the hook already auto-ran the edition-specific `npm run build:zova:admin` wrapper and `npm run deps:vona`; both editions use the shared directory-isolated build workflow, with concrete flavor and command mappings confirmed from the active repository; explicitly build other affected flavors before the final dependency sync
 - Codex evaluates an `apply_patch` batch as operation-aware entries: an explicit Delete is classified from reliable path evidence only; an unreadable Add or Update target is an inspection failure rather than a synthetic delete
 - Cursor Agent writes use native `postToolUse` context and Cursor Tab writes use native `afterTabFileEdit` side effects; the imported Claude bridge is intentionally inactive in Cursor to avoid duplicate work
 - if the change was consumer-side, low-confidence, outside a supported hook path, affected an untrusted/discovery-disabled hook, or was in another edition branch, run the reverse sync flow manually instead of assuming it already happened

@@ -21,9 +21,9 @@ A complete SSR deployment path usually needs all of these pieces to stay aligned
 
 ## Start from the shared root scripts
 
-In Cabloy Basic, the root `package.json` is the first workflow surface.
+In Cabloy Basic and Cabloy Start, the active root `package.json` is the first workflow surface.
 
-Representative current root scripts include:
+Both editions expose this root command family, with edition-specific flavor mappings:
 
 ```bash
 npm run dev:zova:admin
@@ -56,15 +56,15 @@ In the current public repo:
 
 For Cabloy Start:
 
-- the same high-level SSR workflow still applies
-- but flavor names, site baselines, assets, and project paths can differ
-- do not reuse Basic flavor examples blindly in Start-specific documentation or automation
+- `__CABLOY_START__` identifies the edition; its default Admin/Web wrappers select `cabloyStartAdmin` and `cabloyStartWeb`
+- the same SSR workflow and directory-isolated application-build capability apply
+- actual script maps, UI, suite availability, site baselines, assets and output paths remain edition-specific; do not reuse Basic examples blindly in Start documentation or automation
 
 ## Two common workflow levels
 
 ### Level 1: root-wrapper workflow
 
-Use this when you want the standard Cabloy Basic monorepo workflow.
+Use this for the standard monorepo workflow in either edition, selecting flavors through the active root manifest.
 
 Representative commands:
 
@@ -78,11 +78,14 @@ npm run build
 Practical interpretation:
 
 - `dev:zova:*` starts the Zova standalone SSR development entry (the default `9000` listener)
-- `build:zova` builds frontend SSR output in batch mode
+- `build:zova` selects the default Admin/Web SSR/REST pairs for the active edition: Basic's `cabloyBasicAdmin` / `cabloyBasicWeb`, or Start's `cabloyStartAdmin` / `cabloyStartWeb`
+- `build:zova:all` builds all four Basic/Commerce pairs in Basic; in Start it aliases `build:zova`, not Basic's artifact set
 - `build:zova:admin` and `build:zova:web` are explicit root-wrapper paths for flavor-specific SSR output plus related REST generation
 - `build` is the fullstack alignment path when frontend and backend output should move together
 
-Ordinary root build commands use the existing workspace scripts without a source snapshot; they do not guarantee coexistence with a development server in the same checkout. For AI build verification, or when you deliberately need to leave one standalone SSR development server running, use `npm run build:zova:isolated -- cabloyBasicWeb` (substitute the required flavor). This explicit command compiles each SSR/REST pair in a private copy of the prepared frontend workspace, without running dependency preparation in the live workspace. Keep inputs stable during snapshot preparation and prepare missing dependencies/metadata separately. Publication to standard outputs and configured copy targets remains a shared handoff, not seamless hot deployment of a running Vona integrated SSR process. Do not overlap ordinary and isolated artifact publication. See [Frontend build isolation](/reference/repo-scripts#frontend-build-isolation-in-cabloy-basic) for disk cost, failure handling and limits.
+Directory isolation is the default application-build workflow in both Cabloy Basic and Cabloy Start, including supported root wrappers and nested SSR/REST/SPA builds. Prefer `npm run build:zova:web`, `npm run build:zova:admin`, or the relevant batch; `build:zova:isolated` is only a compatibility alias, not an opt-in isolation mode. Select the edition's actual flavors and artifact set rather than copying Basic-specific suite wrappers or output paths into Start.
+
+Isolated builds consume live prepared source/dependencies without automatic installation or shared metadata generation: run `npm run deps:zova` explicitly when preparation is needed, then keep source, dependencies and metadata stable throughout compilation. One build can coexist with one Zova standalone SSR development server, but shared publication is not hot deployment of a live Vona integrated SSR consumer. Only one application-build invocation is supported per checkout. See [Frontend build isolation](/reference/repo-scripts#frontend-build-isolation) for owned roots, preparation, publication and process-ownership limits.
 
 ### Level 2: flavor-specific Zova workflow
 
@@ -104,6 +107,8 @@ This level is useful when you need to separate:
 - admin vs web
 - SSR output vs REST/type output
 - root-wrapper behavior vs lower-level flavor behavior
+
+Individual nested `build:ssr:*` commands publish SSR only, and `build:rest:*` commands publish REST only; neither silently builds the other artifact. The Basic/Commerce batch scripts remain paired. For the Vona integrated SSR handoff, prefer the root paired wrapper rather than a REST-only refresh.
 
 ## Development workflow
 
@@ -160,7 +165,7 @@ npm run build
 
 In the current repo, this means:
 
-- build Zova SSR output first
+- build all four Zova SSR/REST pairs first
 - then build Vona
 
 This is the safer default when a change crosses the frontend/backend SSR boundary.
@@ -176,11 +181,7 @@ cd zova && npm run build:rest:cabloyBasicAdmin
 cd zova && npm run build:rest:cabloyBasicWeb
 ```
 
-Treat these deliberately.
-
-Use them when the workflow depends on generated contract-aligned frontend surfaces in addition to SSR bundle output.
-
-Do **not** assume every SSR-only change needs manual extra regeneration, but do verify whether your target workflow depends on these generated artifacts.
+Treat these as REST-only refreshes. Ordinary root `build:zova*` wrappers already build the matching SSR/REST pair; do not repeat REST generation after them. When Vona consumes changed frontend render/action/metadata, build the relevant pair first, then run `npm run deps:vona` rather than treating REST-only output as a complete SSR handoff.
 
 ## Dev vs prod mindset
 

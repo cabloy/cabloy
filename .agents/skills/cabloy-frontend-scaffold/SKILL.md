@@ -108,6 +108,10 @@ Typical examples:
 - `npm run zova :openapi:config ...`
 - `npm run zova :openapi:generate ...`
 
+### Independent flavor or SSR Site
+
+Do not create a new flavor merely because a new business suite is being scaffolded. When a distinct deployment or configuration boundary actually requires an independent SSR Site/flavor, use `cabloy-contract-loop` Mode E and [Independent SSR Site and Flavor Setup](../../../repo-docs/fullstack/ssr-site-and-flavor-setup.md). In both Basic and Start, new application build scripts must reuse the active repository's isolation coordinator, not direct Quasar builds; keep ordinary page/module scaffolding on the paths above.
+
 ## Step 4: Inspect the generated or transformed frontend thread
 
 After generation or refactor, inspect what the CLI created and keep it as the baseline.

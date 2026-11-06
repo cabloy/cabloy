@@ -49,6 +49,10 @@ vona/.zova-rest
 zova/.zova
 zova/.zova-rest
 zova/.quasar
+zova/.zova-build-*
+zova/.zova-rest-build-*
+zova/.quasar-build-*
+zova/.tsconfig.rest-build-*.json
 
 **/src-cordova/node_modules
 **/src-cordova/platforms

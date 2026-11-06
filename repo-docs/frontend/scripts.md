@@ -43,7 +43,17 @@ npm run build:zova:commerce:web
 npm run build:zova:commerce:admin
 ```
 
-`npm run build:zova:all` sequentially runs the focused Basic and Commerce batch builds. `npm run init` uses it to prepare every shipped Cabloy Basic SSR/REST flavor before Vona is initialized. For normal frontend work, continue to use `build:zova` or `build:zova:commerce` when only that suite's artifacts changed.
+`npm run build:zova:all` builds all four Basic/Commerce SSR/REST pairs sequentially in one runner invocation under one build lock. `npm run init` deliberately prepares dependencies/metadata, then uses that build before Vona initialization. For normal frontend work, continue to use `build:zova` or `build:zova:commerce` when only that suite's artifacts changed.
+
+The Basic root wrappers build SSR/REST pairs. Inside `zova/`, `build` and individual `build:ssr:*` scripts remain SSR-only, individual `build:rest:*` scripts remain REST-only, `build:spa` builds SPA for `admin`, and Basic/Commerce batches build pairs. These artifact selections do not change the shared isolation workflow below.
+
+## Shared application-build isolation
+
+Directory-isolated application builds are a shared capability and the default application-build workflow in **Cabloy Basic and Cabloy Start**. Ordinary root wrappers and nested SSR/REST/SPA scripts use the same isolated coordinator; `build:zova:isolated` is a compatibility alias, not an opt-in isolation mode. Prefer the active repository's ordinary root wrapper for the affected SSR/REST pair. The shared `build:zova`, `build:zova:admin` and `build:zova:web` names select Basic or Start flavors as described in their edition sections; suite batches, UI and generated output paths remain edition-specific.
+
+Isolated builds require prepared inputs: run root `npm run deps:zova` explicitly when needed. They do not automatically install dependencies or generate shared metadata; development/typecheck preparation is unchanged. Keep source, dependencies and metadata stable during a build, allow only one application-build invocation per checkout, and coordinate shared publication. One build can coexist with one Zova standalone SSR development server, but publication is not hot deployment of a live Vona integrated SSR consumer. This covers application builds, not the separate module/library `:bin:buildModule` pipeline. See [Frontend build isolation](/reference/repo-scripts#frontend-build-isolation) for runtime roots, process ownership, failure handling and publication guarantees.
+
+For a new flavor, use [Add durable scripts and root wrappers](/fullstack/ssr-site-and-flavor-setup#_3-add-durable-scripts-and-root-wrappers) as the canonical recipe: one paired runner invocation per root build wrapper, coordinator-backed per-mode scripts, and scripts-only synchronization from the authored manifest. Do not concatenate SSR-only and REST-only builds, add SPA without a delivery need, or automatically add a new suite to `build:zova:all`.
 
 ## Zova standalone SSR development
 
@@ -197,7 +207,7 @@ npm run build:zova:admin
 npm run build:zova:web
 ```
 
-Cabloy Start does not expose the Basic Commerce wrapper family.
+These wrappers select the Start SSR/REST pairs, not Basic artifacts; `build:zova:all` aliases `build:zova` in Start. Cabloy Start does not expose the Basic Commerce wrapper family. They use the same [Shared application-build isolation](#shared-application-build-isolation) workflow.
 
 ## Start SSR browser acceptance
 

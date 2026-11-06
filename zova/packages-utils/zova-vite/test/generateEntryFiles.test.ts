@@ -6,7 +6,19 @@ import { test } from 'node:test';
 
 import { generateEntryFiles } from '../src/generateEntryFiles.ts';
 
-test('generated application entry files retain actual source suffixes', async () => {
+test('generated application entry files retain actual source suffixes', async t => {
+  const previous = {
+    ZOVA_RUNTIME_DIR: process.env.ZOVA_RUNTIME_DIR,
+    ZOVA_ISOLATED: process.env.ZOVA_ISOLATED,
+  };
+  delete process.env.ZOVA_RUNTIME_DIR;
+  delete process.env.ZOVA_ISOLATED;
+  t.after(() => {
+    for (const [key, value] of Object.entries(previous)) {
+      if (value === undefined) delete process.env[key];
+      else process.env[key] = value;
+    }
+  });
   const appDir = await mkdtemp(path.join(tmpdir(), 'zova-entry-'));
   try {
     const configDir = path.join(appDir, 'src/front/config');
@@ -35,6 +47,19 @@ test('generated application entry files retain actual source suffixes', async ()
       files.map(file => readFile(path.join(appDir, '.zova', file), 'utf8')),
     );
     assert.deepEqual(second, first);
+    process.env.ZOVA_ISOLATED = 'true';
+    process.env.ZOVA_RUNTIME_DIR = '.zova-build-ID';
+    await generateEntryFiles(meta as any, options as any, modules as any, {});
+    assert.deepEqual(
+      await Promise.all(
+        files.map(file => readFile(path.join(appDir, '.zova-build-ID', file), 'utf8')),
+      ),
+      first,
+    );
+    assert.deepEqual(
+      await Promise.all(files.map(file => readFile(path.join(appDir, '.zova', file), 'utf8'))),
+      first,
+    );
   } finally {
     await rm(appDir, { recursive: true, force: true });
   }

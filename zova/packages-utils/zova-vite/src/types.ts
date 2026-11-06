@@ -5,11 +5,19 @@ export interface ZovaViteConfigChunkVendor {
 
 export interface ZovaViteConfigOptions {
   appDir: string;
-  runtimeDir: string;
+  /** Generated runtime directory, relative to appDir. Defaults to `.zova`. */
+  runtimeDir?: string;
   zovaManualChunk?: {
     debug: boolean;
     vendors: ZovaViteConfigChunkVendor[];
   };
+}
+
+export interface ZovaViteContext {
+  appDir: string;
+  runtimeDir: string;
+  runtimePath: string;
+  isolated: boolean;
 }
 
 export interface ZovaViteConfigResult {

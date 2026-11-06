@@ -7,6 +7,7 @@ import path from 'node:path';
 import type { ZovaViteConfigOptions } from './types.ts';
 
 import { getEnvMeta } from './utils.ts';
+import { resolveZovaViteContext } from './zovaRuntimeResolver.ts';
 
 // const __ModuleLibs = [
 //   /src\/module\/([^/]*)\//,
@@ -68,6 +69,7 @@ export function createConfigUtils(
   loadModulesMeta: () => ReturnType<typeof glob>;
   codeSplittingGroups: () => any[];
 } {
+  const { runtimeDir } = resolveZovaViteContext(configOptions);
   let __modulesMeta: Awaited<ReturnType<typeof glob>>;
   return {
     loadEnvs: __loadEnvs,
@@ -226,7 +228,9 @@ export function createConfigUtils(
     const groups: any[] = [];
     if (process.env.BUILD_MINIFY === 'false') {
       groups.push({
-        test: /\.zova\/config\.ts/,
+        test: new RegExp(
+          `(?:^|/)${runtimeDir.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}/config\\.ts(?:$|[?#])`,
+        ),
         name: '-zova-config',
       });
     }

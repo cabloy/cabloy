@@ -11,6 +11,7 @@ import type { ZovaViteConfigOptions } from './types.ts';
 // import { generateCel } from './generateCel.ts';
 // import { generateZod } from './generateZod.ts';
 import { copyTemplateFile, getEnvMeta, resolveTemplatePath } from './utils.ts';
+import { resolveZovaViteContext } from './zovaRuntimeResolver.ts';
 
 export async function generateEntryFiles(
   configMeta: ZovaConfigMeta,
@@ -18,6 +19,7 @@ export async function generateEntryFiles(
   modulesMeta: Awaited<ReturnType<typeof glob>>,
   env: Record<string, string>,
 ) {
+  const { runtimeDir } = resolveZovaViteContext(configOptions);
   // config
   await __generateConfig();
   // modules meta
@@ -59,14 +61,14 @@ export async function generateEntryFiles(
     }
     const contentDest = `${imports.join('\n')}\nexport default [${constNames.join(', ')}];`;
     // output
-    const fileDest = path.join(configOptions.appDir, configOptions.runtimeDir, 'config.ts');
+    const fileDest = path.join(configOptions.appDir, runtimeDir, 'config.ts');
     fse.ensureFileSync(fileDest);
     fse.writeFileSync(fileDest, contentDest, 'utf-8');
   }
 
   async function __generateAppComponent() {
     // dest
-    const pathDest = path.join(configOptions.appDir, configOptions.runtimeDir, 'app');
+    const pathDest = path.join(configOptions.appDir, runtimeDir, 'app');
     fse.ensureDirSync(pathDest);
     // vars
     const vars = {
@@ -88,8 +90,8 @@ export async function generateEntryFiles(
     const moduleNames = modulesArray.map(item => item.info.relativeName);
     // src
     const fileSrc = resolveTemplatePath('zova-modules-meta.ejs');
-    const fileDest = path.join(configOptions.appDir, configOptions.runtimeDir, 'modules-meta.ts');
-    await fse.ensureDir(path.join(configOptions.appDir, configOptions.runtimeDir));
+    const fileDest = path.join(configOptions.appDir, runtimeDir, 'modules-meta.ts');
+    await fse.ensureDir(path.join(configOptions.appDir, runtimeDir));
     await copyTemplateFile(fileSrc, fileDest, { modules, moduleNames });
   }
 
@@ -106,7 +108,7 @@ export async function generateEntryFiles(
     }
     // src
     const fileSrc = resolveTemplatePath('env.ejs');
-    const fileDest = path.join(configOptions.appDir, configOptions.runtimeDir, 'env.ts');
+    const fileDest = path.join(configOptions.appDir, runtimeDir, 'env.ts');
     await copyTemplateFile(fileSrc, fileDest, {
       envNormal: JSON.stringify(envNormal, null, 2),
       envSecret: JSON.stringify(envSecret, null, 2),

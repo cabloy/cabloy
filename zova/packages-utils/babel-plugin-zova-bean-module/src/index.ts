@@ -10,12 +10,13 @@ interface ContextInfo {
 
 export interface PluginZovaBeanModuleOptions {
   brandName: 'zova' | 'vona';
+  runtimeDir?: string;
 }
 
 export default function (_plugin: any, options: PluginZovaBeanModuleOptions) {
   const visitor: Visitor<PluginPass> = {
     Program(path: NodePath<t.Program>, state) {
-      const beanInfo = __parseBeanInfo(state);
+      const beanInfo = __parseBeanInfo(state, options);
       if (!beanInfo) return;
       // context
       const context: ContextInfo = {
@@ -52,15 +53,18 @@ function insertImport(path: NodePath<t.Program>, options: PluginZovaBeanModuleOp
   path.get('body')[0].insertBefore(nodeImport);
 }
 
-function __parseBeanInfo(state) {
+function __parseBeanInfo(state, options: PluginZovaBeanModuleOptions) {
   const sourceFileName = state.file.opts.sourceFileName || state.file.opts.filename || '';
-  const moduleName = __getModuleName(sourceFileName);
+  const moduleName = __getModuleName(sourceFileName, options);
   if (!moduleName) return;
   return { module: moduleName };
 }
 
-function __getModuleName(sourceFileName: string | null | undefined) {
-  if (!__checkIfValid(sourceFileName)) return;
+function __getModuleName(
+  sourceFileName: string | null | undefined,
+  options: PluginZovaBeanModuleOptions,
+) {
+  if (!__checkIfValid(sourceFileName, options)) return;
   const moduleInfo = parseInfoFromPath(sourceFileName);
   if (!moduleInfo) return;
   return moduleInfo.relativeName;
@@ -89,9 +93,10 @@ function __createDecoratorNode(beanInfo) {
 //   }
 // }
 
-function __checkIfValid(fileName?: string | null) {
+function __checkIfValid(fileName: string | null | undefined, options: PluginZovaBeanModuleOptions) {
   if (!fileName) return false;
-  return !['src/boot/app/', '.zova/app/', 'src/backend/', '.vona/'].some(item => {
-    return fileName.includes(item);
-  });
+  const normalized = `/${fileName.replaceAll('\\', '/')}`;
+  const excluded = ['src/boot/app/', '.zova/app/', 'src/backend/', '.vona/'];
+  if (options.runtimeDir) excluded.push(`${options.runtimeDir}/app/`);
+  return !excluded.some(item => normalized.includes(`/${item}`));
 }

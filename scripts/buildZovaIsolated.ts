@@ -36,28 +36,52 @@ export interface OutputPlan {
   buildCopyRelease: string;
   buildRestCopyDist: string;
 }
+export type BuildOperation = 'pair' | 'ssr' | 'rest' | 'spa';
+export type BuildAppMode = 'ssr' | 'spa';
+
+export function parseBuildRequest(args: string[]): {
+  operation: BuildOperation;
+  flavors: string[];
+} {
+  let operation: BuildOperation = 'pair';
+  let selected = false;
+  const flavors: string[] = [];
+  for (let index = 0; index < args.length; index++) {
+    const arg = args[index]!;
+    if (arg === '--') continue;
+    if (arg === '--operation' || arg.startsWith('--operation=')) {
+      if (selected) throw failure('Select the build operation only once');
+      const value = arg === '--operation' ? args[++index] : arg.slice('--operation='.length);
+      if (!['pair', 'ssr', 'rest', 'spa'].includes(value ?? ''))
+        throw failure('Build operation must be pair, ssr, rest or spa');
+      operation = value as BuildOperation;
+      selected = true;
+    } else {
+      validateFlavor(arg);
+      flavors.push(arg);
+    }
+  }
+  if (!flavors.length) throw failure('Select at least one Zova flavor');
+  if (new Set(flavors).size !== flavors.length) throw failure('Duplicate Zova build flavor');
+  return { operation, flavors };
+}
+
 export interface BuildTarget {
   source: string;
   destination: string;
+}
+export interface BuildGeneratedRoots {
+  quasar: string;
+  runtime: string;
+  rest: string;
 }
 export interface TargetOptions {
   rootDir: string;
   zovaDir: string;
   runDir: string;
+  artifactRoot?: string;
 }
 const ROOT_DIR = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
-const TRANSIENT = new Set([
-  '.zova',
-  '.quasar',
-  '.zova-rest',
-  'dist',
-  'dist-releases',
-  '.cache',
-  '.vite',
-  '.turbo',
-  'coverage',
-  'run',
-]);
 
 function within(root: string, target: string) {
   const relative = path.relative(root, target);
@@ -201,9 +225,6 @@ export async function copySnapshotTree(
     }
   }
 }
-export async function snapshotZova(source: string, destination: string) {
-  await copySnapshotTree(source, destination, { excludeTopLevel: TRANSIENT });
-}
 
 function overrideEnv(env: NodeJS.ProcessEnv, overrides: NodeJS.ProcessEnv): NodeJS.ProcessEnv {
   const result = { ...env };
@@ -215,14 +236,18 @@ function overrideEnv(env: NodeJS.ProcessEnv, overrides: NodeJS.ProcessEnv): Node
   return { ...result, ...overrides };
 }
 
-export function outputPlanEnv(env: NodeJS.ProcessEnv, flavor: string): NodeJS.ProcessEnv {
+export function outputPlanEnv(
+  env: NodeJS.ProcessEnv,
+  flavor: string,
+  appMode: BuildAppMode = 'ssr',
+): NodeJS.ProcessEnv {
   validateFlavor(flavor);
   return overrideEnv(env, {
     NODE_ENV: 'production',
     FLAVOR: flavor,
     META_FLAVOR: flavor,
     META_MODE: 'production',
-    META_APP_MODE: 'ssr',
+    META_APP_MODE: appMode,
   });
 }
 
@@ -230,13 +255,19 @@ export function compilationEnv(
   env: NodeJS.ProcessEnv,
   privateOutDir: string,
   flavor: string,
+  appMode: BuildAppMode = 'ssr',
 ): NodeJS.ProcessEnv {
   validateFlavor(flavor);
-  // The installed afterBuild hook joins appDir + getOutDir; an absolute value
-  // does not mean the same thing to that hook and to Vite. Use one private relative path.
-  if (privateOutDir !== `dist/ssr-${flavor}`)
-    throw failure('Compilation output must be the canonical private dist path');
-  return overrideEnv(outputPlanEnv(env, flavor), {
+  // Both Vite and the extension understand this app-relative path. Keep artifacts
+  // inside the owned generated root, not the shared zova/dist tree (or an absolute
+  // path that path.join(appDir, getOutDir()) would reinterpret in older versions).
+  if (
+    !/^\.quasar-build-[a-zA-Z0-9-]+\/output\/(?:ssr|spa)-[\w-]+$/.test(privateOutDir) ||
+    path.posix.basename(privateOutDir) !== `${appMode}-${flavor}`
+  ) {
+    throw failure('Compilation output must be the canonical private generated-root path');
+  }
+  return overrideEnv(outputPlanEnv(env, flavor, appMode), {
     BUILD_OUTDIR: privateOutDir,
     BUILD_COPY_DIST: '',
     BUILD_COPY_RELEASE: '',
@@ -244,38 +275,73 @@ export function compilationEnv(
   });
 }
 
+export function buildGeneratedRoots(zovaDir: string, runDir: string): BuildGeneratedRoots {
+  const id = path.basename(runDir).replace(/^zova-build-/, '');
+  if (!/^[a-z0-9-]+$/i.test(id) || path.basename(runDir) !== `zova-build-${id}`)
+    throw failure('Invalid private build run name');
+  return {
+    quasar: path.join(zovaDir, `.quasar-build-${id}`),
+    runtime: path.join(zovaDir, `.zova-build-${id}`),
+    rest: path.join(zovaDir, `.zova-rest-build-${id}`),
+  };
+}
+
+export function generatedBuildEnv(
+  env: NodeJS.ProcessEnv,
+  roots: BuildGeneratedRoots,
+): NodeJS.ProcessEnv {
+  return overrideEnv(env, {
+    ZOVA_ISOLATED: 'true',
+    ZOVA_RUNTIME_DIR: path.basename(roots.runtime),
+    ZOVA_QUASAR_ROOT: roots.quasar,
+    ZOVA_QUASAR_CACHE: path.join(roots.quasar, 'cache'),
+    ZOVA_QUASAR_CONFIG_DIR: path.join(roots.quasar, 'config'),
+    ZOVA_REST_DIR: path.basename(roots.rest),
+    ZOVA_REST_TSCONFIG: `.tsconfig.rest-build-${path.basename(roots.rest).slice('.zova-rest-build-'.length)}.json`,
+  });
+}
+
 export function createBuildTargets(
   zovaDir: string,
   flavor: string,
   plan: OutputPlan,
-  sources: { ssr: string; rest: string },
+  sources: { ssr?: string; rest?: string; spa?: string },
 ): BuildTarget[] {
   validateFlavor(flavor);
   if (!/^[a-z0-9][\w.+-]*$/i.test(plan.appVersion))
     throw failure('Missing or unsafe APP_VERSION in output plan');
-  validateOutputPath(plan.buildOutDir);
-  const ssrName = `ssr-${flavor}`;
-  const restName = `rest-${flavor}`;
-  const releaseName = `${ssrName}-${plan.appVersion}`;
-  const intendedOut = plan.buildOutDir
-    ? path.resolve(zovaDir, plan.buildOutDir)
-    : path.join(zovaDir, 'dist', ssrName);
-  const targets: BuildTarget[] = [
-    { source: sources.ssr, destination: path.join(zovaDir, 'dist', ssrName) },
-    { source: sources.rest, destination: path.join(zovaDir, 'dist', restName) },
-    { source: sources.ssr, destination: intendedOut },
-    { source: sources.ssr, destination: path.join(zovaDir, 'dist-releases', releaseName) },
-    {
-      source: sources.rest,
-      destination: path.join(zovaDir, 'dist-releases', `${restName}-${plan.appVersion}`),
-    },
-  ];
-  addCopies(sources.ssr, plan.buildCopyDist, path.basename(intendedOut));
-  addCopies(sources.ssr, plan.buildCopyRelease, releaseName);
-  const kebab = (flavor[0]!.toLowerCase() + flavor.slice(1))
-    .replace(/([A-Z])/g, '-$1')
-    .toLowerCase();
-  addCopies(sources.rest, plan.buildRestCopyDist, kebab);
+  const targets: BuildTarget[] = [];
+  for (const appMode of ['ssr', 'spa'] as const) {
+    const source = sources[appMode];
+    if (!source) continue;
+    validateOutputPath(plan.buildOutDir);
+    const name = `${appMode}-${flavor}`;
+    const releaseName = `${name}-${plan.appVersion}`;
+    const intendedOut = plan.buildOutDir
+      ? path.resolve(zovaDir, plan.buildOutDir)
+      : path.join(zovaDir, 'dist', name);
+    targets.push(
+      { source, destination: path.join(zovaDir, 'dist', name) },
+      { source, destination: intendedOut },
+      { source, destination: path.join(zovaDir, 'dist-releases', releaseName) },
+    );
+    addCopies(source, plan.buildCopyDist, path.basename(intendedOut));
+    addCopies(source, plan.buildCopyRelease, releaseName);
+  }
+  if (sources.rest) {
+    const name = `rest-${flavor}`;
+    targets.push(
+      { source: sources.rest, destination: path.join(zovaDir, 'dist', name) },
+      {
+        source: sources.rest,
+        destination: path.join(zovaDir, 'dist-releases', `${name}-${plan.appVersion}`),
+      },
+    );
+    const kebab = (flavor[0]!.toLowerCase() + flavor.slice(1))
+      .replace(/([A-Z])/g, '-$1')
+      .toLowerCase();
+    addCopies(sources.rest, plan.buildRestCopyDist, kebab);
+  }
   return targets.filter(
     (target, index) =>
       targets.findIndex(
@@ -314,16 +380,35 @@ export async function validateBuildTargets(
   const root = await realpath(options.rootDir);
   const zova = await realpath(options.zovaDir);
   const run = await realpath(options.runDir);
+  let artifactRoot = run;
+  if (options.artifactRoot) {
+    const expected = buildGeneratedRoots(zova, run).quasar;
+    if (!samePath(options.artifactRoot, expected) || (await lstat(expected)).isSymbolicLink())
+      throw failure('Build artifact root must be the owned generated root');
+    artifactRoot = await realpath(expected);
+    if (
+      !samePath(artifactRoot, expected) ||
+      (await readFile(path.join(expected, 'owner.json'), 'utf8')) !==
+        (await readFile(path.join(run, 'owner.json'), 'utf8'))
+    ) {
+      throw failure('Build artifact root ownership changed');
+    }
+  }
   const destinations: string[] = [];
   for (const target of targets) {
     validateOutputPath(target.destination);
     const destination = await canonical(target.destination);
     validateOutputPath(destination);
     const source = await canonical(target.source);
-    if (!within(run, source) || samePath(source, run))
+    if (!within(artifactRoot, source) || samePath(source, artifactRoot))
       throw failure('Build artifact source must belong to this private run');
-    if (overlaps(run, destination) || within(destination, root))
+    if (
+      overlaps(run, destination) ||
+      overlaps(artifactRoot, destination) ||
+      within(destination, root)
+    ) {
       throw failure('Build target overlaps the checkout or private run');
+    }
     if ((await exists(target.destination)) && (await lstat(target.destination)).isSymbolicLink())
       throw failure('Build target must not replace a symlink');
     const parts = [
@@ -447,7 +532,7 @@ export async function runPairedBuild(options: {
 
 export async function withBuildLock(
   rootDir: string,
-  operation: (runDir: string) => Promise<void>,
+  operation: (runDir: string, roots: BuildGeneratedRoots) => Promise<void>,
 ): Promise<void> {
   const base = path.join(rootDir, 'run');
   await mkdir(base, { recursive: true });
@@ -464,6 +549,9 @@ export async function withBuildLock(
   }
   const owner = JSON.stringify({ pid: process.pid, token: randomUUID() });
   let runDir: string | undefined;
+  const generated: string[] = [];
+  let restTsconfig: string | undefined;
+  const identities = new Map<string, Stats>();
   let retain = false;
   let primary: unknown;
   let failed = false;
@@ -471,7 +559,30 @@ export async function withBuildLock(
     await writeFile(path.join(lock, 'owner.json'), owner, { flag: 'wx', mode: 0o600 });
     runDir = await mkdtemp(path.join(base, 'zova-build-'));
     await writeFile(path.join(runDir, 'owner.json'), owner, { flag: 'wx', mode: 0o600 });
-    await operation(runDir);
+    identities.set(lock, await lstat(lock));
+    identities.set(runDir, await lstat(runDir));
+    const zova = path.join(rootDir, 'zova');
+    await mkdir(zova, { recursive: true });
+    if ((await lstat(zova)).isSymbolicLink())
+      throw failure('Zova application directory must not be a symlink');
+    const roots = buildGeneratedRoots(zova, runDir);
+    for (const directory of Object.values(roots)) {
+      await mkdir(directory, { mode: 0o700 });
+      identities.set(directory, await lstat(directory));
+      generated.push(directory);
+      await writeFile(path.join(directory, 'owner.json'), owner, { flag: 'wx', mode: 0o600 });
+    }
+    await mkdir(path.join(roots.quasar, 'cache'));
+    await mkdir(path.join(roots.quasar, 'config'));
+    await mkdir(path.join(roots.quasar, 'output'));
+    // rolldown-plugin-dts derives --rootDir from the tsconfig's directory. Keep
+    // this owned generated file beside the application tsconfig, not in REST's
+    // private entry root. REST updates it in place, preserving this identity.
+    const tsconfig = path.join(zova, generatedBuildEnv({}, roots).ZOVA_REST_TSCONFIG!);
+    await writeFile(tsconfig, '{}\n', { flag: 'wx', mode: 0o600 });
+    restTsconfig = tsconfig;
+    identities.set(tsconfig, await lstat(tsconfig));
+    await operation(runDir, roots);
   } catch (error) {
     retain = !!(error as { retainRun?: boolean }).retainRun;
     primary = error;
@@ -480,15 +591,33 @@ export async function withBuildLock(
   if (!retain) {
     try {
       // Never remove a replaced directory, even if it occupies our former name.
-      const lockOwned =
-        !(await lstat(lock)).isSymbolicLink() &&
-        (await readFile(path.join(lock, 'owner.json'), 'utf8')) === owner;
-      const runOwned =
-        !runDir ||
-        (!(await lstat(runDir)).isSymbolicLink() &&
-          (await readFile(path.join(runDir, 'owner.json'), 'utf8')) === owner);
-      if (!lockOwned || !runOwned)
-        throw failure('Build directory ownership changed; scratch and lock retained');
+      for (const directory of [lock, ...(runDir ? [runDir] : []), ...generated]) {
+        const stat = await lstat(directory);
+        const identity = identities.get(directory);
+        if (
+          !stat.isDirectory() ||
+          stat.isSymbolicLink() ||
+          (identity && (stat.dev !== identity.dev || stat.ino !== identity.ino)) ||
+          (await readFile(path.join(directory, 'owner.json'), 'utf8')) !== owner
+        ) {
+          throw failure('Build directory ownership changed; scratch and lock retained');
+        }
+      }
+      if (restTsconfig) {
+        const stat = await lstat(restTsconfig);
+        const identity = identities.get(restTsconfig)!;
+        if (
+          !stat.isFile() ||
+          stat.isSymbolicLink() ||
+          stat.nlink !== 1 ||
+          stat.dev !== identity.dev ||
+          stat.ino !== identity.ino
+        ) {
+          throw failure('Build tsconfig ownership changed; scratch and lock retained');
+        }
+      }
+      if (restTsconfig) await rm(restTsconfig);
+      for (const directory of generated.toReversed()) await rm(directory, { recursive: true });
       if (runDir) await rm(runDir, { recursive: true, force: true });
       await rm(lock, { recursive: true });
     } catch (cleanupError) {
@@ -502,7 +631,7 @@ export async function withBuildLock(
     }
   } else {
     console.error(
-      '[zova-build] Children did not drain; private run and build lock retained for manual inspection',
+      '[zova-build] Children did not drain; generated roots, private run and build lock retained for manual inspection',
     );
   }
   if (failed) throw primary;
@@ -512,7 +641,7 @@ const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 const inspectProcesses = promisify(execFile);
 async function groupAlive(pid: number) {
   // Inspect rather than signal(0): on Darwin a reaped leader can produce EPERM
-  // even when its group is gone. Zombies cannot write snapshot files.
+  // even when its group is gone. Zombies cannot write generated files.
   const { stdout } = await inspectProcesses(
     'ps',
     ['-A', '-o', 'pid=', '-o', 'pgid=', '-o', 'state='],
@@ -713,17 +842,14 @@ async function resolveQuasar(zova: string): Promise<string> {
   try {
     const require = createRequire(path.join(zova, 'package.json'));
     const manifest = require.resolve('@quasar/app-vite/package.json');
-    if (!within(zova, await realpath(manifest)))
-      throw failure('Quasar resolved outside private workspace');
     const pkg = JSON.parse(await readFile(manifest, 'utf8'));
     const bin = typeof pkg.bin === 'string' ? pkg.bin : pkg.bin?.quasar;
     if (typeof bin !== 'string') throw failure('Quasar package has no executable');
     const executable = await realpath(path.resolve(path.dirname(manifest), bin));
-    if (!within(zova, executable)) throw failure('Quasar executable escapes private workspace');
     return executable;
   } catch (cause) {
     throw failure(
-      'Prepared Quasar dependencies required; run the existing dependency preparation deliberately before retrying (not during snapshot preparation)',
+      'Prepared Quasar dependencies required; run the existing dependency preparation deliberately before retrying',
       cause,
     );
   }
@@ -790,9 +916,36 @@ function outputPlan(message: unknown): OutputPlan {
   return message as OutputPlan;
 }
 
-export async function buildZovaIsolated(flavors: string[], rootDir = ROOT_DIR): Promise<void> {
-  if (!flavors.length) throw failure('Select at least one Zova flavor');
-  for (const flavor of flavors) validateFlavor(flavor);
+export async function validateBuildArtifacts(sources: {
+  ssr?: string;
+  rest?: string;
+  spa?: string;
+}): Promise<void> {
+  const required = {
+    ssr: ['handler.js', 'index.js', 'quasar.manifest.json', 'client'],
+    rest: ['index.mjs', 'index.d.mts', 'package.json'],
+    spa: ['index.html', 'assets'],
+  };
+  for (const mode of ['ssr', 'rest', 'spa'] as const) {
+    const dir = sources[mode];
+    if (!dir) continue;
+    for (const file of required[mode]) {
+      const artifact = path.join(dir, file);
+      if (!(await exists(artifact)) || !within(dir, await realpath(artifact)))
+        throw failure(`${mode} build is missing a contained required artifact: ${file}`);
+    }
+    if (mode === 'spa' && !(await readdir(path.join(dir, 'assets'))).length)
+      throw failure('SPA build has no emitted assets');
+  }
+}
+
+export async function buildZovaIsolated(
+  flavors: string[],
+  rootDir = ROOT_DIR,
+  operation: BuildOperation = 'pair',
+): Promise<void> {
+  parseBuildRequest(['--operation', operation, ...flavors]);
+  const appMode: BuildAppMode = operation === 'spa' ? 'spa' : 'ssr';
   if (
     Object.keys(process.env).some(
       key =>
@@ -809,86 +962,83 @@ export async function buildZovaIsolated(flavors: string[], rootDir = ROOT_DIR): 
   process.on('SIGINT', onInt);
   process.on('SIGTERM', onTerm);
   try {
-    await withBuildLock(rootDir, async runDir => {
-      const original = path.join(rootDir, 'zova');
-      const snapshot = path.join(runDir, 'zova');
+    await withBuildLock(rootDir, async (runDir, roots) => {
+      const zova = path.join(rootDir, 'zova');
       process.stdout.write(
-        '[zova-build] copying prepared workspace; coordinate source/dependency generation until snapshot ready\n',
+        '[zova-build] using prepared workspace with private generated roots; coordinate source/dependency generation throughout the build\n',
       );
-      await snapshotZova(original, snapshot);
       children.check();
       for (const file of [
         'package.json',
         'src/front/typing/modules.d.ts',
-        'src-ssr/server.ts',
+        ...(operation === 'ssr' || operation === 'pair' ? ['src-ssr/server.ts'] : []),
         'packages-cli/cli/src/bin/zova.ts',
       ]) {
-        if (!(await exists(path.join(snapshot, file)))) {
+        if (!(await exists(path.join(zova, file)))) {
           throw failure(
-            `Prepared Zova workspace required: missing ${file}; run dependency/metadata preparation deliberately before retrying`,
+            `Prepared Zova workspace required: missing ${file}; run npm run deps:zova deliberately from the repository root before retrying`,
           );
         }
       }
-      const quasar = await resolveQuasar(snapshot);
-      const helper = path.join(runDir, 'buildZovaOutputPlan.ts');
-      await copyFile(path.join(ROOT_DIR, 'scripts/buildZovaOutputPlan.ts'), helper);
-      process.stdout.write('[zova-build] snapshot ready\n');
+      const quasar = operation === 'rest' ? undefined : await resolveQuasar(zova);
+      const helper = path.join(ROOT_DIR, 'scripts/buildZovaOutputPlan.ts');
+      const generatedEnv = generatedBuildEnv(process.env, roots);
       for (const flavor of flavors) {
         children.check();
         const resultFile = path.join(runDir, `output-plan-${randomUUID()}.json`);
         await children.run(
-          [helper, snapshot, flavor, resultFile],
-          snapshot,
-          outputPlanEnv(process.env, flavor),
+          [helper, zova, flavor, resultFile, appMode],
+          zova,
+          outputPlanEnv(generatedEnv, flavor, appMode),
         );
         const plan = await readOutputPlan(resultFile);
-        const sources = {
-          ssr: path.join(snapshot, 'dist', `ssr-${flavor}`),
-          rest: path.join(snapshot, 'dist', `rest-${flavor}`),
-        };
-        const targets = createBuildTargets(original, flavor, plan, sources);
-        const options = { rootDir, zovaDir: original, runDir };
+        const sources: { ssr?: string; rest?: string; spa?: string } = {};
+        if (operation !== 'rest')
+          sources[appMode] = path.join(roots.quasar, 'output', `${appMode}-${flavor}`);
+        if (operation === 'pair' || operation === 'rest')
+          sources.rest = path.join(roots.quasar, 'output', `rest-${flavor}`);
+        const targets = createBuildTargets(zova, flavor, plan, sources);
+        const options = { rootDir, zovaDir: zova, runDir, artifactRoot: roots.quasar };
         await validateBuildTargets(targets, options);
-        const env = compilationEnv(process.env, `dist/ssr-${flavor}`, flavor);
-        process.stdout.write(`[zova-build] compiling paired SSR and REST: ${flavor}\n`);
-        await runPairedBuild({
-          flavor,
-          runSSR: async () => {
-            await children.run(
-              [quasar, 'build', '--mode', 'ssr', '--flavor', flavor],
-              snapshot,
-              env,
-            );
-          },
-          runREST: async () => {
-            await children.run(
-              [
-                path.join(snapshot, 'packages-cli/cli/src/bin/zova.ts'),
-                ':bin:buildRest',
-                '--flavor',
-                flavor,
-              ],
-              snapshot,
-              env,
-            );
-          },
-          publish: async () => {
-            children.check();
-            for (const [dir, files] of [
-              [sources.ssr, ['handler.js', 'index.js', 'quasar.manifest.json', 'client']],
-              [sources.rest, ['index.mjs', 'index.d.mts', 'package.json']],
-            ] as const) {
-              for (const file of files) {
-                const artifact = path.join(dir, file);
-                if (!(await exists(artifact)) || !within(dir, await realpath(artifact)))
-                  throw failure(`Paired build is missing a contained required artifact: ${file}`);
-              }
-            }
-            await publishBuildTargets(targets, options);
-            children.check();
-          },
-        });
-        process.stdout.write(`[zova-build] published paired artifacts: ${flavor}\n`);
+        const env = overrideEnv(
+          compilationEnv(
+            generatedEnv,
+            `${path.basename(roots.quasar)}/output/${appMode}-${flavor}`,
+            flavor,
+            appMode,
+          ),
+          { ZOVA_REST_OUTDIR: sources.rest },
+        );
+        process.stdout.write(`[zova-build] compiling ${operation}: ${flavor}\n`);
+        const runFrontend = async () => {
+          await children.run([quasar!, 'build', '--mode', appMode, '--flavor', flavor], zova, env);
+        };
+        const runREST = async () => {
+          await children.run(
+            [
+              path.join(zova, 'packages-cli/cli/src/bin/zova.ts'),
+              ':bin:buildRest',
+              '--flavor',
+              flavor,
+            ],
+            zova,
+            env,
+          );
+        };
+        const publish = async () => {
+          children.check();
+          await validateBuildArtifacts(sources);
+          await publishBuildTargets(targets, options);
+          children.check();
+        };
+        if (operation === 'pair') {
+          await runPairedBuild({ flavor, runSSR: runFrontend, runREST, publish });
+        } else {
+          if (operation === 'rest') await runREST();
+          else await runFrontend();
+          await publish();
+        }
+        process.stdout.write(`[zova-build] published ${operation} artifacts: ${flavor}\n`);
       }
     });
   } finally {
@@ -899,7 +1049,8 @@ export async function buildZovaIsolated(flavors: string[], rootDir = ROOT_DIR): 
 
 if (process.argv[1] && fileURLToPath(import.meta.url) === path.resolve(process.argv[1])) {
   try {
-    await buildZovaIsolated(process.argv.slice(2));
+    const { operation, flavors } = parseBuildRequest(process.argv.slice(2));
+    await buildZovaIsolated(flavors, ROOT_DIR, operation);
   } catch (error) {
     console.error(error);
     const result = error as { exitCode?: number; signal?: NodeJS.Signals };
