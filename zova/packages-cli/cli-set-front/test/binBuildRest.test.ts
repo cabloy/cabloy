@@ -78,7 +78,7 @@ async function declareHook(projectPath: string, exitCode = 0) {
 }
 
 it('public REST delegates once through the app hook with default/selected flavor and project cwd', async () => {
-  for (const flavor of [undefined, 'cabloyBasicWeb']) {
+  for (const flavor of [undefined, 'web'] as const) {
     await withFixture(async (projectPath, cli) => {
       await declareHook(projectPath);
       cli.context.argv.flavor = flavor;

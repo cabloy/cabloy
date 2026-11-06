@@ -13,7 +13,7 @@ export async function resolveRestBuildPaths(
   projectPath: string,
   flavor: string,
   runtimeDir: string,
-  env: NodeJS.ProcessEnv = process.env,
+  env: Record<string, string | undefined> = process.env,
 ): Promise<RestBuildPaths> {
   const isolatedKeys = [
     'ZOVA_ISOLATED',

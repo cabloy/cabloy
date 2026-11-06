@@ -11,7 +11,7 @@ import {
 } from '../src/lib/common/restBuildPaths.ts';
 
 async function withFixture(
-  callback: (projectPath: string, env: NodeJS.ProcessEnv) => Promise<void>,
+  callback: (projectPath: string, env: Record<string, string | undefined>) => Promise<void>,
 ) {
   const projectPath = await mkdtemp(path.join(os.tmpdir(), 'rest-build-paths-'));
   const env = {
