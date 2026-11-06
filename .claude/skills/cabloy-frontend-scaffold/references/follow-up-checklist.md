@@ -45,6 +45,7 @@ After generating or extending a frontend thread, check which follow-up layers ap
 
 - relevant format, lint, and type checks using the smallest supported scope
 - a few affected critical user flows through existing E2E scenarios, selected by spec, tag, or `--grep`
+- for raw HTTP preparation or assertions, verify content negotiation, response shape, and unwrapping ownership; see [HTTP response contracts](../../../../repo-docs/frontend/scripts.md#check-http-response-contracts)
 - focused regressions for actual defects; no exhaustive upfront fake matrices or custom source-evaluation harnesses
 - affected-flavor artifact preparation when runtime verification needs updated output
 - applicable route, SSR/hydration, authentication, authorization, and contract checks; do not replace server-side enforcement with UI coverage
