@@ -789,18 +789,42 @@ test(
 test('all root and workspace application builds select isolation without preparation or duplicate pairs', () => {
   const scripts = JSON.parse(readFileSync(path.join(root, 'package.json'), 'utf8')).scripts;
   const runner = 'node scripts/buildZovaIsolated.ts';
+  const hasBasic = existsSync(path.join(root, '__CABLOY_BASIC__'));
+  const hasStart = existsSync(path.join(root, '__CABLOY_START__'));
+  assert.notEqual(hasBasic, hasStart, 'Exactly one Cabloy edition marker is required');
+  const prefix = hasBasic ? 'cabloyBasic' : 'cabloyStart';
+  const mappings: Record<string, string> = {
+    'build:zova:admin': `${prefix}Admin`,
+    'build:zova:web': `${prefix}Web`,
+  };
+  const flavors = [`${prefix}Admin`, `${prefix}Web`];
+  const batches: Record<string, string[]> = {
+    [`${prefix}Batch`]: flavors,
+  };
+  if (hasBasic) {
+    mappings['build:zova:commerce:web'] = 'cabloyCommerce';
+    mappings['build:zova:commerce:admin'] = 'cabloyCommerceAdmin';
+    const commerceFlavors = ['cabloyCommerce', 'cabloyCommerceAdmin'];
+    batches.cabloyCommerceBatch = commerceFlavors;
+    assert.equal(scripts['build:zova:commerce'], `${runner} ${commerceFlavors.join(' ')}`);
+  }
+  assert.equal(scripts['build:zova'], `${runner} ${flavors.join(' ')}`);
   assert.equal(
     scripts['build:zova:all'],
-    `${runner} cabloyBasicAdmin cabloyBasicWeb cabloyCommerce cabloyCommerceAdmin`,
+    hasBasic ? `${runner} ${Object.values(mappings).join(' ')}` : 'npm run build:zova',
   );
-  assert.equal(scripts['build:zova'], `${runner} cabloyBasicAdmin cabloyBasicWeb`);
-  assert.equal(scripts['build:zova:commerce'], `${runner} cabloyCommerce cabloyCommerceAdmin`);
-  const mappings = {
-    'build:zova:admin': 'cabloyBasicAdmin',
-    'build:zova:web': 'cabloyBasicWeb',
-    'build:zova:commerce:web': 'cabloyCommerce',
-    'build:zova:commerce:admin': 'cabloyCommerceAdmin',
-  };
+  assert.deepEqual(
+    Object.keys(scripts)
+      .filter(name => name.startsWith('build:zova'))
+      .sort(),
+    [
+      'build:zova',
+      'build:zova:all',
+      'build:zova:isolated',
+      ...Object.keys(mappings),
+      ...(hasBasic ? ['build:zova:commerce'] : []),
+    ].sort(),
+  );
   const workspaceScripts = JSON.parse(
     readFileSync(path.join(root, 'zova/package.original.json'), 'utf8'),
   ).scripts;
@@ -824,14 +848,12 @@ test('all root and workspace application builds select isolation without prepara
       `npm run build:isolated -- --operation rest ${flavor}`,
     );
   }
-  assert.equal(
-    workspaceScripts['build:ssr:cabloyBasicBatch'],
-    'npm run build:isolated -- cabloyBasicAdmin cabloyBasicWeb',
-  );
-  assert.equal(
-    workspaceScripts['build:ssr:cabloyCommerceBatch'],
-    'npm run build:isolated -- cabloyCommerce cabloyCommerceAdmin',
-  );
+  for (const [batch, flavors] of Object.entries(batches)) {
+    assert.equal(
+      workspaceScripts[`build:ssr:${batch}`],
+      `npm run build:isolated -- ${flavors.join(' ')}`,
+    );
+  }
   for (const [name, command] of Object.entries(workspaceScripts)) {
     if (name.startsWith('build'))
       assert.doesNotMatch(command as string, /prerun|quasar build|:bin:buildRest/);
@@ -841,13 +863,9 @@ test('all root and workspace application builds select isolation without prepara
   assert.equal(scripts['build:zova:isolated'], 'node scripts/buildZovaIsolated.ts');
   assert.equal(scripts.build, 'npm run build:zova:all && npm run build:vona');
   assert.equal(scripts['build:docker'], 'npm run build:zova:all && npm run build:vona:docker');
-  assert.equal(scripts['dev:zova:admin'], 'cd zova && npm run dev:ssr:cabloyBasicAdmin');
-  assert.equal(scripts['dev:zova:web'], 'cd zova && npm run dev:ssr:cabloyBasicWeb');
-  assert.equal(scripts['dev:zova:commerce:web'], 'cd zova && npm run dev:ssr:cabloyCommerce');
-  assert.equal(
-    scripts['dev:zova:commerce:admin'],
-    'cd zova && npm run dev:ssr:cabloyCommerceAdmin',
-  );
+  for (const [name, flavor] of Object.entries(mappings)) {
+    assert.equal(scripts[name.replace(/^build:/, 'dev:')], `cd zova && npm run dev:ssr:${flavor}`);
+  }
 });
 
 test('build request operations are explicit, validated and compatible with bare flavor pairs', () => {
