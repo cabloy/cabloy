@@ -69,6 +69,22 @@ Do not introduce custom source-evaluation loaders or extensive fake dependencies
 
 This preference does not relax applicable SSR/hydration, authentication, authorization, contract, or acceptance requirements, and UI coverage never replaces server-side enforcement. Managed E2E resource isolation remains required. If runtime verification is unavailable or not authorized, report the gap rather than adding substitute test machinery; live Provider and destructive operations retain their separate authorization boundaries.
 
+### Wait for SSR interaction readiness
+
+SSR HTML can make a control visible and enabled before its client event handlers are ready. Playwright actionability checks and a fulfilled `click()` do not independently prove that those handlers were attached or that a business callback ran. Before an interaction that depends on client behavior, wait for the current document's public readiness signal, then any required page-specific conditions.
+
+During initial SSR hydration, Zova sets `data-zova-hydrated` on `<html>` from `onHydrated(...)`; its value is the active flavor's `SITE_ID`, not a boolean. For an SSR document, use the expected site ID from the target site's contract:
+
+```ts
+await page.goto(path, { waitUntil: 'load' });
+await expect(page.locator('html')).toHaveAttribute('data-zova-hydrated', siteId);
+// Check required visible page state before the client interaction.
+```
+
+Apply this boundary on initial SSR entry and after a full-document navigation or reload. A document `load` event or the expected URL alone does not establish hydration readiness. The marker covers the initial SSR root and currently tracked nested hydration boundaries, not every later asynchronous component or operation; see [Initial hydration completion](/frontend/ssr-overview#initial-hydration-completion).
+
+For same-document SPA navigation, the existing marker may remain present: waiting for it again does not prove that the destination route is ready. Wait for the destination's public, observable conditions, such as required data and action eligibility. Hydration completion is separate from route admission, authentication, data freshness, and business readiness; it is not an SPA-startup signal. Do not add this wait mechanically before every click, or replace readiness with fixed sleeps, forced or repeated clicks, or Controller/IoC probes. After the action, still assert the relevant response and visible business outcome. A passing test after adding a wait supports the synchronization correction; it does not by itself prove the cause of earlier failures.
+
 ### Attribute failures and keep diagnostics focused
 
 Business E2E should observe normal user actions, visible business outcomes, and persistence after save/reload. Do not make ordinary business journeys depend on DOM-to-Controller/IoC instance lookup, temporary method wrappers, or Query/cache internals. Internal assertions belong to an explicit architecture/framework acceptance contract or a focused regression, preferably at the smallest suitable test layer.
