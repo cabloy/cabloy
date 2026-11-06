@@ -1,5 +1,11 @@
 # Changelog
 
+## 5.1.263
+
+### Improvements
+
+- Update `.gitignore` to improve repository file management.
+
 ## 5.1.262
 
 ### Features
