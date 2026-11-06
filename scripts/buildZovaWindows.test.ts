@@ -40,7 +40,7 @@ const success: GuardianResult = {
 };
 
 function fixture() {
-  return realpathSync(mkdtempSync(path.join(tmpdir(), 'cabloy build Windows 空格 ')));
+  return realpathSync.native(mkdtempSync(path.join(tmpdir(), 'cabloy build Windows 空格 ')));
 }
 
 function write(file: string, content: string) {

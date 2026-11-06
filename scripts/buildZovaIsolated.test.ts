@@ -15,6 +15,7 @@ import {
   symlinkSync,
   writeFileSync,
 } from 'node:fs';
+import { realpath } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
 import test from 'node:test';
@@ -39,7 +40,7 @@ import {
 const root = fileURLToPath(new URL('../', import.meta.url));
 
 function fixture() {
-  return realpathSync(mkdtempSync(path.join(tmpdir(), 'cabloy-build-zova-')));
+  return realpathSync.native(mkdtempSync(path.join(tmpdir(), 'cabloy-build-zova-')));
 }
 
 function write(file: string, content: string) {
@@ -74,6 +75,15 @@ function fixtureEnv(): NodeJS.ProcessEnv {
     ),
   );
 }
+
+test('fixture roots use the same native path identity as the build coordinator', async () => {
+  const dir = fixture();
+  try {
+    assert.equal(dir, await realpath(dir));
+  } finally {
+    rmSync(dir, { recursive: true, force: true });
+  }
+});
 
 test('build coordinator imports and resolves native assets from a scripts-only checkout', () => {
   const dir = fixture();

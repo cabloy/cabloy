@@ -106,16 +106,20 @@ test('daily checks and CI use single-project workspace defaults', () => {
     );
     if (workspace === 'zova') {
       for (const [name, command] of Object.entries(workspaceScripts)) {
+        if (name.startsWith('dev:')) {
+          assert.ok(
+            (command as string).startsWith('npm run prerun && '),
+            `${name} must prepare without an automatic typecheck`,
+          );
+        }
         if (
-          name.startsWith('dev:') ||
           name.startsWith('build:spa') ||
           name.startsWith('build:ssr:') ||
           name.startsWith('build:rest:')
         ) {
-          if (name.endsWith('Batch')) continue;
           assert.ok(
-            (command as string).startsWith('npm run prerun && '),
-            `${name} must prepare without an automatic typecheck`,
+            (command as string).startsWith('npm run build:isolated -- '),
+            `${name} must use the isolated runner without automatic preparation or typecheck`,
           );
         }
       }
