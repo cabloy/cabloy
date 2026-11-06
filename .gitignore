@@ -34,9 +34,6 @@ blob-report/
 **/yarn-debug.log*
 **/yarn-error.log*
 
-# Retain specification evidence logs.
-!/repo-specs/**/*.log
-
 # vona core related directories
 vona/.vona
 vona/.app
