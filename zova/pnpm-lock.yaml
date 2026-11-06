@@ -562,8 +562,8 @@ importers:
         specifier: ^1.89.0
         version: 1.89.0
       quasar-app-extension-zova:
-        specifier: ^1.3.3
-        version: 1.3.3(@cabloy/vue-router@4.4.18(vue@3.5.42(typescript@5.9.3)))(@types/node@22.20.2)(eslint@10.10.0(jiti@2.7.0)(supports-color@10.2.2))(jiti@2.7.0)(quasar@2.32.2)(rolldown@1.2.14)(sass-embedded@1.104.1)(sass@1.104.1)(supports-color@10.2.2)(terser@5.51.2)(typescript@5.9.3)(vue@3.5.42(typescript@5.9.3))(yaml@2.9.1)
+        specifier: ^1.3.4
+        version: 1.3.4(@cabloy/vue-router@4.4.18(vue@3.5.42(typescript@5.9.3)))(@types/node@22.20.2)(eslint@10.10.0(jiti@2.7.0)(supports-color@10.2.2))(jiti@2.7.0)(quasar@2.32.2)(rolldown@1.2.14)(sass-embedded@1.104.1)(sass@1.104.1)(supports-color@10.2.2)(terser@5.51.2)(typescript@5.9.3)(vue@3.5.42(typescript@5.9.3))(yaml@2.9.1)
       sass:
         specifier: ^1.101.0
         version: 1.104.1
@@ -7508,8 +7508,8 @@ packages:
   quansync@1.0.0:
     resolution: {integrity: sha512-5xZacEEufv3HSTPQuchrvV6soaiACMFnq1H8wkVioctoH3TRha9Sz66lOxRwPK/qZj7HPiSveih9yAyh98gvqA==}
 
-  quasar-app-extension-zova@1.3.3:
-    resolution: {integrity: sha512-sDdriRLJMjSxcXlbyAZl3wAx2NHYHBNgH4G/z8tvepSiWvufM/qGQXYi4hi4kONtP28nF1vS89MBnOoCPAW/PA==}
+  quasar-app-extension-zova@1.3.4:
+    resolution: {integrity: sha512-AaJWrehQxgfCedfWa2alpcte7cdT6N7Of/+wzGCqk9O7jNHWxEEMiSmrI1FF6ckBweChZDXnyXR9lmsnw6mCuw==}
 
   quasar@2.32.2:
     resolution: {integrity: sha512-IqQHHYoYL8bfFDAwy5E5X1xv7VpMAdhFHjSaLycueRdLOkXMbntUUphAIof8Q/wgvKQcskYflGV9/OyIPvbkLA==}
@@ -13788,7 +13788,7 @@ snapshots:
 
   quansync@1.0.0: {}
 
-  quasar-app-extension-zova@1.3.3(@cabloy/vue-router@4.4.18(vue@3.5.42(typescript@5.9.3)))(@types/node@22.20.2)(eslint@10.10.0(jiti@2.7.0)(supports-color@10.2.2))(jiti@2.7.0)(quasar@2.32.2)(rolldown@1.2.14)(sass-embedded@1.104.1)(sass@1.104.1)(supports-color@10.2.2)(terser@5.51.2)(typescript@5.9.3)(vue@3.5.42(typescript@5.9.3))(yaml@2.9.1):
+  quasar-app-extension-zova@1.3.4(@cabloy/vue-router@4.4.18(vue@3.5.42(typescript@5.9.3)))(@types/node@22.20.2)(eslint@10.10.0(jiti@2.7.0)(supports-color@10.2.2))(jiti@2.7.0)(quasar@2.32.2)(rolldown@1.2.14)(sass-embedded@1.104.1)(sass@1.104.1)(supports-color@10.2.2)(terser@5.51.2)(typescript@5.9.3)(vue@3.5.42(typescript@5.9.3))(yaml@2.9.1):
     dependencies:
       '@cabloy/module-info': 2.0.3
       '@quasar/app-vite': '@cabloy/quasar-app-vite@2.5.11(@cabloy/vue-router@4.4.18(vue@3.5.42(typescript@5.9.3)))(@types/node@22.20.2)(eslint@10.10.0(jiti@2.7.0)(supports-color@10.2.2))(jiti@2.7.0)(quasar@2.32.2)(rolldown@1.2.14)(sass@1.104.1)(supports-color@10.2.2)(terser@5.51.2)(typescript@5.9.3)(vue@3.5.42(typescript@5.9.3))(yaml@2.9.1)'
