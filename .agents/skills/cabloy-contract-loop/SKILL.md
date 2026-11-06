@@ -19,8 +19,8 @@ In that situation:
 
 1. run the normal sync or regeneration flow first
 2. identify every affected flavor from the active repository’s root wrappers and lower-level Zova scripts, then run each matching paired SSR/REST build before `npm run deps:vona`
-   - `npm run build:zova:admin` and `npm run build:zova:web` are representative default wrappers only
-   - an independently named site must use its own source-confirmed paired root wrapper; do not relabel or assume a default wrapper refreshed it
+   - in Cabloy Basic AI workflows, default to `npm run build:zova:isolated -- cabloyBasicAdmin cabloyBasicWeb`, narrowed to the affected flavors; ordinary user/CI wrappers remain non-isolated
+   - an independently named site must use its own source-confirmed flavor and paired build; do not relabel or assume a default Admin/Web build refreshed it
 3. do not treat `build:rest:*` alone as sufficient, because the SSR bundle and rest output must move together
 4. run `npm run deps:vona` after the required flavor builds
 5. if the generated `.zova-rest` artifacts already contain the expected changes but Vona still sees stale types, delete `vona/node_modules` and reinstall dependencies
@@ -38,7 +38,7 @@ Do not keep debugging source-level contract or renderer changes until the local 
 - Cursor payloads are not Claude hook payloads. When Cursor imports `.claude/settings.json`, the Claude bridge recognizes Cursor and returns without work, leaving the native Cursor adapter as the single Agent gate
 - `postToolUse` injects `additional_context` into the agent turn; `afterTabFileEdit` is side-effect only and still runs the shared reverse auto-sync when the edited file matches
 - Codex handles every matching entry in one `apply_patch` call and runs at most one high-confidence reverse auto-sync for that patch. Explicit Delete entries use path-only evidence; an unreadable Add or Update target is reported as an inspection failure, never reinterpreted as a delete
-- for high-confidence reverse-chain source edits on the Zova side, the hook auto-runs `npm run build:zova:admin` and then `npm run deps:vona`
+- for high-confidence reverse-chain source edits on the Zova side, the hook auto-runs `npm run build:zova:isolated -- cabloyBasicAdmin` in Basic, or the existing `npm run build:zova:admin` in Start, then `npm run deps:vona`; affected Web or independent-site flavors still require deliberate builds
 - forward-chain detections remain reminder-only, so backend contract changes still require deliberate regeneration and verification
 - consumer-side reverse signals remain reminder-only, so do not assume every reverse-chain case auto-syncs itself
 
@@ -248,7 +248,8 @@ Typical examples in Cabloy Basic include:
 Important Cabloy Basic reverse-sync rule:
 
 - if Vona consumes newly added or changed Zova Admin render/action/metadata, do **not** stop at `build:rest:cabloyBasicAdmin`
-- run `npm run build:zova:admin` from the repo root instead, then run `npm run deps:vona`
+- for AI work, run `npm run build:zova:isolated -- cabloyBasicAdmin` from the repo root instead; include `cabloyBasicWeb` or another source-confirmed flavor when affected, then run `npm run deps:vona`
+- keep snapshot inputs stable and coordinate dependency preparation and shared publication; do not overlap ordinary and isolated builds or assume live Vona integrated SSR hot deployment
 - treat this as a JS-bundle-plus-rest-output handoff, not a rest-types-only refresh
 - the current repo safeguard may auto-run those two commands for high-confidence Zova reverse-source edits, but only as a convenience layer on top of the contract-loop model
 - if the change was consumer-side, low-confidence, cross-edition, happened outside a supported platform hook path, or used an untrusted/discovery-disabled hook, run the reverse sync flow deliberately yourself
@@ -320,7 +321,7 @@ Typical checks may include:
 - OpenAPI inspection
 - `npm run test`
 - `npm run tsc`
-- `npm run build`
+- `npm run build:vona` when backend build verification is needed, after any required frontend build and dependency synchronization
 
 ### Frontend-side verification
 
@@ -328,7 +329,7 @@ Typical checks may include:
 
 - SDK or metadata regeneration success
 - `npm run tsc:zova`
-- `npm run build:zova`
+- in Basic AI workflows, `npm run build:zova:isolated -- <affected-flavor> [<affected-flavor> ...]`; in Start, the source-confirmed build commands from the active repository
 - flavor-specific or route-specific checks
 - schema-driven consumer alignment
 

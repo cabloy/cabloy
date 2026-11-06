@@ -17,6 +17,7 @@ import { check, GOVERNANCE_DIR, ROOT_DIR } from '../scripts/governance.mjs';
 import {
   analyze,
   buildMessages,
+  EDITION_CONFIGS,
   isCodeFile,
   resolveEdition,
 } from '../tools/contract-loop/core.mjs';
@@ -432,6 +433,25 @@ test('governance adoption force-updates one explicitly named target', () => {
   });
 });
 
+test('contract-loop isolates Basic AI builds and preserves Start commands', () => {
+  assert.deepEqual(EDITION_CONFIGS.basic.reverseAutoSyncCommands, [
+    {
+      args: ['run', 'build:zova:isolated', '--', 'cabloyBasicAdmin'],
+      display: 'npm run build:zova:isolated -- cabloyBasicAdmin',
+    },
+    { args: ['run', 'deps:vona'], display: 'npm run deps:vona' },
+  ]);
+  assert.equal(
+    EDITION_CONFIGS.basic.reverseWebBuildCommand,
+    'npm run build:zova:isolated -- cabloyBasicWeb',
+  );
+  assert.deepEqual(EDITION_CONFIGS.start.reverseAutoSyncCommands, [
+    { args: ['run', 'build:zova:admin'], display: 'npm run build:zova:admin' },
+    { args: ['run', 'deps:vona'], display: 'npm run deps:vona' },
+  ]);
+  assert.equal(EDITION_CONFIGS.start.reverseWebBuildCommand, 'npm run build:zova:web');
+});
+
 test('contract-loop analysis preserves forward and reverse guidance', () => {
   const resolution = resolveEdition(ROOT_DIR);
   assert.equal(resolution.kind, 'resolved');
@@ -452,7 +472,11 @@ test('contract-loop analysis preserves forward and reverse guidance', () => {
     reverse.reverseReason,
     'Frontend-owned resources or metadata may affect backend consumers.',
   );
-  assert.match(buildMessages(reverse, resolution), /npm run build:zova:admin/);
+  assert.match(
+    buildMessages(reverse, resolution),
+    /npm run build:zova:isolated -- cabloyBasicAdmin/,
+  );
+  assert.match(buildMessages(reverse, resolution), /npm run build:zova:isolated -- cabloyBasicWeb/);
   assert.match(buildMessages(reverse, resolution), /npm run deps:vona/);
 });
 
@@ -592,7 +616,10 @@ test('Codex delete paths are classified without reading removed sources', () => 
     const output = JSON.parse(result.output).hookSpecificOutput.additionalContext;
     assert.match(output, /Forward chain:/);
     assert.match(output, /Reverse chain:/);
-    assert.match(output, /Auto-sync failed during `npm run build:zova:admin`/);
+    assert.match(
+      output,
+      /Auto-sync failed during `npm run build:zova:isolated -- cabloyBasicAdmin`/,
+    );
     assert.doesNotMatch(output, /agent-governance\.md/);
   });
 });

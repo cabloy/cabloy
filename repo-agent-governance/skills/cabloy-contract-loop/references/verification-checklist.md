@@ -22,7 +22,7 @@ After a contract-loop change, verify the branch that actually applies.
 - generated SDK or schema outputs are updated
 - thin model facades and downstream consumers still align with the regenerated contract
 - `npm run tsc`
-- `npm run build`
+- relevant builds: in Basic AI workflows, default to `npm run build:zova:isolated -- <affected-flavor> [...]`, then `npm run build:vona` when needed; resolve Start commands from its active scripts
 
 ### Dual-audience resource verification
 
@@ -47,7 +47,7 @@ When one persisted domain has both Admin Resource and Web self-service consumers
 - backend consumers can resolve the refreshed frontend-generated handoff
 - prefer visible proof under `zova/src/**/.metadata/**` when it is available
 - this repo does not rely on a contract-loop pre-commit gate; Claude Code, Codex, and Cursor each use a provider-specific adapter over the same classifier
-- if the change was a high-confidence Zova reverse-source edit through a supported hook path, confirm whether the hook already auto-ran `npm run build:zova:admin` and `npm run deps:vona`
+- if the change was a high-confidence Zova reverse-source edit through a supported hook path, confirm whether the hook already auto-ran the edition-specific Admin build (`npm run build:zova:isolated -- cabloyBasicAdmin` in Basic, existing `npm run build:zova:admin` in Start) and `npm run deps:vona`; explicitly build other affected flavors before the final dependency sync
 - Codex evaluates an `apply_patch` batch as operation-aware entries: an explicit Delete is classified from reliable path evidence only; an unreadable Add or Update target is an inspection failure rather than a synthetic delete
 - Cursor Agent writes use native `postToolUse` context and Cursor Tab writes use native `afterTabFileEdit` side effects; the imported Claude bridge is intentionally inactive in Cursor to avoid duplicate work
 - if the change was consumer-side, low-confidence, outside a supported hook path, affected an untrusted/discovery-disabled hook, or was in another edition branch, run the reverse sync flow manually instead of assuming it already happened

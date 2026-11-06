@@ -298,9 +298,18 @@ Prefer the narrowest useful checks first, then broader checks when needed.
 
 Typical shared checks include:
 
-- root scripts such as `npm run tsc`, `npm run test`, `npm run build`
+- root scripts such as `npm run tsc` and `npm run test`
 - command help or discovery output from `npm run vona` / `npm run zova`
 - targeted build/dev/typecheck flows for the affected side
+
+For AI frontend build verification in Cabloy Basic:
+
+1. Confirm `build:zova:isolated` exists in the active root scripts and resolve the affected flavors.
+2. Default to `npm run build:zova:isolated -- <flavor> [<flavor> ...]`, for example `cabloyBasicAdmin` and/or `cabloyBasicWeb`. This builds each SSR/REST pair in a private prepared-workspace snapshot.
+3. Coordinate dependency/metadata preparation and keep snapshot inputs stable. Publication remains shared; do not overlap ordinary and isolated builds or treat publication as hot deployment of live Vona integrated SSR.
+4. Run `npm run deps:vona` separately when backend consumers need synchronization, then perform the relevant integrated checks. If backend build verification is needed, follow with `npm run build:vona` rather than rerunning ordinary frontend builds through `npm run build`.
+
+Ordinary user/CI commands (`build:zova*`, `build`, `build:docker`, `init`) retain their existing non-isolated workflow. Humans may explicitly opt into isolation too; do not infer an AI caller from the environment or parent process. In Cabloy Start, resolve supported build commands and flavor names from the active repository rather than assuming the Basic entry exists.
 
 ## Response pattern
 
