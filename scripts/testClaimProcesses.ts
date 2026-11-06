@@ -2,10 +2,7 @@ import { execFile } from 'node:child_process';
 import { hostname } from 'node:os';
 import { promisify } from 'node:util';
 
-import {
-  inspectWindowsProcess,
-  inspectWindowsProcesses,
-} from '../vona/packages-vona/vona-core/src/lib/core/testProcessWindowsNative.ts';
+import { inspectWindowsProcess, inspectWindowsProcesses } from './testProcessWindowsNative.ts';
 
 const execFileAsync = promisify(execFile);
 

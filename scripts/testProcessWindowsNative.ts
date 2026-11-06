@@ -4,7 +4,7 @@ import type { Writable } from 'node:stream';
 
 import { spawn } from 'node:child_process';
 import { randomBytes } from 'node:crypto';
-import { existsSync, readFileSync } from 'node:fs';
+import { existsSync } from 'node:fs';
 import { createServer } from 'node:net';
 import { hostname } from 'node:os';
 import { dirname, join } from 'node:path';
@@ -49,26 +49,15 @@ export interface WindowsNativeJob {
   disconnect: () => void;
 }
 
-/** src is included in the published package; build tools need not copy the native assets. */
+/** Root tooling ships the native assets beside this module. */
 export function resolveWindowsProcessAssets(moduleUrl = import.meta.url) {
-  let directory = dirname(fileURLToPath(moduleUrl));
-  for (;;) {
-    const manifest = join(directory, 'package.json');
-    if (existsSync(manifest)) {
-      const info = JSON.parse(readFileSync(manifest, 'utf8')) as { name?: string };
-      if (info.name === 'vona-core') {
-        const script = join(directory, 'src/lib/core/testProcessWindowsNative.ps1');
-        const source = join(directory, 'src/lib/core/testProcessWindowsNative.cs');
-        if (!existsSync(script) || !existsSync(source)) {
-          throw new Error('Installed vona-core is missing the Windows native process assets');
-        }
-        return { script, source };
-      }
-    }
-    const parent = dirname(directory);
-    if (parent === directory) throw new Error('Cannot resolve packaged Windows process assets');
-    directory = parent;
+  const directory = dirname(fileURLToPath(moduleUrl));
+  const script = join(directory, 'testProcessWindowsNative.ps1');
+  const source = join(directory, 'testProcessWindowsNative.cs');
+  if (!existsSync(script) || !existsSync(source)) {
+    throw new Error('Missing Windows native process assets');
   }
+  return { script, source };
 }
 
 function requireWindows() {
@@ -188,7 +177,7 @@ async function outputBridge(name: string, destination: Writable): Promise<Output
 
 /**
  * Creates the external native helper, but does not authorize application launch.
- * The caller MUST persist ready's helper identity before authorize().
+ * Managed test callers must persist ready's helper identity before authorize().
  */
 export async function createWindowsNativeJob(
   config: WindowsNativeJobConfig,

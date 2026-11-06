@@ -8,6 +8,8 @@ import { createServer } from 'node:net';
 import { basename, dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
+import type { GuardianResult, OwnedProcess } from './ownedProcess.ts';
+
 import {
   createTestClaim,
   hasTestClaimTransport,
@@ -28,6 +30,8 @@ import {
 } from './testClaimCleanup.ts';
 import { inspectTestProcess, isTestClaimInactive } from './testClaimProcesses.ts';
 import { startWindowsOwnedProcess } from './testProcessGuardianWindows.ts';
+
+export type { GuardianResult, OwnedProcess } from './ownedProcess.ts';
 
 export const ROOT_DIR = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const OWNER_FILE = '.vona-test-owner';
@@ -82,17 +86,6 @@ export async function allocateTestPort(): Promise<number> {
 
 function toError(value: unknown) {
   return value instanceof Error ? value : new Error(String(value));
-}
-
-export interface GuardianResult {
-  type: 'drained';
-  result?: { code: number | null; signal: NodeJS.Signals | null };
-  failed: boolean;
-}
-
-export interface OwnedProcess {
-  wait: () => Promise<GuardianResult>;
-  stop: () => Promise<GuardianResult>;
 }
 
 export async function startOwnedProcess(

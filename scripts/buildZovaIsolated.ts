@@ -25,9 +25,9 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { promisify } from 'node:util';
 
-import type { OwnedProcess } from './runIsolatedTest.ts';
+import type { OwnedProcess } from './ownedProcess.ts';
 
-import { startWindowsOwnedProcess } from './testProcessGuardianWindows.ts';
+import { startWindowsBuildProcess } from './buildProcessGuardianWindows.ts';
 
 export interface OutputPlan {
   appVersion: string;
@@ -664,15 +664,15 @@ export class OwnedBuildChildren {
   interrupted?: NodeJS.Signals;
   active?: number;
   stopError?: Error;
-  private windowsStarter?: typeof startWindowsOwnedProcess;
+  private windowsStarter?: typeof startWindowsBuildProcess;
   private windowsProcess?: OwnedProcess;
   private windowsStop?: Promise<void>;
   private windowsStopFailure?: (error: Error) => void;
 
   // Only the Windows acquisition seam is injectable; normal execution uses the native platform.
-  constructor(windowsStarter?: typeof startWindowsOwnedProcess) {
+  constructor(windowsStarter?: typeof startWindowsBuildProcess) {
     this.windowsStarter =
-      windowsStarter ?? (process.platform === 'win32' ? startWindowsOwnedProcess : undefined);
+      windowsStarter ?? (process.platform === 'win32' ? startWindowsBuildProcess : undefined);
   }
 
   onSignal = (signal: NodeJS.Signals) => {

@@ -4,6 +4,7 @@ import assert from 'node:assert/strict';
 import { spawn } from 'node:child_process';
 import { randomUUID } from 'node:crypto';
 import {
+  copyFileSync,
   existsSync,
   mkdirSync,
   mkdtempSync,
@@ -13,12 +14,12 @@ import {
   writeFileSync,
 } from 'node:fs';
 import { tmpdir } from 'node:os';
-import { dirname, join } from 'node:path';
+import { basename, dirname, join } from 'node:path';
 import { PassThrough } from 'node:stream';
 import { test } from 'node:test';
-import { fileURLToPath } from 'node:url';
+import { fileURLToPath, pathToFileURL } from 'node:url';
 
-import type { WindowsNativeJob } from '../vona/packages-vona/vona-core/src/lib/core/testProcessWindowsNative.ts';
+import type { WindowsNativeJob } from './testProcessWindowsNative.ts';
 
 import {
   createTestClaim,
@@ -26,14 +27,14 @@ import {
   sendTestClaimEvent,
   startTestClaimBroker,
 } from '../vona/packages-vona/vona-core/src/lib/core/testClaim.ts';
+import { isTestClaimInactive } from './testClaimProcesses.ts';
+import { startWindowsOwnedProcess } from './testProcessGuardianWindows.ts';
 import {
   createWindowsNativeJob,
   inspectWindowsProcess,
   inspectWindowsProcesses,
   resolveWindowsProcessAssets,
-} from '../vona/packages-vona/vona-core/src/lib/core/testProcessWindowsNative.ts';
-import { isTestClaimInactive } from './testClaimProcesses.ts';
-import { startWindowsOwnedProcess } from './testProcessGuardianWindows.ts';
+} from './testProcessWindowsNative.ts';
 
 const nativeOptions = {
   skip:
@@ -43,10 +44,7 @@ const nativeOptions = {
   timeout: 120_000,
 };
 const rootDir = dirname(dirname(fileURLToPath(import.meta.url)));
-const nativeModule = new URL(
-  '../vona/packages-vona/vona-core/src/lib/core/testProcessWindowsNative.ts',
-  import.meta.url,
-);
+const nativeModule = new URL('./testProcessWindowsNative.ts', import.meta.url);
 
 function fixture() {
   const root = mkdtempSync(join(realpathSync(tmpdir()), 'cabloy windows tree 空格 '));
@@ -145,15 +143,45 @@ async function treePids(root: string) {
   return [...new Set([...rootPids, ...childPids, ...grandPids])];
 }
 
-test('Windows native assets resolve from both source and packaged compiled module locations', () => {
-  const source = resolveWindowsProcessAssets(nativeModule.href);
-  const compiledUrl = new URL(
-    '../vona/packages-vona/vona-core/dist/lib/core/testProcessWindowsNative.js',
-    import.meta.url,
-  );
-  assert.deepEqual(resolveWindowsProcessAssets(compiledUrl.href), source);
-  assert.equal(existsSync(source.source), true);
-  assert.match(readFileSync(source.script, 'utf8'), /PSVersion\.Major -lt 7/);
+test('Windows native assets resolve as root script siblings', () => {
+  const assets = {
+    script: join(rootDir, 'scripts/testProcessWindowsNative.ps1'),
+    source: join(rootDir, 'scripts/testProcessWindowsNative.cs'),
+  };
+  assert.deepEqual(resolveWindowsProcessAssets(), assets);
+  assert.deepEqual(resolveWindowsProcessAssets(nativeModule.href), assets);
+  assert.equal(existsSync(assets.source), true);
+  assert.match(readFileSync(assets.script, 'utf8'), /PSVersion\.Major -lt 7/);
+});
+
+test('Windows native asset resolution fails when either sibling asset is missing', async () => {
+  const f = fixture();
+  try {
+    const scripts = join(f.root, 'scripts');
+    mkdirSync(scripts);
+    writeFileSync(join(f.root, 'package.json'), JSON.stringify({ type: 'module' }));
+    const modulePath = join(scripts, 'testProcessWindowsNative.ts');
+    copyFileSync(nativeModule, modulePath);
+    const fixtureUrl = pathToFileURL(modulePath).href;
+    const { resolveWindowsProcessAssets: resolveFixtureAssets } = await import(fixtureUrl);
+    const missingAssets = { message: 'Missing Windows native process assets' };
+    assert.throws(() => resolveFixtureAssets(), missingAssets);
+    for (const name of ['testProcessWindowsNative.ps1', 'testProcessWindowsNative.cs']) {
+      copyFileSync(new URL(`./${name}`, import.meta.url), join(scripts, name));
+    }
+    const assets = {
+      script: join(scripts, 'testProcessWindowsNative.ps1'),
+      source: join(scripts, 'testProcessWindowsNative.cs'),
+    };
+    assert.deepEqual(resolveFixtureAssets(), assets);
+    for (const asset of Object.values(assets)) {
+      rmSync(asset);
+      assert.throws(() => resolveFixtureAssets(), missingAssets);
+      copyFileSync(join(rootDir, 'scripts', basename(asset)), asset);
+    }
+  } finally {
+    f.dispose();
+  }
 });
 
 test('native implementation has no post-creation Job assignment or historical PID termination fallback', () => {

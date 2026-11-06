@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 import { spawnSync } from 'node:child_process';
 import {
+  copyFileSync,
   existsSync,
   linkSync,
   lstatSync,
@@ -73,6 +74,53 @@ function fixtureEnv(): NodeJS.ProcessEnv {
     ),
   );
 }
+
+test('build coordinator imports and resolves native assets from a scripts-only checkout', () => {
+  const dir = fixture();
+  try {
+    const scripts = path.join(dir, 'scripts');
+    mkdirSync(scripts);
+    for (const file of [
+      'buildZovaIsolated.ts',
+      'buildProcessGuardianWindows.ts',
+      'ownedProcess.ts',
+      'testProcessWindowsNative.ts',
+      'testProcessWindowsNative.ps1',
+      'testProcessWindowsNative.cs',
+    ]) {
+      copyFileSync(path.join(root, 'scripts', file), path.join(scripts, file));
+    }
+    write(path.join(dir, 'package.json'), JSON.stringify({ type: 'module' }));
+    for (const absent of ['vona', 'zova', 'node_modules']) {
+      assert.equal(existsSync(path.join(dir, absent)), false);
+    }
+    const result = spawnSync(
+      process.execPath,
+      [
+        '--input-type=module',
+        '--eval',
+        `import { parseBuildRequest } from './scripts/buildZovaIsolated.ts';
+import { resolveWindowsProcessAssets } from './scripts/testProcessWindowsNative.ts';
+process.stdout.write(JSON.stringify({
+  request: parseBuildRequest(['cabloyBasicWeb']),
+  assets: resolveWindowsProcessAssets(),
+}));`,
+      ],
+      { cwd: dir, env: fixtureEnv(), encoding: 'utf8', timeout: 15_000 },
+    );
+    assert.equal(result.error, undefined);
+    assert.equal(result.status, 0, result.stderr);
+    assert.deepEqual(JSON.parse(result.stdout), {
+      request: { operation: 'pair', flavors: ['cabloyBasicWeb'] },
+      assets: {
+        script: path.join(scripts, 'testProcessWindowsNative.ps1'),
+        source: path.join(scripts, 'testProcessWindowsNative.cs'),
+      },
+    });
+  } finally {
+    rmSync(dir, { recursive: true, force: true });
+  }
+});
 
 test('artifact staging copies current files without sharing writable files', async t => {
   const dir = fixture();

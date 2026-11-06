@@ -14,9 +14,8 @@ import path from 'node:path';
 import test from 'node:test';
 import { fileURLToPath } from 'node:url';
 
-import type { GuardianResult, OwnedProcess } from './runIsolatedTest.ts';
+import type { GuardianResult, OwnedProcess } from './ownedProcess.ts';
 
-import { inspectWindowsProcesses } from '../vona/packages-vona/vona-core/src/lib/core/testProcessWindowsNative.ts';
 import {
   OwnedBuildChildren,
   generatedBuildEnv,
@@ -25,6 +24,7 @@ import {
   runPairedBuild,
   withBuildLock,
 } from './buildZovaIsolated.ts';
+import { inspectWindowsProcesses } from './testProcessWindowsNative.ts';
 
 const nativeOptions = {
   skip:
