@@ -82,6 +82,8 @@ Practical interpretation:
 - `build:zova:admin` and `build:zova:web` are explicit root-wrapper paths for flavor-specific SSR output plus related REST generation
 - `build` is the fullstack alignment path when frontend and backend output should move together
 
+Ordinary root build commands use the existing workspace scripts without a source snapshot; they do not guarantee coexistence with a development server in the same checkout. For AI build verification, or when you deliberately need to leave one standalone SSR development server running, use `npm run build:zova:isolated -- cabloyBasicWeb` (substitute the required flavor). This explicit command compiles each SSR/REST pair in a private copy of the prepared frontend workspace, without running dependency preparation in the live workspace. Keep inputs stable during snapshot preparation and prepare missing dependencies/metadata separately. Publication to standard outputs and configured copy targets remains a shared handoff, not seamless hot deployment of a running Vona integrated SSR process. Do not overlap ordinary and isolated artifact publication. See [Frontend build isolation](/reference/repo-scripts#frontend-build-isolation-in-cabloy-basic) for disk cost, failure handling and limits.
+
 ### Level 2: flavor-specific Zova workflow
 
 Use this when you need appMode/flavor detail explicitly.

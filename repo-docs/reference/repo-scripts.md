@@ -37,6 +37,7 @@ Cabloy Basic exposes these shared root scripts:
 - `npm run build:zova:commerce`
 - `npm run build:zova:commerce:web`
 - `npm run build:zova:commerce:admin`
+- `npm run build:zova:isolated -- <flavor> [<flavor> ...]`
 - `npm run start`
 - `npm run start:one`
 - `npm run test`
@@ -52,6 +53,30 @@ Cabloy Basic exposes these shared root scripts:
 - `npm run docs:preview`
 
 `npm run init` prepares all Cabloy Basic SSR and REST artifacts with `npm run build:zova:all`, which sequentially builds the Basic and Commerce flavor batches before Vona initialization. Use `build:zova` or `build:zova:commerce` for focused artifact refreshes; use `build:zova:all` only when every shipped Basic flavor must be prepared.
+
+## Frontend build isolation in Cabloy Basic
+
+Ordinary root frontend builds (`build:zova`, `build:zova:all`, and the Admin/Web/Commerce wrappers) use the existing workspace build scripts without a source snapshot. `build`, `build:docker`, `init`, and normal CI workflows retain this ordinary build path. It has no guarantee of coexistence with a Zova development server in the same checkout: preparation and compilation can overwrite or remove its runtime files.
+
+Select isolation explicitly when needed:
+
+```bash
+npm run build:zova:isolated -- cabloyBasicWeb
+# Multiple flavors run sequentially, each with paired SSR/REST output:
+npm run build:zova:isolated -- cabloyBasicAdmin cabloyBasicWeb
+```
+
+The explicit command compiles in a disposable filesystem copy of the prepared Zova workspace. One isolated production build can run alongside one Zova standalone SSR development server in the same checkout without overwriting its `.zova`, `.quasar` or dependency cache. AI development workflows default to this explicit command for frontend build verification; users can opt in too. The command does not detect whether its caller is an AI. Development commands and their identity/ports are unchanged.
+
+The runner copies current source, including uncommitted and untracked files, generated metadata and installed frontend dependencies. Files are copied independently, using filesystem reflinks where supported; dependencies are not shared through hardlinks or a link to the original `node_modules`. Allow disk space for a private frontend dependency tree. Keep inputs stable during snapshot preparation, and coordinate dependency installation/generation and contract regeneration separately. The runner does not run `prerun`, install missing dependencies or repair missing metadata; prepare those deliberately before building.
+
+Each flavor compiles SSR and REST before publishing either artifact. Basic and Commerce batches remain sequential; if a later flavor fails, earlier successfully published pairs remain published. Standard dist/release names and configured build-copy destinations are preserved. Publication stages complete directories and keeps previous outputs for rollback on a handled replacement failure; it is not a crash-atomic deployment transaction.
+
+After a frontend refresh, run `npm run deps:vona` when Vona consumes the changed REST contract. Artifact publication and dependency synchronization remain shared handoff steps: this isolation does **not** promise seamless replacement of artifacts used by an already running Vona integrated SSR process. Nested workspace build scripts and raw Quasar/REST commands do not receive the root runner's isolation guarantee. Arbitrary custom hooks that explicitly write outside the copied workspace are not sandboxed.
+
+The isolated runner uses POSIX process groups on macOS/Linux and the existing native Windows Job Object guardian on Windows. Native Windows additionally requires PowerShell 7 (`pwsh.exe` on `PATH`), alongside the repository's Node.js and pnpm requirements; the guardian compiles its checked-in native helper at runtime. Snapshot-local directory junctions and independent copies of linked files do not require administrator privileges or Developer Mode. The runner accepts a build result only after confirming that its owned process tree has exited.
+
+Only one isolated frontend build is supported per checkout. A second isolated invocation fails rather than adopting another run's lock or cleaning its files. Ordinary build commands do not acquire this lock; coordinate ordinary and isolated builds so their preparation and artifact publication do not overlap. Interrupted builds with uncertain child shutdown retain their owned scratch and lock for inspection; do not delete another process's lock or snapshot to bypass a conflict. Windows file-sharing restrictions can also prevent replacing artifacts used by a live consumer; such failures are reported rather than bypassed with destructive retries.
 
 ## TypeScript toolchains in Cabloy Basic
 
@@ -86,7 +111,7 @@ Root `npm run tsc` runs `tsc:zova`, then `tsc:vona`; these are the only root `ts
 
 In both nested workspaces, `npm run tsc` delegates to `npm run tsc:native`. Native and legacy checks first run `npm run prerun`, then invoke the selected compiler with incremental caching disabled. Root workspace aliases delegate to these scripts too, so dependency and generated metadata preparation is not bypassed. Each workspace's `prerun` runs only its `:tools:deps` command; it does not call `tsc`, avoiding recursive script execution. Preparation may refresh generated metadata or dependency manifests and install changed dependencies, while the compiler step itself emits no declarations or build-info files.
 
-Zova development and build entrypoints call `npm run prerun` before Quasar or REST emission to prepare dependencies and generated metadata without automatically running a typecheck. Run `npm run tsc`, `npm run tsc:native`, or `npm run tsc:legacy` explicitly inside the Zova workspace when source typechecking is needed. The former multi-project Vona CLI command `:bin:tsc` has been removed; use the project checking scripts instead. Module publication configurations retain their existing compiler selection. REST emission uses tsdown 0.23.1 with an explicit JavaScript-only pass (`dts: false`) followed by a declaration-only pass (`dts.generator: 'tsgo'`). The frontend CLI and fullstack workflows require Node.js `>=24.11.0`. Classic TypeScript remains installed for compiler-JavaScript-API consumers, including SWC configuration loading, Rollup integration, and OpenAPI generation; the REST emitter retains the `@typescript/native-preview` dependency name as an npm alias for stable `typescript@7.0.2`, preserving its declaration plugin's compiler lookup.
+Nested Zova development and build entrypoints call `npm run prerun` before Quasar or REST emission to prepare dependencies and generated metadata without automatically running a typecheck. Ordinary root frontend build wrappers delegate to those workspace scripts. Only `build:zova:isolated` uses the prepared-workspace snapshot described in [Frontend build isolation](#frontend-build-isolation-in-cabloy-basic), without running preparation in the live workspace. Run `npm run tsc`, `npm run tsc:native`, or `npm run tsc:legacy` explicitly inside the Zova workspace when source typechecking is needed. The former multi-project Vona CLI command `:bin:tsc` has been removed; use the project checking scripts instead. Module publication configurations retain their existing compiler selection. REST emission uses tsdown 0.23.1 with an explicit JavaScript-only pass (`dts: false`) followed by a declaration-only pass (`dts.generator: 'tsgo'`). The frontend CLI and fullstack workflows require Node.js `>=24.11.0`. Classic TypeScript remains installed for compiler-JavaScript-API consumers, including SWC configuration loading, Rollup integration, and OpenAPI generation; the REST emitter retains the `@typescript/native-preview` dependency name as an npm alias for stable `typescript@7.0.2`, preserving its declaration plugin's compiler lookup.
 
 The native alias is installed at the repository root, not in either nested workspace. Run `pnpm install` at the root after updating the checkout; a missing alias fails with an installation diagnostic rather than silently selecting the legacy compiler. Do not use a bare root `tsc`/`pnpm exec tsc` to choose a compiler, because both packages declare the same binary name.
 

@@ -64,6 +64,12 @@ For the other Cabloy Basic site URLs and the quick command comparison, see [Full
 
 Direct access to `9000` cannot replace validation at `7102`. Before acceptance or deployment checks, build the required SSR/REST artifacts and synchronize them with Vona. For build and deployment steps, follow [SSR Build and Deploy Guide](/frontend/ssr-build-deploy-guide); for the Basic browser acceptance workflow, see [Frontend Scripts](/frontend/scripts#vona-integrated-ssr-browser-acceptance).
 
+## Build while using the development entry
+
+In Cabloy Basic, ordinary root frontend build commands use the working workspace and do not guarantee coexistence with its development server. To leave one Zova standalone SSR dev server running, explicitly select `npm run build:zova:isolated -- cabloyBasicWeb` (or the required flavor). This compiles SSR/REST in a private copy of the prepared frontend workspace; the development server's runtime and hot-reload files are not reused or deleted by compilation. AI build verification defaults to this explicit isolated entry. No caller detection, port or environment-identity change is required.
+
+Dependency installation/generation and the snapshot preparation window still need coordinated inputs. After both artifacts compile, the runner publishes the flavor's outputs and configured copy targets. This shared handoff is not a hot-deployment guarantee for a live Vona integrated SSR consumer. Run `npm run deps:vona` separately when needed, then verify the Vona entry. Raw nested build commands do not provide this isolation. See [Frontend build isolation](/reference/repo-scripts#frontend-build-isolation-in-cabloy-basic) for preparation, disk cost, failure handling and concurrency limits.
+
 ## Do not confuse an entry mode with an SSR site
 
 “Standalone” here describes **direct access to the Zova development server**. It does not mean an independently deployable SSR application. An **SSR Site/flavor** identifies an application surface that Vona can mount and serve, such as Web or Admin. Adding a new deployable site requires its own aligned flavor, SSR/REST output, and Vona registration; it is not accomplished by starting another standalone development listener. See [Independent SSR Site and Flavor Setup](/fullstack/ssr-site-and-flavor-setup).

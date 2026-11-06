@@ -43,6 +43,7 @@
     "build:zova:commerce": "pnpm --dir zova run build:ssr:cabloyCommerceBatch",
     "build:zova:commerce:web": "pnpm --dir zova run build:ssr:cabloyCommerce && pnpm --dir zova run build:rest:cabloyCommerce",
     "build:zova:commerce:admin": "pnpm --dir zova run build:ssr:cabloyCommerceAdmin && pnpm --dir zova run build:rest:cabloyCommerceAdmin",
+    "build:zova:isolated": "node scripts/buildZovaIsolated.ts",
     "start": "cd vona && npm run start",
     "start:one": "cd vona && npm run start:one",
     "test": "cd vona && npm run test",
