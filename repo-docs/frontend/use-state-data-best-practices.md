@@ -278,6 +278,20 @@ const passportCode = await this.$passport.ensureFreshTempAuthToken(options);
 
 Both paths reuse the same model-owned query. When `$QueryGetFresh(...)` finds stale data, it starts `query.suspense()` and returns `undefined` for the current render; reactive query state provides the replacement value on a later render. `$QueryEnsureFresh(...)` instead waits for that refresh and propagates query errors to the interaction flow.
 
+### Distinguish skipped queries, unloaded data, and expected absence
+
+`undefined` has different meanings at different query boundaries:
+
+- A model query factory may return `undefined` before calling `$useStateData(...)` when a prerequisite is missing; no query is created by that call.
+- An existing query may have `query.data === undefined` before data is loaded.
+- An executed `queryFn` must **not** resolve successfully with `undefined`: TanStack Query rejects that result as a query error, even when the TypeScript data type permits it.
+
+If the domain contract deliberately treats absence as a successful result, return `null` and declare the successful data type as `T | null`. Render the expected unavailable/empty state from the model-owned `query.data`; do not copy it into separate controller state. Only normalize the specific absence condition defined by that contract. Do not turn every HTTP 404, authentication/authorization failure, transport failure, or server error into `null`; unexpected errors must retain their intended propagation.
+
+`$QueryEnsureLoaded(...)` returns `undefined` when the factory supplies no query. For an existing query, it waits only while `query.data === undefined` and throws `result.error` from that wait. `null` is loaded data, not a pending state. Already-defined data, including retained data alongside a refresh error, bypasses this wait/error check; the helper is not an unconditional check of `query.error`.
+
+When an awaited readiness helper throws from Controller `__init__()` and the error is not handled there, it enters Controller-load error handling before ordinary `render()` runs. A normal renderer's `query.error` or unavailable-data branch therefore does not necessarily own initialization failures. `meta.disableErrorEffect: true` does not suppress an explicit readiness-helper throw. Choose the intended boundary rather than broadly catching errors merely to force normal rendering; see [Controller Boundary Guide: Error routing](/frontend/controller-boundary-guide#error-routing).
+
 ## Render-driving state versus one-shot refetch results
 
 A query established during render remains the owner of its ongoing state. Render paths should read the current reactive surface—typically `query.data`, `query.pending`, `query.error`, or a model-derived projection—and let query updates drive a later render.

@@ -81,7 +81,7 @@
     {
       "adapter": "codex",
       "category": "skill",
-      "sha256": "bfb08ef0d1ebf16ae742a52375c6c6253106b598cd7247d1eaa1da2b7e35b2af",
+      "sha256": "e70f573563fde20c2518b60a787f48a08da070464826221e0738e5af99af3da5",
       "source": "skills/cabloy-frontend-scaffold/references/follow-up-checklist.md",
       "target": ".agents/skills/cabloy-frontend-scaffold/references/follow-up-checklist.md"
     },
@@ -417,7 +417,7 @@
     {
       "adapter": "claude",
       "category": "skill",
-      "sha256": "bfb08ef0d1ebf16ae742a52375c6c6253106b598cd7247d1eaa1da2b7e35b2af",
+      "sha256": "e70f573563fde20c2518b60a787f48a08da070464826221e0738e5af99af3da5",
       "source": "skills/cabloy-frontend-scaffold/references/follow-up-checklist.md",
       "target": ".claude/skills/cabloy-frontend-scaffold/references/follow-up-checklist.md"
     },
@@ -767,7 +767,7 @@
     {
       "adapter": "cursor",
       "category": "skill",
-      "sha256": "bfb08ef0d1ebf16ae742a52375c6c6253106b598cd7247d1eaa1da2b7e35b2af",
+      "sha256": "e70f573563fde20c2518b60a787f48a08da070464826221e0738e5af99af3da5",
       "source": "skills/cabloy-frontend-scaffold/references/follow-up-checklist.md",
       "target": ".cursor/skills/cabloy-frontend-scaffold/references/follow-up-checklist.md"
     },

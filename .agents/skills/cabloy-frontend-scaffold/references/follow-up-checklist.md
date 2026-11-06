@@ -21,6 +21,7 @@ After generating or extending a frontend thread, check which follow-up layers ap
 - for state intentionally omitted from SSR, such as cookie-unavailable or browser-only state, keep the same neutral shell/placeholder through hydration and begin query/load/render work only at an explicit post-hydration, admission, mounted, or interaction boundary
 - `disableSuspenseOnInit` skips only the init-time suspense kick; do not treat it as a no-fetch or hydration-deferral mechanism
 - use `$QueryEnsureLoaded(...)` only where loaded data is explicitly required; choose freshness helpers when the boundary requires domain-valid data
+- distinguish a skipped query or unloaded `query.data` from an executed `queryFn` result: successful results cannot be `undefined`; use typed `null` only for domain-defined absence and check initialization error-boundary ownership; see [Query absence and readiness errors](../../../../repo-docs/frontend/use-state-data-best-practices.md#distinguish-skipped-queries-unloaded-data-and-expected-absence)
 - OpenAPI SDK or schema-driven layer impact
 - backend contract reminder if frontend depends on generated backend contract output
 - if backend metadata will consume newly added frontend render resources, run the relevant Zova build first and then `npm run deps:vona`
