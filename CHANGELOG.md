@@ -1,5 +1,15 @@
 # Changelog
 
+## 5.1.260
+
+### Features
+
+- Add unspecified feature updates.
+
+### Improvements
+
+- Update `.npmignore` to adjust npm package exclusions.
+
 ## 5.1.259
 
 ### Features
