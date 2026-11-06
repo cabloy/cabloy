@@ -114,7 +114,7 @@ Add presentation contracts, rollout records, runbooks, extra ADRs, or evidence o
 
 ## 8. Preserve Cabloy boundaries
 
-- Keep suite business planning in `repo-specs/`, public/agent guidance in `repo-docs/`, and supporting maintainer rationale in `repo-docs-internal/`.
+- Keep suite business planning and acceptance records in `repo-specs/`, general framework public/agent guidance in `repo-docs/`, and supporting maintainer rationale in `repo-docs-internal/`. Suite-specific usage/configuration guides may live in the owning suite's `docs/`, linked from its README; specs/runbooks should link to that canonical guide rather than duplicate it. Do not add supplier-specific instructions to generic framework guides or assume suite-local docs are automatically published.
 - Reuse persistence and identity ownership. An independent site does not create a separate tenant, identity, authorization, persistence, or domain-rule authority.
 - Treat the active Vona instance as tenant by default. Authorization and scope are server-authoritative, not menus or browser filters.
 - Separate genuinely different Admin/Web API/DTO, server-scope, frontend state, and page contracts while retaining one domain/persistence boundary.
