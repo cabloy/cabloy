@@ -122,6 +122,8 @@ Before proposing implementation, inspect the active repository rather than infer
 
 The independent identity tuple—flavor, site ID, public path, bundle path, REST package, Vona site module, and root paired-build wrapper—must be selected together. The root wrapper must build both SSR and REST output before `npm run deps:vona`; `build:rest:*` alone is not enough. Default Basic or Start Admin/Web wrappers are validated specimens, not a command template for a differently named site.
 
+In both Cabloy Basic and Cabloy Start, author nested scripts in `zova/package.original.json` and synchronize the working manifest's scripts without replacing its generated dependencies. Preserve ordinary non-isolated root wrappers and an explicit isolated build entrypoint. For Basic AI work, use `npm run build:zova:isolated -- <site-flavor>`; keep each isolated SSR/REST pair in one runner invocation, because separate invocations publish separately. A business suite does not itself require a new flavor, and a new flavor does not automatically belong in `build:zova:all`. Resolve the active repository's script mappings, flavor names, isolation entrypoint and output paths rather than copying another edition's concrete values.
+
 Read [Independent SSR Site and Flavor Setup](../../../repo-docs/fullstack/ssr-site-and-flavor-setup.md) for the canonical setup and evidence procedure.
 
 If the task is only backend scaffolding or only frontend scaffolding, the more specialized scaffold skills may be the better primary choice.
@@ -245,11 +247,13 @@ Typical examples in Cabloy Basic include:
 - `cd zova && npm run build:rest:cabloyBasicAdmin`
 - `cd zova && npm run build:rest:cabloyBasicWeb`
 
-Important Cabloy Basic reverse-sync rule:
+Important reverse-sync rule for Cabloy Basic and Cabloy Start:
 
-- if Vona consumes newly added or changed Zova Admin render/action/metadata, do **not** stop at `build:rest:cabloyBasicAdmin`
-- for AI work, run `npm run build:zova:isolated -- cabloyBasicAdmin` from the repo root instead; include `cabloyBasicWeb` or another source-confirmed flavor when affected, then run `npm run deps:vona`
-- keep snapshot inputs stable and coordinate dependency preparation and shared publication; do not overlap ordinary and isolated builds or assume live Vona integrated SSR hot deployment
+- if Vona consumes newly added or changed Zova Admin render/action/metadata, do **not** stop at a REST-only `build:rest:*` command
+- in Basic AI workflows, default to `npm run build:zova:isolated -- cabloyBasicAdmin` from the repo root; include `cabloyBasicWeb` or another source-confirmed flavor when affected, then run `npm run deps:vona`. Ordinary user/CI wrappers remain non-isolated, and humans may explicitly opt into isolation too; do not infer an AI caller automatically
+- the isolated runner consumes live prepared `zova/` source/dependencies with private generated roots, not a source/dependency snapshot. It does not automatically install dependencies or generate shared metadata: run `npm run deps:zova` explicitly when needed, then keep source, dependencies and metadata stable throughout compilation
+- support only one application-build invocation per checkout and coordinate shared preparation/publication; do not overlap ordinary and isolated builds. Isolation is neither an arbitrary-hook sandbox nor live Vona integrated SSR hot deployment; see [Frontend build isolation](../../../repo-docs/reference/repo-scripts.md#frontend-build-isolation) for owned roots, process ownership and Windows requirements
+- keep individual nested SSR-only and REST-only scripts within those boundaries, SPA scripts SPA-only and paired batches paired. Resolve CLI/coordinator mappings from the active manifest rather than assuming every ordinary build delegates to isolation. Dev/typecheck preparation and module/library builds are unchanged
 - treat this as a JS-bundle-plus-rest-output handoff, not a rest-types-only refresh
 - the current repo safeguard may auto-run those two commands for high-confidence Zova reverse-source edits, but only as a convenience layer on top of the contract-loop model
 - if the change was consumer-side, low-confidence, cross-edition, happened outside a supported platform hook path, or used an untrusted/discovery-disabled hook, run the reverse sync flow deliberately yourself

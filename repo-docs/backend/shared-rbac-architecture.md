@@ -2,7 +2,7 @@
 
 This guide explains the shared RBAC foundation used by Cabloy Basic and Cabloy Start: the Vona `a-rbac` runtime, its extension boundary, and the Resource permission projection consumed by Zova.
 
-Use this page when you need to author, extend, debug, or verify RBAC across the backend/frontend boundary. For Start's operational role, grant, Department, and policy-editor workflow, read [RBAC Authorization](/backend/rbac-authorization) after this guide.
+Use this page when you need to author, extend, debug, or verify RBAC across the backend/frontend boundary. Application-owned role, grant, Department, and policy-editor workflows remain separate from this shared runtime contract.
 
 > [!WARNING]
 > RBAC authority is enforced on the backend. `ModelResource.permissions`, `$passport.checkPermission(...)`, table-action visibility, and SSR-rendered capability state are browser UX projections. None of them authorize a direct API request.
@@ -357,9 +357,8 @@ When extending shared RBAC:
 
 ## Read next
 
-- [RBAC Authorization](/backend/rbac-authorization) — Start roles, grants, five data scopes, and operational policy management.
 - [Controller AOP Guide](/backend/controller-aop-guide) — route guard authoring.
 - [Model Resource Owner Pattern](/frontend/model-resource-owner-pattern) — Resource-owned query and permission state.
 - [Permission, formScene, and Action Visibility Guide](/frontend/permission-formscene-action-visibility-guide) — entry-page scene filtering and action rendering.
 - [Table Action Visibility and Permission Flow Guide](/frontend/table-action-visibility-permission-flow-guide) — list-page action consumers.
-- [Menu Authorization](/backend/menu-authorization) — navigation disclosure, a separate policy domain.
+- [Menu Guide](/backend/menu-guide#static-menu-visibility) — navigation disclosure, a separate policy domain.

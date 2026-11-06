@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 import { spawnSync } from 'node:child_process';
 import {
+  copyFileSync,
   existsSync,
   linkSync,
   lstatSync,
@@ -9,10 +10,12 @@ import {
   readFileSync,
   readlinkSync,
   realpathSync,
+  renameSync,
   rmSync,
   symlinkSync,
   writeFileSync,
 } from 'node:fs';
+import { realpath } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
 import test from 'node:test';
@@ -23,10 +26,13 @@ import {
   copySnapshotTree,
   createBuildTargets,
   outputPlanEnv,
+  parseBuildRequest,
+  validateBuildArtifacts,
   publishBuildTargets,
   readOutputPlan,
   runPairedBuild,
-  snapshotZova,
+  buildGeneratedRoots,
+  generatedBuildEnv,
   validateBuildTargets,
   withBuildLock,
 } from './buildZovaIsolated.ts';
@@ -34,7 +40,7 @@ import {
 const root = fileURLToPath(new URL('../', import.meta.url));
 
 function fixture() {
-  return realpathSync(mkdtempSync(path.join(tmpdir(), 'cabloy-build-zova-')));
+  return realpathSync.native(mkdtempSync(path.join(tmpdir(), 'cabloy-build-zova-')));
 }
 
 function write(file: string, content: string) {
@@ -70,7 +76,63 @@ function fixtureEnv(): NodeJS.ProcessEnv {
   );
 }
 
-test('snapshots current files, metadata and nested dependencies without sharing writable files', async t => {
+test('fixture roots use the same native path identity as the build coordinator', async () => {
+  const dir = fixture();
+  try {
+    assert.equal(dir, await realpath(dir));
+  } finally {
+    rmSync(dir, { recursive: true, force: true });
+  }
+});
+
+test('build coordinator imports and resolves native assets from a scripts-only checkout', () => {
+  const dir = fixture();
+  try {
+    const scripts = path.join(dir, 'scripts');
+    mkdirSync(scripts);
+    for (const file of [
+      'buildZovaIsolated.ts',
+      'buildProcessGuardianWindows.ts',
+      'ownedProcess.ts',
+      'testProcessWindowsNative.ts',
+      'testProcessWindowsNative.ps1',
+      'testProcessWindowsNative.cs',
+    ]) {
+      copyFileSync(path.join(root, 'scripts', file), path.join(scripts, file));
+    }
+    write(path.join(dir, 'package.json'), JSON.stringify({ type: 'module' }));
+    for (const absent of ['vona', 'zova', 'node_modules']) {
+      assert.equal(existsSync(path.join(dir, absent)), false);
+    }
+    const result = spawnSync(
+      process.execPath,
+      [
+        '--input-type=module',
+        '--eval',
+        `import { parseBuildRequest } from './scripts/buildZovaIsolated.ts';
+import { resolveWindowsProcessAssets } from './scripts/testProcessWindowsNative.ts';
+process.stdout.write(JSON.stringify({
+  request: parseBuildRequest(['cabloyBasicWeb']),
+  assets: resolveWindowsProcessAssets(),
+}));`,
+      ],
+      { cwd: dir, env: fixtureEnv(), encoding: 'utf8', timeout: 15_000 },
+    );
+    assert.equal(result.error, undefined);
+    assert.equal(result.status, 0, result.stderr);
+    assert.deepEqual(JSON.parse(result.stdout), {
+      request: { operation: 'pair', flavors: ['cabloyBasicWeb'] },
+      assets: {
+        script: path.join(scripts, 'testProcessWindowsNative.ps1'),
+        source: path.join(scripts, 'testProcessWindowsNative.cs'),
+      },
+    });
+  } finally {
+    rmSync(dir, { recursive: true, force: true });
+  }
+});
+
+test('artifact staging copies current files without sharing writable files', async t => {
   const dir = fixture();
   try {
     const source = path.join(dir, 'zova');
@@ -93,7 +155,7 @@ test('snapshots current files, metadata and nested dependencies without sharing 
     directoryLink('../packages-utils/example', path.join(source, 'node_modules/example'));
     directoryLink('example', path.join(source, 'node_modules/example-chain'));
 
-    await snapshotZova(source, snapshot);
+    await copySnapshotTree(source, snapshot, { excludeTopLevel: new Set(excluded) });
 
     for (const [file, content] of Object.entries(files)) {
       assert.equal(readFileSync(path.join(snapshot, file), 'utf8'), content, file);
@@ -142,7 +204,7 @@ test('snapshots current files, metadata and nested dependencies without sharing 
           return;
         }
         const fileSnapshot = path.join(dir, 'file-link-snapshot');
-        await snapshotZova(source, fileSnapshot);
+        await copySnapshotTree(source, fileSnapshot, { excludeTopLevel: new Set(excluded) });
         const copiedLink = path.join(fileSnapshot, 'src/.metadata/modules.d.ts');
         assert.equal(readFileSync(copiedLink, 'utf8'), files['packages-utils/example/types.d.ts']);
         if (process.platform === 'win32') {
@@ -243,12 +305,12 @@ process.stdout.write(JSON.stringify(Object.fromEntries(keys.map(key => [key, loa
       APP_VERSION: '9.8.7',
     };
     const before = { ...inherited };
-    const privateOutDir = 'dist/ssr-cabloyBasicWeb';
+    const privateOutDir = '.quasar-build-test123/output/ssr-cabloyBasicWeb';
     const env = compilationEnv(inherited, privateOutDir, 'cabloyBasicWeb');
     for (const invalidOutput of ['../must-not-write', path.join(dir, 'absolute-output')]) {
       assert.throws(
         () => compilationEnv(inherited, invalidOutput, 'cabloyBasicWeb'),
-        /canonical private dist path/,
+        /canonical private generated-root path/,
       );
     }
     assert.deepEqual(inherited, before);
@@ -374,10 +436,14 @@ test(
     for (const [env, expected] of [
       [outputPlanEnv(inherited, 'cabloyBasicWeb'), controls],
       [
-        compilationEnv(inherited, 'dist/ssr-cabloyBasicWeb', 'cabloyBasicWeb'),
+        compilationEnv(
+          inherited,
+          '.quasar-build-test123/output/ssr-cabloyBasicWeb',
+          'cabloyBasicWeb',
+        ),
         {
           ...controls,
-          BUILD_OUTDIR: 'dist/ssr-cabloyBasicWeb',
+          BUILD_OUTDIR: '.quasar-build-test123/output/ssr-cabloyBasicWeb',
           BUILD_COPY_DIST: '',
           BUILD_COPY_RELEASE: '',
           BUILD_REST_COPY_DIST: '',
@@ -464,6 +530,101 @@ test('paired builds publish sequentially only after SSR and REST succeed and cle
       assert.equal(readFileSync(unrelated, 'utf8'), 'do not remove');
     }
   } finally {
+    rmSync(dir, { recursive: true, force: true });
+  }
+});
+
+test('generated roots share one run ID, route build paths and clean only their owned directories', async () => {
+  const dir = fixture();
+  let owned: string[] = [];
+  let ownedTsconfig = '';
+  try {
+    const live = ['.zova', '.quasar', '.zova-rest'];
+    for (const name of live) write(path.join(dir, 'zova', name, 'sentinel'), name);
+    for (const fail of [false, true]) {
+      const running = withBuildLock(dir, async (runDir, roots) => {
+        assert.deepEqual(roots, buildGeneratedRoots(path.join(dir, 'zova'), runDir));
+        owned = [runDir, ...Object.values(roots)];
+        const owner = readFileSync(path.join(runDir, 'owner.json'), 'utf8');
+        for (const directory of owned)
+          assert.equal(readFileSync(path.join(directory, 'owner.json'), 'utf8'), owner);
+        const inherited = {
+          ZOVA_ISOLATED: 'false',
+          ZOVA_RUNTIME_DIR: '.zova',
+          APP_NAME: 'unchanged',
+        };
+        const env = generatedBuildEnv(inherited, roots);
+        assert.equal(inherited.ZOVA_ISOLATED, 'false');
+        assert.equal(env.APP_NAME, 'unchanged');
+        assert.equal(env.ZOVA_ISOLATED, 'true');
+        assert.equal(env.ZOVA_RUNTIME_DIR, path.basename(roots.runtime));
+        assert.equal(env.ZOVA_REST_DIR, path.basename(roots.rest));
+        assert.equal(
+          env.ZOVA_REST_TSCONFIG,
+          `.tsconfig.rest-build-${path.basename(runDir).slice('zova-build-'.length)}.json`,
+        );
+        ownedTsconfig = path.join(dir, 'zova', env.ZOVA_REST_TSCONFIG!);
+        assert.equal(readFileSync(ownedTsconfig, 'utf8'), '{}\n');
+        writeFileSync(ownedTsconfig, '{"compilerOptions":{}}\n');
+        assert.equal(env.ZOVA_QUASAR_ROOT, roots.quasar);
+        for (const key of ['ZOVA_QUASAR_CACHE', 'ZOVA_QUASAR_CONFIG_DIR'])
+          assert.equal(existsSync(env[key]!), true);
+        const source = path.join(roots.quasar, 'output/ssr-cabloyBasicWeb');
+        write(path.join(source, 'sentinel'), 'private SSR');
+        const target = { source, destination: path.join(dir, 'zova/dist/ssr-cabloyBasicWeb') };
+        const options = {
+          rootDir: dir,
+          zovaDir: path.join(dir, 'zova'),
+          runDir,
+          artifactRoot: roots.quasar,
+        };
+        await validateBuildTargets([target], options);
+        await assert.rejects(
+          validateBuildTargets([{ ...target, source: path.join(dir, 'zova/.quasar') }], options),
+        );
+        if (fail) throw new Error('generated-root fixture failure');
+        await publishBuildTargets([target], options);
+      });
+      if (fail) await assert.rejects(running, /fixture failure/);
+      else await running;
+      for (const directory of owned) assert.equal(existsSync(directory), false);
+      assert.equal(existsSync(ownedTsconfig), false);
+      assert.equal(existsSync(path.join(dir, 'run/zova-build.lock')), false);
+    }
+    for (const name of live)
+      assert.equal(readFileSync(path.join(dir, 'zova', name, 'sentinel'), 'utf8'), name);
+    assert.equal(
+      readFileSync(path.join(dir, 'zova/dist/ssr-cabloyBasicWeb/sentinel'), 'utf8'),
+      'private SSR',
+    );
+  } finally {
+    rmSync(dir, { recursive: true, force: true });
+  }
+});
+
+test('undrained children and replaced generated roots retain all scratch and the lock', async () => {
+  const dir = fixture();
+  try {
+    for (const mode of ['undrained', 'replaced', 'replaced-tsconfig']) {
+      const checkout = path.join(dir, mode);
+      let owned: string[] = [];
+      await assert.rejects(
+        withBuildLock(checkout, async (runDir, roots) => {
+          owned = [runDir, ...Object.values(roots)];
+          if (mode === 'undrained')
+            throw Object.assign(new Error('drainage unproven'), { retainRun: true });
+          const owner = readFileSync(path.join(roots.runtime, 'owner.json'), 'utf8');
+          renameSync(roots.runtime, `${roots.runtime}-original`);
+          write(path.join(roots.runtime, 'owner.json'), owner);
+          write(path.join(roots.runtime, 'sentinel'), 'replacement must survive');
+        }),
+        /drainage unproven|ownership changed/,
+      );
+      for (const directory of owned) assert.equal(existsSync(directory), true);
+      assert.equal(existsSync(path.join(checkout, 'run/zova-build.lock')), true);
+    }
+  } finally {
+    // Synthetic children only; no live process ownership is being overridden.
     rmSync(dir, { recursive: true, force: true });
   }
 });
@@ -639,14 +800,26 @@ test('ordinary root builds retain workspace mappings and isolation is explicitly
   const workspaceScripts = JSON.parse(
     readFileSync(path.join(root, 'zova/package.original.json'), 'utf8'),
   ).scripts;
+  assert.equal(Object.hasOwn(workspaceScripts, 'build:isolated'), false);
+  assert.equal(workspaceScripts.build, 'npm run build:ssr:admin');
+  assert.equal(
+    workspaceScripts['build:spa'],
+    'npm run prerun && quasar build --mode spa --flavor admin',
+  );
   for (const [name, flavor] of Object.entries(mappings)) {
     assert.equal(
       scripts[name],
       `pnpm --dir zova run build:ssr:${flavor} && pnpm --dir zova run build:rest:${flavor}`,
       name,
     );
-    assert.ok(workspaceScripts[`build:ssr:${flavor}`]);
-    assert.ok(workspaceScripts[`build:rest:${flavor}`]);
+    assert.equal(
+      workspaceScripts[`build:ssr:${flavor}`],
+      `npm run prerun && quasar build --mode ssr --flavor ${flavor}`,
+    );
+    assert.equal(
+      workspaceScripts[`build:rest:${flavor}`],
+      `npm run prerun && npm run zova :bin:buildRest -- --flavor ${flavor}`,
+    );
   }
   assert.ok(workspaceScripts['build:ssr:cabloyBasicBatch']);
   assert.ok(workspaceScripts['build:ssr:cabloyCommerceBatch']);
@@ -660,4 +833,101 @@ test('ordinary root builds retain workspace mappings and isolation is explicitly
     scripts['dev:zova:commerce:admin'],
     'cd zova && npm run dev:ssr:cabloyCommerceAdmin',
   );
+});
+
+test('build request operations are explicit, validated and compatible with bare flavor pairs', () => {
+  assert.deepEqual(parseBuildRequest(['cabloyBasicAdmin', 'cabloyBasicWeb']), {
+    operation: 'pair',
+    flavors: ['cabloyBasicAdmin', 'cabloyBasicWeb'],
+  });
+  for (const operation of ['pair', 'ssr', 'rest', 'spa']) {
+    assert.deepEqual(parseBuildRequest(['--operation', operation, 'admin']), {
+      operation,
+      flavors: ['admin'],
+    });
+    assert.deepEqual(parseBuildRequest([`--operation=${operation}`, 'admin']), {
+      operation,
+      flavors: ['admin'],
+    });
+  }
+  for (const args of [
+    [],
+    ['--operation'],
+    ['--operation', 'other', 'admin'],
+    ['--operation', 'ssr'],
+    ['admin', 'admin'],
+    ['../admin'],
+    ['--operation=spa', '--operation=ssr', 'admin'],
+  ]) {
+    assert.throws(() => parseBuildRequest(args));
+  }
+});
+
+test('single-mode targets publish only selected artifacts and SPA uses its own output mode', () => {
+  const dir = fixture();
+  try {
+    const plan = {
+      appVersion: '1.0.0',
+      buildOutDir: 'dist/custom',
+      buildCopyDist: 'copies',
+      buildCopyRelease: 'releases',
+      buildRestCopyDist: 'rest-copies',
+    };
+    for (const mode of ['ssr', 'spa', 'rest'] as const) {
+      const source = path.join(dir, 'private', mode);
+      const targets = createBuildTargets(dir, 'admin', plan, { [mode]: source });
+      assert.ok(targets.length >= 3);
+      assert.ok(targets.every(target => target.source === source));
+      assert.ok(
+        targets.some(target => target.destination === path.join(dir, 'dist', `${mode}-admin`)),
+      );
+      assert.equal(
+        targets.some(target => target.destination === path.join(dir, 'dist/custom')),
+        mode !== 'rest',
+      );
+      assert.equal(
+        targets.some(target => target.destination === path.join(dir, 'rest-copies/admin')),
+        mode === 'rest',
+      );
+      for (const other of ['ssr', 'spa', 'rest'].filter(value => value !== mode)) {
+        assert.equal(
+          targets.some(target => target.destination === path.join(dir, 'dist', `${other}-admin`)),
+          false,
+        );
+      }
+    }
+    const env = compilationEnv({}, '.quasar-build-fixture/output/spa-admin', 'admin', 'spa');
+    assert.equal(env.META_APP_MODE, 'spa');
+    assert.equal(env.BUILD_OUTDIR, '.quasar-build-fixture/output/spa-admin');
+    assert.equal(env.BUILD_COPY_DIST, '');
+    assert.throws(() =>
+      compilationEnv({}, '.quasar-build-fixture/output/ssr-admin', 'admin', 'spa'),
+    );
+    assert.equal(outputPlanEnv({}, 'admin', 'spa').META_APP_MODE, 'spa');
+  } finally {
+    rmSync(dir, { recursive: true, force: true });
+  }
+});
+
+test('mode-specific artifacts reject missing output without requiring unrelated SSR or REST files', async () => {
+  const dir = fixture();
+  try {
+    const spa = path.join(dir, 'spa');
+    write(path.join(spa, 'index.html'), '<script src="/assets/app.js"></script>');
+    await assert.rejects(validateBuildArtifacts({ spa }), /assets/);
+    mkdirSync(path.join(spa, 'assets'));
+    await assert.rejects(validateBuildArtifacts({ spa }), /no emitted assets/);
+    write(path.join(spa, 'assets/app.js'), 'export {};');
+    await validateBuildArtifacts({ spa });
+    const rest = path.join(dir, 'rest');
+    for (const file of ['index.mjs', 'index.d.mts', 'package.json'])
+      write(path.join(rest, file), '{}');
+    await validateBuildArtifacts({ rest });
+    await assert.rejects(
+      validateBuildArtifacts({ rest, ssr: path.join(dir, 'ssr') }),
+      /handler.js/,
+    );
+  } finally {
+    rmSync(dir, { recursive: true, force: true });
+  }
 });

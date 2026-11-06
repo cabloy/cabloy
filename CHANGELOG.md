@@ -1,5 +1,41 @@
 # Changelog
 
+## 5.1.262
+
+### Features
+
+- Update functionality.
+
+## 5.1.261
+
+### Features
+
+- Add isolation capabilities.
+
+## 5.1.260
+
+### Features
+
+- Add unspecified feature updates.
+
+### Improvements
+
+- Update `.npmignore` to adjust npm package exclusions.
+
+## 5.1.259
+
+### Features
+
+- Add support for isolated Zova builds.
+
+### Improvements
+
+- Align isolated Zova builds with the main build.
+- Synchronize the zova-core 5.1.100 patch and update Vona and Zova packages.
+- Improve debugging and end-to-end testing.
+- Clarify the session SSR first-paint policy.
+- Update scripting and OpenAPI documentation.
+
 ## 5.1.258
 
 ### Improvements

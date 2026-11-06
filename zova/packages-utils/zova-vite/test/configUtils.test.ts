@@ -29,6 +29,34 @@ try {
   hooks.deregister();
 }
 
+test('unminified config chunk matcher follows the resolved runtime directory precisely', async t => {
+  const previous = {
+    BUILD_MINIFY: process.env.BUILD_MINIFY,
+    ZOVA_RUNTIME_DIR: process.env.ZOVA_RUNTIME_DIR,
+    ZOVA_ISOLATED: process.env.ZOVA_ISOLATED,
+  };
+  t.after(() => {
+    for (const [key, value] of Object.entries(previous)) {
+      if (value === undefined) delete process.env[key];
+      else process.env[key] = value;
+    }
+  });
+  process.env.BUILD_MINIFY = 'false';
+  process.env.ZOVA_RUNTIME_DIR = '.zova-build-ID';
+  process.env.ZOVA_ISOLATED = 'true';
+  const config = createConfigUtils(
+    { flavor: 'cabloyBasicAdmin', mode: 'production', appMode: 'ssr' },
+    { appDir: '/checkout/zova', runtimeDir: '.zova' },
+  );
+  await config.loadModulesMeta();
+  const matcher = config.codeSplittingGroups().find(group => group.name === '-zova-config').test;
+  assert.ok(matcher.test('/checkout/zova/.zova-build-ID/config.ts'));
+  assert.ok(matcher.test('D:/checkout/zova/.zova-build-ID/config.ts?query'));
+  assert.ok(!matcher.test('/checkout/zova/.zova/config.ts'));
+  assert.ok(!matcher.test('/checkout/zova/other.zova-build-ID/config.ts'));
+  assert.ok(!matcher.test('/checkout/zova/.zova-build-ID/config.tsx'));
+});
+
 for (const appDir of ['/checkout/zova', 'D:\\checkout\\zova', 'D:\\checkout/zova']) {
   test(`module chunk groups match normalized Vite IDs for ${appDir}`, async () => {
     const config = createConfigUtils(

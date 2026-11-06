@@ -14,16 +14,17 @@ import path from 'node:path';
 import test from 'node:test';
 import { fileURLToPath } from 'node:url';
 
-import type { GuardianResult, OwnedProcess } from './runIsolatedTest.ts';
+import type { GuardianResult, OwnedProcess } from './ownedProcess.ts';
 
-import { inspectWindowsProcesses } from '../vona/packages-vona/vona-core/src/lib/core/testProcessWindowsNative.ts';
 import {
   OwnedBuildChildren,
+  generatedBuildEnv,
   outputPlanEnv,
   readOutputPlan,
   runPairedBuild,
   withBuildLock,
 } from './buildZovaIsolated.ts';
+import { inspectWindowsProcesses } from './testProcessWindowsNative.ts';
 
 const nativeOptions = {
   skip:
@@ -39,7 +40,7 @@ const success: GuardianResult = {
 };
 
 function fixture() {
-  return realpathSync(mkdtempSync(path.join(tmpdir(), 'cabloy build Windows 空格 ')));
+  return realpathSync.native(mkdtempSync(path.join(tmpdir(), 'cabloy build Windows 空格 ')));
 }
 
 function write(file: string, content: string) {
@@ -237,16 +238,16 @@ test(
         write(previous, 'previous paired output');
         let ownedRun = '';
         const children = new OwnedBuildChildren(); // Actual Windows guardian, no injected starter.
-        const running = withBuildLock(checkout, async runDir => {
+        const running = withBuildLock(checkout, async (runDir, roots) => {
           ownedRun = runDir;
-          const snapshot = path.join(runDir, 'snapshot workspace');
-          const loader = path.join(snapshot, 'packages-utils/zova-vite/src/configUtils.ts');
+          const appDir = path.join(checkout, 'zova');
+          const loader = path.join(appDir, 'packages-utils/zova-vite/src/configUtils.ts');
           write(
             loader,
             fails
               ? 'throw new Error("synthetic output-plan loading failure");\n'
               : `export function createConfigUtils(meta, options) {
-  if (meta.flavor !== 'cabloyBasicWeb' || options.appDir !== ${JSON.stringify(snapshot)}) throw new Error('wrong snapshot configuration');
+  if (meta.flavor !== 'cabloyBasicWeb' || options.appDir !== ${JSON.stringify(appDir)} || options.runtimeDir !== ${JSON.stringify(path.basename(roots.runtime))}) throw new Error('wrong application/runtime configuration');
   return { loadEnvs() {
     Object.assign(process.env, ${JSON.stringify({
       APP_VERSION: plan.appVersion,
@@ -262,9 +263,9 @@ test(
           );
           const resultFile = path.join(runDir, 'output plan.json');
           await children.run(
-            [helper, snapshot, 'cabloyBasicWeb', resultFile],
-            snapshot,
-            outputPlanEnv(childEnv(), 'cabloyBasicWeb'),
+            [helper, appDir, 'cabloyBasicWeb', resultFile],
+            appDir,
+            outputPlanEnv(generatedBuildEnv(childEnv(), roots), 'cabloyBasicWeb'),
           );
           assert.deepEqual(await readOutputPlan(resultFile), plan);
           assert.equal(

@@ -19,11 +19,8 @@ import { test } from 'node:test';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 
 import { loadTestClaim } from '../vona/packages-vona/vona-core/src/lib/core/testClaim.ts';
-import {
-  inspectWindowsProcess,
-  inspectWindowsProcesses,
-} from '../vona/packages-vona/vona-core/src/lib/core/testProcessWindowsNative.ts';
 import { isTestClaimInactive } from './testClaimProcesses.ts';
+import { inspectWindowsProcess, inspectWindowsProcesses } from './testProcessWindowsNative.ts';
 
 const rootDir = dirname(dirname(fileURLToPath(import.meta.url)));
 const require = createRequire(import.meta.url);
@@ -36,9 +33,7 @@ const nativeOptions = {
 };
 const moduleUrl = (name: string) => new URL(name, import.meta.url).href;
 const claimUrl = moduleUrl('../vona/packages-vona/vona-core/src/lib/core/testClaim.ts');
-const nativeUrl = moduleUrl(
-  '../vona/packages-vona/vona-core/src/lib/core/testProcessWindowsNative.ts',
-);
+const nativeUrl = moduleUrl('./testProcessWindowsNative.ts');
 const guardianUrl = moduleUrl('./testProcessGuardianWindows.ts');
 const managedUrl = moduleUrl('../repo-e2e/scripts/managedTest.ts');
 

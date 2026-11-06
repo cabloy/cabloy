@@ -39,7 +39,7 @@ publicHoistPattern:
   - 'zod'
 
 overrides:
-  '@quasar/app-vite': 'npm:@cabloy/quasar-app-vite@^2.5.10'
+  '@quasar/app-vite': 'npm:@cabloy/quasar-app-vite@^2.5.11'
   '@vue/babel-plugin-jsx': 'npm:@cabloy/vue-babel-plugin-jsx@^2.0.1'
   '@vue/compiler-dom': '3.5.13'
   '@vue/compiler-sfc': 'npm:@cabloy/vue-compiler-sfc@^3.5.14'

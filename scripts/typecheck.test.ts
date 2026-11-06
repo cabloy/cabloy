@@ -1,6 +1,14 @@
 import assert from 'node:assert/strict';
 import { spawnSync } from 'node:child_process';
-import { mkdirSync, mkdtempSync, readFileSync, realpathSync, rmSync, writeFileSync } from 'node:fs';
+import {
+  existsSync,
+  mkdirSync,
+  mkdtempSync,
+  readFileSync,
+  realpathSync,
+  rmSync,
+  writeFileSync,
+} from 'node:fs';
 import { createRequire } from 'node:module';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
@@ -11,6 +19,9 @@ import { commands } from '../vona/packages-cli/cli-set-api/src/lib/commands.ts';
 import { resolveTypeScriptCompiler, runTypeScript } from './typescriptRunner.ts';
 
 const root = fileURLToPath(new URL('../', import.meta.url));
+const hasBasic = existsSync(path.join(root, '__CABLOY_BASIC__'));
+const hasStart = existsSync(path.join(root, '__CABLOY_START__'));
+assert.notEqual(hasBasic, hasStart, 'Exactly one Cabloy edition marker is required');
 
 function writeCompiler(root: string, packageName: string, report?: string) {
   const dir = path.join(root, 'node_modules', packageName);
@@ -106,17 +117,28 @@ test('daily checks and CI use single-project workspace defaults', () => {
     );
     if (workspace === 'zova') {
       for (const [name, command] of Object.entries(workspaceScripts)) {
-        if (
-          name.startsWith('dev:') ||
-          name.startsWith('build:spa') ||
-          name.startsWith('build:ssr:') ||
-          name.startsWith('build:rest:')
-        ) {
-          if (name.endsWith('Batch')) continue;
+        if (name.startsWith('dev:')) {
           assert.ok(
             (command as string).startsWith('npm run prerun && '),
             `${name} must prepare without an automatic typecheck`,
           );
+        }
+        if (
+          name.startsWith('build:spa') ||
+          name.startsWith('build:ssr:') ||
+          name.startsWith('build:rest:')
+        ) {
+          assert.doesNotMatch(
+            command as string,
+            /build:isolated|\btsc\b/,
+            `${name} must remain an ordinary build without an automatic typecheck`,
+          );
+          if (!name.endsWith('Batch')) {
+            assert.ok(
+              (command as string).startsWith('npm run prerun && '),
+              `${name} must prepare before an ordinary build`,
+            );
+          }
         }
       }
     }
@@ -155,7 +177,9 @@ test('Vona daily config discovers source and tests without changing publication 
     'src/backend/typing/modules.d.ts',
     'src/suite/a-training/modules/training-student/src/index.ts',
     'src/suite/a-training/modules/training-student/test/student.test.ts',
-    'src/suite-vendor/a-test/modules/test-vona/test/application.test.ts',
+    hasBasic
+      ? 'src/suite-vendor/a-test/modules/test-vona/test/application.test.ts'
+      : 'src/suite-vendor/a-vona/modules/a-web/test/controllerMetadataParser.test.ts',
   ]) {
     assert.ok(files.has(file), `${file} must be discovered`);
   }
@@ -178,7 +202,7 @@ test('Vona daily config discovers source and tests without changing publication 
   assert.equal(publish.options.noEmit, false);
 });
 
-test('release dry-run keeps default checks before publishing only', () => {
+test('release dry-run preserves edition gates and default checks before publishing', () => {
   for (const [mode, shouldCheck] of [
     ['--publish-only', true],
     ['--changelog-only', false],
@@ -190,6 +214,15 @@ test('release dry-run keeps default checks before publishing only', () => {
       timeout: 30_000,
     });
     assert.equal(result.error, undefined);
+    if (hasStart) {
+      assert.equal(result.status, 1, result.stderr);
+      assert.match(
+        result.stderr,
+        /public Cabloy release workflow is available only in Cabloy Basic/,
+      );
+      assert.doesNotMatch(result.stdout, /\[dry-run\] npm (?:run tsc|publish)/);
+      continue;
+    }
     assert.equal(result.status, 0, result.stderr);
     const lines = result.stdout.split(/\r?\n/).map(line => line.trim());
     const check = lines.indexOf('[dry-run] npm run tsc');

@@ -77,11 +77,13 @@ export function getLoggerFilterLevel(
   clientName?: keyof ILoggerClientRecord,
 ): LoggerLevel | undefined {
   clientName = clientName || 'default';
-  if (sys.env.META_MODE === 'production') return; // disable on prod: not use process.env.PROD
+  const testLogging = isTestLoggingEnabled();
+  if (sys.env.META_MODE === 'production' && !testLogging) return;
   const envName = `LOGGER_CLIENT_${clientName.toUpperCase()}`;
   const level = sys.env[envName];
   if (level === 'false') return;
-  if (level === 'true' || !level) return 'info';
+  if (level === 'true') return 'info';
+  if (!level) return testLogging ? 'debug' : 'info';
   return level as LoggerLevel;
 }
 
@@ -90,7 +92,11 @@ export function setLoggerFilterLevel(
   clientName?: keyof ILoggerClientRecord,
 ) {
   clientName = clientName || 'default';
-  if (sys.env.META_MODE === 'production') return; // disable on prod: not use process.env.PROD
+  if (sys.env.META_MODE === 'production' && !isTestLoggingEnabled()) return;
   const envName = `LOGGER_CLIENT_${clientName.toUpperCase()}`;
   sys.env[envName] = level.toString();
+}
+
+function isTestLoggingEnabled() {
+  return sys.env.SSR_WITH_VONA === 'true' && sys.env.LOGGER_TEST_ENABLED === 'true';
 }

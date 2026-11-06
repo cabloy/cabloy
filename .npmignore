@@ -5,6 +5,11 @@
 node_modules
 miniprogram_npm
 .assets/
+
+# Test reports and traces
+test-results/
+playwright-report/
+blob-report/
 **/vite.config.ts.timestamp-*
 **/coverage
 **/dist/

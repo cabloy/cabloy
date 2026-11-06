@@ -252,21 +252,36 @@ Return data only when it is an intentional consumer-facing contract, such as an 
 
 ## Response wrapper behavior
 
-By default, Vona wraps the response body in a standard wrapper object.
-
-That means a plain response value conceptually becomes a response shape like:
+For an action completed through the standard response handler, Vona wraps the return value when the selected response content type is exactly `application/json`:
 
 ```typescript
 {
-  code: string;
-  message: string;
-  data: string;
+  code: 0,
+  message: 'success',
+  data: result,
 }
 ```
 
-### Disable the wrapper
+A missing return value becomes `data: null`. The default success status is HTTP `200`; action HTTP-code metadata can select another status. A successful HTTP status alone does not establish the body shape.
 
-Use `@Api.bodyCustom(false)` when the endpoint should return the body directly.
+### Content negotiation
+
+The standard handler selects the response content type in this order:
+
+1. an existing response content type;
+2. action metadata from `@Api.contentType(...)`;
+3. JSON when `ctx.acceptJSON` is true;
+4. accepted HTML, otherwise `application/octet-stream`.
+
+JSON acceptance considers a `.json` path, an existing JSON response type, a JSON request `Content-Type` with JSON acceptance, or a preference for JSON in `Accept`. `Accept` describes the desired response representation; request `Content-Type` describes the submitted body. Do not add a JSON request body merely to influence response negotiation.
+
+For a standard JSON API, `@Api.contentType('application/json')` declares the response type at the action boundary. A raw HTTP caller can request `Accept: application/json` when no higher-priority response type overrides it. Neither an API pathname nor `@Api.body(...)` alone selects JSON at runtime. Other selected content types use the direct-body branch, and an already-handled response is not wrapped again.
+
+Tests should follow the effective endpoint and transport contract rather than infer an envelope from HTTP `200` or a TypeScript type assertion. See [HTTP response contracts in E2E](/frontend/scripts#check-http-response-contracts).
+
+### Disable the schema wrapper {#disable-the-wrapper}
+
+Use `@Api.bodyCustom(false)` when the emitted OpenAPI response schema should describe the body without the default schema wrapper.
 
 Representative pattern:
 
@@ -277,9 +292,9 @@ findOne(): string {
 }
 ```
 
-### Provide a custom wrapper
+### Provide a custom schema wrapper {#provide-a-custom-wrapper}
 
-Use `@Api.bodyCustom(...)` with a wrapper function when the project needs a different response envelope.
+Use `@Api.bodyCustom(...)` with a schema wrapper function when the emitted OpenAPI response schema needs a different envelope.
 
 Representative pattern:
 
@@ -290,7 +305,7 @@ findOne(): string {
 }
 ```
 
-This is one of the most important response-contract choices because it affects backend OpenAPI output and frontend SDK consumption.
+`@Api.bodyCustom(...)` configures schema generation; it does not independently disable or replace the standard handler's runtime JSON wrapping. A direct or custom runtime response needs matching response handling as well as an accurate schema. Keep emitted OpenAPI, actual HTTP responses, and frontend transport expectations aligned rather than treating a schema wrapper as a runtime switch.
 
 Other response/action metadata patterns can also be expressed at the controller surface, including representative cases such as:
 

@@ -117,7 +117,7 @@ Action request schemas expose finite enums and `filter.capabilities.analysis` wi
 
 The generated analysis actions inherit the `select` RBAC policy. Policy inheritance does not apply row filtering or copy data-scope options. Normal model instance and soft-delete predicates remain active.
 
-For a resource that supports department/owner data scope, explicitly configure that scope and combine `rbacScopeCurrent.where(params.where)` **before** grouping or aggregation. Filtering group results afterward is not an authorization boundary. Do not enable ownership scope for Student or another resource that lacks the corresponding ownership fields. See [RBAC Authorization](/backend/rbac-authorization).
+For a resource that supports department/owner data scope, explicitly configure that scope and combine `rbacScopeCurrent.where(params.where)` **before** grouping or aggregation. Filtering group results afterward is not an authorization boundary. Do not enable ownership scope for Student or another resource that lacks the corresponding ownership fields. See [Shared RBAC Architecture](/backend/shared-rbac-architecture#_3-a-passing-guard-is-not-complete-row-authorization).
 
 ## Generated structure
 

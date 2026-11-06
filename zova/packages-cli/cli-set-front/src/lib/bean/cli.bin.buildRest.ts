@@ -12,8 +12,14 @@ import fse from 'fs-extra';
 import path from 'node:path';
 import { rimraf } from 'rimraf';
 import { build } from 'tsdown';
-import { createConfigUtils, saveJSONFile } from 'zova-vite';
+import {
+  createConfigUtils,
+  generateEntryFiles,
+  resolveZovaViteContext,
+  saveJSONFile,
+} from 'zova-vite';
 
+import { resolveRestBuildPaths, writeIsolatedRestTsconfig } from '../common/restBuildPaths.ts';
 import { extractRestDependencies } from '../common/restDependencies.ts';
 import { extractRestDependencyVersions } from '../common/restDependencyVersions.ts';
 import { loadJSONFile } from '../common/utils.ts';
@@ -60,6 +66,8 @@ interface IBinBuildRestContext {
   bundleNameCopy: string;
   srcDir: string;
   outDir: string;
+  tsconfigPath: string;
+  isolated: boolean;
   bundleModules?: string[];
   sideEffectImportModuleNames?: string[];
   moduleRoots?: string[];
@@ -77,11 +85,31 @@ export class CliBinBuildRest extends BeanCliBase {
     const bundleName = `zova-rest-${camelToKebab(flavor)}`;
     const bundleNameCopy = `${camelToKebab(flavor)}`;
     //
-    const srcDir = path.join(projectPath, '.zova-rest');
-    const outDir = path.join(projectPath, 'dist', `rest-${flavor}`);
+    const { runtimeDir } = resolveZovaViteContext({ appDir: projectPath });
+    const paths = await resolveRestBuildPaths(path.resolve(projectPath), flavor, runtimeDir);
+    const { isolated, srcDir, outDir, tsconfigPath } = paths;
+    if (!isolated) {
+      const manifest = await loadJSONFile(path.join(projectPath, 'package.json'));
+      if (Object.hasOwn(manifest.scripts ?? {}, 'build:isolated')) {
+        const hook = manifest.scripts['build:isolated'];
+        if (typeof hook !== 'string' || !hook.trim()) {
+          throw new Error('The application build:isolated script must be a non-empty string');
+        }
+        if (!/^[a-z0-9][\w-]*$/i.test(flavor)) {
+          throw new Error('Invalid isolated REST flavor');
+        }
+        await this.helper.spawnCmd({
+          cmd: 'npm',
+          args: ['run', 'build:isolated', '--', '--operation', 'rest', flavor],
+          options: { cwd: projectPath },
+        });
+        return;
+      }
+    }
     await rimraf(srcDir);
     await fse.ensureDir(srcDir);
     await rimraf(outDir);
+    if (isolated) await writeIsolatedRestTsconfig(path.resolve(projectPath), paths);
     // context
     const context: IBinBuildRestContext = {
       projectPath,
@@ -90,15 +118,17 @@ export class CliBinBuildRest extends BeanCliBase {
       bundleNameCopy,
       srcDir,
       outDir,
+      tsconfigPath,
+      isolated,
     };
     //
-    await this._prepareResources(context);
+    await this._prepareResources(context, runtimeDir);
     await this._build(context);
     //
-    await rimraf(srcDir);
+    if (!isolated) await rimraf(srcDir);
   }
 
-  async _prepareResources(context: IBinBuildRestContext) {
+  async _prepareResources(context: IBinBuildRestContext, runtimeDir: string) {
     const { projectPath, flavor, bundleName, srcDir } = context;
     const { argv } = this.context;
     //
@@ -107,13 +137,16 @@ export class CliBinBuildRest extends BeanCliBase {
     const configMeta: ZovaConfigMeta = { flavor, mode, appMode };
     const configOptions: ZovaViteConfigOptions = {
       appDir: projectPath,
-      runtimeDir: '.zova',
+      runtimeDir,
     };
     const configUtils = createConfigUtils(configMeta, configOptions);
     // env
     const env = configUtils.loadEnvs();
     // modulesMeta
     const modulesMeta = await configUtils.loadModulesMeta();
+    if (context.isolated) {
+      await generateEntryFiles(configMeta, configOptions, modulesMeta, env);
+    }
     // Modules
     const modules: string[] = [];
     const bundleModules: string[] = [];
@@ -145,7 +178,7 @@ export class CliBinBuildRest extends BeanCliBase {
     context.packageJson = await loadJSONFile(path.join(srcDir, 'package.json'));
   }
 
-  async _buildTs({ srcDir, outDir }: IBinBuildRestContext) {
+  async _buildTs({ srcDir, outDir, tsconfigPath }: IBinBuildRestContext) {
     // entry
     const entry = path.join(srcDir, 'index.ts');
     // build
@@ -153,7 +186,7 @@ export class CliBinBuildRest extends BeanCliBase {
       entry: [entry],
       format: ['esm'],
       outDir,
-      tsconfig: 'tsconfig.rest.json',
+      tsconfig: tsconfigPath,
       dts: false,
       plugins: [svgResolverPlugin()],
       deps: {
@@ -174,6 +207,7 @@ export class CliBinBuildRest extends BeanCliBase {
   async _buildDts({
     srcDir,
     outDir,
+    tsconfigPath,
     bundleModules,
     sideEffectImportModuleNames,
   }: IBinBuildRestContext) {
@@ -184,7 +218,7 @@ export class CliBinBuildRest extends BeanCliBase {
       entry: [entry],
       format: ['esm'],
       outDir,
-      tsconfig: 'tsconfig.rest.json',
+      tsconfig: tsconfigPath,
       clean: false,
       checks: {
         namespaceConflict: false,
@@ -193,7 +227,7 @@ export class CliBinBuildRest extends BeanCliBase {
         resolver: 'oxc',
         generator: 'tsgo',
         eager: true,
-        tsconfig: 'tsconfig.rest.json',
+        tsconfig: tsconfigPath,
         emitDtsOnly: true,
       },
       plugins: [svgResolverPlugin()],
@@ -236,14 +270,16 @@ export class CliBinBuildRest extends BeanCliBase {
     await saveJSONFile(path.join(outDir, 'package.json'), pkgContent);
     // await fse.copyFile(path.join(srcDir, 'package.json'), path.join(outDir, 'package.json'));
     // release
-    const outReleasesDir = path.join(
-      projectPath,
-      'dist-releases',
-      `rest-${flavor}-${process.env.APP_VERSION}`,
-    );
-    await fse.copy(outDir, outReleasesDir);
-    // copy
-    _copyToTarget(outDir, process.env.BUILD_REST_COPY_DIST, bundleNameCopy, projectPath);
+    if (!buildContext.isolated) {
+      const outReleasesDir = path.join(
+        projectPath,
+        'dist-releases',
+        `rest-${flavor}-${process.env.APP_VERSION}`,
+      );
+      await fse.copy(outDir, outReleasesDir);
+      // copy
+      _copyToTarget(outDir, process.env.BUILD_REST_COPY_DIST, bundleNameCopy, projectPath);
+    }
   }
 }
 

@@ -53,8 +53,9 @@ export class BeanRbacScope extends BeanBase {
     unrestricted: boolean,
   ): Promise<Record<string, TableIdentity | null | undefined>> {
     const scopeAdapter = this.scopeAdapter;
-    if (!scopeAdapter) this.app.throw(403);
-    const values = await scopeAdapter.ownerValues(action, decision);
+    const values = scopeAdapter
+      ? await scopeAdapter.ownerValues(action, decision)
+      : await this.prepareDefaultOwnerValues();
     const departmentField = action.options.dataScopeField ?? 'departmentId';
     const ownerField = action.options.dataScopeMineField ?? 'userIdOwner';
     const ownerValues = {
@@ -63,6 +64,13 @@ export class BeanRbacScope extends BeanBase {
     };
     if (!this.matches(action, decision, unrestricted, ownerValues)) this.app.throw(403);
     return ownerValues;
+  }
+
+  private async prepareDefaultOwnerValues() {
+    if (!(await this.bean.passport.isSystemAdmin())) this.app.throw(403);
+    const userIdOwner = this.bean.passport.currentUser?.id;
+    if (!userIdOwner) this.app.throw(401);
+    return { departmentId: null, userIdOwner };
   }
 
   private createAccess(

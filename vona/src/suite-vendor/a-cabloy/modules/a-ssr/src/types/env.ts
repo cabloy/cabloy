@@ -20,5 +20,7 @@ export interface ZovaConfigEnv {
   API_JWT: string | undefined;
   SSR_COOKIE_THEMEDARK_DEFAULT: string | undefined;
   SSR_WITH_VONA: string | undefined;
+  LOGGER_TEST_ENABLED?: 'true' | 'false';
+  LOGGER_CLIENT_DEFAULT?: string;
   SSR_PROFILE: 'public' | 'session' | undefined;
 }

@@ -31,7 +31,6 @@ Both editions share Vona + Zova, suite-based modular delivery, CLI-first workflo
 | --------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------ | ------------ | ------------ |
 | Student Training Management | Master–detail forms, nested detail records, image uploads, and file uploads. Cabloy Start additionally demonstrates data-scope-based RBAC. | ✅           | ✅           |
 | E-commerce                  | A complete Admin site, Web site, personal center, payment flows, Markdown editing, and related capabilities.                               | ✅           | —            |
-| System Management           | User management, role management, department management, RBAC authorization, and menu authorization.                                       | —            | ✅           |
 
 Included demonstration suites give AI vibe coding agents high-quality, project-native code examples. They improve development efficiency while reducing token use. For production deployments, set `PROJECT_DISABLED_SUITES` to a comma-separated list of unneeded suite names to disable them; see the [Environment and Config Guide](https://cabloy.com/frontend/environment-config-guide#built-in-env-variables).
 

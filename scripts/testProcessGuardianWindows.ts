@@ -1,6 +1,6 @@
 import { randomUUID } from 'node:crypto';
 
-import type { GuardianResult, OwnedProcess } from './runIsolatedTest.ts';
+import type { GuardianResult, OwnedProcess } from './ownedProcess.ts';
 
 import {
   hasTestClaimTransport,
@@ -8,10 +8,7 @@ import {
   sendTestClaimEvent,
   TEST_CLAIM_WINDOWS_GUARDIAN_ENV,
 } from '../vona/packages-vona/vona-core/src/lib/core/testClaim.ts';
-import {
-  createWindowsNativeJob,
-  inspectWindowsProcess,
-} from '../vona/packages-vona/vona-core/src/lib/core/testProcessWindowsNative.ts';
+import { createWindowsNativeJob, inspectWindowsProcess } from './testProcessWindowsNative.ts';
 
 /** Windows test containment. The external PS7 helper alone owns the native Job. */
 export async function startWindowsOwnedProcess(

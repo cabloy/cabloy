@@ -19,6 +19,7 @@ export interface VonaConfigEnv {
   SERVER_SERVE_PROTOCOL: string | undefined;
   SERVER_SERVE_HOST: string | undefined;
   TEST_WHYISNODERUNNING: string | undefined;
+  LOGGER_CLIENT_DEFAULT: string | undefined;
   LOGGER_DIR: string | undefined;
   LOGGER_DUMMY: 'true' | 'false' | undefined;
   LOGGER_ROTATE_ENABLE: 'true' | 'false' | undefined;

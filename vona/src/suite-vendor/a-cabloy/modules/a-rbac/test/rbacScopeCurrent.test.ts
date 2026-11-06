@@ -32,14 +32,20 @@ function createDecision(
   return { allowed: true, actionKey: action.actionKey, action, terms };
 }
 
+type TestPassport = {
+  isSystemAdmin(): Promise<boolean>;
+  currentUser?: { id: string };
+};
+
 function createScope(
   action: IRbacActionDescriptor,
-  adapter: IRbacScopeAdapter = {
+  adapter: IRbacScopeAdapter | null = {
     isUnrestricted: async () => {
       throw new Error('current() must not recheck unrestricted status');
     },
     ownerValues: async () => ({ departmentId: 'department-1', userIdOwner: 'user-1' }),
   },
+  passport?: TestPassport,
 ): { scope: BeanRbacScope; ctx: VonaContext } {
   const ctx = { route: action.route } as VonaContext;
   const app = {
@@ -54,6 +60,7 @@ function createScope(
     app: { value: app },
     bean: {
       value: {
+        passport,
         rbacCatalog: {
           getCatalog: () => new Map([[action.actionKey, action]]),
         },
@@ -163,7 +170,7 @@ describe('rbacScopeCurrent.test.ts', { concurrency: false }, () => {
 
   it('does not require adapter owner values for an unscoped create action', async () => {
     const action = { ...createAction('create'), options: {} };
-    const { scope, ctx } = createScope(action, null as never);
+    const { scope, ctx } = createScope(action, null);
     setRbacDecision(ctx, createDecision(action, [{ dataScope: 'all' }]));
 
     const access = await scope.current();
@@ -171,6 +178,49 @@ describe('rbacScopeCurrent.test.ts', { concurrency: false }, () => {
     assert.throws(
       () => access.ownerValues(),
       error => (error as { code?: number }).code === 500,
+    );
+  });
+
+  it('derives create ownership from the system admin when no adapter is configured', async () => {
+    const action = {
+      ...createAction('create'),
+      options: { dataScope: true, dataScopeField: 'department', dataScopeMineField: 'owner' },
+    };
+    const { scope, ctx } = createScope(action, null, {
+      isSystemAdmin: async () => true,
+      currentUser: { id: 'admin-1' },
+    });
+    setRbacDecision(ctx, createDecision(action, [{ dataScope: 'all' }]));
+
+    const access = await scope.current();
+    assert.deepEqual(access.ownerValues(), { department: null, owner: 'admin-1' });
+    const values = access.ownerValues();
+    values.owner = 'other';
+    assert.equal(access.ownerValues().owner, 'admin-1');
+
+    setRbacDecision(ctx, createDecision(action, [{ dataScope: 'mine', ownerId: 'other' }]));
+    await assertForbidden(() => scope.current());
+  });
+
+  it('rejects non-admin create ownership without an adapter even for an all decision', async () => {
+    const action = createAction('create');
+    const { scope, ctx } = createScope(action, null, {
+      isSystemAdmin: async () => false,
+      currentUser: { id: 'user-1' },
+    });
+    setRbacDecision(ctx, createDecision(action, [{ dataScope: 'all' }]));
+
+    await assertForbidden(() => scope.current());
+  });
+
+  it('requires a current user identity for default system-admin create ownership', async () => {
+    const action = createAction('create');
+    const { scope, ctx } = createScope(action, null, { isSystemAdmin: async () => true });
+    setRbacDecision(ctx, createDecision(action, [{ dataScope: 'all' }]));
+
+    await assert.rejects(
+      () => scope.current(),
+      error => (error as { code?: number }).code === 401,
     );
   });
 

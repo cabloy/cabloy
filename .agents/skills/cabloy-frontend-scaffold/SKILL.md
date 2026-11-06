@@ -108,6 +108,10 @@ Typical examples:
 - `npm run zova :openapi:config ...`
 - `npm run zova :openapi:generate ...`
 
+### Independent flavor or SSR Site
+
+Do not create a new flavor merely because a new business suite is being scaffolded. When a distinct deployment or configuration boundary actually requires an independent SSR Site/flavor, use `cabloy-contract-loop` Mode E and [Independent SSR Site and Flavor Setup](../../../repo-docs/fullstack/ssr-site-and-flavor-setup.md). In both Basic and Start, new application build scripts must reuse the active repository's isolation coordinator, not direct Quasar builds; keep ordinary page/module scaffolding on the paths above.
+
 ## Step 4: Inspect the generated or transformed frontend thread
 
 After generation or refactor, inspect what the CLI created and keep it as the baseline.
@@ -289,6 +293,8 @@ Always end with a verification path that matches the scope of the frontend chang
 For ordinary frontend changes, prefer a few critical user flows through the existing E2E infrastructure, selected by affected behavior with spec names, tags, or `--grep`. Reuse existing scenarios or extend them narrowly; do not require exhaustive isolated-test matrices, extensive fake dependencies, or custom source-evaluation loaders before delivery. When an actual problem is fixed, add focused regression coverage. Targeted unit or framework tests remain useful when they efficiently prove the behavior being changed; this is not a ban on existing tests or managed test-resource isolation.
 
 Business E2E should primarily assert user actions, visible business outcomes, and persistence after save/reload. Do not turn architecture guidance into default browser assertions about Controller/IoC object identity, model instances, or Query/cache internals. Assert those internals only for an explicit architecture/framework acceptance contract or a focused regression, preferably at the smallest suitable unit, framework, or integration layer. This does not remove architecture requirements or server-side safety checks.
+
+When verification fails, distinguish test preparation/observation failures from target business failures before assigning cause. Any added diagnostic or repeated attempt should name a concrete hypothesis, the smallest distinguishing check, and expected new information; do not keep repairing an internal probe without a business-contract basis. Keep conclusions within observed evidence and preserve business/safety assertions and operation approvals. See [Attribute failures and keep diagnostics focused](../../../repo-docs/frontend/scripts.md#attribute-failures-and-keep-diagnostics-focused).
 
 Keep relevant format, lint, and type checks lightweight and scope-dependent. Prepare only the affected flavor's required artifacts for runtime verification. Preserve applicable route, SSR/hydration, authentication, authorization, contract, and acceptance checks; frontend E2E does not replace server-side enforcement. If runtime verification is unavailable or not authorized, report the gap rather than building a substitute harness. See [Frontend Scripts](../../../repo-docs/frontend/scripts.md) for edition-aware preparation and filtered E2E commands.
 

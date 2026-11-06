@@ -478,6 +478,7 @@ test('contract-loop analysis preserves forward and reverse guidance', () => {
   );
   assert.match(buildMessages(reverse, resolution), /npm run build:zova:isolated -- cabloyBasicWeb/);
   assert.match(buildMessages(reverse, resolution), /npm run deps:vona/);
+  assert.doesNotMatch(buildMessages(reverse, resolution), /npm run build:zova:(?:admin|web)\b/);
 });
 
 test('contract-loop recognizes supported vendor and suite source paths', () => {

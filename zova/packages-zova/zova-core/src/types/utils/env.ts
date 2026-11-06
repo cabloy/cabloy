@@ -29,6 +29,7 @@ export interface ZovaConfigEnv {
   SSR_PROD_PROTOCOL: string | undefined;
   SSR_PROD_HOST: string | undefined;
   SSR_WITH_VONA: string | undefined;
+  LOGGER_TEST_ENABLED?: 'true' | 'false';
   SSR_PROFILE: 'public' | 'session' | undefined;
   SSR_PROFILE_PUBLIC_RESPONSE_CACHE_EXPIRES: string | undefined;
   SSR_PROFILE_SESSION_RESPONSE_CACHE_EXPIRES: string | undefined;

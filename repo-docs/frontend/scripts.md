@@ -43,7 +43,17 @@ npm run build:zova:commerce:web
 npm run build:zova:commerce:admin
 ```
 
-`npm run build:zova:all` sequentially runs the focused Basic and Commerce batch builds. `npm run init` uses it to prepare every shipped Cabloy Basic SSR/REST flavor before Vona is initialized. For normal frontend work, continue to use `build:zova` or `build:zova:commerce` when only that suite's artifacts changed.
+`npm run build:zova:all` builds all four Basic/Commerce SSR/REST pairs sequentially in one runner invocation under one build lock. `npm run init` deliberately prepares dependencies/metadata, then uses that build before Vona initialization. For normal frontend work, continue to use `build:zova` or `build:zova:commerce` when only that suite's artifacts changed.
+
+The Basic root wrappers build SSR/REST pairs. Inside `zova/`, `build` and individual `build:ssr:*` scripts remain SSR-only, individual `build:rest:*` scripts remain REST-only, `build:spa` builds SPA for `admin`, and Basic/Commerce batches build pairs. These artifact selections do not change the shared isolation workflow below.
+
+## Shared application-build isolation
+
+Directory-isolated application builds are a shared capability and the default application-build workflow in **Cabloy Basic and Cabloy Start**. Ordinary root wrappers and nested SSR/REST/SPA scripts use the same isolated coordinator; `build:zova:isolated` is a compatibility alias, not an opt-in isolation mode. Prefer the active repository's ordinary root wrapper for the affected SSR/REST pair. The shared `build:zova`, `build:zova:admin` and `build:zova:web` names select Basic or Start flavors as described in their edition sections; suite batches, UI and generated output paths remain edition-specific.
+
+Isolated builds require prepared inputs: run root `npm run deps:zova` explicitly when needed. They do not automatically install dependencies or generate shared metadata; development/typecheck preparation is unchanged. Keep source, dependencies and metadata stable during a build, allow only one application-build invocation per checkout, and coordinate shared publication. One build can coexist with one Zova standalone SSR development server, but publication is not hot deployment of a live Vona integrated SSR consumer. This covers application builds, not the separate module/library `:bin:buildModule` pipeline. See [Frontend build isolation](/reference/repo-scripts#frontend-build-isolation) for runtime roots, process ownership, failure handling and publication guarantees.
+
+For a new flavor, use [Add durable scripts and root wrappers](/fullstack/ssr-site-and-flavor-setup#_3-add-durable-scripts-and-root-wrappers) as the canonical recipe: one paired runner invocation per root build wrapper, coordinator-backed per-mode scripts, and scripts-only synchronization from the authored manifest. Do not concatenate SSR-only and REST-only builds, add SPA without a delivery need, or automatically add a new suite to `build:zova:all`.
 
 ## Zova standalone SSR development
 
@@ -68,6 +78,90 @@ For frontend changes, prefer a few critical user flows through the existing E2E 
 Do not introduce custom source-evaluation loaders or extensive fake dependencies by default for ordinary page interactions. When an actual problem is fixed, add a focused regression test that reproduces it. Targeted unit and framework tests remain useful when they provide direct, low-cost proof; comprehensive upfront coverage is not a delivery prerequisite.
 
 This preference does not relax applicable SSR/hydration, authentication, authorization, contract, or acceptance requirements, and UI coverage never replaces server-side enforcement. Managed E2E resource isolation remains required. If runtime verification is unavailable or not authorized, report the gap rather than adding substitute test machinery; live Provider and destructive operations retain their separate authorization boundaries.
+
+### Wait for SSR interaction readiness
+
+SSR HTML can make a control visible and enabled before its client event handlers are ready. Playwright actionability checks and a fulfilled `click()` do not independently prove that those handlers were attached or that a business callback ran. Before an interaction that depends on client behavior, wait for the current document's public readiness signal, then any required page-specific conditions.
+
+During initial SSR hydration, Zova sets `data-zova-hydrated` on `<html>` from `onHydrated(...)`; its value is the active flavor's `SITE_ID`, not a boolean. For an SSR document, use the expected site ID from the target site's contract:
+
+```ts
+await page.goto(path, { waitUntil: 'load' });
+await expect(page.locator('html')).toHaveAttribute('data-zova-hydrated', siteId);
+// Check required visible page state before the client interaction.
+```
+
+Apply this boundary on initial SSR entry and after a full-document navigation or reload. A document `load` event or the expected URL alone does not establish hydration readiness. The marker covers the initial SSR root and currently tracked nested hydration boundaries, not every later asynchronous component or operation; see [Initial hydration completion](/frontend/ssr-overview#initial-hydration-completion).
+
+For same-document SPA navigation, the existing marker may remain present: waiting for it again does not prove that the destination route is ready. Wait for the destination's public, observable conditions, such as required data and action eligibility. Hydration completion is separate from route admission, authentication, data freshness, and business readiness; it is not an SPA-startup signal. Do not add this wait mechanically before every click, or replace readiness with fixed sleeps, forced or repeated clicks, or Controller/IoC probes. After the action, still assert the relevant response and visible business outcome. A passing test after adding a wait supports the synchronization correction; it does not by itself prove the cause of earlier failures.
+
+### Attribute failures and keep diagnostics focused
+
+Business E2E should observe normal user actions, visible business outcomes, and persistence after save/reload. Do not make ordinary business journeys depend on DOM-to-Controller/IoC instance lookup, temporary method wrappers, or Query/cache internals. Internal assertions belong to an explicit architecture/framework acceptance contract or a focused regression, preferably at the smallest suitable test layer.
+
+First identify where verification stopped: test preparation/observation, user interaction, request/response, or business-result assertions. A failed test-side probe does not establish a defect in the page Controller; conversely, a timeout alone does not prove the test mechanism is wrong. Separate observed facts, possible causes, and what remains unproved:
+
+- A completed browser `click()` is not proof that the business asynchronous action completed.
+- No matching request observed within a wait window does not prove that the callback never ran or that an eligibility guard rejected it. Check the observation boundary before drawing that conclusion.
+- A source branch or a correctly connected action chain does not establish its runtime disposition or passing acceptance.
+
+Before adding diagnostics or repeating a failed attempt, name the concrete hypothesis, the smallest check that distinguishes it from alternatives, and the expected new information. Prefer existing user-visible output and request/response observations; register relevant waits before the action and do not filter out error responses when diagnosing whether a response occurred. Narrow or reject the hypothesis from the result rather than repeatedly extending an internal probe that fails before the target behavior. Keep diagnostic output minimal and redacted; do not collect raw credentials, headers, bodies, or private framework state by default.
+
+Do not force clicks, bypass the UI with a direct API call, remove eligibility/security guards, weaken business assertions, or increase timeouts merely to make the scenario pass. A timeout change needs evidence of the actual readiness or duration contract. Preserve required checks and report the remaining evidence gap when no justified next check is available. Diagnostic value does not authorize retries, private-artifact access, cleanup, or external operations outside the approved scope.
+
+### Check HTTP response contracts
+
+In Cabloy Basic and Cabloy Start, distinguish raw HTTP calls made through Playwright's `APIRequestContext` from helpers or transports that already unwrap responses. Vona's standard success wrapper depends on the effective response content type; see [Response wrapper behavior](/backend/controller-guide#response-wrapper-behavior).
+
+- For a helper whose contract is the standard JSON envelope, explicitly request `Accept: application/json` where endpoint negotiation permits it, check the HTTP status, and validate the expected envelope and business result. Request `Content-Type` describes the submitted body, not a general response-format guarantee. Existing response types and action metadata may take precedence over `Accept`.
+- HTTP `200`, `response.ok()`, and a TypeScript cast do not validate a response body. `response.json()` parses JSON but does not establish its schema. Keep status, decoding, response-shape, and business-result checks distinct; preserve strict result assertions rather than accepting any successful status.
+- Support both direct bodies and envelopes only when the caller's documented contract genuinely permits both. Do not normalize arbitrary responses with `payload.data ?? payload`: it loses legitimate `data: null` and can confuse a business object's own `data` field with an envelope. Identify the supported shape and preserve its payload, including `null`. An empty body is not the same as a JSON envelope containing `data: null`.
+- Handle error statuses separately from success extraction. Vona's default JSON error response carries `code` and `message` with its error HTTP status; it is not a success `data` envelope or a general HTTP-200 business-error convention. Custom endpoint/error handling must be checked against its own contract.
+- Vona's `executor.performAction()` supplies JSON acceptance when absent and unwraps standard successful envelopes internally; its return value is not raw HTTP-body evidence. Zova's existing API transport also owns envelope/error processing. Do not add another unwrapping layer to generated-client callers or hand-edit generated consumers. See [Controller action tests](/backend/unit-testing#testing-controllers-through-actions).
+
+Keep diagnostics minimal: identify whether the failure was transport/status, parsing, shape validation, or a business assertion without retaining raw bodies, credentials, or private error details. An isolated parsing correction does not prove that a previous server-side operation failed or succeeded, and does not authorize another runtime attempt.
+
+### Debug logging and browser failure reports
+
+In both Cabloy Basic and Cabloy Start, use the framework `this.$logger.debug(...)` at diagnostically meaningful boundaries in frontend business flows, such as action eligibility, an important asynchronous request, or its result. Prefer a few stable, non-sensitive events over per-render or per-function traces. Keep reusable request and mutation diagnostics with the owning model rather than adding a second state or lifecycle owner in the page. See [Debug events for test and E2E diagnostics](/backend/logger-guide#debug-events-for-test-and-e2e-diagnostics) for event naming, safety, and proportionality guidance shared with the backend.
+
+For example, the model that owns a request can record these events at the corresponding stages of the existing awaited operation:
+
+```ts
+this.$logger.debug('payment.session.start.request started');
+// After the request completes successfully:
+this.$logger.debug('payment.session.start.request completed');
+```
+
+#### Test-mode defaults
+
+The root managed test/E2E lifecycle starts Vona in test mode. Its logger defaults to `debug` only when the relevant client level is unset or empty; explicit levels remain authoritative. For Vona integrated SSR, `siteOptions` supplies `LOGGER_TEST_ENABLED` to the server and browser environments from `app.meta.isTest`, and also supplies the optional test-mode `LOGGER_CLIENT_DEFAULT` as a default before Site configuration overrides.
+
+Zova enables test logging only when **both** `SSR_WITH_VONA === 'true'` and `LOGGER_TEST_ENABLED === 'true'`. In that case an unset or empty client level defaults to `debug`, even when `META_MODE` is `production`. Explicit `'false'` disables the client, `'true'` selects `info`, and a named level selects that level. Ordinary production frontend logging remains disabled without the integrated-test condition.
+
+This handoff is not a promise that arbitrary frontend unit tests, raw Playwright commands, Zova standalone SSR, or SPA runs automatically use `debug`. Do not edit `.env` files or enable production logging merely to reproduce the managed test defaults. Use current paired SSR/REST artifacts and dependency synchronization for the active edition when frontend code has changed, as described in the acceptance sections below.
+
+#### Collect only selected browser events
+
+Enabling `debug` output does **not** automatically retain every browser log in an E2E report. Specs use the existing managed fixture from `repo-e2e/scripts/managedTest.ts`; configure its `browserDiagnosticEvents` option with the safe literals relevant to the flow. For example, in a spec under `repo-e2e/specs/` that exercises the payment request events above:
+
+```ts
+import { test } from '../scripts/managedTest.ts';
+
+test.use({
+  browserDiagnosticEvents: [
+    'payment.session.start.request started',
+    'payment.session.start.request completed',
+    'payment.session.start.request failed',
+  ],
+});
+```
+
+Choose events actually emitted by the flow under test; the example does not require adding payment dependencies to unrelated specs. The default allowlist is empty. Matching `log`, `debug`, or `info` messages retain only the configured event literal with elapsed time and a page label, not arbitrary console text, formatter metadata, arguments, or payloads. Console errors and page errors are counted without retaining their text. History is bounded to 100 records and 32 KiB, with dropped-record counts.
+
+When actual test status differs from expected status, the fixture attaches `browser-diagnostics` and prints a short terminal summary. It observes an existing or lazily requested browser; API-only tests do not launch a browser just to collect diagnostics. These are browser diagnostics, not a combined frontend/backend log archive. Unmanaged imports preserve the original Playwright fixtures and do not install this automatic collection.
+
+Use these events to narrow failure attribution, not as the sole proof of request success, authorization, persistence, or user-visible completion. Preserve hydration/readiness waits and business assertions. An absent event may reflect disabled logging, the observation window, an empty or mismatched allowlist, or bounded-history eviction rather than an unexecuted callback. Do not collect raw console payloads or private application state to compensate.
 
 ## Vona integrated SSR browser acceptance
 
@@ -113,7 +207,7 @@ npm run build:zova:admin
 npm run build:zova:web
 ```
 
-Cabloy Start does not expose the Basic Commerce wrapper family.
+These wrappers select the Start SSR/REST pairs, not Basic artifacts; `build:zova:all` aliases `build:zova` in Start. Cabloy Start does not expose the Basic Commerce wrapper family. They use the same [Shared application-build isolation](#shared-application-build-isolation) workflow.
 
 ## Start SSR browser acceptance
 

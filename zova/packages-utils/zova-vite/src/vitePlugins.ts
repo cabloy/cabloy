@@ -12,12 +12,21 @@ import type { ZovaViteConfigOptions, ZovaVitePlugin } from './types.ts';
 import { getAbsolutePathOfModule, requireModule } from './utils.ts';
 import { cssCollectPlugin } from './vitePluginCssCollect.ts';
 import { hmrPlugin } from './vitePluginHmr.ts';
+import { createZovaRuntimeResolverPlugin, resolveZovaRuntimeDir } from './zovaRuntimeResolver.ts';
 
 export function generateVitePlugins(
   configOptions: ZovaViteConfigOptions,
   modulesMeta: Awaited<ReturnType<typeof glob>>,
 ) {
   const vitePlugins: ZovaVitePlugin[] = [];
+  if (process.env.ZOVA_ISOLATED === 'true') {
+    vitePlugins.push([
+      'zova-runtime-resolver',
+      createZovaRuntimeResolverPlugin,
+      configOptions,
+      undefined,
+    ]);
+  }
   vitePlugins.push(__getVitePluginTs());
   vitePlugins.push(__getVitePluginTsx());
   if (process.env.MOCK_ENABLED === 'true') {
@@ -59,7 +68,10 @@ export function generateVitePlugins(
           babelrc: false,
           configFile: false,
           plugins: [
-            [babelPluginZovaBeanModule, { brandName: 'zova' }],
+            [
+              babelPluginZovaBeanModule,
+              { brandName: 'zova', runtimeDir: resolveZovaRuntimeDir(configOptions.runtimeDir) },
+            ],
             [babelPluginZovaBeanUse],
             [babelPluginTransformTypescriptMetadata],
             [babelPluginProposalDecorators, { version: 'legacy' }],
@@ -98,7 +110,10 @@ export function generateVitePlugins(
         babelPlugins: [
           [babelPluginZovaComponent],
           [babelPluginZovaBehavior],
-          [babelPluginZovaBeanModule, { brandName: 'zova' }],
+          [
+            babelPluginZovaBeanModule,
+            { brandName: 'zova', runtimeDir: resolveZovaRuntimeDir(configOptions.runtimeDir) },
+          ],
           [babelPluginZovaBeanUse],
           [babelPluginTransformTypescriptMetadata],
           [babelPluginProposalDecorators, { version: 'legacy' }],

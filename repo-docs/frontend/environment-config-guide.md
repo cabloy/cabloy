@@ -291,9 +291,11 @@ Projects can define custom flavors when built-in variants are not enough.
 
 This usually requires:
 
-- adding scripts that pass the new `--flavor` value
+- adding scripts that select the exact new flavor
 - using `META_FLAVOR` or `sys.config.meta.flavor` in code
 - optionally augmenting type definitions for better autocomplete
+
+A new suite does not need a flavor unless it needs a separate deployment or configuration boundary. Directory-isolated application builds are a shared capability and the default workflow in Cabloy Basic and Cabloy Start; use the isolated coordinator for new-flavor builds in either edition. For a Vona-consumed SSR site, follow [Add durable scripts and root wrappers](/fullstack/ssr-site-and-flavor-setup#_3-add-durable-scripts-and-root-wrappers) for the paired wrapper, per-mode delegation, authored manifests and scripts-only synchronization procedure. Use the active edition's actual flavor names, suite boundaries and output paths. Add SPA only when required. See [Frontend build isolation](/reference/repo-scripts#frontend-build-isolation) for prepared-input and publication guarantees.
 
 Representative flavor type extension:
 
