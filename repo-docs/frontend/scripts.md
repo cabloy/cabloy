@@ -99,6 +99,48 @@ Before adding diagnostics or repeating a failed attempt, name the concrete hypot
 
 Do not force clicks, bypass the UI with a direct API call, remove eligibility/security guards, weaken business assertions, or increase timeouts merely to make the scenario pass. A timeout change needs evidence of the actual readiness or duration contract. Preserve required checks and report the remaining evidence gap when no justified next check is available. Diagnostic value does not authorize retries, private-artifact access, cleanup, or external operations outside the approved scope.
 
+### Debug logging and browser failure reports
+
+In both Cabloy Basic and Cabloy Start, use the framework `this.$logger.debug(...)` at diagnostically meaningful boundaries in frontend business flows, such as action eligibility, an important asynchronous request, or its result. Prefer a few stable, non-sensitive events over per-render or per-function traces. Keep reusable request and mutation diagnostics with the owning model rather than adding a second state or lifecycle owner in the page. See [Debug events for test and E2E diagnostics](/backend/logger-guide#debug-events-for-test-and-e2e-diagnostics) for event naming, safety, and proportionality guidance shared with the backend.
+
+For example, the model that owns a request can record these events at the corresponding stages of the existing awaited operation:
+
+```ts
+this.$logger.debug('payment.session.start.request started');
+// After the request completes successfully:
+this.$logger.debug('payment.session.start.request completed');
+```
+
+#### Test-mode defaults
+
+The root managed test/E2E lifecycle starts Vona in test mode. Its logger defaults to `debug` only when the relevant client level is unset or empty; explicit levels remain authoritative. For Vona integrated SSR, `siteOptions` supplies `LOGGER_TEST_ENABLED` to the server and browser environments from `app.meta.isTest`, and also supplies the optional test-mode `LOGGER_CLIENT_DEFAULT` as a default before Site configuration overrides.
+
+Zova enables test logging only when **both** `SSR_WITH_VONA === 'true'` and `LOGGER_TEST_ENABLED === 'true'`. In that case an unset or empty client level defaults to `debug`, even when `META_MODE` is `production`. Explicit `'false'` disables the client, `'true'` selects `info`, and a named level selects that level. Ordinary production frontend logging remains disabled without the integrated-test condition.
+
+This handoff is not a promise that arbitrary frontend unit tests, raw Playwright commands, Zova standalone SSR, or SPA runs automatically use `debug`. Do not edit `.env` files or enable production logging merely to reproduce the managed test defaults. Use current paired SSR/REST artifacts and dependency synchronization for the active edition when frontend code has changed, as described in the acceptance sections below.
+
+#### Collect only selected browser events
+
+Enabling `debug` output does **not** automatically retain every browser log in an E2E report. Specs use the existing managed fixture from `repo-e2e/scripts/managedTest.ts`; configure its `browserDiagnosticEvents` option with the safe literals relevant to the flow. For example, in a spec under `repo-e2e/specs/` that exercises the payment request events above:
+
+```ts
+import { test } from '../scripts/managedTest.ts';
+
+test.use({
+  browserDiagnosticEvents: [
+    'payment.session.start.request started',
+    'payment.session.start.request completed',
+    'payment.session.start.request failed',
+  ],
+});
+```
+
+Choose events actually emitted by the flow under test; the example does not require adding payment dependencies to unrelated specs. The default allowlist is empty. Matching `log`, `debug`, or `info` messages retain only the configured event literal with elapsed time and a page label, not arbitrary console text, formatter metadata, arguments, or payloads. Console errors and page errors are counted without retaining their text. History is bounded to 100 records and 32 KiB, with dropped-record counts.
+
+When actual test status differs from expected status, the fixture attaches `browser-diagnostics` and prints a short terminal summary. It observes an existing or lazily requested browser; API-only tests do not launch a browser just to collect diagnostics. These are browser diagnostics, not a combined frontend/backend log archive. Unmanaged imports preserve the original Playwright fixtures and do not install this automatic collection.
+
+Use these events to narrow failure attribution, not as the sole proof of request success, authorization, persistence, or user-visible completion. Preserve hydration/readiness waits and business assertions. An absent event may reflect disabled logging, the observation window, an empty or mismatched allowlist, or bounded-history eviction rather than an unexecuted callback. Do not collect raw console payloads or private application state to compensate.
+
 ## Vona integrated SSR browser acceptance
 
 The default Basic Web and Admin sites have browser smoke commands that exercise Vona integrated SSR through Vona SSR dispatch at the managed run's dynamically allocated test listener, not through the ordinary Vona development listener (`7102` by default) or the Zova standalone SSR development-server port. Vona supplies the API origin at runtime, so no Zova `.env` change or rebuild is needed solely for the test port; see [Runtime API origins in Vona integrated SSR](/fullstack/ssr-entry-modes#runtime-api-origins-in-vona-integrated-ssr).

@@ -168,6 +168,34 @@ Default level behavior can also be configured through environment variables such
 - `LOGGER_CLIENT_DEFAULT`
 - `LOGGER_CLIENT_ORDER`
 
+In both Cabloy Basic and Cabloy Start, an unset or empty client-level value defaults to `debug` when `app.meta.isTest` is true, including the Vona worker used by root `npm run test` and `npm run test:e2e`. Outside test mode, the default is `info`. An explicit value remains authoritative: `'false'` disables the client, `'true'` selects `info`, and a named level such as `'info'` or `'debug'` selects that level. Tests do not force an explicitly configured client to `debug`.
+
+These are framework filter defaults, not a guarantee that every event reaches every transport or report. Existing transport filters, request-boundary diagnostic suppression, and the strict contract-generation lane remain in force; do not bypass them to obtain test logs. See [Repo Scripts](/reference/repo-scripts#test-isolation-and-development-data) for managed test boundaries and [Frontend test logging](/frontend/scripts#debug-logging-and-browser-failure-reports) for the integrated SSR handoff and browser collection limits.
+
+## Debug events for test and E2E diagnostics
+
+When developing or changing a critical business flow, use a few framework `logger.debug` events where they can distinguish meaningful stages of a test/E2E failure. Useful boundaries include action entry, a significant eligibility or authorization decision, an important asynchronous request, and a business-state transition or result. Do not mechanically instrument every function or every branch.
+
+For example, place each event at its actual stage in the existing flow, not as consecutive statements:
+
+```typescript
+this.$logger.debug('payment.session.start received');
+// After the existing ownership check succeeds:
+this.$logger.debug('payment.session.start authorized');
+// After the awaited start operation succeeds:
+this.$logger.debug('payment.session.start completed');
+```
+
+Prefer stable event names such as `<resource>.<action> <stage>`, with fixed reasons when a skip or rejection needs explanation. Record the event at the boundary that owns the operation instead of duplicating the same failure at every layer. Do not add `catch/rethrow` wrappers solely to log every function failure, swallow errors, or alter authorization, transactions, retries, or asynchronous lifecycle ownership for diagnostics.
+
+Keep events non-sensitive and inexpensive:
+
+- Do not dump credentials, cookies, tokens, personal information, payment payloads, raw request/response objects, private framework state, or arbitrary error objects.
+- Use only necessary, reviewed safe state; fixed event literals are preferable when the test only needs to distinguish stages.
+- Do not query the database or perform external operations solely to construct a log message. For otherwise necessary expensive message construction, use the delayed-message API below.
+
+Logs help explain where execution reached; they do not prove a durable result, replace business assertions or required audit records, or establish acceptance on their own. A missing event also does not prove that its branch never ran: check the effective level, suppression, observation window, and collection boundary first. For frontend events and an E2E allowlist example, see [Debug logging and browser failure reports](/frontend/scripts#debug-logging-and-browser-failure-reports).
+
 ## Reading and changing levels at runtime
 
 Vona can inspect or change active logger levels while the system is running.

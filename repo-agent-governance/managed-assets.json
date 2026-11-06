@@ -683,7 +683,7 @@
     {
       "adapter": "cursor",
       "category": "policy",
-      "sha256": "96c9e38d3f92b13e43010d375c7734f9736bdf830e26c362c66b62c5875e0919",
+      "sha256": "d52f61ca1ddbee33000dded4ecbfc0a04794f7a5d6607c2d70a9d0398815bdb4",
       "source": "policies/repository.md",
       "target": ".cursor/rules/cabloy-governance.mdc"
     },
@@ -1005,14 +1005,14 @@
     {
       "adapter": "codex",
       "category": "policy",
-      "sha256": "aa74134cb50b4587b5b5695e987b7b361a0fe200b742e619bd2bd23171cbcd70",
+      "sha256": "477d29aaec0fae79b2bd8b20b728cacce727c15999f48ad295405d16494b72cf",
       "source": "policies/repository.md",
       "target": "AGENTS.md"
     },
     {
       "adapter": "claude",
       "category": "policy",
-      "sha256": "aa74134cb50b4587b5b5695e987b7b361a0fe200b742e619bd2bd23171cbcd70",
+      "sha256": "477d29aaec0fae79b2bd8b20b728cacce727c15999f48ad295405d16494b72cf",
       "source": "policies/repository.md",
       "target": "CLAUDE.md"
     }
