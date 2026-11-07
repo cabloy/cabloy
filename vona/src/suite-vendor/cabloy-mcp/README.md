@@ -1,11 +1,14 @@
 # Cabloy MCP
 
-MCP usage and verification guidance lives with this Vona suite rather than in the formal documentation site.
+The `cabloy-mcp` suite connects existing Vona Controller Actions to MCP clients. Backend `cabloy-mcp` owns shared ingress and tool mapping, `mcp-auth` owns browser authorization and tokens, and `mcp-test` provides the independent local test catalog. Zova's companion `cabloy-mcp` module provides consent and personal scope pages inside existing SSR Sites.
 
-## Guides
+## Documentation
 
-- [MCP Integration Guide](./docs/mcp-guide.md): shared endpoint admission, authorization, action contract mapping, Student examples and operational limits.
-- [MCP Browser Authorization](./docs/mcp-browser-authorization.md): DCR-only public/confidential clients, available whenever the existing AS/MCP ingress is available; issuer and resource both derive as `${origin}/mcp` from the root backend `server.serve` configuration. Reuse existing SSR/login, explicit consent, PKCE exchange and protected MCP access, without a separate issuer/resource registry or registration enablement switch. New DCR registrations default to `mcp:all`; explicit `mcp:read` narrows access, omitted authorization scope inherits the registered ceiling, and existing read-only registrations/tokens are not promoted. Both scopes retain local RBAC/data/tenant limits; the three catalog tools remain read-only, with no new mutation or dispatch registry. The guide covers Codex's optional top-level `scopes = ["mcp:read"]` and the unchanged no-refresh boundary.
-- [Local MCP Test Catalog](./docs/mcp-commerce-local.md): independent anonymous, credential-rejecting test launcher and read-only catalog walkthrough.
+The canonical usage guides are published in the formal documentation site:
 
-Product specifications, delivery plans and historical acceptance records remain in [repo-specs/cabloy-mcp](../../../../repo-specs/cabloy-mcp/README.md). Suite-local guides do not imply production deployment or full acceptance clearance.
+- [MCP Integration Guide](../../../../repo-docs/backend/mcp-guide.md): ownership, shared endpoint admission, authorization and operational boundaries.
+- [MCP Controller Tools](../../../../repo-docs/backend/mcp-controller-tools.md): explicit opt-in/exclusion, Action contracts, diagnostics and Student examples.
+- [MCP Browser Authorization](../../../../repo-docs/backend/mcp-browser-authorization.md): DCR, existing login, explicit consent, PKCE, token refresh and personal scopes.
+- [Local MCP Test Catalog](../../../../repo-docs/backend/mcp-commerce-local.md): independent anonymous loopback launcher and three-tool read-only walkthrough.
+
+Product specifications, delivery plans and historical acceptance records remain in [repo-specs/cabloy-mcp](../../../../repo-specs/cabloy-mcp/README.md). Usage guidance does not establish deployment qualification or acceptance closure.
