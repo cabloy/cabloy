@@ -7,6 +7,7 @@ import { setTimeout as delay } from 'node:timers/promises';
 import { acquireTestLock, app } from 'vona-mock';
 import { $schema } from 'vona-module-a-openapiutils';
 
+import { AopMethodLog } from '../../../../../suite-vendor/a-vona/modules/a-logger/src/bean/aopMethod.log.ts';
 import { DtoCategoryPublicSelectRes } from '../src/dto/categoryPublicSelectRes.tsx';
 import { DtoProductPublicDetail } from '../src/dto/productPublicDetail.tsx';
 import { DtoProductPublicSelectRes } from '../src/dto/productPublicSelectRes.tsx';
@@ -907,12 +908,27 @@ describe('localHttp.test.ts', { concurrency: false, timeout: 60000 }, () => {
         };
       },
     );
+    const originalLogResult = AopMethodLog.prototype._logResult;
+    let suppressedResultLogs = 0;
+    const resultLog = t.mock.method(
+      AopMethodLog.prototype,
+      '_logResult',
+      function (this: AopMethodLog, ...args: Parameters<AopMethodLog['_logResult']>) {
+        // Keep the oversized fixture out of logs without changing the real response.
+        if (args[2]?.list?.[0]?.description === description) {
+          suppressedResultLogs++;
+          return;
+        }
+        return originalLogResult.apply(this, args);
+      },
+    );
     try {
       const response = await send(bounded, 'tools/call', {
         name: searchName,
         arguments: { title: 'Wireless Headphones', pageSize: 1 },
       });
       assert.equal(realReadFinished, true);
+      assert.ok(suppressedResultLogs > 0, 'oversized fixture result logging was suppressed');
       assert.equal(response.status, 500);
       assert.deepEqual(response.body, {
         jsonrpc: '2.0',
@@ -933,6 +949,7 @@ describe('localHttp.test.ts', { concurrency: false, timeout: 60000 }, () => {
         // Oversized output is a failed operation, not successful shutdown proof.
         await assert.rejects(bounded.close(), { message: 'MCP_LOCAL_OPERATION_FAILED' });
       } finally {
+        resultLog.mock.restore();
         oversized.mock.restore();
       }
     }
