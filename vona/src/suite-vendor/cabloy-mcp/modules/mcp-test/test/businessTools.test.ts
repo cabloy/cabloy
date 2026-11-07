@@ -900,9 +900,9 @@ describe('businessTools.test.ts', { concurrency: false, timeout: 60000 }, () => 
   it('localizes all eight Student descriptions consistently for HTTP OpenAPI and MCP', async () => {
     if (!app.meta.modules['training-student']) return;
     const { default: enUS } =
-      await import('../../../../a-training/modules/training-student/src/config/locale/en-us.ts');
+      await import('../../../../../suite/a-training/modules/training-student/src/config/locale/en-us.ts');
     const { default: zhCN } =
-      await import('../../../../a-training/modules/training-student/src/config/locale/zh-cn.ts');
+      await import('../../../../../suite/a-training/modules/training-student/src/config/locale/zh-cn.ts');
     const dictionaries = { 'en-us': enUS, 'zh-cn': zhCN };
     const descriptions = {
       create: { key: 'StudentCreateDescription', method: 'post' },

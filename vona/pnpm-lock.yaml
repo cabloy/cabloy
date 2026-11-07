@@ -506,7 +506,7 @@ importers:
         version: link:src/suite/cabloy-basic/modules/basic-siteweb
       vona-module-cabloy-mcp:
         specifier: workspace:^
-        version: link:src/suite/cabloy-mcp/modules/cabloy-mcp
+        version: link:src/suite-vendor/cabloy-mcp/modules/cabloy-mcp
       vona-module-captcha-simple:
         specifier: workspace:^
         version: link:src/suite-vendor/a-captcha/modules/captcha-simple
@@ -563,10 +563,10 @@ importers:
         version: link:src/suite-vendor/a-image/modules/image-native
       vona-module-mcp-auth:
         specifier: workspace:^
-        version: link:src/suite/cabloy-mcp/modules/mcp-auth
+        version: link:src/suite-vendor/cabloy-mcp/modules/mcp-auth
       vona-module-mcp-test:
         specifier: workspace:^
-        version: link:src/suite/cabloy-mcp/modules/mcp-test
+        version: link:src/suite-vendor/cabloy-mcp/modules/mcp-test
       vona-module-pay-mock:
         specifier: workspace:^
         version: link:src/suite-vendor/a-pay/modules/pay-mock
@@ -3479,6 +3479,62 @@ importers:
         specifier: ^6.1.3
         version: 6.1.4
 
+  src/suite-vendor/cabloy-mcp:
+    dependencies:
+      vona-module-cabloy-mcp:
+        specifier: workspace:^
+        version: link:modules/cabloy-mcp
+      vona-module-mcp-auth:
+        specifier: ^5.0.0
+        version: link:modules/mcp-auth
+      vona-module-mcp-test:
+        specifier: ^5.0.0
+        version: link:modules/mcp-test
+
+  src/suite-vendor/cabloy-mcp/modules/cabloy-mcp:
+    dependencies:
+      '@modelcontextprotocol/node':
+        specifier: 2.1.1
+        version: 2.1.1(@modelcontextprotocol/server@2.3.0)
+      '@modelcontextprotocol/server':
+        specifier: 2.3.0
+        version: 2.3.0
+      vona-module-mcp-auth:
+        specifier: workspace:*
+        version: link:../mcp-auth
+    devDependencies:
+      clean-package:
+        specifier: ^2.2.0
+        version: 2.2.0
+      rimraf:
+        specifier: ^6.1.3
+        version: 6.1.4
+
+  src/suite-vendor/cabloy-mcp/modules/mcp-auth:
+    devDependencies:
+      clean-package:
+        specifier: ^2.2.0
+        version: 2.2.0
+      rimraf:
+        specifier: ^6.1.3
+        version: 6.1.4
+
+  src/suite-vendor/cabloy-mcp/modules/mcp-test:
+    dependencies:
+      '@modelcontextprotocol/node':
+        specifier: 2.1.1
+        version: 2.1.1(@modelcontextprotocol/server@2.3.0)
+      '@modelcontextprotocol/server':
+        specifier: 2.3.0
+        version: 2.3.0
+    devDependencies:
+      clean-package:
+        specifier: ^2.2.0
+        version: 2.2.0
+      rimraf:
+        specifier: ^6.1.3
+        version: 6.1.4
+
   src/suite/a-commerce:
     dependencies:
       vona-module-commerce-catalog:
@@ -3741,62 +3797,6 @@ importers:
         version: 6.1.4
 
   src/suite/cabloy-basic/modules/basic-siteweb:
-    devDependencies:
-      clean-package:
-        specifier: ^2.2.0
-        version: 2.2.0
-      rimraf:
-        specifier: ^6.1.3
-        version: 6.1.4
-
-  src/suite/cabloy-mcp:
-    dependencies:
-      vona-module-cabloy-mcp:
-        specifier: workspace:^
-        version: link:modules/cabloy-mcp
-      vona-module-mcp-auth:
-        specifier: ^5.0.0
-        version: link:modules/mcp-auth
-      vona-module-mcp-test:
-        specifier: ^5.0.0
-        version: link:modules/mcp-test
-
-  src/suite/cabloy-mcp/modules/cabloy-mcp:
-    dependencies:
-      '@modelcontextprotocol/node':
-        specifier: 2.1.1
-        version: 2.1.1(@modelcontextprotocol/server@2.3.0)
-      '@modelcontextprotocol/server':
-        specifier: 2.3.0
-        version: 2.3.0
-      vona-module-mcp-auth:
-        specifier: workspace:*
-        version: link:../mcp-auth
-    devDependencies:
-      clean-package:
-        specifier: ^2.2.0
-        version: 2.2.0
-      rimraf:
-        specifier: ^6.1.3
-        version: 6.1.4
-
-  src/suite/cabloy-mcp/modules/mcp-auth:
-    devDependencies:
-      clean-package:
-        specifier: ^2.2.0
-        version: 2.2.0
-      rimraf:
-        specifier: ^6.1.3
-        version: 6.1.4
-
-  src/suite/cabloy-mcp/modules/mcp-test:
-    dependencies:
-      '@modelcontextprotocol/node':
-        specifier: 2.1.1
-        version: 2.1.1(@modelcontextprotocol/server@2.3.0)
-      '@modelcontextprotocol/server':
-        specifier: 2.3.0
-        version: 2.3.0
     devDependencies:
       clean-package:
         specifier: ^2.2.0
