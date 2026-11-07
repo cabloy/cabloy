@@ -12,9 +12,7 @@ import { DtoMockRefundReceipt } from '../dto/mockRefundReceipt.tsx';
 
 export interface IControllerOptionsMockPayment extends IDecoratorControllerOptions {}
 
-@Controller<IControllerOptionsMockPayment>('mock/payment-session', {
-  meta: { mode: ['dev', 'test'] },
-})
+@Controller<IControllerOptionsMockPayment>('mock/payment-session')
 export class ControllerMockPayment extends BeanBase {
   @Web.post(':id/complete')
   @Api.body(DtoMockPaymentReceipt)

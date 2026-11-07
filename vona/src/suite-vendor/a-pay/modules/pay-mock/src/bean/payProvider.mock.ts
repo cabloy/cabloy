@@ -54,6 +54,7 @@ export interface IPayProviderOptionsMock extends IDecoratorPayProviderOptions<
 > {}
 
 @PayProvider<IPayProviderOptionsMock>({
+  meta: { mode: ['dev', 'test'] },
   base: {
     capabilities: {
       redirectCheckout: false,

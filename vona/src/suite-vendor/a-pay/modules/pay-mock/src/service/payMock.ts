@@ -10,7 +10,6 @@ export type TypeMockRefundOutcome = 'succeeded' | 'failed' | 'cancelled';
 @Service()
 export class ServicePayMock extends BeanBase {
   async completePaymentSession(paymentSessionId: TableIdentity, outcome: TypeMockPaymentOutcome) {
-    this._assertSimulatorEnabled();
     const session = await this.$scope.pay.model.paymentSession.getById(paymentSessionId);
     if (!session || String(session.userId) !== String(this.bean.passport.currentUser!.id)) {
       this.app.throw(404, 'payment session not found');
@@ -75,7 +74,6 @@ export class ServicePayMock extends BeanBase {
   }
 
   async completeRefundOperation(refundOperationId: TableIdentity, outcome: TypeMockRefundOutcome) {
-    this._assertSimulatorEnabled();
     const refund = await this.$scope.pay.model.refundOperation.getById(refundOperationId);
     if (!refund) this.app.throw(404, 'mock refund operation not found');
     const session = await this.$scope.pay.model.paymentSession.getById(refund.paymentSessionId);
@@ -128,11 +126,5 @@ export class ServicePayMock extends BeanBase {
     );
     if (!response.ok) this.app.throw(502, 'mock refund webhook was rejected');
     return { refundOperationId: refund.id, accepted: true as const };
-  }
-
-  private _assertSimulatorEnabled() {
-    if (this.app.meta.env.META_MODE === 'prod') {
-      this.app.throw(404, 'mock payment simulator is unavailable');
-    }
   }
 }
