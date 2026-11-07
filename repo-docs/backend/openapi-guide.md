@@ -64,6 +64,7 @@ The decorator records metadata; it does not start an MCP server, register a tran
 - A method-level `@Mcp.tool()` marks that action for mapping.
 - A class-level `@Mcp.tool()` declares controller-level mapping intent and shared options; the MCP implementation resolves eligible registered actions and option precedence.
 - Calling `@Mcp.tool()` without options still records an explicit opt-in marker.
+- Action-only `@Mcp.exclude()` is an explicit MCP deny. It wins over Controller- and Action-level `@Mcp.tool()` metadata and does not itself opt an Action into MCP; the runtime should apply it before name, contract, schema, or diagnostic work.
 - `name` is an action-only public tool name override; using it on a controller class is rejected.
 - `description` accepts text or locale metadata. In Cabloy's MCP mapper, a tool description is Action-scoped: the Action's MCP description takes precedence over its own OpenAPI description, summary and controller/Action identity; a controller-level MCP description is not inherited.
 - `readOnly` declares the intended read classification, and `output.pick` declares an output field selection. In Cabloy's MCP mapper, these two options may inherit controller-level defaults. Their runtime interpretation and enforcement belong to the consuming MCP implementation, not the decorator.

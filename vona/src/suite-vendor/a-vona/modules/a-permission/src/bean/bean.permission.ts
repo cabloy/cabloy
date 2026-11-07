@@ -1,3 +1,4 @@
+import type { Constructable } from 'vona';
 import type { ICachingActionKeyInfo } from 'vona-module-a-caching';
 import type {
   IOpenapiPermissionAction,
@@ -120,6 +121,29 @@ export class BeanPermission extends BeanBase {
     const routePathInfo = recordResourceNameToRoutePath[resource];
     if (!routePathInfo || !appResource.getBean(routePathInfo.controller)) return false;
     const route = this._getControllerActionRoute(resource, actionKey);
+    if (!route?.route?.meta || !this._matchPassportMeta(route.route.meta)) return false;
+    return await this._evaluatePermissionAction(route, true);
+  }
+
+  /**
+   * Checks a registered Controller Action's guards without permission events, result caches or
+   * matcher projection. The Controller identity is resolved through the registered bean metadata.
+   */
+  public async checkPermissionControllerActionGuards(
+    controller: Constructable | string,
+    actionKey: string,
+  ): Promise<boolean> {
+    const beanOptions = appResource.getBean(controller as any);
+    if (!beanOptions) return false;
+    const routesByController = getCacheControllerRoutes(this.app);
+    if (!Object.hasOwn(routesByController, beanOptions.beanFullName)) return false;
+    const routes = routesByController[beanOptions.beanFullName];
+    if (!Array.isArray(routes)) return false;
+    const route = routes.find(
+      candidate =>
+        candidate.controllerBeanFullName === beanOptions.beanFullName &&
+        candidate.action === actionKey,
+    );
     if (!route?.route?.meta || !this._matchPassportMeta(route.route.meta)) return false;
     return await this._evaluatePermissionAction(route, true);
   }
