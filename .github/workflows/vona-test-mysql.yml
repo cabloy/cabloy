@@ -42,6 +42,9 @@ jobs:
           DATABASE_DEFAULT_CLIENT=mysql DATABASE_CLIENT_MYSQL_HOST=127.0.0.1 DATABASE_CLIENT_MYSQL_PASSWORD=root npm run vona :bin:test -- commerce-trade/test/orderSnapshot.test.ts --flavor=normal
           DATABASE_DEFAULT_CLIENT=mysql DATABASE_CLIENT_MYSQL_HOST=127.0.0.1 DATABASE_CLIENT_MYSQL_PASSWORD=root npm run vona :bin:test -- commerce-trade/test/reservationExpiry.test.ts --flavor=normal
         working-directory: vona
+      - name: run MCP no-listener qualification gate
+        run: DATABASE_DEFAULT_CLIENT=mysql DATABASE_CLIENT_MYSQL_HOST=127.0.0.1 DATABASE_CLIENT_MYSQL_PASSWORD=root npm run test:mcp:no-listener
+        working-directory: vona
       - run: DATABASE_DEFAULT_CLIENT=mysql DATABASE_CLIENT_MYSQL_HOST=127.0.0.1 DATABASE_CLIENT_MYSQL_PASSWORD=root npm run test
         working-directory: vona
       - run: DATABASE_DEFAULT_CLIENT=mysql DATABASE_CLIENT_MYSQL_HOST=127.0.0.1 DATABASE_CLIENT_MYSQL_PASSWORD=root npm run build -- --flavor=ci

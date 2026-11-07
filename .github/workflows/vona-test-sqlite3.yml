@@ -101,6 +101,9 @@ jobs:
       - name: run Commerce payment, shipment, and refund lifecycle gate
         run: npm run test -- commerce-trade/test/paymentOutcome.test.ts commerce-trade/test/reservationExpiry.test.ts commerce-trade/test/shipment.test.ts commerce-trade/test/refundLifecycle.test.ts
         working-directory: vona
+      - name: run MCP no-listener qualification gate
+        run: npm run test:mcp:no-listener
+        working-directory: vona
       - run: npm run test
         working-directory: vona
       - run: npm run build -- --flavor=ci

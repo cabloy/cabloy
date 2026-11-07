@@ -48,6 +48,9 @@ jobs:
       - name: run Commerce payment, shipment, and refund lifecycle gate
         run: DATABASE_DEFAULT_CLIENT=pg npm run vona :bin:test -- commerce-trade/test/paymentOutcome.test.ts commerce-trade/test/reservationExpiry.test.ts commerce-trade/test/shipment.test.ts commerce-trade/test/refundLifecycle.test.ts commerce-trade/test/shipmentRefundRace.test.ts --flavor=normal
         working-directory: vona
+      - name: run MCP no-listener qualification gate
+        run: DATABASE_DEFAULT_CLIENT=pg npm run test:mcp:no-listener
+        working-directory: vona
       - run: DATABASE_DEFAULT_CLIENT=pg npm run test
         working-directory: vona
       - run: DATABASE_DEFAULT_CLIENT=pg npm run build -- --flavor=ci
