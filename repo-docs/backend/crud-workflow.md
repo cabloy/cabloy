@@ -142,6 +142,21 @@ The guard is attached to individual actions rather than the controller class. Wh
 
 SSR menu roles control navigation disclosure only. They never authorize a controller action, API, or resource; keep the action guard as the server-side authorization boundary. See [Controller AOP Guide](/backend/controller-aop-guide) and [Menu Guide](/backend/menu-guide).
 
+### Generated MCP metadata and required description follow-up
+
+In this Cabloy Basic checkout, `:tools:crud`, `:tools:crudBasic`, and `:tools:crudStart` generate Action-level `@Mcp.tool()` metadata by default; there is no `--mcp` flag. All eight generated Actions opt in:
+
+| Generated Actions                          | `readOnly` |
+| ------------------------------------------ | ---------- |
+| `select`, `group`, `aggregate`, `view`     | `true`     |
+| `create`, `update`, `delete`, `deleteBulk` | `false`    |
+
+Each description uses `$locale('<Resource><Action>Description')`. Generated locale values contain minimal truthful action text, with English `TODO(mcp-description)` source comments instructing refinement against the actual Action, DTO, and Service. The CLI prints an AI/manual follow-up reminder; generation does not infer the finished business semantics.
+
+**After implementing the business behavior and before declaring the resource complete**, refine the descriptions in every generated locale to explain the actual inputs, result, scope, and material effects. For bulk operations, explain the selection scope and destructive or related-record effects when material. Remove resolved TODO comments in all generated locales; retain unresolved comments and explicitly report incomplete semantics rather than claiming completion. Recheck `readOnly` if behavior changes, and do not invent atomicity, idempotency, rollback, recoverability, or authorization guarantees.
+
+Generated opt-in does not activate an MCP endpoint or grant business permissions. Existing guards and instance/data scope still apply; potentially destructive bulk operations must retain their existing scoping. See [MCP Controller Tools](/mcp/mcp-controller-tools#opt-in-explicitly) for runtime admission and authorization boundaries. Existing resources are not retroactively opted in by changing generator templates.
+
 ### Generated mutation response default
 
 Generated resource `update` and `delete` actions are command-style actions. Their controllers use `Promise<void>`, await the service call without forwarding its result, and declare `@Api.body(z.null())` so OpenAPI and generated SDKs describe the normal HTTP `200` success wrapper accurately as `data: null`.
@@ -201,7 +216,8 @@ For the runtime tenancy boundary, see [Multi-Instance and Instance Resolution](/
 1. run the CRUD generator
 2. inspect the generated files
 3. refine entity, DTO, model, service, and controller behavior for the real business case
-4. verify routes, model behavior, migration behavior, and tests
+4. when MCP descriptions were generated, complete the locale-backed descriptions from the implemented behavior and resolve their TODOs before completion
+5. verify routes, model behavior, migration behavior, and tests
 
 A practical expectation is that the generated test should already help verify the full contract thread rather than only file existence. In other words, generation should leave you with something that can immediately participate in CRUD-oriented action testing, migration verification, and later OpenAPI/frontend contract refinement.
 

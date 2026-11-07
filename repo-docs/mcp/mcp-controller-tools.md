@@ -31,6 +31,14 @@ OAuth scope eligibility and current business authorization apply independently. 
 
 MCP metadata is independent of ordinary OpenAPI publication. `@Api.exclude()` is not an MCP authorization boundary: an explicitly opted-in, admitted Action can still become a tool. Conversely, publishing an HTTP Action does not opt it into MCP.
 
+### Generated CRUD opt-in
+
+In this Cabloy Basic checkout, `:tools:crud`, `:tools:crudBasic`, and `:tools:crudStart` generate explicit Action-level opt-in for all eight Actions by default, without an `--mcp` flag. `select`, `group`, `aggregate`, and `view` use `readOnly: true`; `create`, `update`, `delete`, and `deleteBulk` use `readOnly: false`. This changes new scaffolds, not existing Controllers or the runtime admission rules above. Decorators do not activate an endpoint or grant business authority; bulk mutations remain potentially destructive and must preserve existing guards and instance/data scope.
+
+Generated descriptions use `$locale('<Resource><Action>Description')` with minimal truthful action text and English `TODO(mcp-description)` source comments. The CLI reminder asks for AI/manual refinement against the actual Action, DTO, and Service. **After business implementation and before completion**, fill these descriptions in every generated locale from the implemented inputs, result, scope, and material effects, including bulk selection scope and destructive or related-record effects when material. Remove resolved TODO comments in all generated locales; retain unresolved TODOs and explicitly report incomplete semantics. Verify `readOnly` against the final behavior and never infer atomicity, idempotency, rollback, recoverability, or authorization guarantees from a generated scaffold.
+
+See [CRUD Workflow](/backend/crud-workflow#generated-mcp-metadata-and-required-description-follow-up) for the generation and follow-up sequence. The Student examples below are separately authored contracts, not the default generated catalog.
+
 ## Options and defaults
 
 | Option        | Meaning                                                                                                                                                                                                                                                         |

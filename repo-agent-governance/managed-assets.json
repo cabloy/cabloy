@@ -18,14 +18,14 @@
     {
       "adapter": "codex",
       "category": "skill",
-      "sha256": "7a90333f6adba04b804bd889536226ea94b24110d6e4ec86028095d38a5f4526",
+      "sha256": "fde023fdb14d7086e04ac2540a4e3f6ea7fdbbbde825b60d5ce68def767c8126",
       "source": "skills/cabloy-backend-scaffold/references/follow-up-checklist.md",
       "target": ".agents/skills/cabloy-backend-scaffold/references/follow-up-checklist.md"
     },
     {
       "adapter": "codex",
       "category": "skill",
-      "sha256": "c27742ac71138c1271d575f0b1d3cb30682229e750956b017b437be410daa0ce",
+      "sha256": "41cff2d4d7588555d2094e07bb582c84c6b96ea38e09c20df1ddeff2b62be74e",
       "source": "skills/cabloy-backend-scaffold/SKILL.md",
       "target": ".agents/skills/cabloy-backend-scaffold/SKILL.md"
     },
@@ -354,14 +354,14 @@
     {
       "adapter": "claude",
       "category": "skill",
-      "sha256": "7a90333f6adba04b804bd889536226ea94b24110d6e4ec86028095d38a5f4526",
+      "sha256": "fde023fdb14d7086e04ac2540a4e3f6ea7fdbbbde825b60d5ce68def767c8126",
       "source": "skills/cabloy-backend-scaffold/references/follow-up-checklist.md",
       "target": ".claude/skills/cabloy-backend-scaffold/references/follow-up-checklist.md"
     },
     {
       "adapter": "claude",
       "category": "skill",
-      "sha256": "c27742ac71138c1271d575f0b1d3cb30682229e750956b017b437be410daa0ce",
+      "sha256": "41cff2d4d7588555d2094e07bb582c84c6b96ea38e09c20df1ddeff2b62be74e",
       "source": "skills/cabloy-backend-scaffold/SKILL.md",
       "target": ".claude/skills/cabloy-backend-scaffold/SKILL.md"
     },
@@ -704,14 +704,14 @@
     {
       "adapter": "cursor",
       "category": "skill",
-      "sha256": "7a90333f6adba04b804bd889536226ea94b24110d6e4ec86028095d38a5f4526",
+      "sha256": "fde023fdb14d7086e04ac2540a4e3f6ea7fdbbbde825b60d5ce68def767c8126",
       "source": "skills/cabloy-backend-scaffold/references/follow-up-checklist.md",
       "target": ".cursor/skills/cabloy-backend-scaffold/references/follow-up-checklist.md"
     },
     {
       "adapter": "cursor",
       "category": "skill",
-      "sha256": "c27742ac71138c1271d575f0b1d3cb30682229e750956b017b437be410daa0ce",
+      "sha256": "41cff2d4d7588555d2094e07bb582c84c6b96ea38e09c20df1ddeff2b62be74e",
       "source": "skills/cabloy-backend-scaffold/SKILL.md",
       "target": ".cursor/skills/cabloy-backend-scaffold/SKILL.md"
     },

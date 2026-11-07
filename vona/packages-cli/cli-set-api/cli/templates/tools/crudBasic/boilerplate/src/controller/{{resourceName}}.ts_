@@ -3,7 +3,7 @@ import type { IQueryParams, TypeAnalysisGroupParams, TypeAnalysisAggregateParams
 import type { IDecoratorControllerOptions } from 'vona-module-a-web';
 
 import { BeanBase } from 'vona';
-import { Api, Resource, v } from 'vona-module-a-openapiutils';
+import { Api, Mcp, Resource, v } from 'vona-module-a-openapiutils';
 import { z } from 'zod';
 import { Passport } from 'vona-module-a-user';
 import { Arg, Controller, Web } from 'vona-module-a-web';
@@ -28,6 +28,10 @@ export interface IControllerOptions<%=argv.resourceNameCapitalize%> extends IDec
 })
 @Resource()
 export class Controller<%=argv.resourceNameCapitalize%> extends BeanBase {
+  @Mcp.tool({
+    description: $locale('<%=argv.resourceNameCapitalize%>CreateDescription'),
+    readOnly: false,
+  })
   @Web.post('', { summary: $locale('<%=argv.resourceNameCapitalize%>Create') })
   @Api.body(v.tableIdentity())
   @Passport.rbac()
@@ -35,6 +39,10 @@ export class Controller<%=argv.resourceNameCapitalize%> extends BeanBase {
     return (await this.scope.service.<%=argv.resourceName%>.create(<%=argv.resourceName%>)).id;
   }
 
+  @Mcp.tool({
+    description: $locale('<%=argv.resourceNameCapitalize%>SelectDescription'),
+    readOnly: true,
+  })
   @Web.get('', { summary: $locale('<%=argv.resourceNameCapitalize%>Select') })
   @Api.body(Dto<%=argv.resourceNameCapitalize%>SelectRes)
   @Passport.rbac()
@@ -42,6 +50,10 @@ export class Controller<%=argv.resourceNameCapitalize%> extends BeanBase {
     return await this.scope.service.<%=argv.resourceName%>.select(params);
   }
 
+  @Mcp.tool({
+    description: $locale('<%=argv.resourceNameCapitalize%>GroupDescription'),
+    readOnly: true,
+  })
   @Web.get('group', { summary: $locale('<%=argv.resourceNameCapitalize%>Group') })
   @Api.body(v.array(v.object(Dto<%=argv.resourceNameCapitalize%>GroupResItem)))
   @Passport.rbac({ actionInherit: 'select' })
@@ -49,6 +61,10 @@ export class Controller<%=argv.resourceNameCapitalize%> extends BeanBase {
     return await this.scope.service.<%=argv.resourceName%>.group(params);
   }
 
+  @Mcp.tool({
+    description: $locale('<%=argv.resourceNameCapitalize%>AggregateDescription'),
+    readOnly: true,
+  })
   @Web.get('aggregate', { summary: $locale('<%=argv.resourceNameCapitalize%>Aggregate') })
   @Api.body(Dto<%=argv.resourceNameCapitalize%>AggregateRes)
   @Passport.rbac({ actionInherit: 'select' })
@@ -56,6 +72,10 @@ export class Controller<%=argv.resourceNameCapitalize%> extends BeanBase {
     return await this.scope.service.<%=argv.resourceName%>.aggregate(params);
   }
 
+  @Mcp.tool({
+    description: $locale('<%=argv.resourceNameCapitalize%>ViewDescription'),
+    readOnly: true,
+  })
   @Web.get(':id', { summary: $locale('<%=argv.resourceNameCapitalize%>View') })
   @Api.body(v.optional(), v.object(Dto<%=argv.resourceNameCapitalize%>View))
   @Passport.rbac()
@@ -63,6 +83,10 @@ export class Controller<%=argv.resourceNameCapitalize%> extends BeanBase {
     return await this.scope.service.<%=argv.resourceName%>.view(id);
   }
 
+  @Mcp.tool({
+    description: $locale('<%=argv.resourceNameCapitalize%>UpdateDescription'),
+    readOnly: false,
+  })
   @Web.patch(':id', { summary: $locale('<%=argv.resourceNameCapitalize%>Update') })
   @Api.body(z.null())
   @Passport.rbac()
@@ -70,6 +94,10 @@ export class Controller<%=argv.resourceNameCapitalize%> extends BeanBase {
     await this.scope.service.<%=argv.resourceName%>.update(id, <%=argv.resourceName%>);
   }
 
+  @Mcp.tool({
+    description: $locale('<%=argv.resourceNameCapitalize%>DeleteDescription'),
+    readOnly: false,
+  })
   @Web.delete(':id', { summary: $locale('<%=argv.resourceNameCapitalize%>Delete') })
   @Api.body(z.null())
   @Passport.rbac()
@@ -77,6 +105,10 @@ export class Controller<%=argv.resourceNameCapitalize%> extends BeanBase {
     await this.scope.service.<%=argv.resourceName%>.delete(id);
   }
 
+  @Mcp.tool({
+    description: $locale('<%=argv.resourceNameCapitalize%>DeleteBulkDescription'),
+    readOnly: false,
+  })
   @Web.post('bulk/delete', { summary: $locale('<%=argv.resourceNameCapitalize%>DeleteBulk') })
   @Api.body(z.null())
   @Passport.rbac({ actionInherit: 'delete' })

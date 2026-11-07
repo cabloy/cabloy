@@ -72,13 +72,16 @@ async function makeCli(
   const cli = new Class({ context: { argv } } as never);
   cli.modulesMeta = { modules: { 'test-record': { root: moduleRoot } } } as never;
   cli.__template = new Template(cli);
-  cli.console.log = async () => {};
+  const messages: unknown[] = [];
+  cli.console.log = async message => {
+    messages.push(message);
+  };
   cli.helper.formatFile = async () => {};
   const invocations: string[][] = [];
   cli.helper.invokeCli = async args => {
     invocations.push(args);
   };
-  return { cli, moduleRoot, invocations };
+  return { cli, moduleRoot, invocations, messages };
 }
 
 async function filesUnder(root: string): Promise<string[]> {
@@ -251,6 +254,87 @@ describe('default CRUD analysis generation', { concurrency: false }, () => {
             [],
             file,
           );
+        }
+      }));
+
+    it(`${edition}: generates eight MCP Actions and locale-backed description follow-up by default`, async () =>
+      fixture(async root => {
+        const { cli, moduleRoot, messages } = await makeCli(root, Class);
+        await cli.execute();
+        const controller = await read(moduleRoot, 'src/controller/record.ts');
+        assert.match(controller, /import \{ Api, Mcp, Resource, v \}/);
+        assert.equal(controller.match(/@Mcp\.tool\(/g)?.length, 8);
+        const actions = {
+          Create: false,
+          Select: true,
+          Group: true,
+          Aggregate: true,
+          View: true,
+          Update: false,
+          Delete: false,
+          DeleteBulk: false,
+        };
+        for (const [action, readOnly] of Object.entries(actions)) {
+          assert.ok(
+            controller.includes(
+              `@Mcp.tool({\n    description: $locale('Record${action}Description'),\n    readOnly: ${readOnly},\n  })\n  @Web.`,
+            ),
+            action,
+          );
+        }
+        assert.equal(controller.match(/@Passport\.rbac\(/g)?.length, 8);
+        assert.match(controller, /@Passport\.rbac\(\{ actionInherit: 'delete' \}\)/);
+        if (edition === 'start') {
+          assert.match(controller, /@Arg\.rbacScopeCurrent\(\) rbacScopeCurrent: IRbacScopeAccess/);
+          assert.match(controller, /where: rbacScopeCurrent\.where\(\{ id: ids \}\)/);
+          assert.match(controller, /deleteBulk\(entries\.map\(entry => entry\.id\)\)/);
+        } else {
+          assert.match(controller, /deleteBulk\(command\.ids\)/);
+        }
+        for (const locale of ['en-us', 'zh-cn']) {
+          const source = await read(moduleRoot, `src/config/locale/${locale}.ts`);
+          assert.equal(source.match(/TODO\(mcp-description\)/g)?.length, 8);
+          const values = (await import(`data:text/javascript,${encodeURIComponent(source)}`))
+            .default;
+          for (const action of Object.keys(actions)) {
+            const key = `Record${action}Description`;
+            assert.ok(source.includes(`// TODO(mcp-description): ${key} -`), key);
+            assert.ok(values[key]?.length > 0, key);
+            assert.doesNotMatch(values[key], /todo|Action, DTO|Service behavior/i);
+          }
+        }
+        assert.ok(
+          messages.some(
+            message =>
+              typeof message === 'string' &&
+              message.includes('TODO(mcp-description)') &&
+              message.includes('bulk delete') &&
+              message.includes('unfinished'),
+          ),
+        );
+      }));
+
+    it(`${edition}: preserves authored descriptions and pending markers when generating another resource`, async () =>
+      fixture(async root => {
+        const { cli, moduleRoot } = await makeCli(root, Class);
+        for (const locale of ['en-us', 'zh-cn']) {
+          await fs.writeFile(
+            path.join(moduleRoot, `src/config/locale/${locale}.ts`),
+            `export default { RecordUpdateDescription: 'Authored ${locale} update contract' };\n`,
+          );
+        }
+        await cli.execute();
+        cli.context.argv.resourceName = 'entry';
+        await cli.execute();
+        for (const locale of ['en-us', 'zh-cn']) {
+          const source = await read(moduleRoot, `src/config/locale/${locale}.ts`);
+          assert.ok(
+            source.includes(`RecordUpdateDescription: 'Authored ${locale} update contract'`),
+          );
+          assert.ok(!source.includes('// TODO(mcp-description): RecordUpdateDescription -'));
+          assert.ok(source.includes('// TODO(mcp-description): RecordCreateDescription -'));
+          assert.ok(source.includes('// TODO(mcp-description): EntryUpdateDescription -'));
+          assert.equal(source.match(/TODO\(mcp-description\)/g)?.length, 15);
         }
       }));
 

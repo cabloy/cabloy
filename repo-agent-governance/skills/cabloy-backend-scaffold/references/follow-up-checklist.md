@@ -39,6 +39,15 @@ When the active edition and installed modules provide `@Passport.rbac(...)` and 
 - treat summary/description as presentation metadata, not authorization identity or enforcement
 - verify the explicit server-side catalog/editor projection; do not assume OpenAPI metadata is automatically displayed by a policy editor
 
+### Conditional generated MCP description completion
+
+When generation adds locale-backed `@Mcp.tool()` descriptions or `TODO(mcp-description)` comments, this follow-up is mandatory **after business implementation and before completion**:
+
+- refine `$locale('<Resource><Action>Description')` values from the actual Action, DTO, and Service, not just the resource/action name; describe implemented inputs, result, scope, and material effects, including bulk selection scope and destructive or related-record effects when material
+- update every generated locale consistently; remove resolved `TODO(mcp-description)` comments only after refinement, retaining unresolved TODOs and explicitly reporting incomplete semantics
+- verify `readOnly` against actual behavior rather than assuming generated classification remains accurate after business changes; the CLI's AI/manual reminder and minimal generated locale text are not evidence of completed follow-up
+- do not invent atomicity, idempotency, rollback, recoverability, or authorization guarantees; MCP opt-in does not activate an endpoint or grant authority, and bulk operations must preserve existing guards and instance/data scope
+
 ## Persistence follow-up
 
 - migration/version changes

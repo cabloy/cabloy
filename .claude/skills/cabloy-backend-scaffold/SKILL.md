@@ -155,6 +155,15 @@ When the active edition and installed modules provide `@Passport.rbac(...)` and 
 
 For the authoring example and metadata boundary, read [Controller Guide](../../../repo-docs/backend/controller-guide.md#rbac-presentation-metadata) and [Controller AOP Guide](../../../repo-docs/backend/controller-aop-guide.md#rbac-presentation-metadata).
 
+### Conditional generated MCP description completion
+
+When generation adds locale-backed `@Mcp.tool()` descriptions or `TODO(mcp-description)` comments, complete this step **after implementing the business behavior and before declaring the backend thread complete**. The CLI reminder calls for AI or manual follow-up; it does not complete the descriptions for you.
+
+- Inspect the actual Action, DTO, and Service, then refine each `$locale('<Resource><Action>Description')` value to describe the implemented inputs, result, scope, and material effects. For bulk operations, make the selection scope and destructive or related-record effects clear when material.
+- Update every generated locale consistently and remove only resolved `TODO(mcp-description)` comments. Minimal generated action text is a starting point, not completed business documentation. If semantics remain unresolved, retain the corresponding TODO and explicitly report that follow-up as incomplete.
+- Verify `readOnly` against actual behavior. In this Basic checkout, `:tools:crud`, `:tools:crudBasic`, and `:tools:crudStart` generate Action-level MCP opt-in by default for `create`, `select`, `group`, `aggregate`, `view`, `update`, `delete`, and `deleteBulk`, without an `--mcp` flag: the four reads are `true`, the four mutations are `false`. Verify the active source before assuming the same generator output in another edition.
+- Do not invent atomicity, idempotency, rollback, recoverability, or authorization guarantees. Generated MCP opt-in neither activates an MCP endpoint nor grants authority; preserve existing guards, instance/data scope, and bulk-operation scoping.
+
 ### Persistence and schema lifecycle
 
 Check whether the feature needs:

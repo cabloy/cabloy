@@ -61,5 +61,8 @@ export class CliToolsCrudBasic extends BeanCliBase {
     if (!argv.nometadata) {
       await this.helper.invokeCli([':tools:metadata', moduleName], { cwd: argv.projectPath });
     }
+    await this.console.log(
+      'MCP Actions generated with minimal descriptions, including bulk delete. After implementing the business behavior, refine the descriptions in src/config/locale/*.ts using the actual Action, DTO and Service behavior. Resolve TODO(mcp-description) before completion; report any unresolved descriptions as unfinished.',
+    );
   }
 }

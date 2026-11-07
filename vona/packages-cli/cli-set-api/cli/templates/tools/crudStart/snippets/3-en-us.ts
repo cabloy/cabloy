@@ -42,6 +42,14 @@ export default metadataCustomSnippet({
       [`${resource}Delete`]: `Delete ${resource}`,
       [`${resource}Group`]: `Group ${resource}`,
       [`${resource}Aggregate`]: `Aggregate ${resource}`,
+      [`${resource}CreateDescription`]: `Create ${resource}.`,
+      [`${resource}SelectDescription`]: `Query the ${resource} list.`,
+      [`${resource}GroupDescription`]: `Group ${resource} records.`,
+      [`${resource}AggregateDescription`]: `Aggregate ${resource} records.`,
+      [`${resource}ViewDescription`]: `View a ${resource} by ID.`,
+      [`${resource}UpdateDescription`]: `Update a ${resource} by ID.`,
+      [`${resource}DeleteDescription`]: `Delete a ${resource} by ID.`,
+      [`${resource}DeleteBulkDescription`]: `Delete multiple ${resource} records by ID.`,
     };
     return locale_transform({ ast, argv, resources });
   },
