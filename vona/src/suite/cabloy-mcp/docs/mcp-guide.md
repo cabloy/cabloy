@@ -6,7 +6,7 @@ This guide describes the Cabloy Basic `cabloy-mcp` implementation. The reusable 
 
 The normal authenticated endpoint is shared `/mcp`, owned by `cabloy-mcp`. Recognized dev/test/prod modes use the same OAuth, business-authorization and instance boundary. Production is not rejected solely by mode; unknown modes, not-ready, closing, disabled state and invalid required authority configuration fail closed. Only literal `CABLOY_MCP_ENABLED=false` disables the enabled-by-default integration.
 
-Shared construction admits registered Resource controllers, not a Student action whitelist. A tool must have an enabled registered route, explicit method/class `@Mcp.tool()` opt-in and a supported contract. The implementation derives the Resource from the controller identity and requires its own entry in `recordResourceNameToRoutePath`. Nonresource fixtures are excluded from both listing and known-name direct calls.
+Shared construction admits enabled Controllers and their registered routes, not a Student action whitelist or a Resource-only subset. A tool must have an enabled registered route, explicit Controller/Action `@Mcp.tool()` opt-in, no Action-level `@Mcp.exclude()`, and a supported contract. Resource metadata is not required; test and synthetic Controllers may enter the shared catalog when their module/controller is active. Module capability and Controller `meta.mode` filtering already occur during startup and are not repeated by MCP.
 
 The optional training suite supplies eight Student examples after lookup retirement: select, group, aggregate, view and summary reads, plus create, update and delete writes. These are not a catalog ceiling. Without training, Student tools disappear; other eligible Resource tools may remain. The three synthetic tools and anonymous standalone entry of the `mcp-test` launcher are not the shared endpoint.
 
@@ -104,5 +104,5 @@ The named Student create, update and delete tools add no new server-side per-cal
 - Shared ingress: `vona/src/suite/cabloy-mcp/modules/cabloy-mcp/src/bean/middlewareSystem.mcp.ts`
 - Transport checks: `vona/src/suite/cabloy-mcp/modules/cabloy-mcp/src/lib/mcpTransport.ts`
 - Authenticated exchange and settlement: `vona/src/suite/cabloy-mcp/modules/cabloy-mcp/src/lib/businessTransport.ts`
-- Resource admission and fresh discovery: `vona/src/suite/cabloy-mcp/modules/cabloy-mcp/src/service/sharedBusinessTools.ts`
+- Shared Controller admission and fresh discovery: `vona/src/suite/cabloy-mcp/modules/cabloy-mcp/src/service/sharedBusinessTools.ts`
 - Shutdown drain: `vona/src/suite/cabloy-mcp/modules/cabloy-mcp/src/monkey.ts`

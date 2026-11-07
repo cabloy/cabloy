@@ -1,11 +1,11 @@
 import type { CallToolResult, Tool } from '@modelcontextprotocol/server';
-import type { VonaApplication } from 'vona';
+import type { Constructable, VonaApplication } from 'vona';
 import type { IMcpToolOptions } from 'vona-module-a-openapiutils';
 import type { TypeMcpScope } from 'vona-module-mcp-auth';
 
 import { fromJsonSchema, ProtocolError, Server } from '@modelcontextprotocol/server';
 import { appMetadata, runWithZodQueryCoercion } from 'vona';
-import { SymbolMcpOptions } from 'vona-module-a-openapiutils';
+import { SymbolMcpExclude, SymbolMcpOptions } from 'vona-module-a-openapiutils';
 import { getCacheControllerRoutes } from 'vona-module-a-web';
 import { isMcpScope } from 'vona-module-mcp-auth';
 import z from 'zod';
@@ -44,7 +44,7 @@ export interface IControllerToolCatalogEntry extends IControllerToolIdentity {
 
 export interface IControllerToolServerOptions {
   includeTool?(identity: IControllerToolIdentity): boolean;
-  isToolVisible?(identity: IControllerToolIdentity): Promise<boolean>;
+  isToolVisible?(identity: IControllerToolIdentity, controller: Constructable): Promise<boolean>;
   /** Exact consented bindings, not names alone or a dynamic include expression. */
   toolAccess?: ReadonlyArray<IControllerToolIdentity & { name: string }>;
   toolAccessReadOnly?: boolean;
@@ -52,6 +52,7 @@ export interface IControllerToolServerOptions {
 
 interface IControllerTool {
   identity: IControllerToolIdentity;
+  controller: Constructable;
   controllerSummary: string;
   summary: string;
   tool: Tool;
@@ -108,6 +109,15 @@ export async function createControllerToolServer(
           route.controller.prototype,
           route.action,
         );
+        if (
+          appMetadata.getOwnMetadata<boolean>(
+            SymbolMcpExclude,
+            route.controller.prototype,
+            route.action,
+          )
+        ) {
+          continue;
+        }
         if (!defaults && !local) continue;
         const options = { ...defaults, ...local };
         const name =
@@ -281,6 +291,7 @@ export async function createControllerToolServer(
           };
           tools.set(name, {
             identity: { controller: controller.beanOptions.beanFullName, action: route.action },
+            controller: route.controller,
             controllerSummary: controller.beanOptions.options?.summary
               ? app.meta.text(controller.beanOptions.options.summary)
               : '',
@@ -366,7 +377,7 @@ export async function createControllerToolServer(
           if (!allowed(item)) continue;
           if (
             serverOptions.isToolVisible &&
-            !(await serverOptions.isToolVisible({ ...item.identity }))
+            !(await serverOptions.isToolVisible({ ...item.identity }, item.controller))
           ) {
             continue;
           }

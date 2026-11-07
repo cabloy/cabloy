@@ -8,7 +8,7 @@ import { after, before, describe, it } from 'node:test';
 import { appMetadata, appResource, runWithZodQueryCoercion } from 'vona';
 import { acquireTestLock, app } from 'vona-mock';
 import { getKeyHash } from 'vona-module-a-cache';
-import { $schema, Mcp, SymbolMcpOptions } from 'vona-module-a-openapiutils';
+import { $schema, Mcp, SymbolMcpExclude, SymbolMcpOptions } from 'vona-module-a-openapiutils';
 import { recordResourceNameToRoutePath } from 'vona-module-a-web';
 import { createControllerToolServer, createSharedBusinessToolServer } from 'vona-module-cabloy-mcp';
 
@@ -64,6 +64,7 @@ const statusToolName = 'mcp_test_action_status';
 const effectToolName = 'mcp_test_action_effect';
 const scalarToolName = 'mcp_test_action_scalar';
 const arrayToolName = 'mcp_test_action_array';
+const excludedToolName = 'mcp_test_action_excluded';
 const studentToolNames = [
   'training-student_student_aggregate',
   'training-student_student_create',
@@ -74,6 +75,10 @@ const studentToolNames = [
   'training-student_student_update',
   'training-student_student_view',
 ];
+
+function studentTools(tools: any[]) {
+  return tools.filter(tool => tool.name.startsWith('training-student_student_'));
+}
 
 async function withStudentToolPermissions(fn: () => Promise<void>) {
   await app.bean.executor.mockCtx(async () => {
@@ -329,14 +334,24 @@ describe('businessTools.test.ts', { concurrency: false, timeout: 60000 }, () => 
         const args = { name: 'Dynamic product', price: 1, quantity: 1, amount: 1 };
         const scoped = await read.request('tools/call', { name, arguments: args });
         assert.equal(scoped.error?.code, -32602);
-        for (const excluded of ['test-rest_product_select', statusToolName, toolName]) {
-          assert.equal((await names(all)).includes(excluded), false);
+        assert.equal(
+          (await names(all)).includes('test-rest_product_select'),
+          false,
+          'unannotated Actions stay closed',
+        );
+        assert.equal(
+          (await names(all)).includes(statusToolName),
+          true,
+          'explicitly opted-in non-Resource Actions are shared tools',
+        );
+        assert.equal(
+          (await names(all)).includes(toolName),
+          true,
+          'explicitly opted-in synthetic catalog Actions are shared tools',
+        );
+        for (const excluded of ['test-rest_product_select']) {
           const rejected = await all.request('tools/call', { name: excluded, arguments: {} });
-          assert.equal(
-            rejected.error?.code,
-            -32602,
-            'unannotated and non-resource Actions stay closed',
-          );
+          assert.equal(rejected.error?.code, -32602);
         }
         passport.roles = [];
         await app.bean.passport.setCurrent(passport);
@@ -409,9 +424,18 @@ describe('businessTools.test.ts', { concurrency: false, timeout: 60000 }, () => 
         const listed = JSON.parse(JSON.stringify(await shared.request('tools/list')));
         assert.equal(listed.error, undefined);
         assert.equal(action.mock.callCount(), 0, 'discovery runs guards without business Actions');
+        const listedNames = listed.result.tools.map((tool: any) => tool.name);
+        const studentNames = listedNames.filter((name: string) =>
+          name.startsWith('training-student_student_'),
+        );
         assert.deepEqual(
-          listed.result.tools.map((tool: any) => tool.name).sort(),
+          studentNames.sort(),
           (app.meta.modules['training-student'] ? [...studentToolNames] : []).sort(),
+        );
+        assert.ok(listedNames.includes(toolName), 'synthetic catalog tools remain discoverable');
+        assert.ok(
+          listedNames.includes(statusToolName),
+          'test Controller tools remain discoverable',
         );
         for (const name of studentToolNames) {
           const rejected = await shared.request('tools/call', {
@@ -459,7 +483,7 @@ describe('businessTools.test.ts', { concurrency: false, timeout: 60000 }, () => 
           update: 'patch',
           delete: 'delete',
         };
-        for (const tool of listed.result.tools) {
+        for (const tool of studentTools(listed.result.tools)) {
           assert.ok(!tool.description.includes('Level values:'), tool.name);
           const actionName = tool.name.slice('training-student_student_'.length);
           const metadata = appMetadata.getMetadata<IMcpToolOptions>(
@@ -902,7 +926,9 @@ describe('businessTools.test.ts', { concurrency: false, timeout: 60000 }, () => 
             const listed = JSON.parse(JSON.stringify(await client.request('tools/list')));
             assert.equal(listed.error, undefined);
             assert.deepEqual(
-              listed.result.tools.map((tool: any) => tool.name).sort(),
+              studentTools(listed.result.tools)
+                .map((tool: any) => tool.name)
+                .sort(),
               studentToolNames.toSorted(),
             );
             const snapshot: string[] = [];
@@ -1027,7 +1053,9 @@ describe('businessTools.test.ts', { concurrency: false, timeout: 60000 }, () => 
         const listed = await read.request('tools/list');
         assert.equal(listed.error, undefined);
         assert.deepEqual(
-          listed.result.tools.map((tool: any) => tool.name).sort(),
+          studentTools(listed.result.tools)
+            .map((tool: any) => tool.name)
+            .sort(),
           studentToolNames
             .filter(
               name =>
@@ -1130,7 +1158,9 @@ describe('businessTools.test.ts', { concurrency: false, timeout: 60000 }, () => 
         const listed = await read.request('tools/list');
         assert.equal(listed.error, undefined);
         assert.deepEqual(
-          listed.result.tools.map((tool: any) => tool.name).sort(),
+          studentTools(listed.result.tools)
+            .map((tool: any) => tool.name)
+            .sort(),
           studentToolNames
             .filter(
               name =>
@@ -1325,7 +1355,9 @@ describe('businessTools.test.ts', { concurrency: false, timeout: 60000 }, () => 
         const readTools = await read.request('tools/list');
         assert.equal(readTools.error, undefined);
         assert.deepEqual(
-          readTools.result.tools.map((tool: any) => tool.name).sort(),
+          studentTools(readTools.result.tools)
+            .map((tool: any) => tool.name)
+            .sort(),
           studentToolNames
             .filter(
               name =>
@@ -2219,6 +2251,48 @@ describe('businessTools.test.ts', { concurrency: false, timeout: 60000 }, () => 
         }
       }),
     );
+  });
+
+  it('excludes MCP Actions before contract extraction while preserving OpenAPI exclusion independence', async t => {
+    await app.bean.executor.mockCtx(async () => {
+      assert.equal(
+        appMetadata.getOwnMetadata(SymbolMcpExclude, ControllerToolFixture.prototype, 'excluded'),
+        true,
+      );
+      const openapi = app.scope('a-openapi').service.openapi;
+      const original = openapi.getControllerActionContract;
+      const contracts = t.mock.method(openapi, 'getControllerActionContract', function (...args) {
+        assert.notEqual(args[1], 'excluded');
+        return original.apply(openapi, args as any);
+      });
+      const server = await createControllerToolServer(app, 'mcp:all');
+      const client = await connect(server);
+      try {
+        const tools = (await client.request('tools/list')).result.tools;
+        assert.equal(
+          tools.some((tool: any) => tool.name === excludedToolName),
+          false,
+        );
+        assert.equal(
+          (await client.request('tools/call', { name: excludedToolName, arguments: {} })).error
+            ?.code,
+          -32602,
+        );
+        assert.ok(tools.some((tool: any) => tool.name === statusToolName));
+        assert.equal(
+          server.diagnostics.some(diagnostic => diagnostic.action === 'excluded'),
+          false,
+          'excluded Actions do not produce diagnostics',
+        );
+        assert.ok(
+          server.diagnostics.some(diagnostic => diagnostic.action === 'unsupported'),
+          'the separately opted-in unsupported sibling remains diagnosable',
+        );
+      } finally {
+        await client.close();
+        contracts.mock.restore();
+      }
+    });
   });
 
   it('keeps excluded Action contracts out of public caches, wraps scalar/array output and diagnoses unsupported Actions', async () => {

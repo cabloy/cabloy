@@ -75,6 +75,13 @@ describe('permission.test.ts', { concurrency: false }, () => {
             await permission.checkPermissionActionGuards('training-student:student', 'group'),
             true,
           );
+          assert.equal(
+            await permission.checkPermissionControllerActionGuards(
+              'training-student.controller.student',
+              'group',
+            ),
+            true,
+          );
           allowed = false;
           assert.equal(
             await permission.checkPermissionActionGuards('training-student:student', 'group'),
@@ -87,7 +94,7 @@ describe('permission.test.ts', { concurrency: false }, () => {
           );
           assert.equal(projection.mock.callCount(), 0);
           assert.equal(retrieval.mock.callCount(), 0);
-          assert.deepEqual(policyCalls, Array.from({ length: 4 }).fill(`${controller}#select`));
+          assert.deepEqual(policyCalls, Array.from({ length: 5 }).fill(`${controller}#select`));
           assert.equal(
             await permission.checkPermissionActionGuards(
               'training-student:student',
@@ -103,13 +110,13 @@ describe('permission.test.ts', { concurrency: false }, () => {
             await permission.checkPermissionActionGuards('toString' as never, 'group'),
             false,
           );
-          assert.equal(policyCalls.length, 4);
+          assert.equal(policyCalls.length, 5);
           app.ctx.state.passport = undefined;
           assert.equal(
             await permission.checkPermissionActionGuards('training-student:student', 'group'),
             false,
           );
-          assert.equal(policyCalls.length, 4, 'Passport admission precedes policy evaluation');
+          assert.equal(policyCalls.length, 5, 'Passport admission precedes policy evaluation');
         } finally {
           projection.mock.restore();
         }

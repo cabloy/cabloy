@@ -56,4 +56,13 @@ export class ControllerCatalog extends BeanBase {
   ): Promise<DtoProductPublicDetail | undefined> {
     return this.scope.service.catalog.findPublicById(id);
   }
+
+  @Mcp.tool({ name: 'commerce_categories_list' })
+  @Mcp.exclude()
+  @Web.get('excluded')
+  @Api.body(DtoCategoryPublicSelectRes)
+  @Passport.public()
+  async excluded(): Promise<DtoCategoryPublicSelectRes> {
+    throw new Error('excluded MCP fixture must never execute');
+  }
 }
