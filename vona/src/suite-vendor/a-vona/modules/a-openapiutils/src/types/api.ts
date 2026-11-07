@@ -35,10 +35,13 @@ export interface IOpenapiSchemaObject {
 export type TypeSecuritySchemes = Record<string, ((this: VonaApplication) => object) | object>;
 
 export interface IMcpToolOptions {
-  /** A public tool name override, valid only on an action. */
+  /** A public tool name override for this action. */
   name?: string;
+  /** A tool description for this action. */
   description?: string | ILocaleMagic;
+  /** The intended read classification for this action. */
   readOnly?: boolean;
+  /** The top-level response fields exposed by this action. */
   output?: { pick: string[] };
 }
 

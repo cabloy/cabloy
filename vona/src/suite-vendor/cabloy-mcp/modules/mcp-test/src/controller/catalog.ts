@@ -14,7 +14,6 @@ import { DtoProductPublicSelectRes } from '../dto/productPublicSelectRes.tsx';
 
 export interface IControllerOptionsCatalog extends IDecoratorControllerOptions {}
 
-@Mcp.tool()
 @Controller<IControllerOptionsCatalog>({ path: '/mcp/test/catalog' })
 export class ControllerCatalog extends BeanBase {
   @Mcp.tool({
@@ -57,8 +56,6 @@ export class ControllerCatalog extends BeanBase {
     return this.scope.service.catalog.findPublicById(id);
   }
 
-  @Mcp.tool({ name: 'commerce_categories_list' })
-  @Mcp.exclude()
   @Web.get('excluded')
   @Api.body(DtoCategoryPublicSelectRes)
   @Passport.public()

@@ -14,16 +14,17 @@ import { Mcp } from 'vona-module-a-openapiutils';
 
 Mapping is **closed by default**:
 
-- A method-level `@Mcp.tool()` opts in only that registered Action.
-- A class-level `@Mcp.tool()` opts in all supported, registered Actions on that Controller, including future Actions, with optional shared `readOnly` and `output.pick` defaults. It does not expose arbitrary helper methods.
-- Action-only `@Mcp.exclude()` is an explicit deny. It wins over both Controller- and Action-level tool metadata and is evaluated before naming, collision checks, contract extraction and diagnostics. Exclusion alone does not opt an Action in.
+- Only a registered Action with its **own Action-level `@Mcp.tool(options)`** metadata opts in. `@Mcp.tool()` records an explicit opt-in with empty options.
+- Undecorated Actions, including future Actions, remain closed before naming, collision checks, contract/schema extraction and diagnostics. Helpers are never admitted.
+- Controller-level decoration and Controller-default inheritance are not supported. Applying `@Mcp.tool()` to a class is rejected.
+- This is a breaking change with no compatibility layer: `Mcp.exclude` and `SymbolMcpExclude` are removed. To keep an Action closed, omit its Action-level tool decorator.
 
 Normal shared `/mcp` construction requires all of the following:
 
 1. An enabled Controller.
 2. A registered Action route.
-3. Explicit Controller- or Action-level `@Mcp.tool()` opt-in.
-4. No Action-level `@Mcp.exclude()`.
+3. Admission by the server-owned `includeTool` predicate, when supplied.
+4. Own Action-level `@Mcp.tool()` metadata.
 5. A supported MCP/OpenAPI contract.
 
 OAuth scope eligibility and current business authorization apply independently. Opt-in alone is not exposure on the authenticated endpoint. `@Resource()` is not a generic admission requirement; loaded synthetic/test Controllers can contribute tools under the same rules. Module capability and Controller `meta.mode` filtering occur during startup, before this scan.
@@ -36,10 +37,10 @@ MCP metadata is independent of ordinary OpenAPI publication. `@Api.exclude()` is
 | ------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `name`        | Action-only public tool name override. The default is `module_controller_action`. Names must be unique and contain 1–128 letters, digits, `_` or `-`. Unsupported characters in the Controller identity are replaced by `_`; module-name hyphens are preserved. |
 | `description` | Action-scoped text or locale metadata. Falls back to that Action's OpenAPI description, summary, then Controller/Action identity. A class-level description is not inherited.                                                                                   |
-| `readOnly`    | Explicit read classification. Otherwise inherits the Controller default, then infers `true` for GET and `false` for other methods.                                                                                                                              |
+| `readOnly`    | Action-local read classification. If absent, infers `true` for GET and `false` for other methods; no Controller default applies.                                                                                                                                |
 | `output.pick` | Top-level object response field allowlist, applied to runtime validation/projection and the advertised schema closure. It does not alter the HTTP DTO.                                                                                                          |
 
-Method `readOnly` and `output.pick` override class defaults. Arrays such as `output.pick` **replace**, rather than append to, inherited arrays. An Action's `name` and `description` resolve independently of class defaults. Invalid names, duplicate names and unknown projection fields are configuration errors, not reasons to publish unvalidated output.
+All four options are Action-local; no option is inherited from the Controller. `output.pick` is only the decorated Action's allowlist, not a merge with class defaults. Invalid names, duplicate names and unknown projection fields are configuration errors, not reasons to publish unvalidated output.
 
 The Student examples use default names such as `training-student_student_summary`, derived from `training-student.controller.student`. Clients must refresh discovery after a name change. A personal scope bound to the old exact name does not automatically admit the renamed tool; update the preset and authorize again.
 
@@ -245,7 +246,7 @@ Dedicated protected audit, audit-outage availability gating and deployment-wide 
 
 The mapper supports ordinary typed **JSON/200** Actions with representable path/query/JSON-body contracts and ordinary response handling. Files, uploads, streams, native request/response bindings, header-dependent contracts, custom response wrappers and non-200 responses are outside this profile. Do not approximate an Action by silently dropping its HTTP semantics.
 
-Unsupported opted-in Actions are omitted and recorded in **`server.diagnostics`**, with `controller`, `action` and `reason` fields. These are operator-facing Controller/Action identifiers and bounded reasons, not machine-local paths or client error details. If a tool is missing, check module availability, Controller enablement, route registration, opt-in, exclusion, scope and business authority, then inspect diagnostics for unsupported contracts. Actions skipped before extraction need not have diagnostic entries.
+Unsupported opted-in Actions are omitted and recorded in **`server.diagnostics`**, with `controller`, `action` and `reason` fields. These are operator-facing Controller/Action identifiers and bounded reasons, not machine-local paths or client error details. If a tool is missing, check module availability, Controller enablement, route registration, `includeTool`, own Action-level opt-in, scope and business authority, then inspect diagnostics for unsupported contracts. Undecorated Actions are skipped before names/contracts/diagnostics and have no unsupported-contract diagnostic entries.
 
 Retained schema definitions are limited to those reachable from the advertised contract. A projection must not retain the original private DTO as an unused definition.
 

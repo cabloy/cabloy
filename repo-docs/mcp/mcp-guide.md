@@ -29,13 +29,13 @@ The normal endpoint is **authenticated shared `/mcp`**, served on Vona's existin
 A tool must satisfy every construction requirement:
 
 1. Its Controller is enabled and its Action has a registered route.
-2. The Controller or Action explicitly opts in with `@Mcp.tool()`.
-3. The Action has no `@Mcp.exclude()` deny marker.
+2. It passes the server-owned `includeTool` predicate, when supplied.
+3. It has its own Action-level `@Mcp.tool(options)` metadata; empty options still opt in.
 4. Its request/response contract is supported by the mapper.
 
 A Resource declaration is not required. Module capability and Controller `meta.mode` filtering already occur during startup; MCP does not repeat them. Loaded test or synthetic Controllers can contribute tools if they satisfy the same predicate. The standalone launcher composes exactly three `commerce_*` fixtures. Shared construction is independent: those Actions can also appear when `mcp-test` is active and they satisfy the same admission requirements. Their presence does not make shared `/mcp` anonymous.
 
-Class-level opt-in includes future supported registered Actions. Use method-level decorators when eligibility should remain narrow. Unsupported opted-in Actions are omitted with server-side diagnostics, not approximated by dropping their HTTP semantics.
+Undecorated Actions, including future additions, are closed before names, collisions, contract/schema extraction and diagnostics. Only Action-level decoration is supported; Controller-level decoration is rejected, and Controller defaults are not inherited. `Mcp.exclude` and `SymbolMcpExclude` are removed without backwards compatibility: omit the tool decorator to keep an Action closed. Unsupported opted-in Actions are omitted with server-side diagnostics, not approximated by dropping their HTTP semantics. This admission change does not change MCP wire transport or OAuth.
 
 ## Authorization is checked independently
 
@@ -66,7 +66,7 @@ Object responses become structured content directly. Scalar and array responses 
 
 An undefined result or a missing object resource represented by null produces safe `Resource not found`; authorization, Action and output-validation failures produce safe `Action failed`. Invalid arguments are protocol errors.
 
-`output.pick` applies a top-level field allowlist to both the runtime result and advertised schema without changing the HTTP DTO. Projection minimizes fields; it is not anonymization or authorization. See [MCP Controller Tools](/mcp/mcp-controller-tools#options-and-defaults) for option precedence.
+`output.pick` applies a top-level field allowlist to both the runtime result and advertised schema without changing the HTTP DTO. Projection minimizes fields; it is not anonymization or authorization. `name`, `description`, `readOnly` and `output.pick` are Action-local; see [MCP Controller Tools](/mcp/mcp-controller-tools#options-and-defaults) for defaults.
 
 ## Student read examples
 

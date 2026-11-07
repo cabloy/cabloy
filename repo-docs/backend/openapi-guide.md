@@ -61,13 +61,12 @@ import { Mcp } from 'vona-module-a-openapiutils';
 
 The decorator records metadata; it does not start an MCP server, register a transport endpoint, or provide authentication and authorization. A separate MCP implementation must consume that metadata and adapt the existing action contract.
 
-- A method-level `@Mcp.tool()` marks that action for mapping.
-- A class-level `@Mcp.tool()` declares controller-level mapping intent and shared options; the MCP implementation resolves eligible registered actions and option precedence.
-- Calling `@Mcp.tool()` without options still records an explicit opt-in marker.
-- Action-only `@Mcp.exclude()` is an explicit MCP deny. It wins over Controller- and Action-level `@Mcp.tool()` metadata and does not itself opt an Action into MCP; the runtime should apply it before name, contract, schema, or diagnostic work.
-- `name` is an action-only public tool name override; using it on a controller class is rejected.
-- `description` accepts text or locale metadata. In Cabloy's MCP mapper, a tool description is Action-scoped: the Action's MCP description takes precedence over its own OpenAPI description, summary and controller/Action identity; a controller-level MCP description is not inherited.
-- `readOnly` declares the intended read classification, and `output.pick` declares an output field selection. In Cabloy's MCP mapper, these two options may inherit controller-level defaults. Their runtime interpretation and enforcement belong to the consuming MCP implementation, not the decorator.
+- Only a registered Action with its own Action-level `@Mcp.tool(options)` metadata is eligible for mapping. Calling `@Mcp.tool()` without options still records an explicit opt-in marker.
+- Undecorated Actions remain closed before names, collisions, contract/schema extraction and diagnostics. Controller-level decoration is rejected, and Controller-default inheritance is not supported.
+- `Mcp.exclude` and `SymbolMcpExclude` are removed without backwards compatibility. Keep an Action closed by omitting its tool decorator, not by adding a deny marker.
+- `name` is an Action-local public tool name override.
+- `description` accepts Action-local text or locale metadata. In Cabloy's MCP mapper, it takes precedence over that Action's own OpenAPI description, summary and Controller/Action identity.
+- `readOnly` declares the Action-local read classification; absent an explicit value, Cabloy's mapper infers it from GET. `output.pick` declares that Action's output field selection. Neither inherits Controller defaults. Runtime interpretation and enforcement belong to the consuming MCP implementation, not the decorator.
 
 MCP metadata is independent of ordinary OpenAPI publication. Publishing an HTTP action does not opt it into MCP, and `@Api.exclude()` is not an MCP authorization boundary. Neither the decorator nor `readOnly: true` grants permission, proves the absence of side effects, or supplies tenant isolation, confirmation, transactions, or replay safety.
 
@@ -92,6 +91,8 @@ const document = await this.bean.openapi.generateJsonOfControllerAction(
   { includeExcluded: true, schemaTarget: 'mcp' },
 );
 ```
+
+`includeExcluded: true` permits extraction independently of ordinary `@Api.exclude()` publication; it does not bypass MCP admission or authorization. Enabled Controllers, registered routes, any server-owned `includeTool` predicate and own Action-level tool metadata remain required by the mapper.
 
 `schemaTarget` defaults to `'http'`, preserving ordinary HTTP generation behavior. The `'mcp'` target disables HTTP query coercion while collecting and generating the contract. This matters because schema generation probes the validators: an optional field permits omission, but does not permit `null` unless the field is also nullable. For example, `z.number().int().optional()` must not advertise `null` merely because the HTTP query adapter can normalize it to an omitted value. Explicitly nullable fields retain their null support, and default values remain part of the shared DTO contract.
 

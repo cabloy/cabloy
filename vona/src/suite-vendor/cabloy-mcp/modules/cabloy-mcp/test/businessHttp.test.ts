@@ -42,15 +42,18 @@ const studentSelectName = 'training-student_student_select';
 const studentViewName = 'training-student_student_view';
 const studentGroupName = 'training-student_student_group';
 const studentAggregateName = 'training-student_student_aggregate';
-const excludedNames = [
+const publicReadNames = [
   categoriesName,
   searchName,
   detailName,
   'mcp_test_action_status',
-  'mcp_test_action_effect',
   'mcp_test_action_scalar',
   'mcp_test_action_array',
+];
+const excludedNames = [
   'mcp_test_action_unsupported',
+  'mcp-test_catalog_excluded',
+  'mcp-test_toolFixture_excluded',
   'mcp-test_toolFixture_closed',
   'training_student_select',
   'training-student_student_deleteForce',
@@ -273,6 +276,10 @@ function output(response: Awaited<ReturnType<typeof send>>) {
   return result.structuredContent;
 }
 
+function studentToolNames(tools: Array<{ name: string }>): string[] {
+  return tools.map(tool => tool.name).filter(name => name.startsWith('training-student_student_'));
+}
+
 function allowStudentAction(
   action: 'create' | 'update' | 'delete' | 'select' | 'view' | 'summary',
 ) {
@@ -452,10 +459,17 @@ describe('businessHttp.test.ts', { concurrency: false, timeout: 60000 }, () => {
       assert.equal(listed.status, 200);
       assert.equal(listed.body.error, undefined);
       assert.deepEqual(
-        listed.body.result.tools,
+        studentToolNames(listed.body.result.tools),
         [],
         'ordinary OAuth identity has no student grants',
       );
+      if (app.meta.modules['mcp-test']) {
+        const names = listed.body.result.tools.map((tool: any) => tool.name);
+        for (const name of publicReadNames) {
+          assert.ok(names.includes(name), 'public opted-in fixtures remain discoverable');
+        }
+        assert.equal(names.includes('mcp_test_action_effect'), token === allToken);
+      }
       if (trainingDisabled) {
         for (const [name, args] of [
           [studentCreateName, { name: 'Unavailable student', mobile: '13812345678', level: 1 }],
@@ -484,7 +498,7 @@ describe('businessHttp.test.ts', { concurrency: false, timeout: 60000 }, () => {
     assert.ok(app.server?.listening, 'per-request cleanup does not close shared server');
   });
 
-  it('makes known synthetic and unapproved sibling names uncallable under both scopes and transports', async t => {
+  it('makes unsupported, unannotated and unapproved sibling names uncallable under both scopes and transports', async t => {
     const allToken = await redeemBearer('mcp:all');
     const executor = app.bean.executor;
     const original = executor.performAction;
@@ -775,7 +789,7 @@ describe('businessHttp.test.ts', { concurrency: false, timeout: 60000 }, () => {
           assert.equal(listed.status, 200);
           assert.equal(listed.body.error, undefined);
           const tools = listed.body.result.tools;
-          const names = tools.map((tool: any) => tool.name) as string[];
+          const names = studentToolNames(tools);
           assert.deepEqual(
             names.toSorted(),
             [
@@ -880,7 +894,7 @@ describe('businessHttp.test.ts', { concurrency: false, timeout: 60000 }, () => {
         granted = [`${controller}#select`, `${controller}#view`];
         const visible = await send('tools/list', {}, options);
         assert.deepEqual(
-          visible.body.result.tools.map((tool: any) => tool.name).toSorted(),
+          studentToolNames(visible.body.result.tools).toSorted(),
           [
             studentSelectName,
             studentGroupName,
@@ -923,10 +937,10 @@ describe('businessHttp.test.ts', { concurrency: false, timeout: 60000 }, () => {
         broken = false;
         granted = [`${controller}#view`];
         const recovered = await send('tools/list', {}, options);
-        assert.deepEqual(
-          recovered.body.result.tools.map((tool: any) => tool.name),
-          [studentViewName, studentSummaryName],
-        );
+        assert.deepEqual(studentToolNames(recovered.body.result.tools), [
+          studentViewName,
+          studentSummaryName,
+        ]);
         for (const spy of business) assert.equal(spy.mock.callCount(), 0);
       }
     } finally {
@@ -934,7 +948,7 @@ describe('businessHttp.test.ts', { concurrency: false, timeout: 60000 }, () => {
       for (const spy of business) spy.mock.restore();
     }
     const after = await send('tools/list', {}, { headers: { authorization: `Bearer ${bearer}` } });
-    assert.deepEqual(after.body.result.tools, [], 'test policy was removed');
+    assert.deepEqual(studentToolNames(after.body.result.tools), [], 'test policy was removed');
   });
 
   it('enforces a personal custom scope exact subset through consent, Action checks and edit/delete invalidation', async t => {
@@ -1273,10 +1287,7 @@ describe('businessHttp.test.ts', { concurrency: false, timeout: 60000 }, () => {
             headers: { authorization: `Bearer ${allToken}` },
           },
         );
-        assert.deepEqual(
-          listed.body.result.tools.map((tool: any) => tool.name),
-          [studentCreateName],
-        );
+        assert.deepEqual(studentToolNames(listed.body.result.tools), [studentCreateName]);
         assert.equal(
           create.mock.callCount(),
           beforeList,
@@ -1284,7 +1295,11 @@ describe('businessHttp.test.ts', { concurrency: false, timeout: 60000 }, () => {
         );
         const readOptions = { legacy, headers: { authorization: `Bearer ${bearer}` } };
         const readList = await send('tools/list', {}, readOptions);
-        assert.deepEqual(readList.body.result.tools, [], 'read scope hides even authorized create');
+        assert.deepEqual(
+          studentToolNames(readList.body.result.tools),
+          [],
+          'read scope hides even authorized create',
+        );
         const before = observedCalls.length;
         const denied = await call(studentData, bearer, legacy);
         assert.equal(denied.status, 200);
@@ -1824,11 +1839,8 @@ describe('businessHttp.test.ts', { concurrency: false, timeout: 60000 }, () => {
       for (const legacy of [false, true]) {
         const listed = await list(allToken, legacy);
         assert.equal(listed.status, 200);
-        assert.deepEqual(
-          listed.body.result.tools.map((tool: any) => tool.name),
-          [studentUpdateName],
-        );
-        assert.deepEqual((await list(bearer, legacy)).body.result.tools, []);
+        assert.deepEqual(studentToolNames(listed.body.result.tools), [studentUpdateName]);
+        assert.deepEqual(studentToolNames((await list(bearer, legacy)).body.result.tools), []);
         const before = observedCalls.length;
         const readDenied = await call(args, bearer, legacy);
         assert.equal(readDenied.status, 200);
@@ -1892,10 +1904,9 @@ describe('businessHttp.test.ts', { concurrency: false, timeout: 60000 }, () => {
       assert.deepEqual(await snapshot(target), targetBefore);
       off();
       off = allowStudentAction('update');
-      assert.deepEqual(
-        (await list(revokedToken)).body.result.tools.map((tool: any) => tool.name),
-        [studentUpdateName],
-      );
+      assert.deepEqual(studentToolNames((await list(revokedToken)).body.result.tools), [
+        studentUpdateName,
+      ]);
       await app.bean.executor.mockCtx(
         async () => app.scope('mcp-auth').service.authorization.revoke(revokedToken),
         { instanceName: '' },
@@ -2362,11 +2373,8 @@ describe('businessHttp.test.ts', { concurrency: false, timeout: 60000 }, () => {
       const beforeList = observedCalls.length;
       const listed = await list();
       assert.equal(listed.status, 200);
-      assert.deepEqual(
-        listed.body.result.tools.map((tool: any) => tool.name),
-        [studentDeleteName],
-      );
-      assert.deepEqual((await list(bearer)).body.result.tools, []);
+      assert.deepEqual(studentToolNames(listed.body.result.tools), [studentDeleteName]);
+      assert.deepEqual(studentToolNames((await list(bearer)).body.result.tools), []);
       assert.equal(observedCalls.length, beforeList, 'delete listing performs no trial Action');
       const beforeInvalid = observedCalls.length;
       const readDenied = await call({ id: target.id! }, bearer);
@@ -2410,10 +2418,9 @@ describe('businessHttp.test.ts', { concurrency: false, timeout: 60000 }, () => {
       assert.deepEqual(await snapshot(target), targetBefore);
       off();
       off = allowStudentAction('delete');
-      assert.deepEqual(
-        (await list(revokedToken)).body.result.tools.map((tool: any) => tool.name),
-        [studentDeleteName],
-      );
+      assert.deepEqual(studentToolNames((await list(revokedToken)).body.result.tools), [
+        studentDeleteName,
+      ]);
       await app.bean.executor.mockCtx(
         async () => app.scope('mcp-auth').service.authorization.revoke(revokedToken),
         { instanceName: '' },
@@ -3463,7 +3470,7 @@ describe('businessHttp.test.ts', { concurrency: false, timeout: 60000 }, () => {
       const listed = await send('tools/list', {}, { target });
       assert.equal(listed.status, 200);
       assert.equal(listed.body.error, undefined);
-      assert.deepEqual(listed.body.result.tools, []);
+      assert.deepEqual(studentToolNames(listed.body.result.tools), []);
     }
   });
 

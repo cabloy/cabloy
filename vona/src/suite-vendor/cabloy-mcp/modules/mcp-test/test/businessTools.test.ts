@@ -8,7 +8,7 @@ import { after, before, describe, it } from 'node:test';
 import { appMetadata, appResource, runWithZodQueryCoercion } from 'vona';
 import { acquireTestLock, app } from 'vona-mock';
 import { getKeyHash } from 'vona-module-a-cache';
-import { $schema, Mcp, SymbolMcpExclude, SymbolMcpOptions } from 'vona-module-a-openapiutils';
+import { $schema, Mcp, SymbolMcpOptions } from 'vona-module-a-openapiutils';
 import { recordResourceNameToRoutePath } from 'vona-module-a-web';
 import { createControllerToolServer, createSharedBusinessToolServer } from 'vona-module-cabloy-mcp';
 
@@ -64,7 +64,6 @@ const statusToolName = 'mcp_test_action_status';
 const effectToolName = 'mcp_test_action_effect';
 const scalarToolName = 'mcp_test_action_scalar';
 const arrayToolName = 'mcp_test_action_array';
-const excludedToolName = 'mcp_test_action_excluded';
 const studentToolNames = [
   'training-student_student_aggregate',
   'training-student_student_create',
@@ -283,10 +282,10 @@ describe('businessTools.test.ts', { concurrency: false, timeout: 60000 }, () => 
       assert.ok(resource, 'the second resource fixture is registered');
       const controller = resource.controller;
       const name = 'test-rest_product_create';
-      const original = appMetadata.getMetadata;
+      const original = appMetadata.getOwnMetadata;
       const metadata = t.mock.method(
         appMetadata,
-        'getMetadata',
+        'getOwnMetadata',
         function (...args: Parameters<typeof original>) {
           const [key, target, action] = args;
           if (key === SymbolMcpOptions && target === controller.prototype && action === 'create') {
@@ -1988,132 +1987,87 @@ describe('businessTools.test.ts', { concurrency: false, timeout: 60000 }, () => 
     });
   });
 
-  it('inherits class defaults except descriptions, retains local names and rejects invalid exposure configuration', async t => {
+  it('uses only Action metadata and keeps undecorated Actions closed', async t => {
     await app.bean.executor.mockCtx(async () => {
-      const original = appMetadata.getMetadata;
-      let configuration:
-        | 'defaults'
-        | 'override'
-        | 'pick-replacement'
-        | 'invalid-name'
-        | 'duplicate'
-        | 'invalid-pick' = 'defaults';
-      const metadata = t.mock.method(
-        appMetadata,
-        'getMetadata',
-        function (...args: Parameters<typeof original>) {
-          const [key, target, action] = args;
-          const value = original.apply(appMetadata, args) as IMcpToolOptions | undefined;
-          if (key !== SymbolMcpOptions) return value;
-          if (target === ControllerToolFixture && action === undefined) {
-            if (configuration === 'defaults' || configuration === 'override') {
-              return { description: 'Fixture class default', readOnly: false };
-            }
-            if (configuration === 'pick-replacement') return { output: { pick: ['count'] } };
-          }
-          if (target === ControllerToolFixture.prototype && configuration === 'pick-replacement') {
-            if (action === 'effect') return { ...value, output: { pick: ['label'] } };
-            if (action === 'scalar' || action === 'array') return { ...value, output: undefined };
-          }
-          if (target === ControllerToolFixture.prototype && action === 'status') {
-            if (configuration === 'defaults') return { ...value, readOnly: true };
-            if (configuration === 'override') {
-              return {
-                ...value,
-                name: 'mcp_test_overridden_status',
-                description: 'Local description',
-                readOnly: true,
-              };
-            }
-            if (configuration === 'invalid-name') return { ...value, name: 'invalid tool name' };
-            if (configuration === 'duplicate') return { ...value, name: categoryToolName };
-            if (configuration === 'invalid-pick')
-              return { ...value, output: { pick: ['missing'] } };
-          }
-          return value;
-        },
-      );
+      const openapi = app.scope('a-openapi').service.openapi;
+      const original = openapi.getControllerActionContract;
+      const contracts = t.mock.method(openapi, 'getControllerActionContract', function (...args) {
+        assert.ok(!['closed', 'excluded'].includes(args[1]));
+        return original.apply(openapi, args as any);
+      });
       try {
-        assert.deepEqual(appMetadata.getMetadata(SymbolMcpOptions, ControllerCatalog), {});
-        const client = await connect(await createControllerToolServer(app, 'mcp:all'));
+        assert.equal(appMetadata.getOwnMetadata(SymbolMcpOptions, ControllerCatalog), undefined);
+        const server = await createControllerToolServer(app, 'mcp:all');
+        assert.equal(
+          server.diagnostics.some(item => ['closed', 'excluded'].includes(item.action)),
+          false,
+          'undecorated Actions do not produce diagnostics',
+        );
+        assert.ok(server.diagnostics.some(item => item.action === 'unsupported'));
+        const client = await connect(server);
         try {
           const tools = (await client.request('tools/list')).result.tools;
-          const status = tools.find((tool: any) => tool.name === statusToolName);
-          assert.equal(status.description, 'Action Web description');
-          assert.equal(
-            status.annotations.readOnlyHint,
-            true,
-            'local options override class defaults',
-          );
-          const closed = tools.find((tool: any) => tool.name === 'mcp-test_toolFixture_closed');
-          assert.ok(closed, 'class opt-in exposes representable sibling Actions');
-          assert.equal(closed.description, 'Action Web summary');
-          assert.equal(closed.annotations.readOnlyHint, false);
-          const effect = tools.find((tool: any) => tool.name === effectToolName);
-          assert.equal(effect.description, 'mcp-test.controller.toolFixture#effect');
+          assert.ok(tools.some((tool: any) => tool.name === statusToolName));
+          for (const action of ['closed', 'excluded']) {
+            const name = `mcp-test_toolFixture_${action}`;
+            assert.equal(
+              tools.some((tool: any) => tool.name === name),
+              false,
+            );
+            const closed = await client.request('tools/call', { name, arguments: {} });
+            assert.equal(closed.error?.code, -32602);
+          }
         } finally {
           await client.close();
         }
-        configuration = 'override';
-        const overridden = await connect(await createControllerToolServer(app, 'mcp:read'));
-        try {
-          const tools = (await overridden.request('tools/list')).result.tools;
-          assert.equal(
-            tools.some((tool: any) => tool.name === statusToolName),
-            false,
-          );
-          const status = tools.find((tool: any) => tool.name === 'mcp_test_overridden_status');
-          assert.ok(status);
-          assert.equal(status.description, 'Local description');
-          assert.equal(status.annotations.readOnlyHint, true);
-        } finally {
-          await overridden.close();
-        }
-        configuration = 'pick-replacement';
-        const projected = await connect(await createControllerToolServer(app, 'mcp:all'));
-        const initial = toolFixtureState.count;
-        try {
-          const tool = (await projected.request('tools/list')).result.tools.find(
-            (tool: any) => tool.name === effectToolName,
-          );
-          assert.deepEqual(Object.keys(tool.outputSchema.properties), ['label']);
-          const response = await projected.request('tools/call', {
-            name: effectToolName,
-            arguments: { params: { label: 'pick-replacement' }, body: { amount: 1 } },
-          });
-          assert.deepEqual(response.result.structuredContent, { label: 'pick-replacement' });
-          assert.deepEqual(JSON.parse(response.result.content[0].text), {
-            label: 'pick-replacement',
-          });
-        } finally {
-          toolFixtureState.count = initial;
-          await projected.close();
-        }
-        for (const [mode, expected] of [
-          ['invalid-name', /Invalid or duplicate MCP tool name/],
-          ['duplicate', /Invalid or duplicate MCP tool name/],
-          ['invalid-pick', /Invalid MCP output.pick/],
-        ] as const) {
-          configuration = mode;
-          await assert.rejects(() => createControllerToolServer(app, 'mcp:all'), expected);
-        }
-        assert.throws(
-          () => (Mcp.tool as any)({ name: 'class-name-is-not-valid' })(class {}),
-          /name is only valid on a controller action/,
+        assert.equal(
+          contracts.mock.calls.some(call => call.arguments[1] === 'closed'),
+          false,
         );
       } finally {
-        metadata.mock.restore();
+        contracts.mock.restore();
       }
     });
   });
 
-  it('excludes identities before duplicate names and malformed contracts, without admitting sibling Actions', async t => {
+  it('records empty Action opt-in without inherited options and rejects Controller decoration', () => {
+    class Parent {
+      action() {}
+    }
+    class Child extends Parent {
+      override action() {}
+    }
+    Mcp.tool({ name: 'parent_tool', readOnly: false })(
+      Parent.prototype,
+      'action',
+      Object.getOwnPropertyDescriptor(Parent.prototype, 'action')!,
+    );
+    assert.equal(
+      appMetadata.getOwnMetadata(SymbolMcpOptions, Child.prototype, 'action'),
+      undefined,
+    );
+    Mcp.tool()(
+      Child.prototype,
+      'action',
+      Object.getOwnPropertyDescriptor(Child.prototype, 'action')!,
+    );
+    assert.deepEqual(appMetadata.getOwnMetadata(SymbolMcpOptions, Child.prototype, 'action'), {});
+    for (const options of [{}, { name: 'class-name-is-not-valid' }]) {
+      assert.throws(
+        () => (Mcp.tool as any)(options)(class {}),
+        /only valid on a controller action/,
+      );
+    }
+  });
+
+  it('validates Action-local options after includeTool filtering', async t => {
     await app.bean.executor.mockCtx(async () => {
-      const original = appMetadata.getMetadata;
-      let invalid: 'duplicate' | 'malformed' = 'duplicate';
+      const original = appMetadata.getOwnMetadata;
+      let configuration: 'local-options' | 'invalid-name' | 'duplicate' | 'invalid-pick' =
+        'local-options';
       const metadata = t.mock.method(
         appMetadata,
-        'getMetadata',
+        'getOwnMetadata',
         function (...args: Parameters<typeof original>) {
           const [key, target, action] = args;
           const value = original.apply(appMetadata, args) as IMcpToolOptions | undefined;
@@ -2122,55 +2076,63 @@ describe('businessTools.test.ts', { concurrency: false, timeout: 60000 }, () => 
             target === ControllerToolFixture.prototype &&
             action === 'status'
           ) {
-            return invalid === 'duplicate'
-              ? { ...value, name: categoryToolName }
-              : { ...value, output: { pick: ['missing'] } };
+            if (configuration === 'local-options') {
+              return {
+                name: 'mcp_test_local_status',
+                description: 'Local description',
+                readOnly: false,
+                output: { pick: ['count'] },
+              };
+            }
+            if (configuration === 'invalid-name') return { ...value, name: 'invalid tool name' };
+            if (configuration === 'duplicate') return { ...value, name: categoryToolName };
+            return { ...value, output: { pick: ['missing'] } };
           }
           return value;
         },
       );
-      const openapi = app.scope('a-openapi').service.openapi;
-      const contractOriginal = openapi.getControllerActionContract;
-      const contracts = t.mock.method(
-        openapi,
-        'getControllerActionContract',
-        function (...args: Parameters<typeof contractOriginal>) {
-          assert.equal(args[0], ControllerCatalog, 'excluded identities never extract contracts');
-          assert.equal(args[1], 'categories', 'an annotated sibling is not admitted by prefix');
-          return contractOriginal.apply(openapi, args);
-        },
-      );
       try {
-        for (const mode of ['duplicate', 'malformed'] as const) {
-          invalid = mode;
-          const server = await createControllerToolServer(app, 'mcp:all', {
+        const client = await connect(await createControllerToolServer(app, 'mcp:all'));
+        try {
+          const tools = (await client.request('tools/list')).result.tools;
+          const status = tools.find((tool: any) => tool.name === 'mcp_test_local_status');
+          assert.ok(status);
+          assert.equal(status.description, 'Local description');
+          assert.equal(status.annotations.readOnlyHint, false);
+          assert.deepEqual(Object.keys(status.outputSchema.properties), ['count']);
+          assert.equal(
+            tools.some((tool: any) => tool.name === statusToolName),
+            false,
+          );
+          const result = await client.request('tools/call', { name: status.name });
+          assert.deepEqual(result.result.structuredContent, { count: toolFixtureState.count });
+        } finally {
+          await client.close();
+        }
+        for (const [mode, expected] of [
+          ['invalid-name', /Invalid or duplicate MCP tool name/],
+          ['duplicate', /Invalid or duplicate MCP tool name/],
+          ['invalid-pick', /Invalid MCP output.pick/],
+        ] as const) {
+          configuration = mode;
+          await assert.rejects(() => createControllerToolServer(app, 'mcp:all'), expected);
+          const filtered = await createControllerToolServer(app, 'mcp:all', {
             includeTool: identity =>
               identity.controller === 'mcp-test.controller.catalog' &&
               identity.action === 'categories',
           });
-          const client = await connect(server);
+          const selected = await connect(filtered);
           try {
+            assert.deepEqual(filtered.diagnostics, []);
             assert.deepEqual(
-              server.diagnostics,
-              [],
-              'excluded unsupported contracts do not produce diagnostics',
-            );
-            const listed = await client.request('tools/list');
-            assert.deepEqual(
-              listed.result.tools.map((tool: any) => tool.name),
+              (await selected.request('tools/list')).result.tools.map((tool: any) => tool.name),
               [categoryToolName],
             );
-            for (const name of [toolName, detailToolName, statusToolName, effectToolName]) {
-              const rejected = await client.request('tools/call', { name, arguments: {} });
-              assert.equal(rejected.error?.code, -32602);
-            }
           } finally {
-            await client.close();
+            await selected.close();
           }
         }
-        assert.equal(contracts.mock.callCount(), 2);
       } finally {
-        contracts.mock.restore();
         metadata.mock.restore();
       }
     });
@@ -2253,49 +2215,7 @@ describe('businessTools.test.ts', { concurrency: false, timeout: 60000 }, () => 
     );
   });
 
-  it('excludes MCP Actions before contract extraction while preserving OpenAPI exclusion independence', async t => {
-    await app.bean.executor.mockCtx(async () => {
-      assert.equal(
-        appMetadata.getOwnMetadata(SymbolMcpExclude, ControllerToolFixture.prototype, 'excluded'),
-        true,
-      );
-      const openapi = app.scope('a-openapi').service.openapi;
-      const original = openapi.getControllerActionContract;
-      const contracts = t.mock.method(openapi, 'getControllerActionContract', function (...args) {
-        assert.notEqual(args[1], 'excluded');
-        return original.apply(openapi, args as any);
-      });
-      const server = await createControllerToolServer(app, 'mcp:all');
-      const client = await connect(server);
-      try {
-        const tools = (await client.request('tools/list')).result.tools;
-        assert.equal(
-          tools.some((tool: any) => tool.name === excludedToolName),
-          false,
-        );
-        assert.equal(
-          (await client.request('tools/call', { name: excludedToolName, arguments: {} })).error
-            ?.code,
-          -32602,
-        );
-        assert.ok(tools.some((tool: any) => tool.name === statusToolName));
-        assert.equal(
-          server.diagnostics.some(diagnostic => diagnostic.action === 'excluded'),
-          false,
-          'excluded Actions do not produce diagnostics',
-        );
-        assert.ok(
-          server.diagnostics.some(diagnostic => diagnostic.action === 'unsupported'),
-          'the separately opted-in unsupported sibling remains diagnosable',
-        );
-      } finally {
-        await client.close();
-        contracts.mock.restore();
-      }
-    });
-  });
-
-  it('keeps excluded Action contracts out of public caches, wraps scalar/array output and diagnoses unsupported Actions', async () => {
+  it('keeps @Api.exclude() independent, wraps scalar/array output and diagnoses unsupported Actions', async () => {
     await app.bean.executor.mockCtx(async () => {
       const publicBefore = await app.bean.openapi.generateJsonOfControllerAction(
         ControllerToolFixture,

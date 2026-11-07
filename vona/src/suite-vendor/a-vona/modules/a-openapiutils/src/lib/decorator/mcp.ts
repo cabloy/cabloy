@@ -4,35 +4,23 @@ import { appMetadata } from 'vona';
 
 import type { IMcpToolOptions } from '../../types/api.ts';
 
-import { SymbolMcpExclude, SymbolMcpOptions } from '../const/decorator.ts';
+import { SymbolMcpOptions } from '../const/decorator.ts';
 
-function tool(options?: Omit<IMcpToolOptions, 'name'>): ClassDecorator & MethodDecorator;
-function tool(options: IMcpToolOptions): MethodDecorator;
-function tool(options: IMcpToolOptions = {}): ClassDecorator & MethodDecorator {
+function tool(options: IMcpToolOptions = {}): MethodDecorator {
   return function (target: object, prop?: MetadataKey, descriptor?: PropertyDescriptor) {
-    if (prop === undefined && options.name !== undefined) {
-      throw new Error('Mcp.tool name is only valid on a controller action');
+    if (prop === undefined) {
+      throw new Error('Mcp.tool is only valid on a controller action');
     }
     // An options object, including an empty one, is the explicit opt-in marker.
     const metadata = appMetadata.getOwnMetadataMap(
-      true,
+      false,
       SymbolMcpOptions,
       target,
       prop,
     ) as IMcpToolOptions;
     Object.assign(metadata, options);
     return descriptor;
-  } as ClassDecorator & MethodDecorator;
-}
-
-function exclude(): MethodDecorator {
-  return function (target: object, prop?: MetadataKey, descriptor?: PropertyDescriptor) {
-    if (prop === undefined) {
-      throw new Error('Mcp.exclude is only valid on a controller action');
-    }
-    appMetadata.defineMetadata(SymbolMcpExclude, true, target, prop);
-    return descriptor;
   } as MethodDecorator;
 }
 
-export const Mcp = { tool, exclude };
+export const Mcp = { tool };

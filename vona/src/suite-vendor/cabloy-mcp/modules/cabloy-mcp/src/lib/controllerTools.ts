@@ -5,7 +5,7 @@ import type { TypeMcpScope } from 'vona-module-mcp-auth';
 
 import { fromJsonSchema, ProtocolError, Server } from '@modelcontextprotocol/server';
 import { appMetadata, runWithZodQueryCoercion } from 'vona';
-import { SymbolMcpExclude, SymbolMcpOptions } from 'vona-module-a-openapiutils';
+import { SymbolMcpOptions } from 'vona-module-a-openapiutils';
 import { getCacheControllerRoutes } from 'vona-module-a-web';
 import { isMcpScope } from 'vona-module-mcp-auth';
 import z from 'zod';
@@ -100,28 +100,14 @@ export async function createControllerToolServer(
         ) {
           continue;
         }
-        const defaults = appMetadata.getMetadata<IMcpToolOptions>(
-          SymbolMcpOptions,
-          route.controller,
-        );
-        const local = appMetadata.getMetadata<IMcpToolOptions>(
+        const options = appMetadata.getOwnMetadata<IMcpToolOptions>(
           SymbolMcpOptions,
           route.controller.prototype,
           route.action,
         );
-        if (
-          appMetadata.getOwnMetadata<boolean>(
-            SymbolMcpExclude,
-            route.controller.prototype,
-            route.action,
-          )
-        ) {
-          continue;
-        }
-        if (!defaults && !local) continue;
-        const options = { ...defaults, ...local };
+        if (!options) continue;
         const name =
-          local?.name ??
+          options.name ??
           `${controller.beanOptions.beanFullName.replace('.controller.', '_').replace(/[^\w-]/g, '_')}_${route.action}`;
         if (!/^[\w-]{1,128}$/.test(name) || tools.has(name)) {
           throw new Error(`Invalid or duplicate MCP tool name: ${name}`);
@@ -277,8 +263,8 @@ export async function createControllerToolServer(
             : undefined;
           const tool: Tool = {
             name,
-            description: local?.description
-              ? app.meta.text(local.description)
+            description: options.description
+              ? app.meta.text(options.description)
               : operation.description ||
                 operation.summary ||
                 `${controller.beanOptions.beanFullName}#${route.action}`,

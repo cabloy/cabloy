@@ -81,8 +81,6 @@ export class ControllerToolFixture extends BeanBase {
     return 'not a JSON Action';
   }
 
-  @Mcp.tool({ name: 'mcp_test_action_excluded' })
-  @Mcp.exclude()
   @Web.get('excluded')
   @Api.contentType('text/plain')
   @Api.body(z.string())
