@@ -18,7 +18,7 @@ export class MetaVersion extends BeanBase implements IMetaVersionUpdate {
       table.string(authorization.redirectUri, 2048).notNullable();
       table.string(authorization.scope, 255).notNullable();
       table.string(authorization.requestedScope, 255).notNullable().defaultTo('');
-      table.json(authorization.scopeTools).notNullable().defaultTo('[]');
+      table.json(authorization.scopeTools).notNullable();
       table.boolean(authorization.scopeReadOnly).notNullable().defaultTo(false);
       table.string(authorization.oauthState, 2048).notNullable();
       table.string(authorization.codeChallenge, 43).notNullable();
@@ -42,10 +42,7 @@ export class MetaVersion extends BeanBase implements IMetaVersionUpdate {
       table.string(client.oauthClientId, 255).notNullable();
       table.string(client.name, 255).notNullable();
       table.json(client.redirectUris).notNullable();
-      table
-        .json(client.grantTypes)
-        .notNullable()
-        .defaultTo(JSON.stringify(['authorization_code']));
+      table.json(client.grantTypes).notNullable();
       table.string(client.authentication, 32).notNullable();
       table.string(client.secretSha256, 64).nullable();
       table.string(client.resource, 2048).notNullable();

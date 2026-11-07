@@ -401,7 +401,7 @@ describe('authorization.test.ts', { concurrency: false }, () => {
         assert.equal(app.bean.jwt.get('mcpAccess').getExpiresIn(), 7200);
         assert.equal(rows[0].tokenVersion, 1);
         assert.equal(Boolean(rows[0].refreshEnabled), false);
-        assert.equal(rows[0].refreshExpiresAt, 0);
+        assert.equal(Number(rows[0].refreshExpiresAt), 0);
         assert.equal(rows[0].tokenDigest, sha256(payload.token));
         assert.ok(rows[0].tokenDigest !== sha256(token.access_token));
         assert.ok(!JSON.stringify(rows).includes(token.access_token));

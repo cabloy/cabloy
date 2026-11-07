@@ -74,9 +74,9 @@ describe('registration.test.ts', { concurrency: false }, () => {
     }
   });
 
-  it('persists a public registration and resolves it across contexts', async () => {
+  it('persists default grants for a public registration and resolves it across contexts', async () => {
     const response = await app.bean.executor.mockCtx(() =>
-      service().register(publicRequest, resource),
+      service().register({ ...publicRequest, grant_types: undefined }, resource),
     );
     clientIds.push(response.client_id);
     assert.match(response.client_id, /^[\w-]{43}$/);
