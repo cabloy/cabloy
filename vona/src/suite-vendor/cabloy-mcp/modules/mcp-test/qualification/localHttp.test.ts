@@ -186,7 +186,7 @@ describe('localHttp.test.ts', { concurrency: false, timeout: 60000 }, () => {
 
   it('discovers the modern server and all three DTO-backed tools without the default app listener', async () => {
     assert.equal(app.config.server.listen.disable, true);
-    assert.equal(app.server, undefined);
+    assert.equal(app.server === undefined, true);
     const local = await startLocalTransport(app);
     try {
       assert.deepEqual(local.snapshot(), {
@@ -249,7 +249,7 @@ describe('localHttp.test.ts', { concurrency: false, timeout: 60000 }, () => {
         settled: 2,
         closing: false,
       });
-      assert.equal(app.server, undefined);
+      assert.equal(app.server === undefined, true);
     } finally {
       await local.close();
     }

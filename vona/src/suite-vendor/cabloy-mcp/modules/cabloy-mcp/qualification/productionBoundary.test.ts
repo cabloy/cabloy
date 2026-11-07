@@ -31,8 +31,8 @@ import {
   safeEvent,
   turns,
   waitFor,
-} from './support/productionBoundaryFixture.ts';
-import { controlledScope } from './support/requestBoundaryFoundationFixture.ts';
+} from '../test/support/productionBoundaryFixture.ts';
+import { controlledScope } from '../test/support/requestBoundaryFoundationFixture.ts';
 
 const owners: ReturnType<typeof createProductionRequestOwner>[] = [];
 function owner() {
@@ -1004,7 +1004,7 @@ describe(
       { timeout: 15_000 },
       async t => {
         assert.equal(app.meta.env.SERVER_LISTEN_DISABLE, 'true');
-        assert.equal(app.server, undefined);
+        assert.equal(app.server === undefined, true);
         const current = boundaryOwner();
         const io = boundaryIO();
         const fixture = controlledPorts(io);

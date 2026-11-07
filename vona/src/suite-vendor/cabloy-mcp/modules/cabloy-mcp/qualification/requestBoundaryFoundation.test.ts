@@ -43,7 +43,7 @@ import {
   rejectsIdentity,
   spanFixture,
   turns,
-} from './support/requestBoundaryFoundationFixture.ts';
+} from '../test/support/requestBoundaryFoundationFixture.ts';
 
 const ROOT_CONTEXT = Object.getOwnPropertyDescriptor(
   ServiceTelemetry.prototype,
@@ -78,7 +78,7 @@ describe(
       { timeout: 15_000 },
       async t => {
         assert.equal(app.meta.env.SERVER_LISTEN_DISABLE, 'true');
-        assert.equal(app.server, undefined);
+        assert.equal(app.server === undefined, true);
         assert.equal(getRequestBoundary(), undefined);
         assert.equal(captureRequestBoundary(), undefined);
         const boundary = createRequestBoundary();
@@ -975,7 +975,7 @@ describe(
               }),
             value => value === error,
           );
-          assert.equal(app.server, undefined);
+          assert.equal(app.server === undefined, true);
           assert.equal(getRequestBoundary(), undefined);
           projection(t, 'ordinary', {
             activeReads,

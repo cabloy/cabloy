@@ -160,7 +160,7 @@ export async function createProtectedSqliteFixture(journal: 'wal' | 'delete' = '
   await app.bean.executor.mockCtx(async () => {
     assert.equal(app.meta.env.META_MODE, 'test');
     assert.equal(app.meta.env.SERVER_LISTEN_DISABLE, 'true');
-    assert.equal(app.server, undefined);
+    assert.equal(app.server === undefined, true);
     const runId = app.meta.env.VONA_TEST_RUN_ID;
     assert.ok(runId);
     const paths = resolveVonaLocalPaths(app.projectPath, 'test', runId);

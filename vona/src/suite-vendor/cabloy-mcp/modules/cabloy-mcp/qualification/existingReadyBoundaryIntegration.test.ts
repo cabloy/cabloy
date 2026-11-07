@@ -10,9 +10,9 @@ import {
 import {
   createIntegrationFixture,
   withinBoundary,
-} from './support/existingReadyBoundaryIntegrationFixture.ts';
-import { barrier, turns, waitFor } from './support/productionBoundaryFixture.ts';
-import { proof } from './support/protectedSqliteRegistryFixture.ts';
+} from '../test/support/existingReadyBoundaryIntegrationFixture.ts';
+import { barrier, turns, waitFor } from '../test/support/productionBoundaryFixture.ts';
+import { proof } from '../test/support/protectedSqliteRegistryFixture.ts';
 
 // Real native registry/context ownership; only publication/config/handle and fault controls
 // are synthetic. No listener, ORM query, business dispatch or production admission is tested.

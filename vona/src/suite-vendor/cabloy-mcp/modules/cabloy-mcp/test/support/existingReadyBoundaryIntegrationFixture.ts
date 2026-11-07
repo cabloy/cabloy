@@ -62,7 +62,7 @@ type Hooks = {
 export async function createIntegrationFixture() {
   assert.equal(getRequestBoundary(), undefined, 'unprotected_fixture_preparation');
   const server = app.server;
-  assert.equal(server, undefined, 'listener_disabled');
+  assert.equal(server === undefined, true, 'listener_disabled');
   const sqlite = await createProtectedSqliteFixture();
   const reader = createProtectedSqliteRegistry({ filename: sqlite.filename });
   const requestOwner = createRequestBoundaryOwner(productionOwnerLimits);
