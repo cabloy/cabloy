@@ -55,7 +55,8 @@ A practical master-detail implementation path looks like this:
 5. it renders nested detail DTOs into the parent DTO folder
 6. it patches the master model/service/DTO/locales
 7. it refreshes metadata for both the detail module and the master module
-8. the specimen modules then demonstrate how the same pattern can repeat recursively for nested-detail
+8. it reports mode-aware MCP description follow-up for the retained resource surfaces
+9. the specimen modules then demonstrate how the same pattern can repeat recursively for nested-detail
 
 That means the source-reading branch is not only “follow one CRUD module.”
 
@@ -90,6 +91,7 @@ The main execution path is:
 5. `_renderMasterDetailDtos`
 6. `_patchMasterModule`
 7. `_refreshMetadata`
+8. `_reportMcpFollowUp`
 
 A practical reading of the responsibilities is:
 
@@ -100,6 +102,11 @@ A practical reading of the responsibilities is:
 - `_ensureDetailResourceShape`
   - ensures the detail resource core exists
   - branches into aggregate vs standalone handling
+- `_createDetailCoreResource` → `_removeGeneratedDetailMcpDescriptions`
+  - snapshots pre-existing child MCP description keys per locale before invoking the edition-specific CRUD generator
+  - in aggregate mode only, removes exact newly generated pending description key / `TODO(mcp-description)` comment pairs for the standalone surface being discarded
+  - preserves every pre-existing key, including entries with unresolved TODOs, and preserves authored locale values
+  - standalone mode retains the newly generated child's eight CRUD MCP tools
 - `_handleAggregateDetailMode`
   - refuses to silently collapse an existing standalone detail surface into aggregate-only mode
   - removes generated standalone controller/service/DTO files when aggregate-only shape is intended
@@ -112,8 +119,14 @@ A practical reading of the responsibilities is:
 - `_patchMasterDto`
   - patches `Create` / `Update` / `View` DTOs so the parent DTOs consume the sibling nested detail DTOs
   - emits the current `include: { relationName: { dtoClass: DtoDetail... } }` wiring pattern instead of inlining long relation column lists in every parent DTO
+- `_patchMasterService` / `_masterServiceIncludeReplacements`
+  - adds parent relation includes for create/view/update/delete, not `deleteBulk`; read the actual Service before claiming bulk detail cascading
 - `_refreshMetadata`
   - regenerates `.metadata/index.ts` for both modules so the nested detail DTOs appear in generated contract surfaces
+- `_reportMcpFollowUp`
+  - runs after metadata and reports the aggregate vs retained standalone MCP description follow-up without automatically opting in existing resources or overwriting authored descriptions
+  - directs review to affected descriptions on the already MCP-enabled parent and retained standalone child after actual Action/DTO/Service changes; ancestors need review only when their actual contracts are affected
+  - for the completion rules, use [Complete generated MCP descriptions](/backend/crud-workflow#generated-mcp-metadata-and-required-description-follow-up), covering all generated locales, `readOnly`, and unresolved TODO handling; existing authorization and instance/data scope remain required
 
 ## First-level specimen: `training-student -> training-record`
 

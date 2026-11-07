@@ -197,6 +197,17 @@ Typical checks include:
 - verify migration, initialization, or seed changes through managed isolated tests covering the affected aggregate and detail behavior; focused runs still prepare the test database, so a `meta.version.ts` edit alone does not require the full suite
 - decide development-database updates separately: isolated tests do not update dev data, normal startup applies pending migrations, and replaying an already-applied positive-numbered branch on disposable dev data requires explicit reset approval; use a new migration to preserve existing data
 
+## Step 9: Complete mode-aware MCP follow-up after metadata
+
+After metadata refresh and the actual Action, DTO, and Service changes, follow [Complete generated MCP descriptions](../../../repo-docs/backend/crud-workflow.md#generated-mcp-metadata-and-required-description-follow-up) for affected MCP-enabled actions:
+
+- aggregate mode removes only newly generated pending child MCP description keys and their `TODO(mcp-description)` comments when discarding the generated standalone surface; preserve pre-existing keys even when they still have TODOs, and preserve authored locale values
+- a newly scaffolded child retained in standalone mode keeps all eight generated CRUD MCP tools; do not automatically opt in an existing parent or child or overwrite authored descriptions
+- review affected descriptions on the already MCP-enabled parent and retained standalone child; for recursive nesting, include ancestors only when their actual Action/DTO/Service contracts are affected
+- describe actual nested inputs, outputs, and lifecycle effects; the generator patches parent create/view/update/delete includes, not `deleteBulk`, so do not assume bulk detail cascading
+- apply the canonical completion rules across all generated locales, recheck `readOnly`, and retain/report unresolved TODOs rather than claiming completion
+- preserve existing authorization and instance/data scope; MCP metadata neither grants business permissions nor bypasses aggregate ownership
+
 ## Response pattern
 
 When helpful, structure the response around these points:

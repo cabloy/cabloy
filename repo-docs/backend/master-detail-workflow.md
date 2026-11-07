@@ -267,6 +267,19 @@ That is the practical boundary to remember:
 5. refine entity fields and validation rules for the domain
 6. refine detail columns/actions when the default `basic-details` behavior is not enough
 7. refresh and verify metadata/build outputs
+8. complete the mode-aware MCP follow-up below after the actual Action, DTO, and Service changes
+
+## Complete mode-aware MCP follow-up
+
+After metadata refresh, the generator reports the MCP follow-up appropriate to the retained resource surfaces. It does not infer finished business descriptions, automatically opt an existing resource into MCP, or overwrite authored descriptions.
+
+- **Aggregate mode:** when the generator creates a child CRUD resource only to discard its standalone surface, it removes only the newly generated pending child MCP description keys and their `TODO(mcp-description)` comments. Pre-existing keys are preserved even when they still have TODOs, as are authored locale values. The aggregate-only child has no standalone CRUD MCP tools to describe.
+- **Standalone mode:** a newly scaffolded child keeps its standalone surface and inherits all eight generated CRUD MCP tools. An existing retained child keeps its existing opt-in choices; standalone mode does not add MCP metadata to it automatically.
+- **Parent and recursive contracts:** after implementing the actual Action, DTO, and Service changes, review affected descriptions on the already MCP-enabled parent and retained standalone child. Follow the same rule for an ancestor only when its actual contract is affected; recursive nesting alone is not a reason to rewrite every ancestor description.
+
+Use [Complete generated MCP descriptions](/backend/crud-workflow#generated-mcp-metadata-and-required-description-follow-up) for the canonical completion rules, including all generated locales, `readOnly`, and retaining/reporting unresolved TODOs. Ground descriptions in the implemented nested inputs, result shape, and material lifecycle effects. The generator patches the parent's create/view/update/delete relation includes, **not `deleteBulk`**; do not claim bulk detail cascading without verifying the actual Service behavior.
+
+MCP metadata does not grant business permissions or weaken aggregate ownership. Preserve existing action authorization and active instance/data scope in both nested and standalone flows.
 
 ## Relationship to other docs
 

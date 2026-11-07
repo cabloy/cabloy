@@ -338,35 +338,159 @@ describe('default CRUD analysis generation', { concurrency: false }, () => {
         }
       }));
 
-    it(`${edition}: aggregate master-detail cleanup removes generated standalone analysis artifacts`, async () =>
-      fixture(async root => {
-        const { cli, moduleRoot } = await makeCli(root, Class);
-        await cli.execute();
-        const masterDetail = new CliToolsMasterDetail({
-          context: {
-            argv: {
-              _detailModule: { root: moduleRoot },
-              detailResourceName: 'record',
-              createdDetailResource: true,
-              detailMode: 'aggregate',
+    for (const detailMode of ['aggregate', 'standalone'] as const) {
+      it(`${edition}: ${detailMode} master-detail completes mode-aware MCP follow-up after metadata`, async () =>
+        fixture(async root => {
+          const parent = await makeCli(path.join(root, 'parent'), Class);
+          await parent.cli.execute();
+          const parentController = await read(parent.moduleRoot, 'src/controller/record.ts');
+          const child = await makeCli(path.join(root, 'child'), Class);
+          // Master-detail patches the formatted migration marker produced by CRUD.
+          child.cli.helper.formatFile = async ({ fileName }) => {
+            if (path.basename(fileName) === 'meta.version.ts') {
+              execFileSync(path.join(packageRoot, '../../../node_modules/.bin/oxfmt'), [
+                '--write',
+                '--threads=1',
+                '--config',
+                path.join(packageRoot, '../../../oxfmt.config.ts'),
+                fileName,
+              ]);
+            }
+          };
+          child.cli.context.argv.module = 'test-entry';
+          child.cli.context.argv.resourceName = 'entry';
+          child.cli.modulesMeta = {
+            modules: { 'test-entry': { root: child.moduleRoot } },
+          } as never;
+          for (const locale of ['en-us', 'zh-cn']) {
+            await fs.writeFile(
+              path.join(child.moduleRoot, `src/config/locale/${locale}.ts`),
+              `export default {
+  EntryUpdateDescription: 'Authored ${locale} update contract',
+  // TODO(mcp-description): EntryViewDescription - refine using the actual Action, DTO and Service behavior.
+  EntryViewDescription: 'Existing pending ${locale} view contract',
+  // TODO(mcp-description): OtherCreateDescription - refine using the actual Action, DTO and Service behavior.
+  OtherCreateDescription: 'Unrelated pending ${locale} contract',
+};\n`,
+            );
+            const fileName = path.join(parent.moduleRoot, `src/config/locale/${locale}.ts`);
+            const content = await fs.readFile(fileName, 'utf8');
+            await fs.writeFile(
+              fileName,
+              content.replace(
+                / {2}\/\/ TODO\(mcp-description\): RecordUpdateDescription -[^\n]*\n {2}RecordUpdateDescription: '[^']*',/,
+                `  RecordUpdateDescription: 'Authored ${locale} parent contract',`,
+              ),
+            );
+          }
+          await fs.writeFile(
+            path.join(root, edition === 'start' ? '__CABLOY_START__' : '__CABLOY_BASIC__'),
+            '',
+          );
+          const masterDetail = new CliToolsMasterDetail({
+            context: {
+              argv: {
+                _: [],
+                projectPath: root,
+                module: 'test-record',
+                resourceName: 'record',
+                detailModule: 'test-entry',
+                detailResourceName: 'entry',
+                detailMode,
+              },
             },
-          },
-        } as never);
-        (masterDetail as any)._handleAggregateDetailMode(false);
-        const files = await filesUnder(moduleRoot);
-        for (const file of [
-          'src/controller/record.ts',
-          'src/service/record.ts',
-          'src/lib/recordAnalysis.ts',
-          'test/record.test.ts',
-          'test/recordAnalysis.test.ts',
-        ]) {
-          assert.ok(!files.includes(file), file);
-        }
-        assert.ok(!files.some(file => file.startsWith('src/dto/')));
-        assert.ok(files.includes('src/entity/record.tsx'));
-        assert.ok(files.includes('src/model/record.ts'));
-      }));
+          } as never);
+          masterDetail.modulesMeta = {
+            modules: {
+              'test-record': { root: parent.moduleRoot },
+              'test-entry': { root: child.moduleRoot },
+            },
+          } as never;
+          masterDetail.__template = new SourceTemplate(masterDetail);
+          masterDetail.helper.formatFile = async () => {};
+          const events: string[] = [];
+          masterDetail.console.log = async message => {
+            events.push(String(message));
+          };
+          masterDetail.helper.invokeCli = async args => {
+            events.push(args.join(' '));
+            if (args[0].startsWith(':tools:crud')) {
+              child.cli.context.argv.nometadata = true;
+              await child.cli.execute();
+            }
+          };
+          await masterDetail.execute();
+          assert.deepEqual(events.slice(0, 3), [
+            `:tools:crud${edition === 'basic' ? 'Basic' : 'Start'} entry --module=test-entry --nometadata`,
+            ':tools:metadata test-entry',
+            ':tools:metadata test-record',
+          ]);
+          assert.equal(events.length, 4);
+          const reminder = events[3];
+          assert.match(reminder, new RegExp(`Final MCP description follow-up \\(${detailMode}\\)`));
+          assert.match(reminder, /already MCP-enabled parent Actions for test-record:record/);
+          assert.match(reminder, /create\/view\/update\/delete affected by entrys/);
+          assert.match(reminder, /every locale/);
+          assert.match(reminder, /ancestor Actions only where their actual DTO\/Service path/);
+          assert.match(
+            reminder,
+            /do not assume deleteBulk has the single-delete relation behavior/,
+          );
+          assert.match(reminder, /TODO\(mcp-description\).*unfinished/);
+          assert.equal(await read(parent.moduleRoot, 'src/controller/record.ts'), parentController);
+          for (const locale of ['en-us', 'zh-cn']) {
+            const parentLocale = await read(parent.moduleRoot, `src/config/locale/${locale}.ts`);
+            assert.ok(
+              parentLocale.includes(
+                `RecordUpdateDescription: 'Authored ${locale} parent contract'`,
+              ),
+            );
+            assert.ok(
+              !parentLocale.includes('// TODO(mcp-description): RecordUpdateDescription -'),
+            );
+            const source = await read(child.moduleRoot, `src/config/locale/${locale}.ts`);
+            const values = (await import(`data:text/javascript,${encodeURIComponent(source)}`))
+              .default;
+            assert.equal(values.EntryUpdateDescription, `Authored ${locale} update contract`);
+            assert.equal(values.EntryViewDescription, `Existing pending ${locale} view contract`);
+            assert.equal(values.OtherCreateDescription, `Unrelated pending ${locale} contract`);
+            assert.ok(source.includes('// TODO(mcp-description): EntryViewDescription -'));
+            assert.ok(source.includes('// TODO(mcp-description): OtherCreateDescription -'));
+            assert.equal(
+              source.match(/TODO\(mcp-description\)/g)?.length,
+              detailMode === 'aggregate' ? 2 : 8,
+            );
+            assert.equal(
+              Object.hasOwn(values, 'EntryCreateDescription'),
+              detailMode === 'standalone',
+            );
+          }
+          const files = await filesUnder(child.moduleRoot);
+          assert.ok(files.includes('src/entity/entry.tsx'));
+          assert.ok(files.includes('src/model/entry.ts'));
+          if (detailMode === 'aggregate') {
+            assert.match(reminder, /test-entry:entry has no standalone MCP Actions/);
+            assert.match(reminder, /earlier child CRUD description reminder does not apply/);
+            for (const file of [
+              'src/controller/entry.ts',
+              'src/service/entry.ts',
+              'src/lib/entryAnalysis.ts',
+              'test/entry.test.ts',
+              'test/entryAnalysis.test.ts',
+            ]) {
+              assert.ok(!files.includes(file), file);
+            }
+            assert.ok(!files.some(file => file.startsWith('src/dto/')));
+          } else {
+            assert.match(reminder, /Review retained standalone MCP Actions for test-entry:entry/);
+            assert.match(reminder, /recordId ownership context and bulk delete/);
+            const controller = await read(child.moduleRoot, 'src/controller/entry.ts');
+            assert.equal(controller.match(/@Mcp\.tool\(/g)?.length, 8);
+            assert.match(controller, /EntryDeleteBulkDescription/);
+            assert.ok(files.includes('src/dto/entryCreate.tsx'));
+          }
+        }));
+    }
   }
 
   it(

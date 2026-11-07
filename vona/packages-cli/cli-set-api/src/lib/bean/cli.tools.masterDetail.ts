@@ -1,6 +1,7 @@
 import type { IModule, IModuleInfo } from '@cabloy/module-info';
 
 import { BeanCliBase } from '@cabloy/cli';
+import { evaluateSimple } from '@cabloy/utils';
 import fs from 'node:fs';
 import path from 'node:path';
 
@@ -53,6 +54,7 @@ export class CliToolsMasterDetail extends BeanCliBase {
     await this._renderMasterDetailDtos();
     await this._patchMasterModule();
     await this._refreshMetadata();
+    await this._reportMcpFollowUp();
   }
 
   private _prepareArgv() {
@@ -550,6 +552,15 @@ export class CliToolsMasterDetail extends BeanCliBase {
 
   private async _createDetailCoreResource() {
     const { argv } = this.context;
+    const existingLocaleKeys = new Map<LocaleName, Set<string>>();
+    if (argv.detailMode === 'aggregate') {
+      for (const locale of this._masterLocales()) {
+        const fileName = path.join(this._detailPaths().localeDir, `${locale}.ts`);
+        const content = fs.existsSync(fileName) ? this._readFile(fileName) : 'export default {};';
+        const values = evaluateSimple(content.replace('export default', '').replace(';', ''));
+        existingLocaleKeys.set(locale, new Set(Object.keys(values)));
+      }
+    }
     await this.helper.invokeCli(
       [
         argv.detailCrudCommand,
@@ -558,6 +569,43 @@ export class CliToolsMasterDetail extends BeanCliBase {
         '--nometadata',
       ],
       { cwd: argv.projectPath },
+    );
+    if (argv.detailMode === 'aggregate') {
+      await this._removeGeneratedDetailMcpDescriptions(existingLocaleKeys);
+    }
+  }
+
+  private async _removeGeneratedDetailMcpDescriptions(
+    existingLocaleKeys: Map<LocaleName, Set<string>>,
+  ) {
+    const resource = this.context.argv.detailResourceNameCapitalize;
+    const keys = new Set(
+      ['Create', 'Select', 'Group', 'Aggregate', 'View', 'Update', 'Delete', 'DeleteBulk'].map(
+        action => `${resource}${action}Description`,
+      ),
+    );
+    for (const [locale, existingKeys] of existingLocaleKeys) {
+      const fileName = path.join(this._detailPaths().localeDir, `${locale}.ts`);
+      const content = this._readFile(fileName);
+      const updated = content.replace(
+        /^[ \t]*\/\/ TODO\(mcp-description\): (\w+) - refine using the actual Action, DTO and Service behavior\.\r?\n[ \t]*(\w+):\s*'(?:\\.|[^'\\])*',\r?\n/gm,
+        (entry, markerKey: string, key: string) => {
+          return markerKey === key && keys.has(key) && !existingKeys.has(key) ? '' : entry;
+        },
+      );
+      if (updated !== content) await this._saveFile(fileName, updated);
+    }
+  }
+
+  private async _reportMcpFollowUp() {
+    const { argv } = this.context;
+    const detail = `${argv.detailModule}:${argv.detailResourceName}`;
+    const modeMessage =
+      argv.detailMode === 'aggregate'
+        ? `${detail} has no standalone MCP Actions; the earlier child CRUD description reminder does not apply to removed Actions.`
+        : `Review retained standalone MCP Actions for ${detail}, including the ${argv.fk} ownership context and bulk delete.`;
+    await this.console.log(
+      `Final MCP description follow-up (${argv.detailMode}): ${modeMessage} Review already MCP-enabled parent Actions for ${argv.module}:${argv.resourceName}, especially create/view/update/delete affected by ${argv.relationName}. After implementing business behavior, inspect the actual Action, DTO and Service and refine descriptions in every locale. Review ancestor Actions only where their actual DTO/Service path exposes the changed nested contract. Recheck readOnly; do not assume deleteBulk has the single-delete relation behavior. Preserve authored text and existing MCP opt-in decisions; resolve only completed TODO(mcp-description) entries and report unresolved descriptions as unfinished.`,
     );
   }
 
@@ -607,6 +655,7 @@ export class CliToolsMasterDetail extends BeanCliBase {
     const detailRoot = argv._detailModule!.root;
     return {
       root: detailRoot,
+      localeDir: path.join(detailRoot, 'src/config/locale'),
       entity: path.join(detailRoot, 'src/entity', `${argv.detailResourceName}.tsx`),
       model: path.join(detailRoot, 'src/model', `${argv.detailResourceName}.ts`),
       controller: path.join(detailRoot, 'src/controller', `${argv.detailResourceName}.ts`),
