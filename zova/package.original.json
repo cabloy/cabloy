@@ -88,8 +88,8 @@
     "vite": "^8.3.4",
     "vite-plugin-fake-server-turbo": "^3.0.18",
     "zova-vite": "workspace:^",
-    "oxfmt": "^0.74.0",
-    "oxlint": "^1.89.0"
+    "oxfmt": "^0.77.0",
+    "oxlint": "^1.92.0"
   },
   "engines": {
     "node": ">=24.11.0",
