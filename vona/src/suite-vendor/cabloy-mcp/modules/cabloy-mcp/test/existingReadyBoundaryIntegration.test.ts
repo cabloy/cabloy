@@ -105,7 +105,7 @@ describe('existing-ready boundary composition', { concurrency: false, timeout: 1
           'UPDATE aInstance SET disabled = 1 WHERE id = 1',
           'UPDATE aInstance SET deleted = 1 WHERE id = 1',
           'DELETE FROM aInstance WHERE id = 1',
-          'INSERT INTO aInstance VALUES (9, \'alpha\', 0, 1, \'{"ok":true}\', 0)',
+          "INSERT INTO aInstance VALUES (9, 'alpha', 0, 1, '{\"ok\":true}', 0)",
         ];
         for (const mutation of mutations) {
           await f.mutate(mutation);
@@ -117,7 +117,7 @@ describe('existing-ready boundary composition', { concurrency: false, timeout: 1
           assert.equal(run.observed.initialized, false);
           assert.equal(run.observed.handoffs, 0);
           await f.mutate("DELETE FROM aInstance WHERE name = 'alpha'");
-          await f.mutate('INSERT INTO aInstance VALUES (1, \'alpha\', 0, 1, \'{"ok":true}\', 0)');
+          await f.mutate("INSERT INTO aInstance VALUES (1, 'alpha', 0, 1, '{\"ok\":true}', 0)");
         }
         assert.equal(f.counts.reads, 4, 'each_denial_reads_native_again');
         assert.equal(f.counts.contexts, 0);

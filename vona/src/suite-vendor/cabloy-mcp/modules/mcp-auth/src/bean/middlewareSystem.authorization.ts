@@ -247,7 +247,7 @@ export class MiddlewareSystemAuthorization extends BeanBase implements IMiddlewa
         } else if (character === '"') {
           const raw = body.slice(start, index);
           const value = JSON.parse(raw);
-          if (typeof value !== 'string') throw new Error('string');
+          if (typeof value !== 'string') throw new TypeError('string');
           return value;
         }
       }
