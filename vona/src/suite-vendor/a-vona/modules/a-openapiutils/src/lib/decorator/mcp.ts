@@ -4,7 +4,7 @@ import { appMetadata } from 'vona';
 
 import type { IMcpToolOptions } from '../../types/api.ts';
 
-import { SymbolMcpOptions } from '../const/decorator.ts';
+import { SymbolMcpExclude, SymbolMcpOptions } from '../const/decorator.ts';
 
 function tool(options?: Omit<IMcpToolOptions, 'name'>): ClassDecorator & MethodDecorator;
 function tool(options: IMcpToolOptions): MethodDecorator;
@@ -25,4 +25,14 @@ function tool(options: IMcpToolOptions = {}): ClassDecorator & MethodDecorator {
   } as ClassDecorator & MethodDecorator;
 }
 
-export const Mcp = { tool };
+function exclude(): MethodDecorator {
+  return function (target: object, prop?: MetadataKey, descriptor?: PropertyDescriptor) {
+    if (prop === undefined) {
+      throw new Error('Mcp.exclude is only valid on a controller action');
+    }
+    appMetadata.defineMetadata(SymbolMcpExclude, true, target, prop);
+    return descriptor;
+  } as MethodDecorator;
+}
+
+export const Mcp = { tool, exclude };

@@ -3,6 +3,7 @@ export const SymbolRouteHandlersArgumentsValue = Symbol('SymbolRouteHandlersArgu
 
 export const SymbolOpenApiOptions = Symbol('SymbolOpenApiOptions');
 export const SymbolMcpOptions = Symbol('SymbolMcpOptions');
+export const SymbolMcpExclude = Symbol('SymbolMcpExclude');
 export const SymbolControllerResource = Symbol('SymbolControllerResource');
 export const SymbolDecoratorRule = Symbol('SymbolDecoratorRule');
 export const SymbolDecoratorDtoOpenapi = Symbol('SymbolDecoratorDtoOpenapi');
