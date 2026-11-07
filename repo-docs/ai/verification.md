@@ -10,6 +10,20 @@ Prefer a few critical business flows through existing test infrastructure over e
 
 Business E2E should focus on user actions, visible results, and persistence after save/reload, plus essential rejection paths. Architecture guidance is not automatically a requirement to inspect Controller/IoC object identity, model instances, or Query/cache internals in the browser. Test internal invariants when an explicit architecture/framework contract or an actual regression requires them, preferably at the smallest suitable unit, framework, or integration layer. Architecture requirements and server-side enforcement still apply.
 
+### Reuse system assurance at the owning layer
+
+Assign verification to the layer that owns the guarantee. Business acceptance reuses applicable, already-verified system capabilities instead of repeating unchanged generic login or site-admission matrices as business blockers. A business dependency on a system capability is not, by itself, a reason to requalify that capability.
+
+Distinguish three responsibilities:
+
+- **System assurance:** reuse existing verification when the relied-on behavior and its implementation, effective policy/configuration, and integration assumptions remain unaffected. Briefly identify the existing basis and applicability in the current test plan or execution record; do not create a new assurance register, receipt chain, or approval layer. Do not invent evidence or treat an unknown verification state as a pass.
+- **Business acceptance:** check the business's correct use of framework contracts and test its own authorization, ownership, instance isolation, changed user journey, and persisted outcomes at the appropriate layer. System login/admission assurance does not establish permission to access a particular business record. Inspect relevant guard, route metadata, trusted identity handoff, and configuration as part of the integration; this is not a mandate for a new standalone browser scenario for each item.
+- **Affected-boundary regression:** add focused checks when shared implementation, policy/configuration, contracts, or integration assumptions materially change, or an actual regression challenges the existing assurance. A new independent site/admission boundary still needs qualification; using an unchanged, qualified site does not inherit an obligation to rerun its complete system matrix.
+
+For example, a new “My records” page on an unchanged protected site should prove its business journey, save/reload persistence where applicable, server-derived owner scope, and rejection of another user's record. It need not re-prove the site's entire login/account-admission matrix. If the increment changes the shared admission policy or reveals a redirect regression, add the focused owning-layer regression and affected integration check.
+
+Apply this distinction when creating ATPs, not only when choosing commands during execution. If an existing authoritative ATP unnecessarily duplicates system qualification, correct its scope through the planning owner instead of silently skipping it or calling an unexecuted test passed. Preserve applicable release requirements and historical outcomes; reused assurance is not a waiver of business security or proof of changed behavior.
+
 ### Keep evidence sufficient, not elaborate
 
 Prefer native test reports, redacted logs, and concise ATP/progress links. Retain required revision/worktree attribution, changed-file scope, exact procedures, relevant environment/fixture identities, and observed outcomes, including failures. Do not introduce full input snapshots, exhaustive hash manifests, custom evidence verifiers, or multiple receipt layers unless the test plan requires them or a concrete attribution/integrity risk cannot be addressed with existing artifacts. Preserve privacy review and historical evidence; simpler future evidence is not permission to delete old records.

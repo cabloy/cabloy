@@ -101,6 +101,8 @@ The execution workflow supplies the approved dossier and preserves the boundary;
 
 Use the narrowest approved check first, then follow the linked ATP procedures and applicable release gates.
 
+Reuse applicable, already-verified system assurance for unchanged capabilities; verify the business's own authority, outcomes, and affected integration instead of repeating generic system qualification. Check for material implementation, policy/configuration, contract, or integration changes and actual regressions before reusing that assurance. New site/admission boundaries still require qualification. If an authoritative ATP unnecessarily duplicates system checks, route its scope correction to planning rather than silently skipping it or reporting an unexecuted test as passed. See [Reuse system assurance at the owning layer](/ai/verification#reuse-system-assurance-at-the-owning-layer).
+
 1. run the scoped verification specified by the increment
 2. sanitize machine-local paths and review secrets, credentials, raw tokens, customer data, and provider identifiers **before** durable retention or sharing
 3. retain only reviewed, redacted observed evidence using the suite's existing convention

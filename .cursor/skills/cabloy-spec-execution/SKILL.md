@@ -128,6 +128,8 @@ Keep the specialist’s CLI-first and follow-up rules. Never hand-edit generated
 
 Start with the narrowest meaningful check, then follow linked ATP/release gates. Run only commands observed in the active repository and approved by the dossier. An approved task may first add a planned wrapper to its durable manifest; inspect the resulting command and paired outputs before running it. Do not substitute an existing Basic wrapper for a new/Start tuple.
 
+Reuse applicable, already-verified system assurance rather than requalifying unchanged generic login/site admission for every business increment. Check the actual change for effects on the shared implementation, policy/configuration, contracts, or integration assumptions; a new site/admission boundary or actual regression requires focused affected checks. System assurance does not prove business authorization/ownership, isolation, outcomes, or new integration. If an authoritative ATP unnecessarily duplicates system qualification, route its scope correction to the planning owner; do not silently skip it, mark an unexecuted test passed, or expand runtime scope. Keep this applicability note in existing records, without a new register or approval layer. See [Verification responsibility](../../../repo-docs/ai/verification.md#reuse-system-assurance-at-the-owning-layer).
+
 For contract-sensitive work:
 
 - forward chain: establish backend contract truth, inspect OpenAPI, regenerate Zova consumers, then perform thin frontend follow-up;

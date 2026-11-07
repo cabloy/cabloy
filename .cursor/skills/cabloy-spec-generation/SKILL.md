@@ -112,6 +112,8 @@ For updates, change PRD/SRS/ADR first, then mappings, WBS, ATP, evidence assumpt
 
 Add presentation contracts, rollout records, runbooks, extra ADRs, or evidence only when confirmed scope justifies them. Never create empty evidence or fabricate an `EVD-*` record.
 
+Before defining ATPs, separate applicable, already-verified system capabilities from new or changed business outcomes and integration. Do not copy unchanged generic login/site-admission matrices into recurring business gates. Preserve business authorization, ownership, isolation, and affected integration checks; shared implementation/policy/configuration changes, a new site/admission boundary, or an actual regression require focused checks at the owning layer. Use the existing test-plan scope and ownership sections, not a new assurance register or approval layer. See [Verification responsibility](../../../repo-docs/ai/verification.md#reuse-system-assurance-at-the-owning-layer) and the test-plan template contract in `references/repo-specs-document-set.md`.
+
 ## 8. Preserve Cabloy boundaries
 
 - Follow the repository documentation boundary. Keep suite business planning and acceptance records in `repo-specs/`; link to canonical suite usage/configuration guides rather than duplicating them in specs/runbooks.

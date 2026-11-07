@@ -162,6 +162,8 @@ Use:
 
 Use `ATP-<DOMAIN>-<CAPABILITY>-01` identifiers. Each scenario links to PRD/SRS/WBS records and defines scope, setup, procedure, expected result, and minimum retained proof. Every exact ATP ID named in WBS or traceability records must have one scenario declaration here; a matrix mention, wildcard, range, or evidence-format example is not a scenario. Include appropriate negative, authorization, tenant-isolation, state-transition, rollback, concurrency, idempotency, contract-generation, SSR/hydration, migration, and browser tests for the confirmed risk profile.
 
+In the scope and test-ownership sections, distinguish reused system assurance from the business behavior and affected integration this increment must prove. An unchanged, already-verified system capability does not need another generic ATP merely because the business depends on it. Record the existing basis and relevant applicability briefly; do not invent proof or require a new assurance register. Keep business authorization, ownership, isolation, and outcome checks. Changes affecting the shared implementation, effective policy/configuration, integration assumptions, or an actual regression require focused owning-layer checks; a new site/admission boundary still needs its own qualification. If an existing ATP unnecessarily duplicates system qualification, revise its authoritative scope rather than treating it as passed or silently omitting it during execution.
+
 Every evidence record should retain, at minimum:
 
 - requirement and contract links;

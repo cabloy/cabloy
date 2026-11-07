@@ -348,6 +348,8 @@ When extending shared RBAC:
 
 ## Verification checklist
 
+Select the checks below by the affected layer; this is not a mandatory matrix for every business consumer. Changes to shared RBAC runtime behavior require the relevant shared tests, while changed application policy, configuration, or integration requires focused checks of that boundary. Business consumers of unchanged, already-verified RBAC reuse that system assurance and test their own operation authority, row scope, and business outcomes. New site/admission boundaries still require qualification. See [Reuse system assurance at the owning layer](/ai/verification#reuse-system-assurance-at-the-owning-layer).
+
 - Run the shared `a-rbac` catalog/guard and scope-current tests.
 - Run permission tests that cover route substitution, request-decision restoration, cache isolation, and denied guards.
 - Run frontend matcher tests for malformed projections, `all`, restricted one-row checks, and multi-row checks.
