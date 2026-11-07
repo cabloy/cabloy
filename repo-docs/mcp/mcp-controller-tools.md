@@ -119,18 +119,18 @@ Student tools are examples, not a catalog ceiling. Other eligible Controllers ma
 
 ## Student examples
 
-Student descriptions live in their `@Web.xxx()` options, sharing Action-owned text between HTTP OpenAPI and MCP. `$locale('Student<Action>Description')` resolves through the backend `training-student` module's locale resources in the current request locale. A method-level MCP `description` remains available for a tool-specific override.
+Student tool descriptions live in their Action-level `@Mcp.tool()` options, alongside read classification and output projection. `$locale('Student<Action>Description')` resolves through the backend `training-student` module's locale resources in the current request locale. The `@Web.xxx()` options retain HTTP OpenAPI summaries without duplicating MCP-specific descriptions; the mapper's OpenAPI description/summary fallback remains available when an Action omits its MCP description.
 
 ### Example: student create
 
 `training-student_student_create` opts in the existing guarded `POST /training/student` Action:
 
 ```ts
-@Mcp.tool({ readOnly: false })
-@Web.post('', {
-  summary: $locale('StudentCreate'),
+@Mcp.tool({
   description: $locale('StudentCreateDescription'),
+  readOnly: false,
 })
+@Web.post('', { summary: $locale('StudentCreate') })
 ```
 
 With independent Student-create authority and a write-permitting scope, call it with the flat `DtoStudentCreate` body:
@@ -177,11 +177,11 @@ This is **destructive aggregate soft deletion** of Student, content, training re
 `training-student_student_select` exposes the existing select Action without an MCP output projection:
 
 ```ts
-@Mcp.tool({ readOnly: true })
-@Web.get('', {
-  summary: $locale('StudentSelect'),
+@Mcp.tool({
   description: $locale('StudentSelectDescription'),
+  readOnly: true,
 })
+@Web.get('', { summary: $locale('StudentSelect') })
 ```
 
 Call it with flat query arguments:
@@ -210,14 +210,12 @@ The summary Action declares a projection without changing its HTTP DTO, serializ
 
 ```ts
 @Mcp.tool({
+  description: $locale('StudentSummaryDescription'),
   output: {
     pick: ['id', 'name', 'level', 'levelTitle', 'descriptionLength', 'summaryText'],
   },
 })
-@Web.get('summary/:id', {
-  summary: $locale('StudentSummary'),
-  description: $locale('StudentSummaryDescription'),
-})
+@Web.get('summary/:id', { summary: $locale('StudentSummary') })
 @Api.body(v.optional(), v.object(DtoStudentSummary))
 @Core.serializer()
 @Passport.rbac({ actionInherit: 'view' })

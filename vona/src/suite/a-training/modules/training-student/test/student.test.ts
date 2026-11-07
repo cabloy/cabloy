@@ -125,14 +125,19 @@ describe('student.test.ts', { concurrency: false }, () => {
         deleteBulk: ['post', '/api/training/student/bulk/delete', 'Bulk Delete Students'],
       } as const;
       for (const [action, [method, path, summary]] of Object.entries(expectedSummaries)) {
-        const apiJson = await app.bean.openapi.generateJsonOfControllerAction(
-          controller,
-          action,
-          'V31',
+        const apiJson = JSON.parse(
+          JSON.stringify(
+            await app.bean.openapi.generateJsonOfControllerAction(controller, action, 'V31'),
+          ),
         );
         const operation = (apiJson.paths as any)?.[path]?.[method];
         assert.ok(operation, `${action} operation is missing`);
-        assert.equal(operation.summary?.toJSON(), summary);
+        assert.equal(operation.summary, summary);
+        assert.equal(
+          operation.description,
+          undefined,
+          `${action} has no MCP-specific HTTP description`,
+        );
       }
       const apiJson = await app.bean.openapi.generateJsonOfControllerAction(
         controller,

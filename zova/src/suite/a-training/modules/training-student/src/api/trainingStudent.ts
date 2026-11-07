@@ -100,10 +100,7 @@ export type ApiApiTrainingStudentdeleteForceResponseBody =
 
 @Api()
 export class ApiTrainingStudent extends BeanApiBase {
-  /**
-   * List Students
-   * @description Select students using your current student-select permission and instance. Returns the complete existing paginated select response with serialized row fields, including masked mobile.
-   */
+  /** List Students */
   select(
     options?: {
       query?: ApiApiTrainingStudentselectRequestQuery;
@@ -115,10 +112,7 @@ export class ApiTrainingStudent extends BeanApiBase {
     );
   }
 
-  /**
-   * Create Student
-   * @description Create a student using your current student-create permission and instance. Uses the existing create contract, including optional content and training records with subjects. Non-idempotent; repeating a call can create additional data.
-   */
+  /** Create Student */
   create(body: ApiApiTrainingStudentcreateRequestBody, options?: IApiActionOptions) {
     return this.$fetch.post<any, ApiApiTrainingStudentcreateResponseBody>(
       ApiApiTrainingStudentcreatePath,
@@ -127,10 +121,7 @@ export class ApiTrainingStudent extends BeanApiBase {
     );
   }
 
-  /**
-   * Group Students
-   * @description Group students using your current student-select permission and instance. Supports grouping by level and counting all students or students with an imageId. Defaults to counting all students by level. Uses the existing filters; counts are strings and results are wrapped in result.
-   */
+  /** Group Students */
   group(
     options?: {
       query?: ApiApiTrainingStudentgroupRequestQuery;
@@ -142,10 +133,7 @@ export class ApiTrainingStudent extends BeanApiBase {
     );
   }
 
-  /**
-   * Aggregate Students
-   * @description Count students using your current student-select permission and instance. Supports counting all students or students with an imageId. Defaults to both count_all and count_imageId. Uses the existing filters and returns string counts without grouping.
-   */
+  /** Aggregate Students */
   aggregate(
     options?: {
       query?: ApiApiTrainingStudentaggregateRequestQuery;
@@ -157,10 +145,7 @@ export class ApiTrainingStudent extends BeanApiBase {
     );
   }
 
-  /**
-   * View Student
-   * @description Read complete student details by ID using your current student-view permission and instance. Returns the existing serialized detail response, including masked mobile, Markdown content, nested training records and subjects, and optional image URL metadata.
-   */
+  /** View Student */
   view(
     options: {
       params: ApiApiTrainingStudentviewRequestParams;
@@ -172,10 +157,7 @@ export class ApiTrainingStudent extends BeanApiBase {
     );
   }
 
-  /**
-   * Delete Student
-   * @description Soft-delete a student by ID using your independent current student-delete permission and instance. Destructively includes content, training records and nested subjects. Returns null completion, not existence or read-back proof. Partial deletion is possible; do not automatically replay after errors or uncertain responses.
-   */
+  /** Delete Student */
   delete(
     options: {
       params: ApiApiTrainingStudentdeleteRequestParams;
@@ -187,10 +169,7 @@ export class ApiTrainingStudent extends BeanApiBase {
     );
   }
 
-  /**
-   * Update Student
-   * @description Update a student using your current student-update permission and instance. Requires params.id and body.name, body.mobile, body.level. Uses the complete existing aggregate contract, including content and existing/new training records and subjects; declared nested id/deleted controls can delete children. Returns null completion, not existence or read-back proof. Partial writes are possible; do not automatically replay after errors or uncertain responses.
-   */
+  /** Update Student */
   update(
     body: ApiApiTrainingStudentupdateRequestBody,
     options: {
@@ -204,10 +183,7 @@ export class ApiTrainingStudent extends BeanApiBase {
     );
   }
 
-  /**
-   * View Student Summary
-   * @description Read a student summary by ID using your current student-view permission and instance. Excludes mobile and full notes.
-   */
+  /** View Student Summary */
   summary(
     options: {
       params: ApiApiTrainingStudentsummaryRequestParams;

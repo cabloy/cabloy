@@ -1287,16 +1287,10 @@ export interface paths {
       path?: never;
       cookie?: never;
     };
-    /**
-     * List Students
-     * @description Select students using your current student-select permission and instance. Returns the complete existing paginated select response with serialized row fields, including masked mobile.
-     */
+    /** List Students */
     get: operations['TrainingStudent_select'];
     put?: never;
-    /**
-     * Create Student
-     * @description Create a student using your current student-create permission and instance. Uses the existing create contract, including optional content and training records with subjects. Non-idempotent; repeating a call can create additional data.
-     */
+    /** Create Student */
     post: operations['TrainingStudent_create'];
     delete?: never;
     options?: never;
@@ -1311,10 +1305,7 @@ export interface paths {
       path?: never;
       cookie?: never;
     };
-    /**
-     * Group Students
-     * @description Group students using your current student-select permission and instance. Supports grouping by level and counting all students or students with an imageId. Defaults to counting all students by level. Uses the existing filters; counts are strings and results are wrapped in result.
-     */
+    /** Group Students */
     get: operations['TrainingStudent_group'];
     put?: never;
     post?: never;
@@ -1331,10 +1322,7 @@ export interface paths {
       path?: never;
       cookie?: never;
     };
-    /**
-     * Aggregate Students
-     * @description Count students using your current student-select permission and instance. Supports counting all students or students with an imageId. Defaults to both count_all and count_imageId. Uses the existing filters and returns string counts without grouping.
-     */
+    /** Aggregate Students */
     get: operations['TrainingStudent_aggregate'];
     put?: never;
     post?: never;
@@ -1351,24 +1339,15 @@ export interface paths {
       path?: never;
       cookie?: never;
     };
-    /**
-     * View Student
-     * @description Read complete student details by ID using your current student-view permission and instance. Returns the existing serialized detail response, including masked mobile, Markdown content, nested training records and subjects, and optional image URL metadata.
-     */
+    /** View Student */
     get: operations['TrainingStudent_view'];
     put?: never;
     post?: never;
-    /**
-     * Delete Student
-     * @description Soft-delete a student by ID using your independent current student-delete permission and instance. Destructively includes content, training records and nested subjects. Returns null completion, not existence or read-back proof. Partial deletion is possible; do not automatically replay after errors or uncertain responses.
-     */
+    /** Delete Student */
     delete: operations['TrainingStudent_delete'];
     options?: never;
     head?: never;
-    /**
-     * Update Student
-     * @description Update a student using your current student-update permission and instance. Requires params.id and body.name, body.mobile, body.level. Uses the complete existing aggregate contract, including content and existing/new training records and subjects; declared nested id/deleted controls can delete children. Returns null completion, not existence or read-back proof. Partial writes are possible; do not automatically replay after errors or uncertain responses.
-     */
+    /** Update Student */
     patch: operations['TrainingStudent_update'];
     trace?: never;
   };
@@ -1379,10 +1358,7 @@ export interface paths {
       path?: never;
       cookie?: never;
     };
-    /**
-     * View Student Summary
-     * @description Read a student summary by ID using your current student-view permission and instance. Excludes mobile and full notes.
-     */
+    /** View Student Summary */
     get: operations['TrainingStudent_summary'];
     put?: never;
     post?: never;
@@ -1434,304 +1410,6 @@ export interface paths {
       cookie?: never;
     };
     get: operations['BasicMetrics_snapshot'];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/mcp/auth/summary': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get: operations['Authorization_summary'];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/mcp/auth/decision': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get?: never;
-    put?: never;
-    post: operations['Authorization_decision'];
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/api/mcp/auth/authorizationGrant/mine': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get: operations['McpAuthAuthorizationGrant_mine'];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/api/mcp/auth/authorizationGrant/revokeMine/{id}': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get?: never;
-    put?: never;
-    post: operations['McpAuthAuthorizationGrant_revokeMine'];
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/api/mcp/auth/authorizationGrant/deleteMine/{id}': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get?: never;
-    put?: never;
-    post?: never;
-    delete: operations['McpAuthAuthorizationGrant_deleteMine'];
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/api/mcp/auth/customScope/mine': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /** List personal MCP scopes */
-    get: operations['McpAuthCustomScope_mine'];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/api/mcp/auth/customScope/catalog': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /** Available MCP tools */
-    get: operations['McpAuthCustomScope_catalog'];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/api/mcp/auth/customScope/createMine': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get?: never;
-    put?: never;
-    /** Create personal MCP scope */
-    post: operations['McpAuthCustomScope_createMine'];
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/api/mcp/auth/customScope/updateMine/{id}': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get?: never;
-    put?: never;
-    /** Update personal MCP scope */
-    post: operations['McpAuthCustomScope_updateMine'];
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/api/mcp/auth/customScope/deleteMine/{id}': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get?: never;
-    put?: never;
-    post?: never;
-    /** Delete personal MCP scope */
-    delete: operations['McpAuthCustomScope_deleteMine'];
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/api/mcp/test/catalog/categories': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get: operations['McpTestCatalog_categories'];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/api/mcp/test/catalog/products': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get: operations['McpTestCatalog_products'];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/api/mcp/test/catalog/products/{id}': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get: operations['McpTestCatalog_detail'];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/api/mcp/test/actions/status': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /**
-     * Action Web summary
-     * @description Action Web description
-     */
-    get: operations['McpTestToolFixture_status'];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/api/mcp/test/actions/effect/{label}': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get?: never;
-    put?: never;
-    post: operations['McpTestToolFixture_effect'];
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/api/mcp/test/actions/array': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get: operations['McpTestToolFixture_array'];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/api/mcp/test/actions/unsupported': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get: operations['McpTestToolFixture_unsupported'];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/api/mcp/test/actions/closed': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /** Action Web summary */
-    get: operations['McpTestToolFixture_closed'];
     put?: never;
     post?: never;
     delete?: never;
@@ -2614,6 +2292,336 @@ export interface paths {
     get?: never;
     put?: never;
     post: operations['TestVonaUpload_files'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/mcp/auth/summary': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['Authorization_summary'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/mcp/auth/decision': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['Authorization_decision'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/mcp/auth/authorizationGrant/mine': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['McpAuthAuthorizationGrant_mine'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/mcp/auth/authorizationGrant/revokeMine/{id}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['McpAuthAuthorizationGrant_revokeMine'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/mcp/auth/authorizationGrant/deleteMine/{id}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post?: never;
+    delete: operations['McpAuthAuthorizationGrant_deleteMine'];
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/mcp/auth/customScope/mine': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** List personal MCP scopes */
+    get: operations['McpAuthCustomScope_mine'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/mcp/auth/customScope/catalog': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Available MCP tools */
+    get: operations['McpAuthCustomScope_catalog'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/mcp/auth/customScope/createMine': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** Create personal MCP scope */
+    post: operations['McpAuthCustomScope_createMine'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/mcp/auth/customScope/updateMine/{id}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** Update personal MCP scope */
+    post: operations['McpAuthCustomScope_updateMine'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/mcp/auth/customScope/deleteMine/{id}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post?: never;
+    /** Delete personal MCP scope */
+    delete: operations['McpAuthCustomScope_deleteMine'];
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/mcp/test/catalog/categories': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['McpTestCatalog_categories'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/mcp/test/catalog/products': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['McpTestCatalog_products'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/mcp/test/catalog/products/{id}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['McpTestCatalog_detail'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/mcp/test/catalog/excluded': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['McpTestCatalog_excluded'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/mcp/test/actions/status': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /**
+     * Action Web summary
+     * @description Action Web description
+     */
+    get: operations['McpTestToolFixture_status'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/mcp/test/actions/effect/{label}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['McpTestToolFixture_effect'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/mcp/test/actions/array': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['McpTestToolFixture_array'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/mcp/test/actions/unsupported': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['McpTestToolFixture_unsupported'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/mcp/test/actions/excluded': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['McpTestToolFixture_excluded'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/mcp/test/actions/closed': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Action Web summary */
+    get: operations['McpTestToolFixture_closed'];
+    put?: never;
+    post?: never;
     delete?: never;
     options?: never;
     head?: never;
@@ -5142,175 +5150,6 @@ export interface components {
         | undefined;
       schedulers?: number | undefined;
     };
-    'mcp-auth.dto.authorizationSummary': {
-      clientName: string;
-      resource: string;
-      scope: string;
-      options: components['schemas']['mcp-auth.dto.mcpScopeOption'][];
-      expiresAt: number;
-    };
-    'mcp-auth.dto.mcpScopeOption': {
-      scope: string;
-      name: string;
-      description: string;
-      tools: components['schemas']['mcp-auth.dto.mcpScopeTool'][];
-      allowed: boolean;
-      /** @enum {string|null} */
-      reason?:
-        | 'outside_requested_scope'
-        | 'outside_client_scope'
-        | 'tools_unavailable'
-        | null
-        | undefined;
-    };
-    'mcp-auth.dto.mcpScopeTool': {
-      name: string;
-      controller: string;
-      action: string;
-      controllerSummary: string;
-      summary: string;
-      description: string;
-      readOnly: boolean;
-      available: boolean;
-    };
-    'mcp-auth.dto.authorizationRedirect': {
-      redirectUrl: string;
-    };
-    'mcp-auth.dto.authorizationDecision': {
-      request: string;
-      allow: boolean;
-      scope?: ('mcp:all' | 'mcp:read') | string | undefined;
-    };
-    'mcp-auth.dto.authorizationGrantMineRes': {
-      list: components['schemas']['mcp-auth.dto.authorizationGrant'][];
-      total: string;
-      pageCount: number;
-      pageSize: number;
-      pageNo: number;
-    };
-    'mcp-auth.dto.authorizationGrant': {
-      /**
-       * Format: date-time
-       * @description Created At
-       */
-      createdAt: Date;
-      /** @description ID */
-      id: number | string;
-      resource: string;
-      scope: string;
-      /** @default  */
-      requestedScope?: string;
-      /** @enum {string} */
-      state: 'pending' | 'codeReady' | 'tokenActive' | 'denied' | 'revoked';
-      expiresAt: number;
-      tokenExpiresAt: number;
-      /** @default false */
-      refreshEnabled?: boolean;
-      /** @default 0 */
-      refreshExpiresAt?: number;
-      clientId: string;
-      clientName: string;
-    };
-    'mcp-auth.dto.customScopeMineRes': {
-      list: components['schemas']['mcp-auth.dto.customScopeView'][];
-    };
-    'mcp-auth.dto.customScopeView': {
-      /**
-       * Format: date-time
-       * @description Created At
-       */
-      createdAt: Date;
-      /**
-       * Format: date-time
-       * @description Updated At
-       */
-      updatedAt: Date;
-      /** @description ID */
-      id: number | string;
-      scope: string;
-      /**
-       * Name
-       * @description Use 1–100 letters, digits, underscores or hyphens. Names are case-sensitive; test becomes mcp:custom:test.
-       */
-      name: string;
-      /** @description Description */
-      description: string;
-      /** @description Tools */
-      tools: components['schemas']['mcp-auth.dto.mcpToolIdentity'][];
-    };
-    'mcp-auth.dto.mcpToolIdentity': {
-      name: string;
-      controller: string;
-      action: string;
-    };
-    'mcp-auth.dto.mcpTool': {
-      name: string;
-      controller: string;
-      action: string;
-      controllerSummary: string;
-      summary: string;
-      description: string;
-      readOnly: boolean;
-    };
-    'mcp-auth.dto.customScopeCreate_1ff20af69286149eb0b25291d9450172f7bd0054': {
-      /**
-       * Name
-       * @description Use 1–100 letters, digits, underscores or hyphens. Names are case-sensitive; test becomes mcp:custom:test.
-       */
-      name: string;
-      /** @description Description */
-      description: string;
-      /** @description Tools */
-      tools: components['schemas']['mcp-auth.dto.mcpToolIdentity'][];
-    };
-    'mcp-test.dto.categoryPublicSelectRes': {
-      list: components['schemas']['mcp-test.dto.categoryPublic'][];
-      total: string;
-      pageCount: number;
-      pageSize: number;
-      pageNo: number;
-    };
-    'mcp-test.dto.categoryPublic': {
-      id: number | string;
-      name: string;
-      description?: string | undefined;
-    };
-    'mcp-test.dto.productPublicSelectRes': {
-      list: components['schemas']['mcp-test.dto.productPublic'][];
-      total: string;
-      pageCount: number;
-      pageSize: number;
-      pageNo: number;
-    };
-    'mcp-test.dto.productPublic': {
-      id: number | string;
-      title: string;
-      description?: string | undefined;
-      categoryId: number | string;
-      categoryName: string;
-      priceCents: number;
-      available: number;
-      skuAvailables: components['schemas']['mcp-test.dto.productPublicSku'][];
-    };
-    'mcp-test.dto.productPublicSku': {
-      id: number | string;
-      code: string;
-      priceCents: number;
-      available: number;
-    };
-    'mcp-test.dto.productPublicDetail_2d063d28bc7243bed02ebd8bddf1212a93c6305b':
-      | {
-          id: number | string;
-          title: string;
-          description?: string | undefined;
-          categoryId: number | string;
-          categoryName: string;
-          priceCents: number;
-          available: number;
-          skuAvailables: components['schemas']['mcp-test.dto.productPublicSku'][];
-          descriptionHtml?: string | undefined;
-        }
-      | undefined;
     'a-layoutprofile.dto.layoutProfile_2d063d28bc7243bed02ebd8bddf1212a93c6305b':
       | {
           /** @enum {number} */
@@ -5923,6 +5762,175 @@ export interface components {
       fullName3?: string | undefined;
       fullName4?: string | undefined;
     };
+    'mcp-auth.dto.authorizationSummary': {
+      clientName: string;
+      resource: string;
+      scope: string;
+      options: components['schemas']['mcp-auth.dto.mcpScopeOption'][];
+      expiresAt: number;
+    };
+    'mcp-auth.dto.mcpScopeOption': {
+      scope: string;
+      name: string;
+      description: string;
+      tools: components['schemas']['mcp-auth.dto.mcpScopeTool'][];
+      allowed: boolean;
+      /** @enum {string|null} */
+      reason?:
+        | 'outside_requested_scope'
+        | 'outside_client_scope'
+        | 'tools_unavailable'
+        | null
+        | undefined;
+    };
+    'mcp-auth.dto.mcpScopeTool': {
+      name: string;
+      controller: string;
+      action: string;
+      controllerSummary: string;
+      summary: string;
+      description: string;
+      readOnly: boolean;
+      available: boolean;
+    };
+    'mcp-auth.dto.authorizationRedirect': {
+      redirectUrl: string;
+    };
+    'mcp-auth.dto.authorizationDecision': {
+      request: string;
+      allow: boolean;
+      scope?: ('mcp:all' | 'mcp:read') | string | undefined;
+    };
+    'mcp-auth.dto.authorizationGrantMineRes': {
+      list: components['schemas']['mcp-auth.dto.authorizationGrant'][];
+      total: string;
+      pageCount: number;
+      pageSize: number;
+      pageNo: number;
+    };
+    'mcp-auth.dto.authorizationGrant': {
+      /**
+       * Format: date-time
+       * @description Created At
+       */
+      createdAt: Date;
+      /** @description ID */
+      id: number | string;
+      resource: string;
+      scope: string;
+      /** @default  */
+      requestedScope?: string;
+      /** @enum {string} */
+      state: 'pending' | 'codeReady' | 'tokenActive' | 'denied' | 'revoked';
+      expiresAt: number;
+      tokenExpiresAt: number;
+      /** @default false */
+      refreshEnabled?: boolean;
+      /** @default 0 */
+      refreshExpiresAt?: number;
+      clientId: string;
+      clientName: string;
+    };
+    'mcp-auth.dto.customScopeMineRes': {
+      list: components['schemas']['mcp-auth.dto.customScopeView'][];
+    };
+    'mcp-auth.dto.customScopeView': {
+      /**
+       * Format: date-time
+       * @description Created At
+       */
+      createdAt: Date;
+      /**
+       * Format: date-time
+       * @description Updated At
+       */
+      updatedAt: Date;
+      /** @description ID */
+      id: number | string;
+      scope: string;
+      /**
+       * Name
+       * @description Use 1–100 letters, digits, underscores or hyphens. Names are case-sensitive; test becomes mcp:custom:test.
+       */
+      name: string;
+      /** @description Description */
+      description: string;
+      /** @description Tools */
+      tools: components['schemas']['mcp-auth.dto.mcpToolIdentity'][];
+    };
+    'mcp-auth.dto.mcpToolIdentity': {
+      name: string;
+      controller: string;
+      action: string;
+    };
+    'mcp-auth.dto.mcpTool': {
+      name: string;
+      controller: string;
+      action: string;
+      controllerSummary: string;
+      summary: string;
+      description: string;
+      readOnly: boolean;
+    };
+    'mcp-auth.dto.customScopeCreate_1ff20af69286149eb0b25291d9450172f7bd0054': {
+      /**
+       * Name
+       * @description Use 1–100 letters, digits, underscores or hyphens. Names are case-sensitive; test becomes mcp:custom:test.
+       */
+      name: string;
+      /** @description Description */
+      description: string;
+      /** @description Tools */
+      tools: components['schemas']['mcp-auth.dto.mcpToolIdentity'][];
+    };
+    'mcp-test.dto.categoryPublicSelectRes': {
+      list: components['schemas']['mcp-test.dto.categoryPublic'][];
+      total: string;
+      pageCount: number;
+      pageSize: number;
+      pageNo: number;
+    };
+    'mcp-test.dto.categoryPublic': {
+      id: number | string;
+      name: string;
+      description?: string | undefined;
+    };
+    'mcp-test.dto.productPublicSelectRes': {
+      list: components['schemas']['mcp-test.dto.productPublic'][];
+      total: string;
+      pageCount: number;
+      pageSize: number;
+      pageNo: number;
+    };
+    'mcp-test.dto.productPublic': {
+      id: number | string;
+      title: string;
+      description?: string | undefined;
+      categoryId: number | string;
+      categoryName: string;
+      priceCents: number;
+      available: number;
+      skuAvailables: components['schemas']['mcp-test.dto.productPublicSku'][];
+    };
+    'mcp-test.dto.productPublicSku': {
+      id: number | string;
+      code: string;
+      priceCents: number;
+      available: number;
+    };
+    'mcp-test.dto.productPublicDetail_2d063d28bc7243bed02ebd8bddf1212a93c6305b':
+      | {
+          id: number | string;
+          title: string;
+          description?: string | undefined;
+          categoryId: number | string;
+          categoryName: string;
+          priceCents: number;
+          available: number;
+          skuAvailables: components['schemas']['mcp-test.dto.productPublicSku'][];
+          descriptionHtml?: string | undefined;
+        }
+      | undefined;
   };
   responses: never;
   parameters: never;
@@ -9012,480 +9020,6 @@ export interface operations {
     };
     authToken: true;
   };
-  Authorization_summary: {
-    parameters: {
-      query: {
-        request: string;
-      };
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          'application/json': {
-            code: string;
-            message: string;
-            data: components['schemas']['mcp-auth.dto.authorizationSummary'];
-          };
-        };
-      };
-    };
-    authToken: true;
-  };
-  Authorization_decision: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    requestBody: {
-      content: {
-        'application/json': components['schemas']['mcp-auth.dto.authorizationDecision'];
-      };
-    };
-    responses: {
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          'application/json': {
-            code: string;
-            message: string;
-            data: components['schemas']['mcp-auth.dto.authorizationRedirect'];
-          };
-        };
-      };
-    };
-    authToken: true;
-  };
-  McpAuthAuthorizationGrant_mine: {
-    parameters: {
-      query?: {
-        pageNo?: number;
-        pageSize?: number;
-      };
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          'application/json': {
-            code: string;
-            message: string;
-            data: components['schemas']['mcp-auth.dto.authorizationGrantMineRes'];
-          };
-        };
-      };
-    };
-    authToken: true;
-  };
-  McpAuthAuthorizationGrant_revokeMine: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path: {
-        id: number | string;
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          'application/json': {
-            code: string;
-            message: string;
-            data?: unknown;
-          };
-        };
-      };
-    };
-    authToken: true;
-  };
-  McpAuthAuthorizationGrant_deleteMine: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path: {
-        id: number | string;
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          'application/json': {
-            code: string;
-            message: string;
-            data?: unknown;
-          };
-        };
-      };
-    };
-    authToken: true;
-  };
-  McpAuthCustomScope_mine: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          'application/json': {
-            code: string;
-            message: string;
-            data: components['schemas']['mcp-auth.dto.customScopeMineRes'];
-          };
-        };
-      };
-    };
-    authToken: true;
-  };
-  McpAuthCustomScope_catalog: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          'application/json': {
-            code: string;
-            message: string;
-            data: components['schemas']['mcp-auth.dto.mcpTool'][];
-          };
-        };
-      };
-    };
-    authToken: true;
-  };
-  McpAuthCustomScope_createMine: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    requestBody: {
-      content: {
-        'application/json': components['schemas']['mcp-auth.dto.customScopeCreate_1ff20af69286149eb0b25291d9450172f7bd0054'];
-      };
-    };
-    responses: {
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          'application/json': {
-            code: string;
-            message: string;
-            data: components['schemas']['mcp-auth.dto.customScopeView'];
-          };
-        };
-      };
-    };
-    authToken: true;
-  };
-  McpAuthCustomScope_updateMine: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path: {
-        id: number | string;
-      };
-      cookie?: never;
-    };
-    requestBody: {
-      content: {
-        'application/json': components['schemas']['mcp-auth.dto.customScopeCreate_1ff20af69286149eb0b25291d9450172f7bd0054'];
-      };
-    };
-    responses: {
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          'application/json': {
-            code: string;
-            message: string;
-            data: components['schemas']['mcp-auth.dto.customScopeView'];
-          };
-        };
-      };
-    };
-    authToken: true;
-  };
-  McpAuthCustomScope_deleteMine: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path: {
-        id: number | string;
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          'application/json': {
-            code: string;
-            message: string;
-            data?: unknown;
-          };
-        };
-      };
-    };
-    authToken: true;
-  };
-  McpTestCatalog_categories: {
-    parameters: {
-      query?: {
-        pageNo?: number;
-        pageSize?: number;
-      };
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          'application/json': {
-            code: string;
-            message: string;
-            data: components['schemas']['mcp-test.dto.categoryPublicSelectRes'];
-          };
-        };
-      };
-    };
-  };
-  McpTestCatalog_products: {
-    parameters: {
-      query?: {
-        pageNo?: number;
-        pageSize?: number;
-        categoryId?: number | string | undefined;
-        title?: string | undefined;
-      };
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          'application/json': {
-            code: string;
-            message: string;
-            data: components['schemas']['mcp-test.dto.productPublicSelectRes'];
-          };
-        };
-      };
-    };
-  };
-  McpTestCatalog_detail: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path: {
-        id: number | string;
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          'application/json': {
-            code: string;
-            message: string;
-            data?: components['schemas']['mcp-test.dto.productPublicDetail_2d063d28bc7243bed02ebd8bddf1212a93c6305b'];
-          };
-        };
-      };
-    };
-  };
-  McpTestToolFixture_status: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          'application/json': {
-            code: string;
-            message: string;
-            data: {
-              count: number;
-            };
-          };
-        };
-      };
-    };
-  };
-  McpTestToolFixture_effect: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path: {
-        label: string;
-      };
-      cookie?: never;
-    };
-    requestBody: {
-      content: {
-        'application/json': {
-          amount: number;
-          priority?: number | undefined;
-          note?: string | undefined;
-        };
-      };
-    };
-    responses: {
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          'application/json': {
-            code: string;
-            message: string;
-            data: {
-              count: number;
-              label: string;
-              priority?: number | undefined;
-              note?: string | undefined;
-            };
-          };
-        };
-      };
-    };
-  };
-  McpTestToolFixture_array: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          'application/json': {
-            code: string;
-            message: string;
-            data: string[];
-          };
-        };
-      };
-    };
-  };
-  McpTestToolFixture_unsupported: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          'text/plain': string;
-        };
-      };
-    };
-  };
-  McpTestToolFixture_closed: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          'application/json': {
-            code: string;
-            message: string;
-            data: {
-              count: number;
-            };
-          };
-        };
-      };
-    };
-  };
   Layoutprofile_load: {
     parameters: {
       query: {
@@ -11261,6 +10795,522 @@ export interface operations {
             code: string;
             message: string;
             data?: unknown;
+          };
+        };
+      };
+    };
+  };
+  Authorization_summary: {
+    parameters: {
+      query: {
+        request: string;
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data: components['schemas']['mcp-auth.dto.authorizationSummary'];
+          };
+        };
+      };
+    };
+    authToken: true;
+  };
+  Authorization_decision: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['mcp-auth.dto.authorizationDecision'];
+      };
+    };
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data: components['schemas']['mcp-auth.dto.authorizationRedirect'];
+          };
+        };
+      };
+    };
+    authToken: true;
+  };
+  McpAuthAuthorizationGrant_mine: {
+    parameters: {
+      query?: {
+        pageNo?: number;
+        pageSize?: number;
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data: components['schemas']['mcp-auth.dto.authorizationGrantMineRes'];
+          };
+        };
+      };
+    };
+    authToken: true;
+  };
+  McpAuthAuthorizationGrant_revokeMine: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: number | string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data?: unknown;
+          };
+        };
+      };
+    };
+    authToken: true;
+  };
+  McpAuthAuthorizationGrant_deleteMine: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: number | string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data?: unknown;
+          };
+        };
+      };
+    };
+    authToken: true;
+  };
+  McpAuthCustomScope_mine: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data: components['schemas']['mcp-auth.dto.customScopeMineRes'];
+          };
+        };
+      };
+    };
+    authToken: true;
+  };
+  McpAuthCustomScope_catalog: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data: components['schemas']['mcp-auth.dto.mcpTool'][];
+          };
+        };
+      };
+    };
+    authToken: true;
+  };
+  McpAuthCustomScope_createMine: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['mcp-auth.dto.customScopeCreate_1ff20af69286149eb0b25291d9450172f7bd0054'];
+      };
+    };
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data: components['schemas']['mcp-auth.dto.customScopeView'];
+          };
+        };
+      };
+    };
+    authToken: true;
+  };
+  McpAuthCustomScope_updateMine: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: number | string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['mcp-auth.dto.customScopeCreate_1ff20af69286149eb0b25291d9450172f7bd0054'];
+      };
+    };
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data: components['schemas']['mcp-auth.dto.customScopeView'];
+          };
+        };
+      };
+    };
+    authToken: true;
+  };
+  McpAuthCustomScope_deleteMine: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: number | string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data?: unknown;
+          };
+        };
+      };
+    };
+    authToken: true;
+  };
+  McpTestCatalog_categories: {
+    parameters: {
+      query?: {
+        pageNo?: number;
+        pageSize?: number;
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data: components['schemas']['mcp-test.dto.categoryPublicSelectRes'];
+          };
+        };
+      };
+    };
+  };
+  McpTestCatalog_products: {
+    parameters: {
+      query?: {
+        pageNo?: number;
+        pageSize?: number;
+        categoryId?: number | string | undefined;
+        title?: string | undefined;
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data: components['schemas']['mcp-test.dto.productPublicSelectRes'];
+          };
+        };
+      };
+    };
+  };
+  McpTestCatalog_detail: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: number | string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data?: components['schemas']['mcp-test.dto.productPublicDetail_2d063d28bc7243bed02ebd8bddf1212a93c6305b'];
+          };
+        };
+      };
+    };
+  };
+  McpTestCatalog_excluded: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data: components['schemas']['mcp-test.dto.categoryPublicSelectRes'];
+          };
+        };
+      };
+    };
+  };
+  McpTestToolFixture_status: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data: {
+              count: number;
+            };
+          };
+        };
+      };
+    };
+  };
+  McpTestToolFixture_effect: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        label: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': {
+          amount: number;
+          priority?: number | undefined;
+          note?: string | undefined;
+        };
+      };
+    };
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data: {
+              count: number;
+              label: string;
+              priority?: number | undefined;
+              note?: string | undefined;
+            };
+          };
+        };
+      };
+    };
+  };
+  McpTestToolFixture_array: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data: string[];
+          };
+        };
+      };
+    };
+  };
+  McpTestToolFixture_unsupported: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'text/plain': string;
+        };
+      };
+    };
+  };
+  McpTestToolFixture_excluded: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'text/plain': string;
+        };
+      };
+    };
+  };
+  McpTestToolFixture_closed: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data: {
+              count: number;
+            };
           };
         };
       };

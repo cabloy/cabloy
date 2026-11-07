@@ -34,22 +34,22 @@ export interface IControllerOptionsStudent extends IDecoratorControllerOptions {
 })
 @Resource()
 export class ControllerStudent extends BeanBase {
-  @Mcp.tool({ readOnly: false })
-  @Web.post('', {
-    summary: $locale('StudentCreate'),
+  @Mcp.tool({
     description: $locale('StudentCreateDescription'),
+    readOnly: false,
   })
+  @Web.post('', { summary: $locale('StudentCreate') })
   @Api.body(v.tableIdentity())
   @Passport.rbac()
   async create(@Arg.body() student: DtoStudentCreate): Promise<TableIdentity> {
     return (await this.scope.service.student.create(student)).id;
   }
 
-  @Mcp.tool({ readOnly: true })
-  @Web.get('', {
-    summary: $locale('StudentSelect'),
+  @Mcp.tool({
     description: $locale('StudentSelectDescription'),
+    readOnly: true,
   })
+  @Web.get('', { summary: $locale('StudentSelect') })
   @Api.body(DtoStudentSelectRes)
   @Core.serializer()
   @Passport.rbac()
@@ -59,11 +59,11 @@ export class ControllerStudent extends BeanBase {
     return await this.scope.service.student.select(params);
   }
 
-  @Mcp.tool({ readOnly: true })
-  @Web.get('group', {
-    summary: $locale('StudentGroup'),
+  @Mcp.tool({
     description: $locale('StudentGroupDescription'),
+    readOnly: true,
   })
+  @Web.get('group', { summary: $locale('StudentGroup') })
   @Api.body(v.array(DtoStudentGroupResItem))
   @Passport.rbac({ actionInherit: 'select' })
   async group(
@@ -73,11 +73,11 @@ export class ControllerStudent extends BeanBase {
     return await this.scope.service.student.group(params);
   }
 
-  @Mcp.tool({ readOnly: true })
-  @Web.get('aggregate', {
-    summary: $locale('StudentAggregate'),
+  @Mcp.tool({
     description: $locale('StudentAggregateDescription'),
+    readOnly: true,
   })
+  @Web.get('aggregate', { summary: $locale('StudentAggregate') })
   @Api.body(DtoStudentAggregateRes)
   @Passport.rbac({ actionInherit: 'select' })
   async aggregate(
@@ -87,11 +87,11 @@ export class ControllerStudent extends BeanBase {
     return await this.scope.service.student.aggregate(params);
   }
 
-  @Mcp.tool({ readOnly: true })
-  @Web.get(':id', {
-    summary: $locale('StudentView'),
+  @Mcp.tool({
     description: $locale('StudentViewDescription'),
+    readOnly: true,
   })
+  @Web.get(':id', { summary: $locale('StudentView') })
   @Api.body(v.optional(), v.object(DtoStudentView))
   @Core.serializer()
   @Passport.rbac()
@@ -101,11 +101,11 @@ export class ControllerStudent extends BeanBase {
     return await this.scope.service.student.view(id);
   }
 
-  @Mcp.tool({ readOnly: false })
-  @Web.patch(':id', {
-    summary: $locale('StudentUpdate'),
+  @Mcp.tool({
     description: $locale('StudentUpdateDescription'),
+    readOnly: false,
   })
+  @Web.patch(':id', { summary: $locale('StudentUpdate') })
   @Api.body(z.null())
   @Passport.rbac()
   async update(
@@ -116,14 +116,12 @@ export class ControllerStudent extends BeanBase {
   }
 
   @Mcp.tool({
+    description: $locale('StudentSummaryDescription'),
     output: {
       pick: ['id', 'name', 'level', 'levelTitle', 'descriptionLength', 'summaryText'],
     },
   })
-  @Web.get('summary/:id', {
-    summary: $locale('StudentSummary'),
-    description: $locale('StudentSummaryDescription'),
-  })
+  @Web.get('summary/:id', { summary: $locale('StudentSummary') })
   @Api.body(v.optional(), v.object(DtoStudentSummary))
   @Core.serializer()
   @Passport.rbac({ actionInherit: 'view' })
@@ -140,11 +138,11 @@ export class ControllerStudent extends BeanBase {
     await this.scope.service.student.deleteBulk(command.ids);
   }
 
-  @Mcp.tool({ readOnly: false })
-  @Web.delete(':id', {
-    summary: $locale('StudentDelete'),
+  @Mcp.tool({
     description: $locale('StudentDeleteDescription'),
+    readOnly: false,
   })
+  @Web.delete(':id', { summary: $locale('StudentDelete') })
   @Api.body(z.null())
   @Passport.rbac()
   async delete(@Arg.param('id', v.tableIdentity()) id: TableIdentity): Promise<void> {

@@ -491,7 +491,8 @@ describe('businessTools.test.ts', { concurrency: false, timeout: 60000 }, () => 
             actionName,
           );
           assert.ok(metadata, `${actionName} retains explicit MCP opt-in`);
-          assert.equal(metadata.description, undefined, 'shared descriptions belong to Web');
+          assert.ok(metadata.description, `${actionName} declares its MCP description`);
+          assert.equal(tool.description, app.meta.text(metadata.description), tool.name);
           const document = JSON.parse(
             JSON.stringify(
               await app.bean.openapi.generateJsonOfControllerAction(controller, actionName, 'V31'),
@@ -501,8 +502,12 @@ describe('businessTools.test.ts', { concurrency: false, timeout: 60000 }, () => 
           const operation = Object.values(document.paths ?? {})
             .map(path => (path as any)[method])
             .find(Boolean);
-          assert.ok(operation?.description, `${actionName} emits its HTTP OpenAPI description`);
-          assert.equal(tool.description, operation.description, tool.name);
+          assert.ok(operation?.summary, `${actionName} retains its HTTP OpenAPI summary`);
+          assert.equal(
+            operation.description,
+            undefined,
+            `${actionName} keeps its description MCP-only`,
+          );
         }
         assert.ok(select);
         assert.equal(select.annotations.readOnlyHint, true);
@@ -896,7 +901,7 @@ describe('businessTools.test.ts', { concurrency: false, timeout: 60000 }, () => 
     });
   });
 
-  it('localizes all eight Student descriptions consistently for HTTP OpenAPI and MCP', async () => {
+  it('localizes all eight Student MCP descriptions independently of HTTP OpenAPI summaries', async () => {
     if (!app.meta.modules['training-student']) return;
     const { default: enUS } =
       await import('../../../../../suite/a-training/modules/training-student/src/config/locale/en-us.ts');
@@ -904,14 +909,14 @@ describe('businessTools.test.ts', { concurrency: false, timeout: 60000 }, () => 
       await import('../../../../../suite/a-training/modules/training-student/src/config/locale/zh-cn.ts');
     const dictionaries = { 'en-us': enUS, 'zh-cn': zhCN };
     const descriptions = {
-      create: { key: 'StudentCreateDescription', method: 'post' },
-      select: { key: 'StudentSelectDescription', method: 'get' },
-      group: { key: 'StudentGroupDescription', method: 'get' },
-      aggregate: { key: 'StudentAggregateDescription', method: 'get' },
-      view: { key: 'StudentViewDescription', method: 'get' },
-      update: { key: 'StudentUpdateDescription', method: 'patch' },
-      summary: { key: 'StudentSummaryDescription', method: 'get' },
-      delete: { key: 'StudentDeleteDescription', method: 'delete' },
+      create: { key: 'StudentCreateDescription', summary: 'StudentCreate', method: 'post' },
+      select: { key: 'StudentSelectDescription', summary: 'StudentSelect', method: 'get' },
+      group: { key: 'StudentGroupDescription', summary: 'StudentGroup', method: 'get' },
+      aggregate: { key: 'StudentAggregateDescription', summary: 'StudentAggregate', method: 'get' },
+      view: { key: 'StudentViewDescription', summary: 'StudentView', method: 'get' },
+      update: { key: 'StudentUpdateDescription', summary: 'StudentUpdate', method: 'patch' },
+      summary: { key: 'StudentSummaryDescription', summary: 'StudentSummary', method: 'get' },
+      delete: { key: 'StudentDeleteDescription', summary: 'StudentDelete', method: 'delete' },
     } as const;
     await withStudentToolPermissions(async () => {
       const previousLocale = app.meta.locale.current;
@@ -931,7 +936,7 @@ describe('businessTools.test.ts', { concurrency: false, timeout: 60000 }, () => 
               studentToolNames.toSorted(),
             );
             const snapshot: string[] = [];
-            for (const [actionName, { key, method }] of Object.entries(descriptions)) {
+            for (const [actionName, { key, summary, method }] of Object.entries(descriptions)) {
               const name = `training-student_student_${actionName}`;
               const tool = listed.result.tools.find((tool: any) => tool.name === name);
               const document = JSON.parse(
@@ -947,7 +952,9 @@ describe('businessTools.test.ts', { concurrency: false, timeout: 60000 }, () => 
                 .map(path => (path as any)[method])
                 .find(Boolean);
               assert.equal(tool.description, dictionaries[locale][key], `${locale}: ${name}`);
-              assert.equal(operation?.description, tool.description, `${locale}: ${name}`);
+              assert.ok(operation, `${locale}: ${name} retains its HTTP operation`);
+              assert.equal(operation.summary, dictionaries[locale][summary], `${locale}: ${name}`);
+              assert.equal(operation.description, undefined, `${locale}: ${name}`);
               assert.notEqual(enUS[key], zhCN[key], `${key} has a Chinese translation`);
               snapshot.push(tool.description);
             }
