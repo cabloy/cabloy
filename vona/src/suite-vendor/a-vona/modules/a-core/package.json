@@ -57,8 +57,8 @@
   "devDependencies": {
     "@cabloy/cli": "workspace:^",
     "@swc-node/register": "^1.12.1",
-    "@swc/core": "^1.15.26",
-    "@swc/helpers": "^0.5.21",
+    "@swc/core": "^1.16.22",
+    "@swc/helpers": "^0.5.24",
     "@types/babel__core": "^7.20.5",
     "@types/babel__traverse": "^7.28.0",
     "@types/koa": "^3.0.2",
