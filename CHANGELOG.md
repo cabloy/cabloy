@@ -1,5 +1,17 @@
 # Changelog
 
+## 5.1.264
+
+### Improvements
+
+- Update dependency lockfiles, package metadata, and TypeScript configuration.
+
+## 5.1.263
+
+### Improvements
+
+- Update `.gitignore` to improve repository file management.
+
 ## 5.1.262
 
 ### Features
