@@ -4,7 +4,7 @@
 
 Opt an existing Vona Controller Action into MCP mapping with `@Mcp.tool()`. Reuse its request/response contract, validation, serialization and ordinary business authorization rather than writing a second business implementation.
 
-Start with the [MCP Integration Guide](/backend/mcp-guide) for runtime ownership and endpoint boundaries. Use [MCP Browser Authorization](/backend/mcp-browser-authorization) for client registration, login, consent, tokens and personal scopes. This page covers Controller opt-in, contract mapping, discovery and the Student examples.
+Start with the [MCP Integration Guide](/mcp/mcp-guide) for runtime ownership and endpoint boundaries. Use [MCP Browser Authorization](/mcp/mcp-browser-authorization) for client registration, login, consent, tokens and personal scopes. This page covers Controller opt-in, contract mapping, discovery and the Student examples.
 
 ## Opt in explicitly
 
@@ -93,7 +93,7 @@ Normal `/mcp` uses `createSharedBusinessToolServer`, which delegates to the shar
 
 - `mcp:read` lists only tools classified read-only and rejects direct calls to other tools, even when their names are known.
 - `mcp:all` permits both classifications within the admitted catalog, subject to independent business authorization.
-- Normal shared ingress also supports personal `mcp:custom:<name>` scopes. The shared service resolves the authenticated user's exact consented tool bindings and supplies server-owned `toolAccess` and read-only restrictions to the mapper. A custom scope without resolved bindings is not valid for the two-argument example. Custom selection narrows both listing and calling within the original request and registered client ceiling; it never grants business permissions. See [Personal scopes](/backend/mcp-browser-authorization#personal-scopes-from-account-security).
+- Normal shared ingress also supports personal `mcp:custom:<name>` scopes. The shared service resolves the authenticated user's exact consented tool bindings and supplies server-owned `toolAccess` and read-only restrictions to the mapper. A custom scope without resolved bindings is not valid for the two-argument example. Custom selection narrows both listing and calling within the original request and registered client ceiling; it never grants business permissions. See [Personal scopes](/mcp/mcp-browser-authorization#personal-scopes-from-account-security).
 - Every call uses ordinary `executor.performAction` with **`innerAccess: false`**, retaining Controller guards, RBAC, serialization, current user and instance/data scope. Neither the decorator nor an OAuth scope grants cross-instance access.
 
 ### Permission-aware discovery

@@ -4,7 +4,7 @@
 
 This guide explains how an MCP client connects to Cabloy Basic's authenticated shared `/mcp` endpoint. The authorization server uses RFC 7591 Dynamic Client Registration (DCR), existing Cabloy login, explicit consent and authorization code exchange with PKCE. Static configuration clients are not supported.
 
-Read [MCP Integration Guide](/backend/mcp-guide) for endpoint ownership and admission, and [MCP Controller Tools](/backend/mcp-controller-tools) for Action mapping and business examples. The [independent local test launcher](/backend/mcp-commerce-local) is anonymous and rejects credentials; do not send OAuth tokens to it.
+Read [MCP Integration Guide](/mcp/mcp-guide) for endpoint ownership and admission, and [MCP Controller Tools](/mcp/mcp-controller-tools) for Action mapping and business examples. The [independent local test launcher](/mcp/mcp-commerce-local) is anonymous and rejects credentials; do not send OAuth tokens to it.
 
 ## Connected journey
 
@@ -228,7 +228,7 @@ For a read-only check:
 3. With view authority, call `training-student_student_view` and `training-student_student_summary` using `{ "id": "<returned student ID>" }`, or an already known authorized ID when select is unavailable. View retains full serialized detail; summary contains exactly `id`, `name`, `level`, `levelTitle`, `descriptionLength`, `summaryText`, without mobile/full notes. Structured content and JSON text must agree.
 4. With a separately authorized read scope, confirm writes are absent. Do not invoke mutations merely to test discovery. Missing, excluded or unsupported Actions must not become available by knowing their names.
 
-See [MCP Controller Tools](/backend/mcp-controller-tools) for complete contracts, output limits, safe errors and mutation behavior. Images are existing URL presentation, not MCP image blocks or guaranteed client rendering.
+See [MCP Controller Tools](/mcp/mcp-controller-tools) for complete contracts, output limits, safe errors and mutation behavior. Images are existing URL presentation, not MCP image blocks or guaranteed client rendering.
 
 ## Shared Passport implementation boundary
 
@@ -255,6 +255,6 @@ The selected `passportAuthTokenClient` survives the MCP Passport handoff and cle
 
 The profile initially targets SQLite on Vona's primary datasource and ordinary wall-clock deadlines under a maintained host clock. It does not establish cross-dialect, multi-worker, cross-host, nonrollback-clock or synchronous browser-logout/token-revocation guarantees. Expiry/current revocation must not depend on background cleanup.
 
-Per-worker transport bounds, actual-work settlement and shutdown drain remain active. Dedicated protected audit, audit-outage availability gating and deployment-wide fine-grained quotas are not supplied for the Student examples. Ordinary logs are not protected audit; production-mode support is not qualified deployment, compliance or release evidence. [Mutation limits](/backend/mcp-guide#mutation-and-operational-limits) apply independently of browser approval.
+Per-worker transport bounds, actual-work settlement and shutdown drain remain active. Dedicated protected audit, audit-outage availability gating and deployment-wide fine-grained quotas are not supplied for the Student examples. Ordinary logs are not protected audit; production-mode support is not qualified deployment, compliance or release evidence. [Mutation limits](/mcp/mcp-guide#mutation-and-operational-limits) apply independently of browser approval.
 
 Never retain tokens, codes, secrets, Authorization/cookie values or complete credential-bearing callback URLs in logs, screenshots, traces or shared evidence. Do not reset development databases, alter shared ports or expose the standalone fixture to troubleshoot authorization. See [Repo Scripts](/reference/repo-scripts) for managed verification and resource boundaries.

@@ -10,7 +10,7 @@ Use the Cabloy Basic managed local launcher to discover and call three read-only
 
 The dev/test-only `mcp-test` module in the `cabloy-mcp` suite owns the immutable synthetic catalog, DTOs, service and public Controller Actions. The tools call those real guarded Actions and return DTO-projected data. The `commerce_*` names are compatibility identifiers: no Commerce module, route, seed or database catalog is used.
 
-Start with the [MCP Integration Guide](/backend/mcp-guide) for runtime ownership and admission. Use [MCP Browser Authorization](/backend/mcp-browser-authorization) for the normal authenticated endpoint. Sections 1–8 below apply only to the **managed test-only standalone launcher**, not to shared `/mcp`.
+Start with the [MCP Integration Guide](/mcp/mcp-guide) for runtime ownership and admission. Use [MCP Browser Authorization](/mcp/mcp-browser-authorization) for the normal authenticated endpoint. Sections 1–8 below apply only to the **managed test-only standalone launcher**, not to shared `/mcp`.
 
 ## Standalone and shared endpoints are different
 
@@ -26,7 +26,7 @@ Shared `/mcp` supports recognized **dev/test/prod** modes under the same authent
 
 Shared construction requires an enabled Controller, a registered Action route, explicit Controller- or Action-level `@Mcp.tool()` opt-in, no Action-level `@Mcp.exclude()`, and a supported request/response contract. It is not a Student lookup/summary whitelist. Module capability and Controller mode filtering occur during startup. OAuth scope and current Action guards independently constrain discovery and calls; calls retain `innerAccess: false`.
 
-The current `mcp-test` catalog Controller is opted in, so its eligible Actions can also appear in shared discovery when that module is active. This does **not** make shared `/mcp` anonymous or give it the standalone launcher's fixed three-tool catalog. Do not use the standalone list as the expected shared list. See [MCP Controller Tools](/backend/mcp-controller-tools) for admission and mapping details.
+The current `mcp-test` catalog Controller is opted in, so its eligible Actions can also appear in shared discovery when that module is active. This does **not** make shared `/mcp` anonymous or give it the standalone launcher's fixed three-tool catalog. Do not use the standalone list as the expected shared list. See [MCP Controller Tools](/mcp/mcp-controller-tools) for admission and mapping details.
 
 Shared browser authorization uses `/mcp/auth`, the existing SSR Site's consent page, `/mcp/token` and MCP-specific credentials. Issuer and resource are both `${origin}/mcp`, derived from trusted root backend serve configuration or the documented nonproduction fallback. Validated Host and existing automatic routing establish the instance; a URL selector is not OAuth instance authority. Ordinary Cabloy login tokens are not MCP credentials. Do not adapt this anonymous procedure by adding credentials, changing ports or resetting a database.
 
@@ -69,7 +69,7 @@ The modern curl requests in sections 3–7 include:
 - For `tools/call`, `Mcp-Name` mirroring `params.name`.
 - `Accept: application/json, text/event-stream`. Both media types are required even though this entry returns JSON rather than an SSE stream.
 
-Do not send credentials, cookies or forwarded headers to the standalone launcher. It also rejects instance selectors and requires a supplied `Origin` to exactly match the endpoint URL's origin, without `/mcp`. `Origin` is omitted here. Shared authentication follows [MCP Browser Authorization](/backend/mcp-browser-authorization), not this anonymous procedure.
+Do not send credentials, cookies or forwarded headers to the standalone launcher. It also rejects instance selectors and requires a supplied `Origin` to exactly match the endpoint URL's origin, without `/mcp`. `Origin` is omitted here. Shared authentication follows [MCP Browser Authorization](/mcp/mcp-browser-authorization), not this anonymous procedure.
 
 ## 3. Discover the server
 
@@ -347,7 +347,7 @@ For follow-up, share only the client version, exit/budget outcome, three tool na
 ## Boundaries, troubleshooting and shutdown
 
 - **Standalone local authority only:** the listener binds only `127.0.0.1`, with the default application listener disabled. It uses the isolated run's fixed default instance and anonymous access only for these three already-public catalog reads, with `innerAccess: false`. Clients cannot choose an instance or supply an identity. Shared OAuth uses the separate trusted authority and automatic instance-routing boundary.
-- **Not production authorization:** this anonymous procedure does not implement or validate production MCP authorization, protected tools or deployment. Shared browser authorization has its own [profile and operational limits](/backend/mcp-browser-authorization). Keep the standalone launcher direct loopback; do not expose it through a tunnel or reverse proxy.
+- **Not production authorization:** this anonymous procedure does not implement or validate production MCP authorization, protected tools or deployment. Shared browser authorization has its own [profile and operational limits](/mcp/mcp-browser-authorization). Keep the standalone launcher direct loopback; do not expose it through a tunnel or reverse proxy.
 - **Two native local protocol paths:** modern `2026-07-28` uses the explicit curl procedure above. Legacy clients use native `initialize` → id-less `notifications/initialized` → tools requests, with JSON responses and an empty 202 acknowledgement. The installed SDK negotiates legacy versions `2025-11-25`, `2025-06-18`, `2025-03-26`, `2024-11-05` and `2024-10-07`. Each message gets a fresh server/context; initialization retains no client identity, capabilities or session authority for later messages. There are no sessions, resumption, subscriptions or other notifications; GET/DELETE return 405. HTTP checks do not prove compatibility with an interactive inspector or AI client.
 - **Client diagnostics:** `Parse error` does not necessarily mean malformed JSON; SDK validation can fail after valid JSON was decoded. A client's “not authenticated” label does not establish a login requirement for this anonymous endpoint. Do not remove capabilities, relax validation or change authentication to hide a protocol failure.
 - **Rejected requests:** check the exact endpoint URL and both Accept media types. Modern requests require complete `_meta` and matching protocol/method/name headers; malformed modern claims are rejected rather than reinterpreted as legacy. Legacy clients must not send fabricated modern metadata/headers; a supplied legacy version header must be supported. Standalone ingress rejects Authorization/cookie/forwarding headers before business dispatch and requires a loopback peer, exact Host/Origin and no instance headers/selectors. Do not transfer these anonymous credential rules to protected shared `/mcp`.

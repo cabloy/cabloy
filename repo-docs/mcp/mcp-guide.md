@@ -8,9 +8,9 @@ The reusable [`@Mcp.tool()` metadata](/backend/openapi-guide#mcp-tool-metadata) 
 
 ## Choose a guide
 
-- [MCP Controller Tools](/backend/mcp-controller-tools): opt Actions in, map arguments and results, inspect diagnostics, and follow the Student read/write examples.
-- [MCP Browser Authorization](/backend/mcp-browser-authorization): connect a client through registration, existing login, explicit consent, PKCE, MCP tokens and personal scopes.
-- [Local MCP Test Catalog](/backend/mcp-commerce-local): try an independent, anonymous loopback endpoint with three synthetic read-only tools. It is not the normal authenticated endpoint.
+- [MCP Controller Tools](/mcp/mcp-controller-tools): opt Actions in, map arguments and results, inspect diagnostics, and follow the Student read/write examples.
+- [MCP Browser Authorization](/mcp/mcp-browser-authorization): connect a client through registration, existing login, explicit consent, PKCE, MCP tokens and personal scopes.
+- [Local MCP Test Catalog](/mcp/mcp-commerce-local): try an independent, anonymous loopback endpoint with three synthetic read-only tools. It is not the normal authenticated endpoint.
 
 ## Runtime ownership
 
@@ -66,7 +66,7 @@ Object responses become structured content directly. Scalar and array responses 
 
 An undefined result or a missing object resource represented by null produces safe `Resource not found`; authorization, Action and output-validation failures produce safe `Action failed`. Invalid arguments are protocol errors.
 
-`output.pick` applies a top-level field allowlist to both the runtime result and advertised schema without changing the HTTP DTO. Projection minimizes fields; it is not anonymization or authorization. See [MCP Controller Tools](/backend/mcp-controller-tools#options-and-defaults) for option precedence.
+`output.pick` applies a top-level field allowlist to both the runtime result and advertised schema without changing the HTTP DTO. Projection minimizes fields; it is not anonymization or authorization. See [MCP Controller Tools](/mcp/mcp-controller-tools#options-and-defaults) for option precedence.
 
 ## Student read examples
 
@@ -82,7 +82,7 @@ When the optional training suite is active, its Student Controller contributes e
 
 The abbreviated read names above share the `training-student_student` prefix. A personal custom scope may narrow any eligible selection further. None of these permissions implies another.
 
-Use select to find an authorized row, then use its returned ID for view or summary if independently authorized. Select retains complete serialized rows and pagination; view retains full serialized detail; summary projects exactly six fields. Create returns an identity, while update and delete return null completion rather than a read-back resource. Follow the [complete examples](/backend/mcp-controller-tools#example-student-create) before calling mutations.
+Use select to find an authorized row, then use its returned ID for view or summary if independently authorized. Select retains complete serialized rows and pagination; view retains full serialized detail; summary projects exactly six fields. Create returns an identity, while update and delete return null completion rather than a read-back resource. Follow the [complete examples](/mcp/mcp-controller-tools#example-student-create) before calling mutations.
 
 These examples are not a catalog ceiling. Without training, Student tools disappear; other eligible Controller tools may remain. No fixture fallback is enabled.
 

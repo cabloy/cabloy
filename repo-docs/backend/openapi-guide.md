@@ -73,7 +73,7 @@ MCP metadata is independent of ordinary OpenAPI publication. Publishing an HTTP 
 
 Keep the layers separate: OpenAPI utilities own the reusable metadata surface; an MCP integration owns tool discovery, argument/result adaptation, transport, authentication, and guarded dispatch.
 
-For Cabloy Basic's runtime integration, see [MCP Integration Guide](/backend/mcp-guide), [MCP Controller Tools](/backend/mcp-controller-tools), and [MCP Browser Authorization](/backend/mcp-browser-authorization).
+For Cabloy Basic's runtime integration, see [MCP Integration Guide](/mcp/mcp-guide), [MCP Controller Tools](/mcp/mcp-controller-tools), and [MCP Browser Authorization](/mcp/mcp-browser-authorization).
 
 The metadata declarations are defined in:
 
