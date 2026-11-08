@@ -22,7 +22,7 @@ After a contract-loop change, verify the branch that actually applies.
 - generated SDK or schema outputs are updated
 - thin model facades and downstream consumers still align with the regenerated contract
 - `npm run tsc`
-- relevant builds: in Basic AI workflows, default to `npm run build:zova:isolated -- <affected-flavor> [...]`, then `npm run build:vona` when needed; ordinary user/CI wrappers remain non-isolated. Resolve Start commands, flavor selection, output paths and coordinator mapping from its active scripts. Prepare inputs explicitly with `npm run deps:zova` when needed, then keep source, dependencies and metadata stable throughout compilation
+- relevant builds: in both Basic and Start, use the affected ordinary `build:zova*` wrapper or `npm run build:zova:isolated -- <affected-flavor> [...]`, then `npm run build:vona` when needed; all application-build entries use the shared isolated coordinator without automatic `prerun`, installation or shared metadata generation. Resolve concrete wrappers, flavor selections, default aggregate membership and output paths from the active edition's scripts. Prepare inputs explicitly with `npm run deps:zova` when needed, then keep source, dependencies and metadata stable throughout compilation
 
 ### Dual-audience resource verification
 

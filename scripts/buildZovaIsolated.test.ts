@@ -786,53 +786,94 @@ test(
   },
 );
 
-test('ordinary root builds retain workspace mappings and isolation is explicitly selected', () => {
-  const scripts = JSON.parse(readFileSync(path.join(root, 'package.json'), 'utf8')).scripts;
-  assert.equal(scripts['build:zova:all'], 'npm run build:zova && npm run build:zova:commerce');
-  assert.equal(scripts['build:zova'], 'pnpm --dir zova run build:ssr:cabloyBasicBatch');
-  assert.equal(scripts['build:zova:commerce'], 'pnpm --dir zova run build:ssr:cabloyCommerceBatch');
-  const mappings = {
-    'build:zova:admin': 'cabloyBasicAdmin',
-    'build:zova:web': 'cabloyBasicWeb',
-    'build:zova:commerce:web': 'cabloyCommerce',
-    'build:zova:commerce:admin': 'cabloyCommerceAdmin',
-  };
-  const workspaceScripts = JSON.parse(
+test('root and workspace application builds use isolation without preparation or duplicate pairs', () => {
+  const scripts: Record<string, string> = JSON.parse(
+    readFileSync(path.join(root, 'package.json'), 'utf8'),
+  ).scripts;
+  const workspaceScripts: Record<string, string> = JSON.parse(
     readFileSync(path.join(root, 'zova/package.original.json'), 'utf8'),
   ).scripts;
-  assert.equal(Object.hasOwn(workspaceScripts, 'build:isolated'), false);
+  const hasBasic = existsSync(path.join(root, '__CABLOY_BASIC__'));
+  const hasStart = existsSync(path.join(root, '__CABLOY_START__'));
+  assert.notEqual(hasBasic, hasStart, 'Exactly one Cabloy edition marker is required');
+  const prefix = hasBasic ? 'cabloyBasic' : 'cabloyStart';
+  const flavors = [`${prefix}Admin`, `${prefix}Web`];
+  const runner = 'node scripts/buildZovaIsolated.ts';
+  const workspaceRunner = 'npm run build:isolated --';
+
+  function pairedFlavors(command: string, entrypoint: string, name: string) {
+    assert.ok(command?.startsWith(`${entrypoint} `), name);
+    const request = parseBuildRequest(command.slice(entrypoint.length).trim().split(/\s+/));
+    assert.equal(request.operation, 'pair', name);
+    assert.equal(command, `${entrypoint} ${request.flavors.join(' ')}`, name);
+    for (const flavor of request.flavors) {
+      for (const mode of ['ssr', 'rest']) {
+        assert.equal(
+          workspaceScripts[`build:${mode}:${flavor}`],
+          `${workspaceRunner} --operation ${mode} ${flavor}`,
+          `${name}: ${mode} ${flavor}`,
+        );
+      }
+    }
+    return request.flavors;
+  }
+
+  assert.equal(scripts['build:zova'], `${runner} ${flavors.join(' ')}`);
+  assert.equal(scripts['build:zova:isolated'], runner);
+  assert.equal(workspaceScripts['build:isolated'], 'node ../scripts/buildZovaIsolated.ts');
   assert.equal(workspaceScripts.build, 'npm run build:ssr:admin');
+  assert.equal(workspaceScripts['build:spa'], `${workspaceRunner} --operation spa admin`);
   assert.equal(
-    workspaceScripts['build:spa'],
-    'npm run prerun && quasar build --mode spa --flavor admin',
+    workspaceScripts[`build:ssr:${prefix}Batch`],
+    `${workspaceRunner} ${flavors.join(' ')}`,
   );
-  for (const [name, flavor] of Object.entries(mappings)) {
+  for (const [name, flavor] of [
+    ['admin', flavors[0]],
+    ['web', flavors[1]],
+  ]) {
+    assert.equal(scripts[`build:zova:${name}`], `${runner} ${flavor}`);
+    assert.equal(scripts[`dev:zova:${name}`], `cd zova && npm run dev:ssr:${flavor}`);
     assert.equal(
-      scripts[name],
-      `pnpm --dir zova run build:ssr:${flavor} && pnpm --dir zova run build:rest:${flavor}`,
-      name,
-    );
-    assert.equal(
-      workspaceScripts[`build:ssr:${flavor}`],
-      `npm run prerun && quasar build --mode ssr --flavor ${flavor}`,
-    );
-    assert.equal(
-      workspaceScripts[`build:rest:${flavor}`],
-      `npm run prerun && npm run zova :bin:buildRest -- --flavor ${flavor}`,
+      workspaceScripts[`build:ssr:${name}`],
+      `${workspaceRunner} --operation ssr ${name}`,
     );
   }
-  assert.ok(workspaceScripts['build:ssr:cabloyBasicBatch']);
-  assert.ok(workspaceScripts['build:ssr:cabloyCommerceBatch']);
-  assert.equal(scripts['build:zova:isolated'], 'node scripts/buildZovaIsolated.ts');
+  for (const [name, command] of Object.entries(scripts)) {
+    if (name !== 'build:zova' && !name.startsWith('build:zova:')) continue;
+    if (name === 'build:zova:isolated') continue;
+    const selected = pairedFlavors(
+      name === 'build:zova:all' && command === 'npm run build:zova'
+        ? scripts['build:zova']!
+        : command,
+      runner,
+      name,
+    );
+    if (name === 'build:zova:all') {
+      for (const flavor of flavors) assert.ok(selected.includes(flavor), flavor);
+    }
+    const dev = scripts[name.replace(/^build:/, 'dev:')];
+    if (dev) {
+      assert.equal(selected.length, 1, name);
+      assert.equal(dev, `cd zova && npm run dev:ssr:${selected[0]}`, name);
+    }
+  }
+  assert.ok(scripts['build:zova:all']);
+  for (const [name, command] of Object.entries(workspaceScripts)) {
+    if (!name.startsWith('build')) continue;
+    assert.doesNotMatch(command, /prerun|quasar build|:bin:buildRest|\btsc\b/, name);
+    const mode = /^build:(ssr|rest|spa)(?::(.+))?$/.exec(name);
+    if (!mode) continue;
+    const flavor = mode[2] ?? 'admin';
+    if (flavor.endsWith('Batch')) {
+      pairedFlavors(command, workspaceRunner, name);
+    } else {
+      assert.equal(command, `${workspaceRunner} --operation ${mode[1]} ${flavor}`, name);
+    }
+  }
+  assert.match(workspaceScripts['dev:ssr:admin']!, /npm run prerun && quasar dev/);
+  assert.match(workspaceScripts['tsc:native']!, /npm run prerun/);
   assert.equal(scripts.build, 'npm run build:zova:all && npm run build:vona');
   assert.equal(scripts['build:docker'], 'npm run build:zova:all && npm run build:vona:docker');
-  assert.equal(scripts['dev:zova:admin'], 'cd zova && npm run dev:ssr:cabloyBasicAdmin');
-  assert.equal(scripts['dev:zova:web'], 'cd zova && npm run dev:ssr:cabloyBasicWeb');
-  assert.equal(scripts['dev:zova:commerce:web'], 'cd zova && npm run dev:ssr:cabloyCommerce');
-  assert.equal(
-    scripts['dev:zova:commerce:admin'],
-    'cd zova && npm run dev:ssr:cabloyCommerceAdmin',
-  );
 });
 
 test('build request operations are explicit, validated and compatible with bare flavor pairs', () => {

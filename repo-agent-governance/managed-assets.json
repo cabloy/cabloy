@@ -53,14 +53,14 @@
     {
       "adapter": "codex",
       "category": "skill",
-      "sha256": "0506a7545f89a71dd90f02189c39981b73408f3596f20701f40738f559ed051f",
+      "sha256": "467637568c07d3fe6ef3c419159d65ff308fa65e15a5152b0a0b220d7c19a2a9",
       "source": "skills/cabloy-contract-loop/references/verification-checklist.md",
       "target": ".agents/skills/cabloy-contract-loop/references/verification-checklist.md"
     },
     {
       "adapter": "codex",
       "category": "skill",
-      "sha256": "b25952bec7b5ff11fd0ff4a59cd941a223fbbe3006db42744e67cf9d406cf14f",
+      "sha256": "2089f3df9b2c3fafe6bdceb611e52e315a4bcfded8fdfd953d3282e8005ba48f",
       "source": "skills/cabloy-contract-loop/SKILL.md",
       "target": ".agents/skills/cabloy-contract-loop/SKILL.md"
     },
@@ -277,7 +277,7 @@
     {
       "adapter": "codex",
       "category": "skill",
-      "sha256": "303cbbd74a9f8150982be46df5d44888572e95353ec33a9a7f4eb134443bd762",
+      "sha256": "3cedb06a9a22ab4dc1ea1084ef9dbc9fdaea72a49e6f003012fbfcf1b3c25601",
       "source": "skills/cabloy-workflow/SKILL.md",
       "target": ".agents/skills/cabloy-workflow/SKILL.md"
     },
@@ -389,14 +389,14 @@
     {
       "adapter": "claude",
       "category": "skill",
-      "sha256": "0506a7545f89a71dd90f02189c39981b73408f3596f20701f40738f559ed051f",
+      "sha256": "467637568c07d3fe6ef3c419159d65ff308fa65e15a5152b0a0b220d7c19a2a9",
       "source": "skills/cabloy-contract-loop/references/verification-checklist.md",
       "target": ".claude/skills/cabloy-contract-loop/references/verification-checklist.md"
     },
     {
       "adapter": "claude",
       "category": "skill",
-      "sha256": "b25952bec7b5ff11fd0ff4a59cd941a223fbbe3006db42744e67cf9d406cf14f",
+      "sha256": "2089f3df9b2c3fafe6bdceb611e52e315a4bcfded8fdfd953d3282e8005ba48f",
       "source": "skills/cabloy-contract-loop/SKILL.md",
       "target": ".claude/skills/cabloy-contract-loop/SKILL.md"
     },
@@ -613,7 +613,7 @@
     {
       "adapter": "claude",
       "category": "skill",
-      "sha256": "303cbbd74a9f8150982be46df5d44888572e95353ec33a9a7f4eb134443bd762",
+      "sha256": "3cedb06a9a22ab4dc1ea1084ef9dbc9fdaea72a49e6f003012fbfcf1b3c25601",
       "source": "skills/cabloy-workflow/SKILL.md",
       "target": ".claude/skills/cabloy-workflow/SKILL.md"
     },
@@ -683,7 +683,7 @@
     {
       "adapter": "cursor",
       "category": "policy",
-      "sha256": "47aed749b4cac63f41e336b517400e86f7b3aa170d59e570bbf3c33d8968bedd",
+      "sha256": "efa20ed303514fe4057e435a349ee28d5b1ac201087d490cb438b87b68a0b99d",
       "source": "policies/repository.md",
       "target": ".cursor/rules/cabloy-governance.mdc"
     },
@@ -739,14 +739,14 @@
     {
       "adapter": "cursor",
       "category": "skill",
-      "sha256": "0506a7545f89a71dd90f02189c39981b73408f3596f20701f40738f559ed051f",
+      "sha256": "467637568c07d3fe6ef3c419159d65ff308fa65e15a5152b0a0b220d7c19a2a9",
       "source": "skills/cabloy-contract-loop/references/verification-checklist.md",
       "target": ".cursor/skills/cabloy-contract-loop/references/verification-checklist.md"
     },
     {
       "adapter": "cursor",
       "category": "skill",
-      "sha256": "b25952bec7b5ff11fd0ff4a59cd941a223fbbe3006db42744e67cf9d406cf14f",
+      "sha256": "2089f3df9b2c3fafe6bdceb611e52e315a4bcfded8fdfd953d3282e8005ba48f",
       "source": "skills/cabloy-contract-loop/SKILL.md",
       "target": ".cursor/skills/cabloy-contract-loop/SKILL.md"
     },
@@ -963,7 +963,7 @@
     {
       "adapter": "cursor",
       "category": "skill",
-      "sha256": "303cbbd74a9f8150982be46df5d44888572e95353ec33a9a7f4eb134443bd762",
+      "sha256": "3cedb06a9a22ab4dc1ea1084ef9dbc9fdaea72a49e6f003012fbfcf1b3c25601",
       "source": "skills/cabloy-workflow/SKILL.md",
       "target": ".cursor/skills/cabloy-workflow/SKILL.md"
     },
@@ -1005,14 +1005,14 @@
     {
       "adapter": "codex",
       "category": "policy",
-      "sha256": "e7f496ddf62f1f06474e88d86293ff82a849c6ce5702a1a2ba438deb90168328",
+      "sha256": "317d8a936958e34a0689f484d242c5afff1175ff488aebcacd0e825e2157f13d",
       "source": "policies/repository.md",
       "target": "AGENTS.md"
     },
     {
       "adapter": "claude",
       "category": "policy",
-      "sha256": "e7f496ddf62f1f06474e88d86293ff82a849c6ce5702a1a2ba438deb90168328",
+      "sha256": "317d8a936958e34a0689f484d242c5afff1175ff488aebcacd0e825e2157f13d",
       "source": "policies/repository.md",
       "target": "CLAUDE.md"
     }
