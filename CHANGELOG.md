@@ -1,5 +1,17 @@
 # Changelog
 
+## 5.1.266
+
+### Bug Fixes
+
+- Recover interrupted subproject releases.
+- Fix tests and coverage.
+
+### Improvements
+
+- Synchronize assigned Vona dependency versions.
+- Standardize release changelog formatting.
+
 ## 5.1.265
 
 ### Features
