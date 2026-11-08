@@ -16,7 +16,6 @@ import { fileURLToPath } from 'node:url';
 const TAG_PREFIX = 'cabloy@';
 const GITHUB_REPO = 'cabloy/cabloy';
 const COMMIT_CAP = 200;
-const COAUTHOR_TRAILER = 'Co-Authored-By: Claude <noreply@anthropic.com>';
 const ROOT_DIR = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const VONA_DIR = resolve(ROOT_DIR, 'vona');
 const VONA_PACKAGE_JSON_PATH = resolve(VONA_DIR, 'package.json');
@@ -428,7 +427,7 @@ function commitPendingChanges(dryRun?: boolean): void {
   // eslint-disable-next-line
   console.log('\n📁 Committing pending changes...');
   exec('git add .', dryRun);
-  exec(`git commit -m "chore: pre-release commit" -m "${COAUTHOR_TRAILER}"`, dryRun);
+  exec('git commit -m "chore: pre-release commit"', dryRun);
   exec('git push', dryRun);
 }
 
@@ -672,7 +671,7 @@ async function versionBump(
 
   const tag = `${TAG_PREFIX}${newVersion}`;
   exec('git add package.json .cabloy-version', dryRun);
-  exec(`git commit -m "chore: release v${newVersion}" -m "${COAUTHOR_TRAILER}"`, dryRun);
+  exec(`git commit -m "chore: release v${newVersion}"`, dryRun);
   exec(`git tag ${tag}`, dryRun);
   exec('git push', dryRun);
   exec(`git push origin ${tag}`, dryRun);
@@ -803,10 +802,7 @@ async function generateChangelog(version: string, dryRun?: boolean, noAi?: boole
   }
 
   exec('git add CHANGELOG.md', dryRun);
-  exec(
-    `git commit -m "chore: update CHANGELOG.md for v${version}" -m "${COAUTHOR_TRAILER}"`,
-    dryRun,
-  );
+  exec(`git commit -m "chore: update CHANGELOG.md for v${version}"`, dryRun);
   exec('git push', dryRun);
 }
 

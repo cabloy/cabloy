@@ -18,7 +18,6 @@ const root = fileURLToPath(new URL('../', import.meta.url));
 const coreVersion = readFileSync(join(root, 'vona/pnpm-workspace.yaml'), 'utf8').match(
   /^\s*zova-core@(\d+\.\d+\.\d+):\s+patches\/zova-core@\1\.patch\s*$/m,
 )![1];
-const coauthor = ' -m "Co-Authored-By: Claude <noreply@anthropic.com>"';
 const sourceChecks = [
   'node scripts/typecheck.ts native zova --noEmit --incremental false --project tsconfig.vue-tsc.json',
   'node scripts/typecheck.ts native vona --noEmit --incremental false --project tsconfig.json',
@@ -217,8 +216,8 @@ test('synchronizes and verifies the patch after one subproject release and befor
     const lerna = calls.indexOf('lerna publish patch --yes');
     const patching = calls.findIndex(command => command.startsWith('pnpm patch zova-core@5.1.97 '));
     const verify = calls.indexOf('pnpm exec tsc -p tsconfig.json --noEmit');
-    const commit = calls.indexOf(`git commit -m "chore: pre-release commit"${coauthor}`);
-    const version = calls.indexOf(`git commit -m "chore: release v5.1.253"${coauthor}`);
+    const commit = calls.indexOf('git commit -m "chore: pre-release commit"');
+    const version = calls.indexOf('git commit -m "chore: release v5.1.253"');
     const publish = calls.indexOf('npm publish');
     assert.ok(
       lerna >= 0 &&
@@ -255,7 +254,7 @@ test('resumes assigned subproject versions and verifies compensation before the 
     const patching = calls.findIndex(command => command.startsWith('pnpm patch zova-core@5.1.97 '));
     const verify = calls.indexOf('pnpm exec tsc -p tsconfig.json --noEmit');
     const fullCheck = calls.indexOf('npm run tsc');
-    const version = calls.indexOf(`git commit -m "chore: release v5.1.253"${coauthor}`);
+    const version = calls.indexOf('git commit -m "chore: release v5.1.253"');
     assert.ok(
       sourceChecks.every(command => calls.includes(command) && calls.indexOf(command) < lerna),
     );
@@ -277,10 +276,9 @@ test('resumes assigned subproject versions and verifies compensation before the 
     assert.equal(JSON.parse(readFileSync(join(f.dir, 'package.json'), 'utf8')).version, '5.1.253');
     assert.equal(readFileSync(join(f.dir, '.cabloy-version'), 'utf8'), '5.1.253\n');
     assert.equal(calls.filter(command => command === 'npm publish').length, 1);
-    assert.ok(
-      calls
-        .filter(command => command.startsWith('git commit'))
-        .every(command => command.endsWith(coauthor)),
+    assert.deepEqual(
+      calls.filter(command => command.startsWith('git commit')),
+      ['git commit -m "chore: release v5.1.253"'],
     );
   } finally {
     f.dispose();
