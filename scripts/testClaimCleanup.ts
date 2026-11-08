@@ -200,7 +200,7 @@ export async function reapExpiredTestClaims(
   if (!Number.isSafeInteger(ttl) || ttl <= 0)
     throw new Error('Test claim TTL must be a positive safe integer');
   const now = options.now ?? Date.now();
-  if (!Number.isFinite(now)) throw new Error('Invalid test claim cleanup clock');
+  if (!Number.isFinite(now)) throw new TypeError('Invalid test claim cleanup clock');
   const warn = options.warn ?? (() => {});
   const directory = path.join(projectPath, TEST_CLAIM_DIRECTORY);
   // Legacy roots cannot prove remote ownership and are never adopted/deleted.
