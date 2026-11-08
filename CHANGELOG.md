@@ -1,5 +1,15 @@
 # Changelog
 
+## 5.1.267
+
+### Features
+
+- Apply feature updates.
+
+### Improvements
+
+- Update business tools tests.
+
 ## 5.1.266
 
 ### Bug Fixes
