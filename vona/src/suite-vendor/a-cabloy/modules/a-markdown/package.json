@@ -31,15 +31,15 @@
     "postpack": "clean-package restore"
   },
   "dependencies": {
-    "@tiptap/core": "^3.30.0",
-    "@tiptap/extension-highlight": "^3.30.0",
-    "@tiptap/extension-image": "^3.30.0",
-    "@tiptap/extension-list": "^3.30.0",
-    "@tiptap/extension-table": "^3.30.0",
-    "@tiptap/extension-youtube": "^3.30.0",
-    "@tiptap/markdown": "^3.30.0",
-    "@tiptap/starter-kit": "^3.30.0",
-    "@tiptap/static-renderer": "^3.30.0",
+    "@tiptap/core": "^3.33.0",
+    "@tiptap/extension-highlight": "^3.33.0",
+    "@tiptap/extension-image": "^3.33.0",
+    "@tiptap/extension-list": "^3.33.0",
+    "@tiptap/extension-table": "^3.33.0",
+    "@tiptap/extension-youtube": "^3.33.0",
+    "@tiptap/markdown": "^3.33.0",
+    "@tiptap/starter-kit": "^3.33.0",
+    "@tiptap/static-renderer": "^3.33.0",
     "lowlight": "^3.3.0",
     "sanitize-html": "^2.17.6"
   },
@@ -61,6 +61,19 @@
     "dependencies": {
       "a-image": "5.0.0",
       "a-vona": "5.0.0"
+    },
+    "bundle": {
+      "externals": [
+        "@tiptap/core",
+        "@tiptap/extension-highlight",
+        "@tiptap/extension-image",
+        "@tiptap/extension-list",
+        "@tiptap/extension-table",
+        "@tiptap/extension-youtube",
+        "@tiptap/markdown",
+        "@tiptap/starter-kit",
+        "@tiptap/static-renderer"
+      ]
     }
   }
 }
