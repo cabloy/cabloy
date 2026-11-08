@@ -4,6 +4,7 @@ import type {
   OutgoingHttpHeaders,
   ServerResponse,
 } from 'node:http';
+import type { TestContext } from 'node:test';
 import type { VonaApplication } from 'vona';
 import type { IMcpToolCatalogItem, IMcpToolIdentity, TypeMcpScope } from 'vona-module-mcp-auth';
 import type { DtoStudentCreate, DtoStudentUpdate } from 'vona-module-training-student';
@@ -82,6 +83,37 @@ let fixtureAuthId: string | undefined;
 let fixtureAuthSimpleId: string | undefined;
 let browserToken: string;
 const ownedRequests: string[] = [];
+const requestOwner = randomUUID();
+
+function mockOwnedPerformAction(
+  t: TestContext,
+  implementation: (
+    this: BeanExecutor,
+    ...args: Parameters<BeanExecutor['performAction']>
+  ) => Promise<any>,
+) {
+  const executor = app.bean.executor;
+  const original = executor.performAction;
+  const owned = t.mock.fn(implementation);
+  // The executor is application-owned; count and intercept only this suite's HTTP requests.
+  // Do not filter by Passport identity: the callbacks must still detect incorrect admission.
+  const installed = t.mock.method(
+    executor,
+    'performAction',
+    async function (this: BeanExecutor, ...args: Parameters<BeanExecutor['performAction']>) {
+      if (app.ctx?.get('x-mcp-test-owner') !== requestOwner) {
+        return await original.apply(this, args);
+      }
+      return await owned.apply(this, args);
+    },
+  );
+  return {
+    mock: {
+      callCount: () => owned.mock.callCount(),
+      restore: () => installed.mock.restore(),
+    },
+  };
+}
 
 async function redeemTokens(
   scope: 'mcp:all' | 'mcp:read' = 'mcp:read',
@@ -171,6 +203,7 @@ function openHttp(
       'content-type': 'application/json',
       'accept': 'application/json, text/event-stream',
       'connection': 'close',
+      'x-mcp-test-owner': requestOwner,
       'content-length': Buffer.byteLength(body),
       ...options.headers,
     },
@@ -502,9 +535,8 @@ describe('businessHttp.test.ts', { concurrency: false, timeout: 60000 }, () => {
     const allToken = await redeemBearer('mcp:all');
     const executor = app.bean.executor;
     const original = executor.performAction;
-    const observed = t.mock.method(
-      executor,
-      'performAction',
+    const observed = mockOwnedPerformAction(
+      t,
       async function (this: BeanExecutor, ...args: Parameters<BeanExecutor['performAction']>) {
         assert.fail(`excluded tool reached performAction: ${String(args[1])}`);
         return await original.apply(this, args);
@@ -515,7 +547,26 @@ describe('businessHttp.test.ts', { concurrency: false, timeout: 60000 }, () => {
         [false, true].map(legacy => ({ token, legacy })),
       )) {
         const options = { legacy, headers: { authorization: `Bearer ${token}` } };
-        const listed = await send('tools/list', {}, options);
+        const [listed] = await Promise.all([
+          send('tools/list', {}, options),
+          app.meta.modules['mcp-test']
+            ? app.bean.executor.mockCtx(
+                async () => {
+                  const result = await app.bean.executor.performAction(
+                    'get',
+                    '/mcp/test/catalog/products',
+                    {
+                      query: { title: 'Wireless Headphones', pageNo: 1, pageSize: 1 },
+                      innerAccess: false,
+                    },
+                  );
+                  assert.equal(result.list.length, 1);
+                  assert.equal(result.list[0].title, 'Wireless Headphones');
+                },
+                { instanceName: '' },
+              )
+            : undefined,
+        ]);
         assert.equal(listed.status, 200);
         assert.equal(listed.body.error, undefined);
         for (const name of excludedNames) {
@@ -978,9 +1029,8 @@ describe('businessHttp.test.ts', { concurrency: false, timeout: 60000 }, () => {
     const select = t.mock.method(ServiceStudent.prototype, 'select');
     const executor = app.bean.executor;
     const original = executor.performAction;
-    const dispatched = t.mock.method(
-      executor,
-      'performAction',
+    const dispatched = mockOwnedPerformAction(
+      t,
       async function (this: BeanExecutor, ...args: Parameters<BeanExecutor['performAction']>) {
         assert.equal(String(this.bean.passport.currentUser?.id), fixtureUserId);
         assert.equal(String(this.bean.passport.currentAuth?.id), fixtureAuthId);
@@ -1200,9 +1250,8 @@ describe('businessHttp.test.ts', { concurrency: false, timeout: 60000 }, () => {
     const observedCalls: Array<{ method: unknown; path: unknown; options: any }> = [];
     const executor = app.bean.executor;
     const original = executor.performAction;
-    const observed = t.mock.method(
-      executor,
-      'performAction',
+    const observed = mockOwnedPerformAction(
+      t,
       async function (this: BeanExecutor, ...args: Parameters<BeanExecutor['performAction']>) {
         observedCalls.push({ method: args[0], path: args[1], options: args[2] });
         assert.equal(String(this.bean.passport.currentUser?.id), fixtureUserId);
@@ -1767,9 +1816,8 @@ describe('businessHttp.test.ts', { concurrency: false, timeout: 60000 }, () => {
       const args = { params: { id: target.id! }, body };
       const executor = app.bean.executor;
       const original = executor.performAction;
-      const observed = t.mock.method(
-        executor,
-        'performAction',
+      const observed = mockOwnedPerformAction(
+        t,
         async function (this: BeanExecutor, ...args: Parameters<BeanExecutor['performAction']>) {
           const call: (typeof observedCalls)[number] = {
             method: args[0],
@@ -2311,9 +2359,8 @@ describe('businessHttp.test.ts', { concurrency: false, timeout: 60000 }, () => {
       }> = [];
       const executor = app.bean.executor;
       const original = executor.performAction;
-      const observed = t.mock.method(
-        executor,
-        'performAction',
+      const observed = mockOwnedPerformAction(
+        t,
         async function (this: BeanExecutor, ...args: Parameters<BeanExecutor['performAction']>) {
           const call: (typeof observedCalls)[number] = {
             method: args[0],
@@ -2582,9 +2629,8 @@ describe('businessHttp.test.ts', { concurrency: false, timeout: 60000 }, () => {
     }> = [];
     const executor = app.bean.executor;
     const original = executor.performAction;
-    const observed = t.mock.method(
-      executor,
-      'performAction',
+    const observed = mockOwnedPerformAction(
+      t,
       async function (this: BeanExecutor, ...args: Parameters<BeanExecutor['performAction']>) {
         const call: (typeof observedCalls)[number] = {
           method: args[0],
@@ -3666,7 +3712,7 @@ describe('businessHttp.test.ts', { concurrency: false, timeout: 60000 }, () => {
       missing.headers['www-authenticate'],
       `Bearer resource_metadata="${origin}/.well-known/oauth-protected-resource/mcp"`,
     );
-    const held = t.mock.method(app.bean.executor, 'performAction', async () => {
+    const held = mockOwnedPerformAction(t, async () => {
       throw new Error('unauthorized business dispatch');
     });
     try {

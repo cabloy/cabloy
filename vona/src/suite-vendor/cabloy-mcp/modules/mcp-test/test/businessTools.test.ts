@@ -1,4 +1,6 @@
 import type { JSONRPCMessage, JSONRPCRequest, Server } from '@modelcontextprotocol/server';
+import type { TestContext } from 'node:test';
+import type { BeanExecutor } from 'vona-module-a-executor';
 import type { IMcpToolOptions } from 'vona-module-a-openapiutils';
 import type { IPassport } from 'vona-module-a-user';
 
@@ -77,6 +79,39 @@ const studentToolNames = [
 
 function studentTools(tools: any[]) {
   return tools.filter(tool => tool.name.startsWith('training-student_student_'));
+}
+
+function mockOwnedPerformAction(
+  t: TestContext,
+  implementation: (
+    this: BeanExecutor,
+    ...args: Parameters<BeanExecutor['performAction']>
+  ) => Promise<any>,
+) {
+  const context = app.ctx;
+  assert.ok(context, 'performAction mocks require an owned mockCtx');
+  const executor = app.bean.executor;
+  const original = executor.performAction;
+  const owned = t.mock.fn(implementation);
+  // The executor is application-owned; intercept the exact context, never a Passport identity.
+  const installed = t.mock.method(
+    executor,
+    'performAction',
+    async function (this: BeanExecutor, ...args: Parameters<BeanExecutor['performAction']>) {
+      if (app.ctx !== context) return await original.apply(this, args);
+      return await owned.apply(this, args);
+    },
+  );
+  return {
+    mock: {
+      get calls() {
+        return owned.mock.calls;
+      },
+      callCount: () => owned.mock.callCount(),
+      mockImplementation: (next: typeof implementation) => owned.mock.mockImplementation(next),
+      restore: () => installed.mock.restore(),
+    },
+  };
 }
 
 async function withStudentToolPermissions(fn: () => Promise<void>) {
@@ -276,6 +311,40 @@ describe('businessTools.test.ts', { concurrency: false, timeout: 60000 }, () => 
   });
   after(() => release?.());
 
+  it('keeps performAction mocks local while an independent context executes the real Action', async t => {
+    await app.bean.executor.mockCtx(
+      async () => {
+        const context = app.ctx;
+        const action = mockOwnedPerformAction(t, async () => 'owned-action');
+        const call = () =>
+          app.bean.executor.performAction('get', '/mcp/test/catalog/products', {
+            query: { title: 'Wireless Headphones', pageNo: 1, pageSize: 1 },
+            innerAccess: false,
+          });
+        try {
+          assert.equal(await call(), 'owned-action');
+          assert.equal(action.mock.callCount(), 1);
+          await app.bean.executor.mockCtx(
+            async () => {
+              assert.notEqual(app.ctx, context);
+              const result = await call();
+              assert.equal(result.list.length, 1);
+              assert.equal(result.list[0].title, 'Wireless Headphones');
+              assert.equal(action.mock.callCount(), 1, 'unrelated dispatch is not recorded');
+            },
+            { instanceName: '' },
+          );
+          action.mock.mockImplementation(async () => 'updated-owned-action');
+          assert.equal(await call(), 'updated-owned-action');
+          assert.equal(action.mock.callCount(), 2);
+        } finally {
+          action.mock.restore();
+        }
+      },
+      { instanceName: '' },
+    );
+  });
+
   it('discovers another resource dynamically with its own current guards and scope ceiling', async t => {
     await app.bean.executor.mockCtx(async () => {
       const resource = recordResourceNameToRoutePath['test-rest:product'];
@@ -416,7 +485,7 @@ describe('businessTools.test.ts', { concurrency: false, timeout: 60000 }, () => 
       }
       const server = await createSharedBusinessToolServer(app, 'mcp:all');
       const shared = await connect(server);
-      const action = t.mock.method(app.bean.executor, 'performAction', async () => {
+      const action = mockOwnedPerformAction(t, async () => {
         assert.fail('discovery and invalid arguments must not dispatch business Actions');
       });
       try {
@@ -979,9 +1048,8 @@ describe('businessTools.test.ts', { concurrency: false, timeout: 60000 }, () => 
     if (!app.meta.modules['training-student']) return;
     await withStudentToolPermissions(async () => {
       const server = await connect(await createSharedBusinessToolServer(app, 'mcp:all'));
-      const action = t.mock.method(
-        app.bean.executor,
-        'performAction',
+      const action = mockOwnedPerformAction(
+        t,
         async (...args: Parameters<typeof app.bean.executor.performAction>) => {
           assert.equal(args[0], 'post');
           const body = (args[2] as any).body;
@@ -1050,9 +1118,8 @@ describe('businessTools.test.ts', { concurrency: false, timeout: 60000 }, () => 
       const identity =
         app.util.getModuleConfigRaw('a-orm')?.table?.identityType === 'number' ? 123 : '123';
       // Binding/output only; businessHttp owns the real persisted create and cleanup.
-      const action = t.mock.method(
-        app.bean.executor,
-        'performAction',
+      const action = mockOwnedPerformAction(
+        t,
         async (..._args: Parameters<typeof app.bean.executor.performAction>) => identity,
       );
       try {
@@ -1155,9 +1222,8 @@ describe('businessTools.test.ts', { concurrency: false, timeout: 60000 }, () => 
       };
       const args = { params, body };
       // Binding/output only; businessHttp owns persisted update and real executor null proof.
-      const action = t.mock.method(
-        app.bean.executor,
-        'performAction',
+      const action = mockOwnedPerformAction(
+        t,
         async (..._args: Parameters<typeof app.bean.executor.performAction>) => null,
       );
       try {
@@ -1336,9 +1402,8 @@ describe('businessTools.test.ts', { concurrency: false, timeout: 60000 }, () => 
       const all = await connect(await createSharedBusinessToolServer(app, 'mcp:all'));
       const params = { id: '123' };
       // Binding/output only; businessHttp owns persisted aggregate deletion and executor null proof.
-      const action = t.mock.method(
-        app.bean.executor,
-        'performAction',
+      const action = mockOwnedPerformAction(
+        t,
         async (..._args: Parameters<typeof app.bean.executor.performAction>) => null,
       );
       try {
@@ -1490,9 +1555,8 @@ describe('businessTools.test.ts', { concurrency: false, timeout: 60000 }, () => 
         pageCount: 0,
       };
       // Binding and output parsing only; businessHttp covers real persisted rows and mobile masking.
-      const action = t.mock.method(
-        app.bean.executor,
-        'performAction',
+      const action = mockOwnedPerformAction(
+        t,
         async (..._args: Parameters<typeof app.bean.executor.performAction>) => raw,
       );
       try {
@@ -1553,9 +1617,8 @@ describe('businessTools.test.ts', { concurrency: false, timeout: 60000 }, () => 
         pageSize: ormQuery?.pageSize?.default ?? 20,
       };
       let raw: unknown;
-      const action = t.mock.method(
-        app.bean.executor,
-        'performAction',
+      const action = mockOwnedPerformAction(
+        t,
         async (..._args: Parameters<typeof app.bean.executor.performAction>) => raw,
       );
       try {
@@ -1732,9 +1795,8 @@ describe('businessTools.test.ts', { concurrency: false, timeout: 60000 }, () => 
         ],
       };
       // Parsing/binding only; businessHttp supplies the real guarded aggregate and serializer.
-      const action = t.mock.method(
-        app.bean.executor,
-        'performAction',
+      const action = mockOwnedPerformAction(
+        t,
         async (..._args: Parameters<typeof app.bean.executor.performAction>) => raw,
       );
       try {
@@ -1778,7 +1840,7 @@ describe('businessTools.test.ts', { concurrency: false, timeout: 60000 }, () => 
   it('rejects the retired student lookup tool without dispatching an Action', async t => {
     await withStudentToolPermissions(async () => {
       const clients: Awaited<ReturnType<typeof connect>>[] = [];
-      const action = t.mock.method(app.bean.executor, 'performAction', async () => {
+      const action = mockOwnedPerformAction(t, async () => {
         assert.fail('retired tool calls must not dispatch business Actions');
       });
       try {
@@ -2289,7 +2351,6 @@ describe('businessTools.test.ts', { concurrency: false, timeout: 60000 }, () => 
     if (!app.meta.modules['training-student']) return;
     await withStudentToolPermissions(async () => {
       const client = await connect(await createSharedBusinessToolServer(app, 'mcp:all'));
-      const executor = app.bean.executor;
       const raw = {
         id: '123',
         name: '__MCP projection__',
@@ -2303,7 +2364,7 @@ describe('businessTools.test.ts', { concurrency: false, timeout: 60000 }, () => 
         extra: 'private-extra',
       };
       // Isolate output parsing only; guarded real controller behavior is covered by businessHttp.
-      const action = t.mock.method(executor, 'performAction', async () => raw);
+      const action = mockOwnedPerformAction(t, async () => raw);
       try {
         const call = () =>
           client.request('tools/call', {

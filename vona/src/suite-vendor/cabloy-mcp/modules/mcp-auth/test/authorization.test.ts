@@ -542,17 +542,18 @@ describe('authorization.test.ts', { concurrency: false }, () => {
   });
 
   it('rotates signed refresh grants and revokes the whole family on older refresh replay', async t => {
-    const evidence: Array<{ event: string; family: string; generation: number }> = [];
-    const logger = t.mock.getter(ServiceAuthorization.prototype as any, '$logger', () => ({
-      debug(event: string, message: (typeof evidence)[number]) {
-        assert.equal(event, message.event);
-        evidence.push(message);
-        if (message.generation === 3) throw new Error('synthetic diagnostic failure');
-      },
-    }));
-    try {
-      await withFixture(
-        async fixture => {
+    await withFixture(
+      async fixture => {
+        const evidence: Array<{ event: string; family: string; generation: number }> = [];
+        // Install only after the fixture owns mcp-test; restore before it releases that lock.
+        const logger = t.mock.getter(ServiceAuthorization.prototype as any, '$logger', () => ({
+          debug(event: string, message: (typeof evidence)[number]) {
+            assert.equal(event, message.event);
+            evidence.push(message);
+            if (message.generation === 3) throw new Error('synthetic diagnostic failure');
+          },
+        }));
+        try {
           const { request, code } = await issueCode(fixture, 'mcp:all');
           const initial = await redeem(fixture, code);
           assert.ok(
@@ -631,14 +632,14 @@ describe('authorization.test.ts', { concurrency: false }, () => {
           });
           await expectOAuth(() => refresh(fixture, latest.refresh_token!), 'invalid_grant');
           assert.equal(evidence.length, 2, 'Rejected refresh must not report success');
-        },
-        'none',
-        undefined,
-        ['authorization_code', 'refresh_token'],
-      );
-    } finally {
-      logger.mock.restore();
-    }
+        } finally {
+          logger.mock.restore();
+        }
+      },
+      'none',
+      undefined,
+      ['authorization_code', 'refresh_token'],
+    );
   });
 
   it('rejects wrong clients and token purposes without rotating or revoking a valid family', async () => {

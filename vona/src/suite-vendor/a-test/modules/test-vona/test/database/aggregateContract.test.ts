@@ -10,8 +10,11 @@ import { ModelPost, ModelUserStats, ModelUserStatsGroup } from 'vona-module-test
 describe('aggregateContract.test.ts', () => {
   it('keeps aggregate strings and SQL nulls across query cache boundaries and DTO parsing', async () => {
     await app.bean.executor.mockCtx(async () => {
-      const model = app.scope('test-vona').model.user;
       const prefix = `aggregateContract:${randomUUID()}`;
+      const model = app.scope('test-vona').model.user.newInstance();
+      // Own the real query cache: unrelated user writes invalidate the shared model namespace.
+      const getCacheName = model.cacheQuery.getName.bind(model.cacheQuery);
+      model.cacheQuery.getName = table => `${getCacheName(table)}:${prefix}`;
       const where = { name: { _startsWith_: `${prefix}:` } };
       const aggrs = {
         count: ['*', 'age'] as ('*' | 'age')[],
@@ -135,9 +138,11 @@ describe('aggregateContract.test.ts', () => {
         assert.deepEqual(emptyPage.list, []);
         assert.equal(emptyPage.pageCount, 0);
       } finally {
-        await cache.del(key);
-        await cache.del(groupKey);
-        await model.delete(where);
+        try {
+          await model.delete(where);
+        } finally {
+          await cache.clear();
+        }
       }
     });
   });
