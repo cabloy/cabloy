@@ -3503,7 +3503,7 @@ importers:
         specifier: ^5.0.2
         version: link:modules/mcp-auth
       vona-module-mcp-test:
-        specifier: ^5.0.2
+        specifier: ^5.0.3
         version: link:modules/mcp-test
 
   src/suite-vendor/cabloy-mcp/modules/cabloy-mcp:
