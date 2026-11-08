@@ -1168,9 +1168,10 @@ describe('businessHttp.test.ts', { concurrency: false, timeout: 60000 }, () => {
   it('creates one owned student aggregate only with all scope and independent current create authority', async t => {
     if (trainingDisabled) return;
     const { ServiceStudent } = await import('vona-module-training-student');
-    const name = `MCP create ${randomUUID()}`;
-    const recordName = `MCP create record ${randomUUID()}`;
-    const subjectName = `MCP create subject ${randomUUID()}`;
+    const suffix = randomUUID().slice(0, 8);
+    const name = `MCP create ${suffix}`;
+    const recordName = `MCP create record ${suffix}`;
+    const subjectName = `MCP create subject ${suffix}`;
     const descriptionMarkdown = `# Owned MCP create\n\n${randomUUID()}`;
     const trainingTime = new Date('2026-05-12T08:00:00.000Z');
     const studentData = {
@@ -1472,7 +1473,7 @@ describe('businessHttp.test.ts', { concurrency: false, timeout: 60000 }, () => {
 
   it('creates a basic-fields-only student, updates its root and independently authorizes serialized MCP view', async () => {
     if (trainingDisabled) return;
-    const suffix = randomUUID();
+    const suffix = randomUUID().slice(0, 8);
     const studentData = {
       name: `MCP basic ${suffix}`,
       mobile: '13812345678',
@@ -1575,7 +1576,7 @@ describe('businessHttp.test.ts', { concurrency: false, timeout: 60000 }, () => {
     const { ModelSubject } = await import('vona-module-training-recordsubject');
     const allToken = await redeemBearer('mcp:all');
     const revokedToken = await redeemBearer('mcp:all');
-    const suffix = randomUUID();
+    const suffix = randomUUID().slice(0, 8);
     const descriptionMarkdown = `# Owned MCP update\n\n${suffix}`;
     const trainingTime = new Date('2026-06-15T09:30:00.000Z');
     type OwnedAggregate = {
@@ -2176,7 +2177,7 @@ describe('businessHttp.test.ts', { concurrency: false, timeout: 60000 }, () => {
     const { ServiceStudent } = await import('vona-module-training-student');
     const allToken = await redeemBearer('mcp:all');
     const revokedToken = await redeemBearer('mcp:all');
-    const suffix = randomUUID();
+    const suffix = randomUUID().slice(0, 8);
     type OwnedAggregate = {
       name: string;
       instanceName: '' | 'shareTest';
@@ -2698,6 +2699,8 @@ describe('businessHttp.test.ts', { concurrency: false, timeout: 60000 }, () => {
       if (normalized.content) delete normalized.content.id;
       for (const record of normalized.trainingRecords ?? []) {
         record.id = String(record.id);
+        // PostgreSQL decimals arrive as strings before DTO number normalization.
+        if (record.averageScore != null) record.averageScore = Number(record.averageScore);
         // Both nested DTOs retain EntityBaseInner's declared deleted default.
         if (record.deleted === undefined) record.deleted = false;
         // These two optional identity arrays normalize absent SQL nulls away.

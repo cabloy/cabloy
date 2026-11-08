@@ -798,7 +798,7 @@ describe('student.test.ts', { concurrency: false }, () => {
   });
 
   it('action:student:update admits only an existing current-instance root', async () => {
-    const marker = `__UpdateRoot_${randomUUID()}__`;
+    const marker = `__UpdateRoot_${randomUUID().slice(0, 8)}__`;
     const ownedIds: string[] = [];
     let foreignId: string | undefined;
     try {
@@ -923,7 +923,7 @@ describe('student.test.ts', { concurrency: false }, () => {
   });
 
   it('action:student:delete admits only an existing current-instance root', async () => {
-    const marker = `__DeleteRoot_${randomUUID()}__`;
+    const marker = `__DeleteRoot_${randomUUID().slice(0, 8)}__`;
     type Fixture = {
       kind: string;
       rootId?: string;
