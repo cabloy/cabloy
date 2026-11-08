@@ -16,6 +16,7 @@ import { fileURLToPath } from 'node:url';
 const TAG_PREFIX = 'cabloy@';
 const GITHUB_REPO = 'cabloy/cabloy';
 const COMMIT_CAP = 200;
+const COAUTHOR_TRAILER = 'Co-Authored-By: Claude <noreply@anthropic.com>';
 const ROOT_DIR = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const VONA_DIR = resolve(ROOT_DIR, 'vona');
 const VONA_PACKAGE_JSON_PATH = resolve(VONA_DIR, 'package.json');
@@ -308,13 +309,17 @@ function seedVonaZovaRestWorkspaceDependencies(): void {
   writeFileSync(VONA_PACKAGE_JSON_PATH, `${JSON.stringify(pkg, null, 2)}\n`);
 }
 
-function refreshZovaDependencyGraph(): void {
+function refreshZovaDependencyGraph(resumeSubprojects: boolean): void {
   copyFileSync(ZOVA_PACKAGE_ORIGINAL_JSON_PATH, ZOVA_PACKAGE_JSON_PATH);
   execInherited('pnpm install', false, { cwd: ZOVA_DIR });
   execInherited('npm run zova :tools:deps', false, { cwd: ZOVA_DIR });
-  execInherited('npm run build:zova:admin');
-  if (resolveEdition() === 'basic') {
-    execInherited('npm run build:zova:web');
+  if (resumeSubprojects) {
+    execInherited('npm run build:zova:isolated -- cabloyBasicAdmin cabloyBasicWeb');
+  } else {
+    execInherited('npm run build:zova:admin');
+    if (resolveEdition() === 'basic') {
+      execInherited('npm run build:zova:web');
+    }
   }
 }
 
@@ -423,21 +428,27 @@ function commitPendingChanges(dryRun?: boolean): void {
   // eslint-disable-next-line
   console.log('\n📁 Committing pending changes...');
   exec('git add .', dryRun);
-  exec('git commit -m "chore: pre-release commit"', dryRun);
+  exec(`git commit -m "chore: pre-release commit" -m "${COAUTHOR_TRAILER}"`, dryRun);
   exec('git push', dryRun);
 }
 
 // --- Pre-step: Sub-project release ---
-function subProjectRelease(bumpType: 'patch' | 'minor' | 'major', dryRun?: boolean): void {
+function subProjectRelease(
+  bumpType: 'patch' | 'minor' | 'major',
+  resumeSubprojects: boolean,
+  dryRun?: boolean,
+): void {
+  const mode = resumeSubprojects ? 'from-package' : bumpType;
   // eslint-disable-next-line
-  console.log(`\n🔧 Running vona/zova release (${bumpType})...`);
-  execInherited(`lerna publish ${bumpType} --yes`, dryRun);
+  console.log(`\n🔧 Running vona/zova release (${mode})...`);
+  execInherited(`lerna publish ${mode} --yes`, dryRun);
 }
 
 // --- Compensation step: Refresh the zova-core patch ---
 function regenerateVonaZovaCorePatch(
   currentPatchedVersion: string,
   targetVersion: string,
+  resumeSubprojects: boolean,
   dryRun?: boolean,
 ): void {
   const editDir = resolve(
@@ -459,10 +470,14 @@ function regenerateVonaZovaCorePatch(
     console.log('  [dry-run] Run pnpm install in zova');
     // eslint-disable-next-line
     console.log('  [dry-run] Run npm run zova :tools:deps in zova');
-    // eslint-disable-next-line
-    console.log('  [dry-run] Run npm run build:zova:admin');
-    // eslint-disable-next-line
-    console.log('  [dry-run] Run npm run build:zova:web when the active edition requires it');
+    if (resumeSubprojects) {
+      execInherited('npm run build:zova:isolated -- cabloyBasicAdmin cabloyBasicWeb', true);
+    } else {
+      // eslint-disable-next-line
+      console.log('  [dry-run] Run npm run build:zova:admin');
+      // eslint-disable-next-line
+      console.log('  [dry-run] Run npm run build:zova:web when the active edition requires it');
+    }
     // eslint-disable-next-line
     console.log('  [dry-run] Refresh the Vona dependency graph from package.original.json');
     // eslint-disable-next-line
@@ -510,7 +525,7 @@ function regenerateVonaZovaCorePatch(
   mkdirSync(dirname(editDir), { recursive: true });
 
   try {
-    refreshZovaDependencyGraph();
+    refreshZovaDependencyGraph(resumeSubprojects);
     updateVonaPatchedDependency();
     refreshVonaDependencyGraph();
     execInherited('pnpm install', false, { cwd: VONA_DIR });
@@ -563,11 +578,12 @@ function refreshVonaLockfile(dryRun?: boolean): void {
   execInherited(`pnpm --dir "${VONA_DIR}" install`, dryRun);
 }
 
-function verifyCompensationPatch(dryRun?: boolean): void {
+function verifyCompensationPatch(resumeSubprojects: boolean, dryRun?: boolean): void {
   // eslint-disable-next-line
   console.log('\n✅ Verifying the refreshed zova-core patch...');
   execInherited('pnpm exec tsc -p tsconfig.json --noEmit', dryRun, { cwd: VONA_DIR });
-  execInherited('npm run tsc', dryRun);
+  // Resume always runs the full prepared-source gate after compensation, even if already aligned.
+  if (!resumeSubprojects) execInherited('npm run tsc', dryRun);
 }
 
 function assertVonaZovaCorePatch(): void {
@@ -582,7 +598,7 @@ function assertVonaZovaCorePatch(): void {
   ensurePatchedLockfileVersion(localVersion);
 }
 
-function prepareVonaZovaCorePatch(dryRun?: boolean): void {
+function prepareVonaZovaCorePatch(resumeSubprojects: boolean, dryRun?: boolean): void {
   // eslint-disable-next-line
   console.log('\n🔍 Synchronizing the Vona zova-core patch before the root release...');
 
@@ -594,16 +610,21 @@ function prepareVonaZovaCorePatch(dryRun?: boolean): void {
   const localZovaCoreVersion = readLocalZovaCoreVersion();
   if (dryRun) {
     // Lerna may change the version during a real release, so preview synchronization even if aligned now.
-    regenerateVonaZovaCorePatch(currentPatchedVersion, localZovaCoreVersion, true);
+    regenerateVonaZovaCorePatch(
+      currentPatchedVersion,
+      localZovaCoreVersion,
+      resumeSubprojects,
+      true,
+    );
     refreshVonaLockfile(true);
-    verifyCompensationPatch(true);
+    verifyCompensationPatch(resumeSubprojects, true);
     return;
   }
 
   if (localZovaCoreVersion !== currentPatchedVersion) {
-    regenerateVonaZovaCorePatch(currentPatchedVersion, localZovaCoreVersion);
+    regenerateVonaZovaCorePatch(currentPatchedVersion, localZovaCoreVersion, resumeSubprojects);
     refreshVonaLockfile();
-    verifyCompensationPatch();
+    verifyCompensationPatch(resumeSubprojects);
   }
   assertVonaZovaCorePatch();
 }
@@ -651,7 +672,7 @@ async function versionBump(
 
   const tag = `${TAG_PREFIX}${newVersion}`;
   exec('git add package.json .cabloy-version', dryRun);
-  exec(`git commit -m "chore: release v${newVersion}"`, dryRun);
+  exec(`git commit -m "chore: release v${newVersion}" -m "${COAUTHOR_TRAILER}"`, dryRun);
   exec(`git tag ${tag}`, dryRun);
   exec('git push', dryRun);
   exec(`git push origin ${tag}`, dryRun);
@@ -782,7 +803,10 @@ async function generateChangelog(version: string, dryRun?: boolean, noAi?: boole
   }
 
   exec('git add CHANGELOG.md', dryRun);
-  exec(`git commit -m "chore: update CHANGELOG.md for v${version}"`, dryRun);
+  exec(
+    `git commit -m "chore: update CHANGELOG.md for v${version}" -m "${COAUTHOR_TRAILER}"`,
+    dryRun,
+  );
   exec('git push', dryRun);
 }
 
@@ -863,6 +887,60 @@ interface ReleaseOptions {
   skipPublish?: boolean;
   skipRelease?: boolean;
   noAi?: boolean;
+  resumeSubprojects?: string;
+}
+
+function assertResumeRootVersion(
+  targetVersion: string,
+  bumpType: ReleaseOptions['bumpType'],
+): void {
+  const currentVersion = readPackageJson().version;
+  if (readCabloyVersion() !== currentVersion) {
+    throw new Error('Cannot resume subprojects: package.json and .cabloy-version must agree');
+  }
+  if (targetVersion !== bumpVersion(currentVersion, bumpType)) {
+    throw new Error(
+      `Cannot resume subprojects: target must be the ${bumpType} bump from ${currentVersion}`,
+    );
+  }
+  const tags = exec(`git tag -l '${TAG_PREFIX}*' --sort=-v:refname`).split('\n');
+  if (tags.includes(`${TAG_PREFIX}${targetVersion}`)) {
+    throw new Error(
+      `Cannot resume subprojects: root target tag ${TAG_PREFIX}${targetVersion} already exists`,
+    );
+  }
+  if (tags[0] !== `${TAG_PREFIX}${currentVersion}`) {
+    throw new Error(
+      'Cannot resume subprojects: newest root release tag must match the current baseline',
+    );
+  }
+}
+
+function validateSubprojectResume(options: ReleaseOptions): void {
+  const targetVersion = options.resumeSubprojects;
+  if (typeof targetVersion !== 'string' || !isValidVersion(targetVersion)) {
+    throw new Error('--resume-subprojects requires an explicit target version (major.minor.patch)');
+  }
+  if (options.changelogOnly || options.publishOnly || options.releaseOnly) {
+    throw new Error(
+      '--resume-subprojects requires a full release, without single-stage --*-only options',
+    );
+  }
+  assertResumeRootVersion(targetVersion, options.bumpType);
+
+  // Lerna's read-only listing excludes private packages, just as publication does.
+  const packages = JSON.parse(exec('lerna list --json')) as { name: string; version: string }[];
+  const tags = new Set(exec('git tag -l').split('\n'));
+  if (!Array.isArray(packages) || packages.length === 0) {
+    throw new Error('Cannot resume subprojects: no publishable packages found');
+  }
+  for (const pkg of packages) {
+    if (!pkg.name || !isValidVersion(pkg.version) || !tags.has(`${pkg.name}@${pkg.version}`)) {
+      throw new Error(
+        `Cannot resume subprojects: manifest version has no matching tag for ${pkg.name}@${pkg.version}`,
+      );
+    }
+  }
 }
 
 async function release(options: ReleaseOptions): Promise<void> {
@@ -891,8 +969,21 @@ async function release(options: ReleaseOptions): Promise<void> {
     process.exit(1);
   }
 
+  const resumeSubprojects = options.resumeSubprojects !== undefined;
+  if (resumeSubprojects) validateSubprojectResume(options);
+
   runGovernancePreflight(options.dryRun);
-  if (!options.changelogOnly && !options.releaseOnly) {
+  if (resumeSubprojects) {
+    // Check prepared source before publishing; normal preparation needs the unpublished versions.
+    execInherited(
+      'node scripts/typecheck.ts native zova --noEmit --incremental false --project tsconfig.vue-tsc.json',
+      options.dryRun,
+    );
+    execInherited(
+      'node scripts/typecheck.ts native vona --noEmit --incremental false --project tsconfig.json',
+      options.dryRun,
+    );
+  } else if (!options.changelogOnly && !options.releaseOnly) {
     execInherited('npm run tsc', options.dryRun);
   }
 
@@ -907,10 +998,12 @@ async function release(options: ReleaseOptions): Promise<void> {
   } else {
     // Finalize sub-project versions and their patch before committing the root release snapshot.
     commitPendingChanges(options.dryRun);
-    subProjectRelease(options.bumpType, options.dryRun);
-    prepareVonaZovaCorePatch(options.dryRun);
+    subProjectRelease(options.bumpType, resumeSubprojects, options.dryRun);
+    prepareVonaZovaCorePatch(resumeSubprojects, options.dryRun);
+    if (resumeSubprojects) execInherited('npm run tsc', options.dryRun);
     commitPendingChanges(options.dryRun);
 
+    if (resumeSubprojects) assertResumeRootVersion(options.resumeSubprojects!, options.bumpType);
     version = await versionBump(options.bumpType, options.dryRun);
   }
 
@@ -935,6 +1028,7 @@ async function release(options: ReleaseOptions): Promise<void> {
 
 // --- Entry point ---
 const args = minimist(process.argv.slice(2), {
+  string: ['resume-subprojects'],
   boolean: [
     'dry-run',
     'changelog-only',
@@ -974,6 +1068,7 @@ release({
   skipPublish: args['skip-publish'],
   skipRelease: args['skip-release'],
   noAi: args['no-ai'],
+  resumeSubprojects: args['resume-subprojects'],
 }).catch(err => {
   // eslint-disable-next-line
   console.error(`\n❌ Release failed: ${err.message}`);

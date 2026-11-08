@@ -200,7 +200,6 @@ export class CtxSSR extends BeanSimple {
     return resolveSsrProfileOptions(this.profile, this.sys.config.ssr.profiles);
   }
 
-  /** @internal */
   public _setProfile(
     routeProfile: TypeSsrProfile | undefined,
     routeProfileOptions?: Readonly<ISsrRouteProfileOptions>,
@@ -228,7 +227,6 @@ export class CtxSSR extends BeanSimple {
     }
   }
 
-  /** @internal */
   public _setLocale(route: RouteLocationResolvedGeneric | RouteLocationNormalizedGeneric) {
     if (route.meta.locale) {
       this.app.meta.locale.current = route.params?.locale as unknown as keyof ILocaleRecord;
@@ -399,14 +397,12 @@ export class CtxSSR extends BeanSimple {
     return { ignore: false, clientValue };
   }
 
-  /** @internal */
   public _hydratingRootInc() {
     if (process.env.CLIENT && this.isRuntimeSsrPreHydration) {
       this._hydratingInc();
     }
   }
 
-  /** @internal */
   public _hydratingRootDec() {
     if (process.env.CLIENT && this.isRuntimeSsrPreHydration) {
       this._hydratingDec();
