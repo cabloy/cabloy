@@ -96,7 +96,7 @@ test('inactivity fails closed for active, reused, pending and uninspectable proc
   );
 });
 
-test('Windows job inactivity requires durable drainage and absence of the exact owner PID', async () => {
+test('Windows job inactivity requires durable drainage and absence of the exact helper identity', async () => {
   const owner = { pid: 100, startTime: 'owner-start', host: hostname() };
   const registered = {
     id: 'guardian',
@@ -117,9 +117,9 @@ test('Windows job inactivity requires durable drainage and absence of the exact 
     (await isTestClaimInactive({ owner, processes: [drained] }, false, async () => [])).inactive,
     true,
   );
-  for (const [pid, reason] of [
-    [owner.pid, 'claim owner PID is still present'],
-    [drained.pid, 'registered Windows job owner is still present'],
+  for (const [pid, startTime, reason] of [
+    [owner.pid, 'different-created-time', 'claim owner PID is still present'],
+    [drained.pid, drained.startTime, 'registered Windows job owner is still present'],
   ] as const) {
     let inspections = 0;
     const inactivity = await isTestClaimInactive(
@@ -130,7 +130,7 @@ test('Windows job inactivity requires durable drainage and absence of the exact 
         return [
           {
             pid,
-            startTime: 'different-created-time',
+            startTime,
             host: hostname(),
             state: 'running',
             args: '',
@@ -141,6 +141,21 @@ test('Windows job inactivity requires durable drainage and absence of the exact 
     assert.deepEqual(inactivity, { inactive: false, reason });
     assert.equal(inspections, 1);
   }
+  const reused = {
+    pid: drained.pid,
+    startTime: '134000000000000001',
+    host: hostname(),
+    state: 'running',
+    args: '',
+  };
+  assert.deepEqual(
+    await isTestClaimInactive({ owner, processes: [drained] }, false, async () => [reused]),
+    { inactive: true },
+  );
+  assert.deepEqual(
+    await isTestClaimInactive({ owner, processes: [registered] }, false, async () => [reused]),
+    { inactive: false, reason: 'Windows job drainage is unproven' },
+  );
   assert.equal(
     (
       await isTestClaimInactive(

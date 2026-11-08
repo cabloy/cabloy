@@ -165,6 +165,46 @@ test('one cleanup sequence journals database and Redis before roots; claim remov
   }
 });
 
+test('inactive checks retain categorical reasons with a generic fallback and no cleanup', async () => {
+  for (const evidence of [
+    false,
+    { inactive: false },
+    { inactive: false, reason: 'registered Windows job owner is still present' },
+  ]) {
+    const f = await fixture(true);
+    const warnings: string[] = [];
+    const actions: string[] = [];
+    try {
+      const result = await cleanTestClaim(f.claimPath, {
+        isInactive: async () => evidence,
+        warn: message => warnings.push(message),
+        prepare: async () => ({
+          async dropDatabase() {
+            actions.push('database');
+          },
+          async clearRedis() {
+            actions.push('redis');
+          },
+          async close() {
+            actions.push('close');
+          },
+        }),
+      });
+      const detail = typeof evidence === 'boolean' ? undefined : evidence.reason;
+      const reason = `live or uncertain process ownership${detail ? `: ${detail}` : ''}`;
+      assert.deepEqual(result, { status: 'skipped', reason });
+      assert.deepEqual(warnings, [`Retained test claim ${path.basename(f.claimPath)}: ${reason}`]);
+      assert.deepEqual(actions, ['close']);
+      assert.deepEqual(await loadTestClaim(f.claimPath), f.manifest);
+      for (const local of f.manifest.locals) {
+        assert.equal(await readFile(path.join(local.path, 'test-owned'), 'utf8'), 'resource');
+      }
+    } finally {
+      await f.close();
+    }
+  }
+});
+
 test('partial failure retains progress and retries only remaining resources', async () => {
   const f = await fixture(true);
   let drops = 0;

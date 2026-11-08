@@ -125,7 +125,11 @@ export async function isTestClaimInactive(
       if (!registered.jobId || registered.pgid !== undefined || registered.stage !== 'drained') {
         return { inactive: false, reason: 'Windows job drainage is unproven' };
       }
-      if (processes.some(item => item.pid === registered.pid)) {
+      if (
+        processes.some(
+          item => item.pid === registered.pid && item.startTime === registered.startTime,
+        )
+      ) {
         return { inactive: false, reason: 'registered Windows job owner is still present' };
       }
       continue;

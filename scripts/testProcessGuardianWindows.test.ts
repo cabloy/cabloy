@@ -615,13 +615,15 @@ test(
         env,
       );
       assert.equal((await child.wait()).result?.code, 7);
-      const processes = (await loadTestClaim(claimPath)).processes;
+      const claim = await loadTestClaim(claimPath);
+      const processes = claim.processes;
       assert.equal(processes.length, 1);
       assert.equal(processes[0].stage, 'drained');
       assert.equal(processes[0].containment, 'windows-job');
       assert.equal(processes[0].pgid, undefined);
       assert.match(processes[0].startTime!, /^\d{17,20}$/);
       assert.ok(processes[0].jobId);
+      assert.deepEqual(await isTestClaimInactive(claim, true), { inactive: true });
     } finally {
       await broker?.close();
       f.dispose();

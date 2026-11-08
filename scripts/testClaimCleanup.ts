@@ -116,8 +116,10 @@ export async function cleanTestClaim(
       session = await (options.prepare ?? prepareCleanupProcess)(claim, claimPath);
     if (!options.isInactive) return skip('process inactivity inspector unavailable');
     const evidence = await options.isInactive(claim);
-    if (!(typeof evidence === 'boolean' ? evidence : evidence.inactive))
-      return skip('live or uncertain process ownership');
+    if (!(typeof evidence === 'boolean' ? evidence : evidence.inactive)) {
+      const reason = typeof evidence === 'boolean' ? undefined : evidence.reason;
+      return skip(`live or uncertain process ownership${reason ? `: ${reason}` : ''}`);
+    }
     sequenceStarted = true;
     claim.status = 'cleaning';
     claim.cleanup.processes = true;
