@@ -1,5 +1,10 @@
 # Changelog
 
+## 5.1.270
+
+### Features
+- Apply feature updates (details not specified in commit messages).
+
 ## 5.1.269
 
 ### Improvements
