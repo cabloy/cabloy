@@ -3,6 +3,7 @@
 ## 5.1.265
 
 ### Features
+
 - Add MCP suite and module support with `@modelcontextprotocol/node/server` integration.
 - Add an MCP authorization server with dynamic client registration, browser authorization, scopes, and authentication records.
 - Support MCP token refresh through the Passport lifecycle.
@@ -14,10 +15,12 @@
 - Support isolated Zova builds.
 
 ### Bug Fixes
+
 - Fix Tiptap issues.
 - Correct test issues.
 
 ### Improvements
+
 - Refactor CRUD APIs and master/detail functionality for MCP support.
 - Refine MCP tool descriptions and remove `mcp.exclude`.
 - Rename `mcp.tool` to `Mcp.tool`.
