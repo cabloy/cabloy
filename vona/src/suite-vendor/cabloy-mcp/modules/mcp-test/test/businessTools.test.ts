@@ -346,6 +346,10 @@ describe('businessTools.test.ts', { concurrency: false, timeout: 60000 }, () => 
   });
 
   it('discovers another resource dynamically with its own current guards and scope ceiling', async t => {
+    if (!app.meta.modules['test-rest']) {
+      t.skip('test-rest is not active');
+      return;
+    }
     await app.bean.executor.mockCtx(async () => {
       const resource = recordResourceNameToRoutePath['test-rest:product'];
       assert.ok(resource, 'the second resource fixture is registered');
