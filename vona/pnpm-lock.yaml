@@ -465,6 +465,9 @@ importers:
       vona-module-a-telemetry:
         specifier: workspace:^
         version: link:src/suite-vendor/a-vona/modules/a-telemetry
+      vona-module-a-testutils:
+        specifier: workspace:^
+        version: link:src/suite-vendor/a-vona/modules/a-testutils
       vona-module-a-upload:
         specifier: workspace:^
         version: link:src/suite-vendor/a-vona/modules/a-upload
@@ -2620,6 +2623,9 @@ importers:
       vona-module-a-telemetry:
         specifier: ^5.0.5
         version: link:modules/a-telemetry
+      vona-module-a-testutils:
+        specifier: ^5.0.0
+        version: link:modules/a-testutils
       vona-module-a-upload:
         specifier: workspace:^
         version: link:modules/a-upload
@@ -3385,6 +3391,15 @@ importers:
       '@opentelemetry/semantic-conventions':
         specifier: ^1.43.0
         version: 1.45.0
+    devDependencies:
+      clean-package:
+        specifier: ^2.2.0
+        version: 2.2.0
+      rimraf:
+        specifier: ^6.1.3
+        version: 6.1.4
+
+  src/suite-vendor/a-vona/modules/a-testutils:
     devDependencies:
       clean-package:
         specifier: ^2.2.0

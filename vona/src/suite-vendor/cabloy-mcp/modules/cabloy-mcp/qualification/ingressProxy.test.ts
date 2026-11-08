@@ -66,7 +66,7 @@ function event(
   t.diagnostic(line);
 }
 
-// No test-vona import: the excluded graph must stay excluded even during assertions.
+// No a-testutils import: the excluded graph must stay excluded even during assertions.
 describe('ingress proxy no-listener qualification', { concurrency: false, timeout: 60_000 }, () => {
   it('qualifies the command-selected fresh owner graph', { timeout: 15_000 }, t => {
     const sessions: Session[] = [];
@@ -87,23 +87,23 @@ describe('ingress proxy no-listener qualification', { concurrency: false, timeou
       );
       const disabled = process.env.PROJECT_DISABLED_MODULES;
       assert.equal(
-        disabled === undefined || disabled === '' || disabled === 'test-vona',
+        disabled === undefined || disabled === '' || disabled === 'a-testutils',
         true,
         'module_exclusion_not_selected',
       );
-      excluded = disabled === 'test-vona';
+      excluded = disabled === 'a-testutils';
       assert.equal(app.meta.isTest, true, 'test_mode_required');
       assert.equal(app.meta.appStarted, true, 'started_singleton_required');
       assert.equal(app.config.server.listen.disable, true, 'listener_disabled_required');
       assert.equal(app.server == null, true, 'no_app_server_required');
       assert.equal(!!app.meta.modules['a-web'], true, 'web_required');
       assert.equal(!!app.meta.modules['cabloy-mcp'], true, 'mcp_required');
-      assert.equal(!!app.meta.modules['test-vona'], !excluded, 'owner_graph');
+      assert.equal(!!app.meta.modules['a-testutils'], !excluded, 'owner_graph');
       const aop = app.bean._getBean('a-aspectutils.service.aop') as unknown as {
         findAopsMatched(name: string): string[] | undefined;
       };
       matched = (aop.findAopsMatched('a-web.startup.listen') ?? []).includes(
-        'test-vona.aop.mcpIngressProbe',
+        'a-testutils.aop.listenerProbe',
       );
       assert.equal(matched, !excluded, 'owner_advice_match');
       const startup = app.bean._getBean(
@@ -113,7 +113,7 @@ describe('ingress proxy no-listener qualification', { concurrency: false, timeou
         assert.equal(typeof startup._callback(), 'function', 'excluded_sync_listener');
       } else {
         const probe = app.bean._getBean(
-          'test-vona.aop.mcpIngressProbe' as never,
+          'a-testutils.aop.listenerProbe' as never,
         ) as unknown as Probe;
         const pairs = [
           {
@@ -144,7 +144,7 @@ describe('ingress proxy no-listener qualification', { concurrency: false, timeou
           );
           for (const pair of pairs) {
             assert.equal(
-              listener(pair.req, pair.res) === 'mcp_ingress_probe',
+              listener(pair.req, pair.res) === 'listener_probe',
               true,
               'fixed_probe_result',
             );

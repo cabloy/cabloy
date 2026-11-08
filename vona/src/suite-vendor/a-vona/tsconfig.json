@@ -163,6 +163,9 @@
     },
     {
       "path": "modules/a-telemetry/tsconfig.build.json"
+    },
+    {
+      "path": "modules/a-testutils/tsconfig.build.json"
     }
   ],
   "exclude": ["modules"]

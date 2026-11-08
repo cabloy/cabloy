@@ -11,7 +11,7 @@ interface CallbackSurface {
 type Mode = 'wrap' | 'transparent';
 
 @Aop({ match: /^a-web\.startup\.listen$/, meta: { mode: 'test' } })
-export class AopMcpIngressProbe extends BeanAopBase {
+export class AopListenerProbe extends BeanAopBase {
   private session?: {
     acquire: (original: NativeListener) => NativeListener;
   };
@@ -43,7 +43,7 @@ export class AopMcpIngressProbe extends BeanAopBase {
       state.calls++;
       if (observe?.(req, res) !== true) throw new Error('probe_identity_failed');
       state.identityMatches++;
-      return 'mcp_ingress_probe';
+      return 'listener_probe';
     };
     const session = {
       acquire: (original: NativeListener) => {

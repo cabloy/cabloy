@@ -1664,7 +1664,6 @@ import 'vona-module-a-openapi';
 
 /** controller: end */
 /** aop: begin */
-export * from '../bean/aop.mcpIngressProbe.ts';
 export * from '../bean/aop.regExp.ts';
 export * from '../bean/aop.simple.ts';
 
@@ -1672,25 +1671,13 @@ import { type IDecoratorAopOptions } from 'vona-module-a-aspect';
 declare module 'vona-module-a-aspect' {
 
     export interface IAopRecord {
-      'test-vona:mcpIngressProbe': IDecoratorAopOptions;
-'test-vona:regExp': IDecoratorAopOptions;
+      'test-vona:regExp': IDecoratorAopOptions;
 'test-vona:simple': IDecoratorAopOptions;
     }
 
 
 }
 declare module 'vona-module-test-vona' {
-
-        export interface AopMcpIngressProbe {
-          /** @internal */
-          get scope(): ScopeModuleTestVona;
-        }
-
-          export interface AopMcpIngressProbe {
-            get $beanFullName(): 'test-vona.aop.mcpIngressProbe';
-            get $onionName(): 'test-vona:mcpIngressProbe';
-            get $onionOptions(): IDecoratorAopOptions;
-          }
 
         export interface AopRegExp {
           /** @internal */
