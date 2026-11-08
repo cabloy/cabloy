@@ -7,13 +7,12 @@ import { globby } from 'globby';
 import { createWriteStream } from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
-import { pipeline } from 'node:stream/promises';
 import { run } from 'node:test';
-import { lcov, spec } from 'node:test/reporters';
 import { fileURLToPath } from 'node:url';
 import { cast, createGeneralApp } from 'vona-core';
 
 import { formatActiveResourceCounts } from './testDiagnostics.ts';
+import { reportTestResults } from './testReporters.ts';
 
 const argv = process.argv.slice(2);
 const projectPath = argv[0];
@@ -105,14 +104,13 @@ async function testRun(projectPath: string, coverage: boolean, patterns: string[
         }
       });
     const summaryPromise = waitForTestSummary(testStream);
-    const reporterPromise = coverage
-      ? (() => {
-          const reporterDir = path.join(projectPath, 'coverage');
-          fse.ensureDirSync(reporterDir);
-          const reporterLcov = createWriteStream(path.join(reporterDir, 'lcov.info'));
-          return pipeline(testStream.compose(lcov), reporterLcov);
-        })()
-      : pipeline(testStream.compose(spec), process.stdout, { end: false });
+    let reporterLcov: ReturnType<typeof createWriteStream> | undefined;
+    if (coverage) {
+      const reporterDir = path.join(projectPath, 'coverage');
+      fse.ensureDirSync(reporterDir);
+      reporterLcov = createWriteStream(path.join(reporterDir, 'lcov.info'));
+    }
+    const reporterPromise = reportTestResults(testStream, process.stdout, reporterLcov);
 
     const [summarySuccess, [, reporterError]] = await Promise.all([
       summaryPromise,
