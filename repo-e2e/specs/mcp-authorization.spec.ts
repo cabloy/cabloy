@@ -477,8 +477,12 @@ async function verifyStudentTools(
 
     const listed = await callMcp(request, 'tools/list', {}, token);
     expect(listed.status()).toBe(200);
+    // Other modules may register tools in the shared catalog.
     expect(
-      (await listed.json()).result.tools.map((tool: { name: string }) => tool.name).sort(),
+      (await listed.json()).result.tools
+        .map((tool: { name: string }) => tool.name)
+        .filter((name: string) => name.startsWith('training-student_student_'))
+        .sort(),
     ).toEqual([
       'training-student_student_aggregate',
       ...(scope === 'mcp:all'
