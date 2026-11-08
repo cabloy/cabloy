@@ -1,5 +1,11 @@
 # Changelog
 
+## 5.1.269
+
+### Improvements
+
+- Update MCP authorization tests.
+
 ## 5.1.268
 
 ### Bug Fixes
