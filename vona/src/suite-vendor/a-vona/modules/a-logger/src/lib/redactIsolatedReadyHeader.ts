@@ -5,6 +5,7 @@ export function redactIsolatedReadyHeader<HEADERS extends Record<string, unknown
   header: string | string[],
 ): HEADERS {
   if (!['/health/ready', '/health/test-stop'].includes(path) || !runId) return headers;
+  // Remove protocol header names too; general HTTP redaction only hides their values.
   const redacted = { ...headers };
   const names = (Array.isArray(header) ? header : [header]).map(name => name.toLowerCase());
   for (const name of Object.keys(redacted)) {

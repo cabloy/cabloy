@@ -122,6 +122,81 @@ test('URL projections omit all query/fragment data and absolute-URL userinfo', (
   assert.equal(redactHttpLogUrl('*'), '*');
 });
 
+test('URL path segments remain visible while query credentials are omitted', () => {
+  assert.equal(
+    redactHttpLogUrl('/reset-password/synthetic-path-token?code=synthetic-query-token'),
+    '/reset-password/synthetic-path-token?[REDACTED]',
+  );
+});
+
+test('deferred HTTP messages preserve sanitized snapshots and serialize only after acceptance', async () => {
+  const pending: { level: string; message: () => string; durationMs?: number }[] = [];
+  const headers = { accept: ['application/json'], authorization: secret };
+  const responseHeaders = { 'content-type': ['application/json'], 'set-cookie': [secret] };
+  const req = {
+    method: 'POST',
+    url: `/callback?code=${secret}`,
+    headers,
+    socket: { remoteAddress: '127.0.0.1', remotePort: 12345 },
+  };
+  const res = { statusCode: 204, getHeaders: () => responseHeaders };
+  const fake = {
+    ctx: { req, res, path: '/callback' },
+    app: { meta: { env: {} } },
+    $loggerChild: () => ({
+      http: (message: () => string) => pending.push({ level: 'http', message }),
+      startTimer: () => ({
+        done: (info: (typeof pending)[number]) => pending.push({ ...info, durationMs: 7 }),
+      }),
+    }),
+  };
+  await MiddlewareSystemHttpLog.prototype.execute.call(fake as any, {}, async () => {
+    req.method = 'PATCH';
+    headers.accept.push('application/xml');
+  });
+  assert.equal(pending.length, 2);
+  req.url = '/changed';
+  res.statusCode = 500;
+  headers.accept.push('text/plain');
+  responseHeaders['content-type'].push('text/plain');
+  headers.authorization = 'changed-credential';
+  responseHeaders['set-cookie'].push('changed-cookie');
+
+  const rejectedLevel = formatLoggerFilter({ level: 'info', child: undefined, strict: true });
+  const rejectedChild = formatLoggerFilter({ level: 'http', child: ['other'], strict: true });
+  const accepted = formatLoggerFilter({ level: 'http', child: undefined, strict: true });
+  const output: any[] = [];
+  for (const info of pending) {
+    assert.equal(typeof info.message, 'function');
+    let evaluations = 0;
+    const message = () => {
+      evaluations++;
+      return info.message();
+    };
+    assert.equal(rejectedLevel.transform({ ...info, message }, rejectedLevel.options), false);
+    assert.equal(rejectedChild.transform({ ...info, message }, rejectedChild.options), false);
+    assert.equal(evaluations, 0);
+    const first = accepted.transform({ ...info, message }, accepted.options);
+    const second = accepted.transform({ ...info, message }, accepted.options);
+    assert.ok(first);
+    assert.deepEqual(second, first);
+    assert.equal(evaluations, 1);
+    output.push(first);
+  }
+  assert.equal(JSON.stringify(output).includes(secret), false);
+  const request = JSON.parse(output[0].message);
+  const response = JSON.parse(output[1].message);
+  assert.equal(request.method, 'POST');
+  assert.equal(request.url, '/callback?[REDACTED]');
+  assert.deepEqual(request.headers.accept, ['application/json']);
+  assert.equal(request.headers.authorization, '[REDACTED]');
+  assert.equal(response.url, '/callback?[REDACTED]');
+  assert.equal(response.statusCode, 204);
+  assert.deepEqual(response.headers['content-type'], ['application/json']);
+  assert.equal(response.headers['set-cookie'], '[REDACTED]');
+  assert.equal(output[1].durationMs, 7);
+});
+
 for (const failure of [false, true]) {
   test(`actual middleware strict-http projection, downstream ${failure ? 'error' : 'success'}`, async () => {
     const output: string[] = [];

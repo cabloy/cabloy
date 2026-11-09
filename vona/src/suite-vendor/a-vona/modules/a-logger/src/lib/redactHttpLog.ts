@@ -5,11 +5,16 @@ export function redactHttpLogHeaders(headers: Record<string, unknown>): Record<s
   return Object.fromEntries(
     Object.entries(headers).map(([key, value]) => [
       key,
-      safeHeaders.has(key.toLowerCase()) ? value : '[REDACTED]',
+      safeHeaders.has(key.toLowerCase())
+        ? Array.isArray(value)
+          ? [...value]
+          : value
+        : '[REDACTED]',
     ]),
   );
 }
 
+// Pathnames remain visible; credentials must not be placed in path segments.
 export function redactHttpLogUrl(value: unknown): string | undefined {
   if (typeof value !== 'string') return undefined;
   const boundary = value.search(/[?#]/);

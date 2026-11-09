@@ -35,6 +35,7 @@ export class MiddlewareSystemHttpLog extends BeanBase implements IMiddlewareSyst
       remoteAddress: serialized.remoteAddress,
       remotePort: serialized.remotePort,
     };
+    // Capture sanitized snapshots now; defer only JSON encoding, never access to live requests.
     this.$loggerChild('req').http(() => JSON.stringify(req));
     const profiler = this.$loggerChild('res').startTimer();
     // next
@@ -53,6 +54,6 @@ export class MiddlewareSystemHttpLog extends BeanBase implements IMiddlewareSyst
       statusCode: ctx.res.statusCode,
       headers,
     };
-    profiler.done({ level: 'http', message: JSON.stringify(res) });
+    profiler.done({ level: 'http', message: () => JSON.stringify(res) });
   }
 }

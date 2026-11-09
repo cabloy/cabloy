@@ -99,12 +99,21 @@ describe('HTTP logger', { concurrency: false }, () => {
         },
         $loggerChild: () => ({
           http: (message: () => string) => logs.push(message()),
-          startTimer: () => ({ done: ({ message }: { message: string }) => logs.push(message) }),
+          startTimer: () => ({
+            done: ({ message }: { message: () => string }) => logs.push(message()),
+          }),
         }),
       });
       await middleware.execute({}, async () => {});
       assert.equal(logs.length, 2);
       assert.equal(logs.join('\n').includes('secret-'), false);
+      for (const message of logs) {
+        const { headers: loggedHeaders } = JSON.parse(message);
+        assert.equal(
+          Object.keys(loggedHeaders).some(name => name.toLowerCase().startsWith('x-vona-test-')),
+          false,
+        );
+      }
       assert.match(logs[0], /application\/json/);
       assert.match(logs[1], /application\/json/);
       assert.equal(headers['X-Vona-Test-Stop-Authorization'], 'secret-authorization');
