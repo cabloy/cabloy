@@ -95,22 +95,6 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
-  '/api/auth/mock/authorize': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get: operations['AuthMock_authorize'];
-    put?: never;
-    post: operations['AuthMock_authorizePost'];
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
   '/api/captcha/create': {
     parameters: {
       query?: never;
@@ -2314,6 +2298,336 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  '/mcp/auth/summary': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['Authorization_summary'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/mcp/auth/decision': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['Authorization_decision'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/mcp/auth/authorizationGrant/mine': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['McpAuthAuthorizationGrant_mine'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/mcp/auth/authorizationGrant/revokeMine/{id}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['McpAuthAuthorizationGrant_revokeMine'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/mcp/auth/authorizationGrant/deleteMine/{id}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post?: never;
+    delete: operations['McpAuthAuthorizationGrant_deleteMine'];
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/mcp/auth/customScope/mine': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** List personal MCP scopes */
+    get: operations['McpAuthCustomScope_mine'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/mcp/auth/customScope/catalog': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Available MCP tools */
+    get: operations['McpAuthCustomScope_catalog'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/mcp/auth/customScope/createMine': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** Create personal MCP scope */
+    post: operations['McpAuthCustomScope_createMine'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/mcp/auth/customScope/updateMine/{id}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** Update personal MCP scope */
+    post: operations['McpAuthCustomScope_updateMine'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/mcp/auth/customScope/deleteMine/{id}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post?: never;
+    /** Delete personal MCP scope */
+    delete: operations['McpAuthCustomScope_deleteMine'];
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/mcp/test/catalog/categories': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['McpTestCatalog_categories'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/mcp/test/catalog/products': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['McpTestCatalog_products'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/mcp/test/catalog/products/{id}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['McpTestCatalog_detail'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/mcp/test/catalog/excluded': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['McpTestCatalog_excluded'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/mcp/test/actions/status': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /**
+     * Action Web summary
+     * @description Action Web description
+     */
+    get: operations['McpTestToolFixture_status'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/mcp/test/actions/effect/{label}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['McpTestToolFixture_effect'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/mcp/test/actions/array': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['McpTestToolFixture_array'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/mcp/test/actions/unsupported': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['McpTestToolFixture_unsupported'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/mcp/test/actions/excluded': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['McpTestToolFixture_excluded'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/mcp/test/actions/closed': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Action Web summary */
+    get: operations['McpTestToolFixture_closed'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -2457,6 +2771,12 @@ export interface components {
       provider: string;
       token?: unknown;
       payload?: unknown;
+      /** @enum {string} */
+      status?: 'accepted' | 'rejected' | 'unknown' | 'limited';
+      serverNow?: number;
+      expiresAt?: number;
+      resendAt?: number;
+      retryAt?: number;
     };
     'a-pay.dto.paymentSessionView': {
       id: number | string;
@@ -2528,6 +2848,26 @@ export interface components {
       /** @description Address Line 2 */
       addressLine2?: string | undefined;
     };
+    'CommerceAddressMineQueryPredicate_55d0e8946cbe9e934eacaad301acea8f728589e2':
+      | {
+          and: components['schemas']['CommerceAddressMineQueryPredicate'][];
+        }
+      | {
+          or: components['schemas']['CommerceAddressMineQueryPredicate'][];
+        }
+      | {
+          not: components['schemas']['CommerceAddressMineQueryPredicate'];
+        };
+    'CommerceAddressMineQueryPredicate':
+      | {
+          and: components['schemas']['CommerceAddressMineQueryPredicate'][];
+        }
+      | {
+          or: components['schemas']['CommerceAddressMineQueryPredicate'][];
+        }
+      | {
+          not: components['schemas']['CommerceAddressMineQueryPredicate'];
+        };
     'commerce-member.dto.addressMineView_2d063d28bc7243bed02ebd8bddf1212a93c6305b':
       | {
           /** @description ID */
@@ -2612,6 +2952,70 @@ export interface components {
       /** @description Operations */
       _operationsRow?: unknown;
     };
+    'CommerceAddressSelectQueryPredicate_80c49864b2153857280bcd6fae57bf0e3f28c529':
+      | {
+          /** @enum {string} */
+          field: 'recipientName';
+          /** @enum {string} */
+          op: 'eq' | 'containsI';
+          value: string;
+        }
+      | {
+          /** @enum {string} */
+          field: 'phone';
+          /** @enum {string} */
+          op: 'eq' | 'containsI';
+          value: string;
+        }
+      | {
+          /** @enum {string} */
+          field: 'createdAt';
+          /** @enum {string} */
+          op: 'gte' | 'lt' | 'lte';
+          /** Format: date-time */
+          value: Date;
+        }
+      | {
+          and: components['schemas']['CommerceAddressSelectQueryPredicate'][];
+        }
+      | {
+          or: components['schemas']['CommerceAddressSelectQueryPredicate'][];
+        }
+      | {
+          not: components['schemas']['CommerceAddressSelectQueryPredicate'];
+        };
+    'CommerceAddressSelectQueryPredicate':
+      | {
+          /** @enum {string} */
+          field: 'recipientName';
+          /** @enum {string} */
+          op: 'eq' | 'containsI';
+          value: string;
+        }
+      | {
+          /** @enum {string} */
+          field: 'phone';
+          /** @enum {string} */
+          op: 'eq' | 'containsI';
+          value: string;
+        }
+      | {
+          /** @enum {string} */
+          field: 'createdAt';
+          /** @enum {string} */
+          op: 'gte' | 'lt' | 'lte';
+          /** Format: date-time */
+          value: Date;
+        }
+      | {
+          and: components['schemas']['CommerceAddressSelectQueryPredicate'][];
+        }
+      | {
+          or: components['schemas']['CommerceAddressSelectQueryPredicate'][];
+        }
+      | {
+          not: components['schemas']['CommerceAddressSelectQueryPredicate'];
+        };
     'commerce-member.dto.addressView_2d063d28bc7243bed02ebd8bddf1212a93c6305b_425dbecccd52e19e24888f99e1b1670233afa875':
       | {
           /**
@@ -2961,6 +3365,56 @@ export interface components {
       /** @description Operations */
       _operationsRow?: unknown;
     };
+    'CommerceCouponTemplateSelectQueryPredicate_6f0bf47e65b9343a2afb89a23596aca3dad50313':
+      | {
+          /** @enum {string} */
+          field: 'name';
+          /** @enum {string} */
+          op: 'eq' | 'containsI';
+          value: string;
+        }
+      | {
+          /** @enum {string} */
+          field: 'createdAt';
+          /** @enum {string} */
+          op: 'gte' | 'lt' | 'lte';
+          /** Format: date-time */
+          value: Date;
+        }
+      | {
+          and: components['schemas']['CommerceCouponTemplateSelectQueryPredicate'][];
+        }
+      | {
+          or: components['schemas']['CommerceCouponTemplateSelectQueryPredicate'][];
+        }
+      | {
+          not: components['schemas']['CommerceCouponTemplateSelectQueryPredicate'];
+        };
+    'CommerceCouponTemplateSelectQueryPredicate':
+      | {
+          /** @enum {string} */
+          field: 'name';
+          /** @enum {string} */
+          op: 'eq' | 'containsI';
+          value: string;
+        }
+      | {
+          /** @enum {string} */
+          field: 'createdAt';
+          /** @enum {string} */
+          op: 'gte' | 'lt' | 'lte';
+          /** Format: date-time */
+          value: Date;
+        }
+      | {
+          and: components['schemas']['CommerceCouponTemplateSelectQueryPredicate'][];
+        }
+      | {
+          or: components['schemas']['CommerceCouponTemplateSelectQueryPredicate'][];
+        }
+      | {
+          not: components['schemas']['CommerceCouponTemplateSelectQueryPredicate'];
+        };
     'commerce-promotion.dto.couponTemplateView_2d063d28bc7243bed02ebd8bddf1212a93c6305b_91abd8df366c0c4d47021b38af2a356349ee178b':
       | {
           /**
@@ -3117,6 +3571,76 @@ export interface components {
       currency: 'USD';
       payableTotalCents: number;
     };
+    'CommerceOrderMineQueryPredicate_f9aee760a2098afd454bcecd0e927d9bfb63d77f':
+      | {
+          /** @enum {string} */
+          field: 'state';
+          /** @enum {string} */
+          op: 'eq';
+          /** @enum {string} */
+          value:
+            | 'awaiting_payment'
+            | 'paid'
+            | 'refund_requested'
+            | 'refund_approved'
+            | 'refund_rejected'
+            | 'shipped'
+            | 'refunded'
+            | 'cancelled'
+            | 'expired';
+        }
+      | {
+          /** @enum {string} */
+          field: 'createdAt';
+          /** @enum {string} */
+          op: 'gte' | 'lt' | 'lte';
+          /** Format: date-time */
+          value: Date;
+        }
+      | {
+          and: components['schemas']['CommerceOrderMineQueryPredicate'][];
+        }
+      | {
+          or: components['schemas']['CommerceOrderMineQueryPredicate'][];
+        }
+      | {
+          not: components['schemas']['CommerceOrderMineQueryPredicate'];
+        };
+    'CommerceOrderMineQueryPredicate':
+      | {
+          /** @enum {string} */
+          field: 'state';
+          /** @enum {string} */
+          op: 'eq';
+          /** @enum {string} */
+          value:
+            | 'awaiting_payment'
+            | 'paid'
+            | 'refund_requested'
+            | 'refund_approved'
+            | 'refund_rejected'
+            | 'shipped'
+            | 'refunded'
+            | 'cancelled'
+            | 'expired';
+        }
+      | {
+          /** @enum {string} */
+          field: 'createdAt';
+          /** @enum {string} */
+          op: 'gte' | 'lt' | 'lte';
+          /** Format: date-time */
+          value: Date;
+        }
+      | {
+          and: components['schemas']['CommerceOrderMineQueryPredicate'][];
+        }
+      | {
+          or: components['schemas']['CommerceOrderMineQueryPredicate'][];
+        }
+      | {
+          not: components['schemas']['CommerceOrderMineQueryPredicate'];
+        };
     'commerce-trade.dto.orderDetail_2d063d28bc7243bed02ebd8bddf1212a93c6305b':
       | {
           id: number | string;
@@ -3312,6 +3836,110 @@ export interface components {
       /** @description Operations */
       _operationsRow?: unknown;
     };
+    'CommerceOrderSelectQueryPredicate_a32b689e5c62edf5889e5875801d3b1c6f275ba6':
+      | {
+          /** @enum {string} */
+          field: 'state';
+          /** @enum {string} */
+          op: 'eq';
+          /** @enum {string} */
+          value:
+            | 'awaiting_payment'
+            | 'paid'
+            | 'refund_requested'
+            | 'refund_approved'
+            | 'refund_rejected'
+            | 'shipped'
+            | 'refunded'
+            | 'cancelled'
+            | 'expired';
+        }
+      | {
+          /** @enum {string} */
+          field: 'state';
+          /** @enum {string} */
+          op: 'in';
+          value: (
+            | 'awaiting_payment'
+            | 'paid'
+            | 'refund_requested'
+            | 'refund_approved'
+            | 'refund_rejected'
+            | 'shipped'
+            | 'refunded'
+            | 'cancelled'
+            | 'expired'
+          )[];
+        }
+      | {
+          /** @enum {string} */
+          field: 'createdAt';
+          /** @enum {string} */
+          op: 'gte' | 'lt' | 'lte';
+          /** Format: date-time */
+          value: Date;
+        }
+      | {
+          and: components['schemas']['CommerceOrderSelectQueryPredicate'][];
+        }
+      | {
+          or: components['schemas']['CommerceOrderSelectQueryPredicate'][];
+        }
+      | {
+          not: components['schemas']['CommerceOrderSelectQueryPredicate'];
+        };
+    'CommerceOrderSelectQueryPredicate':
+      | {
+          /** @enum {string} */
+          field: 'state';
+          /** @enum {string} */
+          op: 'eq';
+          /** @enum {string} */
+          value:
+            | 'awaiting_payment'
+            | 'paid'
+            | 'refund_requested'
+            | 'refund_approved'
+            | 'refund_rejected'
+            | 'shipped'
+            | 'refunded'
+            | 'cancelled'
+            | 'expired';
+        }
+      | {
+          /** @enum {string} */
+          field: 'state';
+          /** @enum {string} */
+          op: 'in';
+          value: (
+            | 'awaiting_payment'
+            | 'paid'
+            | 'refund_requested'
+            | 'refund_approved'
+            | 'refund_rejected'
+            | 'shipped'
+            | 'refunded'
+            | 'cancelled'
+            | 'expired'
+          )[];
+        }
+      | {
+          /** @enum {string} */
+          field: 'createdAt';
+          /** @enum {string} */
+          op: 'gte' | 'lt' | 'lte';
+          /** Format: date-time */
+          value: Date;
+        }
+      | {
+          and: components['schemas']['CommerceOrderSelectQueryPredicate'][];
+        }
+      | {
+          or: components['schemas']['CommerceOrderSelectQueryPredicate'][];
+        }
+      | {
+          not: components['schemas']['CommerceOrderSelectQueryPredicate'];
+        };
     'commerce-trade.dto.orderView_2d063d28bc7243bed02ebd8bddf1212a93c6305b_c770e477ee8be6f39738af0fc4f0e7fce54bf9e0':
       | {
           /**
@@ -3408,6 +4036,56 @@ export interface components {
           code: string;
         }
       | undefined;
+    'CommerceStockAuditSelectQueryPredicate_6ed3143d5729b6b0c088585fbdc8eee7a7e109cc':
+      | {
+          /** @enum {string} */
+          field: 'skuId';
+          /** @enum {string} */
+          op: 'eq';
+          value: string;
+        }
+      | {
+          /** @enum {string} */
+          field: 'createdAt';
+          /** @enum {string} */
+          op: 'gte' | 'lt' | 'lte';
+          /** Format: date-time */
+          value: Date;
+        }
+      | {
+          and: components['schemas']['CommerceStockAuditSelectQueryPredicate'][];
+        }
+      | {
+          or: components['schemas']['CommerceStockAuditSelectQueryPredicate'][];
+        }
+      | {
+          not: components['schemas']['CommerceStockAuditSelectQueryPredicate'];
+        };
+    'CommerceStockAuditSelectQueryPredicate':
+      | {
+          /** @enum {string} */
+          field: 'skuId';
+          /** @enum {string} */
+          op: 'eq';
+          value: string;
+        }
+      | {
+          /** @enum {string} */
+          field: 'createdAt';
+          /** @enum {string} */
+          op: 'gte' | 'lt' | 'lte';
+          /** Format: date-time */
+          value: Date;
+        }
+      | {
+          and: components['schemas']['CommerceStockAuditSelectQueryPredicate'][];
+        }
+      | {
+          or: components['schemas']['CommerceStockAuditSelectQueryPredicate'][];
+        }
+      | {
+          not: components['schemas']['CommerceStockAuditSelectQueryPredicate'];
+        };
     'commerce-trade.dto.stockAuditView_2d063d28bc7243bed02ebd8bddf1212a93c6305b_425dbecccd52e19e24888f99e1b1670233afa875':
       | {
           /**
@@ -3521,6 +4199,56 @@ export interface components {
       /** @description Operations */
       _operationsRow?: unknown;
     };
+    'CommerceStockBalanceSelectQueryPredicate_6ed3143d5729b6b0c088585fbdc8eee7a7e109cc':
+      | {
+          /** @enum {string} */
+          field: 'skuId';
+          /** @enum {string} */
+          op: 'eq';
+          value: string;
+        }
+      | {
+          /** @enum {string} */
+          field: 'createdAt';
+          /** @enum {string} */
+          op: 'gte' | 'lt' | 'lte';
+          /** Format: date-time */
+          value: Date;
+        }
+      | {
+          and: components['schemas']['CommerceStockBalanceSelectQueryPredicate'][];
+        }
+      | {
+          or: components['schemas']['CommerceStockBalanceSelectQueryPredicate'][];
+        }
+      | {
+          not: components['schemas']['CommerceStockBalanceSelectQueryPredicate'];
+        };
+    'CommerceStockBalanceSelectQueryPredicate':
+      | {
+          /** @enum {string} */
+          field: 'skuId';
+          /** @enum {string} */
+          op: 'eq';
+          value: string;
+        }
+      | {
+          /** @enum {string} */
+          field: 'createdAt';
+          /** @enum {string} */
+          op: 'gte' | 'lt' | 'lte';
+          /** Format: date-time */
+          value: Date;
+        }
+      | {
+          and: components['schemas']['CommerceStockBalanceSelectQueryPredicate'][];
+        }
+      | {
+          or: components['schemas']['CommerceStockBalanceSelectQueryPredicate'][];
+        }
+      | {
+          not: components['schemas']['CommerceStockBalanceSelectQueryPredicate'];
+        };
     'commerce-trade.dto.stockBalanceView_2d063d28bc7243bed02ebd8bddf1212a93c6305b_425dbecccd52e19e24888f99e1b1670233afa875':
       | {
           /**
@@ -3609,6 +4337,56 @@ export interface components {
       /** @description Operations */
       _operationsRow?: unknown;
     };
+    'CommerceCategorySelectQueryPredicate_6f0bf47e65b9343a2afb89a23596aca3dad50313':
+      | {
+          /** @enum {string} */
+          field: 'name';
+          /** @enum {string} */
+          op: 'eq' | 'containsI';
+          value: string;
+        }
+      | {
+          /** @enum {string} */
+          field: 'createdAt';
+          /** @enum {string} */
+          op: 'gte' | 'lt' | 'lte';
+          /** Format: date-time */
+          value: Date;
+        }
+      | {
+          and: components['schemas']['CommerceCategorySelectQueryPredicate'][];
+        }
+      | {
+          or: components['schemas']['CommerceCategorySelectQueryPredicate'][];
+        }
+      | {
+          not: components['schemas']['CommerceCategorySelectQueryPredicate'];
+        };
+    'CommerceCategorySelectQueryPredicate':
+      | {
+          /** @enum {string} */
+          field: 'name';
+          /** @enum {string} */
+          op: 'eq' | 'containsI';
+          value: string;
+        }
+      | {
+          /** @enum {string} */
+          field: 'createdAt';
+          /** @enum {string} */
+          op: 'gte' | 'lt' | 'lte';
+          /** Format: date-time */
+          value: Date;
+        }
+      | {
+          and: components['schemas']['CommerceCategorySelectQueryPredicate'][];
+        }
+      | {
+          or: components['schemas']['CommerceCategorySelectQueryPredicate'][];
+        }
+      | {
+          not: components['schemas']['CommerceCategorySelectQueryPredicate'];
+        };
     'commerce-catalog.dto.categoryView_2d063d28bc7243bed02ebd8bddf1212a93c6305b_425dbecccd52e19e24888f99e1b1670233afa875':
       | {
           /**
@@ -3738,6 +4516,56 @@ export interface components {
       /** @description Operations */
       _operationsRow?: unknown;
     };
+    'CommerceProductSelectQueryPredicate_deb90652e4f202e098ba09b36626875a1a6e90e4':
+      | {
+          /** @enum {string} */
+          field: 'title';
+          /** @enum {string} */
+          op: 'eq' | 'containsI';
+          value: string;
+        }
+      | {
+          /** @enum {string} */
+          field: 'createdAt';
+          /** @enum {string} */
+          op: 'gte' | 'lt' | 'lte';
+          /** Format: date-time */
+          value: Date;
+        }
+      | {
+          and: components['schemas']['CommerceProductSelectQueryPredicate'][];
+        }
+      | {
+          or: components['schemas']['CommerceProductSelectQueryPredicate'][];
+        }
+      | {
+          not: components['schemas']['CommerceProductSelectQueryPredicate'];
+        };
+    'CommerceProductSelectQueryPredicate':
+      | {
+          /** @enum {string} */
+          field: 'title';
+          /** @enum {string} */
+          op: 'eq' | 'containsI';
+          value: string;
+        }
+      | {
+          /** @enum {string} */
+          field: 'createdAt';
+          /** @enum {string} */
+          op: 'gte' | 'lt' | 'lte';
+          /** Format: date-time */
+          value: Date;
+        }
+      | {
+          and: components['schemas']['CommerceProductSelectQueryPredicate'][];
+        }
+      | {
+          or: components['schemas']['CommerceProductSelectQueryPredicate'][];
+        }
+      | {
+          not: components['schemas']['CommerceProductSelectQueryPredicate'];
+        };
     'commerce-catalog.dto.productPublicSelectRes': {
       list: components['schemas']['commerce-catalog.dto.productPublic'][];
       total: string;
@@ -3938,6 +4766,56 @@ export interface components {
       /** @description Operations */
       _operationsRow?: unknown;
     };
+    'CommerceSkuSelectQueryPredicate_6bfc12fff19619c142f759c3a85aa30659306378':
+      | {
+          /** @enum {string} */
+          field: 'code';
+          /** @enum {string} */
+          op: 'eq' | 'containsI';
+          value: string;
+        }
+      | {
+          /** @enum {string} */
+          field: 'createdAt';
+          /** @enum {string} */
+          op: 'gte' | 'lt' | 'lte';
+          /** Format: date-time */
+          value: Date;
+        }
+      | {
+          and: components['schemas']['CommerceSkuSelectQueryPredicate'][];
+        }
+      | {
+          or: components['schemas']['CommerceSkuSelectQueryPredicate'][];
+        }
+      | {
+          not: components['schemas']['CommerceSkuSelectQueryPredicate'];
+        };
+    'CommerceSkuSelectQueryPredicate':
+      | {
+          /** @enum {string} */
+          field: 'code';
+          /** @enum {string} */
+          op: 'eq' | 'containsI';
+          value: string;
+        }
+      | {
+          /** @enum {string} */
+          field: 'createdAt';
+          /** @enum {string} */
+          op: 'gte' | 'lt' | 'lte';
+          /** Format: date-time */
+          value: Date;
+        }
+      | {
+          and: components['schemas']['CommerceSkuSelectQueryPredicate'][];
+        }
+      | {
+          or: components['schemas']['CommerceSkuSelectQueryPredicate'][];
+        }
+      | {
+          not: components['schemas']['CommerceSkuSelectQueryPredicate'];
+        };
     'commerce-catalog.dto.skuView_2d063d28bc7243bed02ebd8bddf1212a93c6305b_425dbecccd52e19e24888f99e1b1670233afa875':
       | {
           /**
@@ -4208,6 +5086,84 @@ export interface components {
       /** @default true */
       signed?: boolean;
     };
+    'TrainingRecordSelectQueryPredicate_12e26675b7b232083b85f3bb960e6f1048755230':
+      | {
+          /** @enum {string} */
+          field: 'name';
+          /** @enum {string} */
+          op: 'eq' | 'containsI';
+          value: string;
+        }
+      | {
+          /** @enum {string} */
+          field: 'studentId';
+          /** @enum {string} */
+          op: 'eq';
+          value: string;
+        }
+      | {
+          /** @enum {string} */
+          field: 'studentName';
+          /** @enum {string} */
+          op: 'containsI';
+          value: string;
+        }
+      | {
+          /** @enum {string} */
+          field: 'createdAt';
+          /** @enum {string} */
+          op: 'gte' | 'lt' | 'lte';
+          /** Format: date-time */
+          value: Date;
+        }
+      | {
+          and: components['schemas']['TrainingRecordSelectQueryPredicate'][];
+        }
+      | {
+          or: components['schemas']['TrainingRecordSelectQueryPredicate'][];
+        }
+      | {
+          not: components['schemas']['TrainingRecordSelectQueryPredicate'];
+        };
+    'TrainingRecordSelectQueryPredicate':
+      | {
+          /** @enum {string} */
+          field: 'name';
+          /** @enum {string} */
+          op: 'eq' | 'containsI';
+          value: string;
+        }
+      | {
+          /** @enum {string} */
+          field: 'studentId';
+          /** @enum {string} */
+          op: 'eq';
+          value: string;
+        }
+      | {
+          /** @enum {string} */
+          field: 'studentName';
+          /** @enum {string} */
+          op: 'containsI';
+          value: string;
+        }
+      | {
+          /** @enum {string} */
+          field: 'createdAt';
+          /** @enum {string} */
+          op: 'gte' | 'lt' | 'lte';
+          /** Format: date-time */
+          value: Date;
+        }
+      | {
+          and: components['schemas']['TrainingRecordSelectQueryPredicate'][];
+        }
+      | {
+          or: components['schemas']['TrainingRecordSelectQueryPredicate'][];
+        }
+      | {
+          not: components['schemas']['TrainingRecordSelectQueryPredicate'];
+        };
     /** @description View Student Training Record */
     'training-record.dto.recordView_2d063d28bc7243bed02ebd8bddf1212a93c6305b_7d715789d9643740a04e8a6c0f6fb951884bc347':
       | {
@@ -4337,7 +5293,10 @@ export interface components {
       mobile: string;
       /** @description Student Image */
       imageId?: number | string | undefined;
-      /** @description Training Stage */
+      /**
+       * Training Stage
+       * @description 1=Foundation Track; 2=Progress Track; 3=Advanced Workshop
+       */
       level: 1 | 2 | 3;
       /** @description Student Training Records */
       trainingRecords?:
@@ -4509,7 +5468,10 @@ export interface components {
       mobile: string;
       /** @description Student Image */
       imageId?: number | string | undefined;
-      /** @description Training Stage */
+      /**
+       * Training Stage
+       * @description 1=Foundation Track; 2=Progress Track; 3=Advanced Workshop
+       */
       level: 1 | 2 | 3;
       image?: components['schemas']['a-image.dto.imageView_a83c3e638bca4b30ec8675860cdc52d66f6a16d1_2d063d28bc7243bed02ebd8bddf1212a93c6305b_efb37794d7c03c65122279f90d79919f009c34e5_1816ff740d81c738ec055c7038bbd93beb9405a7_537cd6552a384183a9457fb6a920bbae337277f6'];
       /** @description Operations */
@@ -4527,8 +5489,103 @@ export interface components {
           signed?: boolean;
         }
       | undefined;
+    'TrainingStudentSelectQueryPredicate_1a30b20933e90ac2c50faf88c8a6099328e0ded8':
+      | {
+          /** @enum {string} */
+          field: 'id';
+          /** @enum {string} */
+          op: 'eq';
+          value: string;
+        }
+      | {
+          /** @enum {string} */
+          field: 'id';
+          /** @enum {string} */
+          op: 'in';
+          value: string[];
+        }
+      | {
+          /** @enum {string} */
+          field: 'name';
+          /** @enum {string} */
+          op: 'eq' | 'containsI' | 'startsWith';
+          value: string;
+        }
+      | {
+          /** @enum {string} */
+          field: 'level';
+          /** @enum {string} */
+          op: 'eq' | 'gte';
+          value: 1 | 2 | 3;
+        }
+      | {
+          /** @enum {string} */
+          field: 'createdAt';
+          /** @enum {string} */
+          op: 'gte' | 'lt' | 'lte';
+          /** Format: date-time */
+          value: Date;
+        }
+      | {
+          and: components['schemas']['TrainingStudentSelectQueryPredicate'][];
+        }
+      | {
+          or: components['schemas']['TrainingStudentSelectQueryPredicate'][];
+        }
+      | {
+          not: components['schemas']['TrainingStudentSelectQueryPredicate'];
+        };
+    'TrainingStudentSelectQueryPredicate':
+      | {
+          /** @enum {string} */
+          field: 'id';
+          /** @enum {string} */
+          op: 'eq';
+          value: string;
+        }
+      | {
+          /** @enum {string} */
+          field: 'id';
+          /** @enum {string} */
+          op: 'in';
+          value: string[];
+        }
+      | {
+          /** @enum {string} */
+          field: 'name';
+          /** @enum {string} */
+          op: 'eq' | 'containsI' | 'startsWith';
+          value: string;
+        }
+      | {
+          /** @enum {string} */
+          field: 'level';
+          /** @enum {string} */
+          op: 'eq' | 'gte';
+          value: 1 | 2 | 3;
+        }
+      | {
+          /** @enum {string} */
+          field: 'createdAt';
+          /** @enum {string} */
+          op: 'gte' | 'lt' | 'lte';
+          /** Format: date-time */
+          value: Date;
+        }
+      | {
+          and: components['schemas']['TrainingStudentSelectQueryPredicate'][];
+        }
+      | {
+          or: components['schemas']['TrainingStudentSelectQueryPredicate'][];
+        }
+      | {
+          not: components['schemas']['TrainingStudentSelectQueryPredicate'];
+        };
     'training-student.dto.studentGroupResItem': {
-      /** @description Training Stage */
+      /**
+       * Training Stage
+       * @description 1=Foundation Track; 2=Progress Track; 3=Advanced Workshop
+       */
       level?: 1 | 2 | 3 | undefined;
       count_all?: string | undefined;
       count_imageId?: string | undefined;
@@ -4568,7 +5625,10 @@ export interface components {
           mobile: string;
           /** @description Student Image */
           imageId?: number | string | undefined;
-          /** @description Training Stage */
+          /**
+           * Training Stage
+           * @description 1=Foundation Track; 2=Progress Track; 3=Advanced Workshop
+           */
           level: 1 | 2 | 3;
           /** @description Student Training Records */
           trainingRecords: {
@@ -4664,7 +5724,10 @@ export interface components {
       mobile: string;
       /** @description Student Image */
       imageId?: number | string | undefined;
-      /** @description Training Stage */
+      /**
+       * Training Stage
+       * @description 1=Foundation Track; 2=Progress Track; 3=Advanced Workshop
+       */
       level: 1 | 2 | 3;
       /** @description Student Training Records */
       trainingRecords?:
@@ -4768,7 +5831,10 @@ export interface components {
           name: string;
           /** @description Mobile */
           mobile: string;
-          /** @description Training Stage */
+          /**
+           * Training Stage
+           * @description 1=Foundation Track; 2=Progress Track; 3=Advanced Workshop
+           */
           level: 1 | 2 | 3;
           /** @description Description */
           descriptionMarkdown?: string | undefined;
@@ -4998,6 +6064,56 @@ export interface components {
       /** @description Operations */
       _operationsRow?: unknown;
     };
+    'TestRestProductSelectQueryPredicate_6f0bf47e65b9343a2afb89a23596aca3dad50313':
+      | {
+          /** @enum {string} */
+          field: 'name';
+          /** @enum {string} */
+          op: 'eq' | 'containsI';
+          value: string;
+        }
+      | {
+          /** @enum {string} */
+          field: 'createdAt';
+          /** @enum {string} */
+          op: 'gte' | 'lt' | 'lte';
+          /** Format: date-time */
+          value: Date;
+        }
+      | {
+          and: components['schemas']['TestRestProductSelectQueryPredicate'][];
+        }
+      | {
+          or: components['schemas']['TestRestProductSelectQueryPredicate'][];
+        }
+      | {
+          not: components['schemas']['TestRestProductSelectQueryPredicate'];
+        };
+    'TestRestProductSelectQueryPredicate':
+      | {
+          /** @enum {string} */
+          field: 'name';
+          /** @enum {string} */
+          op: 'eq' | 'containsI';
+          value: string;
+        }
+      | {
+          /** @enum {string} */
+          field: 'createdAt';
+          /** @enum {string} */
+          op: 'gte' | 'lt' | 'lte';
+          /** Format: date-time */
+          value: Date;
+        }
+      | {
+          and: components['schemas']['TestRestProductSelectQueryPredicate'][];
+        }
+      | {
+          or: components['schemas']['TestRestProductSelectQueryPredicate'][];
+        }
+      | {
+          not: components['schemas']['TestRestProductSelectQueryPredicate'];
+        };
     'test-rest.dto.productView_2d063d28bc7243bed02ebd8bddf1212a93c6305b_425dbecccd52e19e24888f99e1b1670233afa875':
       | {
           /**
@@ -5275,6 +6391,68 @@ export interface components {
       /** @description Amount */
       amount: number;
     };
+    'TestOrderQueryQueryPredicate_0ba00e95609398d05aa5f48387ae2e7b3638cb10':
+      | {
+          /** @enum {string} */
+          field: 'orderNo';
+          /** @enum {string} */
+          op: 'eq' | 'containsI';
+          value: string;
+        }
+      | {
+          /** @enum {string} */
+          field: 'remark';
+          /** @enum {string} */
+          op: 'eq' | 'containsI';
+          value: string;
+        }
+      | {
+          /** @enum {string} */
+          field: 'userName';
+          /** @enum {string} */
+          op: 'containsI';
+          value: string;
+        }
+      | {
+          and: components['schemas']['TestOrderQueryQueryPredicate'][];
+        }
+      | {
+          or: components['schemas']['TestOrderQueryQueryPredicate'][];
+        }
+      | {
+          not: components['schemas']['TestOrderQueryQueryPredicate'];
+        };
+    'TestOrderQueryQueryPredicate':
+      | {
+          /** @enum {string} */
+          field: 'orderNo';
+          /** @enum {string} */
+          op: 'eq' | 'containsI';
+          value: string;
+        }
+      | {
+          /** @enum {string} */
+          field: 'remark';
+          /** @enum {string} */
+          op: 'eq' | 'containsI';
+          value: string;
+        }
+      | {
+          /** @enum {string} */
+          field: 'userName';
+          /** @enum {string} */
+          op: 'containsI';
+          value: string;
+        }
+      | {
+          and: components['schemas']['TestOrderQueryQueryPredicate'][];
+        }
+      | {
+          or: components['schemas']['TestOrderQueryQueryPredicate'][];
+        }
+      | {
+          not: components['schemas']['TestOrderQueryQueryPredicate'];
+        };
     'test-vona.dto.orderSelectRes': {
       list: components['schemas']['test-vona.dto.orderSelectResItem'][];
       total: string;
@@ -5282,6 +6460,54 @@ export interface components {
       pageSize: number;
       pageNo: number;
     };
+    'TestOrderQueryPageQueryPredicate_2ac91e8ccbe06af23a8af5e36238058a7473772a':
+      | {
+          /** @enum {string} */
+          field: 'orderNo';
+          /** @enum {string} */
+          op: 'eq' | 'containsI';
+          value: string;
+        }
+      | {
+          /** @enum {string} */
+          field: 'remark';
+          /** @enum {string} */
+          op: 'eq' | 'containsI';
+          value: string;
+        }
+      | {
+          and: components['schemas']['TestOrderQueryPageQueryPredicate'][];
+        }
+      | {
+          or: components['schemas']['TestOrderQueryPageQueryPredicate'][];
+        }
+      | {
+          not: components['schemas']['TestOrderQueryPageQueryPredicate'];
+        };
+    'TestOrderQueryPageQueryPredicate':
+      | {
+          /** @enum {string} */
+          field: 'orderNo';
+          /** @enum {string} */
+          op: 'eq' | 'containsI';
+          value: string;
+        }
+      | {
+          /** @enum {string} */
+          field: 'remark';
+          /** @enum {string} */
+          op: 'eq' | 'containsI';
+          value: string;
+        }
+      | {
+          and: components['schemas']['TestOrderQueryPageQueryPredicate'][];
+        }
+      | {
+          or: components['schemas']['TestOrderQueryPageQueryPredicate'][];
+        }
+      | {
+          not: components['schemas']['TestOrderQueryPageQueryPredicate'];
+        };
     'test-vona.dto.postGroup': {
       /** @description Title */
       title?: string | undefined;
@@ -5293,6 +6519,136 @@ export interface components {
       min_stars?: string | undefined;
       max_stars?: string | undefined;
     };
+    'TestPostSelectQueryPredicate_d656479b876f92e6314ae1b5fc8aef786abc46e1':
+      | {
+          /** @enum {string} */
+          field: 'title';
+          /** @enum {string} */
+          op: 'eq' | 'containsI' | 'startsWith';
+          value: string;
+        }
+      | {
+          /** @enum {string} */
+          field: 'title';
+          /** @enum {string} */
+          op: 'isNull' | 'isNotNull';
+        }
+      | {
+          /** @enum {string} */
+          field: 'createdAt';
+          /** @enum {string} */
+          op: 'gte' | 'lt' | 'lte';
+          /** Format: date-time */
+          value: Date;
+        }
+      | {
+          /** @enum {string} */
+          field: 'createdAt';
+          /** @enum {string} */
+          op: 'isNull' | 'isNotNull';
+        }
+      | {
+          /** @enum {string} */
+          field: 'userId';
+          /** @enum {string} */
+          op: 'eq';
+          value: string;
+        }
+      | {
+          /** @enum {string} */
+          field: 'userId';
+          /** @enum {string} */
+          op: 'in';
+          value: string[];
+        }
+      | {
+          /** @enum {string} */
+          field: 'stars';
+          /** @enum {string} */
+          op: 'eq' | 'gte' | 'gt' | 'lte' | 'lt';
+          value: number;
+        }
+      | {
+          /** @enum {string} */
+          field: 'userName';
+          /** @enum {string} */
+          op: 'eqI';
+          value: string;
+        }
+      | {
+          and: components['schemas']['TestPostSelectQueryPredicate'][];
+        }
+      | {
+          or: components['schemas']['TestPostSelectQueryPredicate'][];
+        }
+      | {
+          not: components['schemas']['TestPostSelectQueryPredicate'];
+        };
+    'TestPostSelectQueryPredicate':
+      | {
+          /** @enum {string} */
+          field: 'title';
+          /** @enum {string} */
+          op: 'eq' | 'containsI' | 'startsWith';
+          value: string;
+        }
+      | {
+          /** @enum {string} */
+          field: 'title';
+          /** @enum {string} */
+          op: 'isNull' | 'isNotNull';
+        }
+      | {
+          /** @enum {string} */
+          field: 'createdAt';
+          /** @enum {string} */
+          op: 'gte' | 'lt' | 'lte';
+          /** Format: date-time */
+          value: Date;
+        }
+      | {
+          /** @enum {string} */
+          field: 'createdAt';
+          /** @enum {string} */
+          op: 'isNull' | 'isNotNull';
+        }
+      | {
+          /** @enum {string} */
+          field: 'userId';
+          /** @enum {string} */
+          op: 'eq';
+          value: string;
+        }
+      | {
+          /** @enum {string} */
+          field: 'userId';
+          /** @enum {string} */
+          op: 'in';
+          value: string[];
+        }
+      | {
+          /** @enum {string} */
+          field: 'stars';
+          /** @enum {string} */
+          op: 'eq' | 'gte' | 'gt' | 'lte' | 'lt';
+          value: number;
+        }
+      | {
+          /** @enum {string} */
+          field: 'userName';
+          /** @enum {string} */
+          op: 'eqI';
+          value: string;
+        }
+      | {
+          and: components['schemas']['TestPostSelectQueryPredicate'][];
+        }
+      | {
+          or: components['schemas']['TestPostSelectQueryPredicate'][];
+        }
+      | {
+          not: components['schemas']['TestPostSelectQueryPredicate'];
+        };
     'test-vona.dto.postAggregate': {
       count_all?: string | undefined;
       count_stars?: string | undefined;
@@ -5300,6 +6656,24 @@ export interface components {
       avg_stars?: string | undefined;
       min_stars?: string | undefined;
       max_stars?: string | undefined;
+    };
+    'test-vona.dto.postSelectReq': {
+      where?: components['schemas']['TestPostSelectQueryPredicate_d656479b876f92e6314ae1b5fc8aef786abc46e1'];
+      orders?:
+        | {
+            /** @enum {string} */
+            field: 'id' | 'title' | 'createdAt' | 'userId' | 'stars' | 'userName';
+            /** @enum {string} */
+            direction: 'asc' | 'desc';
+          }[]
+        | undefined;
+      pageNo?: number | undefined;
+      pageSize?: number | undefined;
+      /** @description Created At */
+      createdAt?: string | undefined;
+      /** @description Title */
+      title?: string | undefined;
+      userName?: string | undefined;
     };
     'test-vona.dto.postSelectRes': {
       list: components['schemas']['test-vona.dto.postSelectResItem'][];
@@ -5424,6 +6798,175 @@ export interface components {
       fullName3?: string | undefined;
       fullName4?: string | undefined;
     };
+    'mcp-auth.dto.authorizationSummary': {
+      clientName: string;
+      resource: string;
+      scope: string;
+      options: components['schemas']['mcp-auth.dto.mcpScopeOption'][];
+      expiresAt: number;
+    };
+    'mcp-auth.dto.mcpScopeOption': {
+      scope: string;
+      name: string;
+      description: string;
+      tools: components['schemas']['mcp-auth.dto.mcpScopeTool'][];
+      allowed: boolean;
+      /** @enum {string|null} */
+      reason?:
+        | 'outside_requested_scope'
+        | 'outside_client_scope'
+        | 'tools_unavailable'
+        | null
+        | undefined;
+    };
+    'mcp-auth.dto.mcpScopeTool': {
+      name: string;
+      controller: string;
+      action: string;
+      controllerSummary: string;
+      summary: string;
+      description: string;
+      readOnly: boolean;
+      available: boolean;
+    };
+    'mcp-auth.dto.authorizationRedirect': {
+      redirectUrl: string;
+    };
+    'mcp-auth.dto.authorizationDecision': {
+      request: string;
+      allow: boolean;
+      scope?: ('mcp:all' | 'mcp:read') | string | undefined;
+    };
+    'mcp-auth.dto.authorizationGrantMineRes': {
+      list: components['schemas']['mcp-auth.dto.authorizationGrant'][];
+      total: string;
+      pageCount: number;
+      pageSize: number;
+      pageNo: number;
+    };
+    'mcp-auth.dto.authorizationGrant': {
+      /**
+       * Format: date-time
+       * @description Created At
+       */
+      createdAt: Date;
+      /** @description ID */
+      id: number | string;
+      resource: string;
+      scope: string;
+      /** @default  */
+      requestedScope?: string;
+      /** @enum {string} */
+      state: 'pending' | 'codeReady' | 'tokenActive' | 'denied' | 'revoked';
+      expiresAt: number;
+      tokenExpiresAt: number;
+      /** @default false */
+      refreshEnabled?: boolean;
+      /** @default 0 */
+      refreshExpiresAt?: number;
+      clientId: string;
+      clientName: string;
+    };
+    'mcp-auth.dto.customScopeMineRes': {
+      list: components['schemas']['mcp-auth.dto.customScopeView'][];
+    };
+    'mcp-auth.dto.customScopeView': {
+      /**
+       * Format: date-time
+       * @description Created At
+       */
+      createdAt: Date;
+      /**
+       * Format: date-time
+       * @description Updated At
+       */
+      updatedAt: Date;
+      /** @description ID */
+      id: number | string;
+      scope: string;
+      /**
+       * Name
+       * @description Use 1–100 letters, digits, underscores or hyphens. Names are case-sensitive; test becomes mcp:custom:test.
+       */
+      name: string;
+      /** @description Description */
+      description: string;
+      /** @description Tools */
+      tools: components['schemas']['mcp-auth.dto.mcpToolIdentity'][];
+    };
+    'mcp-auth.dto.mcpToolIdentity': {
+      name: string;
+      controller: string;
+      action: string;
+    };
+    'mcp-auth.dto.mcpTool': {
+      name: string;
+      controller: string;
+      action: string;
+      controllerSummary: string;
+      summary: string;
+      description: string;
+      readOnly: boolean;
+    };
+    'mcp-auth.dto.customScopeCreate_1ff20af69286149eb0b25291d9450172f7bd0054': {
+      /**
+       * Name
+       * @description Use 1–100 letters, digits, underscores or hyphens. Names are case-sensitive; test becomes mcp:custom:test.
+       */
+      name: string;
+      /** @description Description */
+      description: string;
+      /** @description Tools */
+      tools: components['schemas']['mcp-auth.dto.mcpToolIdentity'][];
+    };
+    'mcp-test.dto.categoryPublicSelectRes': {
+      list: components['schemas']['mcp-test.dto.categoryPublic'][];
+      total: string;
+      pageCount: number;
+      pageSize: number;
+      pageNo: number;
+    };
+    'mcp-test.dto.categoryPublic': {
+      id: number | string;
+      name: string;
+      description?: string | undefined;
+    };
+    'mcp-test.dto.productPublicSelectRes': {
+      list: components['schemas']['mcp-test.dto.productPublic'][];
+      total: string;
+      pageCount: number;
+      pageSize: number;
+      pageNo: number;
+    };
+    'mcp-test.dto.productPublic': {
+      id: number | string;
+      title: string;
+      description?: string | undefined;
+      categoryId: number | string;
+      categoryName: string;
+      priceCents: number;
+      available: number;
+      skuAvailables: components['schemas']['mcp-test.dto.productPublicSku'][];
+    };
+    'mcp-test.dto.productPublicSku': {
+      id: number | string;
+      code: string;
+      priceCents: number;
+      available: number;
+    };
+    'mcp-test.dto.productPublicDetail_2d063d28bc7243bed02ebd8bddf1212a93c6305b':
+      | {
+          id: number | string;
+          title: string;
+          description?: string | undefined;
+          categoryId: number | string;
+          categoryName: string;
+          priceCents: number;
+          available: number;
+          skuAvailables: components['schemas']['mcp-test.dto.productPublicSku'][];
+          descriptionHtml?: string | undefined;
+        }
+      | undefined;
   };
   responses: never;
   parameters: never;
@@ -5605,61 +7148,6 @@ export interface operations {
       };
     };
   };
-  AuthMock_authorize: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          'application/json': {
-            code: string;
-            message: string;
-            data?: unknown;
-          };
-        };
-      };
-    };
-  };
-  AuthMock_authorizePost: {
-    parameters: {
-      query: {
-        redirect_uri: string;
-        state: string;
-      };
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    requestBody: {
-      content: {
-        'application/json': {
-          username: string;
-        };
-      };
-    };
-    responses: {
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          'application/json': {
-            code: string;
-            message: string;
-            data?: unknown;
-          };
-        };
-      };
-    };
-  };
   Captcha_create: {
     parameters: {
       query?: never;
@@ -5671,6 +7159,7 @@ export interface operations {
       content: {
         'application/json': {
           scene: string;
+          payload?: unknown;
         };
       };
     };
@@ -5699,8 +7188,9 @@ export interface operations {
     requestBody: {
       content: {
         'application/json': {
-          id: string;
+          id?: string | undefined;
           scene: string;
+          payload?: unknown;
         };
       };
     };
@@ -5880,15 +7370,17 @@ export interface operations {
   CommerceMemberAddress_mine: {
     parameters: {
       query?: {
-        columns?: string[] | undefined;
-        where?:
+        where?: components['schemas']['CommerceAddressMineQueryPredicate_55d0e8946cbe9e934eacaad301acea8f728589e2'];
+        orders?:
           | {
-              [key: string]: unknown;
-            }
+              /** @enum {string} */
+              field: 'id' | 'createdAt';
+              /** @enum {string} */
+              direction: 'asc' | 'desc';
+            }[]
           | undefined;
-        orders?: string | string[][] | undefined;
-        pageNo?: number;
-        pageSize?: number;
+        pageNo?: number | undefined;
+        pageSize?: number | undefined;
       };
       header?: never;
       path?: never;
@@ -6024,18 +7516,20 @@ export interface operations {
   CommerceMemberAddress_select: {
     parameters: {
       query?: {
-        columns?: string[] | undefined;
-        where?:
-          | {
-              [key: string]: unknown;
-            }
-          | undefined;
-        orders?: string | string[][] | undefined;
-        pageNo?: number;
-        pageSize?: number;
         createdAt?: string | undefined;
         recipientName?: string | undefined;
         phone?: string | undefined;
+        where?: components['schemas']['CommerceAddressSelectQueryPredicate_80c49864b2153857280bcd6fae57bf0e3f28c529'];
+        orders?:
+          | {
+              /** @enum {string} */
+              field: 'id' | 'recipientName' | 'phone' | 'createdAt';
+              /** @enum {string} */
+              direction: 'asc' | 'desc';
+            }[]
+          | undefined;
+        pageNo?: number | undefined;
+        pageSize?: number | undefined;
       };
       header?: never;
       path?: never;
@@ -6653,17 +8147,19 @@ export interface operations {
   CommercePromotionCouponTemplate_select: {
     parameters: {
       query?: {
-        columns?: string[] | undefined;
-        where?:
-          | {
-              [key: string]: unknown;
-            }
-          | undefined;
-        orders?: string | string[][] | undefined;
-        pageNo?: number;
-        pageSize?: number;
         createdAt?: string | undefined;
         name?: string | undefined;
+        where?: components['schemas']['CommerceCouponTemplateSelectQueryPredicate_6f0bf47e65b9343a2afb89a23596aca3dad50313'];
+        orders?:
+          | {
+              /** @enum {string} */
+              field: 'id' | 'name' | 'createdAt';
+              /** @enum {string} */
+              direction: 'asc' | 'desc';
+            }[]
+          | undefined;
+        pageNo?: number | undefined;
+        pageSize?: number | undefined;
       };
       header?: never;
       path?: never;
@@ -6983,15 +8479,6 @@ export interface operations {
   CommerceTradeOrder_mine: {
     parameters: {
       query?: {
-        columns?: string[] | undefined;
-        where?:
-          | {
-              [key: string]: unknown;
-            }
-          | undefined;
-        orders?: string | string[][] | undefined;
-        pageNo?: number;
-        pageSize?: number;
         createdAt?: string | undefined;
         state?:
           | 'awaiting_payment'
@@ -7001,6 +8488,17 @@ export interface operations {
           | 'expired'
           | null
           | undefined;
+        where?: components['schemas']['CommerceOrderMineQueryPredicate_f9aee760a2098afd454bcecd0e927d9bfb63d77f'];
+        orders?:
+          | {
+              /** @enum {string} */
+              field: 'id' | 'state' | 'createdAt';
+              /** @enum {string} */
+              direction: 'asc' | 'desc';
+            }[]
+          | undefined;
+        pageNo?: number | undefined;
+        pageSize?: number | undefined;
       };
       header?: never;
       path?: never;
@@ -7284,17 +8782,19 @@ export interface operations {
   CommerceTradeOrder_select: {
     parameters: {
       query?: {
-        columns?: string[] | undefined;
-        where?:
-          | {
-              [key: string]: unknown;
-            }
-          | undefined;
-        orders?: string | string[][] | undefined;
-        pageNo?: number;
-        pageSize?: number;
         createdAt?: string | undefined;
         state?: string | undefined;
+        where?: components['schemas']['CommerceOrderSelectQueryPredicate_a32b689e5c62edf5889e5875801d3b1c6f275ba6'];
+        orders?:
+          | {
+              /** @enum {string} */
+              field: 'id' | 'state' | 'createdAt';
+              /** @enum {string} */
+              direction: 'asc' | 'desc';
+            }[]
+          | undefined;
+        pageNo?: number | undefined;
+        pageSize?: number | undefined;
       };
       header?: never;
       path?: never;
@@ -7346,17 +8846,19 @@ export interface operations {
   CommerceTradeStockAudit_select: {
     parameters: {
       query?: {
-        columns?: string[] | undefined;
-        where?:
-          | {
-              [key: string]: unknown;
-            }
-          | undefined;
-        orders?: string | string[][] | undefined;
-        pageNo?: number;
-        pageSize?: number;
         createdAt?: string | undefined;
         skuId?: number | string | undefined;
+        where?: components['schemas']['CommerceStockAuditSelectQueryPredicate_6ed3143d5729b6b0c088585fbdc8eee7a7e109cc'];
+        orders?:
+          | {
+              /** @enum {string} */
+              field: 'id' | 'skuId' | 'createdAt';
+              /** @enum {string} */
+              direction: 'asc' | 'desc';
+            }[]
+          | undefined;
+        pageNo?: number | undefined;
+        pageSize?: number | undefined;
       };
       header?: never;
       path?: never;
@@ -7436,17 +8938,19 @@ export interface operations {
   CommerceTradeStockBalance_select: {
     parameters: {
       query?: {
-        columns?: string[] | undefined;
-        where?:
-          | {
-              [key: string]: unknown;
-            }
-          | undefined;
-        orders?: string | string[][] | undefined;
-        pageNo?: number;
-        pageSize?: number;
         createdAt?: string | undefined;
         skuId?: number | string | undefined;
+        where?: components['schemas']['CommerceStockBalanceSelectQueryPredicate_6ed3143d5729b6b0c088585fbdc8eee7a7e109cc'];
+        orders?:
+          | {
+              /** @enum {string} */
+              field: 'id' | 'skuId' | 'createdAt';
+              /** @enum {string} */
+              direction: 'asc' | 'desc';
+            }[]
+          | undefined;
+        pageNo?: number | undefined;
+        pageSize?: number | undefined;
       };
       header?: never;
       path?: never;
@@ -7498,17 +9002,19 @@ export interface operations {
   CommerceCatalogCategory_select: {
     parameters: {
       query?: {
-        columns?: string[] | undefined;
-        where?:
-          | {
-              [key: string]: unknown;
-            }
-          | undefined;
-        orders?: string | string[][] | undefined;
-        pageNo?: number;
-        pageSize?: number;
         createdAt?: string | undefined;
         name?: string | undefined;
+        where?: components['schemas']['CommerceCategorySelectQueryPredicate_6f0bf47e65b9343a2afb89a23596aca3dad50313'];
+        orders?:
+          | {
+              /** @enum {string} */
+              field: 'id' | 'name' | 'createdAt';
+              /** @enum {string} */
+              direction: 'asc' | 'desc';
+            }[]
+          | undefined;
+        pageNo?: number | undefined;
+        pageSize?: number | undefined;
       };
       header?: never;
       path?: never;
@@ -7644,17 +9150,19 @@ export interface operations {
   CommerceCatalogProduct_select: {
     parameters: {
       query?: {
-        columns?: string[] | undefined;
-        where?:
-          | {
-              [key: string]: unknown;
-            }
-          | undefined;
-        orders?: string | string[][] | undefined;
-        pageNo?: number;
-        pageSize?: number;
         createdAt?: string | undefined;
         title?: string | undefined;
+        where?: components['schemas']['CommerceProductSelectQueryPredicate_deb90652e4f202e098ba09b36626875a1a6e90e4'];
+        orders?:
+          | {
+              /** @enum {string} */
+              field: 'id' | 'title' | 'createdAt';
+              /** @enum {string} */
+              direction: 'asc' | 'desc';
+            }[]
+          | undefined;
+        pageNo?: number | undefined;
+        pageSize?: number | undefined;
       };
       header?: never;
       path?: never;
@@ -7708,10 +9216,10 @@ export interface operations {
   CommerceCatalogProduct_selectPublic: {
     parameters: {
       query?: {
-        pageNo?: number;
-        pageSize?: number;
         categoryId?: number | string | undefined;
         title?: string | undefined;
+        pageNo?: number;
+        pageSize?: number;
       };
       header?: never;
       path?: never;
@@ -7843,17 +9351,19 @@ export interface operations {
   CommerceCatalogSku_select: {
     parameters: {
       query?: {
-        columns?: string[] | undefined;
-        where?:
-          | {
-              [key: string]: unknown;
-            }
-          | undefined;
-        orders?: string | string[][] | undefined;
-        pageNo?: number;
-        pageSize?: number;
         createdAt?: string | undefined;
         code?: string | undefined;
+        where?: components['schemas']['CommerceSkuSelectQueryPredicate_6bfc12fff19619c142f759c3a85aa30659306378'];
+        orders?:
+          | {
+              /** @enum {string} */
+              field: 'id' | 'code' | 'createdAt';
+              /** @enum {string} */
+              direction: 'asc' | 'desc';
+            }[]
+          | undefined;
+        pageNo?: number | undefined;
+        pageSize?: number | undefined;
       };
       header?: never;
       path?: never;
@@ -8087,18 +9597,20 @@ export interface operations {
   TrainingRecord_select: {
     parameters: {
       query?: {
-        columns?: string[] | undefined;
-        where?:
-          | {
-              [key: string]: unknown;
-            }
-          | undefined;
-        orders?: string | string[][] | undefined;
-        pageNo?: number;
-        pageSize?: number;
         createdAt?: string | undefined;
         name?: string | undefined;
         studentId?: string | undefined;
+        where?: components['schemas']['TrainingRecordSelectQueryPredicate_12e26675b7b232083b85f3bb960e6f1048755230'];
+        orders?:
+          | {
+              /** @enum {string} */
+              field: 'id' | 'name' | 'studentId' | 'studentName' | 'createdAt';
+              /** @enum {string} */
+              direction: 'asc' | 'desc';
+            }[]
+          | undefined;
+        pageNo?: number | undefined;
+        pageSize?: number | undefined;
       };
       header?: never;
       path?: never;
@@ -8234,18 +9746,21 @@ export interface operations {
   TrainingStudent_select: {
     parameters: {
       query?: {
-        columns?: string[] | undefined;
-        where?:
-          | {
-              [key: string]: unknown;
-            }
-          | undefined;
-        orders?: string | string[][] | undefined;
-        pageNo?: number;
-        pageSize?: number;
         createdAt?: string | undefined;
         name?: string | undefined;
-        level?: number | undefined;
+        /** @description 1=Foundation Track; 2=Progress Track; 3=Advanced Workshop */
+        level?: 1 | 2 | 3 | undefined;
+        where?: components['schemas']['TrainingStudentSelectQueryPredicate_1a30b20933e90ac2c50faf88c8a6099328e0ded8'];
+        orders?:
+          | {
+              /** @enum {string} */
+              field: 'id' | 'name' | 'level' | 'createdAt';
+              /** @enum {string} */
+              direction: 'asc' | 'desc';
+            }[]
+          | undefined;
+        pageNo?: number | undefined;
+        pageSize?: number | undefined;
       };
       header?: never;
       path?: never;
@@ -8299,18 +9814,11 @@ export interface operations {
   TrainingStudent_group: {
     parameters: {
       query?: {
-        columns?: string[] | undefined;
-        where?:
-          | {
-              [key: string]: unknown;
-            }
-          | undefined;
-        orders?: string | string[][] | undefined;
-        pageNo?: number;
-        pageSize?: number;
         createdAt?: string | undefined;
         name?: string | undefined;
-        level?: number | undefined;
+        /** @description 1=Foundation Track; 2=Progress Track; 3=Advanced Workshop */
+        level?: 1 | 2 | 3 | undefined;
+        where?: components['schemas']['TrainingStudentSelectQueryPredicate_1a30b20933e90ac2c50faf88c8a6099328e0ded8'];
         aggrs?: {
           count?: ('*' | 'imageId')[] | undefined;
         };
@@ -8340,18 +9848,11 @@ export interface operations {
   TrainingStudent_aggregate: {
     parameters: {
       query?: {
-        columns?: string[] | undefined;
-        where?:
-          | {
-              [key: string]: unknown;
-            }
-          | undefined;
-        orders?: string | string[][] | undefined;
-        pageNo?: number;
-        pageSize?: number;
         createdAt?: string | undefined;
         name?: string | undefined;
-        level?: number | undefined;
+        /** @description 1=Foundation Track; 2=Progress Track; 3=Advanced Workshop */
+        level?: 1 | 2 | 3 | undefined;
+        where?: components['schemas']['TrainingStudentSelectQueryPredicate_1a30b20933e90ac2c50faf88c8a6099328e0ded8'];
         aggrs?: {
           count?: ('*' | 'imageId')[] | undefined;
         };
@@ -8951,17 +10452,19 @@ export interface operations {
   TestRestProduct_select: {
     parameters: {
       query?: {
-        columns?: string[] | undefined;
-        where?:
-          | {
-              [key: string]: unknown;
-            }
-          | undefined;
-        orders?: string | string[][] | undefined;
-        pageNo?: number;
-        pageSize?: number;
         createdAt?: string | undefined;
         name?: string | undefined;
+        where?: components['schemas']['TestRestProductSelectQueryPredicate_6f0bf47e65b9343a2afb89a23596aca3dad50313'];
+        orders?:
+          | {
+              /** @enum {string} */
+              field: 'id' | 'name' | 'createdAt';
+              /** @enum {string} */
+              direction: 'asc' | 'desc';
+            }[]
+          | undefined;
+        pageNo?: number | undefined;
+        pageSize?: number | undefined;
       };
       header?: never;
       path?: never;
@@ -9897,16 +11400,18 @@ export interface operations {
   TestVonaOrder_findAll: {
     parameters: {
       query?: {
-        columns?: string[] | undefined;
-        where?:
-          | {
-              [key: string]: unknown;
-            }
-          | undefined;
-        orders?: string | string[][] | undefined;
         orderNo?: string | undefined;
         remark?: string | undefined;
         userName?: string | undefined;
+        where?: components['schemas']['TestOrderQueryQueryPredicate_0ba00e95609398d05aa5f48387ae2e7b3638cb10'];
+        orders?:
+          | {
+              /** @enum {string} */
+              field: 'id' | 'orderNo' | 'remark' | 'createdAt' | 'userName';
+              /** @enum {string} */
+              direction: 'asc' | 'desc';
+            }[]
+          | undefined;
       };
       header?: never;
       path?: never;
@@ -9932,17 +11437,19 @@ export interface operations {
   TestVonaOrder_findMany: {
     parameters: {
       query?: {
-        columns?: string[] | undefined;
-        where?:
-          | {
-              [key: string]: unknown;
-            }
-          | undefined;
-        orders?: string | string[][] | undefined;
-        pageNo?: number;
         orderNo?: string | undefined;
         remark?: string | undefined;
-        pageSize?: number;
+        where?: components['schemas']['TestOrderQueryPageQueryPredicate_2ac91e8ccbe06af23a8af5e36238058a7473772a'];
+        orders?:
+          | {
+              /** @enum {string} */
+              field: 'id' | 'orderNo' | 'remark' | 'createdAt';
+              /** @enum {string} */
+              direction: 'asc' | 'desc';
+            }[]
+          | undefined;
+        pageNo?: number | undefined;
+        pageSize?: number | undefined;
       };
       header?: never;
       path?: never;
@@ -9968,18 +11475,10 @@ export interface operations {
   TestVonaPost_group: {
     parameters: {
       query?: {
-        columns?: string[] | undefined;
-        where?:
-          | {
-              [key: string]: unknown;
-            }
-          | undefined;
-        orders?: string | string[][] | undefined;
-        pageNo?: number;
-        pageSize?: number;
         createdAt?: string | undefined;
         title?: string | undefined;
         userName?: string | undefined;
+        where?: components['schemas']['TestPostSelectQueryPredicate_d656479b876f92e6314ae1b5fc8aef786abc46e1'];
         aggrs?: {
           count?: ('*' | 'stars')[] | undefined;
           sum?: 'stars'[] | undefined;
@@ -10013,18 +11512,10 @@ export interface operations {
   TestVonaPost_aggregate: {
     parameters: {
       query?: {
-        columns?: string[] | undefined;
-        where?:
-          | {
-              [key: string]: unknown;
-            }
-          | undefined;
-        orders?: string | string[][] | undefined;
-        pageNo?: number;
-        pageSize?: number;
         createdAt?: string | undefined;
         title?: string | undefined;
         userName?: string | undefined;
+        where?: components['schemas']['TestPostSelectQueryPredicate_d656479b876f92e6314ae1b5fc8aef786abc46e1'];
         aggrs?: {
           count?: ('*' | 'stars')[] | undefined;
           sum?: 'stars'[] | undefined;
@@ -10057,18 +11548,20 @@ export interface operations {
   TestVonaPost_findManyEcho: {
     parameters: {
       query?: {
-        columns?: string[] | undefined;
-        where?:
-          | {
-              [key: string]: unknown;
-            }
-          | undefined;
-        orders?: string | string[][] | undefined;
-        pageNo?: number;
-        pageSize?: number;
         createdAt?: string | undefined;
         title?: string | undefined;
         userName?: string | undefined;
+        where?: components['schemas']['TestPostSelectQueryPredicate_d656479b876f92e6314ae1b5fc8aef786abc46e1'];
+        orders?:
+          | {
+              /** @enum {string} */
+              field: 'id' | 'title' | 'createdAt' | 'userId' | 'stars' | 'userName';
+              /** @enum {string} */
+              direction: 'asc' | 'desc';
+            }[]
+          | undefined;
+        pageNo?: number | undefined;
+        pageSize?: number | undefined;
       };
       header?: never;
       path?: never;
@@ -10084,7 +11577,7 @@ export interface operations {
           'application/json': {
             code: string;
             message: string;
-            data: components['schemas']['test-vona.dto.postSelectRes'];
+            data: components['schemas']['test-vona.dto.postSelectReq'];
           };
         };
       };
@@ -10093,18 +11586,20 @@ export interface operations {
   TestVonaPost_findMany: {
     parameters: {
       query?: {
-        columns?: string[] | undefined;
-        where?:
-          | {
-              [key: string]: unknown;
-            }
-          | undefined;
-        orders?: string | string[][] | undefined;
-        pageNo?: number;
-        pageSize?: number;
         createdAt?: string | undefined;
         title?: string | undefined;
         userName?: string | undefined;
+        where?: components['schemas']['TestPostSelectQueryPredicate_d656479b876f92e6314ae1b5fc8aef786abc46e1'];
+        orders?:
+          | {
+              /** @enum {string} */
+              field: 'id' | 'title' | 'createdAt' | 'userId' | 'stars' | 'userName';
+              /** @enum {string} */
+              direction: 'asc' | 'desc';
+            }[]
+          | undefined;
+        pageNo?: number | undefined;
+        pageSize?: number | undefined;
       };
       header?: never;
       path?: never;
@@ -10338,6 +11833,522 @@ export interface operations {
             code: string;
             message: string;
             data?: unknown;
+          };
+        };
+      };
+    };
+  };
+  Authorization_summary: {
+    parameters: {
+      query: {
+        request: string;
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data: components['schemas']['mcp-auth.dto.authorizationSummary'];
+          };
+        };
+      };
+    };
+    authToken: true;
+  };
+  Authorization_decision: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['mcp-auth.dto.authorizationDecision'];
+      };
+    };
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data: components['schemas']['mcp-auth.dto.authorizationRedirect'];
+          };
+        };
+      };
+    };
+    authToken: true;
+  };
+  McpAuthAuthorizationGrant_mine: {
+    parameters: {
+      query?: {
+        pageNo?: number;
+        pageSize?: number;
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data: components['schemas']['mcp-auth.dto.authorizationGrantMineRes'];
+          };
+        };
+      };
+    };
+    authToken: true;
+  };
+  McpAuthAuthorizationGrant_revokeMine: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: number | string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data?: unknown;
+          };
+        };
+      };
+    };
+    authToken: true;
+  };
+  McpAuthAuthorizationGrant_deleteMine: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: number | string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data?: unknown;
+          };
+        };
+      };
+    };
+    authToken: true;
+  };
+  McpAuthCustomScope_mine: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data: components['schemas']['mcp-auth.dto.customScopeMineRes'];
+          };
+        };
+      };
+    };
+    authToken: true;
+  };
+  McpAuthCustomScope_catalog: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data: components['schemas']['mcp-auth.dto.mcpTool'][];
+          };
+        };
+      };
+    };
+    authToken: true;
+  };
+  McpAuthCustomScope_createMine: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['mcp-auth.dto.customScopeCreate_1ff20af69286149eb0b25291d9450172f7bd0054'];
+      };
+    };
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data: components['schemas']['mcp-auth.dto.customScopeView'];
+          };
+        };
+      };
+    };
+    authToken: true;
+  };
+  McpAuthCustomScope_updateMine: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: number | string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['mcp-auth.dto.customScopeCreate_1ff20af69286149eb0b25291d9450172f7bd0054'];
+      };
+    };
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data: components['schemas']['mcp-auth.dto.customScopeView'];
+          };
+        };
+      };
+    };
+    authToken: true;
+  };
+  McpAuthCustomScope_deleteMine: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: number | string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data?: unknown;
+          };
+        };
+      };
+    };
+    authToken: true;
+  };
+  McpTestCatalog_categories: {
+    parameters: {
+      query?: {
+        pageNo?: number;
+        pageSize?: number;
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data: components['schemas']['mcp-test.dto.categoryPublicSelectRes'];
+          };
+        };
+      };
+    };
+  };
+  McpTestCatalog_products: {
+    parameters: {
+      query?: {
+        pageNo?: number;
+        pageSize?: number;
+        categoryId?: number | string | undefined;
+        title?: string | undefined;
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data: components['schemas']['mcp-test.dto.productPublicSelectRes'];
+          };
+        };
+      };
+    };
+  };
+  McpTestCatalog_detail: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: number | string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data?: components['schemas']['mcp-test.dto.productPublicDetail_2d063d28bc7243bed02ebd8bddf1212a93c6305b'];
+          };
+        };
+      };
+    };
+  };
+  McpTestCatalog_excluded: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data: components['schemas']['mcp-test.dto.categoryPublicSelectRes'];
+          };
+        };
+      };
+    };
+  };
+  McpTestToolFixture_status: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data: {
+              count: number;
+            };
+          };
+        };
+      };
+    };
+  };
+  McpTestToolFixture_effect: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        label: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': {
+          amount: number;
+          priority?: number | undefined;
+          note?: string | undefined;
+        };
+      };
+    };
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data: {
+              count: number;
+              label: string;
+              priority?: number | undefined;
+              note?: string | undefined;
+            };
+          };
+        };
+      };
+    };
+  };
+  McpTestToolFixture_array: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data: string[];
+          };
+        };
+      };
+    };
+  };
+  McpTestToolFixture_unsupported: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'text/plain': string;
+        };
+      };
+    };
+  };
+  McpTestToolFixture_excluded: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'text/plain': string;
+        };
+      };
+    };
+  };
+  McpTestToolFixture_closed: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data: {
+              count: number;
+            };
           };
         };
       };

@@ -55,6 +55,14 @@ export type ApiSchemaCommerceMemberDtoAddressMineItem =
   components['schemas']['commerce-member.dto.addressMineItem'];
 export type ApiSchemaCommerceMemberDtoAddressMineItemPartial =
   Partial<ApiSchemaCommerceMemberDtoAddressMineItem>;
+export type ApiSchemaCommerceAddressMineQueryPredicate_55d0e8946cbe9e934eacaad301acea8f728589e2 =
+  components['schemas']['CommerceAddressMineQueryPredicate_55d0e8946cbe9e934eacaad301acea8f728589e2'];
+export type ApiSchemaCommerceAddressMineQueryPredicate_55d0e8946cbe9e934eacaad301acea8f728589e2Partial =
+  Partial<ApiSchemaCommerceAddressMineQueryPredicate_55d0e8946cbe9e934eacaad301acea8f728589e2>;
+export type ApiSchemaCommerceAddressMineQueryPredicate =
+  components['schemas']['CommerceAddressMineQueryPredicate'];
+export type ApiSchemaCommerceAddressMineQueryPredicatePartial =
+  Partial<ApiSchemaCommerceAddressMineQueryPredicate>;
 export type ApiSchemaCommerceMemberDtoAddressMineView_2d063d28bc7243bed02ebd8bddf1212a93c6305b =
   components['schemas']['commerce-member.dto.addressMineView_2d063d28bc7243bed02ebd8bddf1212a93c6305b'];
 export type ApiSchemaCommerceMemberDtoAddressMineView_2d063d28bc7243bed02ebd8bddf1212a93c6305bPartial =
@@ -75,6 +83,14 @@ export type ApiSchemaCommerceMemberDtoAddressSelectResItem =
   components['schemas']['commerce-member.dto.addressSelectResItem'];
 export type ApiSchemaCommerceMemberDtoAddressSelectResItemPartial =
   Partial<ApiSchemaCommerceMemberDtoAddressSelectResItem>;
+export type ApiSchemaCommerceAddressSelectQueryPredicate_80c49864b2153857280bcd6fae57bf0e3f28c529 =
+  components['schemas']['CommerceAddressSelectQueryPredicate_80c49864b2153857280bcd6fae57bf0e3f28c529'];
+export type ApiSchemaCommerceAddressSelectQueryPredicate_80c49864b2153857280bcd6fae57bf0e3f28c529Partial =
+  Partial<ApiSchemaCommerceAddressSelectQueryPredicate_80c49864b2153857280bcd6fae57bf0e3f28c529>;
+export type ApiSchemaCommerceAddressSelectQueryPredicate =
+  components['schemas']['CommerceAddressSelectQueryPredicate'];
+export type ApiSchemaCommerceAddressSelectQueryPredicatePartial =
+  Partial<ApiSchemaCommerceAddressSelectQueryPredicate>;
 export type ApiSchemaCommerceMemberDtoAddressView_2d063d28bc7243bed02ebd8bddf1212a93c6305b_425dbecccd52e19e24888f99e1b1670233afa875 =
   components['schemas']['commerce-member.dto.addressView_2d063d28bc7243bed02ebd8bddf1212a93c6305b_425dbecccd52e19e24888f99e1b1670233afa875'];
 export type ApiSchemaCommerceMemberDtoAddressView_2d063d28bc7243bed02ebd8bddf1212a93c6305b_425dbecccd52e19e24888f99e1b1670233afa875Partial =
@@ -173,6 +189,14 @@ export type ApiSchemaCommercePromotionDtoCouponTemplateSelectResItem =
   components['schemas']['commerce-promotion.dto.couponTemplateSelectResItem'];
 export type ApiSchemaCommercePromotionDtoCouponTemplateSelectResItemPartial =
   Partial<ApiSchemaCommercePromotionDtoCouponTemplateSelectResItem>;
+export type ApiSchemaCommerceCouponTemplateSelectQueryPredicate_6f0bf47e65b9343a2afb89a23596aca3dad50313 =
+  components['schemas']['CommerceCouponTemplateSelectQueryPredicate_6f0bf47e65b9343a2afb89a23596aca3dad50313'];
+export type ApiSchemaCommerceCouponTemplateSelectQueryPredicate_6f0bf47e65b9343a2afb89a23596aca3dad50313Partial =
+  Partial<ApiSchemaCommerceCouponTemplateSelectQueryPredicate_6f0bf47e65b9343a2afb89a23596aca3dad50313>;
+export type ApiSchemaCommerceCouponTemplateSelectQueryPredicate =
+  components['schemas']['CommerceCouponTemplateSelectQueryPredicate'];
+export type ApiSchemaCommerceCouponTemplateSelectQueryPredicatePartial =
+  Partial<ApiSchemaCommerceCouponTemplateSelectQueryPredicate>;
 export type ApiSchemaCommercePromotionDtoCouponTemplateView_2d063d28bc7243bed02ebd8bddf1212a93c6305b_91abd8df366c0c4d47021b38af2a356349ee178b =
   components['schemas']['commerce-promotion.dto.couponTemplateView_2d063d28bc7243bed02ebd8bddf1212a93c6305b_91abd8df366c0c4d47021b38af2a356349ee178b'];
 export type ApiSchemaCommercePromotionDtoCouponTemplateView_2d063d28bc7243bed02ebd8bddf1212a93c6305b_91abd8df366c0c4d47021b38af2a356349ee178bPartial =
@@ -219,6 +243,14 @@ export type ApiSchemaCommerceTradeDtoOrderSummary =
   components['schemas']['commerce-trade.dto.orderSummary'];
 export type ApiSchemaCommerceTradeDtoOrderSummaryPartial =
   Partial<ApiSchemaCommerceTradeDtoOrderSummary>;
+export type ApiSchemaCommerceOrderMineQueryPredicate_f9aee760a2098afd454bcecd0e927d9bfb63d77f =
+  components['schemas']['CommerceOrderMineQueryPredicate_f9aee760a2098afd454bcecd0e927d9bfb63d77f'];
+export type ApiSchemaCommerceOrderMineQueryPredicate_f9aee760a2098afd454bcecd0e927d9bfb63d77fPartial =
+  Partial<ApiSchemaCommerceOrderMineQueryPredicate_f9aee760a2098afd454bcecd0e927d9bfb63d77f>;
+export type ApiSchemaCommerceOrderMineQueryPredicate =
+  components['schemas']['CommerceOrderMineQueryPredicate'];
+export type ApiSchemaCommerceOrderMineQueryPredicatePartial =
+  Partial<ApiSchemaCommerceOrderMineQueryPredicate>;
 export type ApiSchemaCommerceTradeDtoOrderDetail_2d063d28bc7243bed02ebd8bddf1212a93c6305b =
   components['schemas']['commerce-trade.dto.orderDetail_2d063d28bc7243bed02ebd8bddf1212a93c6305b'];
 export type ApiSchemaCommerceTradeDtoOrderDetail_2d063d28bc7243bed02ebd8bddf1212a93c6305bPartial =
@@ -274,6 +306,14 @@ export type ApiSchemaCommerceTradeDtoOrderSelectResItem =
   components['schemas']['commerce-trade.dto.orderSelectResItem'];
 export type ApiSchemaCommerceTradeDtoOrderSelectResItemPartial =
   Partial<ApiSchemaCommerceTradeDtoOrderSelectResItem>;
+export type ApiSchemaCommerceOrderSelectQueryPredicate_a32b689e5c62edf5889e5875801d3b1c6f275ba6 =
+  components['schemas']['CommerceOrderSelectQueryPredicate_a32b689e5c62edf5889e5875801d3b1c6f275ba6'];
+export type ApiSchemaCommerceOrderSelectQueryPredicate_a32b689e5c62edf5889e5875801d3b1c6f275ba6Partial =
+  Partial<ApiSchemaCommerceOrderSelectQueryPredicate_a32b689e5c62edf5889e5875801d3b1c6f275ba6>;
+export type ApiSchemaCommerceOrderSelectQueryPredicate =
+  components['schemas']['CommerceOrderSelectQueryPredicate'];
+export type ApiSchemaCommerceOrderSelectQueryPredicatePartial =
+  Partial<ApiSchemaCommerceOrderSelectQueryPredicate>;
 export type ApiSchemaCommerceTradeDtoOrderView_2d063d28bc7243bed02ebd8bddf1212a93c6305b_c770e477ee8be6f39738af0fc4f0e7fce54bf9e0 =
   components['schemas']['commerce-trade.dto.orderView_2d063d28bc7243bed02ebd8bddf1212a93c6305b_c770e477ee8be6f39738af0fc4f0e7fce54bf9e0'];
 export type ApiSchemaCommerceTradeDtoOrderView_2d063d28bc7243bed02ebd8bddf1212a93c6305b_c770e477ee8be6f39738af0fc4f0e7fce54bf9e0Partial =
@@ -294,6 +334,14 @@ export type ApiSchemaCommerceTradeDtoStockSkuRef_2d063d28bc7243bed02ebd8bddf1212
   components['schemas']['commerce-trade.dto.stockSkuRef_2d063d28bc7243bed02ebd8bddf1212a93c6305b_1816ff740d81c738ec055c7038bbd93beb9405a7_1e820476987d0f2c1bdfcf191436842ebed36849'];
 export type ApiSchemaCommerceTradeDtoStockSkuRef_2d063d28bc7243bed02ebd8bddf1212a93c6305b_1816ff740d81c738ec055c7038bbd93beb9405a7_1e820476987d0f2c1bdfcf191436842ebed36849Partial =
   Partial<ApiSchemaCommerceTradeDtoStockSkuRef_2d063d28bc7243bed02ebd8bddf1212a93c6305b_1816ff740d81c738ec055c7038bbd93beb9405a7_1e820476987d0f2c1bdfcf191436842ebed36849>;
+export type ApiSchemaCommerceStockAuditSelectQueryPredicate_6ed3143d5729b6b0c088585fbdc8eee7a7e109cc =
+  components['schemas']['CommerceStockAuditSelectQueryPredicate_6ed3143d5729b6b0c088585fbdc8eee7a7e109cc'];
+export type ApiSchemaCommerceStockAuditSelectQueryPredicate_6ed3143d5729b6b0c088585fbdc8eee7a7e109ccPartial =
+  Partial<ApiSchemaCommerceStockAuditSelectQueryPredicate_6ed3143d5729b6b0c088585fbdc8eee7a7e109cc>;
+export type ApiSchemaCommerceStockAuditSelectQueryPredicate =
+  components['schemas']['CommerceStockAuditSelectQueryPredicate'];
+export type ApiSchemaCommerceStockAuditSelectQueryPredicatePartial =
+  Partial<ApiSchemaCommerceStockAuditSelectQueryPredicate>;
 export type ApiSchemaCommerceTradeDtoStockAuditView_2d063d28bc7243bed02ebd8bddf1212a93c6305b_425dbecccd52e19e24888f99e1b1670233afa875 =
   components['schemas']['commerce-trade.dto.stockAuditView_2d063d28bc7243bed02ebd8bddf1212a93c6305b_425dbecccd52e19e24888f99e1b1670233afa875'];
 export type ApiSchemaCommerceTradeDtoStockAuditView_2d063d28bc7243bed02ebd8bddf1212a93c6305b_425dbecccd52e19e24888f99e1b1670233afa875Partial =
@@ -314,6 +362,14 @@ export type ApiSchemaCommerceTradeDtoStockBalanceSelectResItem =
   components['schemas']['commerce-trade.dto.stockBalanceSelectResItem'];
 export type ApiSchemaCommerceTradeDtoStockBalanceSelectResItemPartial =
   Partial<ApiSchemaCommerceTradeDtoStockBalanceSelectResItem>;
+export type ApiSchemaCommerceStockBalanceSelectQueryPredicate_6ed3143d5729b6b0c088585fbdc8eee7a7e109cc =
+  components['schemas']['CommerceStockBalanceSelectQueryPredicate_6ed3143d5729b6b0c088585fbdc8eee7a7e109cc'];
+export type ApiSchemaCommerceStockBalanceSelectQueryPredicate_6ed3143d5729b6b0c088585fbdc8eee7a7e109ccPartial =
+  Partial<ApiSchemaCommerceStockBalanceSelectQueryPredicate_6ed3143d5729b6b0c088585fbdc8eee7a7e109cc>;
+export type ApiSchemaCommerceStockBalanceSelectQueryPredicate =
+  components['schemas']['CommerceStockBalanceSelectQueryPredicate'];
+export type ApiSchemaCommerceStockBalanceSelectQueryPredicatePartial =
+  Partial<ApiSchemaCommerceStockBalanceSelectQueryPredicate>;
 export type ApiSchemaCommerceTradeDtoStockBalanceView_2d063d28bc7243bed02ebd8bddf1212a93c6305b_425dbecccd52e19e24888f99e1b1670233afa875 =
   components['schemas']['commerce-trade.dto.stockBalanceView_2d063d28bc7243bed02ebd8bddf1212a93c6305b_425dbecccd52e19e24888f99e1b1670233afa875'];
 export type ApiSchemaCommerceTradeDtoStockBalanceView_2d063d28bc7243bed02ebd8bddf1212a93c6305b_425dbecccd52e19e24888f99e1b1670233afa875Partial =
@@ -330,6 +386,14 @@ export type ApiSchemaCommerceCatalogDtoCategorySelectResItem =
   components['schemas']['commerce-catalog.dto.categorySelectResItem'];
 export type ApiSchemaCommerceCatalogDtoCategorySelectResItemPartial =
   Partial<ApiSchemaCommerceCatalogDtoCategorySelectResItem>;
+export type ApiSchemaCommerceCategorySelectQueryPredicate_6f0bf47e65b9343a2afb89a23596aca3dad50313 =
+  components['schemas']['CommerceCategorySelectQueryPredicate_6f0bf47e65b9343a2afb89a23596aca3dad50313'];
+export type ApiSchemaCommerceCategorySelectQueryPredicate_6f0bf47e65b9343a2afb89a23596aca3dad50313Partial =
+  Partial<ApiSchemaCommerceCategorySelectQueryPredicate_6f0bf47e65b9343a2afb89a23596aca3dad50313>;
+export type ApiSchemaCommerceCategorySelectQueryPredicate =
+  components['schemas']['CommerceCategorySelectQueryPredicate'];
+export type ApiSchemaCommerceCategorySelectQueryPredicatePartial =
+  Partial<ApiSchemaCommerceCategorySelectQueryPredicate>;
 export type ApiSchemaCommerceCatalogDtoCategoryView_2d063d28bc7243bed02ebd8bddf1212a93c6305b_425dbecccd52e19e24888f99e1b1670233afa875 =
   components['schemas']['commerce-catalog.dto.categoryView_2d063d28bc7243bed02ebd8bddf1212a93c6305b_425dbecccd52e19e24888f99e1b1670233afa875'];
 export type ApiSchemaCommerceCatalogDtoCategoryView_2d063d28bc7243bed02ebd8bddf1212a93c6305b_425dbecccd52e19e24888f99e1b1670233afa875Partial =
@@ -350,6 +414,14 @@ export type ApiSchemaCommerceCatalogDtoProductSelectResItem =
   components['schemas']['commerce-catalog.dto.productSelectResItem'];
 export type ApiSchemaCommerceCatalogDtoProductSelectResItemPartial =
   Partial<ApiSchemaCommerceCatalogDtoProductSelectResItem>;
+export type ApiSchemaCommerceProductSelectQueryPredicate_deb90652e4f202e098ba09b36626875a1a6e90e4 =
+  components['schemas']['CommerceProductSelectQueryPredicate_deb90652e4f202e098ba09b36626875a1a6e90e4'];
+export type ApiSchemaCommerceProductSelectQueryPredicate_deb90652e4f202e098ba09b36626875a1a6e90e4Partial =
+  Partial<ApiSchemaCommerceProductSelectQueryPredicate_deb90652e4f202e098ba09b36626875a1a6e90e4>;
+export type ApiSchemaCommerceProductSelectQueryPredicate =
+  components['schemas']['CommerceProductSelectQueryPredicate'];
+export type ApiSchemaCommerceProductSelectQueryPredicatePartial =
+  Partial<ApiSchemaCommerceProductSelectQueryPredicate>;
 export type ApiSchemaCommerceCatalogDtoProductPublicSelectRes =
   components['schemas']['commerce-catalog.dto.productPublicSelectRes'];
 export type ApiSchemaCommerceCatalogDtoProductPublicSelectResPartial =
@@ -386,6 +458,14 @@ export type ApiSchemaCommerceCatalogDtoSkuSelectResItem =
   components['schemas']['commerce-catalog.dto.skuSelectResItem'];
 export type ApiSchemaCommerceCatalogDtoSkuSelectResItemPartial =
   Partial<ApiSchemaCommerceCatalogDtoSkuSelectResItem>;
+export type ApiSchemaCommerceSkuSelectQueryPredicate_6bfc12fff19619c142f759c3a85aa30659306378 =
+  components['schemas']['CommerceSkuSelectQueryPredicate_6bfc12fff19619c142f759c3a85aa30659306378'];
+export type ApiSchemaCommerceSkuSelectQueryPredicate_6bfc12fff19619c142f759c3a85aa30659306378Partial =
+  Partial<ApiSchemaCommerceSkuSelectQueryPredicate_6bfc12fff19619c142f759c3a85aa30659306378>;
+export type ApiSchemaCommerceSkuSelectQueryPredicate =
+  components['schemas']['CommerceSkuSelectQueryPredicate'];
+export type ApiSchemaCommerceSkuSelectQueryPredicatePartial =
+  Partial<ApiSchemaCommerceSkuSelectQueryPredicate>;
 export type ApiSchemaCommerceCatalogDtoSkuView_2d063d28bc7243bed02ebd8bddf1212a93c6305b_425dbecccd52e19e24888f99e1b1670233afa875 =
   components['schemas']['commerce-catalog.dto.skuView_2d063d28bc7243bed02ebd8bddf1212a93c6305b_425dbecccd52e19e24888f99e1b1670233afa875'];
 export type ApiSchemaCommerceCatalogDtoSkuView_2d063d28bc7243bed02ebd8bddf1212a93c6305b_425dbecccd52e19e24888f99e1b1670233afa875Partial =
@@ -435,6 +515,14 @@ export type ApiSchemaAImageDtoImageView = components['schemas']['a-image.dto.ima
 export type ApiSchemaAImageDtoImageViewPartial = Partial<ApiSchemaAImageDtoImageView>;
 export type ApiSchemaAFileDtoFileView = components['schemas']['a-file.dto.fileView'];
 export type ApiSchemaAFileDtoFileViewPartial = Partial<ApiSchemaAFileDtoFileView>;
+export type ApiSchemaTrainingRecordSelectQueryPredicate_12e26675b7b232083b85f3bb960e6f1048755230 =
+  components['schemas']['TrainingRecordSelectQueryPredicate_12e26675b7b232083b85f3bb960e6f1048755230'];
+export type ApiSchemaTrainingRecordSelectQueryPredicate_12e26675b7b232083b85f3bb960e6f1048755230Partial =
+  Partial<ApiSchemaTrainingRecordSelectQueryPredicate_12e26675b7b232083b85f3bb960e6f1048755230>;
+export type ApiSchemaTrainingRecordSelectQueryPredicate =
+  components['schemas']['TrainingRecordSelectQueryPredicate'];
+export type ApiSchemaTrainingRecordSelectQueryPredicatePartial =
+  Partial<ApiSchemaTrainingRecordSelectQueryPredicate>;
 export type ApiSchemaTrainingRecordDtoRecordView_2d063d28bc7243bed02ebd8bddf1212a93c6305b_7d715789d9643740a04e8a6c0f6fb951884bc347 =
   components['schemas']['training-record.dto.recordView_2d063d28bc7243bed02ebd8bddf1212a93c6305b_7d715789d9643740a04e8a6c0f6fb951884bc347'];
 export type ApiSchemaTrainingRecordDtoRecordView_2d063d28bc7243bed02ebd8bddf1212a93c6305b_7d715789d9643740a04e8a6c0f6fb951884bc347Partial =
@@ -463,6 +551,14 @@ export type ApiSchemaAImageDtoImageView_a83c3e638bca4b30ec8675860cdc52d66f6a16d1
   components['schemas']['a-image.dto.imageView_a83c3e638bca4b30ec8675860cdc52d66f6a16d1_2d063d28bc7243bed02ebd8bddf1212a93c6305b_efb37794d7c03c65122279f90d79919f009c34e5_1816ff740d81c738ec055c7038bbd93beb9405a7_537cd6552a384183a9457fb6a920bbae337277f6'];
 export type ApiSchemaAImageDtoImageView_a83c3e638bca4b30ec8675860cdc52d66f6a16d1_2d063d28bc7243bed02ebd8bddf1212a93c6305b_efb37794d7c03c65122279f90d79919f009c34e5_1816ff740d81c738ec055c7038bbd93beb9405a7_537cd6552a384183a9457fb6a920bbae337277f6Partial =
   Partial<ApiSchemaAImageDtoImageView_a83c3e638bca4b30ec8675860cdc52d66f6a16d1_2d063d28bc7243bed02ebd8bddf1212a93c6305b_efb37794d7c03c65122279f90d79919f009c34e5_1816ff740d81c738ec055c7038bbd93beb9405a7_537cd6552a384183a9457fb6a920bbae337277f6>;
+export type ApiSchemaTrainingStudentSelectQueryPredicate_1a30b20933e90ac2c50faf88c8a6099328e0ded8 =
+  components['schemas']['TrainingStudentSelectQueryPredicate_1a30b20933e90ac2c50faf88c8a6099328e0ded8'];
+export type ApiSchemaTrainingStudentSelectQueryPredicate_1a30b20933e90ac2c50faf88c8a6099328e0ded8Partial =
+  Partial<ApiSchemaTrainingStudentSelectQueryPredicate_1a30b20933e90ac2c50faf88c8a6099328e0ded8>;
+export type ApiSchemaTrainingStudentSelectQueryPredicate =
+  components['schemas']['TrainingStudentSelectQueryPredicate'];
+export type ApiSchemaTrainingStudentSelectQueryPredicatePartial =
+  Partial<ApiSchemaTrainingStudentSelectQueryPredicate>;
 export type ApiSchemaTrainingStudentDtoStudentGroupResItem =
   components['schemas']['training-student.dto.studentGroupResItem'];
 export type ApiSchemaTrainingStudentDtoStudentGroupResItemPartial =
@@ -572,6 +668,14 @@ export type ApiSchemaTestRestDtoProductSelectResItem =
   components['schemas']['test-rest.dto.productSelectResItem'];
 export type ApiSchemaTestRestDtoProductSelectResItemPartial =
   Partial<ApiSchemaTestRestDtoProductSelectResItem>;
+export type ApiSchemaTestRestProductSelectQueryPredicate_6f0bf47e65b9343a2afb89a23596aca3dad50313 =
+  components['schemas']['TestRestProductSelectQueryPredicate_6f0bf47e65b9343a2afb89a23596aca3dad50313'];
+export type ApiSchemaTestRestProductSelectQueryPredicate_6f0bf47e65b9343a2afb89a23596aca3dad50313Partial =
+  Partial<ApiSchemaTestRestProductSelectQueryPredicate_6f0bf47e65b9343a2afb89a23596aca3dad50313>;
+export type ApiSchemaTestRestProductSelectQueryPredicate =
+  components['schemas']['TestRestProductSelectQueryPredicate'];
+export type ApiSchemaTestRestProductSelectQueryPredicatePartial =
+  Partial<ApiSchemaTestRestProductSelectQueryPredicate>;
 export type ApiSchemaTestRestDtoProductView_2d063d28bc7243bed02ebd8bddf1212a93c6305b_425dbecccd52e19e24888f99e1b1670233afa875 =
   components['schemas']['test-rest.dto.productView_2d063d28bc7243bed02ebd8bddf1212a93c6305b_425dbecccd52e19e24888f99e1b1670233afa875'];
 export type ApiSchemaTestRestDtoProductView_2d063d28bc7243bed02ebd8bddf1212a93c6305b_425dbecccd52e19e24888f99e1b1670233afa875Partial =
@@ -641,14 +745,41 @@ export type ApiSchemaTestVonaEntityProduct_bce173590aaef19772f1ae3a82196493c2633
   components['schemas']['test-vona.entity.product_bce173590aaef19772f1ae3a82196493c2633e2e'];
 export type ApiSchemaTestVonaEntityProduct_bce173590aaef19772f1ae3a82196493c2633e2ePartial =
   Partial<ApiSchemaTestVonaEntityProduct_bce173590aaef19772f1ae3a82196493c2633e2e>;
+export type ApiSchemaTestOrderQueryQueryPredicate_0ba00e95609398d05aa5f48387ae2e7b3638cb10 =
+  components['schemas']['TestOrderQueryQueryPredicate_0ba00e95609398d05aa5f48387ae2e7b3638cb10'];
+export type ApiSchemaTestOrderQueryQueryPredicate_0ba00e95609398d05aa5f48387ae2e7b3638cb10Partial =
+  Partial<ApiSchemaTestOrderQueryQueryPredicate_0ba00e95609398d05aa5f48387ae2e7b3638cb10>;
+export type ApiSchemaTestOrderQueryQueryPredicate =
+  components['schemas']['TestOrderQueryQueryPredicate'];
+export type ApiSchemaTestOrderQueryQueryPredicatePartial =
+  Partial<ApiSchemaTestOrderQueryQueryPredicate>;
 export type ApiSchemaTestVonaDtoOrderSelectRes =
   components['schemas']['test-vona.dto.orderSelectRes'];
 export type ApiSchemaTestVonaDtoOrderSelectResPartial = Partial<ApiSchemaTestVonaDtoOrderSelectRes>;
+export type ApiSchemaTestOrderQueryPageQueryPredicate_2ac91e8ccbe06af23a8af5e36238058a7473772a =
+  components['schemas']['TestOrderQueryPageQueryPredicate_2ac91e8ccbe06af23a8af5e36238058a7473772a'];
+export type ApiSchemaTestOrderQueryPageQueryPredicate_2ac91e8ccbe06af23a8af5e36238058a7473772aPartial =
+  Partial<ApiSchemaTestOrderQueryPageQueryPredicate_2ac91e8ccbe06af23a8af5e36238058a7473772a>;
+export type ApiSchemaTestOrderQueryPageQueryPredicate =
+  components['schemas']['TestOrderQueryPageQueryPredicate'];
+export type ApiSchemaTestOrderQueryPageQueryPredicatePartial =
+  Partial<ApiSchemaTestOrderQueryPageQueryPredicate>;
 export type ApiSchemaTestVonaDtoPostGroup = components['schemas']['test-vona.dto.postGroup'];
 export type ApiSchemaTestVonaDtoPostGroupPartial = Partial<ApiSchemaTestVonaDtoPostGroup>;
+export type ApiSchemaTestPostSelectQueryPredicate_d656479b876f92e6314ae1b5fc8aef786abc46e1 =
+  components['schemas']['TestPostSelectQueryPredicate_d656479b876f92e6314ae1b5fc8aef786abc46e1'];
+export type ApiSchemaTestPostSelectQueryPredicate_d656479b876f92e6314ae1b5fc8aef786abc46e1Partial =
+  Partial<ApiSchemaTestPostSelectQueryPredicate_d656479b876f92e6314ae1b5fc8aef786abc46e1>;
+export type ApiSchemaTestPostSelectQueryPredicate =
+  components['schemas']['TestPostSelectQueryPredicate'];
+export type ApiSchemaTestPostSelectQueryPredicatePartial =
+  Partial<ApiSchemaTestPostSelectQueryPredicate>;
 export type ApiSchemaTestVonaDtoPostAggregate =
   components['schemas']['test-vona.dto.postAggregate'];
 export type ApiSchemaTestVonaDtoPostAggregatePartial = Partial<ApiSchemaTestVonaDtoPostAggregate>;
+export type ApiSchemaTestVonaDtoPostSelectReq =
+  components['schemas']['test-vona.dto.postSelectReq'];
+export type ApiSchemaTestVonaDtoPostSelectReqPartial = Partial<ApiSchemaTestVonaDtoPostSelectReq>;
 export type ApiSchemaTestVonaDtoPostSelectRes =
   components['schemas']['test-vona.dto.postSelectRes'];
 export type ApiSchemaTestVonaDtoPostSelectResPartial = Partial<ApiSchemaTestVonaDtoPostSelectRes>;

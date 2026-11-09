@@ -1,14 +1,94 @@
 export interface paths {
-  '/api/auth/mock/authorize': {
+  '/api/image/upload-policy': {
     parameters: {
       query?: never;
       header?: never;
       path?: never;
       cookie?: never;
     };
-    get: operations['AuthMock_authorize'];
+    get?: never;
     put?: never;
-    post: operations['AuthMock_authorizePost'];
+    post: operations['Image_getUploadPolicy'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/image/upload': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['Image_upload'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/image/direct-upload': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['Image_createDirectUpload'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/image/direct-upload/finalize': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['Image_finalizeDirectUpload'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/image/upload-url': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['Image_uploadUrl'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/image/delivery': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['Image_delivery'];
+    put?: never;
+    post?: never;
     delete?: never;
     options?: never;
     head?: never;
@@ -247,102 +327,6 @@ export interface paths {
       cookie?: never;
     };
     get: operations['CommerceMemberAddress_view'];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/api/image/upload-policy': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get?: never;
-    put?: never;
-    post: operations['Image_getUploadPolicy'];
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/api/image/upload': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get?: never;
-    put?: never;
-    post: operations['Image_upload'];
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/api/image/direct-upload': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get?: never;
-    put?: never;
-    post: operations['Image_createDirectUpload'];
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/api/image/direct-upload/finalize': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get?: never;
-    put?: never;
-    post: operations['Image_finalizeDirectUpload'];
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/api/image/upload-url': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get?: never;
-    put?: never;
-    post: operations['Image_uploadUrl'];
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/api/image/delivery': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get: operations['Image_delivery'];
     put?: never;
     post?: never;
     delete?: never;
@@ -1303,9 +1287,45 @@ export interface paths {
       path?: never;
       cookie?: never;
     };
+    /** List Students */
     get: operations['TrainingStudent_select'];
     put?: never;
+    /** Create Student */
     post: operations['TrainingStudent_create'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/training/student/group': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Group Students */
+    get: operations['TrainingStudent_group'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/training/student/aggregate': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Aggregate Students */
+    get: operations['TrainingStudent_aggregate'];
+    put?: never;
+    post?: never;
     delete?: never;
     options?: never;
     head?: never;
@@ -1319,12 +1339,15 @@ export interface paths {
       path?: never;
       cookie?: never;
     };
+    /** View Student */
     get: operations['TrainingStudent_view'];
     put?: never;
     post?: never;
+    /** Delete Student */
     delete: operations['TrainingStudent_delete'];
     options?: never;
     head?: never;
+    /** Update Student */
     patch: operations['TrainingStudent_update'];
     trace?: never;
   };
@@ -1335,9 +1358,27 @@ export interface paths {
       path?: never;
       cookie?: never;
     };
+    /** View Student Summary */
     get: operations['TrainingStudent_summary'];
     put?: never;
     post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/training/student/bulk/delete': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** Bulk Delete Students */
+    post: operations['TrainingStudent_deleteBulk'];
     delete?: never;
     options?: never;
     head?: never;
@@ -1354,6 +1395,7 @@ export interface paths {
     get?: never;
     put?: never;
     post?: never;
+    /** Permanently Delete Student */
     delete: operations['TrainingStudent_deleteForce'];
     options?: never;
     head?: never;
@@ -1371,6 +1413,54 @@ export interface paths {
     put?: never;
     post?: never;
     delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/layoutprofile/load': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['Layoutprofile_load'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/layoutprofile/save': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['Layoutprofile_save'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/layoutprofile/reset': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post?: never;
+    delete: operations['Layoutprofile_reset'];
     options?: never;
     head?: never;
     patch?: never;
@@ -2208,6 +2298,336 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  '/mcp/auth/summary': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['Authorization_summary'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/mcp/auth/decision': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['Authorization_decision'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/mcp/auth/authorizationGrant/mine': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['McpAuthAuthorizationGrant_mine'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/mcp/auth/authorizationGrant/revokeMine/{id}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['McpAuthAuthorizationGrant_revokeMine'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/mcp/auth/authorizationGrant/deleteMine/{id}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post?: never;
+    delete: operations['McpAuthAuthorizationGrant_deleteMine'];
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/mcp/auth/customScope/mine': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** List personal MCP scopes */
+    get: operations['McpAuthCustomScope_mine'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/mcp/auth/customScope/catalog': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Available MCP tools */
+    get: operations['McpAuthCustomScope_catalog'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/mcp/auth/customScope/createMine': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** Create personal MCP scope */
+    post: operations['McpAuthCustomScope_createMine'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/mcp/auth/customScope/updateMine/{id}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** Update personal MCP scope */
+    post: operations['McpAuthCustomScope_updateMine'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/mcp/auth/customScope/deleteMine/{id}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post?: never;
+    /** Delete personal MCP scope */
+    delete: operations['McpAuthCustomScope_deleteMine'];
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/mcp/test/catalog/categories': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['McpTestCatalog_categories'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/mcp/test/catalog/products': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['McpTestCatalog_products'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/mcp/test/catalog/products/{id}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['McpTestCatalog_detail'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/mcp/test/catalog/excluded': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['McpTestCatalog_excluded'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/mcp/test/actions/status': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /**
+     * Action Web summary
+     * @description Action Web description
+     */
+    get: operations['McpTestToolFixture_status'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/mcp/test/actions/effect/{label}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['McpTestToolFixture_effect'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/mcp/test/actions/array': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['McpTestToolFixture_array'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/mcp/test/actions/unsupported': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['McpTestToolFixture_unsupported'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/mcp/test/actions/excluded': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['McpTestToolFixture_excluded'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/mcp/test/actions/closed': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Action Web summary */
+    get: operations['McpTestToolFixture_closed'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -2268,11 +2688,95 @@ export interface components {
       amount: number;
       orderId: number | string;
     };
+    'a-image.dto.imageUploadPolicyResponse': {
+      imageScene: string;
+      maxSize?: number | undefined;
+      mimeTypes?: string[] | undefined;
+      extensions?: string[] | undefined;
+      multiple?: boolean | undefined;
+      public?: boolean | undefined;
+      directUpload?: boolean | undefined;
+    };
+    'a-image.dto.imageUploadPolicyRequest': {
+      imageScene: string;
+    };
+    'a-image.dto.imageUploadResponse': {
+      id: number | string;
+      filename?: string | undefined;
+      contentType?: string | undefined;
+      size?: number | undefined;
+      width?: number | undefined;
+      height?: number | undefined;
+      public?: boolean | undefined;
+      url?: string | undefined;
+      signed?: boolean | undefined;
+    };
+    'a-image.dto.imageDirectUploadResponse': {
+      id: number | string;
+      uploadUrl: string;
+      filename?: string | undefined;
+      public?: boolean | undefined;
+    };
+    'a-image.dto.imageDirectUploadRequest': {
+      imageScene: string;
+      filename?: string | undefined;
+      size: number;
+      mimeType: string;
+      contentType?: string | undefined;
+      expiry?: string | undefined;
+      customId?: string | undefined;
+    };
+    'a-image.dto.imageDirectUploadFinalizeResponse': {
+      id: number | string;
+      filename?: string | undefined;
+      contentType?: string | undefined;
+      size?: number | undefined;
+      width?: number | undefined;
+      height?: number | undefined;
+      public?: boolean | undefined;
+      url?: string | undefined;
+      signed?: boolean | undefined;
+    };
+    'a-image.dto.imageDirectUploadFinalizeRequest': {
+      imageId: number | string;
+    };
+    'a-image.dto.imageUploadUrlRequest': {
+      imageScene: string;
+      /** Format: uri */
+      url: string;
+      size: number;
+      mimeType: string;
+      filename?: string | undefined;
+      contentType?: string | undefined;
+    };
+    'a-image.dto.imageTransformOptions_2d063d28bc7243bed02ebd8bddf1212a93c6305b':
+      | {
+          width?: number | undefined;
+          height?: number | undefined;
+          /** @enum {string|null} */
+          fit?: 'scale-down' | 'contain' | 'cover' | 'crop' | 'pad' | null | undefined;
+          /** @enum {string|null} */
+          gravity?: 'auto' | 'center' | 'top' | 'bottom' | 'left' | 'right' | null | undefined;
+          background?: string | undefined;
+          quality?: number | undefined;
+          /** @enum {string|null} */
+          format?: 'auto' | 'avif' | 'webp' | 'jpeg' | 'png' | null | undefined;
+          dpr?: number | undefined;
+          rotate?: number | undefined;
+          sharpen?: number | undefined;
+        }
+      | undefined;
     'a-captcha.dto.captchaData': {
       id: string;
       provider: string;
       token?: unknown;
       payload?: unknown;
+      /** @enum {string} */
+      status?: 'accepted' | 'rejected' | 'unknown' | 'limited';
+      serverNow?: number;
+      expiresAt?: number;
+      resendAt?: number;
+      retryAt?: number;
     };
     'a-pay.dto.paymentSessionView': {
       id: number | string;
@@ -2344,6 +2848,26 @@ export interface components {
       /** @description Address Line 2 */
       addressLine2?: string | undefined;
     };
+    'CommerceAddressMineQueryPredicate_55d0e8946cbe9e934eacaad301acea8f728589e2':
+      | {
+          and: components['schemas']['CommerceAddressMineQueryPredicate'][];
+        }
+      | {
+          or: components['schemas']['CommerceAddressMineQueryPredicate'][];
+        }
+      | {
+          not: components['schemas']['CommerceAddressMineQueryPredicate'];
+        };
+    'CommerceAddressMineQueryPredicate':
+      | {
+          and: components['schemas']['CommerceAddressMineQueryPredicate'][];
+        }
+      | {
+          or: components['schemas']['CommerceAddressMineQueryPredicate'][];
+        }
+      | {
+          not: components['schemas']['CommerceAddressMineQueryPredicate'];
+        };
     'commerce-member.dto.addressMineView_2d063d28bc7243bed02ebd8bddf1212a93c6305b':
       | {
           /** @description ID */
@@ -2428,6 +2952,70 @@ export interface components {
       /** @description Operations */
       _operationsRow?: unknown;
     };
+    'CommerceAddressSelectQueryPredicate_80c49864b2153857280bcd6fae57bf0e3f28c529':
+      | {
+          /** @enum {string} */
+          field: 'recipientName';
+          /** @enum {string} */
+          op: 'eq' | 'containsI';
+          value: string;
+        }
+      | {
+          /** @enum {string} */
+          field: 'phone';
+          /** @enum {string} */
+          op: 'eq' | 'containsI';
+          value: string;
+        }
+      | {
+          /** @enum {string} */
+          field: 'createdAt';
+          /** @enum {string} */
+          op: 'gte' | 'lt' | 'lte';
+          /** Format: date-time */
+          value: Date;
+        }
+      | {
+          and: components['schemas']['CommerceAddressSelectQueryPredicate'][];
+        }
+      | {
+          or: components['schemas']['CommerceAddressSelectQueryPredicate'][];
+        }
+      | {
+          not: components['schemas']['CommerceAddressSelectQueryPredicate'];
+        };
+    'CommerceAddressSelectQueryPredicate':
+      | {
+          /** @enum {string} */
+          field: 'recipientName';
+          /** @enum {string} */
+          op: 'eq' | 'containsI';
+          value: string;
+        }
+      | {
+          /** @enum {string} */
+          field: 'phone';
+          /** @enum {string} */
+          op: 'eq' | 'containsI';
+          value: string;
+        }
+      | {
+          /** @enum {string} */
+          field: 'createdAt';
+          /** @enum {string} */
+          op: 'gte' | 'lt' | 'lte';
+          /** Format: date-time */
+          value: Date;
+        }
+      | {
+          and: components['schemas']['CommerceAddressSelectQueryPredicate'][];
+        }
+      | {
+          or: components['schemas']['CommerceAddressSelectQueryPredicate'][];
+        }
+      | {
+          not: components['schemas']['CommerceAddressSelectQueryPredicate'];
+        };
     'commerce-member.dto.addressView_2d063d28bc7243bed02ebd8bddf1212a93c6305b_425dbecccd52e19e24888f99e1b1670233afa875':
       | {
           /**
@@ -2460,86 +3048,9 @@ export interface components {
           addressLine2?: string | undefined;
         }
       | undefined;
-    'a-image.dto.imageUploadPolicyResponse': {
-      imageScene: string;
-      maxSize?: number | undefined;
-      mimeTypes?: string[] | undefined;
-      extensions?: string[] | undefined;
-      multiple?: boolean | undefined;
-      public?: boolean | undefined;
-      directUpload?: boolean | undefined;
-    };
-    'a-image.dto.imageUploadPolicyRequest': {
-      imageScene: string;
-    };
-    'a-image.dto.imageUploadResponse': {
-      id: number | string;
-      filename?: string | undefined;
-      contentType?: string | undefined;
-      size?: number | undefined;
-      width?: number | undefined;
-      height?: number | undefined;
-      public?: boolean | undefined;
-      url?: string | undefined;
-      signed?: boolean | undefined;
-    };
-    'a-image.dto.imageDirectUploadResponse': {
-      id: number | string;
-      uploadUrl: string;
-      filename?: string | undefined;
-      public?: boolean | undefined;
-    };
-    'a-image.dto.imageDirectUploadRequest': {
-      imageScene: string;
-      filename?: string | undefined;
-      size: number;
-      mimeType: string;
-      contentType?: string | undefined;
-      expiry?: string | undefined;
-      customId?: string | undefined;
-    };
-    'a-image.dto.imageDirectUploadFinalizeResponse': {
-      id: number | string;
-      filename?: string | undefined;
-      contentType?: string | undefined;
-      size?: number | undefined;
-      width?: number | undefined;
-      height?: number | undefined;
-      public?: boolean | undefined;
-      url?: string | undefined;
-      signed?: boolean | undefined;
-    };
-    'a-image.dto.imageDirectUploadFinalizeRequest': {
-      imageId: number | string;
-    };
-    'a-image.dto.imageUploadUrlRequest': {
-      imageScene: string;
-      /** Format: uri */
-      url: string;
-      size: number;
-      mimeType: string;
-      filename?: string | undefined;
-      contentType?: string | undefined;
-    };
-    'a-image.dto.imageTransformOptions_2d063d28bc7243bed02ebd8bddf1212a93c6305b':
-      | {
-          width?: number | undefined;
-          height?: number | undefined;
-          /** @enum {string|null} */
-          fit?: 'scale-down' | 'contain' | 'cover' | 'crop' | 'pad' | null | undefined;
-          /** @enum {string|null} */
-          gravity?: 'auto' | 'center' | 'top' | 'bottom' | 'left' | 'right' | null | undefined;
-          background?: string | undefined;
-          quality?: number | undefined;
-          /** @enum {string|null} */
-          format?: 'auto' | 'avif' | 'webp' | 'jpeg' | 'png' | null | undefined;
-          dpr?: number | undefined;
-          rotate?: number | undefined;
-          sharpen?: number | undefined;
-        }
-      | undefined;
     'home-user.dto.accountCurrent': {
       name: string;
+      displayName?: string | undefined;
       avatar?: string | undefined;
       locale?: unknown;
       tz?: string | undefined;
@@ -2549,10 +3060,10 @@ export interface components {
     };
     'home-user.dto.accountProfileUpdate': {
       /** @description Display name */
-      name: string;
+      displayName?: string | undefined;
       /**
        * Avatar
-       * @description Absolute HTTPS avatar URL or API delivery URL
+       * @description Absolute HTTP(S) avatar URL or API delivery URL
        */
       avatar?: string | undefined;
       /** @description Locale */
@@ -2608,6 +3119,7 @@ export interface components {
     };
     'home-user.dto.passport_2d063d28bc7243bed02ebd8bddf1212a93c6305b':
       | {
+          instanceId: number | string | undefined;
           user: components['schemas']['home-user.dto.passportUser'];
           auth: components['schemas']['a-auth.dto.auth'];
           roles: components['schemas']['home-user.entity.role'][];
@@ -2616,6 +3128,7 @@ export interface components {
     'home-user.dto.passportUser': {
       id: number | string;
       name: string;
+      displayName?: string | undefined;
       avatar?: string | undefined;
       email?: string | undefined;
       mobile?: string | undefined;
@@ -2674,12 +3187,15 @@ export interface components {
           }
         | undefined;
       siteIds: string[];
+      /** @default false */
+      builtin?: boolean;
     };
     'home-user.dto.passportJwt': {
       passport: components['schemas']['home-user.dto.passport'];
       jwt: components['schemas']['a-jwt.dto.jwtToken'];
     };
     'home-user.dto.passport': {
+      instanceId: number | string | undefined;
       user: components['schemas']['home-user.dto.passportUser'];
       auth: components['schemas']['a-auth.dto.auth'];
       roles: components['schemas']['home-user.entity.role'][];
@@ -2723,6 +3239,7 @@ export interface components {
       instanceName: string;
       userId: string;
       userName: string;
+      displayName?: string | undefined;
     };
     'commerce-promotion.dto.couponMineItem': {
       id: number | string;
@@ -2848,6 +3365,56 @@ export interface components {
       /** @description Operations */
       _operationsRow?: unknown;
     };
+    'CommerceCouponTemplateSelectQueryPredicate_6f0bf47e65b9343a2afb89a23596aca3dad50313':
+      | {
+          /** @enum {string} */
+          field: 'name';
+          /** @enum {string} */
+          op: 'eq' | 'containsI';
+          value: string;
+        }
+      | {
+          /** @enum {string} */
+          field: 'createdAt';
+          /** @enum {string} */
+          op: 'gte' | 'lt' | 'lte';
+          /** Format: date-time */
+          value: Date;
+        }
+      | {
+          and: components['schemas']['CommerceCouponTemplateSelectQueryPredicate'][];
+        }
+      | {
+          or: components['schemas']['CommerceCouponTemplateSelectQueryPredicate'][];
+        }
+      | {
+          not: components['schemas']['CommerceCouponTemplateSelectQueryPredicate'];
+        };
+    'CommerceCouponTemplateSelectQueryPredicate':
+      | {
+          /** @enum {string} */
+          field: 'name';
+          /** @enum {string} */
+          op: 'eq' | 'containsI';
+          value: string;
+        }
+      | {
+          /** @enum {string} */
+          field: 'createdAt';
+          /** @enum {string} */
+          op: 'gte' | 'lt' | 'lte';
+          /** Format: date-time */
+          value: Date;
+        }
+      | {
+          and: components['schemas']['CommerceCouponTemplateSelectQueryPredicate'][];
+        }
+      | {
+          or: components['schemas']['CommerceCouponTemplateSelectQueryPredicate'][];
+        }
+      | {
+          not: components['schemas']['CommerceCouponTemplateSelectQueryPredicate'];
+        };
     'commerce-promotion.dto.couponTemplateView_2d063d28bc7243bed02ebd8bddf1212a93c6305b_91abd8df366c0c4d47021b38af2a356349ee178b':
       | {
           /**
@@ -3004,6 +3571,76 @@ export interface components {
       currency: 'USD';
       payableTotalCents: number;
     };
+    'CommerceOrderMineQueryPredicate_f9aee760a2098afd454bcecd0e927d9bfb63d77f':
+      | {
+          /** @enum {string} */
+          field: 'state';
+          /** @enum {string} */
+          op: 'eq';
+          /** @enum {string} */
+          value:
+            | 'awaiting_payment'
+            | 'paid'
+            | 'refund_requested'
+            | 'refund_approved'
+            | 'refund_rejected'
+            | 'shipped'
+            | 'refunded'
+            | 'cancelled'
+            | 'expired';
+        }
+      | {
+          /** @enum {string} */
+          field: 'createdAt';
+          /** @enum {string} */
+          op: 'gte' | 'lt' | 'lte';
+          /** Format: date-time */
+          value: Date;
+        }
+      | {
+          and: components['schemas']['CommerceOrderMineQueryPredicate'][];
+        }
+      | {
+          or: components['schemas']['CommerceOrderMineQueryPredicate'][];
+        }
+      | {
+          not: components['schemas']['CommerceOrderMineQueryPredicate'];
+        };
+    'CommerceOrderMineQueryPredicate':
+      | {
+          /** @enum {string} */
+          field: 'state';
+          /** @enum {string} */
+          op: 'eq';
+          /** @enum {string} */
+          value:
+            | 'awaiting_payment'
+            | 'paid'
+            | 'refund_requested'
+            | 'refund_approved'
+            | 'refund_rejected'
+            | 'shipped'
+            | 'refunded'
+            | 'cancelled'
+            | 'expired';
+        }
+      | {
+          /** @enum {string} */
+          field: 'createdAt';
+          /** @enum {string} */
+          op: 'gte' | 'lt' | 'lte';
+          /** Format: date-time */
+          value: Date;
+        }
+      | {
+          and: components['schemas']['CommerceOrderMineQueryPredicate'][];
+        }
+      | {
+          or: components['schemas']['CommerceOrderMineQueryPredicate'][];
+        }
+      | {
+          not: components['schemas']['CommerceOrderMineQueryPredicate'];
+        };
     'commerce-trade.dto.orderDetail_2d063d28bc7243bed02ebd8bddf1212a93c6305b':
       | {
           id: number | string;
@@ -3133,7 +3770,12 @@ export interface components {
       /** Format: date-time */
       finalizedAt?: Date;
       /** @enum {string} */
-      recoveryDisposition: 'none' | 'reconcile_only' | 'query_only' | 'retry_same_key';
+      recoveryDisposition:
+        | 'none'
+        | 'await_webhook'
+        | 'reconcile_only'
+        | 'query_only'
+        | 'retry_same_key';
       recoveryMessage: string;
     };
     'commerce-trade.dto.refundRecoveryAction': {
@@ -3150,7 +3792,9 @@ export interface components {
       shippedAt: Date;
     };
     'commerce-trade.dto.orderShip': {
+      /** @description Carrier */
       carrier: string;
+      /** @description Tracking number */
       trackingNumber: string;
     };
     'commerce-trade.dto.orderSelectRes': {
@@ -3192,6 +3836,110 @@ export interface components {
       /** @description Operations */
       _operationsRow?: unknown;
     };
+    'CommerceOrderSelectQueryPredicate_a32b689e5c62edf5889e5875801d3b1c6f275ba6':
+      | {
+          /** @enum {string} */
+          field: 'state';
+          /** @enum {string} */
+          op: 'eq';
+          /** @enum {string} */
+          value:
+            | 'awaiting_payment'
+            | 'paid'
+            | 'refund_requested'
+            | 'refund_approved'
+            | 'refund_rejected'
+            | 'shipped'
+            | 'refunded'
+            | 'cancelled'
+            | 'expired';
+        }
+      | {
+          /** @enum {string} */
+          field: 'state';
+          /** @enum {string} */
+          op: 'in';
+          value: (
+            | 'awaiting_payment'
+            | 'paid'
+            | 'refund_requested'
+            | 'refund_approved'
+            | 'refund_rejected'
+            | 'shipped'
+            | 'refunded'
+            | 'cancelled'
+            | 'expired'
+          )[];
+        }
+      | {
+          /** @enum {string} */
+          field: 'createdAt';
+          /** @enum {string} */
+          op: 'gte' | 'lt' | 'lte';
+          /** Format: date-time */
+          value: Date;
+        }
+      | {
+          and: components['schemas']['CommerceOrderSelectQueryPredicate'][];
+        }
+      | {
+          or: components['schemas']['CommerceOrderSelectQueryPredicate'][];
+        }
+      | {
+          not: components['schemas']['CommerceOrderSelectQueryPredicate'];
+        };
+    'CommerceOrderSelectQueryPredicate':
+      | {
+          /** @enum {string} */
+          field: 'state';
+          /** @enum {string} */
+          op: 'eq';
+          /** @enum {string} */
+          value:
+            | 'awaiting_payment'
+            | 'paid'
+            | 'refund_requested'
+            | 'refund_approved'
+            | 'refund_rejected'
+            | 'shipped'
+            | 'refunded'
+            | 'cancelled'
+            | 'expired';
+        }
+      | {
+          /** @enum {string} */
+          field: 'state';
+          /** @enum {string} */
+          op: 'in';
+          value: (
+            | 'awaiting_payment'
+            | 'paid'
+            | 'refund_requested'
+            | 'refund_approved'
+            | 'refund_rejected'
+            | 'shipped'
+            | 'refunded'
+            | 'cancelled'
+            | 'expired'
+          )[];
+        }
+      | {
+          /** @enum {string} */
+          field: 'createdAt';
+          /** @enum {string} */
+          op: 'gte' | 'lt' | 'lte';
+          /** Format: date-time */
+          value: Date;
+        }
+      | {
+          and: components['schemas']['CommerceOrderSelectQueryPredicate'][];
+        }
+      | {
+          or: components['schemas']['CommerceOrderSelectQueryPredicate'][];
+        }
+      | {
+          not: components['schemas']['CommerceOrderSelectQueryPredicate'];
+        };
     'commerce-trade.dto.orderView_2d063d28bc7243bed02ebd8bddf1212a93c6305b_c770e477ee8be6f39738af0fc4f0e7fce54bf9e0':
       | {
           /**
@@ -3288,6 +4036,56 @@ export interface components {
           code: string;
         }
       | undefined;
+    'CommerceStockAuditSelectQueryPredicate_6ed3143d5729b6b0c088585fbdc8eee7a7e109cc':
+      | {
+          /** @enum {string} */
+          field: 'skuId';
+          /** @enum {string} */
+          op: 'eq';
+          value: string;
+        }
+      | {
+          /** @enum {string} */
+          field: 'createdAt';
+          /** @enum {string} */
+          op: 'gte' | 'lt' | 'lte';
+          /** Format: date-time */
+          value: Date;
+        }
+      | {
+          and: components['schemas']['CommerceStockAuditSelectQueryPredicate'][];
+        }
+      | {
+          or: components['schemas']['CommerceStockAuditSelectQueryPredicate'][];
+        }
+      | {
+          not: components['schemas']['CommerceStockAuditSelectQueryPredicate'];
+        };
+    'CommerceStockAuditSelectQueryPredicate':
+      | {
+          /** @enum {string} */
+          field: 'skuId';
+          /** @enum {string} */
+          op: 'eq';
+          value: string;
+        }
+      | {
+          /** @enum {string} */
+          field: 'createdAt';
+          /** @enum {string} */
+          op: 'gte' | 'lt' | 'lte';
+          /** Format: date-time */
+          value: Date;
+        }
+      | {
+          and: components['schemas']['CommerceStockAuditSelectQueryPredicate'][];
+        }
+      | {
+          or: components['schemas']['CommerceStockAuditSelectQueryPredicate'][];
+        }
+      | {
+          not: components['schemas']['CommerceStockAuditSelectQueryPredicate'];
+        };
     'commerce-trade.dto.stockAuditView_2d063d28bc7243bed02ebd8bddf1212a93c6305b_425dbecccd52e19e24888f99e1b1670233afa875':
       | {
           /**
@@ -3369,7 +4167,7 @@ export interface components {
       available: number;
     };
     /** @description Adjust Stock */
-    'commerce-trade.dto.stockAdjust_0aab216abd3467dd07f61c69172266c2441af477': {
+    'commerce-trade.dto.stockAdjust_6a7c2f0bb21a25da3048650f263577ae4467750e': {
       /** @description SKU ID */
       skuId: number | string;
       /** @description Delta */
@@ -3401,6 +4199,56 @@ export interface components {
       /** @description Operations */
       _operationsRow?: unknown;
     };
+    'CommerceStockBalanceSelectQueryPredicate_6ed3143d5729b6b0c088585fbdc8eee7a7e109cc':
+      | {
+          /** @enum {string} */
+          field: 'skuId';
+          /** @enum {string} */
+          op: 'eq';
+          value: string;
+        }
+      | {
+          /** @enum {string} */
+          field: 'createdAt';
+          /** @enum {string} */
+          op: 'gte' | 'lt' | 'lte';
+          /** Format: date-time */
+          value: Date;
+        }
+      | {
+          and: components['schemas']['CommerceStockBalanceSelectQueryPredicate'][];
+        }
+      | {
+          or: components['schemas']['CommerceStockBalanceSelectQueryPredicate'][];
+        }
+      | {
+          not: components['schemas']['CommerceStockBalanceSelectQueryPredicate'];
+        };
+    'CommerceStockBalanceSelectQueryPredicate':
+      | {
+          /** @enum {string} */
+          field: 'skuId';
+          /** @enum {string} */
+          op: 'eq';
+          value: string;
+        }
+      | {
+          /** @enum {string} */
+          field: 'createdAt';
+          /** @enum {string} */
+          op: 'gte' | 'lt' | 'lte';
+          /** Format: date-time */
+          value: Date;
+        }
+      | {
+          and: components['schemas']['CommerceStockBalanceSelectQueryPredicate'][];
+        }
+      | {
+          or: components['schemas']['CommerceStockBalanceSelectQueryPredicate'][];
+        }
+      | {
+          not: components['schemas']['CommerceStockBalanceSelectQueryPredicate'];
+        };
     'commerce-trade.dto.stockBalanceView_2d063d28bc7243bed02ebd8bddf1212a93c6305b_425dbecccd52e19e24888f99e1b1670233afa875':
       | {
           /**
@@ -3489,6 +4337,56 @@ export interface components {
       /** @description Operations */
       _operationsRow?: unknown;
     };
+    'CommerceCategorySelectQueryPredicate_6f0bf47e65b9343a2afb89a23596aca3dad50313':
+      | {
+          /** @enum {string} */
+          field: 'name';
+          /** @enum {string} */
+          op: 'eq' | 'containsI';
+          value: string;
+        }
+      | {
+          /** @enum {string} */
+          field: 'createdAt';
+          /** @enum {string} */
+          op: 'gte' | 'lt' | 'lte';
+          /** Format: date-time */
+          value: Date;
+        }
+      | {
+          and: components['schemas']['CommerceCategorySelectQueryPredicate'][];
+        }
+      | {
+          or: components['schemas']['CommerceCategorySelectQueryPredicate'][];
+        }
+      | {
+          not: components['schemas']['CommerceCategorySelectQueryPredicate'];
+        };
+    'CommerceCategorySelectQueryPredicate':
+      | {
+          /** @enum {string} */
+          field: 'name';
+          /** @enum {string} */
+          op: 'eq' | 'containsI';
+          value: string;
+        }
+      | {
+          /** @enum {string} */
+          field: 'createdAt';
+          /** @enum {string} */
+          op: 'gte' | 'lt' | 'lte';
+          /** Format: date-time */
+          value: Date;
+        }
+      | {
+          and: components['schemas']['CommerceCategorySelectQueryPredicate'][];
+        }
+      | {
+          or: components['schemas']['CommerceCategorySelectQueryPredicate'][];
+        }
+      | {
+          not: components['schemas']['CommerceCategorySelectQueryPredicate'];
+        };
     'commerce-catalog.dto.categoryView_2d063d28bc7243bed02ebd8bddf1212a93c6305b_425dbecccd52e19e24888f99e1b1670233afa875':
       | {
           /**
@@ -3545,6 +4443,7 @@ export interface components {
       /** @description Description */
       description?: string | undefined;
     };
+    /** @description Create product */
     'commerce-catalog.dto.productCreate': {
       /** @description Product title */
       title: string;
@@ -3617,6 +4516,56 @@ export interface components {
       /** @description Operations */
       _operationsRow?: unknown;
     };
+    'CommerceProductSelectQueryPredicate_deb90652e4f202e098ba09b36626875a1a6e90e4':
+      | {
+          /** @enum {string} */
+          field: 'title';
+          /** @enum {string} */
+          op: 'eq' | 'containsI';
+          value: string;
+        }
+      | {
+          /** @enum {string} */
+          field: 'createdAt';
+          /** @enum {string} */
+          op: 'gte' | 'lt' | 'lte';
+          /** Format: date-time */
+          value: Date;
+        }
+      | {
+          and: components['schemas']['CommerceProductSelectQueryPredicate'][];
+        }
+      | {
+          or: components['schemas']['CommerceProductSelectQueryPredicate'][];
+        }
+      | {
+          not: components['schemas']['CommerceProductSelectQueryPredicate'];
+        };
+    'CommerceProductSelectQueryPredicate':
+      | {
+          /** @enum {string} */
+          field: 'title';
+          /** @enum {string} */
+          op: 'eq' | 'containsI';
+          value: string;
+        }
+      | {
+          /** @enum {string} */
+          field: 'createdAt';
+          /** @enum {string} */
+          op: 'gte' | 'lt' | 'lte';
+          /** Format: date-time */
+          value: Date;
+        }
+      | {
+          and: components['schemas']['CommerceProductSelectQueryPredicate'][];
+        }
+      | {
+          or: components['schemas']['CommerceProductSelectQueryPredicate'][];
+        }
+      | {
+          not: components['schemas']['CommerceProductSelectQueryPredicate'];
+        };
     'commerce-catalog.dto.productPublicSelectRes': {
       list: components['schemas']['commerce-catalog.dto.productPublic'][];
       total: string;
@@ -3669,7 +4618,8 @@ export interface components {
           descriptionHtml?: string | undefined;
         }
       | undefined;
-    'commerce-catalog.dto.productView_2d063d28bc7243bed02ebd8bddf1212a93c6305b_9a6ea970b2f00d574b88030d8c96cbf7b1e699d7':
+    /** @description Product details */
+    'commerce-catalog.dto.productView_2d063d28bc7243bed02ebd8bddf1212a93c6305b_a2f92cabb46b0630848b50414c0d4c60efb47a57':
       | {
           /**
            * Format: date-time
@@ -3724,6 +4674,7 @@ export interface components {
           };
         }
       | undefined;
+    /** @description Update product */
     'commerce-catalog.dto.productUpdate': {
       /** @description Product title */
       title: string;
@@ -3810,9 +4761,61 @@ export interface components {
         /** @description Product title */
         title: string;
       };
+      /** @description Available */
+      available: number;
       /** @description Operations */
       _operationsRow?: unknown;
     };
+    'CommerceSkuSelectQueryPredicate_6bfc12fff19619c142f759c3a85aa30659306378':
+      | {
+          /** @enum {string} */
+          field: 'code';
+          /** @enum {string} */
+          op: 'eq' | 'containsI';
+          value: string;
+        }
+      | {
+          /** @enum {string} */
+          field: 'createdAt';
+          /** @enum {string} */
+          op: 'gte' | 'lt' | 'lte';
+          /** Format: date-time */
+          value: Date;
+        }
+      | {
+          and: components['schemas']['CommerceSkuSelectQueryPredicate'][];
+        }
+      | {
+          or: components['schemas']['CommerceSkuSelectQueryPredicate'][];
+        }
+      | {
+          not: components['schemas']['CommerceSkuSelectQueryPredicate'];
+        };
+    'CommerceSkuSelectQueryPredicate':
+      | {
+          /** @enum {string} */
+          field: 'code';
+          /** @enum {string} */
+          op: 'eq' | 'containsI';
+          value: string;
+        }
+      | {
+          /** @enum {string} */
+          field: 'createdAt';
+          /** @enum {string} */
+          op: 'gte' | 'lt' | 'lte';
+          /** Format: date-time */
+          value: Date;
+        }
+      | {
+          and: components['schemas']['CommerceSkuSelectQueryPredicate'][];
+        }
+      | {
+          or: components['schemas']['CommerceSkuSelectQueryPredicate'][];
+        }
+      | {
+          not: components['schemas']['CommerceSkuSelectQueryPredicate'];
+        };
     'commerce-catalog.dto.skuView_2d063d28bc7243bed02ebd8bddf1212a93c6305b_425dbecccd52e19e24888f99e1b1670233afa875':
       | {
           /**
@@ -3941,6 +4944,7 @@ export interface components {
       siteId: string;
       title: string;
     };
+    /** @description Add Student Training Record */
     'training-record.dto.recordCreate': {
       /** @description Training Record Name */
       name: string;
@@ -4082,7 +5086,86 @@ export interface components {
       /** @default true */
       signed?: boolean;
     };
-    'training-record.dto.recordView_2d063d28bc7243bed02ebd8bddf1212a93c6305b_425dbecccd52e19e24888f99e1b1670233afa875':
+    'TrainingRecordSelectQueryPredicate_12e26675b7b232083b85f3bb960e6f1048755230':
+      | {
+          /** @enum {string} */
+          field: 'name';
+          /** @enum {string} */
+          op: 'eq' | 'containsI';
+          value: string;
+        }
+      | {
+          /** @enum {string} */
+          field: 'studentId';
+          /** @enum {string} */
+          op: 'eq';
+          value: string;
+        }
+      | {
+          /** @enum {string} */
+          field: 'studentName';
+          /** @enum {string} */
+          op: 'containsI';
+          value: string;
+        }
+      | {
+          /** @enum {string} */
+          field: 'createdAt';
+          /** @enum {string} */
+          op: 'gte' | 'lt' | 'lte';
+          /** Format: date-time */
+          value: Date;
+        }
+      | {
+          and: components['schemas']['TrainingRecordSelectQueryPredicate'][];
+        }
+      | {
+          or: components['schemas']['TrainingRecordSelectQueryPredicate'][];
+        }
+      | {
+          not: components['schemas']['TrainingRecordSelectQueryPredicate'];
+        };
+    'TrainingRecordSelectQueryPredicate':
+      | {
+          /** @enum {string} */
+          field: 'name';
+          /** @enum {string} */
+          op: 'eq' | 'containsI';
+          value: string;
+        }
+      | {
+          /** @enum {string} */
+          field: 'studentId';
+          /** @enum {string} */
+          op: 'eq';
+          value: string;
+        }
+      | {
+          /** @enum {string} */
+          field: 'studentName';
+          /** @enum {string} */
+          op: 'containsI';
+          value: string;
+        }
+      | {
+          /** @enum {string} */
+          field: 'createdAt';
+          /** @enum {string} */
+          op: 'gte' | 'lt' | 'lte';
+          /** Format: date-time */
+          value: Date;
+        }
+      | {
+          and: components['schemas']['TrainingRecordSelectQueryPredicate'][];
+        }
+      | {
+          or: components['schemas']['TrainingRecordSelectQueryPredicate'][];
+        }
+      | {
+          not: components['schemas']['TrainingRecordSelectQueryPredicate'];
+        };
+    /** @description View Student Training Record */
+    'training-record.dto.recordView_2d063d28bc7243bed02ebd8bddf1212a93c6305b_7d715789d9643740a04e8a6c0f6fb951884bc347':
       | {
           /**
            * Format: date-time
@@ -4157,6 +5240,7 @@ export interface components {
             | undefined;
         }
       | undefined;
+    /** @description Edit Student Training Record */
     'training-record.dto.recordUpdate': {
       /** @description Training Record Name */
       name: string;
@@ -4201,16 +5285,18 @@ export interface components {
         | components['schemas']['training-record.dto.detailRecordSubjectResItem'][]
         | undefined;
     };
+    /** @description Add Student */
     'training-student.dto.studentCreate': {
       /** @description Student Name */
       name: string;
-      /** @description Description */
-      description?: string | undefined;
       /** @description Mobile */
       mobile: string;
       /** @description Student Image */
       imageId?: number | string | undefined;
-      /** @description Training Stage */
+      /**
+       * Training Stage
+       * @description 1=Foundation Track; 2=Progress Track; 3=Advanced Workshop
+       */
       level: 1 | 2 | 3;
       /** @description Student Training Records */
       trainingRecords?:
@@ -4237,13 +5323,6 @@ export interface components {
             /** @description Student Training Record Details */
             trainingRecordSubjects?:
               | {
-                  /**
-                   * @description Deleted
-                   * @default false
-                   */
-                  deleted?: boolean | undefined;
-                  /** @description ID */
-                  id?: number | string | undefined;
                   /** @description Subject Name */
                   name: string;
                   /** @description Subject Score */
@@ -4284,6 +5363,10 @@ export interface components {
               | undefined;
           }[]
         | undefined;
+      content?: {
+        /** @description Description Markdown */
+        descriptionMarkdown?: string | undefined;
+      };
       _trainingRecords?:
         | components['schemas']['training-student.dto.detailRecordResItem'][]
         | undefined;
@@ -4381,13 +5464,14 @@ export interface components {
       id: number | string;
       /** @description Student Name */
       name: string;
-      /** @description Description */
-      description?: string | undefined;
       /** @description Mobile */
       mobile: string;
       /** @description Student Image */
       imageId?: number | string | undefined;
-      /** @description Training Stage */
+      /**
+       * Training Stage
+       * @description 1=Foundation Track; 2=Progress Track; 3=Advanced Workshop
+       */
       level: 1 | 2 | 3;
       image?: components['schemas']['a-image.dto.imageView_a83c3e638bca4b30ec8675860cdc52d66f6a16d1_2d063d28bc7243bed02ebd8bddf1212a93c6305b_efb37794d7c03c65122279f90d79919f009c34e5_1816ff740d81c738ec055c7038bbd93beb9405a7_537cd6552a384183a9457fb6a920bbae337277f6'];
       /** @description Operations */
@@ -4405,7 +5489,113 @@ export interface components {
           signed?: boolean;
         }
       | undefined;
-    'training-student.dto.studentView_2d063d28bc7243bed02ebd8bddf1212a93c6305b_4e7e5941f704425ce1be04de1885c36427ccc436':
+    'TrainingStudentSelectQueryPredicate_1a30b20933e90ac2c50faf88c8a6099328e0ded8':
+      | {
+          /** @enum {string} */
+          field: 'id';
+          /** @enum {string} */
+          op: 'eq';
+          value: string;
+        }
+      | {
+          /** @enum {string} */
+          field: 'id';
+          /** @enum {string} */
+          op: 'in';
+          value: string[];
+        }
+      | {
+          /** @enum {string} */
+          field: 'name';
+          /** @enum {string} */
+          op: 'eq' | 'containsI' | 'startsWith';
+          value: string;
+        }
+      | {
+          /** @enum {string} */
+          field: 'level';
+          /** @enum {string} */
+          op: 'eq' | 'gte';
+          value: 1 | 2 | 3;
+        }
+      | {
+          /** @enum {string} */
+          field: 'createdAt';
+          /** @enum {string} */
+          op: 'gte' | 'lt' | 'lte';
+          /** Format: date-time */
+          value: Date;
+        }
+      | {
+          and: components['schemas']['TrainingStudentSelectQueryPredicate'][];
+        }
+      | {
+          or: components['schemas']['TrainingStudentSelectQueryPredicate'][];
+        }
+      | {
+          not: components['schemas']['TrainingStudentSelectQueryPredicate'];
+        };
+    'TrainingStudentSelectQueryPredicate':
+      | {
+          /** @enum {string} */
+          field: 'id';
+          /** @enum {string} */
+          op: 'eq';
+          value: string;
+        }
+      | {
+          /** @enum {string} */
+          field: 'id';
+          /** @enum {string} */
+          op: 'in';
+          value: string[];
+        }
+      | {
+          /** @enum {string} */
+          field: 'name';
+          /** @enum {string} */
+          op: 'eq' | 'containsI' | 'startsWith';
+          value: string;
+        }
+      | {
+          /** @enum {string} */
+          field: 'level';
+          /** @enum {string} */
+          op: 'eq' | 'gte';
+          value: 1 | 2 | 3;
+        }
+      | {
+          /** @enum {string} */
+          field: 'createdAt';
+          /** @enum {string} */
+          op: 'gte' | 'lt' | 'lte';
+          /** Format: date-time */
+          value: Date;
+        }
+      | {
+          and: components['schemas']['TrainingStudentSelectQueryPredicate'][];
+        }
+      | {
+          or: components['schemas']['TrainingStudentSelectQueryPredicate'][];
+        }
+      | {
+          not: components['schemas']['TrainingStudentSelectQueryPredicate'];
+        };
+    'training-student.dto.studentGroupResItem': {
+      /**
+       * Training Stage
+       * @description 1=Foundation Track; 2=Progress Track; 3=Advanced Workshop
+       */
+      level?: 1 | 2 | 3 | undefined;
+      count_all?: string | undefined;
+      count_imageId?: string | undefined;
+    };
+    'training-student.dto.studentAggregateRes': {
+      count_all?: string | undefined;
+      count_imageId?: string | undefined;
+    };
+    /** @description View Student */
+    'training-student.dto.studentView_2d063d28bc7243bed02ebd8bddf1212a93c6305b_4826fc678e47603ec467782ddb0d02463792cd60':
       | {
           /**
            * Format: date-time
@@ -4431,13 +5621,14 @@ export interface components {
           id: number | string;
           /** @description Student Name */
           name: string;
-          /** @description Description */
-          description?: string | undefined;
           /** @description Mobile */
           mobile: string;
           /** @description Student Image */
           imageId?: number | string | undefined;
-          /** @description Training Stage */
+          /**
+           * Training Stage
+           * @description 1=Foundation Track; 2=Progress Track; 3=Advanced Workshop
+           */
           level: 1 | 2 | 3;
           /** @description Student Training Records */
           trainingRecords: {
@@ -4514,22 +5705,29 @@ export interface components {
               | components['schemas']['training-record.dto.detailRecordSubjectResItem'][]
               | undefined;
           }[];
+          content?: {
+            /** @description Description Markdown */
+            descriptionMarkdown?: string | undefined;
+          };
           image?: components['schemas']['a-image.dto.imageView_a83c3e638bca4b30ec8675860cdc52d66f6a16d1_2d063d28bc7243bed02ebd8bddf1212a93c6305b_efb37794d7c03c65122279f90d79919f009c34e5_1816ff740d81c738ec055c7038bbd93beb9405a7_537cd6552a384183a9457fb6a920bbae337277f6'];
           _trainingRecords?:
             | components['schemas']['training-student.dto.detailRecordResItem'][]
             | undefined;
+          _descriptionMarkdown?: string | undefined;
         }
       | undefined;
+    /** @description Edit Student */
     'training-student.dto.studentUpdate': {
       /** @description Student Name */
       name: string;
-      /** @description Description */
-      description?: string | undefined;
       /** @description Mobile */
       mobile: string;
       /** @description Student Image */
       imageId?: number | string | undefined;
-      /** @description Training Stage */
+      /**
+       * Training Stage
+       * @description 1=Foundation Track; 2=Progress Track; 3=Advanced Workshop
+       */
       level: 1 | 2 | 3;
       /** @description Student Training Records */
       trainingRecords?:
@@ -4610,6 +5808,17 @@ export interface components {
               | undefined;
           }[]
         | undefined;
+      content?: {
+        /**
+         * @description Deleted
+         * @default false
+         */
+        deleted?: boolean | undefined;
+        /** @description ID */
+        id?: number | string | undefined;
+        /** @description Description Markdown */
+        descriptionMarkdown?: string | undefined;
+      };
       _trainingRecords?:
         | components['schemas']['training-student.dto.detailRecordResItem'][]
         | undefined;
@@ -4620,12 +5829,17 @@ export interface components {
           id: number | string;
           /** @description Student Name */
           name: string;
-          /** @description Description */
-          description?: string | undefined;
           /** @description Mobile */
           mobile: string;
-          /** @description Training Stage */
+          /**
+           * Training Stage
+           * @description 1=Foundation Track; 2=Progress Track; 3=Advanced Workshop
+           */
           level: 1 | 2 | 3;
+          /** @description Description */
+          descriptionMarkdown?: string | undefined;
+          /** @description Description HTML */
+          descriptionHtml?: string | undefined;
           /** @description Level Title */
           levelTitle: string;
           /** @description Description Length */
@@ -4634,6 +5848,9 @@ export interface components {
           summaryText: string;
         }
       | undefined;
+    'training-student.dto.studentDeleteBulk': {
+      ids: (number | string)[];
+    };
     'basic-metrics.dto.metricsSnapshot': {
       enabled: boolean;
       runtime: components['schemas']['basic-metrics.dto.metricsRuntime'];
@@ -4660,6 +5877,41 @@ export interface components {
           }
         | undefined;
       schedulers?: number | undefined;
+    };
+    'a-layoutprofile.dto.layoutProfile_2d063d28bc7243bed02ebd8bddf1212a93c6305b':
+      | {
+          /** @enum {number} */
+          version: 1;
+          schemaFingerprint?: string | undefined;
+          columns: {
+            key: string;
+            visible: true | false;
+            width: 'auto' | number;
+          }[];
+        }
+      | undefined;
+    'a-layoutprofile.dto.layoutProfile': {
+      /** @enum {number} */
+      version: 1;
+      schemaFingerprint?: string | undefined;
+      columns: {
+        key: string;
+        visible: true | false;
+        width: 'auto' | number;
+      }[];
+    };
+    'a-layoutprofile.dto.layoutProfileSave': {
+      layoutKey: string;
+      profile: {
+        /** @enum {number} */
+        version: 1;
+        schemaFingerprint?: string | undefined;
+        columns: {
+          key: string;
+          visible: true | false;
+          width: 'auto' | number;
+        }[];
+      };
     };
     'a-file.dto.fileUploadPolicyResponse': {
       fileScene: string;
@@ -4812,6 +6064,56 @@ export interface components {
       /** @description Operations */
       _operationsRow?: unknown;
     };
+    'TestRestProductSelectQueryPredicate_6f0bf47e65b9343a2afb89a23596aca3dad50313':
+      | {
+          /** @enum {string} */
+          field: 'name';
+          /** @enum {string} */
+          op: 'eq' | 'containsI';
+          value: string;
+        }
+      | {
+          /** @enum {string} */
+          field: 'createdAt';
+          /** @enum {string} */
+          op: 'gte' | 'lt' | 'lte';
+          /** Format: date-time */
+          value: Date;
+        }
+      | {
+          and: components['schemas']['TestRestProductSelectQueryPredicate'][];
+        }
+      | {
+          or: components['schemas']['TestRestProductSelectQueryPredicate'][];
+        }
+      | {
+          not: components['schemas']['TestRestProductSelectQueryPredicate'];
+        };
+    'TestRestProductSelectQueryPredicate':
+      | {
+          /** @enum {string} */
+          field: 'name';
+          /** @enum {string} */
+          op: 'eq' | 'containsI';
+          value: string;
+        }
+      | {
+          /** @enum {string} */
+          field: 'createdAt';
+          /** @enum {string} */
+          op: 'gte' | 'lt' | 'lte';
+          /** Format: date-time */
+          value: Date;
+        }
+      | {
+          and: components['schemas']['TestRestProductSelectQueryPredicate'][];
+        }
+      | {
+          or: components['schemas']['TestRestProductSelectQueryPredicate'][];
+        }
+      | {
+          not: components['schemas']['TestRestProductSelectQueryPredicate'];
+        };
     'test-rest.dto.productView_2d063d28bc7243bed02ebd8bddf1212a93c6305b_425dbecccd52e19e24888f99e1b1670233afa875':
       | {
           /**
@@ -4938,7 +6240,24 @@ export interface components {
       count_title?: string | undefined;
       sum_stars?: string | undefined;
     };
-    'test-vona.dto.userUpdate': {
+    'test-vona.dto.userCreate_1ff20af69286149eb0b25291d9450172f7bd0054': {
+      name: string;
+      age?: number | undefined;
+      scores?: number | undefined;
+      posts?:
+        | {
+            /** @description Title */
+            title: string;
+          }[]
+        | undefined;
+      roles?:
+        | {
+            id: number | string;
+            deleted?: boolean | undefined;
+          }[]
+        | undefined;
+    };
+    'test-vona.dto.userUpdate_fb27bcbbc8bfc8a865e086eb43abd766c7107326': {
       name: string;
       age?: number | undefined;
       scores?: number | undefined;
@@ -5072,6 +6391,68 @@ export interface components {
       /** @description Amount */
       amount: number;
     };
+    'TestOrderQueryQueryPredicate_0ba00e95609398d05aa5f48387ae2e7b3638cb10':
+      | {
+          /** @enum {string} */
+          field: 'orderNo';
+          /** @enum {string} */
+          op: 'eq' | 'containsI';
+          value: string;
+        }
+      | {
+          /** @enum {string} */
+          field: 'remark';
+          /** @enum {string} */
+          op: 'eq' | 'containsI';
+          value: string;
+        }
+      | {
+          /** @enum {string} */
+          field: 'userName';
+          /** @enum {string} */
+          op: 'containsI';
+          value: string;
+        }
+      | {
+          and: components['schemas']['TestOrderQueryQueryPredicate'][];
+        }
+      | {
+          or: components['schemas']['TestOrderQueryQueryPredicate'][];
+        }
+      | {
+          not: components['schemas']['TestOrderQueryQueryPredicate'];
+        };
+    'TestOrderQueryQueryPredicate':
+      | {
+          /** @enum {string} */
+          field: 'orderNo';
+          /** @enum {string} */
+          op: 'eq' | 'containsI';
+          value: string;
+        }
+      | {
+          /** @enum {string} */
+          field: 'remark';
+          /** @enum {string} */
+          op: 'eq' | 'containsI';
+          value: string;
+        }
+      | {
+          /** @enum {string} */
+          field: 'userName';
+          /** @enum {string} */
+          op: 'containsI';
+          value: string;
+        }
+      | {
+          and: components['schemas']['TestOrderQueryQueryPredicate'][];
+        }
+      | {
+          or: components['schemas']['TestOrderQueryQueryPredicate'][];
+        }
+      | {
+          not: components['schemas']['TestOrderQueryQueryPredicate'];
+        };
     'test-vona.dto.orderSelectRes': {
       list: components['schemas']['test-vona.dto.orderSelectResItem'][];
       total: string;
@@ -5079,11 +6460,195 @@ export interface components {
       pageSize: number;
       pageNo: number;
     };
+    'TestOrderQueryPageQueryPredicate_2ac91e8ccbe06af23a8af5e36238058a7473772a':
+      | {
+          /** @enum {string} */
+          field: 'orderNo';
+          /** @enum {string} */
+          op: 'eq' | 'containsI';
+          value: string;
+        }
+      | {
+          /** @enum {string} */
+          field: 'remark';
+          /** @enum {string} */
+          op: 'eq' | 'containsI';
+          value: string;
+        }
+      | {
+          and: components['schemas']['TestOrderQueryPageQueryPredicate'][];
+        }
+      | {
+          or: components['schemas']['TestOrderQueryPageQueryPredicate'][];
+        }
+      | {
+          not: components['schemas']['TestOrderQueryPageQueryPredicate'];
+        };
+    'TestOrderQueryPageQueryPredicate':
+      | {
+          /** @enum {string} */
+          field: 'orderNo';
+          /** @enum {string} */
+          op: 'eq' | 'containsI';
+          value: string;
+        }
+      | {
+          /** @enum {string} */
+          field: 'remark';
+          /** @enum {string} */
+          op: 'eq' | 'containsI';
+          value: string;
+        }
+      | {
+          and: components['schemas']['TestOrderQueryPageQueryPredicate'][];
+        }
+      | {
+          or: components['schemas']['TestOrderQueryPageQueryPredicate'][];
+        }
+      | {
+          not: components['schemas']['TestOrderQueryPageQueryPredicate'];
+        };
     'test-vona.dto.postGroup': {
-      userId: number | string;
+      /** @description Title */
+      title?: string | undefined;
+      userId?: number | string | undefined;
       count_all?: string | undefined;
+      count_stars?: string | undefined;
       sum_stars?: string | undefined;
+      avg_stars?: string | undefined;
+      min_stars?: string | undefined;
+      max_stars?: string | undefined;
     };
+    'TestPostSelectQueryPredicate_d656479b876f92e6314ae1b5fc8aef786abc46e1':
+      | {
+          /** @enum {string} */
+          field: 'title';
+          /** @enum {string} */
+          op: 'eq' | 'containsI' | 'startsWith';
+          value: string;
+        }
+      | {
+          /** @enum {string} */
+          field: 'title';
+          /** @enum {string} */
+          op: 'isNull' | 'isNotNull';
+        }
+      | {
+          /** @enum {string} */
+          field: 'createdAt';
+          /** @enum {string} */
+          op: 'gte' | 'lt' | 'lte';
+          /** Format: date-time */
+          value: Date;
+        }
+      | {
+          /** @enum {string} */
+          field: 'createdAt';
+          /** @enum {string} */
+          op: 'isNull' | 'isNotNull';
+        }
+      | {
+          /** @enum {string} */
+          field: 'userId';
+          /** @enum {string} */
+          op: 'eq';
+          value: string;
+        }
+      | {
+          /** @enum {string} */
+          field: 'userId';
+          /** @enum {string} */
+          op: 'in';
+          value: string[];
+        }
+      | {
+          /** @enum {string} */
+          field: 'stars';
+          /** @enum {string} */
+          op: 'eq' | 'gte' | 'gt' | 'lte' | 'lt';
+          value: number;
+        }
+      | {
+          /** @enum {string} */
+          field: 'userName';
+          /** @enum {string} */
+          op: 'eqI';
+          value: string;
+        }
+      | {
+          and: components['schemas']['TestPostSelectQueryPredicate'][];
+        }
+      | {
+          or: components['schemas']['TestPostSelectQueryPredicate'][];
+        }
+      | {
+          not: components['schemas']['TestPostSelectQueryPredicate'];
+        };
+    'TestPostSelectQueryPredicate':
+      | {
+          /** @enum {string} */
+          field: 'title';
+          /** @enum {string} */
+          op: 'eq' | 'containsI' | 'startsWith';
+          value: string;
+        }
+      | {
+          /** @enum {string} */
+          field: 'title';
+          /** @enum {string} */
+          op: 'isNull' | 'isNotNull';
+        }
+      | {
+          /** @enum {string} */
+          field: 'createdAt';
+          /** @enum {string} */
+          op: 'gte' | 'lt' | 'lte';
+          /** Format: date-time */
+          value: Date;
+        }
+      | {
+          /** @enum {string} */
+          field: 'createdAt';
+          /** @enum {string} */
+          op: 'isNull' | 'isNotNull';
+        }
+      | {
+          /** @enum {string} */
+          field: 'userId';
+          /** @enum {string} */
+          op: 'eq';
+          value: string;
+        }
+      | {
+          /** @enum {string} */
+          field: 'userId';
+          /** @enum {string} */
+          op: 'in';
+          value: string[];
+        }
+      | {
+          /** @enum {string} */
+          field: 'stars';
+          /** @enum {string} */
+          op: 'eq' | 'gte' | 'gt' | 'lte' | 'lt';
+          value: number;
+        }
+      | {
+          /** @enum {string} */
+          field: 'userName';
+          /** @enum {string} */
+          op: 'eqI';
+          value: string;
+        }
+      | {
+          and: components['schemas']['TestPostSelectQueryPredicate'][];
+        }
+      | {
+          or: components['schemas']['TestPostSelectQueryPredicate'][];
+        }
+      | {
+          not: components['schemas']['TestPostSelectQueryPredicate'];
+        };
     'test-vona.dto.postAggregate': {
       count_all?: string | undefined;
       count_stars?: string | undefined;
@@ -5091,6 +6656,24 @@ export interface components {
       avg_stars?: string | undefined;
       min_stars?: string | undefined;
       max_stars?: string | undefined;
+    };
+    'test-vona.dto.postSelectReq': {
+      where?: components['schemas']['TestPostSelectQueryPredicate_d656479b876f92e6314ae1b5fc8aef786abc46e1'];
+      orders?:
+        | {
+            /** @enum {string} */
+            field: 'id' | 'title' | 'createdAt' | 'userId' | 'stars' | 'userName';
+            /** @enum {string} */
+            direction: 'asc' | 'desc';
+          }[]
+        | undefined;
+      pageNo?: number | undefined;
+      pageSize?: number | undefined;
+      /** @description Created At */
+      createdAt?: string | undefined;
+      /** @description Title */
+      title?: string | undefined;
+      userName?: string | undefined;
     };
     'test-vona.dto.postSelectRes': {
       list: components['schemas']['test-vona.dto.postSelectResItem'][];
@@ -5215,6 +6798,175 @@ export interface components {
       fullName3?: string | undefined;
       fullName4?: string | undefined;
     };
+    'mcp-auth.dto.authorizationSummary': {
+      clientName: string;
+      resource: string;
+      scope: string;
+      options: components['schemas']['mcp-auth.dto.mcpScopeOption'][];
+      expiresAt: number;
+    };
+    'mcp-auth.dto.mcpScopeOption': {
+      scope: string;
+      name: string;
+      description: string;
+      tools: components['schemas']['mcp-auth.dto.mcpScopeTool'][];
+      allowed: boolean;
+      /** @enum {string|null} */
+      reason?:
+        | 'outside_requested_scope'
+        | 'outside_client_scope'
+        | 'tools_unavailable'
+        | null
+        | undefined;
+    };
+    'mcp-auth.dto.mcpScopeTool': {
+      name: string;
+      controller: string;
+      action: string;
+      controllerSummary: string;
+      summary: string;
+      description: string;
+      readOnly: boolean;
+      available: boolean;
+    };
+    'mcp-auth.dto.authorizationRedirect': {
+      redirectUrl: string;
+    };
+    'mcp-auth.dto.authorizationDecision': {
+      request: string;
+      allow: boolean;
+      scope?: ('mcp:all' | 'mcp:read') | string | undefined;
+    };
+    'mcp-auth.dto.authorizationGrantMineRes': {
+      list: components['schemas']['mcp-auth.dto.authorizationGrant'][];
+      total: string;
+      pageCount: number;
+      pageSize: number;
+      pageNo: number;
+    };
+    'mcp-auth.dto.authorizationGrant': {
+      /**
+       * Format: date-time
+       * @description Created At
+       */
+      createdAt: Date;
+      /** @description ID */
+      id: number | string;
+      resource: string;
+      scope: string;
+      /** @default  */
+      requestedScope?: string;
+      /** @enum {string} */
+      state: 'pending' | 'codeReady' | 'tokenActive' | 'denied' | 'revoked';
+      expiresAt: number;
+      tokenExpiresAt: number;
+      /** @default false */
+      refreshEnabled?: boolean;
+      /** @default 0 */
+      refreshExpiresAt?: number;
+      clientId: string;
+      clientName: string;
+    };
+    'mcp-auth.dto.customScopeMineRes': {
+      list: components['schemas']['mcp-auth.dto.customScopeView'][];
+    };
+    'mcp-auth.dto.customScopeView': {
+      /**
+       * Format: date-time
+       * @description Created At
+       */
+      createdAt: Date;
+      /**
+       * Format: date-time
+       * @description Updated At
+       */
+      updatedAt: Date;
+      /** @description ID */
+      id: number | string;
+      scope: string;
+      /**
+       * Name
+       * @description Use 1–100 letters, digits, underscores or hyphens. Names are case-sensitive; test becomes mcp:custom:test.
+       */
+      name: string;
+      /** @description Description */
+      description: string;
+      /** @description Tools */
+      tools: components['schemas']['mcp-auth.dto.mcpToolIdentity'][];
+    };
+    'mcp-auth.dto.mcpToolIdentity': {
+      name: string;
+      controller: string;
+      action: string;
+    };
+    'mcp-auth.dto.mcpTool': {
+      name: string;
+      controller: string;
+      action: string;
+      controllerSummary: string;
+      summary: string;
+      description: string;
+      readOnly: boolean;
+    };
+    'mcp-auth.dto.customScopeCreate_1ff20af69286149eb0b25291d9450172f7bd0054': {
+      /**
+       * Name
+       * @description Use 1–100 letters, digits, underscores or hyphens. Names are case-sensitive; test becomes mcp:custom:test.
+       */
+      name: string;
+      /** @description Description */
+      description: string;
+      /** @description Tools */
+      tools: components['schemas']['mcp-auth.dto.mcpToolIdentity'][];
+    };
+    'mcp-test.dto.categoryPublicSelectRes': {
+      list: components['schemas']['mcp-test.dto.categoryPublic'][];
+      total: string;
+      pageCount: number;
+      pageSize: number;
+      pageNo: number;
+    };
+    'mcp-test.dto.categoryPublic': {
+      id: number | string;
+      name: string;
+      description?: string | undefined;
+    };
+    'mcp-test.dto.productPublicSelectRes': {
+      list: components['schemas']['mcp-test.dto.productPublic'][];
+      total: string;
+      pageCount: number;
+      pageSize: number;
+      pageNo: number;
+    };
+    'mcp-test.dto.productPublic': {
+      id: number | string;
+      title: string;
+      description?: string | undefined;
+      categoryId: number | string;
+      categoryName: string;
+      priceCents: number;
+      available: number;
+      skuAvailables: components['schemas']['mcp-test.dto.productPublicSku'][];
+    };
+    'mcp-test.dto.productPublicSku': {
+      id: number | string;
+      code: string;
+      priceCents: number;
+      available: number;
+    };
+    'mcp-test.dto.productPublicDetail_2d063d28bc7243bed02ebd8bddf1212a93c6305b':
+      | {
+          id: number | string;
+          title: string;
+          description?: string | undefined;
+          categoryId: number | string;
+          categoryName: string;
+          priceCents: number;
+          available: number;
+          skuAvailables: components['schemas']['mcp-test.dto.productPublicSku'][];
+          descriptionHtml?: string | undefined;
+        }
+      | undefined;
   };
   responses: never;
   parameters: never;
@@ -5224,14 +6976,18 @@ export interface components {
 }
 export type $defs = Record<string, never>;
 export interface operations {
-  AuthMock_authorize: {
+  Image_getUploadPolicy: {
     parameters: {
       query?: never;
       header?: never;
       path?: never;
       cookie?: never;
     };
-    requestBody?: never;
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['a-image.dto.imageUploadPolicyRequest'];
+      };
+    };
     responses: {
       200: {
         headers: {
@@ -5241,29 +6997,142 @@ export interface operations {
           'application/json': {
             code: string;
             message: string;
-            data?: unknown;
+            data: components['schemas']['a-image.dto.imageUploadPolicyResponse'];
           };
         };
       };
     };
+    authToken: true;
   };
-  AuthMock_authorizePost: {
+  Image_upload: {
     parameters: {
-      query: {
-        redirect_uri: string;
-        state: string;
-      };
+      query?: never;
       header?: never;
       path?: never;
       cookie?: never;
     };
     requestBody: {
       content: {
-        'application/json': {
-          username: string;
+        'multipart/form-data': {
+          imageScene: string;
+          /** Format: binary */
+          image: Blob;
         };
       };
     };
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data: components['schemas']['a-image.dto.imageUploadResponse'];
+          };
+        };
+      };
+    };
+    authToken: true;
+  };
+  Image_createDirectUpload: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['a-image.dto.imageDirectUploadRequest'];
+      };
+    };
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data: components['schemas']['a-image.dto.imageDirectUploadResponse'];
+          };
+        };
+      };
+    };
+    authToken: true;
+  };
+  Image_finalizeDirectUpload: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['a-image.dto.imageDirectUploadFinalizeRequest'];
+      };
+    };
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data: components['schemas']['a-image.dto.imageDirectUploadFinalizeResponse'];
+          };
+        };
+      };
+    };
+    authToken: true;
+  };
+  Image_uploadUrl: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['a-image.dto.imageUploadUrlRequest'];
+      };
+    };
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data: components['schemas']['a-image.dto.imageUploadResponse'];
+          };
+        };
+      };
+    };
+    authToken: true;
+  };
+  Image_delivery: {
+    parameters: {
+      query: {
+        imageId: number | string;
+        variantName?: string | undefined;
+        transformOptions?: components['schemas']['a-image.dto.imageTransformOptions_2d063d28bc7243bed02ebd8bddf1212a93c6305b'];
+        token?: string | undefined;
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
     responses: {
       200: {
         headers: {
@@ -5290,6 +7159,7 @@ export interface operations {
       content: {
         'application/json': {
           scene: string;
+          payload?: unknown;
         };
       };
     };
@@ -5318,8 +7188,9 @@ export interface operations {
     requestBody: {
       content: {
         'application/json': {
-          id: string;
+          id?: string | undefined;
           scene: string;
+          payload?: unknown;
         };
       };
     };
@@ -5499,15 +7370,17 @@ export interface operations {
   CommerceMemberAddress_mine: {
     parameters: {
       query?: {
-        columns?: string[] | undefined;
-        where?:
+        where?: components['schemas']['CommerceAddressMineQueryPredicate_55d0e8946cbe9e934eacaad301acea8f728589e2'];
+        orders?:
           | {
-              [key: string]: unknown;
-            }
+              /** @enum {string} */
+              field: 'id' | 'createdAt';
+              /** @enum {string} */
+              direction: 'asc' | 'desc';
+            }[]
           | undefined;
-        orders?: string | string[][] | undefined;
-        pageNo?: number;
-        pageSize?: number;
+        pageNo?: number | undefined;
+        pageSize?: number | undefined;
       };
       header?: never;
       path?: never;
@@ -5643,18 +7516,20 @@ export interface operations {
   CommerceMemberAddress_select: {
     parameters: {
       query?: {
-        columns?: string[] | undefined;
-        where?:
-          | {
-              [key: string]: unknown;
-            }
-          | undefined;
-        orders?: string | string[][] | undefined;
-        pageNo?: number;
-        pageSize?: number;
         createdAt?: string | undefined;
         recipientName?: string | undefined;
         phone?: string | undefined;
+        where?: components['schemas']['CommerceAddressSelectQueryPredicate_80c49864b2153857280bcd6fae57bf0e3f28c529'];
+        orders?:
+          | {
+              /** @enum {string} */
+              field: 'id' | 'recipientName' | 'phone' | 'createdAt';
+              /** @enum {string} */
+              direction: 'asc' | 'desc';
+            }[]
+          | undefined;
+        pageNo?: number | undefined;
+        pageSize?: number | undefined;
       };
       header?: never;
       path?: never;
@@ -5702,178 +7577,6 @@ export interface operations {
       };
     };
     authToken: true;
-  };
-  Image_getUploadPolicy: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    requestBody: {
-      content: {
-        'application/json': components['schemas']['a-image.dto.imageUploadPolicyRequest'];
-      };
-    };
-    responses: {
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          'application/json': {
-            code: string;
-            message: string;
-            data: components['schemas']['a-image.dto.imageUploadPolicyResponse'];
-          };
-        };
-      };
-    };
-    authToken: true;
-  };
-  Image_upload: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    requestBody: {
-      content: {
-        'multipart/form-data': {
-          imageScene: string;
-          /** Format: binary */
-          image: Blob;
-        };
-      };
-    };
-    responses: {
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          'application/json': {
-            code: string;
-            message: string;
-            data: components['schemas']['a-image.dto.imageUploadResponse'];
-          };
-        };
-      };
-    };
-    authToken: true;
-  };
-  Image_createDirectUpload: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    requestBody: {
-      content: {
-        'application/json': components['schemas']['a-image.dto.imageDirectUploadRequest'];
-      };
-    };
-    responses: {
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          'application/json': {
-            code: string;
-            message: string;
-            data: components['schemas']['a-image.dto.imageDirectUploadResponse'];
-          };
-        };
-      };
-    };
-    authToken: true;
-  };
-  Image_finalizeDirectUpload: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    requestBody: {
-      content: {
-        'application/json': components['schemas']['a-image.dto.imageDirectUploadFinalizeRequest'];
-      };
-    };
-    responses: {
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          'application/json': {
-            code: string;
-            message: string;
-            data: components['schemas']['a-image.dto.imageDirectUploadFinalizeResponse'];
-          };
-        };
-      };
-    };
-    authToken: true;
-  };
-  Image_uploadUrl: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    requestBody: {
-      content: {
-        'application/json': components['schemas']['a-image.dto.imageUploadUrlRequest'];
-      };
-    };
-    responses: {
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          'application/json': {
-            code: string;
-            message: string;
-            data: components['schemas']['a-image.dto.imageUploadResponse'];
-          };
-        };
-      };
-    };
-    authToken: true;
-  };
-  Image_delivery: {
-    parameters: {
-      query: {
-        imageId: number | string;
-        variantName?: string | undefined;
-        transformOptions?: components['schemas']['a-image.dto.imageTransformOptions_2d063d28bc7243bed02ebd8bddf1212a93c6305b'];
-        token?: string | undefined;
-      };
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          'application/json': {
-            code: string;
-            message: string;
-            data?: unknown;
-          };
-        };
-      };
-    };
   };
   HomeUserAccount_current: {
     parameters: {
@@ -6444,17 +8147,19 @@ export interface operations {
   CommercePromotionCouponTemplate_select: {
     parameters: {
       query?: {
-        columns?: string[] | undefined;
-        where?:
-          | {
-              [key: string]: unknown;
-            }
-          | undefined;
-        orders?: string | string[][] | undefined;
-        pageNo?: number;
-        pageSize?: number;
         createdAt?: string | undefined;
         name?: string | undefined;
+        where?: components['schemas']['CommerceCouponTemplateSelectQueryPredicate_6f0bf47e65b9343a2afb89a23596aca3dad50313'];
+        orders?:
+          | {
+              /** @enum {string} */
+              field: 'id' | 'name' | 'createdAt';
+              /** @enum {string} */
+              direction: 'asc' | 'desc';
+            }[]
+          | undefined;
+        pageNo?: number | undefined;
+        pageSize?: number | undefined;
       };
       header?: never;
       path?: never;
@@ -6774,15 +8479,6 @@ export interface operations {
   CommerceTradeOrder_mine: {
     parameters: {
       query?: {
-        columns?: string[] | undefined;
-        where?:
-          | {
-              [key: string]: unknown;
-            }
-          | undefined;
-        orders?: string | string[][] | undefined;
-        pageNo?: number;
-        pageSize?: number;
         createdAt?: string | undefined;
         state?:
           | 'awaiting_payment'
@@ -6792,6 +8488,17 @@ export interface operations {
           | 'expired'
           | null
           | undefined;
+        where?: components['schemas']['CommerceOrderMineQueryPredicate_f9aee760a2098afd454bcecd0e927d9bfb63d77f'];
+        orders?:
+          | {
+              /** @enum {string} */
+              field: 'id' | 'state' | 'createdAt';
+              /** @enum {string} */
+              direction: 'asc' | 'desc';
+            }[]
+          | undefined;
+        pageNo?: number | undefined;
+        pageSize?: number | undefined;
       };
       header?: never;
       path?: never;
@@ -7075,17 +8782,19 @@ export interface operations {
   CommerceTradeOrder_select: {
     parameters: {
       query?: {
-        columns?: string[] | undefined;
-        where?:
-          | {
-              [key: string]: unknown;
-            }
-          | undefined;
-        orders?: string | string[][] | undefined;
-        pageNo?: number;
-        pageSize?: number;
         createdAt?: string | undefined;
         state?: string | undefined;
+        where?: components['schemas']['CommerceOrderSelectQueryPredicate_a32b689e5c62edf5889e5875801d3b1c6f275ba6'];
+        orders?:
+          | {
+              /** @enum {string} */
+              field: 'id' | 'state' | 'createdAt';
+              /** @enum {string} */
+              direction: 'asc' | 'desc';
+            }[]
+          | undefined;
+        pageNo?: number | undefined;
+        pageSize?: number | undefined;
       };
       header?: never;
       path?: never;
@@ -7137,17 +8846,19 @@ export interface operations {
   CommerceTradeStockAudit_select: {
     parameters: {
       query?: {
-        columns?: string[] | undefined;
-        where?:
-          | {
-              [key: string]: unknown;
-            }
-          | undefined;
-        orders?: string | string[][] | undefined;
-        pageNo?: number;
-        pageSize?: number;
         createdAt?: string | undefined;
         skuId?: number | string | undefined;
+        where?: components['schemas']['CommerceStockAuditSelectQueryPredicate_6ed3143d5729b6b0c088585fbdc8eee7a7e109cc'];
+        orders?:
+          | {
+              /** @enum {string} */
+              field: 'id' | 'skuId' | 'createdAt';
+              /** @enum {string} */
+              direction: 'asc' | 'desc';
+            }[]
+          | undefined;
+        pageNo?: number | undefined;
+        pageSize?: number | undefined;
       };
       header?: never;
       path?: never;
@@ -7205,7 +8916,7 @@ export interface operations {
     };
     requestBody: {
       content: {
-        'application/json': components['schemas']['commerce-trade.dto.stockAdjust_0aab216abd3467dd07f61c69172266c2441af477'];
+        'application/json': components['schemas']['commerce-trade.dto.stockAdjust_6a7c2f0bb21a25da3048650f263577ae4467750e'];
       };
     };
     responses: {
@@ -7227,17 +8938,19 @@ export interface operations {
   CommerceTradeStockBalance_select: {
     parameters: {
       query?: {
-        columns?: string[] | undefined;
-        where?:
-          | {
-              [key: string]: unknown;
-            }
-          | undefined;
-        orders?: string | string[][] | undefined;
-        pageNo?: number;
-        pageSize?: number;
         createdAt?: string | undefined;
         skuId?: number | string | undefined;
+        where?: components['schemas']['CommerceStockBalanceSelectQueryPredicate_6ed3143d5729b6b0c088585fbdc8eee7a7e109cc'];
+        orders?:
+          | {
+              /** @enum {string} */
+              field: 'id' | 'skuId' | 'createdAt';
+              /** @enum {string} */
+              direction: 'asc' | 'desc';
+            }[]
+          | undefined;
+        pageNo?: number | undefined;
+        pageSize?: number | undefined;
       };
       header?: never;
       path?: never;
@@ -7289,17 +9002,19 @@ export interface operations {
   CommerceCatalogCategory_select: {
     parameters: {
       query?: {
-        columns?: string[] | undefined;
-        where?:
-          | {
-              [key: string]: unknown;
-            }
-          | undefined;
-        orders?: string | string[][] | undefined;
-        pageNo?: number;
-        pageSize?: number;
         createdAt?: string | undefined;
         name?: string | undefined;
+        where?: components['schemas']['CommerceCategorySelectQueryPredicate_6f0bf47e65b9343a2afb89a23596aca3dad50313'];
+        orders?:
+          | {
+              /** @enum {string} */
+              field: 'id' | 'name' | 'createdAt';
+              /** @enum {string} */
+              direction: 'asc' | 'desc';
+            }[]
+          | undefined;
+        pageNo?: number | undefined;
+        pageSize?: number | undefined;
       };
       header?: never;
       path?: never;
@@ -7435,17 +9150,19 @@ export interface operations {
   CommerceCatalogProduct_select: {
     parameters: {
       query?: {
-        columns?: string[] | undefined;
-        where?:
-          | {
-              [key: string]: unknown;
-            }
-          | undefined;
-        orders?: string | string[][] | undefined;
-        pageNo?: number;
-        pageSize?: number;
         createdAt?: string | undefined;
         title?: string | undefined;
+        where?: components['schemas']['CommerceProductSelectQueryPredicate_deb90652e4f202e098ba09b36626875a1a6e90e4'];
+        orders?:
+          | {
+              /** @enum {string} */
+              field: 'id' | 'title' | 'createdAt';
+              /** @enum {string} */
+              direction: 'asc' | 'desc';
+            }[]
+          | undefined;
+        pageNo?: number | undefined;
+        pageSize?: number | undefined;
       };
       header?: never;
       path?: never;
@@ -7499,10 +9216,10 @@ export interface operations {
   CommerceCatalogProduct_selectPublic: {
     parameters: {
       query?: {
-        pageNo?: number;
-        pageSize?: number;
         categoryId?: number | string | undefined;
         title?: string | undefined;
+        pageNo?: number;
+        pageSize?: number;
       };
       header?: never;
       path?: never;
@@ -7568,7 +9285,7 @@ export interface operations {
           'application/json': {
             code: string;
             message: string;
-            data?: components['schemas']['commerce-catalog.dto.productView_2d063d28bc7243bed02ebd8bddf1212a93c6305b_9a6ea970b2f00d574b88030d8c96cbf7b1e699d7'];
+            data?: components['schemas']['commerce-catalog.dto.productView_2d063d28bc7243bed02ebd8bddf1212a93c6305b_a2f92cabb46b0630848b50414c0d4c60efb47a57'];
           };
         };
       };
@@ -7634,17 +9351,19 @@ export interface operations {
   CommerceCatalogSku_select: {
     parameters: {
       query?: {
-        columns?: string[] | undefined;
-        where?:
-          | {
-              [key: string]: unknown;
-            }
-          | undefined;
-        orders?: string | string[][] | undefined;
-        pageNo?: number;
-        pageSize?: number;
         createdAt?: string | undefined;
         code?: string | undefined;
+        where?: components['schemas']['CommerceSkuSelectQueryPredicate_6bfc12fff19619c142f759c3a85aa30659306378'];
+        orders?:
+          | {
+              /** @enum {string} */
+              field: 'id' | 'code' | 'createdAt';
+              /** @enum {string} */
+              direction: 'asc' | 'desc';
+            }[]
+          | undefined;
+        pageNo?: number | undefined;
+        pageSize?: number | undefined;
       };
       header?: never;
       path?: never;
@@ -7878,18 +9597,20 @@ export interface operations {
   TrainingRecord_select: {
     parameters: {
       query?: {
-        columns?: string[] | undefined;
-        where?:
-          | {
-              [key: string]: unknown;
-            }
-          | undefined;
-        orders?: string | string[][] | undefined;
-        pageNo?: number;
-        pageSize?: number;
         createdAt?: string | undefined;
         name?: string | undefined;
-        studentId?: number | undefined;
+        studentId?: string | undefined;
+        where?: components['schemas']['TrainingRecordSelectQueryPredicate_12e26675b7b232083b85f3bb960e6f1048755230'];
+        orders?:
+          | {
+              /** @enum {string} */
+              field: 'id' | 'name' | 'studentId' | 'studentName' | 'createdAt';
+              /** @enum {string} */
+              direction: 'asc' | 'desc';
+            }[]
+          | undefined;
+        pageNo?: number | undefined;
+        pageSize?: number | undefined;
       };
       header?: never;
       path?: never;
@@ -7959,7 +9680,7 @@ export interface operations {
           'application/json': {
             code: string;
             message: string;
-            data?: components['schemas']['training-record.dto.recordView_2d063d28bc7243bed02ebd8bddf1212a93c6305b_425dbecccd52e19e24888f99e1b1670233afa875'];
+            data?: components['schemas']['training-record.dto.recordView_2d063d28bc7243bed02ebd8bddf1212a93c6305b_7d715789d9643740a04e8a6c0f6fb951884bc347'];
           };
         };
       };
@@ -8025,18 +9746,21 @@ export interface operations {
   TrainingStudent_select: {
     parameters: {
       query?: {
-        columns?: string[] | undefined;
-        where?:
-          | {
-              [key: string]: unknown;
-            }
-          | undefined;
-        orders?: string | string[][] | undefined;
-        pageNo?: number;
-        pageSize?: number;
         createdAt?: string | undefined;
         name?: string | undefined;
-        level?: number | undefined;
+        /** @description 1=Foundation Track; 2=Progress Track; 3=Advanced Workshop */
+        level?: 1 | 2 | 3 | undefined;
+        where?: components['schemas']['TrainingStudentSelectQueryPredicate_1a30b20933e90ac2c50faf88c8a6099328e0ded8'];
+        orders?:
+          | {
+              /** @enum {string} */
+              field: 'id' | 'name' | 'level' | 'createdAt';
+              /** @enum {string} */
+              direction: 'asc' | 'desc';
+            }[]
+          | undefined;
+        pageNo?: number | undefined;
+        pageSize?: number | undefined;
       };
       header?: never;
       path?: never;
@@ -8087,6 +9811,73 @@ export interface operations {
     };
     authToken: true;
   };
+  TrainingStudent_group: {
+    parameters: {
+      query?: {
+        createdAt?: string | undefined;
+        name?: string | undefined;
+        /** @description 1=Foundation Track; 2=Progress Track; 3=Advanced Workshop */
+        level?: 1 | 2 | 3 | undefined;
+        where?: components['schemas']['TrainingStudentSelectQueryPredicate_1a30b20933e90ac2c50faf88c8a6099328e0ded8'];
+        aggrs?: {
+          count?: ('*' | 'imageId')[] | undefined;
+        };
+        groups?: 'level'[];
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data: components['schemas']['training-student.dto.studentGroupResItem'][];
+          };
+        };
+      };
+    };
+    authToken: true;
+  };
+  TrainingStudent_aggregate: {
+    parameters: {
+      query?: {
+        createdAt?: string | undefined;
+        name?: string | undefined;
+        /** @description 1=Foundation Track; 2=Progress Track; 3=Advanced Workshop */
+        level?: 1 | 2 | 3 | undefined;
+        where?: components['schemas']['TrainingStudentSelectQueryPredicate_1a30b20933e90ac2c50faf88c8a6099328e0ded8'];
+        aggrs?: {
+          count?: ('*' | 'imageId')[] | undefined;
+        };
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data: components['schemas']['training-student.dto.studentAggregateRes'];
+          };
+        };
+      };
+    };
+    authToken: true;
+  };
   TrainingStudent_view: {
     parameters: {
       query?: never;
@@ -8106,7 +9897,7 @@ export interface operations {
           'application/json': {
             code: string;
             message: string;
-            data?: components['schemas']['training-student.dto.studentView_2d063d28bc7243bed02ebd8bddf1212a93c6305b_4e7e5941f704425ce1be04de1885c36427ccc436'];
+            data?: components['schemas']['training-student.dto.studentView_2d063d28bc7243bed02ebd8bddf1212a93c6305b_4826fc678e47603ec467782ddb0d02463792cd60'];
           };
         };
       };
@@ -8195,6 +9986,34 @@ export interface operations {
     };
     authToken: true;
   };
+  TrainingStudent_deleteBulk: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['training-student.dto.studentDeleteBulk'];
+      };
+    };
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data: undefined;
+          };
+        };
+      };
+    };
+    authToken: true;
+  };
   TrainingStudent_deleteForce: {
     parameters: {
       query?: never;
@@ -8239,6 +10058,86 @@ export interface operations {
             code: string;
             message: string;
             data: components['schemas']['basic-metrics.dto.metricsSnapshot'];
+          };
+        };
+      };
+    };
+    authToken: true;
+  };
+  Layoutprofile_load: {
+    parameters: {
+      query: {
+        layoutKey: string;
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data?: components['schemas']['a-layoutprofile.dto.layoutProfile_2d063d28bc7243bed02ebd8bddf1212a93c6305b'];
+          };
+        };
+      };
+    };
+    authToken: true;
+  };
+  Layoutprofile_save: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['a-layoutprofile.dto.layoutProfileSave'];
+      };
+    };
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data: components['schemas']['a-layoutprofile.dto.layoutProfile'];
+          };
+        };
+      };
+    };
+    authToken: true;
+  };
+  Layoutprofile_reset: {
+    parameters: {
+      query: {
+        layoutKey: string;
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data?: unknown;
           };
         };
       };
@@ -8553,17 +10452,19 @@ export interface operations {
   TestRestProduct_select: {
     parameters: {
       query?: {
-        columns?: string[] | undefined;
-        where?:
-          | {
-              [key: string]: unknown;
-            }
-          | undefined;
-        orders?: string | string[][] | undefined;
-        pageNo?: number;
-        pageSize?: number;
         createdAt?: string | undefined;
         name?: string | undefined;
+        where?: components['schemas']['TestRestProductSelectQueryPredicate_6f0bf47e65b9343a2afb89a23596aca3dad50313'];
+        orders?:
+          | {
+              /** @enum {string} */
+              field: 'id' | 'name' | 'createdAt';
+              /** @enum {string} */
+              direction: 'asc' | 'desc';
+            }[]
+          | undefined;
+        pageNo?: number | undefined;
+        pageSize?: number | undefined;
       };
       header?: never;
       path?: never;
@@ -8993,7 +10894,7 @@ export interface operations {
     };
     requestBody: {
       content: {
-        'application/json': components['schemas']['test-vona.dto.userCreate'];
+        'application/json': components['schemas']['test-vona.dto.userCreate_1ff20af69286149eb0b25291d9450172f7bd0054'];
       };
     };
     responses: {
@@ -9023,7 +10924,7 @@ export interface operations {
     };
     requestBody: {
       content: {
-        'application/json': components['schemas']['test-vona.dto.userUpdate'];
+        'application/json': components['schemas']['test-vona.dto.userUpdate_fb27bcbbc8bfc8a865e086eb43abd766c7107326'];
       };
     };
     responses: {
@@ -9499,16 +11400,18 @@ export interface operations {
   TestVonaOrder_findAll: {
     parameters: {
       query?: {
-        columns?: string[] | undefined;
-        where?:
-          | {
-              [key: string]: unknown;
-            }
-          | undefined;
-        orders?: string | string[][] | undefined;
         orderNo?: string | undefined;
         remark?: string | undefined;
         userName?: string | undefined;
+        where?: components['schemas']['TestOrderQueryQueryPredicate_0ba00e95609398d05aa5f48387ae2e7b3638cb10'];
+        orders?:
+          | {
+              /** @enum {string} */
+              field: 'id' | 'orderNo' | 'remark' | 'createdAt' | 'userName';
+              /** @enum {string} */
+              direction: 'asc' | 'desc';
+            }[]
+          | undefined;
       };
       header?: never;
       path?: never;
@@ -9534,17 +11437,19 @@ export interface operations {
   TestVonaOrder_findMany: {
     parameters: {
       query?: {
-        columns?: string[] | undefined;
-        where?:
-          | {
-              [key: string]: unknown;
-            }
-          | undefined;
-        orders?: string | string[][] | undefined;
-        pageNo?: number;
         orderNo?: string | undefined;
         remark?: string | undefined;
-        pageSize?: number;
+        where?: components['schemas']['TestOrderQueryPageQueryPredicate_2ac91e8ccbe06af23a8af5e36238058a7473772a'];
+        orders?:
+          | {
+              /** @enum {string} */
+              field: 'id' | 'orderNo' | 'remark' | 'createdAt';
+              /** @enum {string} */
+              direction: 'asc' | 'desc';
+            }[]
+          | undefined;
+        pageNo?: number | undefined;
+        pageSize?: number | undefined;
       };
       header?: never;
       path?: never;
@@ -9569,7 +11474,20 @@ export interface operations {
   };
   TestVonaPost_group: {
     parameters: {
-      query?: never;
+      query?: {
+        createdAt?: string | undefined;
+        title?: string | undefined;
+        userName?: string | undefined;
+        where?: components['schemas']['TestPostSelectQueryPredicate_d656479b876f92e6314ae1b5fc8aef786abc46e1'];
+        aggrs?: {
+          count?: ('*' | 'stars')[] | undefined;
+          sum?: 'stars'[] | undefined;
+          avg?: 'stars'[] | undefined;
+          min?: 'stars'[] | undefined;
+          max?: 'stars'[] | undefined;
+        };
+        groups?: ('title' | 'userId')[];
+      };
       header?: never;
       path?: never;
       cookie?: never;
@@ -9593,7 +11511,19 @@ export interface operations {
   };
   TestVonaPost_aggregate: {
     parameters: {
-      query?: never;
+      query?: {
+        createdAt?: string | undefined;
+        title?: string | undefined;
+        userName?: string | undefined;
+        where?: components['schemas']['TestPostSelectQueryPredicate_d656479b876f92e6314ae1b5fc8aef786abc46e1'];
+        aggrs?: {
+          count?: ('*' | 'stars')[] | undefined;
+          sum?: 'stars'[] | undefined;
+          avg?: 'stars'[] | undefined;
+          min?: 'stars'[] | undefined;
+          max?: 'stars'[] | undefined;
+        };
+      };
       header?: never;
       path?: never;
       cookie?: never;
@@ -9618,18 +11548,20 @@ export interface operations {
   TestVonaPost_findManyEcho: {
     parameters: {
       query?: {
-        columns?: string[] | undefined;
-        where?:
-          | {
-              [key: string]: unknown;
-            }
-          | undefined;
-        orders?: string | string[][] | undefined;
-        pageNo?: number;
-        pageSize?: number;
         createdAt?: string | undefined;
         title?: string | undefined;
         userName?: string | undefined;
+        where?: components['schemas']['TestPostSelectQueryPredicate_d656479b876f92e6314ae1b5fc8aef786abc46e1'];
+        orders?:
+          | {
+              /** @enum {string} */
+              field: 'id' | 'title' | 'createdAt' | 'userId' | 'stars' | 'userName';
+              /** @enum {string} */
+              direction: 'asc' | 'desc';
+            }[]
+          | undefined;
+        pageNo?: number | undefined;
+        pageSize?: number | undefined;
       };
       header?: never;
       path?: never;
@@ -9645,7 +11577,7 @@ export interface operations {
           'application/json': {
             code: string;
             message: string;
-            data: components['schemas']['test-vona.dto.postSelectRes'];
+            data: components['schemas']['test-vona.dto.postSelectReq'];
           };
         };
       };
@@ -9654,18 +11586,20 @@ export interface operations {
   TestVonaPost_findMany: {
     parameters: {
       query?: {
-        columns?: string[] | undefined;
-        where?:
-          | {
-              [key: string]: unknown;
-            }
-          | undefined;
-        orders?: string | string[][] | undefined;
-        pageNo?: number;
-        pageSize?: number;
         createdAt?: string | undefined;
         title?: string | undefined;
         userName?: string | undefined;
+        where?: components['schemas']['TestPostSelectQueryPredicate_d656479b876f92e6314ae1b5fc8aef786abc46e1'];
+        orders?:
+          | {
+              /** @enum {string} */
+              field: 'id' | 'title' | 'createdAt' | 'userId' | 'stars' | 'userName';
+              /** @enum {string} */
+              direction: 'asc' | 'desc';
+            }[]
+          | undefined;
+        pageNo?: number | undefined;
+        pageSize?: number | undefined;
       };
       header?: never;
       path?: never;
@@ -9899,6 +11833,522 @@ export interface operations {
             code: string;
             message: string;
             data?: unknown;
+          };
+        };
+      };
+    };
+  };
+  Authorization_summary: {
+    parameters: {
+      query: {
+        request: string;
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data: components['schemas']['mcp-auth.dto.authorizationSummary'];
+          };
+        };
+      };
+    };
+    authToken: true;
+  };
+  Authorization_decision: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['mcp-auth.dto.authorizationDecision'];
+      };
+    };
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data: components['schemas']['mcp-auth.dto.authorizationRedirect'];
+          };
+        };
+      };
+    };
+    authToken: true;
+  };
+  McpAuthAuthorizationGrant_mine: {
+    parameters: {
+      query?: {
+        pageNo?: number;
+        pageSize?: number;
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data: components['schemas']['mcp-auth.dto.authorizationGrantMineRes'];
+          };
+        };
+      };
+    };
+    authToken: true;
+  };
+  McpAuthAuthorizationGrant_revokeMine: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: number | string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data?: unknown;
+          };
+        };
+      };
+    };
+    authToken: true;
+  };
+  McpAuthAuthorizationGrant_deleteMine: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: number | string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data?: unknown;
+          };
+        };
+      };
+    };
+    authToken: true;
+  };
+  McpAuthCustomScope_mine: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data: components['schemas']['mcp-auth.dto.customScopeMineRes'];
+          };
+        };
+      };
+    };
+    authToken: true;
+  };
+  McpAuthCustomScope_catalog: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data: components['schemas']['mcp-auth.dto.mcpTool'][];
+          };
+        };
+      };
+    };
+    authToken: true;
+  };
+  McpAuthCustomScope_createMine: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['mcp-auth.dto.customScopeCreate_1ff20af69286149eb0b25291d9450172f7bd0054'];
+      };
+    };
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data: components['schemas']['mcp-auth.dto.customScopeView'];
+          };
+        };
+      };
+    };
+    authToken: true;
+  };
+  McpAuthCustomScope_updateMine: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: number | string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['mcp-auth.dto.customScopeCreate_1ff20af69286149eb0b25291d9450172f7bd0054'];
+      };
+    };
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data: components['schemas']['mcp-auth.dto.customScopeView'];
+          };
+        };
+      };
+    };
+    authToken: true;
+  };
+  McpAuthCustomScope_deleteMine: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: number | string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data?: unknown;
+          };
+        };
+      };
+    };
+    authToken: true;
+  };
+  McpTestCatalog_categories: {
+    parameters: {
+      query?: {
+        pageNo?: number;
+        pageSize?: number;
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data: components['schemas']['mcp-test.dto.categoryPublicSelectRes'];
+          };
+        };
+      };
+    };
+  };
+  McpTestCatalog_products: {
+    parameters: {
+      query?: {
+        pageNo?: number;
+        pageSize?: number;
+        categoryId?: number | string | undefined;
+        title?: string | undefined;
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data: components['schemas']['mcp-test.dto.productPublicSelectRes'];
+          };
+        };
+      };
+    };
+  };
+  McpTestCatalog_detail: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: number | string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data?: components['schemas']['mcp-test.dto.productPublicDetail_2d063d28bc7243bed02ebd8bddf1212a93c6305b'];
+          };
+        };
+      };
+    };
+  };
+  McpTestCatalog_excluded: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data: components['schemas']['mcp-test.dto.categoryPublicSelectRes'];
+          };
+        };
+      };
+    };
+  };
+  McpTestToolFixture_status: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data: {
+              count: number;
+            };
+          };
+        };
+      };
+    };
+  };
+  McpTestToolFixture_effect: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        label: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': {
+          amount: number;
+          priority?: number | undefined;
+          note?: string | undefined;
+        };
+      };
+    };
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data: {
+              count: number;
+              label: string;
+              priority?: number | undefined;
+              note?: string | undefined;
+            };
+          };
+        };
+      };
+    };
+  };
+  McpTestToolFixture_array: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data: string[];
+          };
+        };
+      };
+    };
+  };
+  McpTestToolFixture_unsupported: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'text/plain': string;
+        };
+      };
+    };
+  };
+  McpTestToolFixture_excluded: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'text/plain': string;
+        };
+      };
+    };
+  };
+  McpTestToolFixture_closed: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data: {
+              count: number;
+            };
           };
         };
       };
