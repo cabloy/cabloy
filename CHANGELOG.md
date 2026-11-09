@@ -1,8 +1,24 @@
 # Changelog
 
+## 5.1.271
+
+### Features
+
+- Add an OpenAPI SDK.
+
+### Bug Fixes
+
+- Support query policy casts during publish compilation.
+
+### Improvements
+
+- Refactor select queries.
+- Update Vona and Zova package versions for the patch release.
+
 ## 5.1.270
 
 ### Features
+
 - Apply feature updates (details not specified in commit messages).
 
 ## 5.1.269
