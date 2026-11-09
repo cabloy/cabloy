@@ -20,6 +20,7 @@ import { BeanControllerBase, deepEqual } from 'zova';
 import { ZovaJsx } from 'zova-jsx';
 import { Controller } from 'zova-module-a-bean';
 import { $QueriesEnsureLoaded } from 'zova-module-a-model';
+import { getQueryOrderField } from 'zova-module-a-openapi';
 import { BeanControllerTableBase, ITableLayout } from 'zova-module-a-table';
 import { ModelResource } from 'zova-module-rest-resource';
 
@@ -220,11 +221,16 @@ export class ControllerBlockPage<TData extends {} = {}> extends BeanControllerBa
   get query() {
     const { where: whereFixed, ...queryFixed } = this.queryFixedData;
     const { where: whereFilter, ...queryFilter } = this.queryFilterData;
+    const predicates = [whereFixed, whereFilter].filter(
+      (where): where is NonNullable<ITableQuery['where']> =>
+        !!where && Object.keys(where).length > 0,
+    );
+    const where = predicates.length > 1 ? { and: predicates } : predicates[0];
     return {
       ...queryFixed,
       ...queryFilter,
       ...this.querySortingData,
-      where: { ...whereFilter, ...whereFixed },
+      ...(where ? { where } : {}),
       ...this.queryPaged,
     };
   }
@@ -422,7 +428,16 @@ export class ControllerBlockPage<TData extends {} = {}> extends BeanControllerBa
     if (!this.selectionPersistent) this.clearSelection();
     this.sorting = sorting;
     const first = this.sorting[0];
-    this.querySortingData = first ? { orders: [[first.id, first.desc ? 'desc' : 'asc']] } : {};
+    this.querySortingData = first
+      ? {
+          orders: [
+            {
+              field: getQueryOrderField(this.schemaOrder, first.id),
+              direction: first.desc ? 'desc' : 'asc',
+            },
+          ],
+        }
+      : {};
     this.queryPaged.pageNo = 1;
   }
 

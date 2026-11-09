@@ -125,6 +125,10 @@ export function normalizeDateTransport(
   ): unknown {
     const resolved = resolveTransportSchema(currentSchema, schemas, refs);
     if (!resolved || currentValue === null || currentValue === undefined) return currentValue;
+    // Public query operands are policy-validated JSON scalars, including ISO
+    // timestamps. Traversing every union branch would turn an identity such as
+    // "12" into a Date merely because a different predicate field is a timestamp.
+    if (resolved.filter?.capabilities?.query) return currentValue;
     if (
       (resolved.format === 'date' || resolved.format === 'date-time') &&
       (resolved.type === undefined ||

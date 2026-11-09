@@ -385,13 +385,13 @@ This is usually the first and best extension point. Use `ZovaRender.column(...)`
 
 ### Enable standard resource-page sorting
 
-For a normal Cabloy Basic resource list, backend field metadata can request a sortable column with:
+For a normal Cabloy Basic resource list, declare sortable fields in the select query policy's `orderable` list. Its published capabilities reach the table through `schemaOrder`, so eligible columns get sortable headers without repeating `enableSorting: true` in entity metadata. To suppress a header's sorting interaction while retaining the API capability, use:
 
 ```ts
-ZovaRender.column({ enableSorting: true });
+ZovaRender.column({ enableSorting: false });
 ```
 
-The field must also be present in the resource `schemaOrder`; that order schema remains the authority for whether the header is actually sortable. `blockTable` forwards the order schema plus controlled sorting state into `ZTable`, and `blockPage` turns one header selection into backend `orders` before reloading the resource query. This is server sorting, not local reordering of the current page.
+`enableSorting: true` cannot enable a field absent from the query's `orderable` list. `blockTable` forwards the order schema plus controlled sorting state into `ZTable`, and `blockPage` turns one header selection into backend `orders` before reloading the resource query. This is server sorting, not local reordering of the current page.
 
 For the full shared `ZovaRender.column(...)` contract, see [Table Guide](/frontend/table-guide#configure-physical-columns-with-zovarendercolumn). For relation-backed order rewriting, see [Existing Resource Field Update](/backend/resource-field-update#filter-and-sort-a-relation-by-its-display-field).
 

@@ -90,7 +90,9 @@ describe('<%=argv.resourceName%>.test.ts', { concurrency: false }, () => {
         <%=argv.resourceName%>Id = await app.bean.executor.performAction('post', '<%=argv.moduleActionPathRaw%>', { body: data });
         assert.equal(!!<%=argv.resourceName%>Id, true);
         // findMany
-        const selectRes: Dto<%=argv.resourceNameCapitalize%>SelectRes = await app.bean.executor.performAction('get', '<%=argv.moduleActionPathRaw%>');
+        const selectRes: Dto<%=argv.resourceNameCapitalize%>SelectRes = await app.bean.executor.performAction('get', '<%=argv.moduleActionPathRaw%>', {
+          query: { where: JSON.stringify({ field: 'id', op: 'eq', value: <%=argv.resourceName%>Id }) },
+        });
         assert.equal(selectRes.list.findIndex(item => item.name === data.name) > -1, true);
         // update
         const updateRes = await app.bean.executor.performAction('patch', '<%=argv.moduleActionPathRaw%>/:id', {

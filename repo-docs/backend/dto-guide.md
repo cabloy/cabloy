@@ -87,7 +87,7 @@ For query-oriented DTOs, another important distinction is optional vs nullable:
 - `v.optional()` means the field may be omitted
 - `v.nullable()` means the field may carry a real `null`
 
-That becomes especially important for DTO query filters. A field declared with `v.optional(), v.nullable()` can preserve real `null` through query parsing so the downstream ORM filter can express SQL `IS NULL` instead of silently treating the value as omitted.
+For named query conveniences, a deliberately nullable input can preserve a real `null` for normalization to an admitted null-check predicate. In the canonical public AST, null checks are explicit `isNull` / `isNotNull` leaves without `value`; `eq` with `null` is invalid. See [Public Query Guide](/backend/public-query-guide#null-and-sql-logic).
 
 ## DTO schema scenes
 
@@ -95,13 +95,16 @@ A DTO can declare the contract scene that its schema represents:
 
 ```typescript
 @Dto({
+  query: orderQuery,
   schemaScene: 'filter',
   fields: {
     status: $makeSchema(v.optional(), z.string()),
   },
 })
-export class DtoOrderFilter extends $Dto.query(EntityOrder, ['status']) {}
+export class DtoOrderFilter extends $Dto.query(orderQuery, ['status']) {}
 ```
+
+Here `orderQuery` is a static `$defineQuery(() => ModelOrder, ...)` policy admitting the intended status predicates; the named `status` control is only a UI convenience.
 
 The shared scene vocabulary is:
 
@@ -129,6 +132,7 @@ Important DTO option areas include:
 - `independent`
 - `openapi`
 - `fields`
+- `query` for policy-bound public predicates, orders, fixed projection and limits
 - `analysis` for backend-controlled, client-selectable group/aggregate contracts
 
 These options make DTOs configurable as reusable schema objects, not just local TypeScript classes.
@@ -139,6 +143,10 @@ A useful ownership rule is:
 - app config can still override broader DTO behavior
 - inference tools can reduce how much hand-authored DTO code is needed
 
+### DTO-owned query policy
+
+Associate `$defineQuery(() => ModelX, config)` through `@Dto({ query: policy })` and pass the policy to `$Dto.query(policy, namedKeys)` / `$Dto.queryPage(policy, namedKeys)`. The policy's advanced field/operator and order allowlists are independent of the small named form projection. Output fields remain server-owned; current fixed-projection policies reject client `columns`. `@Arg.filter` returns public query input. A Resource controller invokes `$compileQuery` with the current Action's scope (`scopeWhere: rbacScopeCurrent.where()` for RBAC data scope); its service accepts trusted ORM parameters without recompilation. Business authorization stays in services. Dedicated self-service methods with explicit identity and their own business scope remain valid public-query compilation consumers. Do not expose `IQueryParams` or raw ORM predicates as a transport contract. See [Public Query Guide](/backend/public-query-guide) for the canonical language, authoring example and scope boundary.
+
 ### DTO-owned analysis policy
 
 For client-selectable grouping or metrics, attach a shared backend policy with `@Dto({ analysis: studentAnalysis })`. Define it with `$defineAnalysis(() => ModelStudent, config)`, not Entity capability flags. `groups` allows physical dimensions; `aggrs` allows columns separately for each function (`count`, `sum`, `avg`, `min`, `max`). Count may allow `'*'`; non-count metrics require numeric columns. The model identity remains explicit even when the filter DTO's projection omits a legitimate metric column, such as Student `imageId`.
@@ -147,7 +155,7 @@ Reuse that same exported policy in three places:
 
 - the filter DTO's `analysis` option and action-aware `@Arg.filter` modes
 - named response wrappers based on `$Dto.analysisGroup(policy)` / `$Dto.analysisAggregate(policy)`
-- service execution through `$executeAnalysisGroup(model, policy, params)` / `$executeAnalysisAggregate(model, policy, params)`
+- Resource controller compilation through `$compileQuery(model, queryPolicy, input, { mode, analysis: policy, scopeWhere })`, followed by service execution through `$executeAnalysisGroup` / `$executeAnalysisAggregate` with the trusted compiled parameters, without public-query recompilation
 
 Do not create a separate AnalysisReq or add analysis controls to ordinary select. The policy owns function/column allowlists, action defaults, and execution limits; response inference describes the finite optional field superset, while execution returns selected fields only. Optional is not nullable: an unrequested metric is absent, while a selected non-count metric can be SQL `null`.
 

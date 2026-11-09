@@ -266,7 +266,7 @@ describe('student.test.ts', { concurrency: false }, () => {
           fixed: component.properties.name.rest.table.fixed,
           enableSorting: component.properties.name.rest.table.enableSorting,
         },
-        { align: 'left', width: 240, fixed: 'left', enableSorting: true },
+        { align: 'left', width: 240, fixed: 'left', enableSorting: undefined },
       );
       assert.deepEqual(
         {
@@ -274,7 +274,7 @@ describe('student.test.ts', { concurrency: false }, () => {
           width: component.properties.level.rest.table.width,
           enableSorting: component.properties.level.rest.table.enableSorting,
         },
-        { align: 'center', width: 140, enableSorting: true },
+        { align: 'center', width: 140, enableSorting: undefined },
       );
       assert.deepEqual(
         {
@@ -282,7 +282,7 @@ describe('student.test.ts', { concurrency: false }, () => {
           width: component.properties.createdAt.rest.table.width,
           enableSorting: component.properties.createdAt.rest.table.enableSorting,
         },
-        { align: 'center', width: 180, enableSorting: true },
+        { align: 'center', width: 180, enableSorting: undefined },
       );
       assert.deepEqual(
         {
@@ -314,12 +314,12 @@ describe('student.test.ts', { concurrency: false }, () => {
         const ascending: DtoStudentSelectRes = await app.bean.executor.performAction(
           'get',
           '/training/student',
-          { query: { orders: [['name', 'asc']] } },
+          { query: { name: '__StudentSort', orders: [{ field: 'name', direction: 'asc' }] } },
         );
         const descending: DtoStudentSelectRes = await app.bean.executor.performAction(
           'get',
           '/training/student',
-          { query: { orders: [['name', 'desc']] } },
+          { query: { name: '__StudentSort', orders: [{ field: 'name', direction: 'desc' }] } },
         );
         const ascendingIndexes = names.map(name =>
           ascending.list.findIndex(item => item.name === name),

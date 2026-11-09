@@ -1,16 +1,13 @@
+import type { IQueryOrder, TypeQueryPredicate } from 'vona-module-a-orm';
+
 export interface ITablePaged {
   pageNo: number;
   pageSize?: number;
 }
 
 export interface ITableQuery {
-  columns?: string[] | undefined;
-  where?:
-    | {
-        [key: string]: unknown;
-      }
-    | undefined;
-  orders?: string | string[][] | undefined;
+  where?: TypeQueryPredicate;
+  orders?: IQueryOrder[];
   pageNo?: number;
   pageSize?: number;
 }

@@ -1,18 +1,17 @@
 import type { TableIdentity } from 'table-identity';
-import type { IQueryParams } from 'vona-module-a-orm';
+import type { TypeQueryInput } from 'vona-module-a-orm';
 import type { IDecoratorControllerOptions } from 'vona-module-a-web';
 
 import { BeanBase } from 'vona';
 import { Core } from 'vona-module-a-core';
 import { Api, Resource, v } from 'vona-module-a-openapiutils';
+import { $compileQuery } from 'vona-module-a-orm';
 import { Passport } from 'vona-module-a-user';
 import { Arg, Controller, Web } from 'vona-module-a-web';
 import { z } from 'zod';
 
-import type { ModelRecord } from '../model/record.ts';
-
 import { DtoRecordCreate } from '../dto/recordCreate.tsx';
-import { DtoRecordSelectReq } from '../dto/recordSelectReq.tsx';
+import { recordQuery, DtoRecordSelectReq } from '../dto/recordSelectReq.tsx';
 import { DtoRecordSelectRes } from '../dto/recordSelectRes.tsx';
 import { DtoRecordUpdate } from '../dto/recordUpdate.tsx';
 import { DtoRecordView } from '../dto/recordView.tsx';
@@ -34,9 +33,11 @@ export class ControllerRecord extends BeanBase {
   @Core.serializer()
   @Passport.systemAdmin()
   async select(
-    @Arg.filter(DtoRecordSelectReq) params: IQueryParams<ModelRecord>,
+    @Arg.filter(DtoRecordSelectReq) params: TypeQueryInput<typeof recordQuery>,
   ): Promise<DtoRecordSelectRes> {
-    return await this.scope.service.record.select(params);
+    return await this.scope.service.record.select(
+      $compileQuery(this.scope.model.record, recordQuery, params),
+    );
   }
 
   @Web.get(':id')

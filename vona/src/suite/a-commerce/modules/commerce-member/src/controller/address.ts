@@ -1,21 +1,22 @@
 import type { TableIdentity } from 'table-identity';
-import type { IQueryParams } from 'vona-module-a-orm';
+import type { TypeQueryInput } from 'vona-module-a-orm';
 import type { IDecoratorControllerOptions } from 'vona-module-a-web';
 
 import { BeanBase } from 'vona';
 import { Api, Resource, v } from 'vona-module-a-openapiutils';
+import { $compileQuery } from 'vona-module-a-orm';
 import { Passport } from 'vona-module-a-user';
 import { Arg, Controller, Web } from 'vona-module-a-web';
 import { z } from 'zod';
 
-import type { ModelAddress } from '../model/address.ts';
+import type { addressMineQuery } from '../dto/addressMineReq.tsx';
 
 import { DtoAddressMineCreate } from '../dto/addressMineCreate.tsx';
 import { DtoAddressMineReq } from '../dto/addressMineReq.tsx';
 import { DtoAddressMineRes } from '../dto/addressMineRes.tsx';
 import { DtoAddressMineUpdate } from '../dto/addressMineUpdate.tsx';
 import { DtoAddressMineView } from '../dto/addressMineView.tsx';
-import { DtoAddressSelectReq } from '../dto/addressSelectReq.tsx';
+import { addressQuery, DtoAddressSelectReq } from '../dto/addressSelectReq.tsx';
 import { DtoAddressSelectRes } from '../dto/addressSelectRes.tsx';
 import { DtoAddressView } from '../dto/addressView.tsx';
 
@@ -27,7 +28,7 @@ export class ControllerAddress extends BeanBase {
   @Web.get('mine')
   @Api.body(DtoAddressMineRes)
   async mine(
-    @Arg.filter(DtoAddressMineReq) params: IQueryParams<ModelAddress>,
+    @Arg.filter(DtoAddressMineReq) params: TypeQueryInput<typeof addressMineQuery>,
   ): Promise<DtoAddressMineRes> {
     return await this.scope.service.address.mine(params);
   }
@@ -65,9 +66,11 @@ export class ControllerAddress extends BeanBase {
   @Api.body(DtoAddressSelectRes)
   @Passport.systemAdmin()
   async select(
-    @Arg.filter(DtoAddressSelectReq) params: IQueryParams<ModelAddress>,
+    @Arg.filter(DtoAddressSelectReq) params: TypeQueryInput<typeof addressQuery>,
   ): Promise<DtoAddressSelectRes> {
-    return await this.scope.service.address.select(params);
+    return await this.scope.service.address.select(
+      $compileQuery(this.scope.model.address, addressQuery, params),
+    );
   }
 
   @Web.get(':id')

@@ -1,5 +1,8 @@
+import type { TypeQueryPredicate } from 'vona-module-a-orm';
+
 import { DateTime } from 'luxon';
 import { BeanBase } from 'vona';
+import { PublicQueryError } from 'vona-module-a-orm';
 
 import type {
   IDecoratorFilterTransformOptions,
@@ -20,22 +23,28 @@ export class FilterTransformDateRange extends BeanBase implements IFilterTransfo
   async where(
     info: IPipeOptionsFilterTransformInfo,
     options: IFilterTransformOptionsDateRange,
-  ): Promise<any | undefined> {
-    const { value } = info;
-    if (value === null) return null;
-    const [dateStartStr, dateEndStr] = value.split(options.separator);
+  ): Promise<TypeQueryPredicate | undefined> {
+    const { value, fullName, type } = info;
+    if (value === null) return { field: fullName, op: 'isNull' };
+    if (typeof value !== 'string') throw new PublicQueryError('query_date_range', info.key);
+    const parts = value.split(options.separator);
+    if (parts.length > 2) throw new PublicQueryError('query_date_range', info.key);
+    const [dateStartStr, dateEndStr] = parts;
     if (!dateStartStr && !dateEndStr) return;
-    //
-    const where: any = {};
+    const predicates: TypeQueryPredicate[] = [];
+    const encode = (date: DateTime) =>
+      type === 'date' ? date.toISODate()! : date.toUTC().toISO()!;
     if (dateStartStr) {
-      const dateStart = this._parseDate(dateStartStr);
-      where._gte_ = dateStart.toJSDate();
+      predicates.push({ field: fullName, op: 'gte', value: encode(this._parseDate(dateStartStr)) });
     }
     if (dateEndStr) {
-      const dateEnd = this._parseDate(dateEndStr).plus({ day: 1 });
-      where._lt_ = dateEnd.toJSDate();
+      predicates.push({
+        field: fullName,
+        op: 'lt',
+        value: encode(this._parseDate(dateEndStr).plus({ day: 1 })),
+      });
     }
-    return where;
+    return predicates.length === 1 ? predicates[0] : { and: predicates };
   }
 
   private _parseDate(str: string) {
@@ -57,7 +66,7 @@ export class FilterTransformDateRange extends BeanBase implements IFilterTransfo
         if (date.isValid) break;
       }
     }
-    if (!date.isValid) throw new Error(`invalid date: ${str}`);
+    if (!date.isValid) throw new PublicQueryError('query_date_range');
     return date;
   }
 }

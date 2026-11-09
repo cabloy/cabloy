@@ -1921,7 +1921,10 @@ test(
 
     const searchResponse = waitForStudentSelect(page);
     await search.click();
-    const searchUrl = new URL((await searchResponse).url());
+    const searched = await searchResponse;
+    expect(searched.ok()).toBeTruthy();
+    expect((await searched.json()).code).toBe(0);
+    const searchUrl = new URL(searched.url());
     expect(searchUrl.searchParams.get('name')).toBe('Flow E2E');
     expect(searchUrl.searchParams.get('level')).toBe('2');
     expect(searchUrl.searchParams.get('createdAt')).toBe('2026-01-10~2026-01-20');
@@ -1996,13 +1999,30 @@ test(
       await expect(operationsHeader).toHaveCSS('min-width', '360px');
       await expect(operationsHeader).toHaveCSS('text-align', 'center');
 
+      // Query capabilities enable headers without per-entity sorting opt-ins.
+      const idSort = page.getByRole('button', { name: 'Sort by id', exact: true });
+      await expect(idSort).toBeVisible();
+      await expect(page.getByRole('button', { name: 'Sort by mobile', exact: true })).toHaveCount(
+        0,
+      );
+      const idResponse = waitForStudentSelect(page, false);
+      await idSort.click();
+      const idSorted = await idResponse;
+      expect(JSON.parse(new URL(idSorted.url()).searchParams.get('orders')!)).toEqual([
+        { field: 'id', direction: 'asc' },
+      ]);
+      expect((await idSorted.json()).code).toBe(0);
+
       const descendingResponse = waitForStudentSelect(page, false);
       await nameSort.click();
       await expect(nameHeader).toHaveAttribute('aria-sort', 'descending');
       const descending = await descendingResponse;
       expect(descending.status()).toBe(200);
       const descendingUrl = new URL(descending.url());
-      expect(JSON.parse(descendingUrl.searchParams.get('orders')!)).toEqual([['name', 'desc']]);
+      expect(JSON.parse(descendingUrl.searchParams.get('orders')!)).toEqual([
+        { field: 'name', direction: 'desc' },
+      ]);
+      expect((await descending.json()).code).toBe(0);
 
       const ascendingResponse = waitForStudentSelect(page, false);
       await nameSort.click();
@@ -2010,7 +2030,10 @@ test(
       const ascending = await ascendingResponse;
       expect(ascending.status()).toBe(200);
       const ascendingUrl = new URL(ascending.url());
-      expect(JSON.parse(ascendingUrl.searchParams.get('orders')!)).toEqual([['name', 'asc']]);
+      expect(JSON.parse(ascendingUrl.searchParams.get('orders')!)).toEqual([
+        { field: 'name', direction: 'asc' },
+      ]);
+      expect((await ascending.json()).code).toBe(0);
 
       await expect(tableWrapper).toBeVisible();
       const overflow = await tableWrapper.evaluate(element => {
@@ -2770,6 +2793,12 @@ test(
       const filteredResponse = await selectPage();
       const filteredUrl = new URL(filteredResponse.url());
       expect(filteredUrl.searchParams.get('name')).toBe(fixturePrefix);
+      const filteredBody = await filteredResponse.json();
+      expect(filteredBody.code).toBe(0);
+      expect(String(filteredBody.data.total)).toBe('21');
+      expect(filteredBody.data.list.map((item: { name: string }) => item.name)).toEqual(
+        visibleFixtureNames.slice(0, 20),
+      );
       await expect(rowFor(visibleFixtureNames[0])).toHaveCount(1);
       await expect(rowFor(visibleFixtureNames[20])).toHaveCount(0);
 
@@ -2805,8 +2834,16 @@ test(
 
       const pageTwoResponse = waitForStudentSelect(page);
       await page.getByRole('button', { name: '»', exact: true }).click();
-      const pageTwoUrl = new URL((await pageTwoResponse).url());
+      const pageTwo = await pageTwoResponse;
+      const pageTwoUrl = new URL(pageTwo.url());
       expect(pageTwoUrl.searchParams.get('pageNo')).toBe('2');
+      expect(pageTwoUrl.searchParams.get('name')).toBe(fixturePrefix);
+      const pageTwoBody = await pageTwo.json();
+      expect(pageTwoBody.code).toBe(0);
+      expect(String(pageTwoBody.data.total)).toBe('21');
+      expect(pageTwoBody.data.list.map((item: { name: string }) => item.name)).toEqual([
+        visibleFixtureNames[20],
+      ]);
       await expect(selectionStatus).toHaveText('Selected 20 items');
       await expect(rowFor(visibleFixtureNames[20])).toHaveCount(1);
       await expect(rowCheckboxFor(visibleFixtureNames[20])).not.toBeChecked();
@@ -2842,7 +2879,15 @@ test(
       const nameSort = page.getByRole('button', { name: 'Sort by name', exact: true });
       const sortResponse = waitForStudentSelect(page);
       await nameSort.click();
-      await sortResponse;
+      const sorted = await sortResponse;
+      expect(JSON.parse(new URL(sorted.url()).searchParams.get('orders')!)).toEqual([
+        { field: 'name', direction: 'desc' },
+      ]);
+      const sortedBody = await sorted.json();
+      expect(sortedBody.code).toBe(0);
+      expect(sortedBody.data.list.map((item: { name: string }) => item.name)).toEqual(
+        visibleFixtureNames.slice(0, 20),
+      );
       await expect(selectionStatus).toHaveText('Selected 0 items');
 
       await nameSort.click();
@@ -2961,6 +3006,154 @@ test(
         ).toBeTruthy();
       }
     }
+  },
+);
+
+test(
+  'ATP-BASIC-QUERY-01: Training Record preserves joined filters, public sorting and paging',
+  { tag: ['@admin', '@flow'] },
+  async ({ page }) => {
+    test.setTimeout(120_000);
+    page.setDefaultTimeout(10_000);
+    await page.setViewportSize({ width: 1440, height: 900 });
+    await loginAsAdmin(page);
+    const pageErrors = collectPageErrors(page);
+    await withDraftStudents(page, 2, async (students, headers) => {
+      const prefix = `Record Query E2E ${Date.now()}`;
+      const records: { id: string | number; name: string; studentId: string | number }[] = [];
+      const waitForRecordSelect = () =>
+        page.waitForResponse(response => {
+          const request = response.request();
+          return (
+            request.method() === 'GET' &&
+            new URL(response.url()).pathname === '/api/training/record' &&
+            !request.headers()['x-vona-openapi-schema']
+          );
+        });
+      try {
+        for (let index = 0; index < 21; index++) {
+          const name = `${prefix} ${String(index).padStart(2, '0')}`;
+          const studentId = students[index % 2]!.id;
+          const created = await page.request.post('/api/training/record', {
+            headers,
+            data: { name, studentId },
+          });
+          expect(created.ok()).toBeTruthy();
+          const body = await created.json();
+          expect(body.code).toBe(0);
+          records.push({ id: body.data, name, studentId });
+        }
+        // Full navigation can reuse SSR-prepared query data without a browser list request.
+        const navigation = await page.goto('/admin/rest/resource/training-record%3Arecord', {
+          waitUntil: 'load',
+        });
+        expect(navigation?.ok()).toBeTruthy();
+        await expect(page.locator('html')).toHaveAttribute('data-zova-hydrated', 'admin');
+        const name = page.getByLabel('Training Record Name', { exact: true });
+        const student = page.getByLabel('Student', { exact: true });
+        await expect(name).toBeVisible();
+        await expect(student).toBeVisible();
+        const search = page.getByRole('button', { name: 'Search', exact: true });
+        await name.fill(prefix);
+        const filtered = waitForRecordSelect();
+        await search.click();
+        const filteredResponse = await filtered;
+        const filteredBody = await filteredResponse.json();
+        expect(filteredResponse.ok()).toBeTruthy();
+        expect(filteredBody.code).toBe(0);
+        expect(String(filteredBody.data.total)).toBe('21');
+        expect(filteredBody.data.list).toHaveLength(20);
+        const firstIds = filteredBody.data.list.map((item: { id: string | number }) =>
+          String(item.id),
+        );
+        await expect(page.locator('tbody tr').filter({ hasText: prefix })).toHaveCount(20);
+
+        const paged = waitForRecordSelect();
+        await page.getByRole('button', { name: '»', exact: true }).click();
+        const pagedResponse = await paged;
+        const pagedUrl = new URL(pagedResponse.url());
+        expect(pagedUrl.searchParams.get('pageNo')).toBe('2');
+        expect(pagedUrl.searchParams.get('name')).toBe(prefix);
+        const pagedBody = await pagedResponse.json();
+        expect(pagedBody.code).toBe(0);
+        expect(String(pagedBody.data.total)).toBe('21');
+        expect(pagedBody.data.list).toHaveLength(1);
+        expect(firstIds).not.toContain(String(pagedBody.data.list[0].id));
+        await expect(page.locator('tbody tr').filter({ hasText: prefix })).toHaveCount(1);
+
+        await student.fill(students[0]!.name);
+        const joined = waitForRecordSelect();
+        await search.click();
+        const joinedResponse = await joined;
+        const joinedUrl = new URL(joinedResponse.url());
+        expect(joinedUrl.searchParams.get('studentId')).toBe(students[0]!.name);
+        expect(joinedUrl.searchParams.get('pageNo') ?? '1').toBe('1');
+        const joinedBody = await joinedResponse.json();
+        expect(joinedBody.code).toBe(0);
+        expect(String(joinedBody.data.total)).toBe('11');
+        expect(
+          joinedBody.data.list.every(
+            (item: { studentId: string | number }) =>
+              String(item.studentId) === String(students[0]!.id),
+          ),
+        ).toBe(true);
+        await expect(page.locator('tbody tr').filter({ hasText: prefix })).toHaveCount(11);
+
+        await test.step('Restore the warmed name-only query before joined sorting', async () => {
+          await student.fill('');
+          await search.click();
+          // This query was fetched above and may be restored without another HTTP request.
+          await expect(page.locator('tbody tr').filter({ hasText: prefix })).toHaveCount(20);
+          await expect(page.getByRole('button', { name: 'Total: 21', exact: true })).toBeVisible();
+        });
+        const studentSort = page.getByRole('button', { name: 'Sort by studentId', exact: true });
+        // Student has no sortDescFirst metadata: the table cycles ascending, then descending.
+        const ascending = waitForRecordSelect();
+        await studentSort.click();
+        const ascendingResponse = await ascending;
+        expect(JSON.parse(new URL(ascendingResponse.url()).searchParams.get('orders')!)).toEqual([
+          { field: 'studentName', direction: 'asc' },
+        ]);
+        const ascendingBody = await ascendingResponse.json();
+        expect(ascendingBody.code).toBe(0);
+        expect(String(ascendingBody.data.total)).toBe('21');
+        expect(ascendingBody.data.list).toHaveLength(20);
+        expect(
+          ascendingBody.data.list
+            .slice(0, 11)
+            .every(
+              (item: { studentId: string | number }) =>
+                String(item.studentId) === String(students[0]!.id),
+            ),
+        ).toBe(true);
+        const sorted = waitForRecordSelect();
+        await studentSort.click();
+        const sortedResponse = await sorted;
+        expect(JSON.parse(new URL(sortedResponse.url()).searchParams.get('orders')!)).toEqual([
+          { field: 'studentName', direction: 'desc' },
+        ]);
+        const sortedBody = await sortedResponse.json();
+        expect(sortedBody.code).toBe(0);
+        expect(String(sortedBody.data.total)).toBe('21');
+        expect(
+          sortedBody.data.list
+            .slice(0, 10)
+            .every(
+              (item: { studentId: string | number }) =>
+                String(item.studentId) === String(students[1]!.id),
+            ),
+        ).toBe(true);
+        await expect(page.locator('tbody tr').filter({ hasText: prefix })).toHaveCount(20);
+        expect(pageErrors).toEqual([]);
+      } finally {
+        for (const record of records.toReversed()) {
+          const removed = await page.request.delete(`/api/training/record/${record.id}`, {
+            headers,
+          });
+          expect(removed.ok()).toBeTruthy();
+        }
+      }
+    });
   },
 );
 
@@ -3167,9 +3360,45 @@ test(
     expect(token).toBeTruthy();
     const headers = { Authorization: `Bearer ${token}` };
     const name = `Submitted Draft E2E ${Date.now()}`;
+    const effects = collectDraftEffects(page);
     let studentId: string | number | undefined;
     try {
-      await openStudentDraftCreate(page);
+      // Keep the first create load client-side and cold; SSR preloads component queries.
+      const schemaResponse = page.waitForResponse(
+        response =>
+          response.request().method() === 'POST' &&
+          new URL(response.url()).pathname === '/api/training/student' &&
+          !!response.request().headers()['x-vona-openapi-schema'],
+      );
+      await page.getByRole('link', { name: 'Student', exact: true }).click();
+      await expect(page).toHaveURL(studentResourceUrl);
+      await page.getByRole('button', { name: 'Create', exact: true }).click();
+      const response = await schemaResponse;
+      expect(response.ok()).toBeTruthy();
+      const { doc } = (await response.json()).data;
+      const schemas = doc.components.schemas;
+      const subjectSchemaName = 'training-record.dto.detailRecordSubjectResItem';
+      expect(schemas[subjectSchemaName]?.properties).toBeTruthy();
+      const pending = [doc.paths['/api/training/student'].post.requestBody];
+      const references = new Set<string>();
+      while (pending.length) {
+        const node = pending.pop();
+        if (!node || typeof node !== 'object') continue;
+        if (node.$ref && !references.has(node.$ref)) {
+          references.add(node.$ref);
+          expect(node.$ref).toMatch(/^#\/components\/schemas\//);
+          const target = schemas[node.$ref.slice('#/components/schemas/'.length)];
+          expect(target, node.$ref).toBeTruthy();
+          pending.push(target);
+        }
+        pending.push(...Object.values(node));
+      }
+      expect(references.has(`#/components/schemas/${subjectSchemaName}`)).toBe(true);
+      await expect(page).toHaveURL(/training-student(?:%3A|:)student\/create/);
+      await expect(studentDraftNameInput(page)).toBeVisible();
+      await expect(
+        page.getByRole('alert').filter({ hasText: 'Unresolved schema reference' }),
+      ).toHaveCount(0);
       await studentDraftNameInput(page).fill(name);
       await page
         .getByRole('group', { name: 'Mobile *', exact: true })
@@ -3194,6 +3423,28 @@ test(
       await openStudentDraftCreate(page);
       await expect(studentDraftBanner(page)).toHaveCount(0);
       await expect(studentDraftNameInput(page)).not.toHaveValue(name);
+
+      // Replace the runtime while retaining browser storage, then enter Create from the SSR list.
+      await page.getByRole('button', { name: 'Back', exact: true }).click();
+      await expect(page).toHaveURL(studentResourceUrl);
+      await page.reload({ waitUntil: 'load' });
+      await expect(page.locator('html')).toHaveAttribute('data-zova-hydrated', 'admin');
+      await page.getByRole('button', { name: 'Create', exact: true }).click();
+      await expect(studentDraftNameInput(page)).toBeVisible();
+      await expect(
+        page.getByRole('group', { name: 'Mobile *', exact: true }).getByRole('textbox'),
+      ).toBeVisible();
+      await page.getByRole('tab', { name: 'Student Training Records', exact: true }).click();
+      await studentDraftTrainingRecords(page)
+        .getByRole('button', { name: 'Add Detail', exact: true })
+        .click();
+      const detailDialog = page.getByRole('dialog');
+      await expect(trainingTimeInput(detailDialog)).toBeVisible();
+      await detailDialog.getByRole('button', { name: 'Cancel', exact: true }).click();
+      await expect(detailDialog).toHaveCount(0);
+      await expect(
+        page.getByRole('alert').filter({ hasText: 'Unresolved schema reference' }),
+      ).toHaveCount(0);
 
       await page.goto(`/admin/rest/resource/training-student%3Astudent/${studentId}/edit`, {
         waitUntil: 'load',
@@ -3220,6 +3471,8 @@ test(
       await expect(page.locator('html')).toHaveAttribute('data-zova-hydrated', 'admin');
       await expect(studentDraftNameInput(page)).toHaveValue(updatedName);
       await expect(studentDraftBanner(page)).toHaveCount(0);
+      expect(effects.consoleErrors).toEqual([]);
+      expect(effects.pageErrors).toEqual([]);
     } finally {
       studentId ??= capture.studentId;
       try {

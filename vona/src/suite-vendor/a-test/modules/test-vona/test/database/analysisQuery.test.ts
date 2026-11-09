@@ -15,7 +15,7 @@ import assert from 'node:assert/strict';
 import { randomUUID } from 'node:crypto';
 import { describe, it } from 'node:test';
 import { app } from 'vona-mock';
-import { $schema } from 'vona-module-a-openapiutils';
+import { $makeSchema, $schema, v } from 'vona-module-a-openapiutils';
 import {
   $defineAnalysis,
   $executeAnalysisAggregate,
@@ -52,9 +52,19 @@ describe('analysisQuery.test.ts', { concurrency: false }, () => {
       const select = prepareAnalysisFilter(DtoPostSelectReq);
       const group = prepareAnalysisFilter(DtoPostSelectReq, { mode: 'group' });
       const aggregate = prepareAnalysisFilter(DtoPostSelectReq, { mode: 'aggregate' });
-      assert.equal(ZodMetadata.getRefId(select.schema), baseRef);
-      assert.deepEqual(Object.keys((select.schema as z.ZodObject).shape), originalFields);
-      assert.deepEqual(ZodMetadata.getOpenapiMetadata(select.schema), originalMetadata);
+      assert.equal(ZodMetadata.getRefId(select.schema), `${baseRef}_select`);
+      assert.deepEqual(
+        Object.keys((select.schema as z.ZodObject).shape).sort(),
+        originalFields.toSorted(),
+      );
+      for (const control of ['columns', 'joins', 'include', 'limit', 'offset']) {
+        assert.equal(ZodMetadata.getFieldSchema(select.schema, control), undefined);
+      }
+      for (const schema of [group.schema, aggregate.schema]) {
+        for (const control of ['columns', 'orders', 'pageNo', 'pageSize']) {
+          assert.equal(ZodMetadata.getFieldSchema(schema, control), undefined);
+        }
+      }
       assert.deepEqual(group.analysis, postAnalysis);
       assert.equal(group.analysisMode, 'group');
       assert.equal(aggregate.analysisMode, 'aggregate');
@@ -131,7 +141,7 @@ describe('analysisQuery.test.ts', { concurrency: false }, () => {
           assert.equal(object.properties?.groups, undefined);
         }
       };
-      const schemas = { select: base, group: group.schema, aggregate: aggregate.schema };
+      const schemas = { select: select.schema, group: group.schema, aggregate: aggregate.schema };
       for (const order of [
         ['select', 'group', 'aggregate'],
         ['aggregate', 'group', 'select'],
@@ -148,7 +158,7 @@ describe('analysisQuery.test.ts', { concurrency: false }, () => {
           info: { title: 'Analysis schemas', version: '1.0.0' },
         });
         const components = document.components!.schemas!;
-        const selectSchema = resolve(document, components[baseRef]);
+        const selectSchema = resolve(document, components[`${baseRef}_select`]);
         assert.equal(selectSchema.properties?.groups, undefined);
         assert.equal(selectSchema.properties?.aggrs, undefined);
         assert.deepEqual(
@@ -253,7 +263,8 @@ describe('analysisQuery.test.ts', { concurrency: false }, () => {
       const prefix = `analysisQuery:${randomUUID()}`;
       const userIds: TableIdentity[] = [];
       const where = { title: { _startsWith_: prefix } };
-      const query = { where };
+      const internalQuery = { where };
+      const query = { where: { field: 'title', op: 'startsWith', value: prefix } };
       const jwt = await app.bean.passport.signinMock();
       try {
         for (const suffix of ['one', 'two']) {
@@ -272,7 +283,7 @@ describe('analysisQuery.test.ts', { concurrency: false }, () => {
         ];
         assert.deepEqual(await readPost('group', query), defaults);
         assert.deepEqual(
-          await $executeAnalysisGroup(scope.model.post, postAnalysis, query),
+          await $executeAnalysisGroup(scope.model.post, postAnalysis, internalQuery),
           defaults,
         );
         const aggregate = await readPost('aggregate', query);
@@ -292,7 +303,7 @@ describe('analysisQuery.test.ts', { concurrency: false }, () => {
         assert.equal(aggregate.min_stars, '2');
         assert.equal(aggregate.max_stars, '8');
         assert.deepEqual(
-          await $executeAnalysisAggregate(scope.model.post, postAnalysis, query),
+          await $executeAnalysisAggregate(scope.model.post, postAnalysis, internalQuery),
           aggregate,
         );
         assert.deepEqual(await $schema(DtoPostAggregate).parseAsync(aggregate), aggregate);
@@ -337,19 +348,16 @@ describe('analysisQuery.test.ts', { concurrency: false }, () => {
           count_all: '1',
         });
 
-        // List controls are validated but never become analysis pagination/projection/order.
+        // Analysis has no public list projection, ordering or pagination controls.
         for (const action of ['group', 'aggregate'] as const) {
-          assert.deepEqual(
-            await readPost(action, {
-              ...query,
-              columns: ['title'],
-              orders: 'title,desc',
-              pageNo: 2,
-              pageSize: 1,
-            }),
-            action === 'group' ? defaults : aggregate,
-          );
-          for (const invalid of [{ pageSize: 0 }, { pageNo: 0 }]) {
+          for (const invalid of [
+            { columns: ['title'] },
+            { orders: [{ field: 'title', direction: 'desc' }] },
+            { pageNo: 2 },
+            { pageSize: 1 },
+            { pageSize: 0 },
+            { pageNo: 0 },
+          ]) {
             await assert.rejects(() => readPost(action, { ...query, ...invalid }), is422);
           }
         }
@@ -367,20 +375,23 @@ describe('analysisQuery.test.ts', { concurrency: false }, () => {
           true,
         );
         const echo = await readPost('findManyEcho', joined);
-        assert.deepEqual(echo.joins, [
-          ['innerJoin', 'testVonaUser', ['userId', 'testVonaUser.id']],
-        ]);
+        assert.deepEqual(echo, {
+          where: {
+            and: [query.where, { field: 'userName', op: 'eqI', value: `${prefix}:one` }],
+          },
+        });
         assert.deepEqual(await readPost('group', joined), [defaults[0]]);
         const joinedAggregate = await readPost('aggregate', joined);
         assert.equal(joinedAggregate.count_all, '2');
         assert.equal(joinedAggregate.sum_stars, '6');
         assert.equal(Number(joinedAggregate.avg_stars), 3);
         for (const action of ['group', 'aggregate'] as const) {
-          assert.deepEqual(
-            await readPost(action, { ...query, orders: [['userName', 'asc']] }),
-            action === 'group' ? defaults : aggregate,
+          await assert.rejects(
+            () => readPost(action, { ...query, orders: [{ field: 'userName', direction: 'asc' }] }),
+            is422,
           );
-          for (const joins of [[], echo.joins, JSON.stringify(echo.joins)]) {
+          const internalJoins = [['innerJoin', 'testVonaUser', ['userId', 'testVonaUser.id']]];
+          for (const joins of [[], internalJoins, JSON.stringify(internalJoins)]) {
             await assert.rejects(() => readPost(action, { ...joined, joins }), is422);
           }
         }
@@ -402,7 +413,7 @@ describe('analysisQuery.test.ts', { concurrency: false }, () => {
           await assert.rejects(
             () =>
               $executeAnalysisGroup(scope.model.post, postAnalysis, {
-                ...query,
+                ...internalQuery,
                 ...invalid,
               } as never),
             is422,
@@ -418,7 +429,7 @@ describe('analysisQuery.test.ts', { concurrency: false }, () => {
           await assert.rejects(
             () =>
               $executeAnalysisAggregate(scope.model.post, postAnalysis, {
-                ...query,
+                ...internalQuery,
                 ...invalid,
               } as never),
             is422,
@@ -431,7 +442,7 @@ describe('analysisQuery.test.ts', { concurrency: false }, () => {
           await assert.rejects(
             () =>
               $executeAnalysisGroup(scope.model.post, postAnalysis, {
-                ...query,
+                ...internalQuery,
                 ...invalid,
               } as never),
             is422,
@@ -439,7 +450,7 @@ describe('analysisQuery.test.ts', { concurrency: false }, () => {
           await assert.rejects(
             () =>
               $executeAnalysisAggregate(scope.model.post, postAnalysis, {
-                ...query,
+                ...internalQuery,
                 ...invalid,
               } as never),
             is422,
@@ -461,7 +472,7 @@ describe('analysisQuery.test.ts', { concurrency: false }, () => {
           ['aggregate', { userName: `${prefix}:one` }, joinedAggregate],
         ] as const) {
           const url = new URL(app.util.getAbsoluteUrlByApiPath(`/test/vona/post/${action}`));
-          url.searchParams.set('where', JSON.stringify(where));
+          url.searchParams.set('where', JSON.stringify(query.where));
           for (const [key, value] of Object.entries(controls))
             url.searchParams.set(key, typeof value === 'string' ? value : JSON.stringify(value));
           const response = await fetch(url, {
@@ -483,7 +494,7 @@ describe('analysisQuery.test.ts', { concurrency: false }, () => {
           },
           limits: { maxGroups: 1, maxMetrics: 1, maxGroupRows: 2 },
         });
-        assert.deepEqual(await $executeAnalysisGroup(scope.model.post, capped, query), [
+        assert.deepEqual(await $executeAnalysisGroup(scope.model.post, capped, internalQuery), [
           { userId: userIds[0], count_all: '2' },
           { userId: userIds[1], count_all: '2' },
         ]);
@@ -493,7 +504,10 @@ describe('analysisQuery.test.ts', { concurrency: false }, () => {
         ]) {
           await assert.rejects(
             () =>
-              $executeAnalysisGroup(scope.model.post, capped, { ...query, ...invalid } as never),
+              $executeAnalysisGroup(scope.model.post, capped, {
+                ...internalQuery,
+                ...invalid,
+              } as never),
             is422,
           );
         }
@@ -505,7 +519,10 @@ describe('analysisQuery.test.ts', { concurrency: false }, () => {
           },
           limits: { maxGroupRows: 1 },
         });
-        await assert.rejects(() => $executeAnalysisGroup(scope.model.post, oneRow, query), is422);
+        await assert.rejects(
+          () => $executeAnalysisGroup(scope.model.post, oneRow, internalQuery),
+          is422,
+        );
         assert.deepEqual(
           await $executeAnalysisGroup(scope.model.post, oneRow, {
             where: { title: `${prefix}:b` },
@@ -515,15 +532,27 @@ describe('analysisQuery.test.ts', { concurrency: false }, () => {
         await assert.rejects(
           () =>
             $executeAnalysisAggregate(scope.model.post, capped, {
-              ...query,
+              ...internalQuery,
               aggrs: { sum: ['stars'], max: ['stars'] },
             }),
           is422,
         );
 
         for (const [emptyWhere, count] of [
-          [{ title: `${prefix}:a`, userId: userIds[1] }, '1'],
-          [{ title: `${prefix}:absent` }, '0'],
+          [
+            {
+              and: [
+                { field: 'title', op: 'eq', value: `${prefix}:a` },
+                {
+                  field: 'userId',
+                  op: 'eq',
+                  value: $makeSchema(v.tableIdentity()).parse(userIds[1]),
+                },
+              ],
+            },
+            '1',
+          ],
+          [{ field: 'title', op: 'eq', value: `${prefix}:absent` }, '0'],
         ] as const) {
           assert.deepEqual(await readPost('aggregate', { where: emptyWhere }), {
             count_all: count,
@@ -534,7 +563,12 @@ describe('analysisQuery.test.ts', { concurrency: false }, () => {
             max_stars: null,
           });
         }
-        assert.deepEqual(await readPost('group', { where: { title: `${prefix}:absent` } }), []);
+        assert.deepEqual(
+          await readPost('group', {
+            where: { field: 'title', op: 'eq', value: `${prefix}:absent` },
+          }),
+          [],
+        );
         // Warmed results remain ORM-owned and refresh after source mutations.
         assert.deepEqual(await readPost('group', query), defaults);
         await scope.model.post.update({ stars: 10 }, { where: { title: `${prefix}:b` } });

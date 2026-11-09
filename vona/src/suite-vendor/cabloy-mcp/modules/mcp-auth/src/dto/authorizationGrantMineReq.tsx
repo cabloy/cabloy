@@ -1,22 +1,27 @@
 import type { IDecoratorDtoOptions } from 'vona-module-a-web';
 
-import { $Class } from 'vona';
-import { $makeSchema } from 'vona-module-a-openapiutils';
-import { $Dto } from 'vona-module-a-orm';
+import { Api } from 'vona-module-a-openapiutils';
+import { $defineQuery } from 'vona-module-a-orm';
 import { Dto } from 'vona-module-a-web';
 import { z } from 'zod';
 
-import { EntityAuthorization } from '../entity/authorization.tsx';
+import { ModelAuthorization } from '../model/authorization.ts';
+
+export const authorizationGrantMineQuery = $defineQuery(() => ModelAuthorization, {
+  name: 'McpAuthorizationGrantMine',
+  fields: {},
+  orderable: [],
+  defaults: { orders: [{ field: 'id', direction: 'desc' }], pageNo: 1, pageSize: 20 },
+  projection: { mode: 'fixed' },
+});
 
 export interface IDtoOptionsAuthorizationGrantMineReq extends IDecoratorDtoOptions {}
 
-@Dto<IDtoOptionsAuthorizationGrantMineReq>({
-  fields: {
-    pageNo: $makeSchema(z.number().int().min(1).max(1000000).default(1)),
-    pageSize: $makeSchema(z.number().int().min(1).max(100).default(20)),
-  },
-})
-export class DtoAuthorizationGrantMineReq extends $Class.pick(
-  $Dto.queryPage(EntityAuthorization, []),
-  ['pageNo', 'pageSize'],
-) {}
+@Dto<IDtoOptionsAuthorizationGrantMineReq>()
+export class DtoAuthorizationGrantMineReq {
+  @Api.field(z.number().int().min(1).max(1000000).default(1))
+  pageNo: number;
+
+  @Api.field(z.number().int().min(1).max(100).default(20))
+  pageSize: number;
+}

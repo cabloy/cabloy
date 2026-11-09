@@ -1,4 +1,5 @@
 export * from './analysis.ts';
+export * from './query.ts';
 export * from './columns.ts';
 export * from './config.ts';
 export * from './database.ts';

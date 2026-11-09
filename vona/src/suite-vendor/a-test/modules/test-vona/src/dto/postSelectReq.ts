@@ -1,19 +1,51 @@
 import type { IDecoratorDtoOptions } from 'vona-module-a-web';
 
 import { $makeSchema, Api, v } from 'vona-module-a-openapiutils';
-import { $Dto } from 'vona-module-a-orm';
+import { $defineQuery, $Dto } from 'vona-module-a-orm';
 import { Dto } from 'vona-module-a-web';
 import z from 'zod';
 import { ZovaRender } from 'zova-rest-cabloy-basic-admin';
 
-import { EntityPost } from '../entity/post.ts';
 import { postAnalysis } from '../lib/postAnalysis.ts';
+import { ModelPost } from '../model/post.ts';
+import { ModelUser } from '../model/user.ts';
+
+export const postQuery = $defineQuery(() => ModelPost, {
+  name: 'TestPostSelect',
+  fields: {
+    title: {
+      operators: ['eq', 'containsI', 'startsWith', 'isNull', 'isNotNull'],
+      schema: z.string().nullable(),
+    },
+    createdAt: {
+      operators: ['gte', 'lt', 'lte', 'isNull', 'isNotNull'],
+      schema: z.iso.datetime({ offset: true }).nullable(),
+      type: 'timestamp',
+    },
+    userId: { operators: ['eq', 'in'] },
+    stars: { operators: ['eq', 'gte', 'gt', 'lte', 'lt'] },
+    userName: { operators: ['eqI'] },
+  },
+  orderable: ['id', 'title', 'createdAt', 'userId', 'stars', 'userName'],
+  defaults: { orders: [{ field: 'createdAt', direction: 'desc' }] },
+  bindings: {
+    userName: {
+      modelLike: () => ModelUser,
+      field: 'name',
+      localKey: 'userId',
+      foreignKey: 'id',
+      joinType: 'innerJoin',
+    },
+  },
+  conveniences: { userName: { field: 'userName', op: 'eqI' } },
+  projection: { mode: 'fixed' },
+});
 
 export interface IDtoOptionsPostSelectReq extends IDecoratorDtoOptions {}
 
 @Dto<IDtoOptionsPostSelectReq>({
+  query: postQuery,
   analysis: postAnalysis,
-  openapi: { filter: { table: 'testVonaPost' } },
   fields: {
     title: $makeSchema(v.optional(), v.nullable(), z.string()),
     createdAt: $makeSchema(
@@ -25,15 +57,7 @@ export interface IDtoOptionsPostSelectReq extends IDecoratorDtoOptions {}
     ),
   },
 })
-export class DtoPostSelectReq extends $Dto.queryPage(EntityPost, ['title', 'createdAt']) {
-  @Api.field(
-    v.filter({
-      table: 'testVonaUser',
-      joinOn: ['userId', 'testVonaUser.id'],
-      originalName: 'name',
-      op: '_eqI_',
-    }),
-    v.optional(),
-  )
+export class DtoPostSelectReq extends $Dto.queryPage(postQuery, ['title', 'createdAt']) {
+  @Api.field(v.optional())
   userName?: string;
 }

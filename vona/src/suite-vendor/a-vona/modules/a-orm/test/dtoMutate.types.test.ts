@@ -3,6 +3,7 @@ import type { TableIdentity } from 'table-identity';
 import type { BeanModelMeta } from '../src/lib/bean.model/bean.model_meta.ts';
 import type { TypeDtoMutateClass, TypeDtoMutateResult } from '../src/types/dto/dtoMutate.ts';
 import type { TypeSymbolKeyModelOptions } from '../src/types/relations.ts';
+import type { TypeModelMutateRelationData } from '../src/types/relationsMutate.ts';
 
 import { $Dto } from '../src/lib/dto/dto.ts';
 
@@ -129,6 +130,74 @@ function checkDtoMutationTypes() {
   >();
 }
 void checkDtoMutationTypes;
+
+type ScopedEntity = Entity & {
+  name: string;
+  description?: string;
+  departmentId: TableIdentity | null;
+  userIdOwner: TableIdentity;
+};
+type ScopedChildModel = BeanModelMeta<ScopedEntity>;
+type ScopedParentModel = BeanModelMeta<ScopedEntity> & {
+  [K in TypeSymbolKeyModelOptions]: {
+    relations: {
+      children: { type: 'hasMany'; model: new () => ScopedChildModel; key: 'parentId' };
+    };
+  };
+};
+declare const ScopedChildModel: new () => ScopedChildModel;
+declare const ScopedParentModel: new () => ScopedParentModel;
+
+// Start scaffolds keep server-owned identity outside public mutation DTOs.
+function checkScopedScaffoldMutationTypes() {
+  class Detail extends $Dto.get(ScopedChildModel, {
+    columns: ['id', 'deleted', 'name', 'description'],
+  }) {}
+  class Create extends $Dto.create(ScopedParentModel, {
+    columns: ['name', 'description'],
+    include: { children: { dtoClass: Detail } },
+  }) {}
+  class Update extends $Dto.update(ScopedParentModel, {
+    columns: ['name', 'description'],
+    include: { children: { dtoClass: Detail } },
+  }) {}
+  type Owners = Partial<Pick<ScopedEntity, 'departmentId' | 'userIdOwner'>>;
+  type PublicOwnerKeys = Extract<keyof Create | keyof Update, keyof Owners>;
+  expectType<Equal<PublicOwnerKeys, never>>();
+  expectType<Equal<Extract<keyof NonNullable<Create['children']>[number], keyof Owners>, never>>();
+  expectType<Equal<Extract<keyof NonNullable<Update['children']>[number], keyof Owners>, never>>();
+
+  function prepareOwners<T extends object>(
+    items: T[] | undefined,
+    owners: Owners,
+  ): T[] | undefined {
+    if (!items?.length) return items;
+    return items.map(item => ({
+      ...item,
+      departmentId: owners.departmentId,
+      userIdOwner: owners.userIdOwner,
+    }));
+  }
+  // Generated Model insert/update signatures use this relation-aware data contract.
+  type WriteData = TypeModelMutateRelationData<
+    ScopedEntity,
+    ScopedParentModel,
+    { include: { children: true } }
+  >;
+  function create(data: Create & Owners): WriteData {
+    data = { ...data, children: prepareOwners(data.children, data) };
+    return data;
+  }
+  function update(data: Update, persisted: ScopedEntity): WriteData {
+    data = { ...data, children: prepareOwners(data.children, persisted) };
+    return data;
+  }
+  const body: Create = { name: 'scaffold', children: undefined };
+  const ownerValues: Record<string, TableIdentity | null | undefined> = {};
+  void create({ ...body, ...ownerValues });
+  void update;
+}
+void checkScopedScaffoldMutationTypes;
 
 declare class CuratedChildDto {
   id: TableIdentity;

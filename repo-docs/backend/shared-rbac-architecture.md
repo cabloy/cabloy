@@ -122,12 +122,12 @@ The shared role-membership listener bridges `a-user:roleMembershipChanged` to `a
 
 After guard admission, a controller must consume the current typed scope. The common injection surface is `@Arg.rbacScopeCurrent()`; framework extraction obtains `app.bean.rbacScope.current()` for the exact request action.
 
-| Operation          | Required scope operation | Why                                                                   |
-| ------------------ | ------------------------ | --------------------------------------------------------------------- |
-| List/select        | `where(callerWhere)`     | Preserve the caller filter while adding server scope                  |
-| View/update/delete | `checkEntry(entry)`      | Check the persisted target, not a client claim                        |
-| Bulk mutation      | `checkEntries(entries)`  | Ensure every intended target is inside scope                          |
-| Create             | `ownerValues()`          | Derive trusted owner/scope fields instead of accepting widening input |
+| Operation          | Required scope operation           | Why                                                                   |
+| ------------------ | ---------------------------------- | --------------------------------------------------------------------- |
+| List/select        | `where()` as compiler `scopeWhere` | AND the validated public filter with trusted server scope             |
+| View/update/delete | `checkEntry(entry)`                | Check the persisted target, not a client claim                        |
+| Bulk mutation      | `checkEntries(entries)`            | Ensure every intended target is inside scope                          |
+| Create             | `ownerValues()`                    | Derive trusted owner/scope fields instead of accepting widening input |
 
 For an atomic multi-ID Resource command, have the command DTO validate its request-list maximum and use `a-rbac` to validate that the list is nonempty and has no duplicate normalized identities. Then load every requested record through the ordinary instance-scoped model boundary. Require complete one-for-one resolution before calling `checkEntries(entries)` and before any mutation. This treats missing, soft-deleted, and other-instance records uniformly as absent; do not use an unscoped query merely to distinguish them. Run the full preflight and mutation inside the domain transaction.
 
@@ -160,12 +160,21 @@ A representative list shape is:
 ```typescript
 @Web.get()
 @Passport.rbac({ dataScope: true })
-async select(@Arg.rbacScopeCurrent() rbacScopeCurrent: IRbacScopeAccess) {
-  return await this.scope.service.record.select({
-    where: rbacScopeCurrent.where(this.ctx.request.query.where),
-  });
+async select(
+  @Arg.filter(DtoRecordSelectReq) params: TypeQueryInput<typeof recordQuery>,
+  @Arg.rbacScopeCurrent() rbacScopeCurrent: IRbacScopeAccess,
+) {
+  return await this.scope.service.record.select(
+    $compileQuery(this.scope.model.record, recordQuery, params, {
+      scopeWhere: rbacScopeCurrent.where(),
+    }),
+  );
 }
 ```
+
+The Resource controller compiles the public input with the current Action's trusted row restriction; the resource service accepts trusted ORM parameters without public-query recompilation. `rbacScopeCurrent.where(callerWhere)` accepts **trusted ORM** predicates (such as the server-authored ID condition in the bulk example), not a public predicate AST. Never call `rbacScopeCurrent.where(params.where)` with public input or forward raw request `where`; use `scopeWhere: rbacScopeCurrent.where()` in `$compileQuery`. Compilation still validates policy capabilities, operands and budgets. Use the corresponding mode/analysis policy and exact Action's scope for group/aggregate, before execution rather than filtering results afterward.
+
+Business authorization remains in services, and normal Model instance/soft-delete scope remains active. Dedicated self-service methods accepting explicit identity and their own business-scoped public query contracts may still own compilation; see [Public Query Guide](/backend/public-query-guide#dedicated-business-scoped-service-contracts-remain-valid).
 
 The details vary by Resource contract, but the security rules do not:
 

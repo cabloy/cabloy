@@ -1,12 +1,58 @@
-import { OpenApiGeneratorV31, OpenAPIRegistry } from '@cabloy/zod-to-openapi';
+import { OpenApiGeneratorV3, OpenApiGeneratorV31, OpenAPIRegistry } from '@cabloy/zod-to-openapi';
 import assert from 'node:assert';
 import { describe, it } from 'node:test';
 import { appResource, cast } from 'vona';
 import { app } from 'vona-mock';
 import { $schema } from 'vona-module-a-openapiutils';
 import { DtoUserLazy } from 'vona-module-test-vona';
+import { z } from 'zod';
 
 describe('dtoLazy.test.ts', () => {
+  it('preserves the named lazy anchor for recursive predicate unions in both OpenAPI versions', async () => {
+    await app.bean.executor.mockCtx(async () => {
+      let predicate: z.ZodType;
+      const lazy = z.lazy(() => predicate).openapi('NamedRecursivePredicate');
+      predicate = z.union([
+        z.strictObject({ field: z.literal('name'), op: z.literal('eq'), value: z.string() }),
+        z.strictObject({ and: z.array(lazy).min(1) }),
+        z.strictObject({ or: z.array(lazy).min(1) }),
+        z.strictObject({ not: lazy }),
+      ]);
+      for (const [Generator, version] of [
+        [OpenApiGeneratorV3, 'V30'],
+        [OpenApiGeneratorV31, 'V31'],
+      ] as const) {
+        const registry = new OpenAPIRegistry();
+        registry.register(
+          'NamedRecursiveQuery',
+          z.object({
+            where: lazy.optional().openapi({ description: 'Public predicate' }),
+          }),
+        );
+        const document = new Generator(registry.definitions).generateDocument(
+          app.scope('a-openapi').config.generateDocument[version],
+        );
+        const schemas = cast(document).components.schemas;
+        const ref = '#/components/schemas/NamedRecursivePredicate';
+        const whereRef = schemas.NamedRecursiveQuery.properties.where.$ref;
+        const whereName = whereRef.slice('#/components/schemas/'.length);
+        assert.ok(whereName.startsWith('NamedRecursivePredicate_'));
+        assert.deepEqual(
+          Object.keys(schemas).sort(),
+          ['NamedRecursivePredicate', whereName, 'NamedRecursiveQuery'].sort(),
+        );
+        assert.equal(schemas.NamedRecursiveQuery.required, undefined);
+        assert.equal(schemas[whereName].description, 'Public predicate');
+        const branches = schemas.NamedRecursivePredicate.anyOf;
+        assert.equal(branches[1].properties.and.items.$ref, ref);
+        assert.equal(branches[2].properties.or.items.$ref, ref);
+        assert.equal(branches[3].properties.not.$ref, ref);
+        assert.equal(branches[0].additionalProperties, false);
+        assert.doesNotThrow(() => JSON.stringify(document));
+      }
+    });
+  });
+
   it('action:dtoLazy', async () => {
     await app.bean.executor.mockCtx(async () => {
       const data = {

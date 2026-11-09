@@ -25,15 +25,16 @@ For example:
 }
 ```
 
-This is a module lifecycle contract. It is stronger than an import or a resource lookup.
+This is a module lifecycle contract, not a JavaScript import or resource lookup. It adds availability, lifecycle ordering, and version requirements; it does not replace ESM evaluation dependencies.
 
-## Four different relationships
+## Different dependency relationships
 
 Keep these concerns separate.
 
 | Relationship                     | Purpose                                                                | Typical surface                    |
 | -------------------------------- | ---------------------------------------------------------------------- | ---------------------------------- |
 | Package dependency               | Makes a package available to package tooling                           | `package.json` `dependencies`      |
+| ESM runtime import               | Links live exports and participates in dependency evaluation           | `import { ModelX } from '...'`     |
 | Suite or application composition | Includes module packages in the application composition                | suite/application package metadata |
 | Module dependency                | Requires a target module's availability, order, and compatible version | `vonaModule.dependencies`          |
 | Runtime resource lookup          | Resolves a resource from an already composed module                    | `this.$scope`, `app.scope(...)`    |
@@ -59,6 +60,54 @@ $relation.belongsTo('commerce-trade:order', 'commerce-member:user', 'userId');
 ```
 
 is not, by itself, a reason to add a module dependency edge.
+
+## Cross-module imports and initialization
+
+### Use the public package boundary
+
+In Vona application code, import another module's classes, DTOs, helpers, and types through that module's public package exports. Do not reach into another module's source through a relative filesystem path or an unexported package source path.
+
+For example, when a query policy needs the Student Model class:
+
+```ts
+import { ModelStudent } from 'vona-module-training-student';
+```
+
+Do not replace it with a path such as `../../../training-student/src/model/student.ts`. Verify the owning package's export map and entry exports. If the required resource is not public, resolve its intended ownership and supported export rather than bypassing the boundary or hand-editing generated metadata.
+
+A runtime import establishes an ESM evaluation dependency; `import type` is erased and cannot ensure that a class or its decorators execute. A string resource identifier also does not import its target package. It can only resolve successfully when the consuming API performs its lookup and the required registration is available.
+
+### Check when the consumer resolves the model
+
+Class callbacks are not an automatic lazy-initialization boundary. The consumer determines when to invoke them:
+
+| Surface                                    | Current resolution behavior                                                                                                        |
+| ------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------- |
+| `$Dto.get(() => ModelX)`                   | Resolves the primary Model during DTO construction; a top-level superclass expression therefore needs it during module evaluation. |
+| `$defineQuery(() => ModelX, config)`       | Resolves the primary Model and configured binding models while constructing the policy, including their field metadata.            |
+| Nested relation schemas in `$Dto.get(...)` | Use a separate lazy schema mechanism; this does not make primary-model resolution lazy.                                            |
+| String Model identifiers                   | Do not load a module or guarantee deferred lookup; the consuming API still determines resolution time.                             |
+
+Consequently, replacing a class import with a string Model identifier can remove the evaluation dependency that previously made registration available. A type-supported reference is not proof that it is valid at that initialization phase. Conversely, a callback such as `() => ModelX` still reads `ModelX` immediately if the consumer invokes it during construction.
+
+### Distinguish ESM cycles from lifecycle dependency cycles
+
+Mutual package imports can form an ESM cycle without failing. Imports are live bindings: a module can read an already-initialized export from another module whose remaining dependencies are still being evaluated. Reading a class or `const` binding before initialization instead causes a temporal-dead-zone error. A missing string-based registration can fail separately during resource lookup.
+
+For example, two package barrels may each expose a Model before a DTO that reads the other package's Model. If both Models initialize before those DTO reads, that evaluation path can succeed. This is not a general ordering guarantee: barrel export order, transitive imports, effects, and the actual application entry path all matter. Do not rely on callback syntax, a Model-first export list alone, or one successful startup as proof that future dependency changes are safe.
+
+An ESM import cycle is different from a cycle in `vonaModule.dependencies`, whose lifecycle graph must remain acyclic. Do not add lifecycle dependency edges merely to repair JavaScript import-time initialization. Trace the early read and use the supported package boundary; if a real cycle fails, revisit the eager dependency or resource ownership rather than bypassing exports, hand-reordering generated metadata, or assuming strings are lazy.
+
+### Verify initialization-sensitive changes
+
+When changing imports or Model references used by DTO superclass expressions, decorators, or top-level policies:
+
+1. verify the public export and distinguish runtime imports from type-only imports and string lookups
+2. trace when the consumer needs the class and its registration, including transitive package-barrel dependencies
+3. run the affected existing backend tests through the root managed `npm run test` entrypoint, which starts the application before executing selected tests; use the argument-forwarding syntax in [Repository Scripts](/reference/repo-scripts)
+4. assert the affected DTO/schema or query behavior and run the relevant typecheck
+
+Typechecking and generated metadata inspection alone do not execute the ESM graph. Reuse existing focused startup/integration coverage rather than adding a separate initialization harness or resetting development data. For DTO and query authoring, see [DTO Infer and Generation](/backend/dto-infer-generation) and [Public Query Guide](/backend/public-query-guide).
 
 ## Decision guide
 

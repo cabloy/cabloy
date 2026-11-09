@@ -1,0 +1,19 @@
+import { $defineQuery } from 'vona-module-a-orm';
+
+import { Model<%=argv.resourceNameCapitalize%> } from '../model/<%=argv.resourceName%>.ts';
+
+// Expose only these authored fields, never every field inherited by the entity.
+export const <%=argv.resourceName%>Query = $defineQuery(() => Model<%=argv.resourceNameCapitalize%>, {
+  fields: {
+    id: { operators: ['eq', 'in'] },
+    name: { operators: ['eq', 'containsI', 'in'] },
+    createdAt: { operators: ['gte', 'lt'] },
+  },
+  orderable: ['id', 'name', 'createdAt'],
+  conveniences: {
+    name: { field: 'name', op: 'containsI' },
+    createdAt: { field: 'createdAt' },
+  },
+  defaults: { orders: [{ field: 'id', direction: 'asc' }] },
+  projection: { mode: 'fixed' },
+});

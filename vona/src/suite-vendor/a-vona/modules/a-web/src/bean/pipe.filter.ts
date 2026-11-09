@@ -3,47 +3,51 @@ import type {
   IDecoratorPipeOptionsArgument,
   IPipeTransform,
 } from 'vona-module-a-aspect';
+import type { ISchemaObjectExtensionField, RouteHandlerArgumentMeta } from 'vona-module-a-openapi';
 import type {
-  ISchemaObjectExtensionField,
-  ITableQuery,
-  RouteHandlerArgumentMeta,
-} from 'vona-module-a-openapi';
-import type { IAnalysisPolicy, TypeAnalysisMode } from 'vona-module-a-orm';
+  IAnalysisPolicy,
+  IQueryPolicy,
+  TypeAnalysisMode,
+  TypeQueryInput,
+  TypeQueryPredicate,
+} from 'vona-module-a-orm';
 import type { ValidatorOptions } from 'vona-module-a-validation';
+import type z from 'zod';
 
-import { isNil, isNilOrEmptyString } from '@cabloy/utils';
 import { ZodMetadata } from '@cabloy/zod-openapi';
 import { isNullableSchema } from '@cabloy/zod-query';
-import { BeanBase, beanFullNameFromOnionName, cast, runWithZodQueryCoercion } from 'vona';
+import { BeanBase, beanFullNameFromOnionName, runWithZodQueryCoercion } from 'vona';
 import { createArgumentPipe, Pipe } from 'vona-module-a-aspect';
-import { analysisFailure, resolveAnalysis } from 'vona-module-a-orm';
+import {
+  checkQueryBudget,
+  PublicQueryError,
+  queryDefaultLimits,
+  resolveAnalysis,
+  validateQuery,
+} from 'vona-module-a-orm';
 
-import type {
-  IFilterTransformRecord,
-  IFilterTransformWhere,
-  TypeQueryParamsPatch,
-} from '../types/filterTransform.ts';
+import type { IFilterTransformRecord, IFilterTransformWhere } from '../types/filterTransform.ts';
 
-export type TypePipeFilterData = ITableQuery;
+import { filterControlNames } from '../lib/analysisFilter.ts';
 
-export type TypePipeFilterResult = TypeQueryParamsPatch;
-type TypeQueryJoin = NonNullable<TypeQueryParamsPatch['joins']>[number];
+export type TypePipeFilterData = Record<string, unknown>;
+export type TypePipeFilterResult = TypeQueryInput;
 
 export interface IPipeOptionsFilter
   extends IDecoratorPipeOptions, IDecoratorPipeOptionsArgument, ValidatorOptions {
+  query?: IQueryPolicy;
+  namedSchema?: z.ZodObject;
   analysis?: IAnalysisPolicy;
   analysisMode?: TypeAnalysisMode;
 }
 
-const __FieldsSystem = ['columns', 'where', 'orders', 'pageNo', 'pageSize'];
-const __AnalysisControls = ['groups', 'aggrs', 'having', 'joins', 'distinct', 'include', 'with'];
+const jsonControls = ['where', 'orders', 'groups', 'aggrs'];
 
 @Pipe<IPipeOptionsFilter>({
-  // ValidatorOptions
   disableErrorMessages: false,
   errorHttpStatusCode: 400,
   loose: false,
-  strict: false,
+  strict: true,
 })
 export class PipeFilter
   extends BeanBase
@@ -59,232 +63,156 @@ export class PipeFilter
         `should specify the schema of pipeFilter: ${metadata.controller.name}.${metadata.method}#${metadata.index}`,
       );
     }
-    value = this._prepareAnalysisControls(value, options);
-    // validateSchema
-    value = (await this.bean.validator.validateSchema(
-      options.schema,
-      value,
+    if (!!options.analysis !== !!options.analysisMode)
+      throw new TypeError('Analysis filter requires both a policy and an action mode');
+    const object = ZodMetadata.unwrapChained(options.schema) as z.ZodObject;
+    if (object.type !== 'object') throw new TypeError('Filter requires an object schema');
+    const limits = options.query?.limits ?? queryDefaultLimits;
+    // Bound bytes and graph traversal before JSON decoding, without applying leaf-string
+    // limits to serialized AST controls. Native inputs receive the real limits below.
+    checkQueryBudget(value, { ...limits, maxStringLength: limits.maxBytes });
+    if (!value || typeof value !== 'object' || Array.isArray(value))
+      throw new PublicQueryError('query_shape');
+    for (const key of Object.keys(value)) {
+      if (!Object.hasOwn(object.shape, key))
+        throw new PublicQueryError('query_unknown_control', key);
+    }
+    const prepared = { ...value };
+    if ((options.type ?? metadata.type) === 'query') {
+      for (const key of jsonControls) {
+        if (typeof prepared[key] !== 'string') continue;
+        try {
+          prepared[key] = JSON.parse(prepared[key]);
+        } catch {
+          throw new PublicQueryError('query_json', key);
+        }
+      }
+      for (const key of ['pageNo', 'pageSize']) {
+        if (typeof prepared[key] !== 'string') continue;
+        if (!/^[1-9]\d*$/.test(prepared[key])) throw new PublicQueryError('query_pagination', key);
+        prepared[key] = Number(prepared[key]);
+      }
+    }
+    checkQueryBudget(prepared, limits);
+    const controls = Object.fromEntries(
+      Object.entries(prepared).filter(([key]) => filterControlNames.includes(key as any)),
+    );
+    let canonical: TypeQueryInput;
+    if (options.query) {
+      canonical = validateQuery(
+        options.query,
+        controls,
+        options.analysisMode ?? 'select',
+        options.analysis,
+      );
+    } else {
+      const pages = object
+        .pick(
+          Object.fromEntries(
+            ['pageNo', 'pageSize'].filter(key => object.shape[key]).map(key => [key, true]),
+          ) as any,
+        )
+        .strict();
+      canonical = (await this.bean.validator.validateSchema(
+        pages,
+        controls,
+        { ...options, queryCoercion: false },
+        metadata.field,
+      )) as TypeQueryInput;
+    }
+    const namedSchema =
+      options.namedSchema ??
+      object
+        .omit(
+          Object.fromEntries(
+            filterControlNames.filter(key => object.shape[key]).map(key => [key, true]),
+          ) as any,
+        )
+        .strict();
+    const namedInput = Object.fromEntries(
+      Object.entries(prepared).filter(([key]) => !filterControlNames.includes(key as any)),
+    );
+    const named = (await this.bean.validator.validateSchema(
+      namedSchema,
+      namedInput,
       options,
       metadata.field,
-    )) as TypePipeFilterData;
-    // transform
-    const params = await this._transform(value, options);
-    // ok
-    return params;
-  }
-
-  private _prepareAnalysisControls(value: TypePipeFilterData, options: IPipeOptionsFilter) {
-    if (!!options.analysis !== !!options.analysisMode) {
-      throw new Error('Analysis filter requires both a policy and an action mode');
+    )) as Record<string, unknown>;
+    const predicates: TypeQueryPredicate[] = canonical.where ? [canonical.where] : [];
+    for (const [key, fieldValue] of Object.entries(named)) {
+      const fieldSchema = namedSchema.shape[key] as z.ZodType;
+      const fieldNullable = fieldValue === null && isNullableSchema(fieldSchema);
+      if ((fieldValue === undefined || fieldValue === null || fieldValue === '') && !fieldNullable)
+        continue;
+      const openapi = ZodMetadata.getOpenapiMetadata(fieldSchema) as
+        | ISchemaObjectExtensionField
+        | undefined;
+      const convenience = options.query?.conveniences[key];
+      const field = convenience?.field ?? key;
+      if (options.query && !options.query.fields[field])
+        throw new PublicQueryError('query_field', key);
+      const [transformName, transformOptions] = openapi?.filter?.transform ?? [
+        'a-web:base',
+        undefined,
+      ];
+      const dynamic = this.bean.onion.filterTransform.getOnionOptionsDynamic(
+        transformName as keyof IFilterTransformRecord,
+        transformOptions,
+      );
+      const beanFullName = beanFullNameFromOnionName(transformName, 'filterTransform');
+      const transform = this.bean._getBean(beanFullName) as unknown as IFilterTransformWhere;
+      if (!transform?.where) throw new Error(`filterTransform.where not found: ${beanFullName}`);
+      const predicate = await transform.where(
+        {
+          params: canonical,
+          query: prepared,
+          options,
+          originalName: field,
+          fullName: field,
+          key,
+          value: fieldValue,
+          type: options.query?.fields[field]?.type ?? ZodMetadata.unwrapChained(fieldSchema).type,
+          op: convenience?.op,
+          schema: fieldSchema,
+          openapi,
+        },
+        dynamic,
+      );
+      if (predicate) predicates.push(predicate);
     }
-    if (!value || typeof value !== 'object') return value;
-    const prepared = { ...value };
-    for (const key of __AnalysisControls) {
-      if (!Object.hasOwn(value, key)) continue;
-      if (!options.analysisMode) analysisFailure(`Select does not support ${key}`);
-      if (key !== 'aggrs' && !(key === 'groups' && options.analysisMode === 'group')) {
-        analysisFailure(`Analysis ${options.analysisMode} does not support ${key}`);
-      }
-      if (typeof value[key] === 'string') {
-        try {
-          prepared[key] = JSON.parse(value[key]);
-        } catch {
-          analysisFailure(`Analysis ${key} must be valid JSON`);
-        }
-      }
+    // A supplied predicate and each named contribution are all effective; named
+    // controls never survive into the canonical input or compiler revalidation.
+    if (predicates.length) {
+      canonical = {
+        ...canonical,
+        where: predicates.length === 1 ? predicates[0] : { and: predicates },
+      } as TypeQueryInput;
     }
     if (options.analysis && options.analysisMode) {
-      // Validate native shapes before permissive generic query coercion runs.
-      runWithZodQueryCoercion(false, () =>
-        resolveAnalysis(options.analysis!, options.analysisMode!, prepared),
+      Object.assign(
+        canonical,
+        runWithZodQueryCoercion(false, () =>
+          resolveAnalysis(options.analysis!, options.analysisMode!, canonical),
+        ),
       );
     }
-    return prepared;
-  }
-
-  private async _transform(value: TypePipeFilterData, options: IPipeOptionsFilter) {
-    // 1. system: columns/where/orders/pageNo/pageSize
-    const params = this._transformSystem(value);
-    const rootOpenapi = ZodMetadata.getOpenapiMetadata(options.schema!) as
-      | ISchemaObjectExtensionField
-      | undefined;
-    // 2. fields
-    await this._transformFields(params, value, options, rootOpenapi);
-    // 3. system: orders
-    this._transformOrders(params, options, rootOpenapi);
-    if (options.analysis && options.analysisMode) {
-      Object.assign(params, resolveAnalysis(options.analysis, options.analysisMode, value));
+    if (options.query) {
+      canonical = validateQuery(
+        options.query,
+        canonical,
+        options.analysisMode ?? 'select',
+        options.analysis,
+        true,
+      );
+    } else {
+      checkQueryBudget(canonical, {
+        ...limits,
+        maxNodes: limits.maxNodes + 64,
+        maxBytes: limits.maxBytes + 4096,
+        maxValueDepth: limits.maxValueDepth + 2,
+      });
     }
-    // ok
-    return params;
-  }
-
-  // system: columns/where/orders/pageNo/pageSize
-  private _transformSystem(value: TypePipeFilterData) {
-    const params = {} as TypeQueryParamsPatch;
-    // columns
-    if (!isNil(value.columns)) params.columns = value.columns as any;
-    // where
-    params.where = value.where ?? {};
-    // orders
-    if (!isNil(value.orders)) {
-      if (typeof value.orders === 'string') {
-        if (value.orders.startsWith('[') && value.orders.endsWith(']')) {
-          params.orders = JSON.parse(value.orders);
-        } else {
-          params.orders = [cast(value.orders).split(',')];
-        }
-      } else {
-        params.orders = value.orders as any;
-      }
-    }
-    // pageNo/pageSize
-    if (!isNil(value.pageNo) && !isNil(value.pageSize)) {
-      params.offset = (value.pageNo - 1) * value.pageSize;
-      params.limit = value.pageSize;
-    }
-    // ok
-    return params;
-  }
-
-  private _transformOrders(
-    params: TypeQueryParamsPatch,
-    options: IPipeOptionsFilter,
-    rootOpenapi: ISchemaObjectExtensionField | undefined,
-  ) {
-    if (!params.orders) return;
-    for (const order of params.orders) {
-      if (!Array.isArray(order) || order.length !== 2) {
-        throw new Error('invalid order');
-      }
-      const [key, direction] = order;
-      if (typeof key !== 'string' || (direction !== 'asc' && direction !== 'desc')) {
-        throw new Error('invalid order');
-      }
-      const info = this._resolveField(key, options, rootOpenapi);
-      if (!info || info.openapi?.filter?.capabilities?.order === false) {
-        throw new Error(`invalid order field: ${key}`);
-      }
-      cast(order)[0] = info.orderFullName;
-      if (!options.analysisMode) this._addJoin(params, info.joinInfo);
-    }
-  }
-
-  private _resolveField(
-    key: string,
-    options: IPipeOptionsFilter,
-    rootOpenapi: ISchemaObjectExtensionField | undefined,
-  ) {
-    const fieldSchema = ZodMetadata.getFieldSchema(options.schema!, key);
-    if (!fieldSchema) {
-      if (!rootOpenapi?.filter?.table) {
-        return { orderFullName: key };
-      }
-      const keyParts = key.split('.');
-      const [table, field] = keyParts;
-      if (!table || !field || keyParts.length !== 2) return;
-      const resolved = this._resolveField(field, options, rootOpenapi);
-      if (!resolved || resolved.orderFullName !== key) return;
-      return resolved;
-    }
-    const fieldSchemaInner = ZodMetadata.unwrapChained(fieldSchema);
-    const openapi: ISchemaObjectExtensionField | undefined = ZodMetadata.getOpenapiMetadata(
-      fieldSchema,
-    ) as ISchemaObjectExtensionField | undefined;
-    const originalName = openapi?.filter?.originalName ?? key;
-    const table = openapi?.filter?.table ?? rootOpenapi?.filter?.table;
-    const joinInfo = openapi?.filter?.joinOn
-      ? ([
-          openapi.filter.joinType ?? 'innerJoin',
-          openapi.filter.table,
-          openapi.filter.joinOn,
-        ] as TypeQueryJoin)
-      : undefined;
-    return {
-      fieldSchema,
-      fieldSchemaInner,
-      openapi,
-      originalName,
-      fullName: joinInfo ? `${openapi?.filter?.table}.${originalName}` : originalName,
-      orderFullName: table ? `${table}.${originalName}` : originalName,
-      joinInfo,
-    };
-  }
-
-  private _addJoin(params: TypeQueryParamsPatch, joinInfo: TypeQueryJoin | undefined) {
-    if (!joinInfo) return;
-    if (!params.joins) params.joins = [];
-    if (params.joins.findIndex(item => item[1] === joinInfo[1]) === -1) {
-      params.joins.push(joinInfo);
-    }
-  }
-
-  private async _transformField(
-    key: string,
-    fieldValue: any,
-    params: TypeQueryParamsPatch,
-    value: any,
-    options: IPipeOptionsFilter,
-    rootOpenapi: ISchemaObjectExtensionField | undefined,
-  ) {
-    if (__FieldsSystem.includes(key) || (options.analysisMode && __AnalysisControls.includes(key)))
-      return;
-    const info = this._resolveField(key, options, rootOpenapi);
-    if (!info) return;
-    const { fieldSchema, fieldSchemaInner, openapi, originalName, fullName, joinInfo } = info;
-    const [transformName, transformOptions] = openapi?.filter?.transform ?? [
-      'a-web:base',
-      undefined,
-    ];
-    const fieldNullable = fieldValue === null && isNullableSchema(fieldSchema);
-    if (isNilOrEmptyString(fieldValue) && !fieldNullable) return;
-    // check where
-    if (Object.prototype.hasOwnProperty.call(params.where, fullName)) return;
-    // filter transform
-    const transformOptions2 = this.bean.onion.filterTransform.getOnionOptionsDynamic(
-      transformName as keyof IFilterTransformRecord,
-      transformOptions,
-    );
-    // execute
-    const beanFullName = beanFullNameFromOnionName(transformName, 'filterTransform');
-    const beanInstance = this.bean._getBean(beanFullName) as unknown as IFilterTransformWhere;
-    if (!beanInstance) {
-      throw new Error(`filterTransform bean not found: ${beanFullName}`);
-    }
-    if (!beanInstance.where) {
-      throw new Error(`filterTransform.where not found: ${beanFullName}`);
-    }
-    const transformInfo = {
-      params,
-      query: value,
-      options,
-      originalName,
-      fullName,
-      key,
-      value: fieldValue,
-      type: fieldSchemaInner.type,
-      schema: fieldSchema,
-      openapi,
-    };
-    const resTransform = await beanInstance.where(transformInfo, transformOptions2);
-    if (resTransform !== undefined) {
-      // where
-      params.where[fullName] = resTransform;
-      // join
-      this._addJoin(params, joinInfo);
-    }
-  }
-
-  private async _transformFields(
-    params: TypeQueryParamsPatch,
-    value: any,
-    options: IPipeOptionsFilter,
-    rootOpenapi: ISchemaObjectExtensionField | undefined,
-  ) {
-    // loop
-    for (const key in value) {
-      await this._transformField(key, value[key], params, value, options, rootOpenapi);
-    }
+    return canonical;
   }
 }
 

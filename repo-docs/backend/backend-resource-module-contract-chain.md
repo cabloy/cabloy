@@ -143,9 +143,10 @@ Representative source facts from this file:
 - the class is decorated with `@Controller<IControllerOptionsStudent>('student')`
 - the class is also decorated with `@Resource()`
 - CRUD actions are declared with `@Web.post()`, `@Web.get()`, `@Web.get(':id')`, `@Web.patch(':id')`, and `@Web.delete(':id')`
-- the standard CRUD actions and the `summary` / `deleteForce` management actions explicitly use `@Passport.systemAdmin()`
+- the standard CRUD actions explicitly use `@Passport.rbac()`; `group` / `aggregate` inherit `select`, while custom management actions declare their own RBAC metadata
 - request shapes use `@Arg.body(...)`, `@Arg.param(...)`, and `@Arg.filter(...)`
-- actions delegate to `this.scope.service.student`
+- `select`, `group`, and `aggregate` compile public query input with `$compileQuery` in the controller before delegating trusted ORM parameters to `this.scope.service.student`
+- for a Resource Action with RBAC data scope, controller preparation also supplies `scopeWhere: rbacScopeCurrent.where()`; never pass the public AST into `rbacScopeCurrent.where(params.where)`
 
 This is the layer where several concerns meet in one place:
 
@@ -168,7 +169,8 @@ Representative source facts:
 
 - the class is decorated with `@Service()`
 - `create(...)` delegates to `this.scope.model.student.insert(...)`
-- `select(...)` delegates to `this.scope.model.student.selectAndCount(...)`
+- `select(...)` accepts trusted `IQueryParams<ModelStudent>` and delegates to `this.scope.model.student.selectAndCount(...)` without public-query recompilation
+- `group(...)` / `aggregate(...)` accept trusted `TypeAnalysisGroupParams<typeof studentAnalysis>` / `TypeAnalysisAggregateParams<typeof studentAnalysis>` and invoke the matching analysis execution helpers
 - `view(...)` delegates to `this.scope.model.student.getById(...)`
 - `update(...)` delegates to `this.scope.model.student.updateById(...)`
 - `delete(...)` delegates to `this.scope.model.student.deleteById(...)`
@@ -177,9 +179,11 @@ That thinness is part of the point.
 
 This specimen makes the layer boundary very easy to see:
 
-- controller owns the HTTP-facing resource surface
-- service owns the business-oriented handoff
-- model owns the persistence-facing behavior
+- controller owns the HTTP-facing resource surface and prepares policy-validated public queries with the current Action's RBAC scope where applicable
+- service owns the business-oriented handoff and business authorization; dedicated self-service methods with explicit identity and business scope may still own public-query compilation
+- model owns the persistence-facing behavior, including ordinary active-instance and soft-delete scope
+
+This is a Resource boundary convention, not a requirement that every service abandon public query business contracts. See [Public Query Guide](/backend/public-query-guide#compile-at-the-resource-action-boundary) for both handoff patterns.
 
 So even though this particular service is small, it is still important for reading the chain correctly.
 
@@ -258,10 +262,11 @@ For the read/list side, these files are especially important:
 
 Representative source facts:
 
-- it uses `@Dto({ openapi: { filter: { table: 'trainingStudent' } }, fields: { ... } })`
-- it extends `$Dto.queryPage(EntityStudent, ['name', 'level', 'createdAt'])`
-- `level` uses a preprocess step so string query input can be normalized before schema validation
-- `createdAt` uses `v.filterTransform('a-web:dateRange')`
+- it defines a static `$defineQuery(() => ModelStudent, ...)` policy with explicit predicate/operator and order allowlists
+- it associates `query: studentQuery` and `analysis: studentAnalysis` through `@Dto({ ... })`, alongside named field/render refinements
+- it extends `$Dto.queryPage(studentQuery, ['name', 'level', 'createdAt'])`; DTO-level table metadata is not needed
+- `level` retains its constrained numeric values and select-renderer metadata; HTTP named-input coercion is separate from canonical AST operand validation
+- `createdAt` uses `v.filterTransform('a-web:dateRange')` to contribute timestamp comparisons admitted by the policy
 
 That makes it a useful example of how request/filter contracts can:
 

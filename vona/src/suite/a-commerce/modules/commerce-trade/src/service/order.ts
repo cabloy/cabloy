@@ -1,5 +1,5 @@
 import type { TableIdentity } from 'table-identity';
-import type { IQueryParams } from 'vona-module-a-orm';
+import type { IQueryParams, TypeQueryInput } from 'vona-module-a-orm';
 import type { IPaymentOutcomeEvent, IRefundOutcomeEvent } from 'vona-module-a-pay';
 import type { EntityPaymentAttempt } from 'vona-module-commerce-payment';
 import type {
@@ -11,6 +11,7 @@ import type {
 import { BeanBase } from 'vona';
 import { Service } from 'vona-module-a-bean';
 import { Core } from 'vona-module-a-core';
+import { $compileQuery } from 'vona-module-a-orm';
 
 import type { DtoCheckoutCreate } from '../dto/checkoutCreate.tsx';
 import type { DtoCheckoutResult } from '../dto/checkoutResult.tsx';
@@ -37,6 +38,7 @@ import type { EntityOrderLine } from '../entity/orderLine.tsx';
 import type { EntityShipment } from '../entity/shipment.tsx';
 import type { ModelOrder } from '../model/order.ts';
 
+import { orderMineQuery } from '../dto/orderMineReq.tsx';
 import { orderSummaryColumns } from '../lib/order.ts';
 import { compactProviderReference } from '../lib/providerReference.ts';
 
@@ -1163,7 +1165,6 @@ export class ServiceOrder extends BeanBase {
     const result = await this.scope.model.order.selectAndCount({
       ...params,
       columns: ['id', 'state', 'payableTotalCents', 'reservationExpiresAt', 'createdAt'],
-      orders: params?.orders ?? [['id', 'desc']],
     });
     return result as DtoOrderSelectRes;
   }
@@ -1199,16 +1200,15 @@ export class ServiceOrder extends BeanBase {
     return { ...order, lines } as DtoOrderView;
   }
 
-  async mine(params?: IQueryParams<ModelOrder>): Promise<DtoOrderMineRes> {
+  async mine(params?: TypeQueryInput<typeof orderMineQuery>): Promise<DtoOrderMineRes> {
     return await this.scope.model.order.selectAndCount({
-      ...params,
+      ...$compileQuery(this.scope.model.order, orderMineQuery, params, {
+        scopeWhere: {
+          userId: this.bean.passport.currentUser!.id,
+          state: customerVisibleOrderStates,
+        },
+      }),
       columns: orderSummaryColumns,
-      where: {
-        ...params?.where,
-        userId: this.bean.passport.currentUser!.id,
-        state: customerVisibleOrderStates,
-      },
-      orders: params?.orders ?? [['id', 'desc']],
     });
   }
 

@@ -1,12 +1,10 @@
-import type { Constructable } from 'vona';
+import type { IQueryPolicy, TypeQueryEntity } from '../../types/query.ts';
 
-import { $Class } from 'vona';
+import { DtoQuery } from './dtoQuery.ts';
 
-import { DtoQueryPageBase } from '../../types/dto/dtoQueryPageBase.ts';
-
-export function DtoQueryPage<T, KEYS extends Array<keyof T>>(
-  classRef: Constructable<T>,
-  keys: KEYS,
+export function DtoQueryPage<P extends IQueryPolicy, K extends keyof TypeQueryEntity<P>>(
+  policy: P,
+  keys: K[],
 ) {
-  return $Class.mixin(DtoQueryPageBase, $Class.partial($Class.pick(classRef, keys)));
+  return DtoQuery(policy, keys);
 }

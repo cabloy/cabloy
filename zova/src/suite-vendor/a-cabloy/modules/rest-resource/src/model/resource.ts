@@ -333,7 +333,7 @@ export class ModelResource<
   }
 
   protected keySelect(actionPath?: string, query?: ITableQuery) {
-    return ['select', actionPath ?? '', hashkey(query)] as const;
+    return ['select', 'public-query-v1', actionPath ?? '', hashkey(query)] as const;
   }
 
   protected keyItemRoot(id: TableIdentity) {

@@ -92,49 +92,63 @@ A useful distinction is:
 - `v.optional` means the field may be omitted
 - `v.nullable` means the field may carry a real `null`
 
-For query parameters, that distinction matters because plain optional values still collapse `null` to omission, while `v.optional(), v.nullable()` allows a real `null` to survive parsing when the contract needs SQL `IS NULL` semantics downstream.
+For named query conveniences, `v.optional(), v.nullable()` can preserve a real `null` for conversion into an admitted null-check predicate. The canonical public AST instead uses explicit `isNull` / `isNotNull` leaves without `value`; it never treats `eq: null` as a null-check shorthand.
 
 ## `@Arg.filter`
 
-The validation layer supports query-style inputs through `@Arg.filter`, which ties DTO/query helpers to named filters, raw `where`, transformations, and list controls.
+`@Arg.filter` connects a policy-bound request DTO to native validation and named-filter normalization. Its output is **public canonical query input**, not trusted `IQueryParams`. A Resource controller must compile it through `$compileQuery` together with the current Action's trusted scope before passing trusted ORM parameters to its service; the service does not recompile them as public input. Dedicated self-service methods with explicit caller identity and their own business scope may still own compilation. See [Public Query Guide](/backend/public-query-guide) for the complete language, typed/null/date semantics, budgets and mandatory scope boundary.
+
+Associate a static `$defineQuery` policy before Action/schema construction with `@Dto({ query: studentQuery })` and `$Dto.queryPage(studentQuery, namedKeys)`. Predicate fields/operators, order fields and response projection are independent of the named UI field set. Supplied named filters become canonical contributions combined with explicit `where` by **AND**, never raw-`where` precedence.
+
+HTTP GET JSON-decodes `where`, `orders`, `groups` and `aggrs` once; MCP supplies native JSON. Canonical AST validation disables broad recursive coercion, so numeric/Boolean string operands remain invalid. Named conveniences keep their own input decoding. Unknown controls, legacy property-keyed predicates, underscore operators, malformed/mixed nodes and unsupported operands fail closed. Current fixed-projection contracts reject client `columns`.
 
 ### Analysis action modes
 
-A DTO can attach one shared `$defineAnalysis` policy through `@Dto({ analysis: studentAnalysis })`. Select, group, and aggregate still have separate contracts:
+A DTO can attach both the query policy and one shared `$defineAnalysis` policy through `@Dto({ query: studentQuery, analysis: studentAnalysis })`. Select, group and aggregate have separate contracts:
 
 ```typescript
 async select(
-  @Arg.filter(DtoStudentSelectReq) params: IQueryParams<ModelStudent>,
+  @Arg.filter(DtoStudentSelectReq) params: TypeQueryInput<typeof studentQuery>,
 ) {
-  return await this.scope.service.student.select(params);
+  return await this.scope.service.student.select(
+    $compileQuery(this.scope.model.student, studentQuery, params),
+  );
 }
 
 async group(
   @Arg.filter(DtoStudentSelectReq, { mode: 'group' })
-  params: TypeAnalysisGroupParams<typeof studentAnalysis>,
+  params: TypeQueryGroupInput<typeof studentQuery, typeof studentAnalysis>,
 ) {
-  return await this.scope.service.student.group(params);
+  return await this.scope.service.student.group(
+    $compileQuery(this.scope.model.student, studentQuery, params, {
+      mode: 'group',
+      analysis: studentAnalysis,
+    }),
+  );
 }
 
 async aggregate(
   @Arg.filter(DtoStudentSelectReq, { mode: 'aggregate' })
-  params: TypeAnalysisAggregateParams<typeof studentAnalysis>,
+  params: TypeQueryAggregateInput<typeof studentQuery, typeof studentAnalysis>,
 ) {
-  return await this.scope.service.student.aggregate(params);
+  return await this.scope.service.student.aggregate(
+    $compileQuery(this.scope.model.student, studentQuery, params, {
+      mode: 'aggregate',
+      analysis: studentAnalysis,
+    }),
+  );
 }
 ```
 
-Group mode derives `groups` and `aggrs` controls from the policy; aggregate mode derives `aggrs` only. Each action receives its own schema reference and finite enums without mutating the base SelectReq schema. An ordinary select request explicitly containing analysis controls is rejected before unknown-key stripping can hide them. This does not enable strict unknown-key rejection for every unrelated filter.
+Group mode derives `groups` and `aggrs` controls from the analysis policy; aggregate derives `aggrs` only. Each Action has its own schema without mutating ordinary select. Select rejects analysis controls. Group and aggregate reject irrelevant list controls (`orders`, `columns`, `pageNo`, `pageSize`) instead of accepting and ignoring them.
 
-For GET, array/object controls are JSON query values: `groups=["level"]` and `aggrs={"count":["imageId"]}` before URL encoding. Generated API calls accept structured values and encode them through the existing `combineQueries` convention. Malformed JSON, empty arrays/metric objects, duplicate fields, unsupported functions/columns, or any `groups` on aggregate are invalid. Omitted `groups` and `aggrs` independently use the action defaults; explicit empty input never means “use the default.”
+For GET, structured controls are JSON query values: `groups=["level"]` and `aggrs={"count":["imageId"]}` before URL encoding. Generated API calls accept structured values and use the existing query encoder. Malformed JSON, empty selections, duplicate fields, unsupported functions/columns, or any `groups` on aggregate are invalid. Omitted `groups` and `aggrs` independently use Action defaults; explicit empty input never means “use the default.”
 
-The policy owns main-model dimension and function-specific metric column allowlists. HTTP client-supplied joins are rejected, as are custom aliases, expressions and `having`. Joined filters from server-owned DTO metadata and typed joins from trusted service callers are supported. Analysis uses main-model `id IN (full joined-filter subquery)`, so each matching main record contributes once rather than once per joined row, preserving inner/left join semantics. Named local filters, transforms, and raw-`where` precedence retain their existing behavior.
+These abbreviated Student controller methods show compilation without an RBAC row predicate. For a Resource Action configured for RBAC data scope, inject `@Arg.rbacScopeCurrent()` and add `scopeWhere: rbacScopeCurrent.where()` to the compiler options for that exact Action. Never pass public AST input to `rbacScopeCurrent.where(params.where)`. The service receives trusted `TypeAnalysisGroupParams<typeof analysisPolicy>` / `TypeAnalysisAggregateParams<typeof analysisPolicy>` and invokes `$executeAnalysisGroup` / `$executeAnalysisAggregate` without public-query recompilation. These execution helpers retain their trusted internal API and revalidate analysis controls. The compiler supplies the same policy validation and mandatory server-scope boundary used by list execution; client OR/NOT cannot replace it. Services retain business authorization; main-model instance/deleted scope remains active. Only fixed server-declared related aliases are public query capabilities; arbitrary client joins, expressions, custom aliases and `having` are not.
 
-List controls such as `columns`, `orders`, `pageNo`, and `pageSize` remain validated but do not project, sort, or paginate analysis results; order-only fields do not add joins. For example, invalid `pageSize: 0` still fails, while valid page 2 does not remove matching source rows from the aggregate population. Main-model `iid` and `deleted` scope remains in effect, and server-side business authorization is still required. Joined raw tables do not automatically inherit model instance, soft-delete or authorization scope; supply required constraints through server metadata and predicates. See [Bounded analysis APIs](/backend/orm-aggregate-group-guide#bounded-client-selectable-analysis-apis) for join semantics and the required cache dependencies when joined-table mutations invalidate analysis results.
+The analysis defaults remain `maxGroups: 3`, `maxMetrics: 10`, `maxGroupRows: 1000`, with deliberate policy overrides possible. Group execution uses deterministic dimension ordering and reads cap+1 rows to detect overflow. Invalid analysis selections and overflow produce deliberate `422` errors, not silent truncation. These result limits do not bound database scan/aggregation cost and apply alongside the public query budgets.
 
-`$executeAnalysisGroup(model, policy, params)` and `$executeAnalysisAggregate(model, policy, params)` revalidate analysis controls for direct service callers. The default effective limits are `maxGroups: 3`, `maxMetrics: 10`, and `maxGroupRows: 1000`; policies can deliberately override them. Group execution uses deterministic dimension ordering and reads cap+1 rows to detect overflow. Invalid analysis selections and group-row overflow produce deliberate `422` errors, not generic server failures or silently truncated results. The row cap is not a limit on database scan/aggregation cost.
-
-The derived schemas expose public `filter.capabilities.analysis` (mode, allowlists, defaults, limits), including on flattened `groups` / `aggrs` query parameter schemas. They do not publish model/class references. See [CRUD Workflow](/backend/crud-workflow#grouping-and-statistics) and [DTO Infer and Generation](/backend/dto-infer-generation#aggregate-and-group-dto-inference) for policy authoring and requested-only response fields.
+The derived schemas expose `filter.capabilities.query` and action-specific `filter.capabilities.analysis`, without model/class references. Regenerate affected consumers after backend changes. See [CRUD Workflow](/backend/crud-workflow#grouping-and-statistics), [DTO Infer and Generation](/backend/dto-infer-generation#aggregate-and-group-dto-inference) and [Bounded analysis APIs](/backend/orm-aggregate-group-guide#bounded-client-selectable-analysis-apis).
 
 ## Tool groups
 

@@ -392,6 +392,7 @@ export default defineConfig({
           text: 'Data & CRUD',
           items: [
             { text: 'CRUD Workflow', link: '/backend/crud-workflow' },
+            { text: 'Public Query Guide', link: '/backend/public-query-guide' },
             {
               text: 'Existing Resource Field Update',
               link: '/backend/resource-field-update',

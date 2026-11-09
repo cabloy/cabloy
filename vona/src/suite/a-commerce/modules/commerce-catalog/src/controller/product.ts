@@ -1,20 +1,21 @@
 import type { TableIdentity } from 'table-identity';
-import type { IQueryParams } from 'vona-module-a-orm';
+import type { TypeQueryInput } from 'vona-module-a-orm';
 import type { IDecoratorControllerOptions } from 'vona-module-a-web';
 
 import { BeanBase } from 'vona';
 import { Api, Resource, v } from 'vona-module-a-openapiutils';
+import { $compileQuery } from 'vona-module-a-orm';
 import { Passport } from 'vona-module-a-user';
 import { Arg, Controller, Web } from 'vona-module-a-web';
 import { z } from 'zod';
 
-import type { ModelProduct } from '../model/product.ts';
+import type { productPublicQuery } from '../dto/productPublicSelectReq.tsx';
 
 import { DtoProductCreate } from '../dto/productCreate.tsx';
 import { DtoProductPublicDetail } from '../dto/productPublicDetail.tsx';
 import { DtoProductPublicSelectReq } from '../dto/productPublicSelectReq.tsx';
 import { DtoProductPublicSelectRes } from '../dto/productPublicSelectRes.tsx';
-import { DtoProductSelectReq } from '../dto/productSelectReq.tsx';
+import { productQuery, DtoProductSelectReq } from '../dto/productSelectReq.tsx';
 import { DtoProductSelectRes } from '../dto/productSelectRes.tsx';
 import { DtoProductUpdate } from '../dto/productUpdate.tsx';
 import { DtoProductView } from '../dto/productView.tsx';
@@ -35,16 +36,18 @@ export class ControllerProduct extends BeanBase {
   @Api.body(DtoProductSelectRes)
   @Passport.systemAdmin()
   async select(
-    @Arg.filter(DtoProductSelectReq) params: IQueryParams<ModelProduct>,
+    @Arg.filter(DtoProductSelectReq) params: TypeQueryInput<typeof productQuery>,
   ): Promise<DtoProductSelectRes> {
-    return await this.scope.service.product.select(params);
+    return await this.scope.service.product.select(
+      $compileQuery(this.scope.model.product, productQuery, params),
+    );
   }
 
   @Web.get('public')
   @Api.body(DtoProductPublicSelectRes)
   @Passport.public()
   async selectPublic(
-    @Arg.filter(DtoProductPublicSelectReq) params: IQueryParams<ModelProduct>,
+    @Arg.filter(DtoProductPublicSelectReq) params: TypeQueryInput<typeof productPublicQuery>,
   ): Promise<DtoProductPublicSelectRes> {
     return await this.scope.service.product.selectPublic(params);
   }

@@ -43,4 +43,6 @@ export interface IDtoOptions<%=argv.resourceNameCapitalize%>Create extends IDeco
     }),
   ],
 })
-export class Dto<%=argv.resourceNameCapitalize%>Create extends $Dto.create(() => Model<%=argv.resourceNameCapitalize%>) {}
+export class Dto<%=argv.resourceNameCapitalize%>Create extends $Dto.create(() => Model<%=argv.resourceNameCapitalize%>, {
+  columns: ['name', 'description'],
+}) {}

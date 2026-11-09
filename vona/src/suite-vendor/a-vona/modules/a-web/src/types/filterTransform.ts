@@ -1,22 +1,24 @@
 import type { OmitNever } from 'vona';
 import type { ServiceOnion } from 'vona-module-a-onion';
 import type { ISchemaObjectExtensionField } from 'vona-module-a-openapi';
-import type { IQueryParams } from 'vona-module-a-orm';
+import type { TypeQueryInput, TypeQueryOperator, TypeQueryPredicate } from 'vona-module-a-orm';
 import type z from 'zod';
 
 import type { IPipeOptionsFilter } from '../bean/pipe.filter.ts';
 
-export type TypeQueryParamsPatch = IQueryParams & { where: {} };
+/** Public canonical input, never a trusted ORM parameter patch. */
+export type TypeQueryParamsPatch = TypeQueryInput;
 
 export interface IPipeOptionsFilterTransformInfo {
   params: TypeQueryParamsPatch;
-  query: any;
+  query: Record<string, unknown>;
   options: IPipeOptionsFilter;
   originalName: string;
   fullName: string;
   key?: string;
   value?: any;
   type?: string;
+  op?: TypeQueryOperator;
   schema?: z.ZodType;
   openapi?: ISchemaObjectExtensionField;
 }
@@ -27,7 +29,7 @@ export interface IFilterTransformWhere {
   where(
     info: IPipeOptionsFilterTransformInfo,
     options: IDecoratorFilterTransformOptions,
-  ): Promise<boolean>;
+  ): Promise<TypeQueryPredicate | undefined>;
 }
 
 export interface IDecoratorFilterTransformOptions {}

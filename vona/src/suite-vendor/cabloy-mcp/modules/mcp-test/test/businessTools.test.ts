@@ -11,6 +11,7 @@ import { appMetadata, appResource, runWithZodQueryCoercion } from 'vona';
 import { acquireTestLock, app } from 'vona-mock';
 import { getKeyHash } from 'vona-module-a-cache';
 import { $schema, Mcp, SymbolMcpOptions } from 'vona-module-a-openapiutils';
+import * as orm from 'vona-module-a-orm';
 import { recordResourceNameToRoutePath } from 'vona-module-a-web';
 import { createControllerToolServer, createSharedBusinessToolServer } from 'vona-module-cabloy-mcp';
 
@@ -18,6 +19,7 @@ import {
   closeMutationInputSchema,
   isPrimitiveSchema,
   normalizeDateTransport,
+  resolveSchema,
   serializeDateTransport,
   toolSchema,
 } from '../../cabloy-mcp/src/lib/controllerToolSchema.ts';
@@ -79,6 +81,21 @@ const studentToolNames = [
 
 function studentTools(tools: any[]) {
   return tools.filter(tool => tool.name.startsWith('training-student_student_'));
+}
+
+async function nativeStudentQuery() {
+  // The native module, not the MCP schema under test, selects the query contract.
+  // Legacy Student modules do not export studentQuery.
+  const student = (await import('vona-module-training-student')) as Record<string, any>;
+  return student.studentQuery;
+}
+
+function studentActionIsScoped(action: string) {
+  const descriptor = app.bean.rbacCatalog
+    .getCatalog()
+    .get(`training-student.controller.student#${action}`);
+  assert.ok(descriptor, `Student ${action} is registered in the RBAC catalog`);
+  return Boolean(descriptor.options.dataScope);
 }
 
 function mockOwnedPerformAction(
@@ -150,7 +167,14 @@ async function withStudentToolPermissions(fn: () => Promise<void>) {
           ? 'view'
           : 'select';
       assert.equal(request.policyActionKey, `${controller}#${inherited}`);
-      return { allowed: true, actionKey: request.action.actionKey, action: request.action };
+      return {
+        allowed: true,
+        actionKey: request.action.actionKey,
+        action: request.action,
+        ...(request.action.options.dataScope
+          ? { terms: [{ dataScope: 'mine' as const, ownerId: String(passport.user!.id) }] }
+          : {}),
+      };
     });
     try {
       await app.bean.passport.setCurrent(passport);
@@ -259,6 +283,41 @@ describe('businessTools.test.ts', { concurrency: false, timeout: 60000 }, () => 
       {},
     ) as any;
     assert.equal(invalidDate.trainingTime, 'not-a-date');
+    // Only public-query contracts carry policy-validated JSON predicate operands.
+    if (app.meta.modules['training-student'] && (await nativeStudentQuery())) {
+      const predicate = {
+        filter: { capabilities: { query: { fields: { id: {}, createdAt: {} } } } },
+        anyOf: [
+          { type: 'object', properties: { field: { const: 'id' }, value: { type: 'string' } } },
+          {
+            type: 'object',
+            properties: {
+              field: { const: 'createdAt' },
+              value: { type: 'string', format: 'date-time' },
+            },
+          },
+        ],
+      };
+      for (const where of [
+        { field: 'id', op: 'eq', value: '12' },
+        { field: 'createdAt', op: 'gte', value: dateValue },
+      ]) {
+        assert.deepEqual(
+          normalizeDateTransport(
+            { where, trainingTime: dateValue },
+            {
+              type: 'object',
+              properties: {
+                where: { $ref: '#/components/schemas/Predicate' },
+                trainingTime: { type: 'string', format: 'date-time' },
+              },
+            },
+            { Predicate: predicate },
+          ),
+          { where, trainingTime: new Date(dateValue) },
+        );
+      }
+    }
     const dateSchemas = {
       Record: {
         type: 'object',
@@ -582,10 +641,27 @@ describe('businessTools.test.ts', { concurrency: false, timeout: 60000 }, () => 
             `${actionName} keeps its description MCP-only`,
           );
         }
+        const query = await nativeStudentQuery();
+        const { DtoStudentSelectReq, DtoStudentSelectResItem } =
+          await import('vona-module-training-student');
+        const nativeDocument = JSON.parse(
+          JSON.stringify(
+            await runWithZodQueryCoercion(false, () =>
+              app.bean.openapi.generateJsonOfClasses(
+                [DtoStudentSelectReq, DtoStudentSelectResItem],
+                'V31',
+              ),
+            ),
+          ),
+        );
+        const nativeSelect =
+          nativeDocument.components.schemas[appResource.getBeanFullName(DtoStudentSelectReq)!];
+        const nativeSelectItem =
+          nativeDocument.components.schemas[appResource.getBeanFullName(DtoStudentSelectResItem)!];
         assert.ok(select);
         assert.equal(select.annotations.readOnlyHint, true);
         assert.deepEqual(Object.keys(select.inputSchema.properties).sort(), [
-          'columns',
+          ...(!query ? ['columns'] : []),
           'createdAt',
           'level',
           'name',
@@ -600,27 +676,93 @@ describe('businessTools.test.ts', { concurrency: false, timeout: 60000 }, () => 
         assert.ok(!select.inputSchema.required?.includes('level'));
         const selectCheck = fromJsonSchema(select.inputSchema)['~standard'];
         assert.equal((await selectCheck.validate({})).issues, undefined);
-        for (const level of [1, 2, 3]) {
+        for (const level of query ? [1, 2, 3] : [0, 1, 1.5, 2, 3, 4]) {
           assert.equal((await selectCheck.validate({ level })).issues, undefined);
         }
-        const ormQuery = app.util.getModuleConfigRaw('a-orm')?.rest?.query;
-        assert.equal(select.inputSchema.properties.pageNo.type, 'number');
-        assert.equal(select.inputSchema.properties.pageNo.minimum, 1);
-        assert.equal(select.inputSchema.properties.pageNo.default, 1);
-        assert.equal(select.inputSchema.properties.pageSize.type, 'number');
-        assert.equal(select.inputSchema.properties.pageSize.minimum, 1);
-        assert.equal(
-          select.inputSchema.properties.pageSize.default,
-          ormQuery?.pageSize?.default ?? 20,
-        );
-        assert.equal(
-          select.inputSchema.properties.pageSize.maximum,
-          ormQuery?.pageSize?.max ?? 100,
-        );
-        assert.equal(
-          select.inputSchema.properties.orders.default,
-          ormQuery?.orders?.default ?? 'createdAt,desc',
-        );
+        if (query) {
+          const whereSchema = resolveSchema(
+            select.inputSchema.properties.where,
+            select.inputSchema.components.schemas,
+          );
+          const capabilities = whereSchema.filter.capabilities.query;
+          assert.deepEqual(capabilities.defaults.orders, [
+            { field: 'createdAt', direction: 'desc' },
+          ]);
+          assert.deepEqual(capabilities.projection, { mode: 'fixed' });
+          assert.deepEqual(capabilities.fields.name.operators, ['eq', 'containsI', 'startsWith']);
+          assert.deepEqual(capabilities.fields.id.operators, ['eq', 'in']);
+          assert.equal(
+            select.inputSchema.properties.id,
+            undefined,
+            'id stays outside named UI conveniences',
+          );
+          const idSchema = query.fields.id.schema;
+          const publicId = idSchema.parse(idSchema.type === 'number' ? 123 : '123');
+          for (const where of [
+            { field: 'id', op: 'eq', value: publicId },
+            { field: 'id', op: 'in', value: [publicId] },
+          ]) {
+            assert.equal((await selectCheck.validate({ where })).issues, undefined);
+          }
+          assert.ok((await selectCheck.validate({ id: publicId })).issues);
+          assert.equal(select.inputSchema.properties.pageNo.minimum, 1);
+          assert.equal(select.inputSchema.properties.pageSize.minimum, 1);
+          assert.equal(
+            select.inputSchema.properties.pageSize.maximum,
+            capabilities.limits.maxPageSize,
+          );
+          assert.equal(select.inputSchema.properties.orders.type, 'array');
+          const recursive = {
+            where: {
+              and: [
+                { field: 'name', op: 'containsI', value: 'Student' },
+                {
+                  or: [
+                    { field: 'level', op: 'eq', value: 2 },
+                    { not: { field: 'level', op: 'gte', value: 3 } },
+                  ],
+                },
+              ],
+            },
+            orders: [{ field: 'name', direction: 'asc' }],
+          };
+          assert.ok(
+            select.inputSchema.components?.schemas,
+            'actual generated recursion stays reachable',
+          );
+          assert.ok(JSON.stringify(select.inputSchema).includes('QueryPredicate'));
+          // This compiles the actual tools/list schema, not a synthetic recursive surrogate.
+          assert.equal((await selectCheck.validate(recursive)).issues, undefined);
+          for (const where of [
+            { name: 'Student' },
+            { field: 'mobile', op: 'eq', value: 'private' },
+            { field: 'name', op: 'raw', value: 'select 1' },
+            { field: 'level', op: 'eq', value: '2' },
+            { and: [] },
+            { field: 'level', op: 'eq', value: 2, injected: true },
+          ])
+            assert.ok((await selectCheck.validate({ where })).issues, JSON.stringify(where));
+        } else {
+          // Legacy queryPage retains ORM controls/defaults and an unrestricted numeric level filter.
+          const ormQuery = app.util.getModuleConfigRaw('a-orm')?.rest?.query;
+          assert.equal(select.inputSchema.properties.pageNo.type, 'number');
+          assert.equal(select.inputSchema.properties.pageNo.minimum, 1);
+          assert.equal(select.inputSchema.properties.pageNo.default, 1);
+          assert.equal(select.inputSchema.properties.pageSize.type, 'number');
+          assert.equal(select.inputSchema.properties.pageSize.minimum, 1);
+          assert.equal(
+            select.inputSchema.properties.pageSize.default,
+            ormQuery?.pageSize?.default ?? 20,
+          );
+          assert.equal(
+            select.inputSchema.properties.pageSize.maximum,
+            ormQuery?.pageSize?.max ?? 100,
+          );
+          assert.equal(
+            select.inputSchema.properties.orders.default,
+            ormQuery?.orders?.default ?? 'createdAt,desc',
+          );
+        }
         assert.deepEqual(Object.keys(select.outputSchema.properties).sort(), [
           'list',
           'pageCount',
@@ -654,7 +796,10 @@ describe('businessTools.test.ts', { concurrency: false, timeout: 60000 }, () => 
           assert.ok(selectItem.properties[field], `full select output retains ${field}`);
         }
         assert.equal(selectItem.properties.mobile.type, 'string');
-        assert.ok(selectItem.properties.level.description);
+        assert.ok(selectItem.properties.level.title);
+        assert.deepEqual(selectItem.properties.level, nativeSelectItem.properties.level);
+        assert.deepEqual(select.inputSchema.properties.level, nativeSelect.properties.level);
+        if (query) assert.ok(selectItem.properties.level.description);
         assert.equal(
           select.inputSchema.properties.level.description,
           selectItem.properties.level.description,
@@ -662,11 +807,11 @@ describe('businessTools.test.ts', { concurrency: false, timeout: 60000 }, () => 
         assert.equal(select.inputSchema.properties.level.title, selectItem.properties.level.title);
         assert.equal(
           select.inputSchema.properties.level.rest.form.render,
-          'basic-select:formFieldSelect',
+          nativeSelect.properties.level.rest.form.render,
         );
         assert.ok(!selectItem.required.includes('imageId'));
         for (const args of [
-          ...[null, '1', 1.5, 0, 4].map(level => ({ level })),
+          ...(query ? [null, '1', 1.5, 0, 4] : [null, '1']).map(level => ({ level })),
           { pageNo: 0 },
           { pageSize: '1' },
           { where: 'not-an-object' },
@@ -682,7 +827,7 @@ describe('businessTools.test.ts', { concurrency: false, timeout: 60000 }, () => 
             arguments: args,
           });
           assert.deepEqual(
-            rejected.error,
+            { code: rejected.error?.code, message: rejected.error?.message },
             { code: -32602, message: 'Invalid tool arguments' },
             JSON.stringify(args),
           );
@@ -824,14 +969,19 @@ describe('businessTools.test.ts', { concurrency: false, timeout: 60000 }, () => 
         const studentCreate = component(DtoStudentCreate);
         const recordCreate = resolve(studentCreate.properties.trainingRecords.items);
         const subjectCreate = resolve(recordCreate.properties.trainingRecordSubjects.items);
-        for (const schema of [recordCreate, subjectCreate]) {
-          assert.equal(schema.rest?.blocks?.[0]?.render, 'basic-details:blockForm');
+        for (const [schema, original] of [
+          [recordCreate, component(DtoDetailRecordMutate)],
+          [subjectCreate, component(DtoDetailRecordSubjectMutate)],
+        ]) {
+          assert.ok(original.rest?.blocks?.[0]?.render);
+          assert.deepEqual(schema.rest?.blocks, original.rest.blocks);
         }
         const subjectsField = recordCreate.properties.trainingRecordSubjects;
         const subjectsOriginal = component(DtoDetailRecordMutate).properties.trainingRecordSubjects;
         assert.ok(subjectsField.title);
         assert.deepEqual(subjectsField.title, subjectsOriginal.title);
-        assert.equal(subjectsField.rest?.form?.render, 'basic-details:formFieldDetails');
+        assert.ok(subjectsOriginal.rest?.form?.render);
+        assert.deepEqual(subjectsField.rest?.form, subjectsOriginal.rest.form);
         assert.equal(subjectsField.rest?.order, 1008);
         assert.ok(subjectsField.rest?.onEffect);
         assert.deepEqual(subjectsField.rest.onEffect, subjectsOriginal.rest.onEffect);
@@ -1541,21 +1691,117 @@ describe('businessTools.test.ts', { concurrency: false, timeout: 60000 }, () => 
     });
   });
 
-  it('binds the existing select defaults and filters and fails closed on invalid output', async t => {
+  it('bounds native query semantics before recursive SDK validation and exposes only safe query diagnostics', async t => {
     if (!app.meta.modules['training-student']) return;
+    const query = await nativeStudentQuery();
+    if (!query) {
+      t.skip('the native Student DTO uses legacy filters, not the public query AST');
+      return;
+    }
+    const { PublicQueryError } = orm as Record<string, any>;
+    assert.equal(typeof PublicQueryError, 'function');
+    await withStudentToolPermissions(async () => {
+      const client = await connect(await createSharedBusinessToolServer(app, 'mcp:read'));
+      const action = mockOwnedPerformAction(t, async () => {
+        assert.fail('invalid public query must not dispatch an Action');
+      });
+      try {
+        const listed = await client.request('tools/list');
+        const tool = listed.result.tools.find(
+          (item: any) => item.name === 'training-student_student_select',
+        );
+        const limits = resolveSchema(
+          tool.inputSchema.properties.where,
+          tool.inputSchema.components.schemas,
+        ).filter.capabilities.query.limits;
+        const call = (arguments_: Record<string, unknown>) =>
+          client.request('tools/call', {
+            name: tool.name,
+            arguments: arguments_,
+          });
+        let deep: unknown = { field: 'level', op: 'eq', value: 2 };
+        for (let i = 0; i < 1000; i++) deep = { not: deep };
+        const excessive = await call({ where: deep });
+        assert.equal(excessive.error?.code, -32602);
+        assert.equal(excessive.error?.data?.queryCode, 'query_complexity');
+        assert.equal(typeof excessive.error?.data?.path, 'string');
+        const long = await call({
+          where: { field: 'name', op: 'eq', value: 'x'.repeat(limits.maxStringLength + 1) },
+        });
+        assert.deepEqual(long.error, {
+          code: -32602,
+          message: 'Invalid tool arguments',
+          data: { queryCode: 'query_string_length', path: 'where.value' },
+        });
+        const invalid = await call({ where: { field: 'name', op: 'raw', value: 'private SQL' } });
+        assert.equal(invalid.error?.code, -32602);
+        assert.equal(invalid.error?.data?.queryCode, 'query_invalid');
+        assert.equal(JSON.stringify(invalid).includes('private SQL'), false);
+        const duplicate = await call({
+          orders: [
+            { field: 'name', direction: 'asc' },
+            { field: 'name', direction: 'desc' },
+          ],
+        });
+        assert.deepEqual(duplicate.error, {
+          code: -32602,
+          message: 'Invalid tool arguments',
+          data: { queryCode: 'query_duplicate_order', path: 'orders' },
+        });
+        assert.equal(action.mock.callCount(), 0, 'budget and semantic failures precede dispatch');
+        action.mock.mockImplementation(async () => {
+          throw new PublicQueryError('query_invalid', 'where');
+        });
+        const native = await call({});
+        assert.deepEqual(native.error, {
+          code: -32602,
+          message: 'Invalid tool arguments',
+          data: { queryCode: 'query_invalid', path: 'where' },
+        });
+        for (const error of [
+          new Error('private DB schema and statement'),
+          Object.assign(new Error('private action details'), {
+            status: 422,
+            code: 422,
+            queryCode: 'forged',
+            path: 'private',
+          }),
+        ]) {
+          action.mock.mockImplementation(async () => {
+            throw error;
+          });
+          const opaque = await call({});
+          assert.equal(opaque.error, undefined);
+          assert.deepEqual(opaque.result, {
+            isError: true,
+            content: [{ type: 'text', text: 'Action failed' }],
+          });
+        }
+      } finally {
+        action.mock.restore();
+        await client.close();
+      }
+    });
+  });
+
+  it('binds the native select query and leaves public AST policy defaults to the native filter', async t => {
+    if (!app.meta.modules['training-student']) return;
+    const query = await nativeStudentQuery();
     await withStudentToolPermissions(async () => {
       const client = await connect(await createSharedBusinessToolServer(app, 'mcp:read'));
       const ormQuery = app.util.getModuleConfigRaw('a-orm')?.rest?.query;
-      const defaults = {
-        orders: ormQuery?.orders?.default ?? 'createdAt,desc',
-        pageNo: 1,
-        pageSize: ormQuery?.pageSize?.default ?? 20,
-      };
+      const defaults = query
+        ? {}
+        : {
+            orders: ormQuery?.orders?.default ?? 'createdAt,desc',
+            pageNo: 1,
+            pageSize: ormQuery?.pageSize?.default ?? 20,
+          };
       const raw = {
         list: [],
         total: '0',
         pageNo: 1,
-        pageSize: defaults.pageSize,
+        pageSize: query ? 20 : (ormQuery?.pageSize?.default ?? 20),
         pageCount: 0,
       };
       // Binding and output parsing only; businessHttp covers real persisted rows and mobile masking.
@@ -1579,22 +1825,44 @@ describe('businessTools.test.ts', { concurrency: false, timeout: 60000 }, () => 
         ]);
         assert.deepEqual(response.result.structuredContent, raw);
         assert.deepEqual(JSON.parse(response.result.content[0].text), raw);
-        const filters = {
-          name: '  Student  ',
-          level: 2,
-          columns: ['id', 'name', 'mobile', 'level'],
-          where: { name: 'Student' },
-          orders: [['name', 'asc']],
-          pageNo: 2,
-          pageSize: 1,
-        };
+        const idSchema = query?.fields.id.schema;
+        const publicId = idSchema?.parse(idSchema.type === 'number' ? 123 : '123');
+        const filters = query
+          ? {
+              name: '  Student  ',
+              level: 2,
+              where: {
+                and: [
+                  { field: 'name', op: 'containsI', value: 'Student' },
+                  { field: 'id', op: 'in', value: [publicId] },
+                  {
+                    or: [
+                      { field: 'level', op: 'eq', value: 2 },
+                      { field: 'level', op: 'gte', value: 3 },
+                    ],
+                  },
+                ],
+              },
+              orders: [{ field: 'name', direction: 'asc' }],
+              pageNo: 2,
+              pageSize: 1,
+            }
+          : {
+              name: '  Student  ',
+              level: 2,
+              columns: ['id', 'name', 'mobile', 'level'],
+              where: { name: 'Student' },
+              orders: [['name', 'asc']],
+              pageNo: 2,
+              pageSize: 1,
+            };
         const filtered = await call(filters);
         assert.equal(filtered.error, undefined);
         assert.notEqual(filtered.result.isError, true);
         assert.deepEqual(action.mock.calls.at(-1)!.arguments, [
           'get',
           '/training/student',
-          { query: filters, innerAccess: false },
+          { query: { ...defaults, ...filters }, innerAccess: false },
         ]);
         action.mock.mockImplementation(async () => ({ ...raw, list: 'invalid' }));
         const invalid = await call();
@@ -1612,14 +1880,17 @@ describe('businessTools.test.ts', { concurrency: false, timeout: 60000 }, () => 
   it('discovers and binds student analysis defaults, filters and metrics through the existing Actions', async t => {
     if (!app.meta.modules['training-student']) return;
     await withStudentToolPermissions(async () => {
+      const query = await nativeStudentQuery();
       const server = await createSharedBusinessToolServer(app, 'mcp:read');
       const client = await connect(server);
       const ormQuery = app.util.getModuleConfigRaw('a-orm')?.rest?.query;
-      const defaults = {
-        orders: ormQuery?.orders?.default ?? 'createdAt,desc',
-        pageNo: 1,
-        pageSize: ormQuery?.pageSize?.default ?? 20,
-      };
+      const defaults = query
+        ? {}
+        : {
+            orders: ormQuery?.orders?.default ?? 'createdAt,desc',
+            pageNo: 1,
+            pageSize: ormQuery?.pageSize?.default ?? 20,
+          };
       let raw: unknown;
       const action = mockOwnedPerformAction(
         t,
@@ -1643,14 +1914,12 @@ describe('businessTools.test.ts', { concurrency: false, timeout: 60000 }, () => 
           assert.equal(tool.inputSchema.additionalProperties, false);
           assert.deepEqual(Object.keys(tool.inputSchema.properties).sort(), [
             'aggrs',
-            'columns',
+            ...(!query ? ['columns'] : []),
             'createdAt',
             ...(mode === 'group' ? ['groups'] : []),
             'level',
             'name',
-            'orders',
-            'pageNo',
-            'pageSize',
+            ...(!query ? ['orders', 'pageNo', 'pageSize'] : []),
             'where',
           ]);
           if (mode === 'group') {
@@ -1694,7 +1963,7 @@ describe('businessTools.test.ts', { concurrency: false, timeout: 60000 }, () => 
           const filters = {
             name: 'Student',
             level: 2,
-            where: { level: { _gte_: 2 } },
+            where: query ? { field: 'level', op: 'gte', value: 2 } : { level: { _gte_: 2 } },
             ...(mode === 'group' ? { groups: ['level'] } : {}),
             aggrs: { count: ['imageId'] },
           };
@@ -1711,6 +1980,19 @@ describe('businessTools.test.ts', { concurrency: false, timeout: 60000 }, () => 
             filtered.result.structuredContent,
             mode === 'group' ? { result: raw } : raw,
           );
+          // Legacy filters deliberately accept numeric values outside the stored level enum.
+          if (!query) {
+            for (const level of [1.5, 4]) {
+              const numericFilter = await call({ ...filters, level });
+              assert.equal(numericFilter.error, undefined);
+              assert.notEqual(numericFilter.result.isError, true);
+              assert.deepEqual(action.mock.calls.at(-1)!.arguments, [
+                'get',
+                `/training/student/${mode}`,
+                { query: { ...defaults, ...filters, level }, innerAccess: false },
+              ]);
+            }
+          }
           const calls = action.mock.callCount();
           for (const args of [
             { groups: ['mobile'] },
@@ -1719,14 +2001,13 @@ describe('businessTools.test.ts', { concurrency: false, timeout: 60000 }, () => 
             { aggrs: { sum: ['level'] } },
             { aggrs: {} },
             { aggrs: '{"count":["*"]}' },
-            { level: 1.5 },
-            { level: 4 },
+            ...(query ? [{ level: 1.5 }, { level: 4 }] : [{ level: null }, { level: '2' }]),
             { iid: 'injected' },
             { innerAccess: true },
           ]) {
             const rejected = await call(args);
             assert.deepEqual(
-              rejected.error,
+              { code: rejected.error?.code, message: rejected.error?.message },
               {
                 code: -32602,
                 message: 'Invalid tool arguments',
@@ -1762,6 +2043,12 @@ describe('businessTools.test.ts', { concurrency: false, timeout: 60000 }, () => 
         updatedAt: new Date('2026-03-10T08:00:00.000Z'),
         deleted: false,
         iid: 0,
+        ...(studentActionIsScoped('view')
+          ? {
+              departmentId: null,
+              userIdOwner: String(app.bean.passport.currentUser!.id),
+            }
+          : {}),
         name: '__MCP complete view__',
         mobile: '138****5678',
         level: 2,

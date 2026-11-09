@@ -1,4 +1,4 @@
-import type { IQueryParams } from 'vona-module-a-orm';
+import type { TypeQueryInput } from 'vona-module-a-orm';
 
 import { isNil } from '@cabloy/utils';
 import assert from 'node:assert';
@@ -6,11 +6,14 @@ import { describe, it } from 'node:test';
 import { $protocolKey } from 'vona';
 import { app } from 'vona-mock';
 
+import type { postQuery } from '../../src/dto/postSelectReq.ts';
+
+const is422 = (error: { code?: number }) => error.code === 422;
+
 describe('dtoQuery.test.ts', () => {
-  it('action:dtoQuery', async () => {
+  it('returns canonical public predicates without compiling ORM controls', async () => {
     await app.bean.executor.mockCtx(async () => {
-      // findManyEcho
-      const resEcho: IQueryParams = await app.bean.executor.performAction(
+      const resEcho: TypeQueryInput<typeof postQuery> = await app.bean.executor.performAction(
         'get',
         '/test/vona/post/findManyEcho',
         {
@@ -18,13 +21,8 @@ describe('dtoQuery.test.ts', () => {
             [$protocolKey('x-vona-tz')]: 'Asia/Tokyo',
           },
           query: {
-            columns: 'id,title', // ['id', 'title'],
-            where: {
-              stars: {
-                _gt_: 12,
-              },
-            },
-            orders: [['userName', 'asc']],
+            where: { field: 'stars', op: 'gt', value: 12 },
+            orders: [{ field: 'userName', direction: 'asc' }],
             pageNo: 2,
             pageSize: 30,
             title: 'ai',
@@ -33,73 +31,52 @@ describe('dtoQuery.test.ts', () => {
           },
         },
       );
-      assert.deepEqual(resEcho.columns, ['id', 'title']);
-      assert.deepEqual(resEcho.where, {
-        'stars': { _gt_: 12 },
-        'title': { _includesI_: 'ai' },
-        'testVonaUser.name': { _eqI_: 'tom' },
-        'createdAt': {
-          _gte_: new Date('2025-11-30T15:00:00.000Z'),
-          _lt_: new Date('2025-12-02T15:00:00.000Z'),
-        },
-      });
-      assert.deepEqual(resEcho.orders, [['testVonaUser.name', 'asc']]);
-      assert.deepEqual(resEcho.joins, [
-        ['innerJoin', 'testVonaUser', ['userId', 'testVonaUser.id']],
-      ]);
-      assert.equal(resEcho.offset, 30);
-      assert.equal(resEcho.limit, 30);
-      // findManyEcho: null in where
-      const resEchoNull: IQueryParams = await app.bean.executor.performAction(
-        'get',
-        '/test/vona/post/findManyEcho',
+      assert.ok(resEcho.where && 'and' in resEcho.where);
+      // AND contributions are complete without making schema-property order a contract.
+      const predicates = resEcho.where.and;
+      assert.deepEqual(
+        { ...resEcho, where: undefined },
         {
-          query: {
-            where: {
-              title: null,
-            },
-          },
+          where: undefined,
+          orders: [{ field: 'userName', direction: 'asc' }],
+          pageNo: 2,
+          pageSize: 30,
         },
       );
-      assert.deepEqual(resEchoNull.where, {
-        title: null,
-      });
-      // findManyEcho: null in field
-      const resEchoFieldNull: IQueryParams = await app.bean.executor.performAction(
+      assert.deepEqual(
+        predicates.map(predicate => JSON.stringify(predicate)).sort(),
+        [
+          { field: 'stars', op: 'gt', value: 12 },
+          { field: 'title', op: 'containsI', value: 'ai' },
+          {
+            and: [
+              { field: 'createdAt', op: 'gte', value: '2025-11-30T15:00:00.000Z' },
+              { field: 'createdAt', op: 'lt', value: '2025-12-02T15:00:00.000Z' },
+            ],
+          },
+          { field: 'userName', op: 'eqI', value: 'tom' },
+        ]
+          .map(predicate => JSON.stringify(predicate))
+          .sort(),
+      );
+      for (const query of [{ where: { field: 'title', op: 'isNull' } }, { title: 'null' }]) {
+        const result = await app.bean.executor.performAction(
+          'get',
+          '/test/vona/post/findManyEcho',
+          { query },
+        );
+        assert.deepEqual(result, { where: { field: 'title', op: 'isNull' } });
+      }
+      const dateNull = await app.bean.executor.performAction(
         'get',
         '/test/vona/post/findManyEcho',
-        {
-          query: {
-            title: 'null',
-          },
-        },
+        { query: { createdAt: 'null' } },
       );
-      assert.deepEqual(resEchoFieldNull.where, {
-        title: null,
-      });
-      // findManyEcho: null in custom transform field
-      const resEchoDateNull: IQueryParams = await app.bean.executor.performAction(
-        'get',
-        '/test/vona/post/findManyEcho',
-        {
-          query: {
-            createdAt: 'null',
-          },
-        },
-      );
-      assert.deepEqual(resEchoDateNull.where, {
-        createdAt: null,
-      });
-      // findMany
+      assert.deepEqual(dateNull, { where: { field: 'createdAt', op: 'isNull' } });
       const res = await app.bean.executor.performAction('get', '/test/vona/post/findMany', {
         query: {
-          columns: 'id,title', // ['id', 'title'],
-          where: {
-            stars: {
-              _gt_: 12,
-            },
-          },
-          orders: [['testVonaPost.createdAt', 'desc']],
+          where: { field: 'stars', op: 'gt', value: 12 },
+          orders: [{ field: 'createdAt', direction: 'desc' }],
           pageNo: 2,
           pageSize: 30,
           title: 'ai',
@@ -108,6 +85,52 @@ describe('dtoQuery.test.ts', () => {
       });
       assert.equal(Array.isArray(res.list), true);
       assert.equal(!isNil(res.total), true);
+    });
+  });
+
+  it('returns bounded machine-readable query diagnostics over HTTP without submitted values', async () => {
+    await app.bean.executor.mockCtx(async () => {
+      const submittedValue = 'private-submitted-projection-value';
+      const url = new URL(app.util.getAbsoluteUrlByApiPath('/test/vona/post/findManyEcho'));
+      url.searchParams.set('columns', submittedValue);
+      const response = await fetch(url, { headers: { Accept: 'application/json' } });
+      assert.equal(response.status, 422);
+      const text = await response.text();
+      const body = JSON.parse(text);
+      assert.equal(body.code, 422);
+      assert.deepEqual(body.errors, {
+        queryCode: 'query_unknown_control',
+        path: 'columns',
+      });
+      assert.ok(Buffer.byteLength(text, 'utf8') < 512);
+      assert.equal(text.includes(submittedValue), false);
+    });
+  });
+
+  it('rejects legacy DSL, projection and internal controls at the public boundary', async () => {
+    await app.bean.executor.mockCtx(async () => {
+      for (const query of [
+        { where: { stars: { _gt_: 12 } } },
+        { where: { field: 'stars', op: 'gt', value: '12' } },
+        { where: { field: 'testVonaPost.title', op: 'eq', value: 'title' } },
+        { where: { field: 'title', op: 'eq', value: null } },
+        { where: '{invalid' },
+        { orders: [['title', 'asc']] },
+        { orders: [{ field: 'testVonaPost.title', direction: 'asc' }] },
+        { columns: 'id,title' },
+        { columns: ['id'] },
+        { joins: [] },
+        { include: { user: true } },
+        { limit: 1 },
+        { offset: 0 },
+        { pageNo: 0 },
+        { pageSize: 101 },
+      ]) {
+        await assert.rejects(
+          () => app.bean.executor.performAction('get', '/test/vona/post/findManyEcho', { query }),
+          is422,
+        );
+      }
     });
   });
 });

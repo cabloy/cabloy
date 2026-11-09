@@ -108,8 +108,45 @@ async function boundedResponse(response: Response, requestId: unknown): Promise<
   ) {
     body.id = requestId;
   }
-  const output = body.error ? errorBody(body.error.code, body.id) : body;
-  // Do not forward SDK diagnostic headers or caller-controlled error data.
+  let output = body.error ? errorBody(body.error.code, body.id) : body;
+  // Only the mapper's PublicQueryError boundary emits this exact envelope.
+  // Rebuild a bounded, reviewed diagnostic pair; never forward arbitrary SDK
+  // error data, action errors, messages, or caller-supplied lookalike fields.
+  const queryCodes = new Set([
+    'query_bytes',
+    'query_complexity',
+    'query_cycle',
+    'query_duplicate_order',
+    'query_invalid',
+    'query_list_length',
+    'query_offset',
+    'query_predicate_depth',
+    'query_shape',
+    'query_string_length',
+  ]);
+  const data = body.error?.data;
+  if (
+    body.error?.code === -32602 &&
+    body.error.message === 'Invalid tool arguments' &&
+    data &&
+    typeof data === 'object' &&
+    !Array.isArray(data) &&
+    Object.keys(data).length === 2 &&
+    queryCodes.has(data.queryCode) &&
+    typeof data.path === 'string' &&
+    data.path.length <= 256 &&
+    /^[\w.]*$/.test(data.path)
+  ) {
+    output = {
+      ...output,
+      error: {
+        code: -32602,
+        message: 'Invalid tool arguments',
+        data: { queryCode: data.queryCode, path: data.path },
+      },
+    };
+  }
+  // Do not forward SDK diagnostic headers or other caller-controlled error data.
   return new Response(JSON.stringify(output), {
     status: response.status,
     headers: { 'content-type': 'application/json', 'cache-control': 'no-store' },

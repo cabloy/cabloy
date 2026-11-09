@@ -1,6 +1,6 @@
 # ORM Select Guide
 
-This guide explains how ORM select operations work in Vona within the Cabloy monorepo.
+This guide explains **trusted server-authored ORM** select operations in Vona within the Cabloy monorepo. Its property-keyed `where`, underscore operators, tuple orders, joins, Raw and Ref examples are not public request payloads. For HTTP, MCP and generated frontend query inputs, use the policy-bound [Public Query Guide](/backend/public-query-guide); there is no public raw-ORM fallback.
 
 ## Why select operations matter
 
@@ -117,7 +117,7 @@ The operator model is broad and includes examples like:
 - case-insensitive variants
 - `_ref_`
 
-That operator vocabulary is part of the Cabloy data language and should be reused consistently.
+That operator vocabulary belongs to the trusted ORM DSL. Public predicate operators and shapes are deliberately different.
 
 A practical operator-family reading is:
 
@@ -163,7 +163,7 @@ await this.scope.model.post.select({
 
 The same direct-`where` rule applies to filters used by mutation, aggregate, and group operations.
 
-That distinction also matters at the request-contract layer: omitting a nullable filter and passing a real `null` are different operations. When a query DTO needs `IS NULL` behavior from frontend query params, the parsing contract must explicitly preserve `null` instead of collapsing it to omission.
+At the public request boundary, use an admitted `{ field, op: 'isNull' }` or `{ field, op: 'isNotNull' }` leaf, without `value`. Public `eq` with `null` is invalid; the trusted `{ publishedAt: null }` shorthand above is not a public AST.
 
 ## Joint operators and subqueries
 

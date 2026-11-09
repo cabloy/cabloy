@@ -244,7 +244,6 @@ This is why table work often belongs in the broader contract loop when the real 
     align: 'left',
     width: 240,
     fixed: 'left',
-    enableSorting: true,
     sortDescFirst: true,
   }),
   v.string(),
@@ -260,7 +259,7 @@ The current options are:
 | `align`         | Applies `left`, `center`, or `right` text alignment to the header and cells.                                                   |
 | `width`         | Supplies the TanStack column size and current renderers apply it as pixel width and minimum width.                             |
 | `fixed`         | Pins the column to the `left` or `right`; the table runtime calculates pinning and renderers apply sticky offsets.             |
-| `enableSorting` | Requests a sortable header, subject to the order-schema capability described below.                                            |
+| `enableSorting` | Defaults to the query's `orderable` capability; `false` suppresses the sortable header, while `true` cannot grant capability.  |
 | `sortDescFirst` | Makes the first header toggle descend; it does not change backend order syntax.                                                |
 
 `ZovaRender.column(...)` configures the physical column. `ZovaRender.cell(...)` independently selects the cell renderer and its options. For example, a virtual Operations field can be right-pinned and centered while its content comes from a reusable `tableCell` resource:
@@ -279,7 +278,9 @@ The `basic-table:*` renderer key in this example is Cabloy Basic-specific. The `
 
 ### Enable server-backed sorting
 
-`enableSorting: true` is necessary but not sufficient. The same field, canonical key, or schema alias must also exist in `schemaOrder`; otherwise the table deliberately creates a non-sortable column.
+Declare sortable fields in the select query policy's `orderable` list. The table reads the published query capabilities from `schemaOrder` and enables eligible columns by default; entity metadata does not need to repeat `enableSorting: true`. A column key maps through `conveniences[column].field` when declared, otherwise it is used unchanged. The mapped field must be in `orderable`.
+
+Use `ZovaRender.column({ enableSorting: false })` to hide sorting for a particular column without removing its API capability. Explicit `true` cannot override an absent capability, and a table without an orderable query capability remains non-sortable. `sortDescFirst` remains an independent first-toggle preference; backend default orders belong in the query policy.
 
 A direct `ZTable` consumer owns and passes `schemaOrder`, controlled `sorting`, and `onSortingChange`. In the standard Cabloy Basic resource-page path, `basic-page:blockTable` passes those values from `basic-page:blockPage`; the page translates one manual table sort into backend `orders` and reloads the resource query. The loaded page is not client-side sorted by TanStack.
 

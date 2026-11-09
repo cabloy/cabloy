@@ -6,14 +6,14 @@ import { Dto } from 'vona-module-a-web';
 import z from 'zod';
 import { ZovaRender } from 'zova-rest-cabloy-start-admin';
 
-import { Entity<%=argv.resourceNameCapitalize%> } from '../entity/<%=argv.resourceName%>.tsx';
+import { <%=argv.resourceName%>Query } from '../lib/<%=argv.resourceName%>Query.ts';
 import { <%=argv.resourceName%>Analysis } from '../lib/<%=argv.resourceName%>Analysis.ts';
 
 export interface IDtoOptions<%=argv.resourceNameCapitalize%>SelectReq extends IDecoratorDtoOptions {}
 
 @Dto<IDtoOptions<%=argv.resourceNameCapitalize%>SelectReq>({
+  query: <%=argv.resourceName%>Query,
   analysis: <%=argv.resourceName%>Analysis,
-  openapi: { filter: { table: '<%=argv.moduleResourceName%>' } },
   fields: {
     name: $makeSchema(v.optional(), z.string()),
     createdAt: $makeSchema(
@@ -24,4 +24,4 @@ export interface IDtoOptions<%=argv.resourceNameCapitalize%>SelectReq extends ID
     ),
   },
 })
-export class Dto<%=argv.resourceNameCapitalize%>SelectReq extends $Dto.queryPage(Entity<%=argv.resourceNameCapitalize%>, ['name', 'createdAt']) {}
+export class Dto<%=argv.resourceNameCapitalize%>SelectReq extends $Dto.queryPage(<%=argv.resourceName%>Query, ['name', 'createdAt']) {}

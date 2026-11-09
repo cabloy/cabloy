@@ -32,6 +32,7 @@ import {
 } from 'zova';
 import { isJsxComponent, ZovaJsx } from 'zova-jsx';
 import { Controller } from 'zova-module-a-bean';
+import { getQueryCapabilities, getQueryOrderField } from 'zova-module-a-openapi';
 
 import type { ITableMeta, TypeColumn, TypeTableGetColumns } from '../../types/table.ts';
 import type {
@@ -97,6 +98,13 @@ export class ControllerTable<TData extends {} = {}> extends BeanControllerTableB
     // watch
     this.$watch(
       () => this.$props.schema,
+      async (newValue, oldValue) => {
+        if (deepEqual(newValue, oldValue)) return;
+        await this.refreshMeta();
+      },
+    );
+    this.$watch(
+      () => this.$props.schemaOrder,
       async (newValue, oldValue) => {
         if (deepEqual(newValue, oldValue)) return;
         await this.refreshMeta();
@@ -268,7 +276,7 @@ export class ControllerTable<TData extends {} = {}> extends BeanControllerTableB
           },
           cell: props => tableMeta.renders[key](props),
           size: this._getLayoutWidth(key),
-          enableSorting: property.rest?.enableSorting === true && this._isOrderable(property),
+          enableSorting: this._isOrderable(property) && property.rest?.enableSorting !== false,
           sortDescFirst: property.rest?.sortDescFirst === true,
           meta: {
             rest: {
@@ -345,10 +353,11 @@ export class ControllerTable<TData extends {} = {}> extends BeanControllerTableB
   }
 
   private _isOrderable(property: ISchemaObjectExtensionField) {
-    const properties = this.$props.schemaOrder?.properties;
-    if (!properties) return false;
-    const keys = [property.key, property.schemaKey, ...(property.schemaKeys ?? [])];
-    return keys.some(key => key && Object.prototype.hasOwnProperty.call(properties, key));
+    const orderable = getQueryCapabilities(this.$props.schemaOrder)?.orderable;
+    return (
+      !!property.key &&
+      orderable?.includes(getQueryOrderField(this.$props.schemaOrder, property.key)) === true
+    );
   }
 
   private _createProperties() {

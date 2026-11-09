@@ -18,9 +18,7 @@ export class ServiceProduct extends BeanBase {
   }
 
   async select(params?: IQueryParams<ModelProduct>): Promise<DtoProductSelectRes> {
-    return await this.scope.model.product.selectAndCount({
-      ...params,
-    });
+    return await this.scope.model.product.selectAndCount(params);
   }
 
   async view(id: TableIdentity): Promise<DtoProductView | undefined> {

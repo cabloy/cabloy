@@ -10,6 +10,7 @@ import path from 'node:path';
 import { describe, it } from 'node:test';
 import { app } from 'vona-mock';
 import { $schema } from 'vona-module-a-openapiutils';
+import { prepareAnalysisFilter } from 'vona-module-a-web';
 
 import { DtoStudentAggregateRes } from '../src/dto/studentAggregateRes.tsx';
 import { DtoStudentGroupResItem } from '../src/dto/studentGroupResItem.tsx';
@@ -44,13 +45,18 @@ async function readAnalysis(query: Record<string, unknown>) {
 }
 
 describe('studentAnalysis.test.ts', { concurrency: false }, () => {
-  it('keeps select unchanged and emits optional analysis response field supersets', async () => {
+  it('emits public query controls and optional analysis response field supersets', async () => {
     await app.bean.executor.mockCtx(async () => {
       const request = $schema(DtoStudentSelectReq);
-      const requestMetadata = ZodMetadata.getOpenapiMetadata(request) as
-        | ISchemaObjectExtensionField
-        | undefined;
-      assert.equal(requestMetadata?.filter?.table, 'trainingStudent');
+      const requestMetadata = ZodMetadata.getOpenapiMetadata(
+        prepareAnalysisFilter(DtoStudentSelectReq).schema,
+      ) as ISchemaObjectExtensionField | undefined;
+      assert.deepEqual(requestMetadata?.filter?.capabilities?.query?.orderable, [
+        'id',
+        'name',
+        'level',
+        'createdAt',
+      ]);
       assert.equal(request.safeParse({}).success, true);
       assert.equal(
         request.safeParse({ name: 'Student', level: 2, createdAt: '2026-03-10~2026-03-10' })
@@ -59,9 +65,8 @@ describe('studentAnalysis.test.ts', { concurrency: false }, () => {
       );
       assert.equal(
         request.safeParse({
-          where: { level: { _gte_: 2 } },
-          columns: ['name'],
-          orders: 'level,desc',
+          where: { field: 'level', op: 'gte', value: 2 },
+          orders: [{ field: 'level', direction: 'desc' }],
           pageNo: 2,
           pageSize: 1,
         }).success,
@@ -78,7 +83,7 @@ describe('studentAnalysis.test.ts', { concurrency: false }, () => {
       for (const [DtoClass, expectedFields] of [
         [
           DtoStudentSelectReq,
-          ['columns', 'createdAt', 'level', 'name', 'orders', 'pageNo', 'pageSize', 'where'],
+          ['createdAt', 'level', 'name', 'orders', 'pageNo', 'pageSize', 'where'],
         ],
         [DtoStudentGroupResItem, ['count_all', 'count_imageId', 'level']],
         [DtoStudentAggregateRes, ['count_all', 'count_imageId']],
@@ -185,6 +190,15 @@ describe('studentAnalysis.test.ts', { concurrency: false }, () => {
           }),
           { count_imageId: '1' },
         );
+        const internalSelected = await student.service.student.select({
+          where: { name: { _startsWith_: name } },
+          orders: [['createdAt', 'desc']],
+          limit: 1,
+          offset: 1,
+        });
+        assert.equal(internalSelected.total, '3');
+        assert.equal(internalSelected.list.length, 1);
+        assert.equal(internalSelected.list[0].level, 1);
         const selected = await app.bean.executor.performAction('get', '/training/student', {
           query: { name, pageSize: 1 },
         });
@@ -207,7 +221,6 @@ describe('studentAnalysis.test.ts', { concurrency: false }, () => {
           url.searchParams.set('name', name);
           url.searchParams.set('pageNo', '1');
           url.searchParams.set('pageSize', '20');
-          url.searchParams.set('where', '{}');
           if (level !== undefined) url.searchParams.set('level', String(level));
           const response = await fetch(url, {
             headers: {
@@ -334,23 +347,29 @@ describe('studentAnalysis.test.ts', { concurrency: false }, () => {
           () => student.service.student.aggregate({ groups: ['level'] } as never),
           (error: { code?: number }) => error.code === 422,
         );
+        for (const action of ['group', 'aggregate'] as const) {
+          for (const controls of [
+            { columns: ['name'] },
+            { orders: [{ field: 'level', direction: 'desc' }] },
+            { pageNo: 2 },
+            { pageSize: 1 },
+          ]) {
+            await assert.rejects(
+              () =>
+                app.bean.executor.performAction('get', `/training/student/${action}`, {
+                  query: { name, ...controls },
+                }),
+              (error: { code?: number }) => error.code === 422,
+            );
+          }
+        }
+        // Canonical predicates compose with named filters; neither can override the other.
         assert.deepEqual(
-          await readAnalysis({
-            name,
-            columns: ['name'],
-            orders: 'level,desc',
-            pageNo: 2,
-            pageSize: 1,
-          }),
-          initial,
+          await readAnalysis({ name, level: 1, where: { field: 'level', op: 'eq', value: 2 } }),
+          empty,
         );
-        // Raw predicates are shared with select and take precedence over named filters.
         assert.deepEqual(
-          await readAnalysis({
-            name,
-            level: 1,
-            where: { level: 2 },
-          }),
+          await readAnalysis({ name, where: { field: 'level', op: 'eq', value: 2 } }),
           {
             groups: [{ level: 2, count_all: '1' }],
             aggregate: { count_all: '1', count_imageId: '0' },

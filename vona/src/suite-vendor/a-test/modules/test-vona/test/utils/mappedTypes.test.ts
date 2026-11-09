@@ -24,7 +24,7 @@ class DtoUserWithMarried extends $Class.omit(DtoUser, ['married']) {
   openapi: {
     title: 'User filter',
     description: 'Inherited filter metadata',
-    filter: { table: 'testVonaUser', capabilities: { order: false } },
+    filter: { capabilities: { where: false, order: false } },
   },
   fields: { name: { title: 'Filter name' } },
 })
@@ -37,7 +37,7 @@ class DtoUserFilterInherited extends DtoUserFilter {}
 class DtoUserFilterPicked extends $Class.pick(DtoUserFilter, ['name']) {}
 
 @Dto({
-  openapi: { title: 'Post filter', filter: { table: 'testVonaPost' } },
+  openapi: { title: 'Post filter', filter: { capabilities: { where: true } } },
 })
 class DtoUserFilterOverride extends $Class.pick(DtoUserFilter, ['name']) {}
 
@@ -47,8 +47,7 @@ describe('mappedTypes.test.ts', () => {
       const parentMetadata = $makeMetadata($schema(DtoUserFilter));
       assert.equal(parentMetadata?.title, 'User filter');
       assert.deepEqual(parentMetadata?.filter, {
-        table: 'testVonaUser',
-        capabilities: { order: false },
+        capabilities: { where: false, order: false },
       });
       for (const DtoClass of [DtoUserFilterInherited, DtoUserFilterPicked]) {
         const metadata = $makeMetadata($schema(DtoClass));
@@ -67,14 +66,12 @@ describe('mappedTypes.test.ts', () => {
       assert.equal(overrideMetadata?.title, 'Post filter');
       assert.equal(overrideMetadata?.description, 'Inherited filter metadata');
       assert.deepEqual(overrideMetadata?.filter, {
-        table: 'testVonaPost',
-        capabilities: { order: false },
+        capabilities: { where: true, order: false },
       });
       const parentMetadataAfter = $makeMetadata($schema(DtoUserFilter));
       assert.equal(parentMetadataAfter?.title, 'User filter');
       assert.deepEqual(parentMetadataAfter?.filter, {
-        table: 'testVonaUser',
-        capabilities: { order: false },
+        capabilities: { where: false, order: false },
       });
     });
   });

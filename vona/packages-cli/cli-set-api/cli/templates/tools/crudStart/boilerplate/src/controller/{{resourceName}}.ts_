@@ -1,15 +1,16 @@
 import type { TableIdentity } from 'table-identity';
-import type { IQueryParams, TypeAnalysisGroupParams, TypeAnalysisAggregateParams } from 'vona-module-a-orm';
+import type { TypeQueryInput, TypeQueryGroupInput, TypeQueryAggregateInput } from 'vona-module-a-orm';
 import type { IRbacScopeAccess } from 'vona-module-a-rbac';
 import type { IDecoratorControllerOptions } from 'vona-module-a-web';
 
 import { BeanBase } from 'vona';
 import { Api, Mcp, Resource, v } from 'vona-module-a-openapiutils';
+import { $compileQuery } from 'vona-module-a-orm';
 import { z } from 'zod';
 import { Passport } from 'vona-module-a-user';
 import { Arg, Controller, Web } from 'vona-module-a-web';
 
-import type { Model<%=argv.resourceNameCapitalize%> } from '../model/<%=argv.resourceName%>.ts';
+import { <%=argv.resourceName%>Query } from '../lib/<%=argv.resourceName%>Query.ts';
 
 import { $locale } from '../.metadata/locales.ts';
 import { Dto<%=argv.resourceNameCapitalize%>Create } from '../dto/<%=argv.resourceName%>Create.tsx';
@@ -20,7 +21,7 @@ import { Dto<%=argv.resourceNameCapitalize%>Update } from '../dto/<%=argv.resour
 import { Dto<%=argv.resourceNameCapitalize%>View } from '../dto/<%=argv.resourceName%>View.tsx';
 import { Dto<%=argv.resourceNameCapitalize%>GroupResItem } from '../dto/<%=argv.resourceName%>GroupResItem.tsx';
 import { Dto<%=argv.resourceNameCapitalize%>AggregateRes } from '../dto/<%=argv.resourceName%>AggregateRes.tsx';
-import type { <%=argv.resourceName%>Analysis } from '../lib/<%=argv.resourceName%>Analysis.ts';
+import { <%=argv.resourceName%>Analysis } from '../lib/<%=argv.resourceName%>Analysis.ts';
 
 export interface IControllerOptions<%=argv.resourceNameCapitalize%> extends IDecoratorControllerOptions {}
 
@@ -35,9 +36,15 @@ export class Controller<%=argv.resourceNameCapitalize%> extends BeanBase {
   })
   @Web.post('', { summary: $locale('<%=argv.resourceNameCapitalize%>Create') })
   @Api.body(v.tableIdentity())
-  @Passport.rbac()
-  async create(@Arg.body() <%=argv.resourceName%>: Dto<%=argv.resourceNameCapitalize%>Create): Promise<TableIdentity> {
-    return (await this.scope.service.<%=argv.resourceName%>.create(<%=argv.resourceName%>)).id;
+  @Passport.rbac({ dataScope: true })
+  async create(
+    @Arg.body() <%=argv.resourceName%>: Dto<%=argv.resourceNameCapitalize%>Create,
+    @Arg.rbacScopeCurrent() rbacScopeCurrent: IRbacScopeAccess,
+  ): Promise<TableIdentity> {
+    return (await this.scope.service.<%=argv.resourceName%>.create({
+      ...<%=argv.resourceName%>,
+      ...rbacScopeCurrent.ownerValues(),
+    })).id;
   }
 
   @Mcp.tool({
@@ -46,9 +53,13 @@ export class Controller<%=argv.resourceNameCapitalize%> extends BeanBase {
   })
   @Web.get('', { summary: $locale('<%=argv.resourceNameCapitalize%>Select') })
   @Api.body(Dto<%=argv.resourceNameCapitalize%>SelectRes)
-  @Passport.rbac()
-  async select(@Arg.filter(Dto<%=argv.resourceNameCapitalize%>SelectReq) params: IQueryParams<Model<%=argv.resourceNameCapitalize%>>): Promise<Dto<%=argv.resourceNameCapitalize%>SelectRes> {
-    return await this.scope.service.<%=argv.resourceName%>.select(params);
+  @Passport.rbac({ dataScope: true })
+  async select(
+    @Arg.filter(Dto<%=argv.resourceNameCapitalize%>SelectReq) params: TypeQueryInput<typeof <%=argv.resourceName%>Query>,
+    @Arg.rbacScopeCurrent() rbacScopeCurrent: IRbacScopeAccess,
+  ): Promise<Dto<%=argv.resourceNameCapitalize%>SelectRes> {
+    const query = $compileQuery(this.scope.model.<%=argv.resourceName%>, <%=argv.resourceName%>Query, params, { scopeWhere: rbacScopeCurrent.where() });
+    return await this.scope.service.<%=argv.resourceName%>.select(query);
   }
 
   @Mcp.tool({
@@ -57,9 +68,13 @@ export class Controller<%=argv.resourceNameCapitalize%> extends BeanBase {
   })
   @Web.get('group', { summary: $locale('<%=argv.resourceNameCapitalize%>Group') })
   @Api.body(v.array(v.object(Dto<%=argv.resourceNameCapitalize%>GroupResItem)))
-  @Passport.rbac({ actionInherit: 'select' })
-  async group(@Arg.filter(Dto<%=argv.resourceNameCapitalize%>SelectReq, { mode: 'group' }) params: TypeAnalysisGroupParams<typeof <%=argv.resourceName%>Analysis>): Promise<Dto<%=argv.resourceNameCapitalize%>GroupResItem[]> {
-    return await this.scope.service.<%=argv.resourceName%>.group(params);
+  @Passport.rbac({ dataScope: true, actionInherit: 'select' })
+  async group(
+    @Arg.filter(Dto<%=argv.resourceNameCapitalize%>SelectReq, { mode: 'group' }) params: TypeQueryGroupInput<typeof <%=argv.resourceName%>Query, typeof <%=argv.resourceName%>Analysis>,
+    @Arg.rbacScopeCurrent() rbacScopeCurrent: IRbacScopeAccess,
+  ): Promise<Dto<%=argv.resourceNameCapitalize%>GroupResItem[]> {
+    const query = $compileQuery(this.scope.model.<%=argv.resourceName%>, <%=argv.resourceName%>Query, params, { mode: 'group', analysis: <%=argv.resourceName%>Analysis, scopeWhere: rbacScopeCurrent.where() });
+    return await this.scope.service.<%=argv.resourceName%>.group(query);
   }
 
   @Mcp.tool({
@@ -68,9 +83,13 @@ export class Controller<%=argv.resourceNameCapitalize%> extends BeanBase {
   })
   @Web.get('aggregate', { summary: $locale('<%=argv.resourceNameCapitalize%>Aggregate') })
   @Api.body(Dto<%=argv.resourceNameCapitalize%>AggregateRes)
-  @Passport.rbac({ actionInherit: 'select' })
-  async aggregate(@Arg.filter(Dto<%=argv.resourceNameCapitalize%>SelectReq, { mode: 'aggregate' }) params: TypeAnalysisAggregateParams<typeof <%=argv.resourceName%>Analysis>): Promise<Dto<%=argv.resourceNameCapitalize%>AggregateRes> {
-    return await this.scope.service.<%=argv.resourceName%>.aggregate(params);
+  @Passport.rbac({ dataScope: true, actionInherit: 'select' })
+  async aggregate(
+    @Arg.filter(Dto<%=argv.resourceNameCapitalize%>SelectReq, { mode: 'aggregate' }) params: TypeQueryAggregateInput<typeof <%=argv.resourceName%>Query, typeof <%=argv.resourceName%>Analysis>,
+    @Arg.rbacScopeCurrent() rbacScopeCurrent: IRbacScopeAccess,
+  ): Promise<Dto<%=argv.resourceNameCapitalize%>AggregateRes> {
+    const query = $compileQuery(this.scope.model.<%=argv.resourceName%>, <%=argv.resourceName%>Query, params, { mode: 'aggregate', analysis: <%=argv.resourceName%>Analysis, scopeWhere: rbacScopeCurrent.where() });
+    return await this.scope.service.<%=argv.resourceName%>.aggregate(query);
   }
 
   @Mcp.tool({
@@ -79,9 +98,14 @@ export class Controller<%=argv.resourceNameCapitalize%> extends BeanBase {
   })
   @Web.get(':id', { summary: $locale('<%=argv.resourceNameCapitalize%>View') })
   @Api.body(v.optional(), v.object(Dto<%=argv.resourceNameCapitalize%>View))
-  @Passport.rbac()
-  async view(@Arg.param('id', v.tableIdentity()) id: TableIdentity): Promise<Dto<%=argv.resourceNameCapitalize%>View | undefined> {
-    return await this.scope.service.<%=argv.resourceName%>.view(id);
+  @Passport.rbac({ dataScope: true })
+  async view(
+    @Arg.param('id', v.tableIdentity()) id: TableIdentity,
+    @Arg.rbacScopeCurrent() rbacScopeCurrent: IRbacScopeAccess,
+  ): Promise<Dto<%=argv.resourceNameCapitalize%>View | undefined> {
+    const data = await this.scope.service.<%=argv.resourceName%>.view(id);
+    rbacScopeCurrent.checkEntry(data);
+    return data;
   }
 
   @Mcp.tool({
@@ -90,8 +114,14 @@ export class Controller<%=argv.resourceNameCapitalize%> extends BeanBase {
   })
   @Web.patch(':id', { summary: $locale('<%=argv.resourceNameCapitalize%>Update') })
   @Api.body(z.null())
-  @Passport.rbac()
-  async update(@Arg.param('id', v.tableIdentity()) id: TableIdentity, @Arg.body() <%=argv.resourceName%>: Dto<%=argv.resourceNameCapitalize%>Update): Promise<void> {
+  @Passport.rbac({ dataScope: true })
+  async update(
+    @Arg.param('id', v.tableIdentity()) id: TableIdentity,
+    @Arg.body() <%=argv.resourceName%>: Dto<%=argv.resourceNameCapitalize%>Update,
+    @Arg.rbacScopeCurrent() rbacScopeCurrent: IRbacScopeAccess,
+  ): Promise<void> {
+    const data = await this.scope.model.<%=argv.resourceName%>.getById(id);
+    rbacScopeCurrent.checkEntry(data);
     await this.scope.service.<%=argv.resourceName%>.update(id, <%=argv.resourceName%>);
   }
 
@@ -101,8 +131,13 @@ export class Controller<%=argv.resourceNameCapitalize%> extends BeanBase {
   })
   @Web.delete(':id', { summary: $locale('<%=argv.resourceNameCapitalize%>Delete') })
   @Api.body(z.null())
-  @Passport.rbac()
-  async delete(@Arg.param('id', v.tableIdentity()) id: TableIdentity): Promise<void> {
+  @Passport.rbac({ dataScope: true })
+  async delete(
+    @Arg.param('id', v.tableIdentity()) id: TableIdentity,
+    @Arg.rbacScopeCurrent() rbacScopeCurrent: IRbacScopeAccess,
+  ): Promise<void> {
+    const data = await this.scope.model.<%=argv.resourceName%>.getById(id);
+    rbacScopeCurrent.checkEntry(data);
     await this.scope.service.<%=argv.resourceName%>.delete(id);
   }
 
@@ -112,7 +147,7 @@ export class Controller<%=argv.resourceNameCapitalize%> extends BeanBase {
   })
   @Web.post('bulk/delete', { summary: $locale('BulkDelete') })
   @Api.body(z.null())
-  @Passport.rbac({ actionInherit: 'delete' })
+  @Passport.rbac({ dataScope: true, actionInherit: 'delete' })
   async deleteBulk(
     @Arg.body() command: Dto<%=argv.resourceNameCapitalize%>DeleteBulk,
     @Arg.rbacScopeCurrent() rbacScopeCurrent: IRbacScopeAccess,

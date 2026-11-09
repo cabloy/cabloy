@@ -1,17 +1,16 @@
 import type { TableIdentity } from 'table-identity';
-import type { IQueryParams } from 'vona-module-a-orm';
+import type { TypeQueryInput } from 'vona-module-a-orm';
 import type { IDecoratorControllerOptions } from 'vona-module-a-web';
 
 import { BeanBase } from 'vona';
 import { Api, Resource, v } from 'vona-module-a-openapiutils';
+import { $compileQuery } from 'vona-module-a-orm';
 import { Passport } from 'vona-module-a-user';
 import { Arg, Controller, Web } from 'vona-module-a-web';
 import { z } from 'zod';
 
-import type { ModelCategory } from '../model/category.ts';
-
 import { DtoCategoryCreate } from '../dto/categoryCreate.tsx';
-import { DtoCategorySelectReq } from '../dto/categorySelectReq.tsx';
+import { categoryQuery, DtoCategorySelectReq } from '../dto/categorySelectReq.tsx';
 import { DtoCategorySelectRes } from '../dto/categorySelectRes.tsx';
 import { DtoCategoryUpdate } from '../dto/categoryUpdate.tsx';
 import { DtoCategoryView } from '../dto/categoryView.tsx';
@@ -32,9 +31,11 @@ export class ControllerCategory extends BeanBase {
   @Api.body(DtoCategorySelectRes)
   @Passport.systemAdmin()
   async select(
-    @Arg.filter(DtoCategorySelectReq) params: IQueryParams<ModelCategory>,
+    @Arg.filter(DtoCategorySelectReq) params: TypeQueryInput<typeof categoryQuery>,
   ): Promise<DtoCategorySelectRes> {
-    return await this.scope.service.category.select(params);
+    return await this.scope.service.category.select(
+      $compileQuery(this.scope.model.category, categoryQuery, params),
+    );
   }
 
   @Web.get(':id')

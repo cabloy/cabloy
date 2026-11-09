@@ -88,11 +88,13 @@ A practical mental model is:
 
 - use `$Dto.get` for one-item read contracts
 - use `$Dto.listAndCount` for list-plus-total contracts
-- use `$Dto.query` and `$Dto.queryPage` for query-input or query-result patterns
+- use `$Dto.query(policy, namedKeys)` and `$Dto.queryPage(policy, namedKeys)` for public query inputs derived from a static `$defineQuery` policy
 - use `$Dto.create` and `$Dto.update` for write contracts derived from model structure
 - use `$Dto.aggregate` and `$Dto.group` for summary-oriented result shapes
 
 This matters because different ORM operations naturally produce different API contracts.
+
+`$Dto.get(() => ModelX)` resolves its primary Model while constructing the DTO; callback syntax does not defer that read until startup completes. Cross-module references must use public package exports, and string Model identifiers do not load or register their targets. Nested relation-schema laziness is a separate mechanism. See [Cross-module imports and initialization](/backend/module-dependencies#cross-module-imports-and-initialization) for evaluation timing and runtime verification.
 
 ## Default read shape versus a public projection
 
@@ -131,10 +133,11 @@ Use the operation-appropriate `$Dto.*` helper to establish the baseline contract
 - use `include` to bring a relation-aware shape into the DTO
 - use `dtoClass` when a top-level or nested relation needs a reusable, named field surface
 
-For example, `DtoStudentSelectReq` starts from an Entity-backed query projection:
+For example, `DtoStudentSelectReq` starts from a policy-bound query helper. The policy derives value truth from the Model/Entity, while the key list selects named UI conveniences, not the full advanced predicate surface:
 
 ```typescript
-export class DtoStudentSelectReq extends $Dto.queryPage(EntityStudent, [
+@Dto({ query: studentQuery })
+export class DtoStudentSelectReq extends $Dto.queryPage(studentQuery, [
   'name',
   'level',
   'createdAt',
@@ -176,13 +179,14 @@ For a field already supplied by the projection, use the `fields` map on `@Dto(..
 
 ```typescript
 @Dto({
+  query: studentQuery,
   fields: {
     name: $makeSchema(v.optional(), z.string()),
     level: $makeSchema(v.optional(), z.number()),
     createdAt: $makeSchema(v.filterTransform('a-web:dateRange'), v.optional(), z.string()),
   },
 })
-export class DtoStudentSelectReq extends $Dto.queryPage(EntityStudent, [
+export class DtoStudentSelectReq extends $Dto.queryPage(studentQuery, [
   'name',
   'level',
   'createdAt',
@@ -319,14 +323,14 @@ Again, the class keeps a named public identity, while the DTO shape stays close 
 
 Representative source facts:
 
-- it extends `$Dto.queryPage(EntityStudent, ['name', 'level', 'createdAt'])`
-- it also adds `@Dto({ openapi: { filter: { table: 'trainingStudent' } }, fields: { ... } })`
-- `level` uses preprocess logic so string query input can be normalized before schema validation
-- `createdAt` uses `v.filterTransform('a-web:dateRange')`
+- it extends `$Dto.queryPage(studentQuery, ['name', 'level', 'createdAt'])`
+- it associates `query: studentQuery` and `analysis: studentAnalysis` alongside named filter/render metadata
+- named `level` decoding belongs to the form/query convenience schema; canonical numeric AST operands must already be numbers
+- `createdAt` uses `v.filterTransform('a-web:dateRange')` to contribute timestamp comparisons admitted by the policy
 
 This makes it a strong specimen of a **query DTO that still wraps inference, but adds operation-specific shaping**.
 
-Its `fields` entries use `$makeSchema(...)` because the query contract changes the projected fields' runtime schema: query values become optional, `level` is normalized before validation, and `createdAt` accepts the date-range filter representation. Keep the final structure-defining schema last in each `$makeSchema(...)` call, then verify the emitted schema/OpenAPI result after a structure-shaping change.
+Named `fields` entries use `$makeSchema(...)` when the convenience contract changes an inferred field's schema (for example, optional text or a date-range string), and `$makeMetadata(...)` for rendering-only changes. These overrides do not redefine canonical AST operand schemas or grant extra query fields. Keep the final structure-defining schema last in each `$makeSchema(...)` call and verify emitted output. Supplied named filters combine with explicit `where` by AND. See [Public Query Guide](/backend/public-query-guide) for the independent capabilities and compiler boundary.
 
 A practical reading takeaway is:
 
@@ -449,8 +453,8 @@ Summary-oriented ORM queries often benefit from inferred DTOs because the result
 For a backend allowlist with client-selectable combinations, infer from one shared `$defineAnalysis` policy instead:
 
 ```typescript
-@Dto({ analysis: studentAnalysis })
-export class DtoStudentSelectReq extends $Dto.queryPage(EntityStudent, [
+@Dto({ query: studentQuery, analysis: studentAnalysis })
+export class DtoStudentSelectReq extends $Dto.queryPage(studentQuery, [
   'name',
   'level',
   'createdAt',
@@ -467,7 +471,7 @@ These are abbreviated declarations; keep existing request field refinements such
 
 The response schema is a finite optional superset of all policy-permitted dimension and metric keys, not an unrestricted property map. Execution returns **requested keys only**, with fixed ORM aliases such as `count_all` and `count_imageId`. Group keys retain their column types; count aliases are decimal strings; non-count aliases are strings or SQL `null`. An optional property is unrequested, not a substitute for nullable. If refining a nullable description dimension, preserve both optionality and nullability (`description?: string | null`) and do not synthesize it when absent from the result.
 
-Select, group, and aggregate remain separate action schemas. Attach the policy to SelectReq, then use `@Arg.filter(DtoStudentSelectReq, { mode: 'group' })` or `{ mode: 'aggregate' }` on the analysis action; ordinary select remains unchanged and rejects explicit analysis controls. The named wrappers keep response references distinct, while public action capabilities and enums come from the same policy.
+Select, group and aggregate remain separate Action schemas. Attach both policies to SelectReq, then use `@Arg.filter(DtoStudentSelectReq, { mode: 'group' })` or `{ mode: 'aggregate' }` on the analysis Action. Ordinary select rejects analysis controls; analysis rejects list orders/projection/paging controls. The Resource controller compiles canonical public input with the query policy, analysis mode/policy and current Action's mandatory scope (`scopeWhere: rbacScopeCurrent.where()` for RBAC data scope). The service accepts trusted analysis parameters and invokes the analysis execution helper without public-query recompilation. Dedicated business-scoped service contracts may still own compilation; see [Public Query Guide](/backend/public-query-guide#dedicated-business-scoped-service-contracts-remain-valid). Named response wrappers keep references distinct, while public capabilities and enums come from backend policies.
 
 See [CRUD Workflow](/backend/crud-workflow#grouping-and-statistics) for the Student policy, GET JSON controls, and generator workflow; [Validation Guide](/backend/validation-guide#analysis-action-modes) for defaults, validation, and limits; and [ORM Aggregate and Group Guide](/backend/orm-aggregate-group-guide) for the underlying model operations.
 

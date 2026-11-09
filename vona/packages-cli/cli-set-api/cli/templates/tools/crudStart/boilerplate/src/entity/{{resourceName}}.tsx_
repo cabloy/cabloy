@@ -1,3 +1,4 @@
+import type { TableIdentity } from 'table-identity';
 import type { IDecoratorEntityOptions } from 'vona-module-a-orm';
 
 import { $makeMetadata, Api, v } from 'vona-module-a-openapiutils';
@@ -44,4 +45,10 @@ export class Entity<%=argv.resourceNameCapitalize%> extends EntityBase {
     ZovaRender.order(2),
   )
   description?: string;
+
+  @Api.field(ZovaRender.visible(false), v.nullable(), v.tableIdentity())
+  departmentId: TableIdentity | null;
+
+  @Api.field(ZovaRender.visible(false), v.required(), v.tableIdentity())
+  userIdOwner: TableIdentity;
 }

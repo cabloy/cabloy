@@ -1,11 +1,13 @@
 import type { CallToolResult, Tool } from '@modelcontextprotocol/server';
 import type { Constructable, VonaApplication } from 'vona';
 import type { IMcpToolOptions } from 'vona-module-a-openapiutils';
+import type { IAnalysisPolicy, IQueryPolicy, TypeAnalysisMode } from 'vona-module-a-orm';
 import type { TypeMcpScope } from 'vona-module-mcp-auth';
 
 import { fromJsonSchema, ProtocolError, Server } from '@modelcontextprotocol/server';
 import { appMetadata, runWithZodQueryCoercion } from 'vona';
 import { SymbolMcpOptions } from 'vona-module-a-openapiutils';
+import { checkQueryBudget, PublicQueryError, validateQuery } from 'vona-module-a-orm';
 import { getCacheControllerRoutes } from 'vona-module-a-web';
 import { isMcpScope } from 'vona-module-mcp-auth';
 import z from 'zod';
@@ -140,6 +142,30 @@ export async function createControllerToolServer(
               'Native, upload or header bindings are not supported',
             );
           }
+          // Filter pipe factories carry the native policy resolved from the DTO. Do not
+          // reconstruct business limits from a second transport-specific configuration.
+          const queryBindings = contract.argsMeta.flatMap(arg =>
+            arg.pipes.flatMap(pipe => {
+              const info = pipe() as {
+                pipeName: string;
+                options?: {
+                  query?: IQueryPolicy;
+                  analysis?: IAnalysisPolicy;
+                  analysisMode?: TypeAnalysisMode;
+                };
+              };
+              return info.pipeName === 'a-web:filter' && info.options?.query
+                ? [
+                    {
+                      type: arg.type === 'param' ? 'params' : arg.type,
+                      field: arg.field,
+                      ...info.options,
+                      query: info.options.query,
+                    },
+                  ]
+                : [];
+            }),
+          );
           const document = await app.bean.openapi.generateJsonOfControllerAction(
             route.controller,
             route.action,
@@ -285,20 +311,52 @@ export async function createControllerToolServer(
             tool,
             readOnly,
             async call(args) {
-              const checked = await inputCheck.validate(
-                serializeDateTransport(args, inputSchema, schemas),
-              );
-              if (checked.issues) throw new ProtocolError(-32602, 'Invalid tool arguments');
               const values = flat ? { [keys[0]]: args } : args;
               const bound: Record<string, unknown> = {};
-              for (const key of keys) {
-                const schema = contract.request[key as keyof typeof contract.request];
-                const transported = normalizeDateTransport(values[key], locations[key], schemas);
-                const parsed = await runWithZodQueryCoercion(false, () =>
-                  schema!.safeParseAsync(transported),
+              try {
+                for (const binding of queryBindings) {
+                  const group = values[binding.type];
+                  const value =
+                    binding.field && group && typeof group === 'object'
+                      ? (group as Record<string, unknown>)[binding.field]
+                      : group;
+                  // Iterative native limits must run before date traversal, AJV or
+                  // recursive Zod unions, including calls over the in-memory transport.
+                  checkQueryBudget(value, binding.query.limits);
+                  if (value && typeof value === 'object' && !Array.isArray(value)) {
+                    const controls = ['where', 'orders', 'pageNo', 'pageSize', 'groups', 'aggrs'];
+                    validateQuery(
+                      binding.query,
+                      Object.fromEntries(
+                        Object.entries(value).filter(([key]) => controls.includes(key)),
+                      ),
+                      binding.analysisMode ?? 'select',
+                      binding.analysis,
+                    );
+                  }
+                }
+                const checked = await inputCheck.validate(
+                  serializeDateTransport(args, inputSchema, schemas),
                 );
-                if (!parsed.success) throw new ProtocolError(-32602, 'Invalid tool arguments');
-                bound[key] = parsed.data;
+                if (checked.issues) throw new ProtocolError(-32602, 'Invalid tool arguments');
+                for (const key of keys) {
+                  const schema = contract.request[key as keyof typeof contract.request];
+                  const transported = normalizeDateTransport(values[key], locations[key], schemas);
+                  const parsed = await runWithZodQueryCoercion(false, () =>
+                    schema!.safeParseAsync(transported),
+                  );
+                  if (!parsed.success) throw new ProtocolError(-32602, 'Invalid tool arguments');
+                  bound[key] = parsed.data;
+                }
+              } catch (error) {
+                if (error instanceof PublicQueryError) {
+                  throw new ProtocolError(-32602, 'Invalid tool arguments', {
+                    queryCode: error.queryCode,
+                    path: error.path,
+                  });
+                }
+                if (error instanceof ProtocolError) throw error;
+                throw new ProtocolError(-32602, 'Invalid tool arguments');
               }
               try {
                 const result = await app.bean.executor.performAction(
@@ -320,7 +378,13 @@ export async function createControllerToolServer(
                   content: [{ type: 'text', text: JSON.stringify(structuredContent) }],
                   structuredContent,
                 };
-              } catch {
+              } catch (error) {
+                if (error instanceof PublicQueryError) {
+                  throw new ProtocolError(-32602, 'Invalid tool arguments', {
+                    queryCode: error.queryCode,
+                    path: error.path,
+                  });
+                }
                 return failure('Action failed');
               }
             },

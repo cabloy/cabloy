@@ -69,7 +69,7 @@ Unknown top-level arguments and unknown fields in location objects are rejected.
 
 Object results become `structuredContent` directly. Array and scalar results use `{ "result": value }`; a declared null result becomes `{ "result": null }`. JSON text content represents that same structured object. Results are validated; failed validation never falls back to raw Action output.
 
-An `undefined` result or a missing object resource represented by `null` returns an error tool result with safe text `Resource not found`. Authorization, Action and output-validation failures return `Action failed`, without raw exceptions or private data. Invalid arguments are protocol errors.
+An `undefined` result or a missing object resource represented by `null` returns an error tool result with safe text `Resource not found`. Authorization, unexpected Action and output-validation failures return `Action failed`, without raw exceptions or private data. Invalid arguments are protocol errors; reviewed public-query validation failures may include bounded `queryCode` / `path` diagnostics, never SQL, operand values or a hidden-field catalog.
 
 ### Action contract extraction
 
@@ -85,6 +85,19 @@ const document = await app.bean.openapi.generateJsonOfControllerAction(controlle
 `includeExcluded: true` permits contract extraction independently of ordinary `@Api.exclude()` publication; it is not an authorization bypass or a global publication switch. `schemaTarget: 'mcp'` disables HTTP query coercion during contract collection and schema generation. Optional fields therefore do not advertise null merely because HTTP query normalization can treat null as omission; explicitly nullable fields retain null support.
 
 See [OpenAPI Guide](/backend/openapi-guide#generate-an-action-contract-for-mcp-json-arguments) for target defaults and cache separation. Native validators remain authoritative for constraints JSON Schema cannot express.
+
+### Public query arguments
+
+For query-enabled Actions, use the same policy-bound [public query contract](/backend/public-query-guide) as HTTP and generated UI clients. Read the discovered tool's actual `inputSchema`: its finite field/operator/value alternatives and query capabilities define the advanced surface, independently of the named UI filters. Not every list Action exposes advanced controls.
+
+- Supply `where`, `orders`, `groups` and `aggrs` as **native JSON**, not JSON strings. Only HTTP GET needs structured-control JSON query encoding. Numeric and Boolean operands are native numbers/Booleans; recursive string coercion is disabled.
+- Use explicit AST leaves (`{ field, op, value }`), nonempty `and` / `or` arrays or `not`. Omit `where` for no added restriction; `{}` and old property-keyed/underscore-operator queries are invalid. No raw-ORM fallback exists.
+- Explicit `where` and all supplied named conveniences combine by AND. Names in a small form are not the complete advanced field allowlist and need not map to same-named canonical fields.
+- Public string operators match literal `%`, `_` and `!`; they do not accept client LIKE patterns. Use explicit null-check leaves without `value`, typed dates and offset-bearing timestamps as documented in the canonical guide.
+- Select uses structured orders and stable resource-id tie-breaking. Current projection is fixed: do not send `columns`. Group/aggregate reject list orders/projection/paging instead of ignoring them.
+- Shared query byte/node/depth/list/order/string budgets combine. The complete MCP JSON-RPC envelope has separate transport limits, including argument wrappers, so do not assume every semantic maximum fits one call.
+
+Compilation preserves service-owned scope AND client restrictions and ordinary ORM instance/deleted scope. The static query policy is not authorization. MCP adds no joins, Raw/Ref, execution identity, datasource/scope switches or cross-instance access. Refresh discovery/generated consumers after backend policy changes; do not maintain a second MCP field catalog.
 
 ## Factory and authorization boundary
 
@@ -198,11 +211,41 @@ Call it with flat query arguments:
 { "name": "Student", "level": 2, "pageNo": 1, "pageSize": 10 }
 ```
 
-The existing `@Arg.filter(DtoStudentSelectReq)` also supports `createdAt`, `columns`, `where` and `orders`. Filtering and pagination follow the HTTP contract. Name filtering uses LIKE semantics: `%` and `_` are wildcards, not literal-escaped characters.
+The policy-bound `@Arg.filter(DtoStudentSelectReq)` also exposes named `createdAt`, canonical `where` and structured `orders` according to its generated schema. An advanced call using admitted Student operations is:
 
-The result retains `DtoStudentSelectRes`: `list`, string `total`, `pageNo`, `pageSize` and `pageCount`. Rows retain their serialized fields, including masked mobile and optional image resolution. Select does not add detail relations, full notes or fetch every page. Schema UI metadata does not create extra row values. Caller-selected `columns` must still satisfy the response DTO; incompatible projections produce safe `Action failed`, never raw output.
+```json
+{
+  "where": {
+    "and": [
+      { "field": "name", "op": "containsI", "value": "Student" },
+      { "field": "level", "op": "eq", "value": 2 }
+    ]
+  },
+  "orders": [{ "field": "createdAt", "direction": "desc" }],
+  "pageNo": 1,
+  "pageSize": 10
+}
+```
+
+These are native arguments, not serialized query strings. A supplied named `name` filter additionally restricts the advanced predicate; it never overrides or is overridden by `where`. Name search treats `%`, `_` and `!` literally. Timestamp comparisons need offset-bearing ISO strings; the named date-range input remains a distinct UI convenience. Read current discovery for exact operators rather than assuming every operator family is enabled for Student.
+
+The result retains `DtoStudentSelectRes`: `list`, string `total`, `pageNo`, `pageSize` and `pageCount`. Rows retain their fixed serialized fields, including masked mobile and optional image resolution. Client `columns` is rejected at input; it is not a way to vary the response or deliberately trigger output-validation failure. Select does not add detail relations, full notes or fetch every page. Schema UI metadata does not create extra row values.
 
 For name → ID → summary/view, choose a matching row's returned `id`, then call the next tool only with independent Student-view permission. Select authority alone does not grant detail access.
+
+### Example: student group and aggregate
+
+`training-student_student_group` and `training-student_student_aggregate` use the same canonical filter and mandatory scope boundary, with the separate Student analysis allowlist. A query-only group call is flat:
+
+```json
+{
+  "where": { "field": "name", "op": "containsI", "value": "Student" },
+  "groups": ["level"],
+  "aggrs": { "count": ["*"] }
+}
+```
+
+Aggregate accepts `aggrs` but no `groups`. Neither accepts `orders`, `columns`, `pageNo` or `pageSize`; analysis covers the full matching population, not a select page. Omitted analysis selections use the Action defaults; explicit empty selections are invalid. Count values remain decimal strings. See [CRUD Workflow](/backend/crud-workflow#grouping-and-statistics) for requested-only response fields and analysis limits. These are persisted Student flows; immutable `commerce_*` test fixtures do not demonstrate real commerce data access.
 
 ### Example: complete student view
 

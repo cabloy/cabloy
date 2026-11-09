@@ -18,7 +18,7 @@ describe('permission.test.ts', { concurrency: false }, () => {
   });
   after(() => release?.());
 
-  it('checks fresh guards without terms, retrieval events or matcher projection', async t => {
+  it('checks fresh guards with the native scope contract, without retrieval or matcher projection', async t => {
     if (!app.meta.modules['training-student']) {
       t.skip('training-student is not active');
       return;
@@ -40,7 +40,8 @@ describe('permission.test.ts', { concurrency: false }, () => {
       const action = app.bean.rbacCatalog.getCatalog().get(`${controller}#group`);
       assert.ok(action);
       assert.equal(action.actionInheritKey, `${controller}#select`);
-      assert.equal(Boolean(action.options.dataScope), false);
+      const scoped = Boolean(action.options.dataScope);
+      let terms: IRbacPolicyDecision['terms'];
       let allowed = true;
       const policyCalls: string[] = [];
       const off = app.scope('a-rbac').event.resolvePolicy.on((request, next) => {
@@ -56,6 +57,7 @@ describe('permission.test.ts', { concurrency: false }, () => {
           allowed,
           actionKey: request.action.actionKey,
           action: request.action,
+          terms,
         };
       });
       const retrieval = t.mock.method(permission, 'retrievePermissionAction', async () => {
@@ -65,12 +67,21 @@ describe('permission.test.ts', { concurrency: false }, () => {
         throw new Error('guard-only checks must not emit permission retrieval events');
       });
       try {
-        // Preserve the existing projection contract: a no-terms decision still denies there.
+        // Projection rejects no-terms decisions even when the Action itself is unscoped.
         assert.equal(await (permission as any)._evaluatePermissionAction(action.route), false);
         const projection = t.mock.method(app.bean.rbacScope, 'current', async () => {
           throw new Error('guard-only checks must not project a matcher');
         });
+        const expectedPolicyCalls = scoped ? 6 : 5;
         try {
+          if (scoped) {
+            assert.equal(
+              await permission.checkPermissionActionGuards('training-student:student', 'group'),
+              false,
+              'scoped guards reject an allow decision without effective scope terms',
+            );
+            terms = [{ dataScope: 'mine', ownerId: userId }];
+          }
           assert.equal(
             await permission.checkPermissionActionGuards('training-student:student', 'group'),
             true,
@@ -94,7 +105,10 @@ describe('permission.test.ts', { concurrency: false }, () => {
           );
           assert.equal(projection.mock.callCount(), 0);
           assert.equal(retrieval.mock.callCount(), 0);
-          assert.deepEqual(policyCalls, Array.from({ length: 5 }).fill(`${controller}#select`));
+          assert.deepEqual(
+            policyCalls,
+            Array.from({ length: expectedPolicyCalls }).fill(`${controller}#select`),
+          );
           assert.equal(
             await permission.checkPermissionActionGuards(
               'training-student:student',
@@ -110,13 +124,17 @@ describe('permission.test.ts', { concurrency: false }, () => {
             await permission.checkPermissionActionGuards('toString' as never, 'group'),
             false,
           );
-          assert.equal(policyCalls.length, 5);
+          assert.equal(policyCalls.length, expectedPolicyCalls);
           app.ctx.state.passport = undefined;
           assert.equal(
             await permission.checkPermissionActionGuards('training-student:student', 'group'),
             false,
           );
-          assert.equal(policyCalls.length, 5, 'Passport admission precedes policy evaluation');
+          assert.equal(
+            policyCalls.length,
+            expectedPolicyCalls,
+            'Passport admission precedes policy evaluation',
+          );
         } finally {
           projection.mock.restore();
         }

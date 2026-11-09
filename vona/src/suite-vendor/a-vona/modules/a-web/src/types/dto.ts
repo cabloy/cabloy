@@ -2,7 +2,7 @@ import type { OmitNever } from 'vona';
 import type { ServiceOnion } from 'vona-module-a-onion';
 import type { ISchemaObjectExtensionField, TypeSchemaScene } from 'vona-module-a-openapi';
 import type { SchemaLike } from 'vona-module-a-openapiutils';
-import type { IAnalysisPolicy, SymbolKeyFieldsMore } from 'vona-module-a-orm';
+import type { IAnalysisPolicy, IQueryPolicy, SymbolKeyFieldsMore } from 'vona-module-a-orm';
 
 export interface IDtoRecord {}
 
@@ -11,6 +11,7 @@ export interface IDecoratorDtoOptions<FieldsMore = never> {
   independent?: boolean;
   schemaScene?: TypeSchemaScene;
   analysis?: IAnalysisPolicy;
+  query?: IQueryPolicy;
   openapi?: ISchemaObjectExtensionField;
   pipes?: SchemaLike | SchemaLike[];
   blocks?: any[];

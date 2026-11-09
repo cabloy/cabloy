@@ -13,6 +13,8 @@ const __snippet_update = `if (options.version === <%=argv.fileVersion%>) {
     await this.bean.model.createTable(entity<%=argv.resourceNameCapitalize%>.$table, table => {
       table.comment(entity<%=argv.resourceNameCapitalize%>.$comment.$table);
       table.basicFields();
+      table.tableIdentity(entity<%=argv.resourceNameCapitalize%>.departmentId).comment(entity<%=argv.resourceNameCapitalize%>.$comment.departmentId);
+      table.tableIdentity(entity<%=argv.resourceNameCapitalize%>.userIdOwner).comment(entity<%=argv.resourceNameCapitalize%>.$comment.userIdOwner);
       table.string(entity<%=argv.resourceNameCapitalize%>.name, 50).comment(entity<%=argv.resourceNameCapitalize%>.$comment.name);
       table.string(entity<%=argv.resourceNameCapitalize%>.description, 255).comment(entity<%=argv.resourceNameCapitalize%>.$comment.description);
     });

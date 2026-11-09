@@ -13,9 +13,12 @@ export function schemaRefCustomAdapter(_app: VonaApplication) {
 function _patchGenerator(generator: any) {
   const gen = Object.getPrototypeOf(cast(generator).generator);
   gen.generateSchemaWithRef = function (zodSchema) {
-    // schema ref
+    // Resolving a lazy schema preserves public metadata but not its internal
+    // refId. Keep the lazy anchor's name so recursive children reuse the
+    // in-progress reference instead of expanding the same union indefinitely.
+    let refId = ZodMetadata.getRefId(zodSchema);
     zodSchema = ZodMetadata.resolveLazySchema(zodSchema);
-    const refId = ZodMetadata.getRefId(zodSchema);
+    refId ??= ZodMetadata.getRefId(zodSchema);
     if (!refId) {
       return this.generateSimpleSchema(zodSchema);
     }

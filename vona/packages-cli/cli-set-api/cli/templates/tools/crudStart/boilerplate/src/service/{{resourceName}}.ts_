@@ -19,20 +19,23 @@ import { <%=argv.resourceName%>Analysis } from '../lib/<%=argv.resourceName%>Ana
 
 @Service()
 export class Service<%=argv.resourceNameCapitalize%> extends BeanBase {
-  async create(<%=argv.resourceName%>: Dto<%=argv.resourceNameCapitalize%>Create): Promise<Entity<%=argv.resourceNameCapitalize%>> {
+  async create(<%=argv.resourceName%>: Dto<%=argv.resourceNameCapitalize%>Create & Partial<Pick<Entity<%=argv.resourceNameCapitalize%>, 'departmentId' | 'userIdOwner'>>): Promise<Entity<%=argv.resourceNameCapitalize%>> {
     return await this.scope.model.<%=argv.resourceName%>.insert(<%=argv.resourceName%>);
   }
 
   async select(params?: IQueryParams<Model<%=argv.resourceNameCapitalize%>>): Promise<Dto<%=argv.resourceNameCapitalize%>SelectRes> {
-    return await this.scope.model.<%=argv.resourceName%>.selectAndCount(params);
+    const model = this.scope.model.<%=argv.resourceName%>;
+    return await model.selectAndCount(params);
   }
 
   async group(params?: TypeAnalysisGroupParams<typeof <%=argv.resourceName%>Analysis>): Promise<Dto<%=argv.resourceNameCapitalize%>GroupResItem[]> {
-    return await $executeAnalysisGroup(this.scope.model.<%=argv.resourceName%>, <%=argv.resourceName%>Analysis, params);
+    const model = this.scope.model.<%=argv.resourceName%>;
+    return await $executeAnalysisGroup(model, <%=argv.resourceName%>Analysis, params);
   }
 
   async aggregate(params?: TypeAnalysisAggregateParams<typeof <%=argv.resourceName%>Analysis>): Promise<Dto<%=argv.resourceNameCapitalize%>AggregateRes> {
-    return await $executeAnalysisAggregate(this.scope.model.<%=argv.resourceName%>, <%=argv.resourceName%>Analysis, params);
+    const model = this.scope.model.<%=argv.resourceName%>;
+    return await $executeAnalysisAggregate(model, <%=argv.resourceName%>Analysis, params);
   }
 
   async view(id: TableIdentity): Promise<Dto<%=argv.resourceNameCapitalize%>View | undefined> {

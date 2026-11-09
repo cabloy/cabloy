@@ -1,23 +1,24 @@
 import type { TableIdentity } from 'table-identity';
-import type { IQueryParams } from 'vona-module-a-orm';
+import type { TypeQueryInput } from 'vona-module-a-orm';
 import type { IDecoratorControllerOptions } from 'vona-module-a-web';
 
-// import React from 'react';
 import { BeanBase } from 'vona';
 import { Api, Resource, v } from 'vona-module-a-openapiutils';
+import { $compileQuery } from 'vona-module-a-orm';
 import { Ssr } from 'vona-module-a-ssr';
 import { Passport } from 'vona-module-a-user';
 import { Arg, Controller, Web } from 'vona-module-a-web';
 import { z } from 'zod';
 
-import type { ModelProduct } from '../model/product.ts';
-
-// import { PPDevuiRestpage, PPDevuiRestpageEntry } from 'zova-rest-cabloy-basic-admin';
 import { DtoProductCreate } from '../dto/productCreate.tsx';
-import { DtoProductSelectReq } from '../dto/productSelectReq.tsx';
+import { productQuery, DtoProductSelectReq } from '../dto/productSelectReq.tsx';
 import { DtoProductSelectRes } from '../dto/productSelectRes.tsx';
 import { DtoProductUpdate } from '../dto/productUpdate.tsx';
 import { DtoProductView } from '../dto/productView.tsx';
+
+// import React from 'react';
+
+// import { PPDevuiRestpage, PPDevuiRestpageEntry } from 'zova-rest-cabloy-basic-admin';
 
 export interface IControllerOptionsProduct extends IDecoratorControllerOptions {}
 
@@ -37,9 +38,11 @@ export class ControllerProduct extends BeanBase {
     params: { resource: 'test-rest:product' },
   })
   async select(
-    @Arg.filter(DtoProductSelectReq) params: IQueryParams<ModelProduct>,
+    @Arg.filter(DtoProductSelectReq) params: TypeQueryInput<typeof productQuery>,
   ): Promise<DtoProductSelectRes> {
-    return await this.scope.service.product.select(params);
+    return await this.scope.service.product.select(
+      $compileQuery(this.scope.model.product, productQuery, params),
+    );
   }
 
   @Web.get(':id')

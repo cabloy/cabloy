@@ -27,12 +27,12 @@ export interface IEntityOptionsStudent extends IDecoratorEntityOptions {}
 @Entity<IEntityOptionsStudent>('trainingStudent', {
   openapi: { title: $locale('Student') },
   fields: {
-    id: $makeMetadata(ZovaRender.order(1, 'core'), ZovaRender.column({ width: 50, fixed: 'left' })),
+    id: $makeMetadata(ZovaRender.order(1, 'core'), ZovaRender.column({ width: 64, fixed: 'left' })),
     iid: $makeMetadata(ZovaRender.visible(false)),
     deleted: $makeMetadata(ZovaRender.visible(false)),
     createdAt: $makeMetadata(
       ZovaRender.order(-2, 'max'),
-      ZovaRender.column({ align: 'center', width: 180, enableSorting: true }),
+      ZovaRender.column({ align: 'center', width: 180 }),
       ZovaRender.field('basic-date:formFieldDate'),
       ZovaRender.cell('basic-date:date'),
     ),
@@ -53,7 +53,6 @@ export class EntityStudent extends EntityBase {
       align: 'left',
       width: 240,
       fixed: 'left',
-      enableSorting: true,
       sortDescFirst: true,
     }),
     ZovaRender.cell('basic-table:actionView'),
@@ -99,7 +98,7 @@ export class EntityStudent extends EntityBase {
     v.description(studentLevelDescription),
     v.required(),
     ZovaRender.order(5),
-    ZovaRender.column({ align: 'center', width: 140, enableSorting: true }),
+    ZovaRender.column({ align: 'center', width: 140 }),
     // Tutorial 3 built-in form renderer example. Keep it commented here for side-by-side comparison.
     // ZovaRender.field('basic-select:formFieldSelect', {
     //   items: studentLevelItems,

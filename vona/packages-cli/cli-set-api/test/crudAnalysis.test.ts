@@ -122,6 +122,7 @@ describe('default CRUD analysis generation', { concurrency: false }, () => {
         const files = await filesUnder(moduleRoot);
         for (const file of [
           'src/lib/recordAnalysis.ts',
+          'src/lib/recordQuery.ts',
           'test/recordAnalysis.test.ts',
           'src/dto/recordGroupResItem.tsx',
           'src/dto/recordAggregateRes.tsx',
@@ -137,13 +138,132 @@ describe('default CRUD analysis generation', { concurrency: false }, () => {
         const service = await read(moduleRoot, 'src/service/record.ts');
         const req = await read(moduleRoot, 'src/dto/recordSelectReq.tsx');
         const policy = await read(moduleRoot, 'src/lib/recordAnalysis.ts');
-        assert.doesNotMatch(controller, /AnalysisReq|\$schema|dataScope/);
+        const queryPolicy = await read(moduleRoot, 'src/lib/recordQuery.ts');
+        const entity = await read(moduleRoot, 'src/entity/record.tsx');
+        const migration = await read(moduleRoot, 'src/bean/meta.version.ts');
+        const createDto = await read(moduleRoot, 'src/dto/recordCreate.tsx');
+        const updateDto = await read(moduleRoot, 'src/dto/recordUpdate.tsx');
+        if (edition === 'start') {
+          assert.match(entity, /departmentId: TableIdentity \| null;/);
+          assert.match(entity, /userIdOwner: TableIdentity;/);
+          assert.doesNotMatch(entity, /(?:departmentId|userIdOwner)\?:/);
+          assert.match(entity, /@Api\.field\([^;]*v\.nullable\(\)[^;]*\)\s+departmentId:/);
+          assert.match(entity, /@Api\.field\([^;]*v\.required\(\)[^;]*\)\s+userIdOwner:/);
+          for (const field of ['departmentId', 'userIdOwner']) {
+            assert.ok(migration.includes(`table.tableIdentity(entityRecord.${field})`), field);
+          }
+          for (const [kind, dto] of [
+            ['create', createDto],
+            ['update', updateDto],
+          ]) {
+            assert.ok(dto.includes(`$Dto.${kind}(() => ModelRecord, {`));
+            assert.match(dto, /columns: \['name', 'description'\]/);
+            assert.doesNotMatch(dto, /departmentId|userIdOwner/);
+          }
+          assert.match(
+            service,
+            /async create\(record: DtoRecordCreate & Partial<Pick<EntityRecord, 'departmentId' \| 'userIdOwner'>>\)/,
+          );
+        } else {
+          assert.doesNotMatch(entity, /departmentId|userIdOwner/);
+          assert.doesNotMatch(migration, /departmentId|userIdOwner/);
+          assert.match(createDto, /\$Dto\.create\(\(\) => ModelRecord\) \{\}/);
+          assert.match(updateDto, /\$Dto\.update\(\(\) => ModelRecord\) \{\}/);
+          assert.match(service, /async create\(record: DtoRecordCreate\)/);
+        }
+        assert.match(
+          queryPolicy,
+          /export const recordQuery = \$defineQuery\(\(\) => ModelRecord, \{/,
+        );
+        assert.match(queryPolicy, /id: \{ operators: \['eq', 'in'\] \}/);
+        assert.match(queryPolicy, /name: \{ operators: \['eq', 'containsI', 'in'\] \}/);
+        assert.match(queryPolicy, /createdAt: \{ operators: \['gte', 'lt'\] \}/);
+        assert.match(queryPolicy, /orderable: \['id', 'name', 'createdAt'\]/);
+        assert.match(queryPolicy, /name: \{ field: 'name', op: 'containsI' \}/);
+        assert.match(queryPolicy, /createdAt: \{ field: 'createdAt' \}/);
+        assert.match(
+          queryPolicy,
+          /defaults: \{ orders: \[\{ field: 'id', direction: 'asc' \}\] \}/,
+        );
+        assert.match(queryPolicy, /projection: \{ mode: 'fixed' \}/);
+        assert.doesNotMatch(queryPolicy, /description|Object\.keys|\.\.\./);
+        assert.doesNotMatch(controller, /IQueryParams|TypeAnalysis(?:Group|Aggregate)Params/);
+        assert.doesNotMatch(controller, /AnalysisReq|\$schema/);
         assert.ok(
           controller.includes(
-            'async select(@Arg.filter(DtoRecordSelectReq) params: IQueryParams<ModelRecord>)',
+            '@Arg.filter(DtoRecordSelectReq) params: TypeQueryInput<typeof recordQuery>',
           ),
         );
-        assert.match(req, /\$Dto.queryPage\(EntityRecord, \['name', 'createdAt'\]\)/);
+        assert.match(controller, /import \{ \$compileQuery \} from 'vona-module-a-orm'/);
+        assert.match(controller, /import \{ recordQuery \} from '\.\.\/lib\/recordQuery\.ts'/);
+        assert.match(
+          controller,
+          /import \{ recordAnalysis \} from '\.\.\/lib\/recordAnalysis\.ts'/,
+        );
+        assert.equal(controller.match(/const query = \$compileQuery\(/g)?.length, 3);
+        const scopeOptions =
+          edition === 'start' ? ', { scopeWhere: rbacScopeCurrent.where() }' : '';
+        assert.ok(
+          controller.includes(
+            `const query = $compileQuery(this.scope.model.record, recordQuery, params${scopeOptions});\n    return await this.scope.service.record.select(query);`,
+          ),
+        );
+        if (edition === 'start') {
+          assert.equal(controller.match(/scopeWhere: rbacScopeCurrent\.where\(\)/g)?.length, 3);
+          assert.equal(
+            controller.match(/@Arg\.rbacScopeCurrent\(\) rbacScopeCurrent: IRbacScopeAccess/g)
+              ?.length,
+            8,
+          );
+          assert.equal(controller.match(/@Passport\.rbac\(\{ dataScope: true/g)?.length, 8);
+          assert.equal(controller.match(/rbacScopeCurrent\.checkEntry\(data\)/g)?.length, 3);
+          assert.ok(
+            controller.includes(`return (await this.scope.service.record.create({
+      ...record,
+      ...rbacScopeCurrent.ownerValues(),
+    })).id;`),
+          );
+          for (const [action, read] of [
+            ['view', 'this.scope.service.record.view(id)'],
+            ['update', 'this.scope.model.record.getById(id)'],
+            ['delete', 'this.scope.model.record.getById(id)'],
+          ]) {
+            const method = controller.slice(controller.indexOf(`  async ${action}(`));
+            assert.ok(
+              method.includes(
+                `const data = await ${read};\n    rbacScopeCurrent.checkEntry(data);`,
+              ),
+              action,
+            );
+            if (action === 'view') {
+              assert.ok(method.includes('rbacScopeCurrent.checkEntry(data);\n    return data;'));
+            } else {
+              assert.ok(
+                method.indexOf('rbacScopeCurrent.checkEntry(data)') <
+                  method.indexOf(`await this.scope.service.record.${action}(`),
+                action,
+              );
+            }
+          }
+          assert.match(
+            controller,
+            /@Passport\.rbac\(\{ dataScope: true, actionInherit: 'select' \}\)/,
+          );
+          assert.doesNotMatch(controller, /rbacScopeCurrent\.where\(params(?:\.where)?\)/);
+        } else {
+          assert.doesNotMatch(controller, /rbacScopeCurrent|scopeWhere|dataScope/);
+        }
+        assert.match(req, /\$Dto.queryPage\(recordQuery, \['name', 'createdAt'\]\)/);
+        assert.match(req, /query: recordQuery/);
+        assert.doesNotMatch(req, /filter:\s*\{\s*table:/);
+        assert.match(req, /import \{ recordQuery \} from '\.\.\/lib\/recordQuery\.ts'/);
+        assert.match(service, /async select\(params\?: IQueryParams<ModelRecord>\)/);
+        assert.match(service, /import type \{ ModelRecord \} from '\.\.\/model\/record\.ts'/);
+        assert.match(service, /return await model\.selectAndCount\(params\)/);
+        assert.doesNotMatch(
+          service,
+          /\$compileQuery|TypeQuery(?:Group|Aggregate)?Input|recordQuery/,
+        );
         assert.match(req, /analysis: recordAnalysis/);
         assert.match(req, /import \{ recordAnalysis \} from '\.\.\/lib\/recordAnalysis\.ts'/);
         assert.match(
@@ -165,7 +285,7 @@ describe('default CRUD analysis generation', { concurrency: false }, () => {
           const mode = action === 'group' ? 'Group' : 'Aggregate';
           assert.ok(
             controller.includes(
-              `async ${action}(@Arg.filter(DtoRecordSelectReq, { mode: '${action}' }) params: TypeAnalysis${mode}Params<typeof recordAnalysis>)`,
+              `@Arg.filter(DtoRecordSelectReq, { mode: '${action}' }) params: TypeQuery${mode}Input<typeof recordQuery, typeof recordAnalysis>`,
             ),
             `${action} must derive action controls from the same SelectReq policy`,
           );
@@ -177,10 +297,14 @@ describe('default CRUD analysis generation', { concurrency: false }, () => {
               `async ${action}(params?: TypeAnalysis${mode}Params<typeof recordAnalysis>)`,
             ),
           );
+          const scopeWhere = edition === 'start' ? ', scopeWhere: rbacScopeCurrent.where()' : '';
           assert.ok(
-            service.includes(
-              `return await $executeAnalysis${mode}(this.scope.model.record, recordAnalysis, params)`,
+            controller.includes(
+              `const query = $compileQuery(this.scope.model.record, recordQuery, params, { mode: '${action}', analysis: recordAnalysis${scopeWhere} });\n    return await this.scope.service.record.${action}(query);`,
             ),
+          );
+          assert.ok(
+            service.includes(`return await $executeAnalysis${mode}(model, recordAnalysis, params)`),
           );
         }
         const groupDto = await read(moduleRoot, 'src/dto/recordGroupResItem.tsx');
@@ -207,16 +331,45 @@ describe('default CRUD analysis generation', { concurrency: false }, () => {
           /The shared policy does not enable analysis controls on ordinary select/,
         );
         assert.match(analysisTest, /\{ name \}/);
-        assert.match(analysisTest, /where: \{ id: fixture.id \}/);
         assert.match(
           analysisTest,
-          /columns: \['id'\], orders: 'name,desc', pageNo: 2, pageSize: 1/,
+          /const where = \{ field: 'id', op: 'eq', value: fixture.id \} as const/,
+        );
+        assert.match(analysisTest, /where: JSON\.stringify\(where\)/);
+        assert.match(analysisTest, /const serviceWhere = \{ id: fixture\.id \}/);
+        assert.match(
+          analysisTest,
+          /scope\.service\.record\.select\(\{ where: serviceWhere, limit: 1 \}\)/,
+        );
+        for (const action of ['group', 'aggregate']) {
+          assert.match(
+            analysisTest,
+            new RegExp(`scope\\.service\\.record\\.${action}\\(\\{\\s+where: serviceWhere,`),
+          );
+          assert.ok(
+            analysisTest.includes(
+              `scope.service.record.${action}({ where: serviceWhere, aggrs: { count: [] } })`,
+            ),
+          );
+        }
+        assert.doesNotMatch(
+          analysisTest,
+          /\$compileQuery|scope\.service\.record\.\w+\(\{ where[,}]/,
+        );
+        assert.match(analysisTest, /columns: JSON\.stringify\(\['id'\]\)/);
+        assert.match(
+          analysisTest,
+          /orders: JSON\.stringify\(\[\{ field: 'name', direction: 'desc' \}\]\)/,
         );
         assert.match(analysisTest, /assert.rejects\(/);
         assert.match(analysisTest, /for \(const action of \['group', 'aggregate'\] as const\)/);
         assert.match(analysisTest, /\['description'\]/);
-        assert.match(analysisTest, /pageNo: 2, pageSize: 0/);
+        assert.match(analysisTest, /pageNo: 2, pageSize: 1/);
         const actionTest = await read(moduleRoot, 'test/record.test.ts');
+        assert.match(
+          actionTest,
+          /where: JSON\.stringify\(\{ field: 'id', op: 'eq', value: recordId \}\)/,
+        );
         if (edition === 'basic') {
           assert.match(
             actionTest,
@@ -283,7 +436,12 @@ describe('default CRUD analysis generation', { concurrency: false }, () => {
           );
         }
         assert.equal(controller.match(/@Passport\.rbac\(/g)?.length, 8);
-        assert.match(controller, /@Passport\.rbac\(\{ actionInherit: 'delete' \}\)/);
+        assert.match(
+          controller,
+          edition === 'start'
+            ? /@Passport\.rbac\(\{ dataScope: true, actionInherit: 'delete' \}\)/
+            : /@Passport\.rbac\(\{ actionInherit: 'delete' \}\)/,
+        );
         if (edition === 'start') {
           assert.match(controller, /@Arg\.rbacScopeCurrent\(\) rbacScopeCurrent: IRbacScopeAccess/);
           assert.match(controller, /where: rbacScopeCurrent\.where\(\{ id: ids \}\)/);
@@ -344,6 +502,30 @@ describe('default CRUD analysis generation', { concurrency: false }, () => {
           const parent = await makeCli(path.join(root, 'parent'), Class);
           await parent.cli.execute();
           const parentController = await read(parent.moduleRoot, 'src/controller/record.ts');
+          if (edition === 'start' && detailMode === 'standalone') {
+            // Older owner-capable Start scaffolds inferred all entity write columns.
+            // The master-detail patch must retain its business-only write contract.
+            for (const kind of ['create', 'update']) {
+              const fileName = path.join(
+                parent.moduleRoot,
+                `src/dto/record${kind === 'create' ? 'Create' : 'Update'}.tsx`,
+              );
+              const source = await fs.readFile(fileName, 'utf8');
+              await fs.writeFile(
+                fileName,
+                source.replace(
+                  /extends \$Dto\.(create|update)\(\(\) => ModelRecord, \{\s*columns: \['name', 'description'\],?\s*\}\)/,
+                  'extends $Dto.$1(() => ModelRecord)',
+                ),
+              );
+            }
+            const serviceFile = path.join(parent.moduleRoot, 'src/service/record.ts');
+            const service = await fs.readFile(serviceFile, 'utf8');
+            await fs.writeFile(
+              serviceFile,
+              service.replace(" & Partial<Pick<EntityRecord, 'departmentId' | 'userIdOwner'>>", ''),
+            );
+          }
           const child = await makeCli(path.join(root, 'child'), Class);
           // Master-detail patches the formatted migration marker produced by CRUD.
           child.cli.helper.formatFile = async ({ fileName }) => {
@@ -409,6 +591,7 @@ describe('default CRUD analysis generation', { concurrency: false }, () => {
           masterDetail.__template = new SourceTemplate(masterDetail);
           masterDetail.helper.formatFile = async () => {};
           const events: string[] = [];
+          let childController: string | undefined;
           masterDetail.console.log = async message => {
             events.push(String(message));
           };
@@ -417,6 +600,7 @@ describe('default CRUD analysis generation', { concurrency: false }, () => {
             if (args[0].startsWith(':tools:crud')) {
               child.cli.context.argv.nometadata = true;
               await child.cli.execute();
+              childController = await read(child.moduleRoot, 'src/controller/entry.ts');
             }
           };
           await masterDetail.execute();
@@ -438,6 +622,69 @@ describe('default CRUD analysis generation', { concurrency: false }, () => {
           );
           assert.match(reminder, /TODO\(mcp-description\).*unfinished/);
           assert.equal(await read(parent.moduleRoot, 'src/controller/record.ts'), parentController);
+          const parentService = await read(parent.moduleRoot, 'src/service/record.ts');
+          const nestedBase = await read(parent.moduleRoot, 'src/dto/detailEntryBase.tsx');
+          assert.match(nestedBase, /columns: \['id', 'deleted', 'name', 'description'\]/);
+          assert.doesNotMatch(nestedBase, /departmentId|userIdOwner|recordId/);
+          assert.match(
+            await read(parent.moduleRoot, 'src/model/record.ts'),
+            /entrys: \$relation\.hasMany\('test-entry:entry', 'recordId'/,
+          );
+          for (const kind of ['create', 'update']) {
+            const dto = await read(
+              parent.moduleRoot,
+              `src/dto/record${kind === 'create' ? 'Create' : 'Update'}.tsx`,
+            );
+            assert.match(dto, /include: \{ entrys: \{ dtoClass: DtoDetailEntryMutate \} \}/);
+            assert.doesNotMatch(dto, /departmentId|userIdOwner|recordId/);
+            if (edition === 'start') {
+              assert.match(dto, /columns: \['name', 'description'\]/);
+            } else {
+              assert.doesNotMatch(dto, /columns:/);
+            }
+          }
+          if (edition === 'start') {
+            // These are authored-source regressions, not runtime authorization proof.
+            assert.match(
+              parentService,
+              /private _prepareEntrysOwners<T extends object>\(\s*items: T\[\] \| undefined,\s*owners: Partial<Pick<EntityRecord, 'departmentId' \| 'userIdOwner'>>,?\s*\): T\[\] \| undefined/,
+            );
+            assert.match(parentService, /if \(!items\?\.length\) return items;/);
+            assert.match(parentService, /owners\.departmentId === undefined/);
+            assert.match(parentService, /owners\.userIdOwner === undefined/);
+            assert.match(parentService, /owners\.userIdOwner === null/);
+            assert.match(
+              parentService,
+              /throw\(500, 'Record scope owner values are unavailable'\)/,
+            );
+            assert.match(
+              parentService,
+              /items\.map\(item => \(\{\s*\.\.\.item,\s*departmentId: owners\.departmentId,\s*userIdOwner: owners\.userIdOwner,?\s*\}\)\)/,
+            );
+            const create = parentService.slice(
+              parentService.indexOf('  async create('),
+              parentService.indexOf('  async select('),
+            );
+            assert.match(create, /entrys: this\._prepareEntrysOwners\(record\.entrys, record\)/);
+            assert.ok(create.indexOf('_prepareEntrysOwners(') < create.indexOf('.insert('));
+            const update = parentService.slice(
+              parentService.indexOf('  async update('),
+              parentService.indexOf('  async delete('),
+            );
+            assert.match(
+              update,
+              /if \(record\.entrys\?\.length\) \{\s*const data = await this\.scope\.model\.record\.getById\(id\);\s*if \(!data\) return;/,
+            );
+            assert.match(update, /entrys: this\._prepareEntrysOwners\(record\.entrys, data\)/);
+            assert.ok(update.indexOf('_prepareEntrysOwners(') < update.indexOf('.updateById('));
+            assert.doesNotMatch(
+              update,
+              /ownerValues\(|_prepareEntrysOwners\(record\.entrys, record\)/,
+            );
+          } else {
+            assert.doesNotMatch(parentService, /Owners|departmentId|userIdOwner/);
+            assert.match(parentService, /insert\(record, \{ include: \{ entrys: true \} \}\)/);
+          }
           for (const locale of ['en-us', 'zh-cn']) {
             const parentLocale = await read(parent.moduleRoot, `src/config/locale/${locale}.ts`);
             assert.ok(
@@ -475,6 +722,7 @@ describe('default CRUD analysis generation', { concurrency: false }, () => {
               'src/controller/entry.ts',
               'src/service/entry.ts',
               'src/lib/entryAnalysis.ts',
+              'src/lib/entryQuery.ts',
               'test/entry.test.ts',
               'test/entryAnalysis.test.ts',
             ]) {
@@ -485,13 +733,150 @@ describe('default CRUD analysis generation', { concurrency: false }, () => {
             assert.match(reminder, /Review retained standalone MCP Actions for test-entry:entry/);
             assert.match(reminder, /recordId ownership context and bulk delete/);
             const controller = await read(child.moduleRoot, 'src/controller/entry.ts');
+            assert.equal(controller, childController);
+            for (const kind of ['create', 'update']) {
+              const dto = await read(
+                child.moduleRoot,
+                `src/dto/entry${kind === 'create' ? 'Create' : 'Update'}.tsx`,
+              );
+              if (edition === 'start') {
+                assert.match(dto, /columns: \['name', 'description', 'recordId'\]/);
+                assert.doesNotMatch(dto, /departmentId|userIdOwner/);
+              } else {
+                assert.ok(dto.includes(`$Dto.${kind}(() => ModelEntry) {}`));
+              }
+            }
             assert.equal(controller.match(/@Mcp\.tool\(/g)?.length, 8);
             assert.match(controller, /EntryDeleteBulkDescription/);
             assert.ok(files.includes('src/dto/entryCreate.tsx'));
+            assert.ok(files.includes('src/lib/entryQuery.ts'));
+            assert.match(
+              await read(child.moduleRoot, 'src/dto/entrySelectReq.tsx'),
+              /query: entryQuery/,
+            );
+            assert.match(
+              controller,
+              /\$compileQuery\(this\.scope\.model\.entry, entryQuery, params/,
+            );
+            const service = await read(child.moduleRoot, 'src/service/entry.ts');
+            assert.match(service, /async select\(params\?: IQueryParams<ModelEntry>\)/);
+            assert.doesNotMatch(service, /\$compileQuery|entryQuery/);
+            assert.doesNotMatch(await read(child.moduleRoot, 'src/lib/entryQuery.ts'), /recordId/);
           }
+          const snapshot = await Promise.all(
+            [parent.moduleRoot, child.moduleRoot].map(async moduleRoot =>
+              Promise.all(
+                (await filesUnder(moduleRoot)).map(async file => [
+                  file,
+                  await read(moduleRoot, file),
+                ]),
+              ),
+            ),
+          );
+          await masterDetail.execute();
+          assert.deepEqual(
+            await Promise.all(
+              [parent.moduleRoot, child.moduleRoot].map(async moduleRoot =>
+                Promise.all(
+                  (await filesUnder(moduleRoot)).map(async file => [
+                    file,
+                    await read(moduleRoot, file),
+                  ]),
+                ),
+              ),
+            ),
+            snapshot,
+            'rerunning master-detail must not duplicate ownership, FK, DTO, or relation patches',
+          );
         }));
     }
   }
+
+  it('preserves an ownerless legacy Start parent without inventing owner propagation', async () =>
+    fixture(async root => {
+      const parent = await makeCli(path.join(root, 'parent'), CliToolsCrudStart);
+      await parent.cli.execute();
+      const entityFile = path.join(parent.moduleRoot, 'src/entity/record.tsx');
+      const entity = await fs.readFile(entityFile, 'utf8');
+      await fs.writeFile(
+        entityFile,
+        entity.replace(
+          /\n {2}@Api\.field\(ZovaRender\.visible\(false\), v\.(?:nullable|required)\(\), v\.tableIdentity\(\)\)\n {2}(?:departmentId: TableIdentity \| null|userIdOwner: TableIdentity);\n/g,
+          '\n',
+        ),
+      );
+      assert.doesNotMatch(
+        await read(parent.moduleRoot, 'src/entity/record.tsx'),
+        /departmentId|userIdOwner/,
+      );
+      for (const kind of ['create', 'update']) {
+        const fileName = path.join(
+          parent.moduleRoot,
+          `src/dto/record${kind === 'create' ? 'Create' : 'Update'}.tsx`,
+        );
+        const dto = await fs.readFile(fileName, 'utf8');
+        await fs.writeFile(
+          fileName,
+          dto.replace(
+            /extends \$Dto\.(create|update)\(\(\) => ModelRecord, \{\s*columns: \['name', 'description'\],?\s*\}\)/,
+            'extends $Dto.$1(() => ModelRecord)',
+          ),
+        );
+      }
+      const serviceFile = path.join(parent.moduleRoot, 'src/service/record.ts');
+      await fs.writeFile(
+        serviceFile,
+        (await fs.readFile(serviceFile, 'utf8')).replace(
+          " & Partial<Pick<EntityRecord, 'departmentId' | 'userIdOwner'>>",
+          '',
+        ),
+      );
+      const child = await makeCli(path.join(root, 'child'), CliToolsCrudStart);
+      child.cli.context.argv.module = 'test-entry';
+      child.cli.context.argv.resourceName = 'entry';
+      child.cli.modulesMeta = { modules: { 'test-entry': { root: child.moduleRoot } } } as never;
+      await child.cli.execute();
+      execFileSync(path.join(packageRoot, '../../../node_modules/.bin/oxfmt'), [
+        '--write',
+        '--threads=1',
+        '--config',
+        path.join(packageRoot, '../../../oxfmt.config.ts'),
+        path.join(child.moduleRoot, 'src/bean/meta.version.ts'),
+      ]);
+      await fs.writeFile(path.join(root, '__CABLOY_START__'), '');
+      const masterDetail = new CliToolsMasterDetail({
+        context: {
+          argv: {
+            _: [],
+            projectPath: root,
+            module: 'test-record',
+            resourceName: 'record',
+            detailModule: 'test-entry',
+            detailResourceName: 'entry',
+            detailMode: 'standalone',
+          },
+        },
+      } as never);
+      masterDetail.modulesMeta = {
+        modules: {
+          'test-record': { root: parent.moduleRoot },
+          'test-entry': { root: child.moduleRoot },
+        },
+      } as never;
+      masterDetail.__template = new SourceTemplate(masterDetail);
+      masterDetail.helper.formatFile = async () => {};
+      masterDetail.helper.invokeCli = async () => {};
+      masterDetail.console.log = async () => {};
+      await masterDetail.execute();
+      const service = await read(parent.moduleRoot, 'src/service/record.ts');
+      assert.doesNotMatch(service, /Owners|departmentId|userIdOwner/);
+      assert.match(service, /insert\(record, \{ include: \{ entrys: true \} \}\)/);
+      for (const kind of ['Create', 'Update']) {
+        const dto = await read(parent.moduleRoot, `src/dto/record${kind}.tsx`);
+        assert.match(dto, /include: \{ entrys: \{ dtoClass: DtoDetailEntryMutate \} \}/);
+        assert.doesNotMatch(dto, /columns:|departmentId|userIdOwner/);
+      }
+    }));
 
   it(
     'freshly packaged beans and production templates match default source generation',

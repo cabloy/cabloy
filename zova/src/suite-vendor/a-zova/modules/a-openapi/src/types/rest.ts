@@ -6,6 +6,8 @@ import 'openapi3-ts/oas30';
 import 'openapi3-ts/oas31';
 import { SchemaObject } from 'openapi3-ts/oas31';
 
+import type { IQueryOrder, TypeQueryOperator } from './table.ts';
+
 import { IResourceDetailsActionRowRecord } from './detail/detailsActionRow.ts';
 import { IResourceRenderBlockOptionsBlock } from './resource/block.ts';
 import { IResourceFormFieldRecord } from './resource/formField.ts';
@@ -46,7 +48,33 @@ export interface ISchemaObjectExtensionFieldRest extends ITableColumnOptions {
   'filter'?: Omit<ISchemaObjectExtensionFieldRest, TypeSchemaScene>;
 }
 
+export interface IQueryFieldCapabilities {
+  operators: readonly TypeQueryOperator[];
+  type: 'string' | 'number' | 'boolean' | 'identity' | 'timestamp' | 'date' | 'decimal' | 'enum';
+  nullable: boolean;
+}
+
+export interface IQueryCapabilities {
+  fields: Record<string, IQueryFieldCapabilities>;
+  orderable: readonly string[];
+  projection: { mode: 'fixed' };
+  pagination?: boolean;
+  limits: {
+    maxBytes: number;
+    maxNodes: number;
+    maxValueDepth: number;
+    maxPredicateDepth: number;
+    maxListItems: number;
+    maxOrders: number;
+    maxStringLength: number;
+    maxPageSize: number;
+  };
+  defaults: { orders: readonly IQueryOrder[]; pageNo: number; pageSize: number };
+  conveniences?: Record<string, { field: string; op?: TypeQueryOperator }>;
+}
+
 export interface ISchemaObjectExtensionFieldFilterCapabilities {
+  query?: IQueryCapabilities;
   where?: boolean;
   // filter?: boolean;
   order?: boolean;

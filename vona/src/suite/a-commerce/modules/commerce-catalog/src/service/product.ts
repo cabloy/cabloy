@@ -1,10 +1,11 @@
 import type { Knex } from 'knex';
 import type { TableIdentity } from 'table-identity';
-import type { IQueryParams } from 'vona-module-a-orm';
+import type { IQueryParams, TypeQueryInput } from 'vona-module-a-orm';
 
 import { BeanBase } from 'vona';
 import { Service } from 'vona-module-a-bean';
 import { Core } from 'vona-module-a-core';
+import { $compileQuery } from 'vona-module-a-orm';
 
 import type { DtoProductCreate } from '../dto/productCreate.tsx';
 import type { DtoProductPublic } from '../dto/productPublic.tsx';
@@ -15,6 +16,8 @@ import type { DtoProductUpdate } from '../dto/productUpdate.tsx';
 import type { DtoProductView } from '../dto/productView.tsx';
 import type { EntityProduct } from '../entity/product.tsx';
 import type { ModelProduct } from '../model/product.ts';
+
+import { productPublicQuery } from '../dto/productPublicSelectReq.tsx';
 
 const serializationRetryOptions = {
   retries: 6,
@@ -50,17 +53,20 @@ export class ServiceProduct extends BeanBase {
   async select(params?: IQueryParams<ModelProduct>): Promise<DtoProductSelectRes> {
     return await this.scope.model.product.selectAndCount({
       ...params,
-      include: { ...params?.include, category: true },
+      include: { category: true },
     });
   }
 
-  async selectPublic(params: IQueryParams<ModelProduct>): Promise<DtoProductPublicSelectRes> {
+  async selectPublic(
+    params: TypeQueryInput<typeof productPublicQuery>,
+  ): Promise<DtoProductPublicSelectRes> {
+    const compiled = $compileQuery(this.scope.model.product, productPublicQuery, params, {
+      scopeWhere: this._getPublicProductWhere(),
+    });
+    this.$logger.debug('product.public.select sellability scope compiled');
     const result = await this.scope.model.product.selectAndCount({
+      ...compiled,
       columns: ['id', 'title', 'description', 'categoryId'],
-      where: this._getPublicProductWhere(params.where),
-      orders: [['id', 'asc']],
-      limit: params.limit ?? 20,
-      offset: params.offset ?? 0,
       include: {
         category: { columns: ['id', 'name'] },
         skuAvailables: true,

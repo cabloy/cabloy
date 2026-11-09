@@ -1,26 +1,27 @@
 import type { TableIdentity } from 'table-identity';
+import type { TypeQueryInput } from 'vona-module-a-orm';
 
 import { BeanBase } from 'vona';
 import { Service } from 'vona-module-a-bean';
+import { $compileQuery } from 'vona-module-a-orm';
 
-import type { DtoAuthorizationGrantMineReq } from '../dto/authorizationGrantMineReq.tsx';
 import type { DtoAuthorizationGrantMineRes } from '../dto/authorizationGrantMineRes.tsx';
 
 import { authorizationGrantColumns } from '../dto/authorizationGrant.tsx';
+import { authorizationGrantMineQuery } from '../dto/authorizationGrantMineReq.tsx';
 
 @Service()
 export class ServiceAuthorizationGrant extends BeanBase {
   async mine(
     userId: TableIdentity,
-    query: DtoAuthorizationGrantMineReq,
+    query: TypeQueryInput<typeof authorizationGrantMineQuery>,
   ): Promise<DtoAuthorizationGrantMineRes> {
     const result = await this.scope.model.authorization.selectAndCount({
+      ...$compileQuery(this.scope.model.authorization, authorizationGrantMineQuery, query, {
+        scopeWhere: { userId },
+      }),
       columns: [...authorizationGrantColumns, 'clientId', 'oauthClientId'],
       include: { client: true },
-      where: { userId },
-      orders: [['id', 'desc']],
-      limit: query.pageSize,
-      offset: (query.pageNo - 1) * query.pageSize,
     });
     return {
       ...result,

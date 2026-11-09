@@ -29,7 +29,7 @@ A practical mental model is:
 1. `blockFilter` normalizes user-entered filter values
 2. `blockPage` stores those values in `queryFilterData`
 3. `blockPage` also owns paging state in `queryPaged`
-4. `blockPage` computes one merged `query`
+4. `blockPage` composes fixed predicates, user filters, structured orders and paging into one `query`
 5. `ModelResource.select(query)` becomes the owner-side query execution boundary
 6. the select result provides both `list` and paged metadata
 7. `blockTable` consumes the list data
@@ -97,22 +97,49 @@ It also owns:
 
 That means paging is page-owned runtime state, not something the pager block owns independently.
 
-### 3. `query` is the canonical merged state
+### 3. `query` composes constraints and list controls
 
-The same `blockPage` controller computes:
+`blockPage` owns `queryFixedData`, `queryFilterData`, `querySortingData` and `queryPaged`. Its `query` getter separates predicates before merging other controls:
 
 ```typescript
-this.query = this.$computed(() => {
-  return Object.assign({}, this.queryFilterData, this.queryPaged);
-});
+const { where: whereFixed, ...queryFixed } = this.queryFixedData;
+const { where: whereFilter, ...queryFilter } = this.queryFilterData;
+const predicates = [whereFixed, whereFilter].filter(
+  (where): where is NonNullable<ITableQuery['where']> => !!where,
+);
+const where = predicates.length > 1 ? { and: predicates } : predicates[0];
+return {
+  ...queryFixed,
+  ...queryFilter,
+  ...this.querySortingData,
+  ...(where ? { where } : {}),
+  ...this.queryPaged,
+};
 ```
 
-This is the canonical query object for the list page.
+`where` is the [canonical public predicate AST](/backend/public-query-guide#predicate-language), not a property-keyed ORM object. Fixed and user predicates combine by **AND**, preserving repeated fields and nested OR/NOT. Do not spread one `where` object over another. If neither exists, omit `where`; do not send `{}`. Named form fields remain top-level conveniences and the backend AND-composes their normalized predicates with explicit `where`.
 
-A practical reading rule is:
+For a policy admitting the field, a resource-picker fixed constraint can be:
 
-- filter state and paging state stay separate while they are being edited
-- `query` is the merged runtime shape passed into the owner
+```typescript
+const queryFixed = {
+  where: { field: 'level', op: 'eq', value: 2 },
+};
+```
+
+This frontend fixed query is a UX constraint, not authorization. The Resource controller uses `$compileQuery` to validate the public query and compose the current Action's trusted RBAC row restriction (`scopeWhere: rbacScopeCurrent.where()`) AND the canonical client predicate; never pass the AST to `rbacScopeCurrent.where(params.where)`. Its service accepts trusted ORM parameters without recompilation and retains business authorization and additional ownership/state/visibility rules. Normal Model instance/soft-delete scope remains active. Dedicated self-service methods with explicit identity and business scope may still own compilation; see [Public Query Guide](/backend/public-query-guide#dedicated-business-scoped-service-contracts-remain-valid). There is no public raw-ORM fallback, even for handwritten clients or pickers.
+
+Sorting changes produce structured controls, for example:
+
+```typescript
+{
+  orders: [{ field: 'createdAt', direction: 'desc' }];
+}
+```
+
+Do not emit tuple orders or infer sortability from a same-named filter input. `schemaOrder` exposes backend public order capabilities; response column `rest.enableSorting` remains the UI enablement gate. A field may be sortable without a named filter. The Basic table emits one user sort; the backend supplies endpoint defaults when omitted and a stable resource-id tie-breaker when absent. Named filters, canonical predicate fields, orderable fields and returned columns are distinct capabilities. Current fixed projection rejects client `columns`.
+
+Fixed-query, filter and sort changes reset page 1 and clear ordinary list selection; page-size changes do likewise. Picker-persistent selection follows the existing selection policy rather than being unconditionally cleared. Filter and paging state stay separate while edited; the composed query is the one passed to the existing resource owner, not a second fetch/cache owner.
 
 ### 4. `ModelResource.select(query)` is the owner-side query boundary
 
@@ -126,7 +153,7 @@ zova/src/suite-vendor/a-cabloy/modules/rest-resource/src/model/resource.ts
 
 ```typescript
 get queryData() {
-  return this.$$modelResource.select(this.query);
+  return this.$$modelResource.selectGeneral(this.$props.actionPath, this.query);
 }
 ```
 
@@ -134,8 +161,9 @@ Inside the owner:
 
 - `select(query?)` delegates to `selectGeneral(undefined, query)`
 - `selectGeneral(...)` creates a query key shaped like:
-  - `['select', actionPath ?? '', hashkey(query)]`
+  - `['select', 'public-query-v1', actionPath ?? '', hashkey(query)]`
 - it fetches the list result from the resolved `resourceApi`
+- the contract discriminator prevents old persisted raw-query results from masquerading as new-contract results; existing select-prefix invalidation remains in use
 
 This is the second key rule:
 
@@ -192,6 +220,8 @@ This is the third key rule:
 - the pager does not fetch directly
 - it mutates page-owned paging state and lets the central query path react
 
+Keep `schemaFilter`, `schemaOrder` and `schemaRow` under the current resource owner. They are locale-reactive: reacquire current schema facades rather than retaining a snapshot from before a locale change. Advanced-query typing comes from backend policy/OpenAPI generation; the named ZForm does not need to become an advanced query editor.
+
 ## Permission-driven table-meta refresh is adjacent, not the data path itself
 
 `blockPage` also watches:
@@ -216,8 +246,8 @@ The shortest end-to-end trace is:
 - filter UI normalizes user input
 - `queryFilterData` changes
 - `queryPaged` changes when navigation changes page
-- `query = { ...queryFilterData, ...queryPaged }`
-- `queryData = $$modelResource.select(query)`
+- fixed and user AST predicates compose with AND; other filter/sort/page controls join the query
+- `queryData = $$modelResource.selectGeneral(actionPath, query)`
 - `data = queryData.data?.list`
 - `paged = queryData.data`
 - table consumes `data`
@@ -232,7 +262,7 @@ If list data looks wrong, ask:
 1. did `blockFilter` normalize away a field unexpectedly?
 2. did `queryFilterData` actually change?
 3. did `queryPaged` change as expected?
-4. does the merged `query` contain the expected fields?
+4. does the composed `query` contain the expected named controls, AND-composed AST and structured orders, without an empty `where`?
 5. did `ModelResource.select(query)` create the expected query-key identity?
 6. is `queryData.data?.list` populated as expected?
 7. is `paged` present and consistent with the list result?
@@ -244,6 +274,7 @@ Use these next steps depending on your question:
 
 - if you want the broader list-page runtime assembly, read [Resource List Page Deep Dive](/frontend/resource-list-page-deep-dive)
 - if you want the owner internals behind `select(query)`, read [ModelResource Internals Deep Dive](/frontend/model-resource-internals-deep-dive)
+- for predicate semantics, native operands, transport and budgets, read [Public Query Guide](/backend/public-query-guide)
 - if you want practical CRUD authoring guidance, read [Table + Resource CRUD Cookbook](/frontend/table-resource-crud-cookbook)
 - if you want row/bulk action visibility, read [Table Action Visibility and Permission Flow Guide](/frontend/table-action-visibility-permission-flow-guide)
 

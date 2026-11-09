@@ -10,7 +10,7 @@ import { app } from 'vona-mock';
 import { $makeMetadata, getTargetDecoratorRules } from 'vona-module-a-openapiutils';
 
 import { DtoDetailRecordSubjectResItem } from '../src/dto/detailRecordSubjectResItem.tsx';
-import { DtoRecordSelectReq } from '../src/dto/recordSelectReq.tsx';
+import { DtoRecordSelectReq, recordQuery } from '../src/dto/recordSelectReq.tsx';
 import { DtoRecordSelectResItem } from '../src/dto/recordSelectResItem.tsx';
 import { DtoRecordView } from '../src/dto/recordView.tsx';
 
@@ -33,13 +33,12 @@ describe('record.test.ts', () => {
       assert.ok(selectReqRules.studentId);
       const studentIdMetadata = $makeMetadata(selectReqRules.studentId);
       assert.equal(selectReqRules.studentId?.type, 'optional');
-      assert.deepEqual(studentIdMetadata?.filter, {
-        table: 'trainingStudent',
-        joinType: 'innerJoin',
-        joinOn: ['studentId', 'trainingStudent.id'],
-        originalName: 'name',
-        op: '_includesI_',
+      assert.equal(studentIdMetadata?.filter, undefined);
+      assert.deepEqual(recordQuery.conveniences.studentId, {
+        field: 'studentName',
+        op: 'containsI',
       });
+      assert.equal(recordQuery.bindings.studentName?.field, 'name');
 
       const controller = app.bean.onion.controller
         .getOnionsEnabledCached()
@@ -89,7 +88,7 @@ describe('record.test.ts', () => {
           'id',
           'name',
         ]);
-        assert.equal(component.properties.studentId.rest.table.enableSorting, true);
+        assert.equal(component.properties.studentId.rest?.table?.enableSorting, undefined);
       }
     });
   });

@@ -1,18 +1,19 @@
 import type { TableIdentity } from 'table-identity';
-import type { IQueryParams } from 'vona-module-a-orm';
+import type { TypeQueryInput } from 'vona-module-a-orm';
 import type { IDecoratorControllerOptions } from 'vona-module-a-web';
 
 import { BeanBase } from 'vona';
 import { Api, Resource, v } from 'vona-module-a-openapiutils';
+import { $compileQuery } from 'vona-module-a-orm';
 import { Passport } from 'vona-module-a-user';
 import { Arg, Controller, Web } from 'vona-module-a-web';
 
-import type { ModelOrder } from '../model/order.ts';
+import type { orderMineQuery } from '../dto/orderMineReq.tsx';
 
 import { DtoOrderDetail } from '../dto/orderDetail.tsx';
 import { DtoOrderMineReq } from '../dto/orderMineReq.tsx';
 import { DtoOrderMineRes } from '../dto/orderMineRes.tsx';
-import { DtoOrderSelectReq } from '../dto/orderSelectReq.tsx';
+import { orderQuery, DtoOrderSelectReq } from '../dto/orderSelectReq.tsx';
 import { DtoOrderSelectRes } from '../dto/orderSelectRes.tsx';
 import { DtoOrderShip } from '../dto/orderShip.tsx';
 import { DtoOrderView } from '../dto/orderView.tsx';
@@ -31,7 +32,7 @@ export class ControllerOrder extends BeanBase {
   @Web.get('mine')
   @Api.body(DtoOrderMineRes)
   async mine(
-    @Arg.filter(DtoOrderMineReq) params: IQueryParams<ModelOrder>,
+    @Arg.filter(DtoOrderMineReq) params: TypeQueryInput<typeof orderMineQuery>,
   ): Promise<DtoOrderMineRes> {
     return await this.scope.service.order.mine(params);
   }
@@ -125,9 +126,11 @@ export class ControllerOrder extends BeanBase {
   @Api.body(DtoOrderSelectRes)
   @Passport.systemAdmin()
   async select(
-    @Arg.filter(DtoOrderSelectReq) params: IQueryParams<ModelOrder>,
+    @Arg.filter(DtoOrderSelectReq) params: TypeQueryInput<typeof orderQuery>,
   ): Promise<DtoOrderSelectRes> {
-    return await this.scope.service.order.select(params);
+    return await this.scope.service.order.select(
+      $compileQuery(this.scope.model.order, orderQuery, params),
+    );
   }
 
   @Web.get(':id')

@@ -200,6 +200,8 @@ Then distinguish runtime lookup from a true module dependency:
 - do not add a dependency declaration merely because code looks up another module's service, model, config, locale, or other resource
 - scope lookup cannot make an absent module available; validate application/suite composition separately when the target must exist
 
+When a DTO superclass, decorator, or top-level policy needs another module's resource, use its public package exports, not cross-module filesystem paths. Check when the consumer resolves the resource: neither a string identifier nor a class callback guarantees deferred initialization. After changing such references, verify actual application startup and the affected DTO/query behavior through existing managed tests, not typechecking alone. See [Cross-module imports and initialization](../../../repo-docs/backend/module-dependencies.md#cross-module-imports-and-initialization).
+
 For the canonical decision guide, read [Vona Module Dependencies](../../../repo-docs/backend/module-dependencies.md), with [Backend Foundation](../../../repo-docs/backend/foundation.md#scope-lookup-vs-module-dependencies) and [Package Map](../../../repo-docs/reference/package-map.md) as companions.
 
 ### Verification

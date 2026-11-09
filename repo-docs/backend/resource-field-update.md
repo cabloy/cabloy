@@ -96,40 +96,65 @@ Read [DTO Infer and Generation](/backend/dto-infer-generation) when inference ca
 
 ## Filter and sort a relation by its display field
 
-A resource list can search and order a relation by a human-readable column from its related table without changing the persisted relation contract. Keep the entity field as the foreign-key identity and place the join mapping on that entity field. For example, `studentId` remains a `TableIdentity` even though the list filter accepts part of the student's name:
+A resource list can search and order a relation by a human-readable column from its related table without changing the persisted relation contract. Keep the entity field as the foreign-key identity; put the related-field binding in the select query policy, not in entity filter metadata. For example, `studentId` remains a `TableIdentity` even though the named list filter accepts part of the student's name:
 
 ```ts
-@Api.field(
-  v.filter({
-    table: 'trainingStudent',
-    joinType: 'innerJoin',
-    joinOn: ['studentId', 'trainingStudent.id'],
-    originalName: 'name',
-    op: '_includesI_',
-  }),
-  ZovaRender.column({ enableSorting: true }),
-  v.tableIdentity(),
-)
+@Api.field(v.tableIdentity())
 studentId: TableIdentity;
 ```
 
-`table` and `joinOn` identify the relation, while `originalName` resolves both the `studentId` filter and order key to `trainingStudent.name`. `_includesI_` makes the filter a case-insensitive partial-name match. `ZovaRender.column({ enableSorting: true })` is the shared Cabloy Basic/Start frontend eligibility declaration for a sortable table header; it does not by itself authorize or resolve the backend order key. The order schema and query metadata remain authoritative, and the query pipeline uses the same field metadata to add the join and rewrite `orders: [['studentId', 'asc']]` to the related display column. For the complete table-column contract and resource-page sort path, see [Table Guide](/frontend/table-guide#configure-physical-columns-with-zovarendercolumn).
-
-Use `innerJoin` deliberately when the relation is required and unmatched rows should not participate in this filter/order path. For an optional relation whose unmatched rows must remain visible, choose the join behavior explicitly instead of copying the required-relation example.
-
-Keep `studentId` as the public filter and order key. In the select request DTO, override only its query-input schema and renderer so a text fragment reaches the join-backed filter; the entity and create/update contracts remain foreign-key identities:
+Declare the canonical display alias, its allowed operators, and its server-owned binding with `$defineQuery`. This policy follows the Training Record pattern and preserves its default ordering:
 
 ```ts
-fields: {
-  studentId: $makeSchema(
-    ZovaRender.field('basic-input:formFieldInput'),
-    v.optional(),
-    z.string(),
-  ),
-},
+export const recordQuery = $defineQuery(() => ModelRecord, {
+  name: 'TrainingRecordSelect',
+  fields: {
+    name: { operators: ['eq', 'containsI'] },
+    studentId: { operators: ['eq'] },
+    studentName: { operators: ['containsI'] },
+    createdAt: { operators: ['gte', 'lt', 'lte'] },
+  },
+  orderable: ['id', 'name', 'studentId', 'studentName', 'createdAt'],
+  defaults: { orders: [{ field: 'createdAt', direction: 'desc' }] },
+  bindings: {
+    studentName: {
+      modelLike: () => ModelStudent,
+      field: 'name',
+      localKey: 'studentId',
+      foreignKey: 'id',
+      joinType: 'innerJoin',
+    },
+  },
+  conveniences: { studentId: { field: 'studentName', op: 'containsI' } },
+  projection: { mode: 'fixed' },
+});
 ```
 
-Do not add a parallel `studentName` query field unless the API intentionally needs distinct ID and display-name filtering semantics. For the underlying query behavior, see [ORM Select Guide](/backend/orm-select-guide). For the list-page query path, see [Filter to Query to Select Data Flow](/frontend/filter-query-select-data-flow-guide).
+`bindings.studentName` obtains the scalar schema from the related Model's `name` field and binds the owning resource's `studentId` to that Model's `id`. `conveniences.studentId` maps the named UI input to the canonical `studentName` predicate. The canonical `studentId` field remains available for an identity `eq` comparison; it does not acquire text-search semantics.
+
+Use `innerJoin` deliberately when a related-field predicate must require a matching related row. For an optional relation, use `leftJoin` (the binding default) when unmatched rows must remain eligible, and choose predicates/null checks accordingly. Related-field sorting uses a scoped scalar lookup, not a row-multiplying outer query join; sorting alone does not exclude unmatched rows, and null values sort last.
+
+Keep `studentId` as the named filter and table-column key, but use `studentName` for canonical display-name predicates and orders. Associate the policy with the select request DTO and refine only the named query-input schema and renderer. A minimal named-filter projection is:
+
+```ts
+@Dto({
+  query: recordQuery,
+  fields: {
+    studentId: $makeSchema(
+      ZovaRender.field('basic-input:formFieldInput'),
+      v.optional(),
+      z.string(),
+    ),
+  },
+})
+export class DtoRecordSelectReq extends $Dto.queryPage(recordQuery, ['studentId']) {}
+```
+
+In an existing DTO, retain its other named filters and refinements, such as `name` and the `createdAt` date-range transform. The renderer key above is Cabloy Basic-specific; resolve the equivalent renderer in the active edition. The entity and create/update contracts remain foreign-key identities. There is no need for a second named `studentName` form control: `studentName` is the canonical policy alias, while `studentId` is the convenience input.
+
+The table maps its `studentId` column through the published convenience capability to `studentName` and submits `orders: [{ field: 'studentName', direction: 'asc' }]`. It inherits that published orderability without `enableSorting: true`; only the server-owned binding supplies the related lookup. Use `ZovaRender.column({ enableSorting: false })` only when the UI should hide an otherwise allowed sort. See [Table Guide](/frontend/table-guide#configure-physical-columns-with-zovarendercolumn) for the column contract.
+
+Do not use removed `v.filter` options `table`, `joinType`, `joinOn`, or `originalName`, or DTO-level `openapi.filter.table`, to configure this path. Policy `bindings` and `conveniences` replace that metadata; the binding's own `joinType` remains supported. This does not remove `v.filter`, filter transforms, query capabilities, or trusted internal ORM joins. See [Public Query Guide](/backend/public-query-guide) for the public contract and compiler boundary, [ORM Select Guide](/backend/orm-select-guide) for trusted ORM operations, and [Filter to Query to Select Data Flow](/frontend/filter-query-select-data-flow-guide) for the list-page path.
 
 ## Choose the renderer branch
 
@@ -181,11 +206,11 @@ Minimum backend coverage generally includes:
 
 For join-backed relation filtering and sorting, also verify:
 
-- the projected request field is optional text while the entity remains a foreign-key identity;
-- direct DTO metadata retains the intended `table`, `joinType`, `joinOn`, `originalName`, and operator;
-- the select action exposes the intended query parameter without an unintended parallel display-name parameter;
-- filtering returns records whose related display value matches the text fragment;
-- ascending and descending orders return the expected related-display ordering, including the selected join behavior for unmatched rows.
+- the named request field is optional text while the entity remains a foreign-key identity;
+- the policy has the intended related Model/field/key binding and operator allowlist, while published `filter.capabilities.query` metadata exposes the alias, orderability, and convenience mapping without backend binding details;
+- the select action exposes the intended named filter without an unintended second display-name form control, alongside the admitted canonical `where` and `orders` controls;
+- named text filtering normalizes to a canonical display-alias predicate and returns records whose related display value matches; an admitted canonical identity comparison remains distinct;
+- ascending and descending canonical orders return the expected related-display ordering, with separate checks for unmatched-row predicate semantics and null-last sorting.
 
 For constrained enum-like values, add a negative test that proves an invalid value is rejected. Test-local persisted resources must be deleted in `finally` using precise owned identities and reverse dependency order.
 
@@ -199,6 +224,6 @@ Choose checks that match the layers changed:
 - decide development-database updates separately: tests do not update dev data, pending migrations apply through normal startup, and replaying an already-applied positive-numbered branch on disposable dev data requires explicit reset approval;
 - run the relevant frontend metadata/build/dependency synchronization when custom renderer resources are involved;
 - verify action-level serializer behavior with an API test when `v.serializer*` metadata changes returned fields;
-- for join-backed filters and sorting, inspect transformed `where`, `orders`, and `joins`, then exercise the resource endpoint so metadata-only success cannot hide incorrect query behavior.
+- for relation-backed filters and sorting, inspect normalized canonical `where` / `orders` and the compiled query behavior, then exercise the resource endpoint; do not require a public or top-level ORM `joins` object, because related predicates compile through main-ID membership and related orders through scoped scalar lookups.
 
 Finish by confirming the backend contract, frontend resources, generated handoff, and user-visible locale labels all describe the same field behavior.

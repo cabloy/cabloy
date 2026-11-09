@@ -1,3 +1,4 @@
+import type { TableIdentity } from 'table-identity';
 import type {
   DtoCategoryCreate,
   DtoProductCreate,
@@ -10,6 +11,7 @@ import assert from 'node:assert';
 import { randomUUID } from 'node:crypto';
 import { after, before, describe, it } from 'node:test';
 import { acquireTestLock, app } from 'vona-mock';
+import { $makeSchema, v } from 'vona-module-a-openapiutils';
 
 interface IProductFixture {
   categoryId?: number;
@@ -120,6 +122,111 @@ describe('product.test.ts', { concurrency: false }, () => {
       } finally {
         await cleanupFixture(fixture);
         await app.bean.passport.signout();
+      }
+    });
+  });
+
+  it('keeps sellability scope outside public OR/NOT predicates and rejects projection overrides', async () => {
+    await app.bean.executor.mockCtx(async () => {
+      const suffix = randomUUID().slice(0, 12);
+      const fixture: IProductFixture = { productIds: [], skuIds: [] };
+      const catalog = app.scope('commerce-catalog');
+      try {
+        const category = await catalog.model.category.insert({
+          name: `__QueryCategory-${suffix}__`,
+          published: true,
+        });
+        fixture.categoryId = category.id as number;
+        for (const [label, published, lifecycle, available] of [
+          ['visible', true, 'active', 2],
+          ['unpublished', false, 'active', 2],
+          ['inactive', true, 'inactive', 2],
+          ['empty', true, 'active', 0],
+        ] as const) {
+          const product = await catalog.model.product.insert({
+            categoryId: category.id,
+            title: `__QueryProduct-${suffix}-${label}__`,
+            published,
+          });
+          fixture.productIds.push(product.id as number);
+          const sku = await catalog.model.sku.insert({
+            productId: product.id,
+            code: `query-${suffix}-${label}`,
+            priceCents: 100,
+            lifecycle,
+          });
+          fixture.skuIds.push(sku.id as number);
+          if (available) {
+            await app.scope('commerce-trade').service.stockBalance.adjustStock({
+              skuId: sku.id,
+              delta: available,
+              reason: 'public query regression',
+              correlationId: `query-${suffix}-${label}`,
+            });
+          }
+        }
+        const publicCategoryId = $makeSchema(v.tableIdentity()).parse(category.id) as TableIdentity;
+        const result = await catalog.service.product.selectPublic({
+          where: {
+            and: [
+              { field: 'categoryId', op: 'eq', value: publicCategoryId },
+              {
+                or: [
+                  { field: 'title', op: 'containsI', value: `__QueryProduct-${suffix}` },
+                  { not: { field: 'title', op: 'containsI', value: 'not-a-fixture-product' } },
+                ],
+              },
+            ],
+          },
+        });
+        assert.equal(result.total, '1');
+        assert.deepEqual(
+          result.list.map(item => String(item.id)),
+          [String(fixture.productIds[0])],
+        );
+        const scoped = await catalog.service.product.selectPublic({
+          where: {
+            and: [
+              { field: 'categoryId', op: 'eq', value: publicCategoryId },
+              { not: { field: 'title', op: 'containsI', value: 'not-a-fixture-product' } },
+            ],
+          },
+        });
+        assert.equal(scoped.total, '1');
+        assert.deepEqual(
+          scoped.list.map(item => String(item.id)),
+          [String(fixture.productIds[0])],
+        );
+        assert.deepEqual(Object.keys(scoped.list[0]).sort(), [
+          'available',
+          'categoryId',
+          'categoryName',
+          'description',
+          'id',
+          'priceCents',
+          'skuAvailables',
+          'title',
+        ]);
+        assert.deepEqual(Object.keys(scoped.list[0].skuAvailables[0]).sort(), [
+          'available',
+          'code',
+          'id',
+          'priceCents',
+        ]);
+        for (const invalid of [
+          { columns: ['id', 'published', 'iid', 'deleted'] },
+          { include: { skus: true } },
+          { where: { published: false } },
+          { where: { field: 'published', op: 'eq', value: false } },
+          { orders: [{ field: 'title', direction: 'asc' }] },
+        ]) {
+          await assert.rejects(
+            () => catalog.service.product.selectPublic(invalid as never),
+            (error: { code?: number }) => error.code === 422,
+          );
+        }
+      } finally {
+        await cleanupFixture(fixture);
       }
     });
   });

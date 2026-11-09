@@ -1,16 +1,15 @@
 import type { TableIdentity } from 'table-identity';
-import type { IQueryParams } from 'vona-module-a-orm';
+import type { TypeQueryInput } from 'vona-module-a-orm';
 import type { IDecoratorControllerOptions } from 'vona-module-a-web';
 
 import { BeanBase } from 'vona';
 import { Api, Resource, v } from 'vona-module-a-openapiutils';
+import { $compileQuery } from 'vona-module-a-orm';
 import { Passport } from 'vona-module-a-user';
 import { Arg, Controller, Web } from 'vona-module-a-web';
 
-import type { ModelStockBalance } from '../model/stockBalance.ts';
-
 import { DtoStockAdjust } from '../dto/stockAdjust.tsx';
-import { DtoStockBalanceSelectReq } from '../dto/stockBalanceSelectReq.tsx';
+import { stockBalanceQuery, DtoStockBalanceSelectReq } from '../dto/stockBalanceSelectReq.tsx';
 import { DtoStockBalanceSelectRes } from '../dto/stockBalanceSelectRes.tsx';
 import { DtoStockBalanceView } from '../dto/stockBalanceView.tsx';
 import { EntityStockBalance } from '../entity/stockBalance.tsx';
@@ -33,9 +32,11 @@ export class ControllerStockBalance extends BeanBase {
   @Api.body(DtoStockBalanceSelectRes)
   @Passport.systemAdmin()
   async select(
-    @Arg.filter(DtoStockBalanceSelectReq) params: IQueryParams<ModelStockBalance>,
+    @Arg.filter(DtoStockBalanceSelectReq) params: TypeQueryInput<typeof stockBalanceQuery>,
   ): Promise<DtoStockBalanceSelectRes> {
-    return await this.scope.service.stockBalance.select(params);
+    return await this.scope.service.stockBalance.select(
+      $compileQuery(this.scope.model.stockBalance, stockBalanceQuery, params),
+    );
   }
 
   @Web.get(':id')

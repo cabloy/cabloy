@@ -1,21 +1,19 @@
 import type {
-  IQueryParams,
-  TypeAnalysisAggregateParams,
-  TypeAnalysisGroupParams,
+  TypeQueryInput,
+  TypeQueryAggregateInput,
+  TypeQueryGroupInput,
 } from 'vona-module-a-orm';
 import type { IDecoratorControllerOptions } from 'vona-module-a-web';
 
 import { BeanBase } from 'vona';
 import { Api, v } from 'vona-module-a-openapiutils';
-import { $executeAnalysisAggregate, $executeAnalysisGroup } from 'vona-module-a-orm';
+import { $compileQuery, $executeAnalysisAggregate, $executeAnalysisGroup } from 'vona-module-a-orm';
 import { Passport } from 'vona-module-a-user';
 import { Arg, Controller, Web } from 'vona-module-a-web';
 
-import type { ModelPost } from '../model/post.ts';
-
 import { DtoPostAggregate } from '../dto/postAggregate.ts';
 import { DtoPostGroup } from '../dto/postGroup.ts';
-import { DtoPostSelectReq } from '../dto/postSelectReq.ts';
+import { postQuery, DtoPostSelectReq } from '../dto/postSelectReq.ts';
 import { DtoPostSelectRes } from '../dto/postSelectRes.ts';
 import { postAnalysis } from '../lib/postAnalysis.ts';
 
@@ -27,31 +25,47 @@ export class ControllerPost extends BeanBase {
   @Api.body(v.array(DtoPostGroup))
   async group(
     @Arg.filter(DtoPostSelectReq, { mode: 'group' })
-    params: TypeAnalysisGroupParams<typeof postAnalysis>,
+    params: TypeQueryGroupInput<typeof postQuery, typeof postAnalysis>,
   ): Promise<DtoPostGroup[]> {
-    return await $executeAnalysisGroup(this.scope.model.post, postAnalysis, params);
+    return await $executeAnalysisGroup(
+      this.scope.model.post,
+      postAnalysis,
+      $compileQuery(this.scope.model.post, postQuery, params, {
+        mode: 'group',
+        analysis: postAnalysis,
+      }),
+    );
   }
 
   @Web.get('aggregate')
   @Api.body(DtoPostAggregate)
   async aggregate(
     @Arg.filter(DtoPostSelectReq, { mode: 'aggregate' })
-    params: TypeAnalysisAggregateParams<typeof postAnalysis>,
+    params: TypeQueryAggregateInput<typeof postQuery, typeof postAnalysis>,
   ): Promise<DtoPostAggregate> {
-    return await $executeAnalysisAggregate(this.scope.model.post, postAnalysis, params);
+    return await $executeAnalysisAggregate(
+      this.scope.model.post,
+      postAnalysis,
+      $compileQuery(this.scope.model.post, postQuery, params, {
+        mode: 'aggregate',
+        analysis: postAnalysis,
+      }),
+    );
   }
 
   @Web.get('findManyEcho')
-  @Api.body(DtoPostSelectRes)
+  @Api.body(DtoPostSelectReq)
   @Passport.public()
-  findManyEcho(@Arg.filter(DtoPostSelectReq) params: IQueryParams<ModelPost>) {
+  findManyEcho(@Arg.filter(DtoPostSelectReq) params: TypeQueryInput<typeof postQuery>) {
     return params;
   }
 
   @Web.get('findMany')
   @Api.body(DtoPostSelectRes)
   @Passport.public()
-  async findMany(@Arg.filter(DtoPostSelectReq) params: IQueryParams<ModelPost>) {
-    return await this.scope.service.post.findMany(params);
+  async findMany(@Arg.filter(DtoPostSelectReq) params: TypeQueryInput<typeof postQuery>) {
+    return await this.scope.service.post.findMany(
+      $compileQuery(this.scope.model.post, postQuery, params),
+    );
   }
 }

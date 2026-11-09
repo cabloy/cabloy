@@ -50,7 +50,6 @@ export class ServiceSku extends BeanBase {
     const result = await this.scope.model.sku.selectAndCount({
       ...params,
       include: {
-        ...params?.include,
         product: { columns: ['id', 'title'] },
       },
     });

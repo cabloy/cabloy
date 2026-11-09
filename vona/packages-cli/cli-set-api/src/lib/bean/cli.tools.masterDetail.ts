@@ -192,6 +192,25 @@ export class CliToolsMasterDetail extends BeanCliBase {
     if (updated !== content) await this._saveFile(fileName, updated);
   }
 
+  private async _patchStandaloneDetailWriteColumns() {
+    const { argv } = this.context;
+    if (argv.detailCrudCommand !== ':tools:crudStart' || argv.detailMode !== 'standalone') return;
+    for (const scene of ['Create', 'Update']) {
+      const fileName = path.join(
+        this._detailPaths().dtoDir,
+        `${argv.detailResourceName}${scene}.tsx`,
+      );
+      const content = this._readFile(fileName);
+      const columns = "columns: ['name', 'description']";
+      if (content.includes(columns)) {
+        await this._saveFile(
+          fileName,
+          content.replace(columns, `columns: ['name', 'description', '${argv.fk}']`),
+        );
+      }
+    }
+  }
+
   private _detailMetaVersionLine() {
     const { argv } = this.context;
     return `        table.tableIdentity(entity${argv.detailResourceNameCapitalize}.${argv.fk}).comment(entity${argv.detailResourceNameCapitalize}.$comment.${argv.fk});\n`;
@@ -250,6 +269,7 @@ export class CliToolsMasterDetail extends BeanCliBase {
       () => this._patchDetailEntity(),
       () => this._patchDetailMetaVersion(),
       () => this._patchDetailMetaIndex(),
+      () => this._patchStandaloneDetailWriteColumns(),
     ];
   }
 
@@ -281,12 +301,95 @@ export class CliToolsMasterDetail extends BeanCliBase {
   private async _patchMasterService() {
     const { argv } = this.context;
     const fileName = this._masterPaths().service;
-    let content = this._readFile(fileName);
-    if (content.includes(`include: { ${argv.relationName}: true }`)) return;
-    for (const [search, replacement] of this._masterServiceIncludeReplacements()) {
-      content = this._replaceStrict(content, search, replacement, fileName);
+    const original = this._readFile(fileName);
+    let content = original;
+    if (!content.includes(`include: { ${argv.relationName}: true }`)) {
+      for (const [search, replacement] of this._masterServiceIncludeReplacements()) {
+        content = this._replaceStrict(content, search, replacement, fileName);
+      }
     }
-    await this._saveFile(fileName, content);
+    if (this._usesScopeOwners()) {
+      content = this._patchMasterServiceOwners(content, fileName);
+    }
+    if (content !== original) await this._saveFile(fileName, content);
+  }
+
+  private _hasScopeOwnerFields(moduleRoot: string, resourceName: string) {
+    const fileName = path.join(moduleRoot, 'src/entity', `${resourceName}.tsx`);
+    const content = this._readFile(fileName);
+    return (
+      /\bdepartmentId\s*:\s*TableIdentity\s*\|\s*null\s*;/.test(content) &&
+      /\buserIdOwner\s*:\s*TableIdentity\s*;/.test(content)
+    );
+  }
+
+  private _usesScopeOwners() {
+    const { argv } = this.context;
+    return (
+      argv.detailCrudCommand === ':tools:crudStart' &&
+      this._hasScopeOwnerFields(argv._module.root, argv.resourceName) &&
+      this._hasScopeOwnerFields(argv._detailModule!.root, argv.detailResourceName)
+    );
+  }
+
+  private _patchMasterServiceOwners(content: string, fileName: string) {
+    const { argv } = this.context;
+    const helperName = `_prepare${argv.relationNameCapitalize}Owners`;
+    if (content.includes(`  private ${helperName}<`)) return content;
+    const ownerType = `Partial<Pick<Entity${argv.resourceNameCapitalize}, 'departmentId' | 'userIdOwner'>>`;
+    const createArg = `${argv.resourceName}: Dto${argv.resourceNameCapitalize}Create`;
+    const ownedCreateArg = new RegExp(
+      `${argv.resourceName}:\\s*Dto${argv.resourceNameCapitalize}Create\\s*&\\s*Partial<\\s*Pick<\\s*Entity${argv.resourceNameCapitalize},\\s*'departmentId'\\s*\\|\\s*'userIdOwner'\\s*>,?\\s*>`,
+    );
+    if (!ownedCreateArg.test(content)) {
+      content = this._replaceStrict(content, createArg, `${createArg} & ${ownerType}`, fileName);
+    }
+    const insert = `    return await this.scope.model.${argv.resourceName}.insert(${argv.resourceName}, { include: { ${argv.relationName}: true } });`;
+    content = this._replaceStrict(
+      content,
+      insert,
+      `    ${argv.resourceName} = {
+      ...${argv.resourceName},
+      ${argv.relationName}: this.${helperName}(${argv.resourceName}.${argv.relationName}, ${argv.resourceName}),
+    };
+${insert}`,
+      fileName,
+    );
+    const update = `    return await this.scope.model.${argv.resourceName}.updateById(id, ${argv.resourceName}, {`;
+    content = this._replaceStrict(
+      content,
+      update,
+      `    if (${argv.resourceName}.${argv.relationName}?.length) {
+      const data = await this.scope.model.${argv.resourceName}.getById(id);
+      if (!data) return;
+      ${argv.resourceName} = {
+        ...${argv.resourceName},
+        ${argv.relationName}: this.${helperName}(${argv.resourceName}.${argv.relationName}, data),
+      };
+    }
+${update}`,
+      fileName,
+    );
+    const classEnd = content.lastIndexOf('\n}');
+    if (classEnd === -1)
+      throw new Error(`master service is not in the expected shape: ${fileName}`);
+    const helper = `
+
+  private ${helperName}<T extends object>(
+    items: T[] | undefined,
+    owners: ${ownerType},
+  ): T[] | undefined {
+    if (!items?.length) return items;
+    if (owners.departmentId === undefined || owners.userIdOwner === undefined || owners.userIdOwner === null) {
+      this.app.throw(500, '${argv.resourceNameCapitalize} scope owner values are unavailable');
+    }
+    return items.map(item => ({
+      ...item,
+      departmentId: owners.departmentId,
+      userIdOwner: owners.userIdOwner,
+    }));
+  }`;
+    return content.slice(0, classEnd) + helper + content.slice(classEnd);
   }
 
   private _patchMasterModelImport(content: string, fileName: string) {
@@ -481,16 +584,24 @@ export class CliToolsMasterDetail extends BeanCliBase {
     detailDtoClassCapitalize: string,
     detailDtoResItemCapitalize: string,
   ) {
-    const classReplaceSource = this._masterDtoClassReplaceSource(scene);
-    if (!content.includes(classReplaceSource)) {
+    const { argv } = this.context;
+    const kind = scene === 'Create' ? 'create' : scene === 'Update' ? 'update' : 'get';
+    const projected = new RegExp(
+      `export class Dto${argv.resourceNameCapitalize}${scene} extends \\$Dto\\.${kind}\\(\\(\\) => Model${argv.resourceNameCapitalize},\\s*\\{\\s*columns: \\['name', 'description'\\],?\\s*\\},?\\s*\\) \\{\\}`,
+    );
+    const bare = this._masterDtoClassReplaceSource(scene);
+    const source = scene !== 'View' ? (content.match(projected)?.[0] ?? bare) : bare;
+    if (!content.includes(source)) {
       throw new Error(`master dto class is not in the expected generated shape: ${fileName}`);
     }
+    const writeColumns = scene !== 'View' && (source !== bare || this._usesScopeOwners());
     return content.replace(
-      classReplaceSource,
+      source,
       this._masterDtoClassReplaceTarget(
         scene,
         detailDtoClassCapitalize,
         detailDtoResItemCapitalize,
+        writeColumns,
       ),
     );
   }
@@ -519,10 +630,12 @@ export class CliToolsMasterDetail extends BeanCliBase {
     scene: MasterDtoScene,
     detailDtoClassCapitalize: string,
     detailDtoResItemCapitalize: string,
+    writeColumns: boolean,
   ) {
     const { argv } = this.context;
     const kind = scene === 'Create' ? 'create' : scene === 'Update' ? 'update' : 'get';
-    return `export class Dto${argv.resourceNameCapitalize}${scene} extends $Dto.${kind}(() => Model${argv.resourceNameCapitalize}, {\n  include: { ${argv.relationName}: { dtoClass: Dto${detailDtoClassCapitalize} } },\n}) {\n  @Api.field(ZovaRender.visible(false), v.optional(), v.array(Dto${detailDtoResItemCapitalize}))\n  ${argv.detailFieldPrivateName}?: Dto${detailDtoResItemCapitalize}[];\n}`;
+    const columns = writeColumns ? "  columns: ['name', 'description'],\n" : '';
+    return `export class Dto${argv.resourceNameCapitalize}${scene} extends $Dto.${kind}(() => Model${argv.resourceNameCapitalize}, {\n${columns}  include: { ${argv.relationName}: { dtoClass: Dto${detailDtoClassCapitalize} } },\n}) {\n  @Api.field(ZovaRender.visible(false), v.optional(), v.array(Dto${detailDtoResItemCapitalize}))\n  ${argv.detailFieldPrivateName}?: Dto${detailDtoResItemCapitalize}[];\n}`;
   }
 
   private _detailDtoClassCapitalize(scene: MasterDtoScene) {
@@ -664,6 +777,7 @@ export class CliToolsMasterDetail extends BeanCliBase {
       test: path.join(detailRoot, 'test', `${argv.detailResourceName}.test.ts`),
       analysisTest: path.join(detailRoot, 'test', `${argv.detailResourceName}Analysis.test.ts`),
       analysis: path.join(detailRoot, 'src/lib', `${argv.detailResourceName}Analysis.ts`),
+      query: path.join(detailRoot, 'src/lib', `${argv.detailResourceName}Query.ts`),
       metaVersion: path.join(detailRoot, 'src/bean', 'meta.version.ts'),
       metaIndex: path.join(detailRoot, 'src/bean', 'meta.index.ts'),
     };
@@ -684,6 +798,7 @@ export class CliToolsMasterDetail extends BeanCliBase {
       files.test,
       files.analysisTest,
       files.analysis,
+      files.query,
     ]) {
       if (fs.existsSync(file)) {
         fs.rmSync(file, { force: true });

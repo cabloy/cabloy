@@ -1,4 +1,7 @@
 export * from './analysis/index.ts';
+export * from './query/policy.ts';
+export * from './query/schema.ts';
+export * from './query/compile.ts';
 export * from './const.ts';
 export * from './databaseDialect.ts';
 export * from './dto/index.ts';

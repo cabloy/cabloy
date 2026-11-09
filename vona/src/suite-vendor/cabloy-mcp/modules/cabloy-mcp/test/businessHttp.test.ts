@@ -5,10 +5,11 @@ import type {
   ServerResponse,
 } from 'node:http';
 import type { TestContext } from 'node:test';
-import type { VonaApplication } from 'vona';
+import type { Constructable, VonaApplication } from 'vona';
 import type { IMcpToolCatalogItem, IMcpToolIdentity, TypeMcpScope } from 'vona-module-mcp-auth';
 import type { DtoStudentCreate, DtoStudentUpdate } from 'vona-module-training-student';
 
+import { fromJsonSchema } from '@modelcontextprotocol/server';
 import fse from 'fs-extra';
 import assert from 'node:assert/strict';
 import { createHash, randomBytes, randomUUID } from 'node:crypto';
@@ -18,8 +19,10 @@ import path from 'node:path';
 import { after, before, describe, it } from 'node:test';
 import { setTimeout as delay } from 'node:timers/promises';
 import { isDeepStrictEqual } from 'node:util';
+import { appResource } from 'vona';
 import { acquireTestLock, app } from 'vona-mock';
 import { BeanExecutor } from 'vona-module-a-executor';
+import { BeanRbacScope } from 'vona-module-a-rbac';
 import {
   closeMcpTransport,
   fixtureIngressLimits,
@@ -313,6 +316,43 @@ function studentToolNames(tools: Array<{ name: string }>): string[] {
   return tools.map(tool => tool.name).filter(name => name.startsWith('training-student_student_'));
 }
 
+function studentActionIsScoped(action: string) {
+  const descriptor = app.bean.rbacCatalog
+    .getCatalog()
+    .get(`training-student.controller.student#${action}`);
+  assert.ok(descriptor, `Student ${action} is registered in the native RBAC catalog`);
+  return Boolean(descriptor.options.dataScope);
+}
+
+function studentPolicyTerms(action: string) {
+  // Unscoped admission must remain effective without matcher terms.
+  return studentActionIsScoped(action) ? { terms: [{ dataScope: 'all' as const }] } : {};
+}
+
+function mockStudentCreateOwnerValues(t: TestContext) {
+  if (!studentActionIsScoped('create')) return undefined;
+  const prototype = BeanRbacScope.prototype as any;
+  const original = prototype.prepareDefaultOwnerValues;
+  return t.mock.method(
+    prototype,
+    'prepareDefaultOwnerValues',
+    async function (this: BeanRbacScope) {
+      const route = this.ctx.route;
+      if (
+        fixtureUserId !== undefined &&
+        this.ctx.get('x-mcp-test-owner') === requestOwner &&
+        this.ctx.instanceName === '' &&
+        String(this.bean.passport.currentUser?.id) === fixtureUserId &&
+        route?.controllerBeanFullName === 'training-student.controller.student' &&
+        route.action === 'create'
+      ) {
+        return { departmentId: null, userIdOwner: fixtureUserId };
+      }
+      return await original.call(this);
+    },
+  );
+}
+
 function allowStudentAction(
   action: 'create' | 'update' | 'delete' | 'select' | 'view' | 'summary',
 ) {
@@ -330,6 +370,7 @@ function allowStudentAction(
       allowed: request.action.action === action,
       actionKey: request.action.actionKey,
       action: request.action,
+      ...studentPolicyTerms(request.action.action),
     };
   });
 }
@@ -732,8 +773,48 @@ describe('businessHttp.test.ts', { concurrency: false, timeout: 60000 }, () => {
     if (trainingDisabled) return;
     assert.ok(app.meta.modules['training-student']);
     const allToken = await redeemBearer('mcp:all');
-    const { ControllerStudent, ModelStudent, ServiceStudent } =
-      await import('vona-module-training-student');
+    const {
+      ControllerStudent,
+      ModelStudent,
+      ServiceStudent,
+      DtoStudentCreate,
+      DtoStudentUpdate,
+      DtoStudentSelectResItem,
+      DtoStudentView,
+      DtoStudentSummary,
+    } = await import('vona-module-training-student');
+    const nativeLevelMetadata = await app.bean.executor.mockCtx(
+      async () => {
+        const classes = new Map<string, Constructable>([
+          [studentCreateName, DtoStudentCreate],
+          [studentUpdateName, DtoStudentUpdate],
+          [studentSelectName, DtoStudentSelectResItem],
+          [studentViewName, DtoStudentView],
+          [studentSummaryName, DtoStudentSummary],
+        ]);
+        const document = JSON.parse(
+          JSON.stringify(
+            await app.bean.openapi.generateJsonOfClasses([...classes.values()], 'V31'),
+          ),
+        );
+        return new Map(
+          Array.from(classes, ([name, Class]) => {
+            const schema = document.components.schemas[appResource.getBeanFullName(Class)!];
+            const level = resolveSchema(schema.properties.level, document.components.schemas);
+            assert.ok(level.title || level.description, `${name} has native level metadata`);
+            return [name, { title: level.title, description: level.description, rest: level.rest }];
+          }),
+        );
+      },
+      { instanceName: '' },
+    );
+    const assertLevelMetadata = (name: string, level: any) => {
+      assert.deepEqual(
+        { title: level.title, description: level.description, rest: level.rest },
+        nativeLevelMetadata.get(name),
+        `${name} retains native DTO level metadata`,
+      );
+    };
     const business = [
       t.mock.method(ControllerStudent.prototype, 'create'),
       t.mock.method(ServiceStudent.prototype, 'create'),
@@ -779,11 +860,12 @@ describe('businessHttp.test.ts', { concurrency: false, timeout: 60000 }, () => {
       if (broken && request.action.action === 'summary') {
         throw new Error('private discovery failure detail');
       }
-      // Ordinary non-data-scoped admission deliberately has no matcher terms.
+      // Match the native Action's scope contract without adding terms to unscoped admission.
       return {
         allowed: granted.includes(request.policyActionKey),
         actionKey: request.action.actionKey,
         action: request.action,
+        ...studentPolicyTerms(request.action.action),
       };
     });
     const states = [
@@ -871,7 +953,6 @@ describe('businessHttp.test.ts', { concurrency: false, timeout: 60000 }, () => {
             ],
             'each list freshly checks registered Actions in order, skipping mutations only on read scope',
           );
-          const levelDescription = '1=Foundation Track; 2=Progress Track; 3=Advanced Workshop';
           for (const tool of tools) {
             if (tool.name === studentDeleteName) continue;
             assert.ok(tool.description, `${tool.name} describes its existing Action contract`);
@@ -881,7 +962,7 @@ describe('businessHttp.test.ts', { concurrency: false, timeout: 60000 }, () => {
                 tool.name === studentCreateName ? schema : schema.properties.body,
                 schema.components?.schemas ?? {},
               );
-              assert.equal(body.properties.level.description, levelDescription);
+              assertLevelMetadata(tool.name, body.properties.level);
             }
             if ([studentViewName, studentSummaryName, studentSelectName].includes(tool.name)) {
               const schema = tool.outputSchema;
@@ -889,7 +970,7 @@ describe('businessHttp.test.ts', { concurrency: false, timeout: 60000 }, () => {
                 tool.name === studentSelectName
                   ? resolveSchema(schema.properties.list.items, schema.components?.schemas ?? {})
                   : schema;
-              assert.equal(student.properties.level.description, levelDescription);
+              assertLevelMetadata(tool.name, student.properties.level);
             }
           }
           const createTool = tools.find((tool: any) => tool.name === studentCreateName);
@@ -1024,6 +1105,7 @@ describe('businessHttp.test.ts', { concurrency: false, timeout: 60000 }, () => {
             request.policyActionKey === 'training-student.controller.student#select'),
         actionKey: request.action.actionKey,
         action: request.action,
+        ...studentPolicyTerms(request.action.action),
       };
     });
     const select = t.mock.method(ServiceStudent.prototype, 'select');
@@ -1315,6 +1397,7 @@ describe('businessHttp.test.ts', { concurrency: false, timeout: 60000 }, () => {
         { instanceName: '' },
       );
     };
+    const ownerValues = mockStudentCreateOwnerValues(t);
     try {
       // Broader OAuth scope is not an ordinary business permission.
       assertDenied(await call(), 'create without current create permission');
@@ -1516,11 +1599,12 @@ describe('businessHttp.test.ts', { concurrency: false, timeout: 60000 }, () => {
       } finally {
         create.mock.restore();
         observed.mock.restore();
+        ownerValues?.mock.restore();
       }
     }
   });
 
-  it('creates a basic-fields-only student, updates its root and independently authorizes serialized MCP view', async () => {
+  it('creates a basic-fields-only student, updates its root and independently authorizes serialized MCP view', async t => {
     if (trainingDisabled) return;
     const suffix = randomUUID().slice(0, 8);
     const studentData = {
@@ -1537,6 +1621,7 @@ describe('businessHttp.test.ts', { concurrency: false, timeout: 60000 }, () => {
     let studentId: string | undefined;
     const contentIds = new Set<string>();
     let off = () => {};
+    const ownerValues = mockStudentCreateOwnerValues(t);
     try {
       off = allowStudentAction('create');
       const response = await send(
@@ -1583,6 +1668,7 @@ describe('businessHttp.test.ts', { concurrency: false, timeout: 60000 }, () => {
       assert.equal(Object.hasOwn(student.content, 'descriptionMarkdown'), false);
       assert.deepEqual(student.trainingRecords, []);
     } finally {
+      ownerValues?.mock.restore();
       off();
       await app.bean.executor.mockCtx(
         async () => {
@@ -1688,6 +1774,9 @@ describe('businessHttp.test.ts', { concurrency: false, timeout: 60000 }, () => {
             name: fixture.name,
             mobile: '13812345678',
             level: 1,
+            ...(studentActionIsScoped('update')
+              ? { departmentId: null, userIdOwner: fixtureUserId! }
+              : {}),
             content: { descriptionMarkdown: `Original ${fixture.name}` },
             trainingRecords: [
               {
@@ -2084,7 +2173,8 @@ describe('businessHttp.test.ts', { concurrency: false, timeout: 60000 }, () => {
       }
       off();
       off = allowStudentAction('update');
-      // Null acknowledges completion, not existence. Admission must precede every nested write.
+      // Scoped Actions deny missing roots; unscoped void completion says nothing about existence.
+      // Neither contract may enter nested writes.
       for (const id of [missingRoot.id!, deletedRoot.id!, foreignRoot.id!]) {
         const counts = writeCounts();
         const absentBody = {
@@ -2097,7 +2187,9 @@ describe('businessHttp.test.ts', { concurrency: false, timeout: 60000 }, () => {
             },
           ],
         };
-        assertNull(await call({ params: { id }, body: absentBody }));
+        const absent = await call({ params: { id }, body: absentBody });
+        if (studentActionIsScoped('update')) assertDenied(absent);
+        else assertNull(absent);
         assert.deepEqual(
           writeCounts(),
           counts,
@@ -2582,6 +2674,30 @@ describe('businessHttp.test.ts', { concurrency: false, timeout: 60000 }, () => {
     assert.ok(app.meta.modules['training-student']);
     assert.ok(fixtureUserId);
     const userId = fixtureUserId;
+    // A missing AST in MCP must fail the AST regressions, not select the legacy branch.
+    const nativeStudent = (await import('vona-module-training-student')) as Record<string, any>;
+    const studentQuery = nativeStudent.studentQuery;
+    const nativeQueryCapabilities = await app.bean.executor.mockCtx(
+      async () => {
+        const document = JSON.parse(
+          JSON.stringify(
+            await app.bean.openapi.generateJsonOfClass(nativeStudent.DtoStudentSelectReq, 'V31'),
+          ),
+        );
+        const schema =
+          document.components.schemas[
+            appResource.getBeanFullName(nativeStudent.DtoStudentSelectReq)!
+          ];
+        const where = resolveSchema(schema.properties.where, document.components.schemas);
+        return where.filter?.capabilities?.query;
+      },
+      { instanceName: '' },
+    );
+    assert.equal(
+      Boolean(studentQuery),
+      Boolean(nativeQueryCapabilities),
+      'native Student query export and DTO agree on public-query support',
+    );
     const name = `MCP student ${randomUUID()}`;
     const mobile = '13812345678';
     const descriptionMarkdown = `# Private student notes\n\n${randomUUID()}`;
@@ -2608,9 +2724,28 @@ describe('businessHttp.test.ts', { concurrency: false, timeout: 60000 }, () => {
         },
       ],
     } as DtoStudentCreate;
-    const selectQuery = { name, level, orders: 'createdAt,desc', pageNo: 1, pageSize: 1 };
-    const selectEmptyPageQuery = { ...selectQuery, pageNo: 2 };
-    const selectColumnsQuery = { ...selectQuery, columns: ['id'] };
+    let selectQuery!: Record<string, unknown>;
+    let selectEmptyPageQuery!: Record<string, unknown>;
+    let selectColumnsQuery!: Record<string, unknown>;
+    const makeSelectQuery = (id: string | number) => ({
+      name,
+      level,
+      where: {
+        and: [
+          { field: 'name', op: 'eq', value: name },
+          { field: 'id', op: 'eq', value: id },
+          {
+            or: [
+              { field: 'level', op: 'eq', value: 2 },
+              { field: 'level', op: 'eq', value: 3 },
+            ],
+          },
+        ],
+      },
+      orders: [{ field: 'createdAt', direction: 'desc' }],
+      pageNo: 1,
+      pageSize: 1,
+    });
     let studentId: string | undefined;
     let imageId: string | undefined;
     let imageDirectory: string | undefined;
@@ -2681,6 +2816,7 @@ describe('businessHttp.test.ts', { concurrency: false, timeout: 60000 }, () => {
       normalized.total = String(normalized.total);
       normalized.list = normalized.list.map((row: Record<string, unknown>) => {
         row.id = String(row.id);
+        if (studentActionIsScoped('select')) row.userIdOwner = String(row.userIdOwner);
         // The existing optional identity schema normalizes absent SQL values away.
         if (row.imageId === null) delete row.imageId;
         else if (row.imageId !== undefined) row.imageId = String(row.imageId);
@@ -2737,6 +2873,7 @@ describe('businessHttp.test.ts', { concurrency: false, timeout: 60000 }, () => {
     const normalizeView = (serialized: Record<string, unknown>) => {
       const normalized = JSON.parse(JSON.stringify(serialized));
       normalized.id = String(normalized.id);
+      if (studentActionIsScoped('view')) normalized.userIdOwner = String(normalized.userIdOwner);
       // Preserve the select regression's measured optional-identity normalization.
       if (normalized.imageId === null) delete normalized.imageId;
       else if (normalized.imageId !== undefined) normalized.imageId = String(normalized.imageId);
@@ -2832,8 +2969,27 @@ describe('businessHttp.test.ts', { concurrency: false, timeout: 60000 }, () => {
           );
           imageId = String(image.id);
           const training = app.scope('training-student');
-          const student = await training.service.student.create({ ...studentData, imageId });
+          const student = await training.service.student.create({
+            ...studentData,
+            imageId,
+            ...(studentActionIsScoped('select') || studentActionIsScoped('view')
+              ? { departmentId: null, userIdOwner: userId }
+              : {}),
+          } as DtoStudentCreate);
           studentId = String(student.id);
+          if (studentQuery) {
+            const idField = studentQuery.fields.id;
+            const publicId = idField.schema.parse(
+              idField.type === 'number' ? Number(student.id) : String(student.id),
+            );
+            assert.ok(typeof publicId === 'string' || typeof publicId === 'number');
+            selectQuery = makeSelectQuery(publicId);
+          } else {
+            // Legacy DTOs retain numeric convenience filters and string-form ordering.
+            selectQuery = { name, level, orders: 'createdAt,desc', pageNo: 1, pageSize: 1 };
+          }
+          selectEmptyPageQuery = { ...selectQuery, pageNo: 2 };
+          selectColumnsQuery = { ...selectQuery, columns: ['id'] };
           const role = await app.scope('home-user').model.role.getByName('systemAdmin');
           assert.ok(role, 'existing shared systemAdmin role is read-only');
           adminRoleId = String(role.id);
@@ -2903,6 +3059,7 @@ describe('businessHttp.test.ts', { concurrency: false, timeout: 60000 }, () => {
             request.policyActionKey === `${controllerBeanFullName}#${viewOnly ? 'view' : 'select'}`,
           actionKey: request.action.actionKey,
           action: request.action,
+          ...studentPolicyTerms(request.action.action),
         };
       });
       try {
@@ -2998,8 +3155,8 @@ describe('businessHttp.test.ts', { concurrency: false, timeout: 60000 }, () => {
       errorResult(await view(studentId), 'Action failed');
       errorResult(await call(studentId), 'Action failed');
       assert.equal(policyCalls.length, 40, 'the exact test policy listener was removed');
-      // Basic has no custom grant provider. Exercise its supported unrestricted role
-      // through the ordinary membership API, without mutating the shared role itself.
+      // Exercise the native unrestricted role through the ordinary membership API,
+      // without mutating the shared role itself.
       await app.bean.executor.mockCtx(
         async () => {
           membershipOwned = await app.bean.role.addUserId(adminRoleId!, userId);
@@ -3018,6 +3175,71 @@ describe('businessHttp.test.ts', { concurrency: false, timeout: 60000 }, () => {
       for (const { token, legacy } of [bearer, allToken].flatMap(token =>
         [false, true].map(legacy => ({ token, legacy })),
       )) {
+        if (studentQuery) {
+          const options = { legacy, headers: { authorization: `Bearer ${token}` } };
+          const listed = await send('tools/list', {}, options);
+          assert.equal(listed.body.error, undefined);
+          const selectTool = listed.body.result.tools.find(
+            (tool: any) => tool.name === studentSelectName,
+          );
+          assert.ok(
+            selectTool.inputSchema.components?.schemas,
+            'HTTP tools/list retains recursive definitions',
+          );
+          const queryCapabilities = resolveSchema(
+            selectTool.inputSchema.properties.where,
+            selectTool.inputSchema.components.schemas,
+          ).filter.capabilities.query;
+          assert.deepEqual(
+            queryCapabilities,
+            nativeQueryCapabilities,
+            'MCP retains the native DTO public-query contract',
+          );
+          assert.deepEqual(queryCapabilities.fields.id.operators, ['eq', 'in']);
+          assert.equal(
+            selectTool.inputSchema.properties.id,
+            undefined,
+            'id is an advanced predicate, not a named UI convenience',
+          );
+          const check = fromJsonSchema(selectTool.inputSchema)['~standard'];
+          assert.equal(
+            (await check.validate(selectQuery)).issues,
+            undefined,
+            'actual generated AST accepts the near-envelope-depth query',
+          );
+          const beforeInvalid = observedCalls.length;
+          for (const query of [
+            { where: { name } },
+            { where: { field: 'mobile', op: 'eq', value: mobile } },
+            { where: { field: 'level', op: 'eq', value: '2' } },
+            { orders: 'createdAt,desc' },
+            { orders: [['createdAt', 'desc']] },
+            { columns: ['id'] },
+          ]) {
+            assert.ok((await check.validate(query)).issues, JSON.stringify(query));
+            const rejected = await select(token, legacy, query);
+            assert.equal(rejected.status, 200);
+            assert.equal(rejected.body.error?.code, -32602);
+            assert.equal(rejected.body.result, undefined);
+          }
+          const semantic = await select(token, legacy, {
+            where: {
+              field: 'name',
+              op: 'eq',
+              value: 'x'.repeat(studentQuery.limits.maxStringLength + 1),
+            },
+          });
+          assert.deepEqual(semantic.body.error, {
+            code: -32602,
+            message: 'Invalid tool arguments',
+            data: { queryCode: 'query_string_length', path: 'where.value' },
+          });
+          assert.equal(
+            observedCalls.length,
+            beforeInvalid,
+            'recursive/public-query failures never dispatch',
+          );
+        }
         const selected = assertSelect(await select(token, legacy));
         assertView(await view(selected.list[0].id, token, legacy));
         assert.ok(
@@ -3074,16 +3296,18 @@ describe('businessHttp.test.ts', { concurrency: false, timeout: 60000 }, () => {
           assert.equal(wire.includes(`"${field}"`), false);
         }
       }
+      const ormQuery = app.util.getModuleConfigRaw('a-orm')?.rest?.query;
+      const analysisDefaults = studentQuery
+        ? {}
+        : {
+            orders: ormQuery?.orders?.default ?? 'createdAt,desc',
+            pageNo: 1,
+            pageSize: ormQuery?.pageSize?.default ?? 20,
+          };
       const groupQuery = { name, level, groups: ['level'], aggrs: { count: ['*', 'imageId'] } };
       assert.deepEqual(output(await group(groupQuery)), {
         result: [{ level, count_all: '1', count_imageId: '1' }],
       });
-      const ormQuery = app.util.getModuleConfigRaw('a-orm')?.rest?.query;
-      const analysisDefaults = {
-        orders: ormQuery?.orders?.default ?? 'createdAt,desc',
-        pageNo: 1,
-        pageSize: ormQuery?.pageSize?.default ?? 20,
-      };
       assert.deepEqual(observedCalls.at(-1)!.options, {
         query: { ...analysisDefaults, ...groupQuery },
         innerAccess: false,
@@ -3094,9 +3318,18 @@ describe('businessHttp.test.ts', { concurrency: false, timeout: 60000 }, () => {
         query: { ...analysisDefaults, ...aggregateQuery },
         innerAccess: false,
       });
-      for (const id of ['-1', otherStudentId]) {
-        assert.deepEqual(output(await group({ where: { id } })), { result: [] });
-        assert.deepEqual(output(await aggregate({ where: { id } })), {
+      // Absent-name predicates yield no rows; the same-name foreign-instance
+      // row above is already excluded from the one-row counts.
+      const absentWhere = studentQuery
+        ? [`MCP absent ${randomUUID()}`, `MCP absent ${randomUUID()}`].map(value => ({
+            field: 'name',
+            op: 'eq',
+            value,
+          }))
+        : ['-1', otherStudentId].map(id => ({ id }));
+      for (const where of absentWhere) {
+        assert.deepEqual(output(await group({ where })), { result: [] });
+        assert.deepEqual(output(await aggregate({ where })), {
           count_all: '0',
           count_imageId: '0',
         });
@@ -3114,7 +3347,14 @@ describe('businessHttp.test.ts', { concurrency: false, timeout: 60000 }, () => {
         pageSize: 1,
         pageCount: 1,
       });
-      errorResult(await select(bearer, false, selectColumnsQuery), 'Action failed');
+      if (studentQuery) {
+        const columnsRejected = await select(bearer, false, selectColumnsQuery);
+        assert.equal(columnsRejected.body.error?.code, -32602);
+        assert.equal(columnsRejected.body.result, undefined);
+      } else {
+        // Legacy projection is admitted, then fails at its ordinary Action boundary.
+        errorResult(await select(bearer, false, selectColumnsQuery), 'Action failed');
+      }
       const missing = errorResult(await call('-1'), 'Resource not found');
       const otherInstance = errorResult(await call(otherStudentId), 'Resource not found');
       assert.deepEqual(otherInstance, missing);
@@ -3132,10 +3372,12 @@ describe('businessHttp.test.ts', { concurrency: false, timeout: 60000 }, () => {
           assert.deepEqual(options, { params: { id: options.params.id }, innerAccess: false });
         } else if (current.path === '/training/student') {
           assert.ok(
-            [selectQuery, selectEmptyPageQuery, selectColumnsQuery].some(query =>
-              isDeepStrictEqual(current.options, { query, innerAccess: false }),
-            ),
-            'select retains only the explicitly supplied filter/pagination/columns query',
+            [
+              selectQuery,
+              selectEmptyPageQuery,
+              ...(!studentQuery ? [selectColumnsQuery] : []),
+            ].some(query => isDeepStrictEqual(current.options, { query, innerAccess: false })),
+            'select retains only the explicitly supplied native filter and pagination query',
           );
         } else {
           assert.ok(
@@ -3159,7 +3401,7 @@ describe('businessHttp.test.ts', { concurrency: false, timeout: 60000 }, () => {
           ].map(path => [path, observedCalls.filter(current => current.path === path).length]),
         ),
         {
-          '/training/student': 19,
+          '/training/student': studentQuery ? 18 : 19,
           '/training/student/group': 16,
           '/training/student/aggregate': 16,
           '/training/student/:id': 19,
@@ -3167,7 +3409,11 @@ describe('businessHttp.test.ts', { concurrency: false, timeout: 60000 }, () => {
         },
         'every student read traverses its fixed guarded action',
       );
-      assert.equal(observedCalls.length, 89);
+      assert.equal(
+        observedCalls.length,
+        studentQuery ? 88 : 89,
+        'public-query columns fail predispatch; legacy columns reach the guarded Action',
+      );
       await app.bean.executor.mockCtx(
         async () => {
           assert.equal(await app.bean.role.removeUserId(adminRoleId!, userId), true);
@@ -3187,7 +3433,7 @@ describe('businessHttp.test.ts', { concurrency: false, timeout: 60000 }, () => {
       }
       assert.equal(
         observedCalls.length,
-        109,
+        studentQuery ? 108 : 109,
         'revocation rechecks all five reads on every scope/transport pair',
       );
     } finally {

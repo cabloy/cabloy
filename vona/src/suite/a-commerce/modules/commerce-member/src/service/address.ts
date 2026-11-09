@@ -1,8 +1,9 @@
 import type { TableIdentity } from 'table-identity';
-import type { IQueryParams } from 'vona-module-a-orm';
+import type { IQueryParams, TypeQueryInput } from 'vona-module-a-orm';
 
 import { BeanBase } from 'vona';
 import { Service } from 'vona-module-a-bean';
+import { $compileQuery } from 'vona-module-a-orm';
 
 import type { DtoAddressMineCreate } from '../dto/addressMineCreate.tsx';
 import type { DtoAddressMineRes } from '../dto/addressMineRes.tsx';
@@ -12,6 +13,7 @@ import type { DtoAddressSelectRes } from '../dto/addressSelectRes.tsx';
 import type { DtoAddressView } from '../dto/addressView.tsx';
 import type { ModelAddress } from '../model/address.ts';
 
+import { addressMineQuery } from '../dto/addressMineReq.tsx';
 import { addressMineReadColumns } from '../lib/addressMine.ts';
 
 @Service()
@@ -20,7 +22,6 @@ export class ServiceAddress extends BeanBase {
     return await this.scope.model.address.selectAndCount({
       ...params,
       columns: ['id', 'recipientName', 'phone', 'countryCode', 'city', 'createdAt'],
-      orders: params?.orders ?? [['id', 'asc']],
     });
   }
 
@@ -42,12 +43,12 @@ export class ServiceAddress extends BeanBase {
     });
   }
 
-  async mine(params?: IQueryParams<ModelAddress>): Promise<DtoAddressMineRes> {
+  async mine(params?: TypeQueryInput<typeof addressMineQuery>): Promise<DtoAddressMineRes> {
     return await this.scope.model.address.selectAndCount({
-      ...params,
+      ...$compileQuery(this.scope.model.address, addressMineQuery, params, {
+        scopeWhere: { userId: this._getCurrentUserId() },
+      }),
       columns: addressMineReadColumns,
-      where: { ...params?.where, userId: this._getCurrentUserId() },
-      orders: params?.orders ?? [['id', 'asc']],
     });
   }
 

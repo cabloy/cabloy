@@ -1,17 +1,28 @@
 import type { IDecoratorDtoOptions } from 'vona-module-a-web';
 
 import { $makeSchema, v } from 'vona-module-a-openapiutils';
-import { $Dto } from 'vona-module-a-orm';
+import { $defineQuery, $Dto } from 'vona-module-a-orm';
 import { Dto } from 'vona-module-a-web';
 import z from 'zod';
 import { ZovaRender } from 'zova-rest-cabloy-basic-admin';
 
-import { EntityCategory } from '../entity/category.tsx';
+import { ModelCategory } from '../model/category.ts';
+
+export const categoryQuery = $defineQuery(() => ModelCategory, {
+  name: 'CommerceCategorySelect',
+  fields: {
+    name: { operators: ['eq', 'containsI'] },
+    createdAt: { operators: ['gte', 'lt', 'lte'] },
+  },
+  orderable: ['id', 'name', 'createdAt'],
+  defaults: { orders: [{ field: 'createdAt', direction: 'desc' }] },
+  projection: { mode: 'fixed' },
+});
 
 export interface IDtoOptionsCategorySelectReq extends IDecoratorDtoOptions {}
 
 @Dto<IDtoOptionsCategorySelectReq>({
-  openapi: { filter: { table: 'commerceCatalogCategory' } },
+  query: categoryQuery,
   fields: {
     name: $makeSchema(v.optional(), z.string()),
     createdAt: $makeSchema(
@@ -22,4 +33,4 @@ export interface IDtoOptionsCategorySelectReq extends IDecoratorDtoOptions {}
     ),
   },
 })
-export class DtoCategorySelectReq extends $Dto.queryPage(EntityCategory, ['name', 'createdAt']) {}
+export class DtoCategorySelectReq extends $Dto.queryPage(categoryQuery, ['name', 'createdAt']) {}

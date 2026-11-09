@@ -1,17 +1,28 @@
 import type { IDecoratorDtoOptions } from 'vona-module-a-web';
 
 import { $makeSchema, v } from 'vona-module-a-openapiutils';
-import { $Dto } from 'vona-module-a-orm';
+import { $defineQuery, $Dto } from 'vona-module-a-orm';
 import { Dto } from 'vona-module-a-web';
 import z from 'zod';
 import { ZovaRender } from 'zova-rest-cabloy-basic-admin';
 
-import { EntityStockBalance } from '../entity/stockBalance.tsx';
+import { ModelStockBalance } from '../model/stockBalance.ts';
+
+export const stockBalanceQuery = $defineQuery(() => ModelStockBalance, {
+  name: 'CommerceStockBalanceSelect',
+  fields: {
+    skuId: { operators: ['eq'] },
+    createdAt: { operators: ['gte', 'lt', 'lte'] },
+  },
+  orderable: ['id', 'skuId', 'createdAt'],
+  defaults: { orders: [{ field: 'createdAt', direction: 'desc' }] },
+  projection: { mode: 'fixed' },
+});
 
 export interface IDtoOptionsStockBalanceSelectReq extends IDecoratorDtoOptions {}
 
 @Dto<IDtoOptionsStockBalanceSelectReq>({
-  openapi: { filter: { table: 'commerceTradeStockBalance' } },
+  query: stockBalanceQuery,
   fields: {
     skuId: $makeSchema(v.optional(), v.tableIdentity()),
     createdAt: $makeSchema(
@@ -22,7 +33,7 @@ export interface IDtoOptionsStockBalanceSelectReq extends IDecoratorDtoOptions {
     ),
   },
 })
-export class DtoStockBalanceSelectReq extends $Dto.queryPage(EntityStockBalance, [
+export class DtoStockBalanceSelectReq extends $Dto.queryPage(stockBalanceQuery, [
   'skuId',
   'createdAt',
 ]) {}
