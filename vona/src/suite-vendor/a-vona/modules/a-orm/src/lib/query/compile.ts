@@ -55,7 +55,13 @@ export function $compileQuery<P extends IQueryPolicy>(
     throw new TypeError('Query policy does not belong to this model');
   const owner = model as unknown as BeanModelCache<any>;
   const mode = options.mode ?? 'select';
-  const value = validateQuery(policy, input ?? {}, mode, options.analysis, true) as TypeQueryInput;
+  const value = validateQuery(
+    policy,
+    input ?? {},
+    mode,
+    options.analysis,
+    true,
+  ) as unknown as TypeQueryInput;
   const table = owner.getTable(options.scopeWhere);
   const main = getTableOrTableAlias(table);
   const where: Record<string, unknown> = {};

@@ -215,5 +215,5 @@ export function validateQuery<P extends IQueryPolicy>(
       ((value.pageNo ?? policy.defaults.pageNo) - 1) * (value.pageSize ?? policy.defaults.pageSize);
     if (!Number.isSafeInteger(offset) || offset < 0) queryFailure('query_offset', 'pageNo');
   }
-  return value as TypeQueryInput<P>;
+  return value as unknown as TypeQueryInput<P>;
 }

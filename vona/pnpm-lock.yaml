@@ -1987,7 +1987,7 @@ importers:
         specifier: ^5.0.5
         version: link:modules/a-markdown
       vona-module-a-rbac:
-        specifier: ^5.0.27
+        specifier: ^5.0.28
         version: link:modules/a-rbac
       vona-module-a-socket:
         specifier: workspace:^
@@ -3500,10 +3500,10 @@ importers:
         specifier: workspace:^
         version: link:modules/cabloy-mcp
       vona-module-mcp-auth:
-        specifier: ^5.0.2
+        specifier: ^5.0.3
         version: link:modules/mcp-auth
       vona-module-mcp-test:
-        specifier: ^5.0.3
+        specifier: ^5.0.4
         version: link:modules/mcp-test
 
   src/suite-vendor/cabloy-mcp/modules/cabloy-mcp:
