@@ -71,6 +71,19 @@ describe('analysis controls', () => {
     assert.deepEqual(resolveAnalysis(policy, 'aggregate'), { aggrs: { count: ['*', 'imageId'] } });
   });
 
+  it('accepts server-authored filter joins without treating them as analysis controls', () => {
+    assert.deepEqual(
+      resolveAnalysis(policy, 'group', {
+        joins: [['innerJoin', 'child', ['main.id', 'child.mainId']]],
+      }),
+      resolveAnalysis(policy, 'group'),
+    );
+    assert.deepEqual(
+      resolveAnalysis(policy, 'aggregate', { joins: [] }),
+      resolveAnalysis(policy, 'aggregate'),
+    );
+  });
+
   it('rejects empty, duplicated, unknown, qualified and malformed controls', () => {
     for (const input of [
       { groups: [] },
@@ -96,7 +109,6 @@ describe('analysis controls', () => {
       { aggrs: { median: ['amount'] } },
       { aggrs: { 'sql.count': ['*'] } },
       { aggrs: { count: ['*'], avg: [] } },
-      { joins: [] },
       { having: {} },
       { distinct: false },
       { include: {} },
@@ -197,7 +209,7 @@ describe('analysis execution boundary', () => {
       AnalysisError,
     );
     await assert.rejects(
-      $executeAnalysisAggregate(model as never, policy, { joins: [] } as never),
+      $executeAnalysisAggregate(model as never, policy, { having: {} } as never),
       AnalysisError,
     );
     await assert.rejects($executeAnalysisAggregate({} as never, policy), AnalysisError);

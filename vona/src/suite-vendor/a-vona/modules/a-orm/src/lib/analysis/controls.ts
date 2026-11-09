@@ -101,7 +101,7 @@ export function resolveAnalysis(
     analysisFailure('Analysis parameters must be an object');
   }
   const params = (input ?? {}) as Record<string, unknown>;
-  for (const key of ['joins', 'having', 'distinct', 'include', 'with']) {
+  for (const key of ['having', 'distinct', 'include', 'with']) {
     if (Object.hasOwn(params, key) && params[key] !== undefined) {
       analysisFailure(`Analysis does not support ${key}`);
     }

@@ -6,6 +6,7 @@ import type {
 } from 'openapi3-ts/oas31';
 import type { TableIdentity } from 'table-identity';
 import type { ISchemaObjectExtensionField } from 'vona-module-a-openapi';
+import type { TypeAnalysisAggregateParams } from 'vona-module-a-orm';
 import type z from 'zod';
 
 import { ZodMetadata } from '@cabloy/zod-openapi';
@@ -28,6 +29,7 @@ import { DtoPostGroup } from '../../src/dto/postGroup.ts';
 import { DtoPostSelectReq } from '../../src/dto/postSelectReq.ts';
 import { postAnalysis } from '../../src/lib/postAnalysis.ts';
 import { ModelPost } from '../../src/model/post.ts';
+import { ModelUser } from '../../src/model/user.ts';
 
 const is422 = (error: { code?: number }) => error.code === 422;
 
@@ -356,7 +358,7 @@ describe('analysisQuery.test.ts', { concurrency: false }, () => {
         assert.equal(list.list.length, 1);
         assert.equal(Object.hasOwn(list.list[0], 'count_all'), false);
 
-        // Ordinary joined filters still work; single-model analysis rejects them explicitly.
+        // DTO-authored joined filters select main records for both lists and analysis.
         const joined = { ...query, userName: `${prefix}:one` };
         const selected = await readPost('findMany', joined);
         assert.equal(selected.total, '2');
@@ -368,12 +370,19 @@ describe('analysisQuery.test.ts', { concurrency: false }, () => {
         assert.deepEqual(echo.joins, [
           ['innerJoin', 'testVonaUser', ['userId', 'testVonaUser.id']],
         ]);
+        assert.deepEqual(await readPost('group', joined), [defaults[0]]);
+        const joinedAggregate = await readPost('aggregate', joined);
+        assert.equal(joinedAggregate.count_all, '2');
+        assert.equal(joinedAggregate.sum_stars, '6');
+        assert.equal(Number(joinedAggregate.avg_stars), 3);
         for (const action of ['group', 'aggregate'] as const) {
-          await assert.rejects(() => readPost(action, joined), is422);
-          await assert.rejects(
-            () => readPost(action, { ...query, orders: [['userName', 'asc']] }),
-            is422,
+          assert.deepEqual(
+            await readPost(action, { ...query, orders: [['userName', 'asc']] }),
+            action === 'group' ? defaults : aggregate,
           );
+          for (const joins of [[], echo.joins, JSON.stringify(echo.joins)]) {
+            await assert.rejects(() => readPost(action, { ...joined, joins }), is422);
+          }
         }
 
         for (const invalid of [
@@ -418,11 +427,7 @@ describe('analysisQuery.test.ts', { concurrency: false }, () => {
         for (const invalid of [{ groups: ['title'] }, { aggrs: { count: ['*'] } }]) {
           await assert.rejects(() => readPost('findMany', { ...query, ...invalid }), is422);
         }
-        for (const invalid of [
-          { joins: [['innerJoin', 'testVonaUser', ['userId', 'testVonaUser.id']]] },
-          { having: { stars: { _gt_: 0 } } },
-          { include: { user: true } },
-        ]) {
+        for (const invalid of [{ having: { stars: { _gt_: 0 } } }, { include: { user: true } }]) {
           await assert.rejects(
             () =>
               $executeAnalysisGroup(scope.model.post, postAnalysis, {
@@ -452,11 +457,13 @@ describe('analysisQuery.test.ts', { concurrency: false }, () => {
             ],
           ],
           ['aggregate', { aggrs: { sum: ['stars'] } }, { sum_stars: '14' }],
+          ['group', { userName: `${prefix}:one` }, [defaults[0]]],
+          ['aggregate', { userName: `${prefix}:one` }, joinedAggregate],
         ] as const) {
           const url = new URL(app.util.getAbsoluteUrlByApiPath(`/test/vona/post/${action}`));
           url.searchParams.set('where', JSON.stringify(where));
           for (const [key, value] of Object.entries(controls))
-            url.searchParams.set(key, JSON.stringify(value));
+            url.searchParams.set(key, typeof value === 'string' ? value : JSON.stringify(value));
           const response = await fetch(url, {
             headers: { Accept: 'application/json', Authorization: `Bearer ${jwt.accessToken}` },
           });
@@ -540,6 +547,129 @@ describe('analysisQuery.test.ts', { concurrency: false }, () => {
           for (const id of userIds.toReversed()) await scope.model.user.deleteById(id);
         } finally {
           await app.bean.passport.signout();
+        }
+      }
+    });
+  });
+
+  it('preserves main-record metrics, Boolean predicates and scope through joined membership', async () => {
+    await app.bean.executor.mockCtx(async () => {
+      const scope = app.scope('test-vona');
+      const prefix = `analysis-joins:${randomUUID()}`;
+      const userIds: TableIdentity[] = [];
+      const postIds: TableIdentity[] = [];
+      const policy = $defineAnalysis(() => ModelUser, {
+        groups: ['age'],
+        aggrs: { count: ['*'], sum: ['scores'], avg: ['scores'] },
+        defaults: {
+          group: { groups: ['age'], aggrs: { count: ['*'], sum: ['scores'] } },
+          aggregate: { aggrs: { count: ['*'], sum: ['scores'], avg: ['scores'] } },
+        },
+      });
+      const joins: TypeAnalysisAggregateParams<typeof policy>['joins'] = [
+        ['innerJoin', 'testVonaPost', ['testVonaUser.id', 'testVonaPost.userId']],
+      ];
+      try {
+        for (const [name, scores] of [
+          ['one', 10],
+          ['two', 10],
+          ['empty', 40],
+          ['deleted', 100],
+          ['other', 100],
+        ] as const) {
+          const user = await scope.model.user.insert({
+            name: `${prefix}:${name}`,
+            age: 20,
+            scores,
+          });
+          userIds.push(user.id);
+        }
+        for (const [index, title, stars] of [
+          [0, 'match', 1],
+          [0, 'match', 2],
+          [1, 'match', 3],
+          [1, 'other', 9],
+          [3, 'match', 100],
+          [4, 'match', 100],
+        ] as const) {
+          const post = await scope.model.post.insert({
+            userId: userIds[index],
+            title: `${prefix}:${title}`,
+            stars,
+          });
+          postIds.push(post.id);
+        }
+        // Raw updates create test-owned excluded records without altering shared instance state.
+        await scope.model.user.builder().where('id', userIds[3]).update({ deleted: true });
+        await scope.model.user.builder().where('id', userIds[4]).update({ iid: 0 });
+        const params = {
+          where: { 'id': userIds, 'testVonaPost.title': `${prefix}:match` },
+          joins,
+        };
+        const original = structuredClone(params);
+        const result = await $executeAnalysisAggregate(scope.model.user, policy, params);
+        assert.equal(result.count_all, '2');
+        assert.equal(result.sum_scores, '20');
+        assert.equal(Number(result.avg_scores), 10);
+        assert.deepEqual(await $executeAnalysisGroup(scope.model.user, policy, params), [
+          { age: 20, count_all: '2', sum_scores: '20' },
+        ]);
+        assert.deepEqual(params, original);
+        assert.deepEqual(await $executeAnalysisAggregate(scope.model.user, policy, params), result);
+
+        // Both joined conditions must match the same child row, not independent EXISTS.
+        const sameChild = await $executeAnalysisAggregate(scope.model.user, policy, {
+          ...params,
+          where: { ...params.where, 'testVonaPost.stars': 9 },
+        });
+        assert.equal(sameChild.count_all, '0');
+        assert.equal(sameChild.sum_scores, null);
+
+        const leftJoins: typeof joins = [
+          ['leftJoin', 'testVonaPost', ['testVonaUser.id', 'testVonaPost.userId']],
+        ];
+        const mixed = await $executeAnalysisAggregate(scope.model.user, policy, {
+          joins: leftJoins,
+          where: {
+            id: userIds,
+            _or_: { 'name': `${prefix}:empty`, 'testVonaPost.title': `${prefix}:match` },
+          },
+        });
+        assert.equal(mixed.count_all, '3');
+        assert.equal(mixed.sum_scores, '60');
+        assert.equal(Number(mixed.avg_scores), 20);
+        const absent = await $executeAnalysisAggregate(scope.model.user, policy, {
+          joins: leftJoins,
+          where: { 'id': userIds, 'testVonaPost.id': null },
+        });
+        assert.equal(absent.count_all, '1');
+        assert.equal(absent.sum_scores, '40');
+
+        // Numbered logical branches qualify main columns without touching their operands.
+        const nested = await $executeAnalysisAggregate(scope.model.user, policy, {
+          joins,
+          where: {
+            _and_: { id: userIds },
+            _or_1: { 'name': `${prefix}:one`, 'testVonaPost.stars': 3 },
+            _not_: { name: `${prefix}:deleted` },
+          } as never,
+        });
+        assert.equal(nested.count_all, '2');
+        assert.equal(nested.sum_scores, '20');
+
+        const dynamic = scope.model.user.newInstance(undefined, (_ctx, where) =>
+          Object.hasOwn(where ?? {}, 'name') ? 'testVonaUser' : 'testVonaPost',
+        );
+        await assert.rejects(
+          () =>
+            $executeAnalysisAggregate(dynamic, policy, { joins, where: { name: `${prefix}:one` } }),
+          is422,
+        );
+      } finally {
+        try {
+          if (postIds.length) await scope.model.post.builder().whereIn('id', postIds).delete();
+        } finally {
+          if (userIds.length) await scope.model.user.builder().whereIn('id', userIds).delete();
         }
       }
     });

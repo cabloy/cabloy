@@ -48,7 +48,8 @@ function checkAnalysisTypes() {
   const group: TypeAnalysisGroupParams<typeof policy> = {
     groups: ['description'],
     aggrs: { sum: ['amount'] },
-    where: { name: 'x' },
+    where: { name: 'x', _or_: { 'child.name': 'x', 'child.amount': { _gt_: 1 } } },
+    joins: [['innerJoin', 'child', ['main.id', 'child.mainId']]],
   };
   const aggregate: TypeAnalysisAggregateParams<typeof policy> = { aggrs: { count: ['imageId'] } };
   void group;
@@ -61,7 +62,13 @@ function checkAnalysisTypes() {
   const badAggregate: TypeAnalysisAggregateParams<typeof policy> = { groups: ['level'] };
   // @ts-expect-error unknown function
   const badFunction: TypeAnalysisAggregateParams<typeof policy> = { aggrs: { median: ['amount'] } };
-  void [badGroup, badColumn, badAggregate, badFunction];
+  // @ts-expect-error qualified filter keys do not widen dimension selections
+  const joinedGroup: TypeAnalysisGroupParams<typeof policy> = { groups: ['child.level'] };
+  const joinedMetric: TypeAnalysisAggregateParams<typeof policy> = {
+    // @ts-expect-error qualified filter keys do not widen metric selections
+    aggrs: { sum: ['child.amount'] },
+  };
+  void [badGroup, badColumn, badAggregate, badFunction, joinedGroup, joinedMetric];
   $defineAnalysis(Model, {
     groups: ['level'],
     // @ts-expect-error non-count metrics must be numeric

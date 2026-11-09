@@ -113,7 +113,6 @@ export class PipeFilter
     // 3. system: orders
     this._transformOrders(params, options, rootOpenapi);
     if (options.analysis && options.analysisMode) {
-      if (params.joins?.length) analysisFailure('Analysis does not support joined filters');
       Object.assign(params, resolveAnalysis(options.analysis, options.analysisMode, value));
     }
     // ok
@@ -167,7 +166,7 @@ export class PipeFilter
         throw new Error(`invalid order field: ${key}`);
       }
       cast(order)[0] = info.orderFullName;
-      this._addJoin(params, info.joinInfo);
+      if (!options.analysisMode) this._addJoin(params, info.joinInfo);
     }
   }
 

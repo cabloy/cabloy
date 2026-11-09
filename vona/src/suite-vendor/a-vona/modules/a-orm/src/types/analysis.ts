@@ -1,6 +1,7 @@
 import type { Constructable } from 'vona';
 
 import type { BeanModelMeta } from '../lib/bean.model/bean.model_meta.ts';
+import type { IModelSelectParamsJoin } from './model.ts';
 import type { TypeModelWhere } from './modelWhere.ts';
 import type { IModelClassRecord } from './onion/model.ts';
 import type { TypeModelOfModelLike, TypeSymbolKeyEntity } from './relations.ts';
@@ -83,7 +84,9 @@ export interface IAnalysisConfig<
 }
 
 interface IAnalysisParams<Policy extends IAnalysisPolicy> {
-  where?: TypeModelWhere<TypeAnalysisEntity<Policy['modelLike']>>;
+  where?: TypeModelWhere<
+    TypeAnalysisEntity<Policy['modelLike']> & Record<`${string}.${string}`, unknown>
+  >;
   aggrs?: TypeAnalysisSelectionAggrs<Policy['aggrs']>;
   // Existing list controls remain accepted but never drive analysis execution.
   columns?: unknown;
@@ -92,7 +95,8 @@ interface IAnalysisParams<Policy extends IAnalysisPolicy> {
   offset?: number;
   pageNo?: number;
   pageSize?: number;
-  joins?: never;
+  // Server-authored filter joins only; the HTTP filter rejects client join definitions.
+  joins?: IModelSelectParamsJoin<TypeAnalysisEntity<Policy['modelLike']>, string, string>[];
   having?: never;
   distinct?: never;
   include?: never;
