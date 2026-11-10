@@ -76,6 +76,11 @@ function _buildWhereOpJoint<TRecord>(
   if (wheres === Op.omit) {
     return;
   }
+  // A raw predicate is one grouped operand, not an object of child fields.
+  if ((op === Op.and || op === Op.or) && isRaw(wheres)) {
+    builder[having ? 'having' : 'where'](wheres as Knex.Raw);
+    return;
+  }
   // and/or
   if (op === Op.and) {
     builder[having ? 'having' : 'where'](builder => {

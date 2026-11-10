@@ -6,12 +6,13 @@ import type {
   TypeAnalysisGroupParams,
   TypeAnalysisAggregateParams,
 } from '../../types/analysis.ts';
-import type { IQueryParams } from '../../types/model.ts';
+import type { IModelSelectParamsJoin, IQueryParams } from '../../types/model.ts';
 import type { TypeModelWhere } from '../../types/modelWhere.ts';
 import type { IQueryPolicy, TypeQueryInput, TypeQueryPredicate } from '../../types/query.ts';
 import type { TypeModelOfModelLike } from '../../types/relations.ts';
 import type { BeanModelCache } from '../bean.model/bean.model_cache.ts';
 
+import { qualifyWhere } from '../../common/qualifyWhere.ts';
 import { getTableOrTableAlias } from '../../common/utils.ts';
 import { Op } from '../../types/modelWhere.ts';
 import { resolveAnalysis } from '../analysis/controls.ts';
@@ -65,9 +66,9 @@ export function $compileQuery<P extends IQueryPolicy>(
   const table = owner.getTable(options.scopeWhere);
   const main = getTableOrTableAlias(table);
   const where: Record<string, unknown> = {};
-  if (options.scopeWhere) where[`${Op.and}scope`] = options.scopeWhere;
+  if (options.scopeWhere) where[`${Op.and}scope`] = qualifyWhere(options.scopeWhere, main);
   const aliases = new Map<string, string>();
-  const members = owner.builder(table).select(`${main}.id`);
+  const joins: IModelSelectParamsJoin<any, any, string>[] = [];
   const addBinding = (field: string) => {
     const binding = policy.bindings[field];
     if (!binding) return `${main}.${field}`;
@@ -79,88 +80,66 @@ export function $compileQuery<P extends IQueryPolicy>(
       const targetTable = target.getTable(undefined);
       const scoped = target.builder(targetTable).select(`${getTableOrTableAlias(targetTable)}.*`);
       target.prepareWhere(scoped, targetTable, {});
-      members[binding.joinType ?? 'leftJoin'](
+      const join: IModelSelectParamsJoin<any, any, string> = [
+        binding.joinType ?? 'leftJoin',
         scoped.as(alias),
-        `${main}.${binding.localKey}`,
-        `${alias}.${binding.foreignKey}`,
-      );
+        [`${main}.${binding.localKey}`, `${alias}.${binding.foreignKey}`],
+      ];
+      joins.push(join);
     }
     return `${alias}.${binding.field}`;
   };
-  const compile = (builder: Knex.QueryBuilder, node: TypeQueryPredicate) => {
+  const compile = (node: TypeQueryPredicate): TypeModelWhere<any> => {
     if ('and' in node || 'or' in node) {
+      const op = 'and' in node ? Op.and : Op.or;
       const children = 'and' in node ? node.and : node.or;
-      builder.where(group => {
-        for (const child of children)
-          group['and' in node ? 'andWhere' : 'orWhere'](part => compile(part, child));
-      });
-      return;
+      return {
+        [op]: Object.fromEntries(
+          children.map((child, index) => [`${Op.and}${index}`, compile(child)]),
+        ),
+      };
     }
-    if ('not' in node) {
-      builder.whereNot(part => compile(part, node.not));
-      return;
-    }
+    if ('not' in node) return { [Op.not]: compile(node.not) };
     const column = addBinding(node.field);
     const op = node.op;
-    if (op === 'isNull') {
-      builder.whereNull(column);
-    } else if (op === 'isNotNull') {
-      builder.whereNotNull(column);
-    } else {
-      const rawValue = 'value' in node ? node.value : undefined;
-      const field = policy.fields[node.field];
-      const convert = (entry: unknown) =>
-        field.type === 'timestamp' ? new Date(entry as string) : entry;
-      const operand: any = Array.isArray(rawValue) ? rawValue.map(convert) : convert(rawValue);
-      const compare = { eq: '=', ne: '<>', gt: '>', gte: '>=', lt: '<', lte: '<=' } as const;
-      if (op in compare) {
-        builder.where(column, compare[op as keyof typeof compare], operand);
-      } else if (op === 'in') {
-        builder.whereIn(column, operand);
-      } else if (op === 'notIn') {
-        builder.whereNotIn(column, operand);
-      } else {
-        const escaped = String(operand).replace(/[!%_]/g, '!$&');
-        const pattern = op.startsWith('contains')
-          ? `%${escaped}%`
-          : op.startsWith('startsWith')
-            ? `${escaped}%`
-            : op.startsWith('endsWith')
-              ? `%${escaped}`
-              : escaped;
-        const insensitive = op.endsWith('I');
-        const method =
-          insensitive && owner.db.dialect.capabilities.ilike
-            ? 'whereILike'
-            : !insensitive && owner.db.dialect.capabilities.like
-              ? 'whereLike'
-              : insensitive
-                ? 'whereLike'
-                : 'whereILike';
-        builder[method](column, owner.raw("? escape '!'", [pattern]));
-      }
-    }
+    if (op === 'isNull') return { [column]: { [Op.is]: null } };
+    if (op === 'isNotNull') return { [column]: { [Op.isNot]: null } };
+    const rawValue = 'value' in node ? node.value : undefined;
+    const field = policy.fields[node.field];
+    const convert = (entry: unknown) =>
+      field.type === 'timestamp' ? new Date(entry as string) : entry;
+    const operand = Array.isArray(rawValue) ? rawValue.map(convert) : convert(rawValue);
+    const compare = {
+      eq: Op.eq,
+      ne: Op.notEq,
+      gt: Op.gt,
+      gte: Op.gte,
+      lt: Op.lt,
+      lte: Op.lte,
+      in: Op.in,
+      notIn: Op.notIn,
+    } as const;
+    if (op in compare) return { [column]: { [compare[op as keyof typeof compare]]: operand } };
+    const escaped = String(operand).replace(/[!%_]/g, '!$&');
+    const pattern = op.startsWith('contains')
+      ? `%${escaped}%`
+      : op.startsWith('startsWith')
+        ? `${escaped}%`
+        : op.startsWith('endsWith')
+          ? `%${escaped}`
+          : escaped;
+    const insensitive = op.endsWith('I');
+    const capabilities = owner.db.dialect.capabilities;
+    // Only dialects supporting both operators distinguish LIKE from ILIKE.
+    const operator = insensitive && capabilities.like && capabilities.ilike ? 'ilike' : 'like';
+    return owner.raw(`?? ${operator} ? escape '!'`, [column, pattern]) as any;
   };
-  if (value.where) {
-    // Knex compiles joins before deferred where callbacks; resolve every binding first.
-    const pending: TypeQueryPredicate[] = [value.where as TypeQueryPredicate];
-    while (pending.length) {
-      const node = pending.pop()!;
-      if ('field' in node) addBinding(node.field);
-      else if ('not' in node) pending.push(node.not);
-      else pending.push(...('and' in node ? node.and : node.or));
-    }
-    // One membership predicate preserves OR/NOT and repeated fields without parent fan-out.
-    compile(members, value.where as TypeQueryPredicate);
-    // Keep trusted scope on the outer model; related joins may share its field names.
-    owner.prepareWhere(members, table, {});
-    const { sql, bindings } = members.toSQL();
-    where[`${main}.id`] = { [Op.in]: owner.raw(sql, bindings) };
-  }
+  if (value.where) where[`${Op.and}query`] = compile(value.where as TypeQueryPredicate);
+  const filter = { where, ...(joins.length ? { joins, columns: [`${main}.*`] } : {}) };
   if (owner.getTable(where as any) !== table)
     throw new TypeError('Query must resolve to the same model table');
   if (mode !== 'select') {
-    return { where, ...resolveAnalysis(options.analysis!, mode, value) } as any;
+    return { ...filter, ...resolveAnalysis(options.analysis!, mode, value) } as any;
   }
   const orders: unknown[][] = [];
   for (const order of value.orders ?? policy.defaults.orders) {
@@ -186,10 +165,10 @@ export function $compileQuery<P extends IQueryPolicy>(
   }
   if (!(value.orders ?? policy.defaults.orders).some(order => order.field === 'id'))
     orders.push([`${main}.id`, 'asc']);
-  if (policy.pagination === false) return { where, orders } as any;
+  if (policy.pagination === false) return { ...filter, orders } as any;
   const pageSize = value.pageSize ?? policy.defaults.pageSize;
   return {
-    where,
+    ...filter,
     orders,
     limit: pageSize,
     offset: ((value.pageNo ?? policy.defaults.pageNo) - 1) * pageSize,

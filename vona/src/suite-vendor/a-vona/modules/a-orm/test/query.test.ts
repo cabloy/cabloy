@@ -5,6 +5,8 @@ import z from 'zod';
 
 import type { IQueryPolicy } from '../src/types/query.ts';
 
+import { buildWhere } from '../src/common/buildWhere.ts';
+import { $executeAnalysisAggregate, $executeAnalysisGroup } from '../src/lib/analysis/execute.ts';
 import { $compileQuery } from '../src/lib/query/compile.ts';
 import { queryDefaultLimits } from '../src/lib/query/policy.ts';
 import {
@@ -33,8 +35,33 @@ class Model {
     return this.connection.raw(sql, bindings);
   }
 
-  prepareWhere(builder: any, _table: string, where: object = {}) {
-    builder.where(where).where('main.iid', 1).where('main.deleted', false);
+  prepareWhere(builder: any, table: string, where: object = {}) {
+    buildWhere(this.db as any, builder, where);
+    builder.where(`${table}.iid`, 1).where(`${table}.deleted`, false);
+  }
+
+  newInstanceTarget() {
+    const target = new Model(this.connection.client.config.client);
+    target.getTable = () => 'related';
+    target.connection = this.connection;
+    return target;
+  }
+
+  ref(column: string) {
+    return this.connection.ref(column);
+  }
+
+  buildJoins(builder: any, joins: any[]) {
+    for (const [type, table, columns] of joins ?? []) builder[type](table, ...columns);
+  }
+
+  selectSql(params: any) {
+    const builder = this.builder('main').select(params.columns ?? 'main.*');
+    this.buildJoins(builder, params.joins);
+    this.prepareWhere(builder, 'main', params.where);
+    for (const [column, direction] of params.orders ?? []) builder.orderBy(column, direction);
+    if (params.groups) builder.groupBy(params.groups);
+    return builder.toSQL();
   }
 }
 function policy() {
@@ -160,6 +187,146 @@ describe('public query contract', () => {
     }
   });
 
+  it('joins unique targets directly while retaining scoped left joins and Boolean groups', async () => {
+    for (const client of ['pg', 'mysql2', 'sqlite3']) {
+      const model = new Model(client);
+      model.db.dialect.capabilities = { like: client !== 'mysql2', ilike: client !== 'sqlite3' };
+      const p = policy();
+      (p.fields as any).userName = p.fields.name;
+      (p.bindings as any).userName = {
+        modelLike: Model,
+        localKey: 'userId',
+        foreignKey: 'id',
+        field: 'name',
+      };
+      try {
+        const params = $compileQuery(
+          model as any,
+          p,
+          {
+            where: {
+              or: [
+                { field: 'level', op: 'gte', value: 2 },
+                {
+                  and: [
+                    { field: 'userName', op: 'containsI', value: 'a%_!' },
+                    { not: { field: 'userName', op: 'isNull' } },
+                  ],
+                },
+              ],
+            },
+          },
+          { scopeWhere: { userId: 'trusted' } },
+        );
+        assert.equal(params.joins?.length, 1);
+        assert.deepEqual(params.columns, ['main.*']);
+        const { sql, bindings } = model.selectSql(params);
+        assert.doesNotMatch(sql, /\bin \(select/i);
+        assert.match(
+          sql,
+          /left join \(select .*related.*iid.*related.*deleted.*\) as .*query_related_0/s,
+        );
+        assert.match(sql, / or /);
+        assert.match(sql, /not .*query_related_0.*name.*is null/s);
+        assert.match(sql, /main.*userId/);
+        assert.deepEqual(bindings, [1, false, 'trusted', 2, '%a!%!_!!%', 1, false]);
+      } finally {
+        await model.connection.destroy();
+      }
+    }
+  });
+
+  it('does not turn an order-only binding into a filtering inner join', async () => {
+    const model = new Model();
+    const p = policy();
+    (p.bindings as any).name = {
+      modelLike: Model,
+      localKey: 'userId',
+      foreignKey: 'id',
+      field: 'name',
+      joinType: 'innerJoin',
+    };
+    try {
+      const params = $compileQuery(model as any, p, {
+        orders: [{ field: 'name', direction: 'desc' }],
+      });
+      assert.equal(params.joins, undefined);
+      const { sql } = model.selectSql(params);
+      assert.match(sql, /order by case when \(select .*related.*name/s);
+      assert.doesNotMatch(sql, /inner join/);
+    } finally {
+      await model.connection.destroy();
+    }
+  });
+
+  it('executes compiled and server-authored analysis joins directly with qualified metrics and stable aliases', async () => {
+    for (const client of ['pg', 'mysql2', 'sqlite3']) {
+      const model = new Model(client);
+      const p = policy();
+      (p.bindings as any).name = {
+        modelLike: Model,
+        localKey: 'userId',
+        foreignKey: 'id',
+        field: 'name',
+      };
+      const analysis = {
+        modelClass: Model,
+        modelLike: Model,
+        groups: ['level'],
+        aggrs: { count: ['*', 'id'], sum: ['level'] },
+        defaults: {
+          group: { groups: ['level'], aggrs: { count: ['*', 'id'], sum: ['level'] } },
+          aggregate: { aggrs: { count: ['*', 'id'], sum: ['level'] } },
+        },
+        limits: { maxGroups: 1, maxMetrics: 3, maxGroupRows: 10 },
+      } as any;
+      const calls: any[] = [];
+      (model as any).group = async (params: any) => {
+        calls.push(params);
+        return [{ level: 2, count_all: 1, count_id: 1, sum_level: 2 }];
+      };
+      (model as any).aggregate = async (params: any) => {
+        calls.push(params);
+        return { count_all: 1, count_id: 1, sum_level: 2 };
+      };
+      try {
+        const input = { where: { field: 'name', op: 'eq', value: 'target' } };
+        const group = $compileQuery(model as any, p, input, { mode: 'group', analysis });
+        const rows = await $executeAnalysisGroup(model as any, analysis, group);
+        assert.deepEqual(rows, [{ level: 2, count_all: '1', count_id: '1', sum_level: '2' }]);
+        const aggregate = $compileQuery(model as any, p, input, { mode: 'aggregate', analysis });
+        assert.deepEqual(await $executeAnalysisAggregate(model as any, analysis, aggregate), {
+          count_all: '1',
+          count_id: '1',
+          sum_level: '2',
+        });
+        const authored = {
+          joins: [['innerJoin', 'related', ['main.id', 'related.mainId']]],
+          where: { 'level': 2, 'related.name': 'target' },
+        };
+        const original = structuredClone(authored);
+        await $executeAnalysisGroup(model as any, analysis, authored as any);
+        await $executeAnalysisAggregate(model as any, analysis, authored as any);
+        assert.deepEqual(authored, original);
+        for (const params of calls.slice(2)) {
+          assert.equal(params.joins, authored.joins);
+          assert.deepEqual(params.where, { 'main.level': 2, 'related.name': 'target' });
+        }
+        for (const params of calls) {
+          assert.equal(params.joins.length, 1);
+          const { sql } = model.selectSql(params);
+          assert.doesNotMatch(sql, /\bin \(select/i);
+          assert.match(sql, /count\(\*\) as ["`]count_all["`]/);
+          assert.match(sql, /count\(["`]main["`]\.["`]id["`]\) as ["`]count_id["`]/);
+          assert.match(sql, /sum\(["`]main["`]\.["`]level["`]\) as ["`]sum_level["`]/);
+        }
+        assert.deepEqual(calls[0].groups, ['main.level']);
+      } finally {
+        await model.connection.destroy();
+      }
+    }
+  });
+
   it('compiles repeated predicates and scope without overwriting and escapes literal patterns', () => {
     const model = new Model();
     const p = policy();
@@ -179,12 +346,12 @@ describe('public query contract', () => {
       },
       { scopeWhere: { userId: 'trusted' } },
     );
-    const raw = (params.where as any)['main.id']._in_.toSQL();
+    const raw = model.selectSql(params);
     assert.match(raw.sql, /not.*ilike/s);
     assert.match(raw.sql, /escape '!'/);
-    assert.deepEqual(raw.bindings, [2, 4, '%a!%!_!!%', 1, false]);
-    assert.doesNotMatch(raw.sql, /userId/);
-    assert.deepEqual((params.where as any)._and_scope, { userId: 'trusted' });
+    assert.doesNotMatch(raw.sql, /\bin \(select/i);
+    assert.deepEqual(raw.bindings, ['trusted', 2, 4, '%a!%!_!!%', 1, false]);
+    assert.deepEqual((params.where as any)._and_scope, { 'main.userId': 'trusted' });
     const orders = params.orders as any[];
     assert.equal(orders[0][0].toSQL().sql, 'case when "main"."name" is null then 1 else 0 end');
     assert.equal(orders[0][1], 'asc');

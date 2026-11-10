@@ -17,16 +17,18 @@ import { describe, it } from 'node:test';
 import { app } from 'vona-mock';
 import { $makeSchema, $schema, v } from 'vona-module-a-openapiutils';
 import {
+  $compileQuery,
   $defineAnalysis,
   $executeAnalysisAggregate,
   $executeAnalysisGroup,
+  Op,
 } from 'vona-module-a-orm';
 import { prepareAnalysisFilter } from 'vona-module-a-web';
 
 import { ControllerPost } from '../../src/controller/post.ts';
 import { DtoPostAggregate } from '../../src/dto/postAggregate.ts';
 import { DtoPostGroup } from '../../src/dto/postGroup.ts';
-import { DtoPostSelectReq } from '../../src/dto/postSelectReq.ts';
+import { DtoPostSelectReq, postQuery } from '../../src/dto/postSelectReq.ts';
 import { postAnalysis } from '../../src/lib/postAnalysis.ts';
 import { ModelPost } from '../../src/model/post.ts';
 import { ModelUser } from '../../src/model/user.ts';
@@ -381,6 +383,33 @@ describe('analysisQuery.test.ts', { concurrency: false }, () => {
           },
         });
         assert.deepEqual(await readPost('group', joined), [defaults[0]]);
+        const compiled = $compileQuery(scope.model.post, postQuery, {
+          where: { and: [query.where, { field: 'userName', op: 'eqI', value: `${prefix}:one` }] },
+          orders: [{ field: 'userName', direction: 'asc' }],
+          pageSize: 1,
+          pageNo: 2,
+        });
+        assert.equal(compiled.joins?.length, 1);
+        assert.equal(Object.hasOwn(compiled.where!, 'testVonaPost.id'), false);
+        const uncached = await scope.model.post.selectAndCount(compiled, {
+          disableCacheEntity: true,
+          disableCacheQuery: true,
+        });
+        assert.equal(uncached.total, '2');
+        assert.equal(uncached.list.length, 1);
+        assert.equal(uncached.list[0].userId, userIds[0]);
+        assert.equal(uncached.list[0].title, `${prefix}:a`);
+        assert.equal(Object.hasOwn(uncached.list[0], 'name'), false);
+        const ordered = await readPost('findMany', {
+          ...query,
+          orders: [{ field: 'userName', direction: 'desc' }],
+          pageSize: 2,
+        });
+        assert.equal(ordered.total, '4');
+        assert.deepEqual(
+          ordered.list.map((row: { userId: TableIdentity }) => row.userId),
+          [userIds[1], userIds[1]],
+        );
         const joinedAggregate = await readPost('aggregate', joined);
         assert.equal(joinedAggregate.count_all, '2');
         assert.equal(joinedAggregate.sum_stars, '6');
@@ -586,7 +615,7 @@ describe('analysisQuery.test.ts', { concurrency: false }, () => {
     });
   });
 
-  it('preserves main-record metrics, Boolean predicates and scope through joined membership', async () => {
+  it('executes joins directly and leaves main-record membership to the caller', async () => {
     await app.bean.executor.mockCtx(async () => {
       const scope = app.scope('test-vona');
       const prefix = `analysis-joins:${randomUUID()}`;
@@ -642,14 +671,34 @@ describe('analysisQuery.test.ts', { concurrency: false }, () => {
         };
         const original = structuredClone(params);
         const result = await $executeAnalysisAggregate(scope.model.user, policy, params);
-        assert.equal(result.count_all, '2');
-        assert.equal(result.sum_scores, '20');
+        assert.equal(result.count_all, '3');
+        assert.equal(result.sum_scores, '30');
         assert.equal(Number(result.avg_scores), 10);
         assert.deepEqual(await $executeAnalysisGroup(scope.model.user, policy, params), [
-          { age: 20, count_all: '2', sum_scores: '20' },
+          { age: 20, count_all: '3', sum_scores: '30' },
         ]);
         assert.deepEqual(params, original);
         assert.deepEqual(await $executeAnalysisAggregate(scope.model.user, policy, params), result);
+
+        // The caller explicitly selects membership when each user must count only once.
+        const ids = scope.model.user
+          .builder()
+          .select('testVonaUser.id')
+          .innerJoin('testVonaPost', 'testVonaUser.id', 'testVonaPost.userId')
+          .whereIn('testVonaUser.id', userIds)
+          .where('testVonaPost.title', `${prefix}:match`);
+        scope.model.user.prepareWhere(ids, 'testVonaUser', {});
+        const { sql, bindings } = ids.toSQL();
+        const membership: TypeAnalysisAggregateParams<typeof policy> = {
+          where: { 'testVonaUser.id': { [Op.in]: scope.model.user.raw(sql, bindings) } },
+        };
+        const members = await $executeAnalysisAggregate(scope.model.user, policy, membership);
+        assert.equal(members.count_all, '2');
+        assert.equal(members.sum_scores, '20');
+        assert.equal(Number(members.avg_scores), 10);
+        assert.deepEqual(await $executeAnalysisGroup(scope.model.user, policy, membership), [
+          { age: 20, count_all: '2', sum_scores: '20' },
+        ]);
 
         // Both joined conditions must match the same child row, not independent EXISTS.
         const sameChild = await $executeAnalysisAggregate(scope.model.user, policy, {
@@ -669,9 +718,9 @@ describe('analysisQuery.test.ts', { concurrency: false }, () => {
             _or_: { 'name': `${prefix}:empty`, 'testVonaPost.title': `${prefix}:match` },
           },
         });
-        assert.equal(mixed.count_all, '3');
-        assert.equal(mixed.sum_scores, '60');
-        assert.equal(Number(mixed.avg_scores), 20);
+        assert.equal(mixed.count_all, '4');
+        assert.equal(mixed.sum_scores, '70');
+        assert.equal(Number(mixed.avg_scores), 17.5);
         const absent = await $executeAnalysisAggregate(scope.model.user, policy, {
           joins: leftJoins,
           where: { 'id': userIds, 'testVonaPost.id': null },
@@ -688,8 +737,8 @@ describe('analysisQuery.test.ts', { concurrency: false }, () => {
             _not_: { name: `${prefix}:deleted` },
           } as never,
         });
-        assert.equal(nested.count_all, '2');
-        assert.equal(nested.sum_scores, '20');
+        assert.equal(nested.count_all, '3');
+        assert.equal(nested.sum_scores, '30');
 
         const dynamic = scope.model.user.newInstance(undefined, (_ctx, where) =>
           Object.hasOwn(where ?? {}, 'name') ? 'testVonaUser' : 'testVonaPost',

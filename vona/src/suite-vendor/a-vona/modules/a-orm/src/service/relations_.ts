@@ -12,6 +12,7 @@ import type { IModelClassRecord } from '../types/onion/model.ts';
 import type { TypeModelClassLike } from '../types/relations.ts';
 import type { IModelRelationOptionsMetaBasic, IRelationItem } from '../types/relationsDef.ts';
 
+import { getTableOrTableAlias } from '../common/utils.ts';
 import { handleRelationsCollection } from '../lib/utils.ts';
 
 @Service()
@@ -510,6 +511,8 @@ export class ServiceRelations extends BeanBase {
     if (!options || !options.columns) return [options, undefined];
     const columns = Array.isArray(options.columns) ? options.columns : [options.columns];
     if (columns.includes('*')) return [options, undefined];
+    const table = getTableOrTableAlias(this._model.getTable((options as { where?: any }).where));
+    if (columns.includes(`${table}.*`)) return [options, undefined];
     // refKeys
     const refKeys: string[] = [];
     for (const relation of relations) {
