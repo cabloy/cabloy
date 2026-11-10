@@ -2164,7 +2164,11 @@ test(
       await expect(
         adminPage.locator('section').getByText('SKU code', { exact: true }),
       ).toBeVisible();
-      await expect(adminPage.getByText('Created At', { exact: true })).toHaveCount(1);
+      const createdAtHeader = adminPage
+        .getByRole('columnheader')
+        .getByRole('button', { name: 'Sort by createdAt', exact: true });
+      await expect(createdAtHeader).toBeVisible();
+      await expect(createdAtHeader).toContainText('Created At');
       await expect(adminPage.getByRole('group', { name: 'Attributes' })).toHaveCount(0);
 
       await adminPage.goto(`${skuListPath}/${skuId}`, { waitUntil: 'load' });
