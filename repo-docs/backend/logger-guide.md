@@ -91,7 +91,7 @@ In the VSCode workflow, the `recordloggerclient` snippet can generate the client
 
 ## HTTP access logs versus diagnostics
 
-The application config separates HTTP access records from diagnostic logs using the `access` client. Request (`req`) and response (`res`) records use `info` within that client; they do not use the default client's `http` level. Clients select purpose and routing, while levels select verbosity within a client. Raising diagnostic logging to `debug` therefore does not send access records to the diagnostic console or `combined.log`.
+The application config separates HTTP access records from diagnostic logs using the `access` client. Each eligible request produces one terminal result through the `res` child at `info`, rather than separate request and response records. It does not use the default client's `http` level. Clients select purpose and routing, while levels select verbosity within a client. Raising diagnostic logging to `debug` therefore does not send access records to the diagnostic console or `combined.log`.
 
 By default, `access` has only a normal threshold-filtered file transport, writing `access.log` under the configured log directory and using the existing rotation settings. Managed isolated test runs use their run-owned `.app-test-<runId>/logs` directory. The default client's existing transports remain available for other explicit logger calls.
 
@@ -105,9 +105,23 @@ The file transport must follow the client threshold: use `makeTransportFile(clie
 
 Files actually handled by Vona's static cache are excluded, including public/module files, aliases, and built Vona-integrated SSR client assets. Cached files, HEAD and conditional 304 responses are excluded too. Missing files that fall through, dynamic SSR pages, and business routes with filename-like paths remain eligible for logging. External development proxy responses remain eligible because their completion does not distinguish a static asset from a page; exclusions are not guessed from filename extensions or entire site prefixes.
 
-To make that decision, the middleware captures a sanitized request snapshot and starts timing before downstream execution, but publishes records only after downstream settles. A pending request has no early request record. Success produces request and response records; a downstream rejection retains only the request record and propagates the original failure. Duration still measures middleware completion, not response `finish` or client `close`.
+The terminal result contains only these payload fields, alongside the normal logger envelope and available request/trace correlation:
 
-Headers and URLs retain the existing redaction rules; bodies are not recorded. Protected request-boundary and strict contract-generation suppression still apply. Access files support traffic analysis, but they are not a durable business/security audit ledger and do not replace business assertions or required audit records.
+| Field        | Meaning                                                                       |
+| ------------ | ----------------------------------------------------------------------------- |
+| `method`     | Request method captured at middleware entry                                   |
+| `url`        | Entry URL with query/fragment values and absolute-URL userinfo redacted       |
+| `statusCode` | Status at termination, or `null` when an abort occurs before headers are sent |
+| `durationMs` | Monotonic elapsed time from entry to the first response terminal event        |
+| `outcome`    | `finished` or `aborted`                                                       |
+
+A response `finish` produces `finished`; an early `close` produces `aborted` unless `writableFinished` already confirms completion. Only the first terminal event is recorded. `finish` means the server finished writing to its underlying output, not proof that the client consumed the response. A status such as `200` can therefore accompany an aborted response after headers were sent; no synthetic `499` is substituted.
+
+Response completion is independent of middleware settlement. Streaming responses can finish later, while integrated SSR can finish before downstream returns. Downstream errors propagate unchanged: the existing error handler owns diagnostics and response mapping, and the access record observes the eventual terminal status. No entry is emitted merely because middleware resolves or rejects. Terminal logging preserves the registering request's async context without creating another owned request scope.
+
+Static exclusion uses the confirmed classification at termination. If a client disconnects during an unresolved cold-file lookup, the request is recorded as aborted/unserved traffic, even if the abandoned lookup later identifies a static file. This avoids waiting indefinitely for downstream work after a disconnect.
+
+Request/response headers, bodies, remote addresses/ports, and error objects/stacks are omitted. URL path segments remain visible, so credentials must not be placed in them. Protected request-boundary and strict contract-generation suppression still apply. Access files support traffic analysis, but they are not a durable business/security audit ledger and do not replace business assertions or required audit records.
 
 ## Getting a logger client
 
