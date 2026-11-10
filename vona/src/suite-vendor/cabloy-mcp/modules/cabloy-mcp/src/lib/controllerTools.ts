@@ -289,13 +289,16 @@ export async function createControllerToolServer(
           const outputCheck = isPrimitiveSchema(rawOutput, schemas)
             ? fromJsonSchema(outputSchema as Parameters<typeof fromJsonSchema>[0])['~standard']
             : undefined;
+          const description = options.description
+            ? app.meta.text(options.description)
+            : operation.description ||
+              operation.summary ||
+              `${controller.beanOptions.beanFullName}#${route.action}`;
           const tool: Tool = {
             name,
-            description: options.description
-              ? app.meta.text(options.description)
-              : operation.description ||
-                operation.summary ||
-                `${controller.beanOptions.beanFullName}#${route.action}`,
+            description: queryBindings.length
+              ? `${description}\n\nFor alternatives within one query, prefer a single call using where.or rather than separate calls and client-side merging. Use where.and for combined constraints. Follow the schema-declared argument location and where predicate syntax; named filters are additional AND constraints. Available fields, operators and value types are defined by inputSchema.`
+              : description,
             inputSchema,
             outputSchema,
             annotations: {

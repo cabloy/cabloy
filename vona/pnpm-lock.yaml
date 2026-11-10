@@ -734,7 +734,7 @@ importers:
         specifier: npm:@cabloy/zod@4.3.8
         version: '@cabloy/zod@4.3.8'
       zova:
-        specifier: ^5.1.188
+        specifier: ^5.1.189
         version: 5.1.189(debug@4.4.3(supports-color@7.2.0))(supports-color@7.2.0)(typescript@5.9.3)(vue@3.5.45(typescript@5.9.3))
       zova-jsx:
         specifier: ^1.1.102
@@ -770,7 +770,7 @@ importers:
         specifier: ^5.1.34
         version: 5.1.34
       zova-module-a-layoutprofile:
-        specifier: ^5.0.7
+        specifier: ^5.0.8
         version: 5.0.8
       zova-module-a-logger:
         specifier: ^5.1.31
@@ -782,10 +782,10 @@ importers:
         specifier: ^5.1.41
         version: 5.1.41(vue@3.5.45(typescript@5.9.3))
       zova-module-a-openapi:
-        specifier: ^5.1.64
+        specifier: ^5.1.65
         version: 5.1.65
       zova-module-a-pay:
-        specifier: ^5.0.14
+        specifier: ^5.0.15
         version: 5.0.15
       zova-module-a-rbac:
         specifier: ^5.0.4
@@ -812,7 +812,7 @@ importers:
         specifier: ^5.1.38
         version: 5.1.38
       zova-module-a-table:
-        specifier: ^5.1.50
+        specifier: ^5.1.51
         version: 5.1.51(vue@3.5.45(typescript@5.9.3))
       zova-module-a-zod:
         specifier: ^5.1.44
@@ -821,7 +821,7 @@ importers:
         specifier: ^5.1.121
         version: 5.1.121(typescript@5.9.3)(vue@3.5.45(typescript@5.9.3))
       zova-module-pay-mock:
-        specifier: ^5.0.9
+        specifier: ^5.0.10
         version: 5.0.10
       zova-module-pay-paypal:
         specifier: ^5.0.5
@@ -830,7 +830,7 @@ importers:
         specifier: ^5.0.5
         version: 5.0.5
       zova-module-rest-resource:
-        specifier: ^5.1.60
+        specifier: ^5.1.61
         version: 5.1.61
 
   .zova-rest/cabloy-basic-web:

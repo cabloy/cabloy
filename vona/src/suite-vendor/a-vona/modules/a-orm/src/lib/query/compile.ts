@@ -152,7 +152,8 @@ export function $compileQuery<P extends IQueryPolicy>(
     }
     // One membership predicate preserves OR/NOT and repeated fields without parent fan-out.
     compile(members, value.where as TypeQueryPredicate);
-    owner.prepareWhere(members, table, options.scopeWhere);
+    // Keep trusted scope on the outer model; related joins may share its field names.
+    owner.prepareWhere(members, table, {});
     const { sql, bindings } = members.toSQL();
     where[`${main}.id`] = { [Op.in]: owner.raw(sql, bindings) };
   }

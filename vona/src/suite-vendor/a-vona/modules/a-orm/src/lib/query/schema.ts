@@ -140,7 +140,17 @@ export function queryControlSchemas(
 ) {
   const metadata = { filter: { capabilities: { query: queryCapabilities(policy) } } };
   const shape: Record<string, z.ZodType> = {
-    where: queryPredicateSchema(policy).optional().openapi(metadata),
+    where: queryPredicateSchema(policy)
+      .optional()
+      .openapi({
+        ...metadata,
+        description:
+          'Recursive Boolean predicate: use explicit leaves { field, op, value }, nonempty { and: [...] } / { or: [...] } groups, or { not: predicate }. ' +
+          'Field-value maps such as { fieldName: value } are not supported inside where. ' +
+          'The isNull and isNotNull operators omit value; in and notIn require nonempty value arrays. ' +
+          'Use only fields, operators and value types admitted by this schema and respect its query limits. ' +
+          'Omit where for no added restriction. Supplied named filters combine with where by AND.',
+      }),
   };
   if (mode === 'select') {
     const fields = policy.orderable;

@@ -90,6 +90,8 @@ See [OpenAPI Guide](/backend/openapi-guide#generate-an-action-contract-for-mcp-j
 
 For query-enabled Actions, use the same policy-bound [public query contract](/backend/public-query-guide) as HTTP and generated UI clients. Read the discovered tool's actual `inputSchema`: its finite field/operator/value alternatives and query capabilities define the advanced surface, independently of the named UI filters. Not every list Action exposes advanced controls.
 
+Generic query guidance is generated centrally, not maintained in each business tool description. The ORM-generated `where` description explains the recursive predicate syntax, including the distinction between explicit leaves and unsupported field-value maps. For Actions with an actual policy-bound filter, the MCP mapper preserves the selected business description and appends a short recommendation to use one `where.or` call for alternatives rather than separate calls and client-side merging. This covers select/group/aggregate query bindings, not all read-only tools or Actions named `select`. The shared guidance is in English; localized business descriptions remain intact. It changes neither accepted arguments nor query policies and does not guarantee a client's call strategy. Refresh client tool discovery after deployment to receive the updated schema and descriptions.
+
 - Supply `where`, `orders`, `groups` and `aggrs` as **native JSON**, not JSON strings. Only HTTP GET needs structured-control JSON query encoding. Numeric and Boolean operands are native numbers/Booleans; recursive string coercion is disabled.
 - Use explicit AST leaves (`{ field, op, value }`), nonempty `and` / `or` arrays or `not`. Omit `where` for no added restriction; `{}` and old property-keyed/underscore-operator queries are invalid. No raw-ORM fallback exists.
 - Explicit `where` and all supplied named conveniences combine by AND. Names in a small form are not the complete advanced field allowlist and need not map to same-named canonical fields.
@@ -301,7 +303,7 @@ Retained schema definitions are limited to those reachable from the advertised c
 
 ### Trace tool calls and Boolean filters
 
-The Controller-tool mapper emits three diagnostic events through the existing default logger at `debug`. Use the normal [Logger Guide](/backend/logger-guide#level-control-and-transport-behavior) controls, such as `LOGGER_CLIENT_DEFAULT=debug`, when investigating calls. No separate MCP logging switch or audit store is involved.
+The Controller-tool mapper emits three diagnostic events through the `mcp` logger child of the existing default client at `debug`. Use the normal [Logger Guide](/backend/logger-guide#level-control-and-transport-behavior) controls, such as `LOGGER_CLIENT_DEFAULT=debug`, when investigating calls. Set `LOGGER_CHILD_DEFAULT=mcp` to filter the default client's diagnostics to this child. No separate MCP logger client, logging switch or audit store is involved.
 
 | Event                    | Meaning                                                                                                                                                             |
 | ------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------- |

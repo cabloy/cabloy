@@ -3,6 +3,10 @@ export interface IMcpConfig {
 }
 
 declare module 'vona' {
+  export interface ILoggerChildRecord {
+    mcp: never;
+  }
+
   export interface VonaConfigEnv {
     CABLOY_MCP_ENABLED: string | undefined;
   }

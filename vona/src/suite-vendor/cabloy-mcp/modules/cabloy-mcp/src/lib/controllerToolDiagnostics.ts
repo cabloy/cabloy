@@ -82,7 +82,7 @@ export function recordToolCall(
   queries?: () => IQueryDiagnosticInput[],
 ): void {
   try {
-    app.bean.logger.default.debug(`mcp.tool.call ${stage}`, {
+    app.bean.logger.getChild('mcp').debug(`mcp.tool.call ${stage}`, {
       callId: call.callId,
       tool: call.tool,
       ...(stage === 'dispatch' && queries ? summarizeToolQueries(queries()) : {}),

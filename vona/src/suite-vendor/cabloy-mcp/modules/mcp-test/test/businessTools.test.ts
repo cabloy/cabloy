@@ -620,6 +620,7 @@ describe('businessTools.test.ts', { concurrency: false, timeout: 60000 }, () => 
           'the existing filter-backed select and analysis contracts are representable without diagnostics',
         );
         const controller = recordResourceNameToRoutePath['training-student:student'].controller;
+        const query = await nativeStudentQuery();
         const methods: Record<string, string> = {
           create: 'post',
           update: 'patch',
@@ -635,7 +636,55 @@ describe('businessTools.test.ts', { concurrency: false, timeout: 60000 }, () => 
           );
           assert.ok(metadata, `${actionName} retains explicit MCP opt-in`);
           assert.ok(metadata.description, `${actionName} declares its MCP description`);
-          assert.equal(tool.description, app.meta.text(metadata.description), tool.name);
+          const businessDescription = app.meta.text(metadata.description);
+          if (query && ['select', 'group', 'aggregate'].includes(actionName)) {
+            assert.ok(tool.description.startsWith(`${businessDescription}\n\n`), tool.name);
+            assert.match(tool.description, /prefer a single call using where\.or/);
+            assert.match(tool.description, /named filters are additional AND constraints/);
+            const where = resolveSchema(
+              tool.inputSchema.properties.where,
+              tool.inputSchema.components?.schemas ?? {},
+            );
+            assert.match(where.description, /explicit leaves \{ field, op, value \}/);
+            assert.match(where.description, /Field-value maps.*are not supported inside where/);
+            assert.match(where.description, /isNull and isNotNull operators omit value/);
+            assert.match(where.description, /admitted by this schema/);
+            assert.deepEqual(where.filter.capabilities.query.fields.level.operators, ['eq', 'gte']);
+            const validator = fromJsonSchema(tool.inputSchema)['~standard'];
+            const controls = actionName === 'select' ? {} : { aggrs: { count: ['*'] } };
+            assert.equal(
+              (
+                await validator.validate({
+                  ...controls,
+                  where: {
+                    or: [
+                      { field: 'level', op: 'eq', value: 1 },
+                      { field: 'level', op: 'eq', value: 2 },
+                    ],
+                  },
+                })
+              ).issues,
+              undefined,
+            );
+            assert.ok(
+              (
+                await validator.validate({
+                  ...controls,
+                  where: { or: [{ level: 1 }, { level: 2 }] },
+                })
+              ).issues,
+            );
+            assert.ok(
+              (
+                await validator.validate({
+                  ...controls,
+                  where: { field: 'level', op: 'in', value: [1, 2] },
+                })
+              ).issues,
+            );
+          } else {
+            assert.equal(tool.description, businessDescription, tool.name);
+          }
           const document = JSON.parse(
             JSON.stringify(
               await app.bean.openapi.generateJsonOfControllerAction(controller, actionName, 'V31'),
@@ -652,7 +701,6 @@ describe('businessTools.test.ts', { concurrency: false, timeout: 60000 }, () => 
             `${actionName} keeps its description MCP-only`,
           );
         }
-        const query = await nativeStudentQuery();
         const { DtoStudentSelectReq, DtoStudentSelectResItem } =
           await import('vona-module-training-student');
         const nativeDocument = JSON.parse(
@@ -670,6 +718,22 @@ describe('businessTools.test.ts', { concurrency: false, timeout: 60000 }, () => 
         const nativeSelectItem =
           nativeDocument.components.schemas[appResource.getBeanFullName(DtoStudentSelectResItem)!];
         assert.ok(select);
+        if (query) {
+          const where = resolveSchema(
+            select.inputSchema.properties.where,
+            select.inputSchema.components?.schemas ?? {},
+          );
+          const nativeWhere = resolveSchema(
+            nativeSelect.properties.where,
+            nativeDocument.components.schemas,
+          );
+          assert.equal(where.description, nativeWhere.description);
+          const orders = resolveSchema(
+            select.inputSchema.properties.orders,
+            select.inputSchema.components?.schemas ?? {},
+          );
+          assert.ok(!orders.description?.includes('Recursive Boolean predicate'));
+        }
         assert.equal(select.annotations.readOnlyHint, true);
         assert.deepEqual(Object.keys(select.inputSchema.properties).sort(), [
           ...(!query ? ['columns'] : []),
@@ -1142,6 +1206,7 @@ describe('businessTools.test.ts', { concurrency: false, timeout: 60000 }, () => 
     const { default: zhCN } =
       await import('../../../../../suite/a-training/modules/training-student/src/config/locale/zh-cn.ts');
     const dictionaries = { 'en-us': enUS, 'zh-cn': zhCN };
+    const query = await nativeStudentQuery();
     const descriptions = {
       create: { key: 'StudentCreateDescription', summary: 'StudentCreate', method: 'post' },
       select: { key: 'StudentSelectDescription', summary: 'StudentSelect', method: 'get' },
@@ -1185,7 +1250,12 @@ describe('businessTools.test.ts', { concurrency: false, timeout: 60000 }, () => 
               const operation = Object.values(document.paths ?? {})
                 .map(path => (path as any)[method])
                 .find(Boolean);
-              assert.equal(tool.description, dictionaries[locale][key], `${locale}: ${name}`);
+              if (query && ['select', 'group', 'aggregate'].includes(actionName)) {
+                assert.ok(tool.description.startsWith(`${dictionaries[locale][key]}\n\n`));
+                assert.match(tool.description, /prefer a single call using where\.or/);
+              } else {
+                assert.equal(tool.description, dictionaries[locale][key], `${locale}: ${name}`);
+              }
               assert.ok(operation, `${locale}: ${name} retains its HTTP operation`);
               assert.equal(operation.summary, dictionaries[locale][summary], `${locale}: ${name}`);
               assert.equal(operation.description, undefined, `${locale}: ${name}`);
@@ -1814,9 +1884,18 @@ describe('businessTools.test.ts', { concurrency: false, timeout: 60000 }, () => 
       });
       // Logger facades have no method descriptors. Intercept default-client lookup
       // only in this owned context; BeanLogger still owns protected suppression.
+      const children: string[] = [];
       const observedLogger = new Proxy(logger, {
         get(target, key) {
-          return key === 'debug' ? logging : Reflect.get(target, key, target);
+          if (key === 'debug') return logging;
+          if (key === 'child') {
+            return (metadata: { name: string }) => {
+              if (metadata.name !== 'mcp') return target.child(metadata);
+              children.push(metadata.name);
+              return observedLogger;
+            };
+          }
+          return Reflect.get(target, key, target);
         },
       });
       const originalGet = app.meta.logger.get;
@@ -1872,6 +1951,7 @@ describe('businessTools.test.ts', { concurrency: false, timeout: 60000 }, () => 
             ],
           ],
         );
+        assert.deepEqual(children, Array.from({ length: events.length }).fill('mcp'));
         const received = events.filter(item => item.event === 'mcp.tool.call received');
         assert.equal(new Set(received.map(item => item.data.callId)).size, 3);
         for (const { data } of received) {

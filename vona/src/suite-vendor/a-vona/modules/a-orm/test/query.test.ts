@@ -182,7 +182,8 @@ describe('public query contract', () => {
     const raw = (params.where as any)['main.id']._in_.toSQL();
     assert.match(raw.sql, /not.*ilike/s);
     assert.match(raw.sql, /escape '!'/);
-    assert.deepEqual(raw.bindings, [2, 4, '%a!%!_!!%', 'trusted', 1, false]);
+    assert.deepEqual(raw.bindings, [2, 4, '%a!%!_!!%', 1, false]);
+    assert.doesNotMatch(raw.sql, /userId/);
     assert.deepEqual((params.where as any)._and_scope, { userId: 'trusted' });
     const orders = params.orders as any[];
     assert.equal(orders[0][0].toSQL().sql, 'case when "main"."name" is null then 1 else 0 end');
