@@ -299,6 +299,40 @@ Unsupported opted-in Actions are omitted and recorded in **`server.diagnostics`*
 
 Retained schema definitions are limited to those reachable from the advertised contract. A projection must not retain the original private DTO as an unused definition.
 
+### Trace tool calls and Boolean filters
+
+The Controller-tool mapper emits three diagnostic events through the existing default logger at `debug`. Use the normal [Logger Guide](/backend/logger-guide#level-control-and-transport-behavior) controls, such as `LOGGER_CLIENT_DEFAULT=debug`, when investigating calls. No separate MCP logging switch or audit store is involved.
+
+| Event                    | Meaning                                                                                                                                                             |
+| ------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `mcp.tool.call received` | The SDK reached the application `tools/call` callback with a request context. Malformed protocol envelopes can be rejected earlier.                                 |
+| `mcp.tool.call dispatch` | Existing argument validation passed and the mapper is about to invoke the ordinary guarded Action. This does not mean its guards have admitted the operation.       |
+| `mcp.tool.call settled`  | Server-side tool processing settled, with a fixed `outcome` and monotonic `durationMs`. This does not prove client receipt, rollback, or absence of partial writes. |
+
+Each event includes a server-generated `callId` and the admitted tool name. Unknown or scope-ineligible names use the fixed label `unavailable`, without reflecting caller text. A call rejected before dispatch has only received/settled events. Outcomes are `success`, `unavailable`, `invalid_arguments`, `resource_not_found` or `action_failed`; opaque Action failures do not expose an authorization reason or exception detail.
+
+Dispatch events include only the structure of validated policy-bound query arguments: declared named-filter names and canonical Boolean trees containing field/operator names. **All operands are omitted**, including numeric levels, IDs, timestamps and strings. Business bodies, result records, credentials and error objects are not logged. No-policy tools have no argument summary. Diagnostic summaries have fixed size/depth/node bounds and explicitly mark truncation.
+
+For example, two calls with `{ "level": 1 }` and `{ "level": 2 }` produce different call IDs, each with `queries: [{ "namedFilters": ["level"] }]`. A single call with `where.or` instead produces one call ID and a dispatch projection like:
+
+```json
+{
+  "queries": [
+    {
+      "namedFilters": [],
+      "where": {
+        "or": [
+          { "field": "level", "op": "eq" },
+          { "field": "level", "op": "eq" }
+        ]
+      }
+    }
+  ]
+}
+```
+
+This distinguishes split calls from a combined Boolean filter without retaining business values. It does not reveal the original natural-language prompt, why the agent chose that strategy, which schema it cached, or whether two redacted operands differ. The call ID correlates these MCP events, not individual SQL statements. Existing thresholds, child filters, protected-request suppression and strict contract-generation suppression remain authoritative; missing events do not prove a call never occurred. Ordinary diagnostics are not protected audit.
+
 ## Source locations
 
 Repository-relative locations:

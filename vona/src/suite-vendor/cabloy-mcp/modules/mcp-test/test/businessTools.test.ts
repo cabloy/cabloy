@@ -7,7 +7,13 @@ import type { IPassport } from 'vona-module-a-user';
 import { fromJsonSchema, InMemoryTransport } from '@modelcontextprotocol/server';
 import assert from 'node:assert/strict';
 import { after, before, describe, it } from 'node:test';
-import { appMetadata, appResource, runWithZodQueryCoercion } from 'vona';
+import {
+  appMetadata,
+  appResource,
+  createRequestBoundary,
+  runWithRequestBoundary,
+  runWithZodQueryCoercion,
+} from 'vona';
 import { acquireTestLock, app } from 'vona-mock';
 import { getKeyHash } from 'vona-module-a-cache';
 import { $schema, Mcp, SymbolMcpOptions } from 'vona-module-a-openapiutils';
@@ -15,6 +21,11 @@ import * as orm from 'vona-module-a-orm';
 import { recordResourceNameToRoutePath } from 'vona-module-a-web';
 import { createControllerToolServer, createSharedBusinessToolServer } from 'vona-module-cabloy-mcp';
 
+import {
+  beginToolCall,
+  recordToolCall,
+  summarizeToolQueries,
+} from '../../cabloy-mcp/src/lib/controllerToolDiagnostics.ts';
 import {
   closeMutationInputSchema,
   isPrimitiveSchema,
@@ -1779,6 +1790,167 @@ describe('businessTools.test.ts', { concurrency: false, timeout: 60000 }, () => 
         }
       } finally {
         action.mock.restore();
+        await client.close();
+      }
+    });
+  });
+
+  it('traces separate calls and OR structure without operands, results or errors', async t => {
+    if (!app.meta.modules['training-student']) return;
+    const query = await nativeStudentQuery();
+    if (!query) return;
+    await withStudentToolPermissions(async () => {
+      const client = await connect(await createSharedBusinessToolServer(app, 'mcp:all'));
+      const context = app.ctx;
+      const logger = app.bean.logger.default;
+      const originalDebug = logger.debug;
+      const events: { event: string; data: any }[] = [];
+      const logging = t.mock.fn(function (...args: any[]) {
+        if (app.ctx === context && String(args[0]).startsWith('mcp.tool.call ')) {
+          events.push({ event: args[0], data: args[1] });
+          return logger;
+        }
+        return originalDebug.apply(logger, args as any);
+      });
+      // Logger facades have no method descriptors. Intercept default-client lookup
+      // only in this owned context; BeanLogger still owns protected suppression.
+      const observedLogger = new Proxy(logger, {
+        get(target, key) {
+          return key === 'debug' ? logging : Reflect.get(target, key, target);
+        },
+      });
+      const originalGet = app.meta.logger.get;
+      const lookup = t.mock.method(app.meta.logger, 'get', function (clientName) {
+        if (app.ctx === context && (!clientName || clientName === 'default')) {
+          return observedLogger;
+        }
+        return originalGet.call(app.meta.logger, clientName);
+      });
+      const raw = { list: [], total: '0', pageNo: 1, pageSize: 20, pageCount: 0 };
+      const secret = 'mcp-diagnostic-private-canary';
+      const action = mockOwnedPerformAction(t, async () => raw);
+      const call = (args: Record<string, unknown>, name = 'training-student_student_select') =>
+        client.request('tools/call', { name, arguments: args });
+      try {
+        for (const level of [1, 2]) {
+          const response = await call({ level });
+          assert.deepEqual(response.result.structuredContent, raw);
+        }
+        const args = {
+          name: secret,
+          where: {
+            or: [
+              { field: 'level', op: 'eq', value: 1 },
+              { field: 'level', op: 'eq', value: 2 },
+            ],
+          },
+        };
+        const response = await call(args);
+        assert.deepEqual(response.result.structuredContent, raw);
+        assert.equal(action.mock.callCount(), 3);
+        assert.deepEqual(action.mock.calls.at(-1)!.arguments, [
+          'get',
+          '/training/student',
+          { query: args, innerAccess: false },
+        ]);
+        const dispatches = events.filter(item => item.event === 'mcp.tool.call dispatch');
+        assert.deepEqual(
+          dispatches.map(item => item.data.queries),
+          [
+            [{ namedFilters: ['level'] }],
+            [{ namedFilters: ['level'] }],
+            [
+              {
+                namedFilters: ['name'],
+                where: {
+                  or: [
+                    { field: 'level', op: 'eq' },
+                    { field: 'level', op: 'eq' },
+                  ],
+                },
+              },
+            ],
+          ],
+        );
+        const received = events.filter(item => item.event === 'mcp.tool.call received');
+        assert.equal(new Set(received.map(item => item.data.callId)).size, 3);
+        for (const { data } of received) {
+          assert.match(data.callId, /^[0-9a-f-]{36}$/);
+          const lifecycle = events.filter(item => item.data.callId === data.callId);
+          assert.deepEqual(
+            lifecycle.map(item => item.event),
+            ['mcp.tool.call received', 'mcp.tool.call dispatch', 'mcp.tool.call settled'],
+          );
+          assert.equal(lifecycle[2].data.outcome, 'success');
+          assert.ok(Number.isFinite(lifecycle[2].data.durationMs));
+          assert.ok(lifecycle[2].data.durationMs >= 0);
+        }
+        const invalid = await call({ where: { field: 'level', op: 'in', value: [1, 2] } });
+        assert.equal(invalid.error.code, -32602);
+        assert.equal(events.at(-1)!.data.outcome, 'invalid_arguments');
+        const unknown = await call({}, secret);
+        assert.equal(unknown.error.code, -32602);
+        assert.equal(events.at(-1)!.data.outcome, 'unavailable');
+        assert.equal(events.at(-1)!.data.tool, 'unavailable');
+        const extra = await call({ [secret]: secret });
+        assert.equal(extra.error.code, -32602);
+        assert.equal(action.mock.callCount(), 3);
+        action.mock.mockImplementation(async () => {
+          throw new Error(secret);
+        });
+        const failed = await call({ name: secret });
+        assert.equal(failed.result.isError, true);
+        assert.equal(events.at(-1)!.data.outcome, 'action_failed');
+        action.mock.mockImplementation(async () => undefined);
+        const missing = await call({ id: '123' }, 'training-student_student_view');
+        assert.equal(missing.result.isError, true);
+        assert.equal(events.at(-1)!.data.outcome, 'resource_not_found');
+        action.mock.mockImplementation(async () => ({ ...raw, list: secret }));
+        const badOutput = await call({});
+        assert.equal(badOutput.result.isError, true);
+        assert.equal(events.at(-1)!.data.outcome, 'action_failed');
+        assert.equal(JSON.stringify(events).includes(secret), false);
+        assert.equal(JSON.stringify(events).includes('value'), false);
+        assert.equal(JSON.stringify(events).includes('total'), false);
+        assert.equal(JSON.stringify(events).includes('structuredContent'), false);
+
+        const bounded = summarizeToolQueries([
+          {
+            policy: query,
+            namedFilters: ['name'],
+            value: {
+              name: secret,
+              where: {
+                or: Array.from({ length: 80 }).fill({
+                  field: 'name',
+                  op: 'eq',
+                  value: secret,
+                }),
+              },
+            },
+          },
+        ]);
+        assert.equal(bounded.truncated, true);
+        assert.ok(JSON.stringify(bounded).length <= 4096);
+        assert.equal(JSON.stringify(bounded).includes(secret), false);
+
+        const before = events.length;
+        runWithRequestBoundary(createRequestBoundary(), () => {
+          recordToolCall(app, beginToolCall('training-student_student_select'), 'received');
+        });
+        assert.equal(events.length, before);
+        action.mock.mockImplementation(async () => raw);
+        logging.mock.mockImplementation(function (...args: any[]) {
+          if (app.ctx === context && String(args[0]).startsWith('mcp.tool.call ')) {
+            throw new Error(secret);
+          }
+          return originalDebug.apply(logger, args as any);
+        });
+        const observedFailure = await call({ level: 1 });
+        assert.deepEqual(observedFailure.result.structuredContent, raw);
+      } finally {
+        action.mock.restore();
+        lookup.mock.restore();
         await client.close();
       }
     });

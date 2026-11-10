@@ -12,8 +12,10 @@ import { getCacheControllerRoutes } from 'vona-module-a-web';
 import { isMcpScope } from 'vona-module-mcp-auth';
 import z from 'zod';
 
+import type { IToolCallDiagnostic } from './controllerToolDiagnostics.ts';
 import type { ToolSchema } from './controllerToolSchema.ts';
 
+import { beginToolCall, recordToolCall } from './controllerToolDiagnostics.ts';
 import {
   closeMutationInputSchema,
   isPrimitiveSchema,
@@ -59,7 +61,7 @@ interface IControllerTool {
   summary: string;
   tool: Tool;
   readOnly: boolean;
-  call(args: Record<string, unknown>): Promise<CallToolResult>;
+  call(args: Record<string, unknown>, diagnostic: IToolCallDiagnostic): Promise<CallToolResult>;
 }
 
 function objectValidator(schema: z.ZodType): z.ZodObject | undefined {
@@ -310,7 +312,7 @@ export async function createControllerToolServer(
             summary: operation.summary ?? '',
             tool,
             readOnly,
-            async call(args) {
+            async call(args, diagnostic) {
               const values = flat ? { [keys[0]]: args } : args;
               const bound: Record<string, unknown> = {};
               try {
@@ -358,6 +360,26 @@ export async function createControllerToolServer(
                 if (error instanceof ProtocolError) throw error;
                 throw new ProtocolError(-32602, 'Invalid tool arguments');
               }
+              recordToolCall(app, diagnostic, 'dispatch', () =>
+                queryBindings
+                  .filter(binding => binding.type === 'query')
+                  .map(binding => {
+                    const group = bound[binding.type];
+                    const value =
+                      binding.field && group && typeof group === 'object'
+                        ? (group as Record<string, unknown>)[binding.field]
+                        : group;
+                    const location = resolveSchema(locations[binding.type], schemas);
+                    const querySchema = binding.field
+                      ? resolveSchema(location.properties?.[binding.field] ?? {}, schemas)
+                      : location;
+                    return {
+                      policy: binding.query,
+                      namedFilters: Object.keys(querySchema.properties ?? {}),
+                      value,
+                    };
+                  }),
+              );
               try {
                 const result = await app.bean.executor.performAction(
                   route.routeMethod as any,
@@ -365,6 +387,7 @@ export async function createControllerToolServer(
                   { ...bound, innerAccess: false },
                 );
                 if (result === undefined || (direct && result === null)) {
+                  diagnostic.outcome = 'resource_not_found';
                   return failure('Resource not found');
                 }
                 if (outputCheck && (await outputCheck.validate({ result })).issues) {
@@ -374,6 +397,7 @@ export async function createControllerToolServer(
                 const structuredContent = JSON.parse(
                   JSON.stringify(direct ? parsed : { result: parsed }),
                 ) as Record<string, unknown>;
+                diagnostic.outcome = 'success';
                 return {
                   content: [{ type: 'text', text: JSON.stringify(structuredContent) }],
                   structuredContent,
@@ -451,8 +475,23 @@ export async function createControllerToolServer(
       track(async () => {
         if (!app.ctx) throw new ProtocolError(-32603, 'Request context required');
         const tool = tools.get(request.params.name);
-        if (!tool || !allowed(tool)) throw new ProtocolError(-32602, 'Tool unavailable');
-        return tool.call(request.params.arguments ?? {});
+        const admitted = tool && allowed(tool);
+        const diagnostic = beginToolCall(admitted ? tool.tool.name : 'unavailable');
+        recordToolCall(app, diagnostic, 'received');
+        try {
+          if (!admitted) {
+            diagnostic.outcome = 'unavailable';
+            throw new ProtocolError(-32602, 'Tool unavailable');
+          }
+          return await tool.call(request.params.arguments ?? {}, diagnostic);
+        } catch (error) {
+          if (admitted && error instanceof ProtocolError && error.code === -32602) {
+            diagnostic.outcome = 'invalid_arguments';
+          }
+          throw error;
+        } finally {
+          recordToolCall(app, diagnostic, 'settled');
+        }
       }),
     );
     return Object.assign(server, {
