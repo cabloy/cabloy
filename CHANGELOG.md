@@ -1,5 +1,18 @@
 # Changelog
 
+## 5.1.272
+
+### Bug Fixes
+
+- Fix test issues.
+
+### Improvements
+
+- Refactor HTTP logging.
+- Update commerce tests.
+- Update dependency lockfile.
+- Publish prepared Vona and Zova patch versions.
+
 ## 5.1.271
 
 ### Features
