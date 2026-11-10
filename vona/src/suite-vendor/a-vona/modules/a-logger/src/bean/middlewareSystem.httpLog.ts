@@ -36,10 +36,16 @@ export class MiddlewareSystemHttpLog extends BeanBase implements IMiddlewareSyst
       remotePort: serialized.remotePort,
     };
     // Capture sanitized snapshots now; defer only JSON encoding, never access to live requests.
-    this.$loggerChild('req').http(() => JSON.stringify(req));
-    const profiler = this.$loggerChild('res').startTimer();
-    // next
-    await next();
+    const profiler = this.$loggerChild('res', 'access').startTimer();
+    // Static files are classified downstream; retain the request snapshot until then.
+    try {
+      await next();
+    } finally {
+      if (ctx.state.staticFileServed !== true) {
+        this.$loggerChild('req', 'access').info(() => JSON.stringify(req));
+      }
+    }
+    if (ctx.state.staticFileServed === true) return;
     // end
     const headers = redactHttpLogHeaders(
       redactIsolatedReadyHeader(
@@ -54,6 +60,6 @@ export class MiddlewareSystemHttpLog extends BeanBase implements IMiddlewareSyst
       statusCode: ctx.res.statusCode,
       headers,
     };
-    profiler.done({ level: 'http', message: () => JSON.stringify(res) });
+    profiler.done({ level: 'info', message: () => JSON.stringify(res) });
   }
 }

@@ -94,15 +94,19 @@ describe('HTTP logger', { concurrency: false }, () => {
         app: { meta: { env: { VONA_TEST_RUN_ID: '20261014010203-a1b2c3d4' } } },
         ctx: {
           path,
+          state: {},
           req: { url: path, headers },
           res: { statusCode: 200, getHeaders: () => responseHeaders },
         },
-        $loggerChild: () => ({
-          http: (message: () => string) => logs.push(message()),
-          startTimer: () => ({
-            done: ({ message }: { message: () => string }) => logs.push(message()),
-          }),
-        }),
+        $loggerChild: (_name: string, client: string) => {
+          assert.equal(client, 'access');
+          return {
+            info: (message: () => string) => logs.push(message()),
+            startTimer: () => ({
+              done: ({ message }: { message: () => string }) => logs.push(message()),
+            }),
+          };
+        },
       });
       await middleware.execute({}, async () => {});
       assert.equal(logs.length, 2);

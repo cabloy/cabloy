@@ -89,6 +89,26 @@ config.logger = {
 
 In the VSCode workflow, the `recordloggerclient` snippet can generate the client-type augmentation skeleton.
 
+## HTTP access logs versus diagnostics
+
+The application config separates HTTP access records from diagnostic logs using the `access` client. Request (`req`) and response (`res`) records use `info` within that client; they do not use the default client's `http` level. Clients select purpose and routing, while levels select verbosity within a client. Raising diagnostic logging to `debug` therefore does not send access records to the diagnostic console or `combined.log`.
+
+By default, `access` has only a normal threshold-filtered file transport, writing `access.log` under the configured log directory and using the existing rotation settings. Managed isolated test runs use their run-owned `.app-test-<runId>/logs` directory. The default client's existing transports remain available for other explicit logger calls.
+
+Control access logging independently:
+
+- `LOGGER_CLIENT_ACCESS=info` keeps ordinary access records.
+- `LOGGER_CLIENT_ACCESS=false` disables access output without disabling business diagnostics.
+- `this.bean.logger.setFilterLevel(false, 'access')` changes the same filter at runtime; `setFilterLevel('info', 'access')` restores it.
+
+The file transport must follow the client threshold: use `makeTransportFile(clientInfo, 'access')`, without a strict-level argument. Strict-level file transports have different filtering semantics and do not follow the client's disable switch.
+
+Files actually handled by Vona's static cache are excluded, including public/module files, aliases, and built Vona-integrated SSR client assets. Cached files, HEAD and conditional 304 responses are excluded too. Missing files that fall through, dynamic SSR pages, and business routes with filename-like paths remain eligible for logging. External development proxy responses remain eligible because their completion does not distinguish a static asset from a page; exclusions are not guessed from filename extensions or entire site prefixes.
+
+To make that decision, the middleware captures a sanitized request snapshot and starts timing before downstream execution, but publishes records only after downstream settles. A pending request has no early request record. Success produces request and response records; a downstream rejection retains only the request record and propagates the original failure. Duration still measures middleware completion, not response `finish` or client `close`.
+
+Headers and URLs retain the existing redaction rules; bodies are not recorded. Protected request-boundary and strict contract-generation suppression still apply. Access files support traffic analysis, but they are not a durable business/security audit ledger and do not replace business assertions or required audit records.
+
 ## Getting a logger client
 
 There are two common access styles.

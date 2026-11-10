@@ -112,6 +112,9 @@ export default async function (app: VonaApplication) {
       };
     },
     clients: {
+      access(this: VonaApplication, clientInfo: ILoggerOptionsClientInfo) {
+        return { transports: [this.bean.logger.makeTransportFile(clientInfo, 'access')] };
+      },
       default(this: VonaApplication, clientInfo: ILoggerOptionsClientInfo) {
         const transports = [
           this.bean.logger.makeTransportFile(clientInfo, 'error', 'error'),

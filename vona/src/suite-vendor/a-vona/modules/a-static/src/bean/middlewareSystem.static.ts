@@ -125,7 +125,26 @@ export class MiddlewareSystemStatic extends BeanBase implements IMiddlewareSyste
         mkdirSync(newOptions.dir, { recursive: true });
       }
 
-      middlewares.push(staticCache(newOptions));
+      const resolvePath = newOptions.getFullPath;
+      if (resolvePath) {
+        newOptions.getFullPath = async function (ctx: VonaContext, ...args: any[]) {
+          const result = await resolvePath.call(this, ctx, ...args);
+          // A resolver can render SSR or proxy a response instead of returning a file.
+          if (result === true) ctx.state.staticFileServed = false;
+          return result;
+        };
+      }
+      const serve = staticCache(newOptions);
+      middlewares.push(async (ctx: VonaContext, next: Next) => {
+        let fellThrough = false;
+        await serve(ctx, async () => {
+          fellThrough = true;
+          return next();
+        });
+        if (!fellThrough && ctx.state.staticFileServed !== false) {
+          ctx.state.staticFileServed = true;
+        }
+      });
     }
 
     return middlewares;

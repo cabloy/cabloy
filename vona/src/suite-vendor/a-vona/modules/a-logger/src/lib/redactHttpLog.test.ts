@@ -12,6 +12,8 @@ const middlewareUrl = new URL(
   '../bean/middlewareSystem.httpLog.ts?fixture=httpLogging',
   import.meta.url,
 ).href;
+const configUrl = new URL('src/backend/config/config/config.ts?fixture=accessLogging', vonaUrl)
+  .href;
 const formatterUrl = new URL('packages-vona/vona-core/src/lib/core/logger/utils.ts', vonaUrl).href;
 const checkUrl = new URL('packages-utils/utils/src/check.ts', vonaUrl).href;
 const fixture = (source: string) => `data:text/javascript,${encodeURIComponent(source)}`;
@@ -30,6 +32,17 @@ const hooks = registerHooks({
           shortCircuit: true,
         };
       }
+    }
+    if (context.parentURL === configUrl && specifier === 'vona') {
+      return {
+        url: fixture(`
+          export const $protocolKey = value => value;
+          export const getLoggerPathPhysicalRoot = () => '/unused/logs';
+          export const getPublicPathPhysicalRoot = () => '/unused/public';
+          export const getSqlite3DatabaseNameDefault = () => ':memory:';
+        `),
+        shortCircuit: true,
+      };
     }
     if (context.parentURL === formatterUrl) {
       if (specifier === '@cabloy/utils') return { url: checkUrl, shortCircuit: true };
@@ -61,15 +74,107 @@ const hooks = registerHooks({
     return nextLoad(url, context);
   },
 });
-const { MiddlewareSystemHttpLog, formatLoggerFilter } = await (async () => {
+const { MiddlewareSystemHttpLog, formatLoggerFilter, createConfig } = await (async () => {
   try {
-    return { ...(await import(middlewareUrl)), ...(await import(formatterUrl)) };
+    return {
+      ...(await import(middlewareUrl)),
+      ...(await import(formatterUrl)),
+      createConfig: (await import(configUrl)).default,
+    };
   } finally {
     hooks.deregister();
   }
 })();
 
 const secret = 'synthetic-http-secret-sentinel';
+
+test('access configuration uses only a normal threshold file transport', async () => {
+  const calls: any[][] = [];
+  const transport = {};
+  const app = {
+    meta: { env: {} },
+    bean: {
+      logger: {
+        makeTransportFile(...args: any[]) {
+          calls.push(args);
+          return transport;
+        },
+        makeTransportConsole() {
+          assert.fail('access logs must not use the diagnostic console');
+        },
+      },
+    },
+  };
+  const config = await createConfig(app as any);
+  const clientInfo = { clientName: 'access', level: () => 'debug', child: () => undefined };
+  const access = (config.logger!.clients!.access as Function).call(app, clientInfo);
+  assert.deepEqual(access.transports, [transport]);
+  assert.deepEqual(calls, [[clientInfo, 'access']]);
+});
+
+test('access filtering can be disabled independently of business debug', () => {
+  let accessLevel: 'info' | false = 'info';
+  const access = formatLoggerFilter({ level: () => accessLevel, child: undefined });
+  const diagnostic = formatLoggerFilter({ level: 'debug', child: undefined });
+  assert.ok(access.transform({ level: 'info', message: 'request' }, access.options));
+  accessLevel = false;
+  let evaluations = 0;
+  assert.equal(
+    access.transform(
+      {
+        level: 'info',
+        message: () => {
+          evaluations++;
+          return 'request';
+        },
+      },
+      access.options,
+    ),
+    false,
+  );
+  assert.equal(evaluations, 0);
+  assert.ok(
+    diagnostic.transform({ level: 'debug', message: 'business stage' }, diagnostic.options),
+  );
+});
+
+for (const staticFileServed of [undefined, false, true]) {
+  test(`access publication waits for static classification: ${staticFileServed}`, async () => {
+    const records: string[] = [];
+    const ctx = {
+      path: '/api/report.csv',
+      state: {} as { staticFileServed?: boolean },
+      req: { method: 'GET', url: '/api/report.csv', headers: {} },
+      res: { statusCode: 200, getHeaders: () => ({}) },
+    };
+    const fake = {
+      ctx,
+      app: { meta: { env: {} } },
+      $loggerChild: (name: string, client: string) => {
+        assert.equal(client, 'access');
+        return {
+          info: (message: () => string) => records.push(`${name}:${message()}`),
+          startTimer: () => ({
+            done: ({ message }: { message: () => string }) => records.push(`${name}:${message()}`),
+          }),
+        };
+      },
+    };
+    const ready = Promise.withResolvers<void>();
+    const execution = MiddlewareSystemHttpLog.prototype.execute.call(fake as any, {}, async () => {
+      await ready.promise;
+      ctx.state.staticFileServed = staticFileServed;
+    });
+    assert.equal(records.length, 0);
+    ready.resolve();
+    await execution;
+    assert.equal(records.length, staticFileServed === true ? 0 : 2);
+    if (records.length) {
+      assert.ok(records[0]!.startsWith('req:'));
+      assert.ok(records[1]!.startsWith('res:'));
+    }
+  });
+}
 
 test('header copies hide standard, mixed-case and custom credentials', () => {
   const headers = Object.freeze({
@@ -141,16 +246,21 @@ test('deferred HTTP messages preserve sanitized snapshots and serialize only aft
   };
   const res = { statusCode: 204, getHeaders: () => responseHeaders };
   const fake = {
-    ctx: { req, res, path: '/callback' },
+    ctx: { req, res, path: '/callback', state: {} },
     app: { meta: { env: {} } },
-    $loggerChild: () => ({
-      http: (message: () => string) => pending.push({ level: 'http', message }),
-      startTimer: () => ({
-        done: (info: (typeof pending)[number]) => pending.push({ ...info, durationMs: 7 }),
-      }),
-    }),
+    $loggerChild: (name: string, client: string) => {
+      assert.equal(client, 'access');
+      assert.ok(name === 'req' || name === 'res');
+      return {
+        info: (message: () => string) => pending.push({ level: 'info', message }),
+        startTimer: () => ({
+          done: (info: (typeof pending)[number]) => pending.push({ ...info, durationMs: 7 }),
+        }),
+      };
+    },
   };
   await MiddlewareSystemHttpLog.prototype.execute.call(fake as any, {}, async () => {
+    assert.equal(pending.length, 0);
     req.method = 'PATCH';
     headers.accept.push('application/xml');
   });
@@ -162,9 +272,9 @@ test('deferred HTTP messages preserve sanitized snapshots and serialize only aft
   headers.authorization = 'changed-credential';
   responseHeaders['set-cookie'].push('changed-cookie');
 
-  const rejectedLevel = formatLoggerFilter({ level: 'info', child: undefined, strict: true });
-  const rejectedChild = formatLoggerFilter({ level: 'http', child: ['other'], strict: true });
-  const accepted = formatLoggerFilter({ level: 'http', child: undefined, strict: true });
+  const rejectedLevel = formatLoggerFilter({ level: 'warn', child: undefined });
+  const rejectedChild = formatLoggerFilter({ level: 'info', child: ['other'] });
+  const accepted = formatLoggerFilter({ level: 'info', child: undefined });
   const output: any[] = [];
   for (const info of pending) {
     assert.equal(typeof info.message, 'function');
@@ -198,11 +308,11 @@ test('deferred HTTP messages preserve sanitized snapshots and serialize only aft
 });
 
 for (const failure of [false, true]) {
-  test(`actual middleware strict-http projection, downstream ${failure ? 'error' : 'success'}`, async () => {
+  test(`actual middleware access projection, downstream ${failure ? 'error' : 'success'}`, async () => {
     const output: string[] = [];
-    const filter = formatLoggerFilter({ level: 'http', child: undefined, strict: true });
+    const filter = formatLoggerFilter({ level: 'info', child: undefined });
     const capture = (message: any, extra = {}) => {
-      const info = filter.transform({ level: 'http', message, ...extra }, filter.options);
+      const info = filter.transform({ level: 'info', message, ...extra }, filter.options);
       assert.ok(info);
       output.push(JSON.stringify(info));
     };
@@ -228,18 +338,20 @@ for (const failure of [false, true]) {
     const ctx = {
       req,
       path: '/callback',
+      state: {},
       res: { statusCode: 204, getHeaders: () => responseHeaders },
     };
     const fake = {
       ctx,
       app: { meta: { env: {} } },
-      $loggerChild: (name: string) => {
+      $loggerChild: (name: string, client: string) => {
         assert.ok(name === 'req' || name === 'res');
+        assert.equal(client, 'access');
         return {
-          http: (message: any) => capture(message),
+          info: (message: any) => capture(message),
           startTimer: () => ({
             done: (info: any) => {
-              assert.equal(info.level, 'http');
+              assert.equal(info.level, 'info');
               capture(info.message, { durationMs: 7 });
             },
           }),
