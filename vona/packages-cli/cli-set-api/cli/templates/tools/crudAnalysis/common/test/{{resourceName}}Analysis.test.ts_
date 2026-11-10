@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import { randomUUID } from 'node:crypto';
 import { describe, it } from 'node:test';
 import { app } from 'vona-mock';
+import { $makeSchema, v } from 'vona-module-a-openapiutils';
 
 import { <%=argv.resourceName%>Analysis } from '../src/lib/<%=argv.resourceName%>Analysis.ts';
 
@@ -13,7 +14,7 @@ describe('<%=argv.resourceName%>Analysis.test.ts', { concurrency: false }, () =>
       const fixture = await scope.model.<%=argv.resourceName%>.insert({ name });
       try {
         await app.bean.passport.signinMock();
-        const where = { field: 'id', op: 'eq', value: fixture.id } as const;
+        const where = { field: 'id', op: 'eq', value: $makeSchema(v.tableIdentity()).parse(fixture.id) } as const;
         const serviceWhere = { id: fixture.id };
         const queries = [
           { name },

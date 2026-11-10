@@ -2,6 +2,7 @@ import type { Dto<%=argv.resourceNameCapitalize%>Create, Dto<%=argv.resourceName
 import assert from 'node:assert';
 import { describe, it } from 'node:test';
 import { app } from 'vona-mock';
+import { $makeSchema, v } from 'vona-module-a-openapiutils';
 
 describe('<%=argv.resourceName%>.test.ts', { concurrency: false }, () => {
   it('action:<%=argv.resourceName%>', async () => {
@@ -41,7 +42,7 @@ describe('<%=argv.resourceName%>.test.ts', { concurrency: false }, () => {
         assert.equal(!!<%=argv.resourceName%>Id, true);
         // findMany
         const selectRes: Dto<%=argv.resourceNameCapitalize%>SelectRes = await app.bean.executor.performAction('get', '<%=argv.moduleActionPathRaw%>', {
-          query: { where: JSON.stringify({ field: 'id', op: 'eq', value: <%=argv.resourceName%>Id }) },
+          query: { where: JSON.stringify({ field: 'id', op: 'eq', value: $makeSchema(v.tableIdentity()).parse(<%=argv.resourceName%>Id) }) },
         });
         assert.equal(selectRes.list.findIndex(item => item.name === data.name) > -1, true);
         // update

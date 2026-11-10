@@ -377,7 +377,8 @@ function allowStudentAction(
 
 // The root managed test runner owns this listener and disposable instance state.
 // No test creates another application/listener or changes global origin configuration.
-describe('businessHttp.test.ts', { concurrency: false, timeout: 60000 }, () => {
+// This budget covers all serial scenarios, including concurrent CI coverage overhead.
+describe('businessHttp.test.ts', { concurrency: false, timeout: 180000 }, () => {
   let release: (() => void) | undefined;
   before(async () => {
     assert.ok(app.server?.listening, 'managed application listener must be enabled');

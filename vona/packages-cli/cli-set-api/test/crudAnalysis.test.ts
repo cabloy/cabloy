@@ -333,7 +333,11 @@ describe('default CRUD analysis generation', { concurrency: false }, () => {
         assert.match(analysisTest, /\{ name \}/);
         assert.match(
           analysisTest,
-          /const where = \{ field: 'id', op: 'eq', value: fixture.id \} as const/,
+          /import \{ \$makeSchema, v \} from 'vona-module-a-openapiutils'/,
+        );
+        assert.match(
+          analysisTest,
+          /const where = \{ field: 'id', op: 'eq', value: \$makeSchema\(v\.tableIdentity\(\)\)\.parse\(fixture\.id\) \} as const/,
         );
         assert.match(analysisTest, /where: JSON\.stringify\(where\)/);
         assert.match(analysisTest, /const serviceWhere = \{ id: fixture\.id \}/);
@@ -368,7 +372,11 @@ describe('default CRUD analysis generation', { concurrency: false }, () => {
         const actionTest = await read(moduleRoot, 'test/record.test.ts');
         assert.match(
           actionTest,
-          /where: JSON\.stringify\(\{ field: 'id', op: 'eq', value: recordId \}\)/,
+          /import \{ \$makeSchema, (?:SymbolOpenApiOptions, )?v \} from 'vona-module-a-openapiutils'/,
+        );
+        assert.match(
+          actionTest,
+          /where: JSON\.stringify\(\{ field: 'id', op: 'eq', value: \$makeSchema\(v\.tableIdentity\(\)\)\.parse\(recordId\) \}\)/,
         );
         if (edition === 'basic') {
           assert.match(
