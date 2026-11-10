@@ -82,7 +82,13 @@ export class PipeFilter
       for (const key of jsonControls) {
         if (typeof prepared[key] !== 'string') continue;
         try {
-          prepared[key] = JSON.parse(prepared[key]);
+          // Public AST values stay literal even when @cabloy/json5 revives ISO strings.
+          prepared[key] = JSON.parse(
+            prepared[key],
+            function (this: Record<string, unknown>, key: string) {
+              return this[key];
+            },
+          );
         } catch {
           throw new PublicQueryError('query_json', key);
         }

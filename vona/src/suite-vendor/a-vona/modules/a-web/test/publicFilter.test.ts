@@ -124,6 +124,24 @@ describe('publicFilter.test.ts', { concurrency: false }, () => {
     });
   });
 
+  it('preserves serialized ISO operands as strings without admitting native Date objects', async () => {
+    await app.bean.executor.mockCtx(async () => {
+      const where = {
+        and: [
+          { field: 'createdAt', op: 'gte', value: '2026-01-02T00:00:00Z' },
+          { field: 'createdAt', op: 'lt', value: '2026-01-03T00:00:00.000Z' },
+          { field: 'title', op: 'eq', value: '2026-01-02T00:00:00Z' },
+        ],
+      };
+      assert.deepEqual((await filter({ where: JSON.stringify(where) })).where, where);
+      await assert.rejects(
+        () => filter({ where: { field: 'createdAt', op: 'gte', value: new Date() } }),
+        (error: unknown) =>
+          isPublicError(error) && (error as PublicQueryError).queryCode === 'query_shape',
+      );
+    });
+  });
+
   it('rejects unsafe native coercion, double JSON, unknown controls, SQL-style where, and list controls in analysis', async () => {
     await app.bean.executor.mockCtx(async () => {
       for (const input of [
