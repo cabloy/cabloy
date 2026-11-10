@@ -62,7 +62,7 @@ export class CliToolsDeps extends BeanCliBase {
       );
     }
     const bundles = await globby('*', { cwd: targetDir, onlyDirectories: true });
-    if (bundles.length > 0) return false;
+    if (bundles.length > 0) return true;
     throw new Error(
       'No Zova REST bundles found in .zova-rest. Please run `npm run build:zova:admin` or `npm run build:zova:web` first.',
     );
