@@ -26,7 +26,10 @@ import z from 'zod';
 
 import type { ToolSchema } from '../../cabloy-mcp/src/lib/controllerToolSchema.ts';
 
-import { compactToolSchema } from '../../cabloy-mcp/src/lib/controllerToolContract.ts';
+import {
+  compactToolSchema,
+  queryRepairHint,
+} from '../../cabloy-mcp/src/lib/controllerToolContract.ts';
 import {
   beginToolCall,
   recordToolCall,
@@ -2523,7 +2526,7 @@ describe('businessTools.test.ts', { concurrency: false, timeout: 60000 }, () => 
         assert.deepEqual(long.error, {
           code: -32602,
           message: 'Invalid tool arguments',
-          data: { queryCode: 'query_string_length', path: 'where.value' },
+          data: { queryCode: 'query_string_length', path: 'where.value', hint: queryRepairHint },
         });
         const invalid = await call({ where: { field: 'name', op: 'raw', value: 'private SQL' } });
         assert.equal(invalid.error?.code, -32602);
@@ -2538,7 +2541,7 @@ describe('businessTools.test.ts', { concurrency: false, timeout: 60000 }, () => 
         assert.deepEqual(duplicate.error, {
           code: -32602,
           message: 'Invalid tool arguments',
-          data: { queryCode: 'query_duplicate_order', path: 'orders' },
+          data: { queryCode: 'query_duplicate_order', path: 'orders', hint: queryRepairHint },
         });
         assert.equal(action.mock.callCount(), 0, 'budget and semantic failures precede dispatch');
         action.mock.mockImplementation(async () => {
@@ -2548,7 +2551,7 @@ describe('businessTools.test.ts', { concurrency: false, timeout: 60000 }, () => 
         assert.deepEqual(native.error, {
           code: -32602,
           message: 'Invalid tool arguments',
-          data: { queryCode: 'query_invalid', path: 'where' },
+          data: { queryCode: 'query_invalid', path: 'where', hint: queryRepairHint },
         });
         for (const error of [
           new Error('private DB schema and statement'),
@@ -2557,6 +2560,7 @@ describe('businessTools.test.ts', { concurrency: false, timeout: 60000 }, () => 
             code: 422,
             queryCode: 'forged',
             path: 'private',
+            hint: 'private repair instructions',
           }),
         ]) {
           action.mock.mockImplementation(async () => {

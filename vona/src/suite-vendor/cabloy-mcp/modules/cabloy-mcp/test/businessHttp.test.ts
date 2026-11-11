@@ -33,6 +33,7 @@ import {
 import { getMcpIssuer } from 'vona-module-mcp-auth';
 
 import { ServiceAuthorization } from '../../mcp-auth/src/service/authorization.ts';
+import { queryRepairHint } from '../src/lib/controllerToolContract.ts';
 import { resolveSchema } from '../src/lib/controllerToolSchema.ts';
 
 const version = '2026-07-28';
@@ -3128,6 +3129,11 @@ describe('businessHttp.test.ts', { concurrency: false, timeout: 180000 }, () => 
     let selectQuery!: Record<string, unknown>;
     let selectEmptyPageQuery!: Record<string, unknown>;
     let selectColumnsQuery!: Record<string, unknown>;
+    const selectRecoveryQuery = {
+      where: { field: 'name', op: 'eq', value: name },
+      pageNo: 1,
+      pageSize: 1,
+    };
     const makeSelectQuery = (id: string | number) => ({
       name,
       level,
@@ -3822,13 +3828,65 @@ describe('businessHttp.test.ts', { concurrency: false, timeout: 180000 }, () => 
           assert.deepEqual(semantic.body.error, {
             code: -32602,
             message: 'Invalid tool arguments',
-            data: { queryCode: 'query_string_length', path: 'where.value' },
+            data: { queryCode: 'query_string_length', path: 'where.value', hint: queryRepairHint },
           });
           assert.equal(
             observedCalls.length,
             beforeInvalid,
             'recursive/public-query failures never dispatch',
           );
+          // Recover through the wire contract without dropping the original name filter.
+          const rejected = await select(token, legacy, {
+            where: { name },
+            pageNo: 1,
+            pageSize: 1,
+          });
+          assert.equal(rejected.status, 200);
+          assert.equal(rejected.body.result, undefined);
+          assert.deepEqual(rejected.body.error, {
+            code: -32602,
+            message: 'Invalid tool arguments',
+            data: { queryCode: 'query_invalid', path: 'where', hint: queryRepairHint },
+          });
+          assert.match(rejected.body.error.data.hint, /cabloy_tool_contract/);
+          assert.match(rejected.body.error.data.hint, /section "query"/);
+          for (const privateValue of [name, mobile, descriptionMarkdown]) {
+            assert.equal(JSON.stringify(rejected.body.error).includes(privateValue), false);
+          }
+          const recovery = output(
+            await send(
+              'tools/call',
+              { name: contractName, arguments: { tool: studentSelectName, section: 'query' } },
+              options,
+            ),
+          );
+          assert.equal(recovery.tool, studentSelectName);
+          const recoveredBinding = recovery.bindings[0];
+          assert.deepEqual(recoveredBinding.argumentPath, []);
+          assert.ok(recoveredBinding.capabilities.query.fields.name.operators.includes('eq'));
+          assert.equal(
+            (
+              await fromJsonSchema({ type: 'object', ...recoveredBinding.predicates })[
+                '~standard'
+              ].validate(selectRecoveryQuery.where)
+            ).issues,
+            undefined,
+          );
+          assert.equal(observedCalls.length, beforeInvalid, 'error and lookup never dispatch');
+          const recovered = output(await select(token, legacy, selectRecoveryQuery));
+          assert.equal(recovered.total, '1');
+          assert.equal(recovered.list.length, 1);
+          assert.equal(String(recovered.list[0].id), studentId);
+          assert.equal(recovered.list[0].name, name);
+          assert.equal(
+            observedCalls.length,
+            beforeInvalid + 1,
+            'only the corrected call dispatches',
+          );
+          assert.deepEqual(observedCalls.at(-1)!.options, {
+            query: selectRecoveryQuery,
+            innerAccess: false,
+          });
         }
         const selected = assertSelect(await select(token, legacy));
         assertView(await view(selected.list[0].id, token, legacy));
@@ -3965,7 +4023,7 @@ describe('businessHttp.test.ts', { concurrency: false, timeout: 180000 }, () => 
             [
               selectQuery,
               selectEmptyPageQuery,
-              ...(!studentQuery ? [selectColumnsQuery] : []),
+              ...(studentQuery ? [selectRecoveryQuery] : [selectColumnsQuery]),
             ].some(query => isDeepStrictEqual(current.options, { query, innerAccess: false })),
             'select retains only the explicitly supplied native filter and pagination query',
           );
@@ -3991,7 +4049,7 @@ describe('businessHttp.test.ts', { concurrency: false, timeout: 180000 }, () => 
           ].map(path => [path, observedCalls.filter(current => current.path === path).length]),
         ),
         {
-          '/training/student': studentQuery ? 18 : 19,
+          '/training/student': studentQuery ? 22 : 19,
           '/training/student/group': 16,
           '/training/student/aggregate': 16,
           '/training/student/:id': 19,
@@ -4001,7 +4059,7 @@ describe('businessHttp.test.ts', { concurrency: false, timeout: 180000 }, () => 
       );
       assert.equal(
         observedCalls.length,
-        studentQuery ? 88 : 89,
+        studentQuery ? 92 : 89,
         'public-query columns fail predispatch; legacy columns reach the guarded Action',
       );
       await app.bean.executor.mockCtx(
@@ -4023,7 +4081,7 @@ describe('businessHttp.test.ts', { concurrency: false, timeout: 180000 }, () => 
       }
       assert.equal(
         observedCalls.length,
-        studentQuery ? 108 : 109,
+        studentQuery ? 112 : 109,
         'revocation rechecks all five reads on every scope/transport pair',
       );
     } finally {

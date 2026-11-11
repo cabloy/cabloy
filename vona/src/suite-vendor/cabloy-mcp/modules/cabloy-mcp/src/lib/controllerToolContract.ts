@@ -6,6 +6,10 @@ import { resolveSchema } from './controllerToolSchema.ts';
 
 export const toolContractName = 'cabloy_tool_contract';
 
+export const queryRepairHint =
+  `Call ${toolContractName} with the failed tool's exact server name and section "query" to check argument paths, admitted fields, operators, operands and limits. ` +
+  'Use explicit predicate AST nodes, not field-value shorthand. Preserve the intended filters when correcting arguments; do not remove constraints to bypass validation.';
+
 export const toolContract: Tool = {
   name: toolContractName,
   description:

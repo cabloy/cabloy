@@ -16,7 +16,12 @@ import type { IToolCallDiagnostic } from './controllerToolDiagnostics.ts';
 import type { IControllerQueryCapability } from './controllerToolQuery.ts';
 import type { ToolSchema } from './controllerToolSchema.ts';
 
-import { compactToolSchema, toolContract, toolContractName } from './controllerToolContract.ts';
+import {
+  compactToolSchema,
+  queryRepairHint,
+  toolContract,
+  toolContractName,
+} from './controllerToolContract.ts';
 import { beginToolCall, recordToolCall } from './controllerToolDiagnostics.ts';
 import { controllerToolQuery } from './controllerToolQuery.ts';
 import {
@@ -409,6 +414,7 @@ export async function createControllerToolServer(
                   throw new ProtocolError(-32602, 'Invalid tool arguments', {
                     queryCode: error.queryCode,
                     path: error.path,
+                    hint: queryRepairHint,
                   });
                 }
                 if (error instanceof ProtocolError) throw error;
@@ -461,6 +467,7 @@ export async function createControllerToolServer(
                   throw new ProtocolError(-32602, 'Invalid tool arguments', {
                     queryCode: error.queryCode,
                     path: error.path,
+                    hint: queryRepairHint,
                   });
                 }
                 return failure('Action failed');

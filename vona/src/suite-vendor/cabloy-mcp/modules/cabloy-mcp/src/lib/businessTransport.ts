@@ -14,6 +14,7 @@ import {
 import { runWithZodQueryCoercion } from 'vona';
 import { OAuthError } from 'vona-module-mcp-auth';
 
+import { queryRepairHint } from './controllerToolContract.ts';
 import { authenticateMcpResource, mcpResourceChallenge } from './resourceServer.ts';
 import { FixtureTransportError, readFixtureBody } from './transport.ts';
 
@@ -110,7 +111,7 @@ async function boundedResponse(response: Response, requestId: unknown): Promise<
   }
   let output = body.error ? errorBody(body.error.code, body.id) : body;
   // Only the mapper's PublicQueryError boundary emits this exact envelope.
-  // Rebuild a bounded, reviewed diagnostic pair; never forward arbitrary SDK
+  // Rebuild bounded diagnostics and the fixed repair hint; never forward arbitrary SDK
   // error data, action errors, messages, or caller-supplied lookalike fields.
   const queryCodes = new Set([
     'query_bytes',
@@ -131,7 +132,8 @@ async function boundedResponse(response: Response, requestId: unknown): Promise<
     data &&
     typeof data === 'object' &&
     !Array.isArray(data) &&
-    Object.keys(data).length === 2 &&
+    Object.keys(data).length === 3 &&
+    data.hint === queryRepairHint &&
     queryCodes.has(data.queryCode) &&
     typeof data.path === 'string' &&
     data.path.length <= 256 &&
@@ -142,7 +144,7 @@ async function boundedResponse(response: Response, requestId: unknown): Promise<
       error: {
         code: -32602,
         message: 'Invalid tool arguments',
-        data: { queryCode: data.queryCode, path: data.path },
+        data: { queryCode: data.queryCode, path: data.path, hint: queryRepairHint },
       },
     };
   }
