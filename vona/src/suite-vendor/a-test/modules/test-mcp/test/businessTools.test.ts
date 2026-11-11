@@ -4,6 +4,7 @@ import type { BeanExecutor } from 'vona-module-a-executor';
 import type { IMcpToolOptions } from 'vona-module-a-openapiutils';
 import type { IAnalysisPolicy, IQueryPolicy } from 'vona-module-a-orm';
 import type { IPassport } from 'vona-module-a-user';
+import type { ToolSchema } from 'vona-module-cabloy-mcp';
 
 import { OpenApiGeneratorV31, OpenAPIRegistry } from '@cabloy/zod-to-openapi';
 import { fromJsonSchema, InMemoryTransport } from '@modelcontextprotocol/server';
@@ -21,29 +22,24 @@ import { getKeyHash } from 'vona-module-a-cache';
 import { $schema, Mcp, SymbolMcpOptions } from 'vona-module-a-openapiutils';
 import * as orm from 'vona-module-a-orm';
 import { recordResourceNameToRoutePath } from 'vona-module-a-web';
-import { createControllerToolServer, createSharedBusinessToolServer } from 'vona-module-cabloy-mcp';
-import z from 'zod';
-
-import type { ToolSchema } from '../../cabloy-mcp/src/lib/controllerToolSchema.ts';
-
-import {
-  compactToolSchema,
-  queryRepairHint,
-} from '../../cabloy-mcp/src/lib/controllerToolContract.ts';
 import {
   beginToolCall,
-  recordToolCall,
-  summarizeToolQueries,
-} from '../../cabloy-mcp/src/lib/controllerToolDiagnostics.ts';
-import { controllerToolQuery } from '../../cabloy-mcp/src/lib/controllerToolQuery.ts';
-import {
   closeMutationInputSchema,
+  compactToolSchema,
+  controllerToolQuery,
+  createControllerToolServer,
+  createSharedBusinessToolServer,
   isPrimitiveSchema,
   normalizeDateTransport,
+  queryRepairHint,
+  recordToolCall,
   resolveSchema,
   serializeDateTransport,
+  summarizeToolQueries,
   toolSchema,
-} from '../../cabloy-mcp/src/lib/controllerToolSchema.ts';
+} from 'vona-module-cabloy-mcp';
+import z from 'zod';
+
 import { ControllerCatalog } from '../src/controller/catalog.ts';
 import { ControllerToolFixture, toolFixtureState } from '../src/controller/toolFixture.ts';
 import { DtoCategoryPublic } from '../src/dto/categoryPublic.tsx';
@@ -858,7 +854,7 @@ describe('businessTools.test.ts', { concurrency: false, timeout: 60000 }, () => 
   });
   let release: (() => void) | undefined;
   before(async () => {
-    assert.ok(app.meta.modules['mcp-test'], 'fixture module is loaded');
+    assert.ok(app.meta.modules['test-mcp'], 'fixture module is loaded');
     assert.ok(app.meta.modules['cabloy-mcp'], 'core module is loaded');
     if ((process.env.PROJECT_DISABLED_SUITES ?? '').split(',').includes('a-training')) {
       assert.equal(app.meta.modules['training-student'], undefined);
@@ -872,7 +868,7 @@ describe('businessTools.test.ts', { concurrency: false, timeout: 60000 }, () => 
         'disabled Commerce modules are absent from the actual runtime composition',
       );
     }
-    release = await acquireTestLock('mcp-test');
+    release = await acquireTestLock('test-mcp');
   });
   after(() => release?.());
 
@@ -3192,7 +3188,7 @@ describe('businessTools.test.ts', { concurrency: false, timeout: 60000 }, () => 
         assert.fail('contract listing and lookup must not dispatch Actions');
       });
       const includeTool = (identity: { controller: string; action: string }) =>
-        identity.controller === 'mcp-test.controller.toolFixture' && identity.action === 'effect';
+        identity.controller === 'test-mcp.controller.toolFixture' && identity.action === 'effect';
       const server = await createControllerToolServer(app, 'mcp:all', { includeTool });
       const all = await connect(server);
       const read = await connect(
@@ -3428,7 +3424,7 @@ describe('businessTools.test.ts', { concurrency: false, timeout: 60000 }, () => 
         assert.equal(denied.error?.code, -32602);
         assert.equal(toolFixtureState.count, initial, 'denied calls do not reach the controller');
         const closed = await all.request('tools/call', {
-          name: 'mcp-test_toolFixture_closed',
+          name: 'test-mcp_toolFixture_closed',
           arguments: {},
         });
         assert.equal(closed.error?.code, -32602, 'unannotated sibling Actions remain closed');
@@ -3585,7 +3581,7 @@ describe('businessTools.test.ts', { concurrency: false, timeout: 60000 }, () => 
           const tools = (await client.request('tools/list')).result.tools;
           assert.ok(tools.some((tool: any) => tool.name === statusToolName));
           for (const action of ['closed', 'excluded']) {
-            const name = `mcp-test_toolFixture_${action}`;
+            const name = `test-mcp_toolFixture_${action}`;
             assert.equal(
               tools.some((tool: any) => tool.name === name),
               false,
@@ -3697,7 +3693,7 @@ describe('businessTools.test.ts', { concurrency: false, timeout: 60000 }, () => 
         const reused = await connect(
           await createControllerToolServer(app, 'mcp:read', {
             includeTool: identity =>
-              identity.controller === 'mcp-test.controller.toolFixture' &&
+              identity.controller === 'test-mcp.controller.toolFixture' &&
               identity.action === 'status',
           }),
         );
@@ -3728,7 +3724,7 @@ describe('businessTools.test.ts', { concurrency: false, timeout: 60000 }, () => 
           await assert.rejects(() => createControllerToolServer(app, 'mcp:all'), expected);
           const filtered = await createControllerToolServer(app, 'mcp:all', {
             includeTool: identity =>
-              identity.controller === 'mcp-test.controller.catalog' &&
+              identity.controller === 'test-mcp.controller.catalog' &&
               identity.action === 'categories',
           });
           const selected = await connect(filtered);
@@ -3846,7 +3842,7 @@ describe('businessTools.test.ts', { concurrency: false, timeout: 60000 }, () => 
         assert.ok(
           server.diagnostics.some(
             item =>
-              item.controller === 'mcp-test.controller.toolFixture' &&
+              item.controller === 'test-mcp.controller.toolFixture' &&
               item.action === 'unsupported' &&
               item.reason.includes('Only JSON/200 Actions'),
           ),

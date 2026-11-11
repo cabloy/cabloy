@@ -243,7 +243,7 @@ When the optional training suite is active, its eight Student tools illustrate i
 
 These permissions do not imply one another. Select-only authority lists three reads; view-only authority lists two. All corresponding permissions permit eight Student tools under `mcp:all`, or five reads under `mcp:read`. A personal scope may narrow those selections further. Visibility establishes Action admission, not that a matching Student exists.
 
-Student tools are examples, not a catalog ceiling. Other eligible Controllers may contribute tools; without training, Student tools disappear without enabling fixture fallback. The independent anonymous `mcp-test` launcher has exactly three synthetic fixtures and is a separate entrypoint. Its fixed catalog is not the expected shared `/mcp` list: opted-in `mcp-test` Controller Actions may also qualify for the shared map when their module is active, under the same authentication, contract and permission rules.
+Student tools are examples, not a catalog ceiling. Other eligible Controllers may contribute tools; without training, Student tools disappear without enabling fixture fallback. The independent anonymous launcher owned by `a-test/test-mcp` has exactly three synthetic fixtures and is a separate entrypoint. Its relocation from `mcp-test` changes module-derived default names from `mcp-test_*` to `test-mcp_*`, not explicit overrides such as `mcp_test_action_*`, the three `commerce_*` tools or protocol strings such as `x-mcp-test-owner`. Its fixed catalog is not the expected shared `/mcp` list: opted-in `test-mcp` Controller Actions may also qualify for the shared map when their module is active, under the same authentication, contract and permission rules.
 
 ## Student examples
 

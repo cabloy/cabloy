@@ -15,13 +15,15 @@ The reusable [`@Mcp.tool()` metadata](/backend/openapi-guide#mcp-tool-metadata) 
 
 ## Runtime ownership
 
-| Component             | Responsibility                                                                      |
-| --------------------- | ----------------------------------------------------------------------------------- |
-| `a-openapiutils`      | Reusable MCP decorators and Action contract metadata                                |
-| Backend `cabloy-mcp`  | Shared `/mcp`, Controller-to-tool mapping, guarded dispatch and transport lifecycle |
-| Backend `mcp-auth`    | OAuth registration, authorization state, personal scopes, codes and tokens          |
-| Frontend `cabloy-mcp` | Consent page and personal scope management within existing SSR Sites                |
-| Backend `mcp-test`    | Dev/test-only synthetic catalog and standalone launcher support                     |
+| Component                 | Responsibility                                                                      |
+| ------------------------- | ----------------------------------------------------------------------------------- |
+| `a-openapiutils`          | Reusable MCP decorators and Action contract metadata                                |
+| Backend `cabloy-mcp`      | Shared `/mcp`, Controller-to-tool mapping, guarded dispatch and transport lifecycle |
+| Backend `mcp-auth`        | OAuth registration, authorization state, personal scopes, codes and tokens          |
+| Frontend `cabloy-mcp`     | Consent page and personal scope management within existing SSR Sites                |
+| Backend `a-test/test-mcp` | Dev/test-only diagnostics, synthetic catalog and standalone launcher support        |
+
+The backend `cabloy-mcp` suite contains only `cabloy-mcp` and `mcp-auth`. Fixtures live separately at `vona/src/suite-vendor/a-test/modules/test-mcp`; the runtime/auth suite does not depend on them.
 
 ## Shared endpoint and tool admission
 
@@ -34,7 +36,7 @@ A tool must satisfy every construction requirement:
 3. It has its own Action-level `@Mcp.tool(options)` metadata; empty options still opt in.
 4. Its request/response contract is supported by the mapper.
 
-A Resource declaration is not required. Module capability and Controller `meta.mode` filtering already occur during startup; MCP does not repeat them. Loaded test or synthetic Controllers can contribute tools if they satisfy the same predicate. The standalone launcher composes exactly three `commerce_*` fixtures. Shared construction is independent: those Actions can also appear when `mcp-test` is active and they satisfy the same admission requirements. Their presence does not make shared `/mcp` anonymous.
+A Resource declaration is not required. Module capability and Controller `meta.mode` filtering already occur during startup; MCP does not repeat them. Loaded test or synthetic Controllers can contribute tools if they satisfy the same predicate. The standalone launcher composes exactly three `commerce_*` fixtures. Shared construction is independent: those Actions can also appear when `test-mcp` is active and they satisfy the same admission requirements. Their presence does not make shared `/mcp` anonymous.
 
 Undecorated Actions, including future additions, are closed before names, collisions, contract/schema extraction and diagnostics. Only Action-level decoration is supported; Controller-level decoration is rejected, and Controller defaults are not inherited. `Mcp.exclude` and `SymbolMcpExclude` are removed without backwards compatibility: omit the tool decorator to keep an Action closed. Unsupported opted-in Actions are omitted with server-side diagnostics, not approximated by dropping their HTTP semantics. This admission change does not change MCP wire transport or OAuth.
 
@@ -167,7 +169,7 @@ npm run test
 npm --prefix vona run test:mcp:no-listener
 ```
 
-The ordinary test command uses the managed application listener, including the business HTTP tests. The no-listener command starts a separate managed test run with `SERVER_LISTEN_DISABLE=true` and explicitly selects six qualification entrypoints under the backend `cabloy-mcp` and `mcp-test` modules. They cover request boundaries, the protected SQLite registry, existing-ready composition, ingress interception, and the fixture-owned local HTTP transport. Both commands retain the managed runner's disposable-resource ownership and cleanup rules.
+The ordinary test command uses the managed application listener, including the business HTTP tests. The no-listener command starts a separate managed test run with `SERVER_LISTEN_DISABLE=true` and explicitly selects six qualification entrypoints under the backend `cabloy-mcp` and `test-mcp` modules. They cover request boundaries, the protected SQLite registry, existing-ready composition, ingress interception, and the fixture-owned local HTTP transport. Both commands retain the managed runner's disposable-resource ownership and cleanup rules.
 
 The SQLite, PostgreSQL, MySQL, and PostgreSQL coverage workflows require the no-listener gate separately. The ordinary coverage command retains its own report; the qualification gate does not overwrite it.
 

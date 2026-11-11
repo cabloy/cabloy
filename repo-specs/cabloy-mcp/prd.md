@@ -1,5 +1,7 @@
 # A-MCP Product Requirements Document
 
+Current ownership note (2026-11-11): the fixture module is now `a-test/test-mcp` at `vona/src/suite-vendor/a-test/modules/test-mcp`; the backend `cabloy-mcp` suite contains only `cabloy-mcp` and `mcp-auth`. The dated same-suite `mcp-test` approvals below retain their historical facts. See the [current SRS boundary](./srs.md#current-fixture-ownership-2026-11-11) and [evidence migration mapping](./evidence/README.md#fixture-module-relocation-2026-11-11); no new acceptance or product-scope change is asserted.
+
 ## Purpose
 
 The planned `cabloy-mcp` suite gives authorized external AI applications a controlled way to discover and invoke Cabloy business capabilities through a standards-based remote MCP server. It is an access boundary over existing Cabloy APIs, not a second business-domain implementation and not a bypass around Passport, instance isolation, RBAC, resource ownership, or controller guards.

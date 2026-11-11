@@ -10,10 +10,7 @@ import {
 
 const VONA_DIR = resolve(ROOT_DIR, 'vona');
 const ENTRY_FILE = fileURLToPath(import.meta.url);
-const RUNTIME_FILE = resolve(
-  VONA_DIR,
-  'src/suite-vendor/cabloy-mcp/modules/mcp-test/runtime/local.ts',
-);
+const RUNTIME_FILE = resolve(VONA_DIR, 'src/suite-vendor/a-test/modules/test-mcp/runtime/local.ts');
 
 function parseSeconds(args: string[]): number {
   if (args.length === 0) return 600;

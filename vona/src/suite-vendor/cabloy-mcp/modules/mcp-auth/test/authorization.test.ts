@@ -110,7 +110,7 @@ async function withFixture(
   grantTypes: TypeMcpGrantTypes = ['authorization_code'],
 ) {
   // Same lock as the RS tests: both temporarily own the global registration fixture.
-  const release = await acquireTestLock('mcp-test');
+  const release = await acquireTestLock('test-mcp');
   const original = structuredClone(app.config.modules['mcp-auth']);
   const name = `mcp-auth-${randomUUID()}`;
   let clientId: string | undefined;
@@ -296,7 +296,7 @@ describe('authorization.test.ts', { concurrency: false }, () => {
         [configured.name, configured],
         [undefined, fallback],
         ['', fallback],
-        ['mcp-test:missing', undefined],
+        ['test-mcp:missing', undefined],
       ] as const) {
         app.config.modules['mcp-auth'].ssrSite = selector as IMcpAuthConfig['ssrSite'];
         const url = new URL(resource.resource);
@@ -545,7 +545,7 @@ describe('authorization.test.ts', { concurrency: false }, () => {
     await withFixture(
       async fixture => {
         const evidence: Array<{ event: string; family: string; generation: number }> = [];
-        // Install only after the fixture owns mcp-test; restore before it releases that lock.
+        // Install only after the fixture owns test-mcp; restore before it releases that lock.
         const logger = t.mock.getter(ServiceAuthorization.prototype as any, '$logger', () => ({
           debug(event: string, message: (typeof evidence)[number]) {
             assert.equal(event, message.event);

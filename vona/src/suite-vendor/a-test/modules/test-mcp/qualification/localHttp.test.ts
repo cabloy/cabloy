@@ -170,7 +170,7 @@ function toolOutput(response: Awaited<ReturnType<typeof send>>, legacy = false) 
 describe('localHttp.test.ts', { concurrency: false, timeout: 60000 }, () => {
   let release: (() => void) | undefined;
   before(async () => {
-    assert.ok(app.meta.modules['mcp-test'], 'fixture module is loaded');
+    assert.ok(app.meta.modules['test-mcp'], 'fixture module is loaded');
     assert.ok(app.meta.modules['cabloy-mcp'], 'core module is loaded');
     if ((process.env.PROJECT_DISABLED_SUITES ?? '').split(',').includes('a-commerce')) {
       assert.deepEqual(
@@ -181,7 +181,7 @@ describe('localHttp.test.ts', { concurrency: false, timeout: 60000 }, () => {
         'disabled Commerce modules are absent from the actual runtime composition',
       );
     }
-    release = await acquireTestLock('mcp-test');
+    release = await acquireTestLock('test-mcp');
   });
   after(() => release?.());
 

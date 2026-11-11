@@ -8,7 +8,7 @@ import z from 'zod';
 
 export interface IControllerOptionsToolFixture extends IDecoratorControllerOptions {}
 
-// Test-only observable effect; tests own the mcp-test lock and restore this state.
+// Test-only observable effect; tests own the test-mcp lock and restore this state.
 export const toolFixtureState = { count: 0 };
 
 @Controller<IControllerOptionsToolFixture>({ path: '/mcp/test/actions', meta: { mode: 'test' } })

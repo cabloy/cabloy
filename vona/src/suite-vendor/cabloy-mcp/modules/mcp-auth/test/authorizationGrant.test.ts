@@ -62,7 +62,7 @@ async function api(method: string, path: string, user?: UserFixture) {
 
 async function withFixture(operation: (fixture: Fixture) => Promise<void>) {
   // Other MCP suites temporarily own registration policy under this same lock.
-  const release = await acquireTestLock('mcp-test');
+  const release = await acquireTestLock('test-mcp');
   const fixture: Fixture = {
     users: [],
     clientId: '',

@@ -59,9 +59,9 @@ const publicReadNames = [
 ];
 const excludedNames = [
   'mcp_test_action_unsupported',
-  'mcp-test_catalog_excluded',
-  'mcp-test_toolFixture_excluded',
-  'mcp-test_toolFixture_closed',
+  'test-mcp_catalog_excluded',
+  'test-mcp_toolFixture_excluded',
+  'test-mcp_toolFixture_closed',
   'training_student_select',
   'training-student_student_deleteForce',
   'training-student_student_deleteBulk',
@@ -391,7 +391,7 @@ describe('businessHttp.test.ts', { concurrency: false, timeout: 180000 }, () => 
     resource = getMcpIssuer(app);
     origin = new URL(resource).origin;
     redirectUri = `${origin}/mcp-test-callback`;
-    release = await acquireTestLock('mcp-test');
+    release = await acquireTestLock('test-mcp');
     const registration = await openHttp({
       target: '/mcp/register',
       headers: {
@@ -485,12 +485,12 @@ describe('businessHttp.test.ts', { concurrency: false, timeout: 180000 }, () => 
       .getOnionsEnabledCached()
       .map(item => item.beanOptions.beanFullName)
       .filter(name =>
-        ['cabloy-mcp.middlewareSystem.mcp', 'mcp-test.middlewareSystem.mcp'].includes(name),
+        ['cabloy-mcp.middlewareSystem.mcp', 'test-mcp.middlewareSystem.mcp'].includes(name),
       );
     assert.deepEqual(owners, ['cabloy-mcp.middlewareSystem.mcp']);
     const closeOwners = app.meta.modulesMonkey.filter(
       module =>
-        ['cabloy-mcp', 'mcp-test'].includes(module.info.relativeName) &&
+        ['cabloy-mcp', 'test-mcp'].includes(module.info.relativeName) &&
         typeof module.monkeyInstance?.appClose === 'function',
     );
     assert.deepEqual(
@@ -498,10 +498,10 @@ describe('businessHttp.test.ts', { concurrency: false, timeout: 180000 }, () => 
       ['cabloy-mcp'],
     );
     assert.ok(app.meta.modules['cabloy-mcp']);
-    if ((process.env.PROJECT_DISABLED_MODULES ?? '').split(',').includes('mcp-test')) {
-      assert.equal(app.meta.modules['mcp-test'], undefined);
+    if ((process.env.PROJECT_DISABLED_MODULES ?? '').split(',').includes('test-mcp')) {
+      assert.equal(app.meta.modules['test-mcp'], undefined);
     } else {
-      assert.ok(app.meta.modules['mcp-test'], 'default composition retains the synthetic fixtures');
+      assert.ok(app.meta.modules['test-mcp'], 'default composition retains the synthetic fixtures');
     }
     if (trainingDisabled) {
       assert.equal(app.meta.modules['training-student'], undefined);
@@ -545,7 +545,7 @@ describe('businessHttp.test.ts', { concurrency: false, timeout: 180000 }, () => 
         [],
         'ordinary OAuth identity has no student grants',
       );
-      if (app.meta.modules['mcp-test']) {
+      if (app.meta.modules['test-mcp']) {
         const names = listed.body.result.tools.map((tool: any) => tool.name);
         for (const name of publicReadNames) {
           assert.ok(names.includes(name), 'public opted-in fixtures remain discoverable');
@@ -595,8 +595,8 @@ describe('businessHttp.test.ts', { concurrency: false, timeout: 180000 }, () => 
   });
 
   it('resolves compact nonquery contracts from native metadata and executes unchanged Actions over both transports', async t => {
-    if (!app.meta.modules['mcp-test']) return;
-    const { ControllerToolFixture, toolFixtureState } = await import('vona-module-mcp-test');
+    if (!app.meta.modules['test-mcp']) return;
+    const { ControllerToolFixture, toolFixtureState } = await import('vona-module-test-mcp');
     const effectName = 'mcp_test_action_effect';
     const initial = toolFixtureState.count;
     const allToken = await redeemBearer('mcp:all');
@@ -795,7 +795,7 @@ describe('businessHttp.test.ts', { concurrency: false, timeout: 180000 }, () => 
         const options = { legacy, headers: { authorization: `Bearer ${token}` } };
         const [listed] = await Promise.all([
           send('tools/list', {}, options),
-          app.meta.modules['mcp-test']
+          app.meta.modules['test-mcp']
             ? app.bean.executor.mockCtx(
                 async () => {
                   const result = await app.bean.executor.performAction(
@@ -1317,7 +1317,7 @@ describe('businessHttp.test.ts', { concurrency: false, timeout: 180000 }, () => 
           studentGroupName,
           studentAggregateName,
           studentSummaryName,
-          'mcp-test_catalog_excluded',
+          'test-mcp_catalog_excluded',
           `client_${studentSelectName}`,
           'unknown_query_target',
         ]) {

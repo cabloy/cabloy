@@ -43,7 +43,7 @@ describe('registration.test.ts', { concurrency: false }, () => {
   const clientIds: string[] = [];
 
   before(async () => {
-    release = await acquireTestLock('mcp-test');
+    release = await acquireTestLock('test-mcp');
     original = structuredClone(app.config.modules['mcp-auth']);
     Object.assign(app.config.modules['mcp-auth'], {
       ...defaultConfig(app),

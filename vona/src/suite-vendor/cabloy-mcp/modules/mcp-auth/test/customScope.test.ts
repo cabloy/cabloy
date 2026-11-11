@@ -133,7 +133,7 @@ async function refresh(clientId: string, token: string, scope?: TypeMcpScope) {
   );
 }
 async function withFixture(operation: (fixture: Fixture) => Promise<void>) {
-  const release = await acquireTestLock('mcp-test');
+  const release = await acquireTestLock('test-mcp');
   const users: UserFixture[] = [];
   const clients: string[] = [];
   const off = app.scope('a-rbac').event.resolvePolicy.on((request, next) => {

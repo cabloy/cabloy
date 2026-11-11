@@ -69,7 +69,7 @@ async function run() {
       .includes('a-commerce');
     if (
       !commerceDisabled ||
-      !modules['mcp-test'] ||
+      !modules['test-mcp'] ||
       !modules['cabloy-mcp'] ||
       Object.keys(modules).some(name => name.startsWith('commerce-') || name === 'test-pay')
     ) {

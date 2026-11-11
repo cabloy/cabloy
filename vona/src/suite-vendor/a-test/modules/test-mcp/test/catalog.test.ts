@@ -68,7 +68,7 @@ describe('catalog.test.ts', { concurrency: false }, () => {
         assert.equal(empty.total, '0');
         assert.deepEqual(empty.list, []);
       }
-      const service = app.scope('mcp-test').service.catalog;
+      const service = app.scope('test-mcp').service.catalog;
       for (const fixture of catalogFixtures.products.filter(
         item => !products.list.some(publicItem => publicItem.id === item.id),
       )) {
@@ -86,7 +86,7 @@ describe('catalog.test.ts', { concurrency: false }, () => {
 
   it('filters before stable pagination and omits absent optional fields', async () => {
     await app.bean.executor.mockCtx(async () => {
-      const service = app.scope('mcp-test').service.catalog;
+      const service = app.scope('test-mcp').service.catalog;
       const categories = await service.categories({ pageNo: 1, pageSize: 20 });
       const electronics = categories.list.find(item => item.name === 'Electronics')!;
       const pageOne = await service.selectPublic({
@@ -135,7 +135,7 @@ describe('catalog.test.ts', { concurrency: false }, () => {
   it('scopes synthetic data to the actual default-instance context, not ORM tenancy', async () => {
     await app.bean.executor.mockCtx(
       async () => {
-        const service = app.scope('mcp-test').service.catalog;
+        const service = app.scope('test-mcp').service.catalog;
         assert.deepEqual((await service.categories({ pageNo: 1, pageSize: 20 })).list, []);
         assert.deepEqual((await service.selectPublic({ pageNo: 1, pageSize: 20 })).list, []);
         assert.equal(await service.findPublicById(catalogFixtures.products[0].id), undefined);

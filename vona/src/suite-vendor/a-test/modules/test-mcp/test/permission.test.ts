@@ -14,7 +14,7 @@ import {
 describe('permission.test.ts', { concurrency: false }, () => {
   let release: (() => void) | undefined;
   before(async () => {
-    release = await acquireTestLock('mcp-test');
+    release = await acquireTestLock('test-mcp');
   });
   after(() => release?.());
 

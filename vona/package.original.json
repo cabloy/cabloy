@@ -25,7 +25,7 @@
     "dev": "npm run prerun && npm run vona :bin:dev -- --workers=2 --flavor=normal",
     "dev:one": "npm run prerun && npm run vona :bin:dev -- --workers=1 --flavor=normal",
     "test": "node ../scripts/runIsolatedTest.ts unit",
-    "test:mcp:no-listener": "cross-env SERVER_LISTEN_DISABLE=true node ../scripts/runIsolatedTest.ts unit src/suite-vendor/cabloy-mcp/modules/cabloy-mcp/qualification/existingReadyBoundaryIntegration.test.ts src/suite-vendor/cabloy-mcp/modules/cabloy-mcp/qualification/ingressProxy.test.ts src/suite-vendor/cabloy-mcp/modules/cabloy-mcp/qualification/productionBoundary.test.ts src/suite-vendor/cabloy-mcp/modules/cabloy-mcp/qualification/protectedSqliteRegistry.test.ts src/suite-vendor/cabloy-mcp/modules/cabloy-mcp/qualification/requestBoundaryFoundation.test.ts src/suite-vendor/cabloy-mcp/modules/mcp-test/qualification/localHttp.test.ts",
+    "test:mcp:no-listener": "cross-env SERVER_LISTEN_DISABLE=true node ../scripts/runIsolatedTest.ts unit src/suite-vendor/cabloy-mcp/modules/cabloy-mcp/qualification/existingReadyBoundaryIntegration.test.ts src/suite-vendor/cabloy-mcp/modules/cabloy-mcp/qualification/ingressProxy.test.ts src/suite-vendor/cabloy-mcp/modules/cabloy-mcp/qualification/productionBoundary.test.ts src/suite-vendor/cabloy-mcp/modules/cabloy-mcp/qualification/protectedSqliteRegistry.test.ts src/suite-vendor/cabloy-mcp/modules/cabloy-mcp/qualification/requestBoundaryFoundation.test.ts src/suite-vendor/a-test/modules/test-mcp/qualification/localHttp.test.ts",
     "cov": "node ../scripts/runIsolatedTest.ts unit --coverage",
     "tsc": "npm run tsc:native",
     "tsc:native": "npm run prerun && node ../scripts/typecheck.ts native vona --noEmit --incremental false --project tsconfig.json",

@@ -273,7 +273,7 @@ The selected `passportAuthTokenClient` survives the MCP Passport handoff and cle
 - **Decision rejected:** check current identity, lifetime and trusted origin. Do not replace authenticated POST with GET or weaken origin checks.
 - **Code/refresh rejected:** check exact bindings, verifier or current credential pair, expiry, revocation and scope. Reauthorize when needed; do not replay, recover or convert ordinary login credentials.
 - **MCP denied:** distinguish OAuth failure from independent business authorization. Tokens do not create local roles or cross-instance access.
-- **503 or missing tools:** check recognized mode, enabled/ready state, shutdown, required authority, Controller/route registration, opt-in/exclusion, supported contract, scope and actual Action guards. Inspect server-side `diagnostics` for unsupported opted-in contracts. The standalone launcher always composes exactly three fixtures, while shared discovery can also include their opted-in Actions when `mcp-test` is active. Shared `/mcp` remains authenticated and does not use a fixed three-tool catalog.
+- **503 or missing tools:** check recognized mode, enabled/ready state, shutdown, required authority, Controller/route registration, opt-in/exclusion, supported contract, scope and actual Action guards. Inspect server-side `diagnostics` for unsupported opted-in contracts. The standalone launcher always composes exactly three fixtures, while shared discovery can also include their opted-in Actions when `a-test/test-mcp` is active. Shared `/mcp` remains authenticated and does not use a fixed three-tool catalog.
 
 ## Operational limits
 

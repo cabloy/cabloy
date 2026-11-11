@@ -31,6 +31,9 @@
     },
     {
       "path": "modules/test-markdown/tsconfig.build.json"
+    },
+    {
+      "path": "modules/test-mcp/tsconfig.build.json"
     }
   ],
   "exclude": ["modules"]

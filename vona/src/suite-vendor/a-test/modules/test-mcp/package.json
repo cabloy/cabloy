@@ -1,5 +1,5 @@
 {
-  "name": "vona-module-mcp-test",
+  "name": "vona-module-test-mcp",
   "version": "5.0.5",
   "description": "",
   "keywords": [
@@ -46,7 +46,7 @@
       "exports.\\..import"
     ]
   },
-  "title": "mcp-test",
+  "title": "test-mcp",
   "vonaModule": {
     "dependencies": {
       "a-vona": "5.0.0",

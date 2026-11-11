@@ -8,7 +8,7 @@ Use the Cabloy Basic managed local launcher to discover and call three read-only
 - `commerce_product_detail`: read a public product using an ID returned by search.
 - `commerce_categories_list`: list the flat published category directory, then use a returned category ID to filter product search.
 
-The dev/test-only `mcp-test` module in the `cabloy-mcp` suite owns the immutable synthetic catalog, DTOs, service and public Controller Actions. The tools call those real guarded Actions and return DTO-projected data. The `commerce_*` names are compatibility identifiers: no Commerce module, route, seed or database catalog is used.
+The dev/test-only `test-mcp` module in the `a-test` suite owns the immutable synthetic catalog, DTOs, service and public Controller Actions at `vona/src/suite-vendor/a-test/modules/test-mcp`. The backend `cabloy-mcp` suite contains only the `cabloy-mcp` runtime and `mcp-auth` authorization modules; neither depends on the fixtures. The tools call those real guarded Actions and return DTO-projected data. The `commerce_*` names are compatibility identifiers: no Commerce module, route, seed or database catalog is used.
 
 Start with the [MCP Integration Guide](/mcp/mcp-guide) for runtime ownership and admission. Use [MCP Browser Authorization](/mcp/mcp-browser-authorization) for the normal authenticated endpoint. Sections 1–8 below apply only to the **managed test-only standalone launcher**, not to shared `/mcp`.
 
@@ -26,7 +26,7 @@ Shared `/mcp` supports recognized **dev/test/prod** modes under the same authent
 
 Shared construction requires an enabled Controller, a registered Action route, admission by any supplied server-owned `includeTool` predicate, own Action-level `@Mcp.tool(options)` metadata, and a supported request/response contract. Undecorated Actions are closed before names, contract/schema extraction and diagnostics. Controller-level decoration and default inheritance are not supported; `name`, `description`, `readOnly` and `output.pick` are Action-local. `Mcp.exclude` and `SymbolMcpExclude` are removed without compatibility; omit the tool decorator to keep an Action closed. It is not a Student lookup/summary whitelist. Module capability and Controller mode filtering occur during startup. OAuth scope and current Action guards independently constrain discovery and calls; calls retain `innerAccess: false`. MCP wire transport and OAuth are unchanged.
 
-Each of the three `mcp-test` catalog Actions has its own tool decorator, so those eligible Actions can also appear in shared discovery when that module is active. This does **not** make shared `/mcp` anonymous or give it the standalone launcher's fixed three-tool catalog. Do not use the standalone list as the expected shared list. See [MCP Controller Tools](/mcp/mcp-controller-tools) for admission and mapping details.
+Each of the three `test-mcp` catalog Actions has its own tool decorator, so those eligible Actions can also appear in shared discovery when that module is active. This does **not** make shared `/mcp` anonymous or give it the standalone launcher's fixed three-tool catalog. Do not use the standalone list as the expected shared list. See [MCP Controller Tools](/mcp/mcp-controller-tools) for admission and mapping details.
 
 Shared browser authorization uses `/mcp/auth`, the existing SSR Site's consent page, `/mcp/token` and MCP-specific credentials. Issuer and resource are both `${origin}/mcp`, derived from trusted root backend serve configuration or the documented nonproduction fallback. Validated Host and existing automatic routing establish the instance; a URL selector is not OAuth instance authority. Ordinary Cabloy login tokens are not MCP credentials. Do not adapt this anonymous procedure by adding credentials, changing ports or resetting a database.
 
@@ -48,7 +48,7 @@ Keep this shell running. Copy the actual printed URL, not the placeholder above.
 
 `mcp:commerce:local` is an alias for the same launcher. The launcher adds `a-commerce` to its child-process disabled-suite list, preserving existing exclusions; preparation and runtime exclude Commerce and dependent modules such as `test-pay`.
 
-The launcher prepares disposable, run-specific test database, Redis, generated/runtime and public resources using the managed test lifecycle. The catalog itself is in-memory synthetic data owned by `mcp-test`, with no tables, migration or seed. Treat it as **read-only** and use returned identities. Do not insert products, rerun seeding or reset a development database for this walkthrough. Only the actual default-instance request context sees the fixture; other instance contexts see empty/absent data. This is fixture scoping, not proof of persisted ORM tenant isolation.
+The launcher prepares disposable, run-specific test database, Redis, generated/runtime and public resources using the managed test lifecycle. The catalog itself is in-memory synthetic data owned by `test-mcp`, with no tables, migration or seed. Treat it as **read-only** and use returned identities. Do not insert products, rerun seeding or reset a development database for this walkthrough. Only the actual default-instance request context sees the fixture; other instance contexts see empty/absent data. This is fixture scoping, not proof of persisted ORM tenant isolation.
 
 ## 2. Prepare a separate client shell
 

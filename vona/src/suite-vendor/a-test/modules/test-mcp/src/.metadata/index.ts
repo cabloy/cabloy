@@ -22,19 +22,19 @@ import 'vona-module-a-web';
 declare module 'vona-module-a-web' {
 
     export interface IDtoRecord {
-      'mcp-test:categoryPublic': IDtoOptionsCategoryPublic;
-'mcp-test:categoryPublicSelectReq': IDtoOptionsCategoryPublicSelectReq;
-'mcp-test:categoryPublicSelectRes': IDtoOptionsCategoryPublicSelectRes;
-'mcp-test:productPublic': IDtoOptionsProductPublic;
-'mcp-test:productPublicDetail': IDtoOptionsProductPublicDetail;
-'mcp-test:productPublicSelectReq': IDtoOptionsProductPublicSelectReq;
-'mcp-test:productPublicSelectRes': IDtoOptionsProductPublicSelectRes;
-'mcp-test:productPublicSku': IDtoOptionsProductPublicSku;
+      'test-mcp:categoryPublic': IDtoOptionsCategoryPublic;
+'test-mcp:categoryPublicSelectReq': IDtoOptionsCategoryPublicSelectReq;
+'test-mcp:categoryPublicSelectRes': IDtoOptionsCategoryPublicSelectRes;
+'test-mcp:productPublic': IDtoOptionsProductPublic;
+'test-mcp:productPublicDetail': IDtoOptionsProductPublicDetail;
+'test-mcp:productPublicSelectReq': IDtoOptionsProductPublicSelectReq;
+'test-mcp:productPublicSelectRes': IDtoOptionsProductPublicSelectRes;
+'test-mcp:productPublicSku': IDtoOptionsProductPublicSku;
     }
 
 
 }
-declare module 'vona-module-mcp-test' {
+declare module 'vona-module-test-mcp' {
 
 }
 /** dto: end */
@@ -47,7 +47,7 @@ import type { DtoProductPublicDetail } from '../dto/productPublicDetail.tsx';
 import type { DtoProductPublicSelectReq } from '../dto/productPublicSelectReq.tsx';
 import type { DtoProductPublicSelectRes } from '../dto/productPublicSelectRes.tsx';
 import type { DtoProductPublicSku } from '../dto/productPublicSku.tsx';
-declare module 'vona-module-mcp-test' {
+declare module 'vona-module-test-mcp' {
 
     export interface IDtoOptionsCategoryPublic {
       fields?: TypeEntityOptionsFields<DtoCategoryPublic, IDtoOptionsCategoryPublic[TypeSymbolKeyFieldsMore]>;
@@ -91,33 +91,33 @@ import 'vona-module-a-web';
 declare module 'vona-module-a-web' {
 
     export interface IControllerRecord {
-      'mcp-test:catalog': IControllerOptionsCatalog;
-'mcp-test:toolFixture': IControllerOptionsToolFixture;
+      'test-mcp:catalog': IControllerOptionsCatalog;
+'test-mcp:toolFixture': IControllerOptionsToolFixture;
     }
 
 
 }
-declare module 'vona-module-mcp-test' {
+declare module 'vona-module-test-mcp' {
 
         export interface ControllerCatalog {
           /** @internal */
-          get scope(): ScopeModuleMcpTest;
+          get scope(): ScopeModuleTestMcp;
         }
 
           export interface ControllerCatalog {
-            get $beanFullName(): 'mcp-test.controller.catalog';
-            get $onionName(): 'mcp-test:catalog';
+            get $beanFullName(): 'test-mcp.controller.catalog';
+            get $onionName(): 'test-mcp:catalog';
             get $onionOptions(): IControllerOptionsCatalog;
           }
 
         export interface ControllerToolFixture {
           /** @internal */
-          get scope(): ScopeModuleMcpTest;
+          get scope(): ScopeModuleTestMcp;
         }
 
           export interface ControllerToolFixture {
-            get $beanFullName(): 'mcp-test.controller.toolFixture';
-            get $onionName(): 'mcp-test:toolFixture';
+            get $beanFullName(): 'test-mcp.controller.toolFixture';
+            get $onionName(): 'test-mcp:toolFixture';
             get $onionOptions(): IControllerOptionsToolFixture;
           }
 }
@@ -127,7 +127,7 @@ declare module 'vona-module-mcp-test' {
 import type { ControllerCatalog } from '../controller/catalog.ts';
 // @ts-ignore ignore
 import type { ControllerToolFixture } from '../controller/toolFixture.ts';
-declare module 'vona-module-mcp-test' {
+declare module 'vona-module-test-mcp' {
 
     export interface IControllerOptionsCatalog {
       actions?: TypeControllerOptionsActions<ControllerCatalog>;
@@ -164,21 +164,21 @@ import 'vona-module-a-bean';
 declare module 'vona-module-a-bean' {
 
     export interface IServiceRecord {
-      'mcp-test:catalog': never;
+      'test-mcp:catalog': never;
     }
 
 
 }
-declare module 'vona-module-mcp-test' {
+declare module 'vona-module-test-mcp' {
 
         export interface ServiceCatalog {
           /** @internal */
-          get scope(): ScopeModuleMcpTest;
+          get scope(): ScopeModuleTestMcp;
         }
 
           export interface ServiceCatalog {
-            get $beanFullName(): 'mcp-test.service.catalog';
-            get $onionName(): 'mcp-test:catalog';
+            get $beanFullName(): 'test-mcp.service.catalog';
+            get $onionName(): 'test-mcp:catalog';
           }
 }
 /** service: end */
@@ -193,7 +193,7 @@ export interface IModuleService {
 import 'vona';
 declare module 'vona' {
   export interface IBeanRecordGeneral {
-    'mcp-test.service.catalog': ServiceCatalog;
+    'test-mcp.service.catalog': ServiceCatalog;
   }
 }
 /** service: end */
@@ -202,9 +202,9 @@ import { BeanScopeBase, type BeanScopeUtil } from 'vona';
 import { Scope } from 'vona-module-a-bean';
 
 @Scope()
-export class ScopeModuleMcpTest extends BeanScopeBase {}
+export class ScopeModuleTestMcp extends BeanScopeBase {}
 
-export interface ScopeModuleMcpTest {
+export interface ScopeModuleTestMcp {
   util: BeanScopeUtil;
 service: IModuleService;
 }
@@ -212,11 +212,11 @@ service: IModuleService;
 import 'vona';
 declare module 'vona' {
   export interface IBeanScopeRecord {
-    'mcp-test': ScopeModuleMcpTest;
+    'test-mcp': ScopeModuleTestMcp;
   }
 
   export interface IBeanScopeContainer {
-    mcpTest: ScopeModuleMcpTest;
+    testMcp: ScopeModuleTestMcp;
   }
 
 

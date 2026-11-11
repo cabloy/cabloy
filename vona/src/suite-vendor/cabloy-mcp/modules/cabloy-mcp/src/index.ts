@@ -1,7 +1,22 @@
 export * from './.metadata/index.ts';
 export * from './types/index.ts';
 export { createControllerToolServer } from './lib/controllerTools.ts';
-export { toolSchema } from './lib/controllerToolSchema.ts';
+export {
+  closeMutationInputSchema,
+  isPrimitiveSchema,
+  normalizeDateTransport,
+  resolveSchema,
+  serializeDateTransport,
+  toolSchema,
+} from './lib/controllerToolSchema.ts';
+export type { ToolSchema } from './lib/controllerToolSchema.ts';
+export { compactToolSchema, queryRepairHint } from './lib/controllerToolContract.ts';
+export {
+  beginToolCall,
+  recordToolCall,
+  summarizeToolQueries,
+} from './lib/controllerToolDiagnostics.ts';
+export { controllerToolQuery } from './lib/controllerToolQuery.ts';
 export { createSharedBusinessToolServer } from './lib/sharedBusinessTools.ts';
 export { createBusinessTransport, fail as failBusinessTransport } from './lib/businessTransport.ts';
 export { handleMcpRequest, mcpTransportSnapshot, closeMcpTransport } from './lib/mcpTransport.ts';

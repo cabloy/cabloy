@@ -1642,6 +1642,336 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  '/mcp/auth/summary': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['Authorization_summary'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/mcp/auth/decision': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['Authorization_decision'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/mcp/auth/authorizationGrant/mine': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['McpAuthAuthorizationGrant_mine'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/mcp/auth/authorizationGrant/revokeMine/{id}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['McpAuthAuthorizationGrant_revokeMine'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/mcp/auth/authorizationGrant/deleteMine/{id}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post?: never;
+    delete: operations['McpAuthAuthorizationGrant_deleteMine'];
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/mcp/auth/customScope/mine': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** List personal MCP scopes */
+    get: operations['McpAuthCustomScope_mine'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/mcp/auth/customScope/catalog': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Available MCP tools */
+    get: operations['McpAuthCustomScope_catalog'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/mcp/auth/customScope/createMine': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** Create personal MCP scope */
+    post: operations['McpAuthCustomScope_createMine'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/mcp/auth/customScope/updateMine/{id}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** Update personal MCP scope */
+    post: operations['McpAuthCustomScope_updateMine'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/mcp/auth/customScope/deleteMine/{id}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post?: never;
+    /** Delete personal MCP scope */
+    delete: operations['McpAuthCustomScope_deleteMine'];
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/mcp/test/catalog/categories': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['TestMcpCatalog_categories'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/mcp/test/catalog/products': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['TestMcpCatalog_products'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/mcp/test/catalog/products/{id}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['TestMcpCatalog_detail'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/mcp/test/catalog/excluded': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['TestMcpCatalog_excluded'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/mcp/test/actions/status': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /**
+     * Action Web summary
+     * @description Action Web description
+     */
+    get: operations['TestMcpToolFixture_status'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/mcp/test/actions/effect/{label}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['TestMcpToolFixture_effect'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/mcp/test/actions/array': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['TestMcpToolFixture_array'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/mcp/test/actions/unsupported': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['TestMcpToolFixture_unsupported'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/mcp/test/actions/excluded': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['TestMcpToolFixture_excluded'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/mcp/test/actions/closed': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Action Web summary */
+    get: operations['TestMcpToolFixture_closed'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   '/api/test/rest/product': {
     parameters: {
       query?: never;
@@ -2298,336 +2628,6 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
-  '/mcp/auth/summary': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get: operations['Authorization_summary'];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/mcp/auth/decision': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get?: never;
-    put?: never;
-    post: operations['Authorization_decision'];
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/api/mcp/auth/authorizationGrant/mine': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get: operations['McpAuthAuthorizationGrant_mine'];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/api/mcp/auth/authorizationGrant/revokeMine/{id}': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get?: never;
-    put?: never;
-    post: operations['McpAuthAuthorizationGrant_revokeMine'];
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/api/mcp/auth/authorizationGrant/deleteMine/{id}': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get?: never;
-    put?: never;
-    post?: never;
-    delete: operations['McpAuthAuthorizationGrant_deleteMine'];
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/api/mcp/auth/customScope/mine': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /** List personal MCP scopes */
-    get: operations['McpAuthCustomScope_mine'];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/api/mcp/auth/customScope/catalog': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /** Available MCP tools */
-    get: operations['McpAuthCustomScope_catalog'];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/api/mcp/auth/customScope/createMine': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get?: never;
-    put?: never;
-    /** Create personal MCP scope */
-    post: operations['McpAuthCustomScope_createMine'];
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/api/mcp/auth/customScope/updateMine/{id}': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get?: never;
-    put?: never;
-    /** Update personal MCP scope */
-    post: operations['McpAuthCustomScope_updateMine'];
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/api/mcp/auth/customScope/deleteMine/{id}': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get?: never;
-    put?: never;
-    post?: never;
-    /** Delete personal MCP scope */
-    delete: operations['McpAuthCustomScope_deleteMine'];
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/api/mcp/test/catalog/categories': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get: operations['McpTestCatalog_categories'];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/api/mcp/test/catalog/products': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get: operations['McpTestCatalog_products'];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/api/mcp/test/catalog/products/{id}': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get: operations['McpTestCatalog_detail'];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/api/mcp/test/catalog/excluded': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get: operations['McpTestCatalog_excluded'];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/api/mcp/test/actions/status': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /**
-     * Action Web summary
-     * @description Action Web description
-     */
-    get: operations['McpTestToolFixture_status'];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/api/mcp/test/actions/effect/{label}': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get?: never;
-    put?: never;
-    post: operations['McpTestToolFixture_effect'];
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/api/mcp/test/actions/array': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get: operations['McpTestToolFixture_array'];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/api/mcp/test/actions/unsupported': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get: operations['McpTestToolFixture_unsupported'];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/api/mcp/test/actions/excluded': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get: operations['McpTestToolFixture_excluded'];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/api/mcp/test/actions/closed': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /** Action Web summary */
-    get: operations['McpTestToolFixture_closed'];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -2848,7 +2848,8 @@ export interface components {
       /** @description Address Line 2 */
       addressLine2?: string | undefined;
     };
-    'CommerceAddressMineQueryPredicate_55d0e8946cbe9e934eacaad301acea8f728589e2':
+    /** @description Recursive Boolean predicate: use explicit leaves { field, op, value }, nonempty { and: [...] } / { or: [...] } groups, or { not: predicate }. Field-value maps such as { fieldName: value } are not supported inside where. The isNull and isNotNull operators omit value; in and notIn require nonempty value arrays. Use only fields, operators and value types admitted by this schema and respect its query limits. Omit where for no added restriction. Supplied named filters combine with where by AND. */
+    'CommerceAddressMineQueryPredicate_dc2a69005a769a476af75f8ddcac9f6b01986cbc':
       | {
           and: components['schemas']['CommerceAddressMineQueryPredicate'][];
         }
@@ -2952,7 +2953,8 @@ export interface components {
       /** @description Operations */
       _operationsRow?: unknown;
     };
-    'CommerceAddressSelectQueryPredicate_80c49864b2153857280bcd6fae57bf0e3f28c529':
+    /** @description Recursive Boolean predicate: use explicit leaves { field, op, value }, nonempty { and: [...] } / { or: [...] } groups, or { not: predicate }. Field-value maps such as { fieldName: value } are not supported inside where. The isNull and isNotNull operators omit value; in and notIn require nonempty value arrays. Use only fields, operators and value types admitted by this schema and respect its query limits. Omit where for no added restriction. Supplied named filters combine with where by AND. */
+    'CommerceAddressSelectQueryPredicate_281fb5dbb12729e4fcf775d43464b6d1dee7f1c4':
       | {
           /** @enum {string} */
           field: 'recipientName';
@@ -3365,7 +3367,8 @@ export interface components {
       /** @description Operations */
       _operationsRow?: unknown;
     };
-    'CommerceCouponTemplateSelectQueryPredicate_6f0bf47e65b9343a2afb89a23596aca3dad50313':
+    /** @description Recursive Boolean predicate: use explicit leaves { field, op, value }, nonempty { and: [...] } / { or: [...] } groups, or { not: predicate }. Field-value maps such as { fieldName: value } are not supported inside where. The isNull and isNotNull operators omit value; in and notIn require nonempty value arrays. Use only fields, operators and value types admitted by this schema and respect its query limits. Omit where for no added restriction. Supplied named filters combine with where by AND. */
+    'CommerceCouponTemplateSelectQueryPredicate_f1ad438326f24b325310489202991e4fba89700b':
       | {
           /** @enum {string} */
           field: 'name';
@@ -3571,7 +3574,8 @@ export interface components {
       currency: 'USD';
       payableTotalCents: number;
     };
-    'CommerceOrderMineQueryPredicate_f9aee760a2098afd454bcecd0e927d9bfb63d77f':
+    /** @description Recursive Boolean predicate: use explicit leaves { field, op, value }, nonempty { and: [...] } / { or: [...] } groups, or { not: predicate }. Field-value maps such as { fieldName: value } are not supported inside where. The isNull and isNotNull operators omit value; in and notIn require nonempty value arrays. Use only fields, operators and value types admitted by this schema and respect its query limits. Omit where for no added restriction. Supplied named filters combine with where by AND. */
+    'CommerceOrderMineQueryPredicate_b384b6f552106d32a751938d95717f1347ff2cc9':
       | {
           /** @enum {string} */
           field: 'state';
@@ -3836,7 +3840,8 @@ export interface components {
       /** @description Operations */
       _operationsRow?: unknown;
     };
-    'CommerceOrderSelectQueryPredicate_a32b689e5c62edf5889e5875801d3b1c6f275ba6':
+    /** @description Recursive Boolean predicate: use explicit leaves { field, op, value }, nonempty { and: [...] } / { or: [...] } groups, or { not: predicate }. Field-value maps such as { fieldName: value } are not supported inside where. The isNull and isNotNull operators omit value; in and notIn require nonempty value arrays. Use only fields, operators and value types admitted by this schema and respect its query limits. Omit where for no added restriction. Supplied named filters combine with where by AND. */
+    'CommerceOrderSelectQueryPredicate_da2274d737fe5ffedcfa26bc0a7e6fab61ef3b5f':
       | {
           /** @enum {string} */
           field: 'state';
@@ -4036,7 +4041,8 @@ export interface components {
           code: string;
         }
       | undefined;
-    'CommerceStockAuditSelectQueryPredicate_6ed3143d5729b6b0c088585fbdc8eee7a7e109cc':
+    /** @description Recursive Boolean predicate: use explicit leaves { field, op, value }, nonempty { and: [...] } / { or: [...] } groups, or { not: predicate }. Field-value maps such as { fieldName: value } are not supported inside where. The isNull and isNotNull operators omit value; in and notIn require nonempty value arrays. Use only fields, operators and value types admitted by this schema and respect its query limits. Omit where for no added restriction. Supplied named filters combine with where by AND. */
+    'CommerceStockAuditSelectQueryPredicate_18925a5c8530f6f0f81e9aa4ed03244d4cdbbc36':
       | {
           /** @enum {string} */
           field: 'skuId';
@@ -4199,7 +4205,8 @@ export interface components {
       /** @description Operations */
       _operationsRow?: unknown;
     };
-    'CommerceStockBalanceSelectQueryPredicate_6ed3143d5729b6b0c088585fbdc8eee7a7e109cc':
+    /** @description Recursive Boolean predicate: use explicit leaves { field, op, value }, nonempty { and: [...] } / { or: [...] } groups, or { not: predicate }. Field-value maps such as { fieldName: value } are not supported inside where. The isNull and isNotNull operators omit value; in and notIn require nonempty value arrays. Use only fields, operators and value types admitted by this schema and respect its query limits. Omit where for no added restriction. Supplied named filters combine with where by AND. */
+    'CommerceStockBalanceSelectQueryPredicate_18925a5c8530f6f0f81e9aa4ed03244d4cdbbc36':
       | {
           /** @enum {string} */
           field: 'skuId';
@@ -4337,7 +4344,8 @@ export interface components {
       /** @description Operations */
       _operationsRow?: unknown;
     };
-    'CommerceCategorySelectQueryPredicate_6f0bf47e65b9343a2afb89a23596aca3dad50313':
+    /** @description Recursive Boolean predicate: use explicit leaves { field, op, value }, nonempty { and: [...] } / { or: [...] } groups, or { not: predicate }. Field-value maps such as { fieldName: value } are not supported inside where. The isNull and isNotNull operators omit value; in and notIn require nonempty value arrays. Use only fields, operators and value types admitted by this schema and respect its query limits. Omit where for no added restriction. Supplied named filters combine with where by AND. */
+    'CommerceCategorySelectQueryPredicate_f1ad438326f24b325310489202991e4fba89700b':
       | {
           /** @enum {string} */
           field: 'name';
@@ -4516,7 +4524,8 @@ export interface components {
       /** @description Operations */
       _operationsRow?: unknown;
     };
-    'CommerceProductSelectQueryPredicate_deb90652e4f202e098ba09b36626875a1a6e90e4':
+    /** @description Recursive Boolean predicate: use explicit leaves { field, op, value }, nonempty { and: [...] } / { or: [...] } groups, or { not: predicate }. Field-value maps such as { fieldName: value } are not supported inside where. The isNull and isNotNull operators omit value; in and notIn require nonempty value arrays. Use only fields, operators and value types admitted by this schema and respect its query limits. Omit where for no added restriction. Supplied named filters combine with where by AND. */
+    'CommerceProductSelectQueryPredicate_c7173b5725d5509026a89427a16667ed875cee88':
       | {
           /** @enum {string} */
           field: 'title';
@@ -4766,7 +4775,8 @@ export interface components {
       /** @description Operations */
       _operationsRow?: unknown;
     };
-    'CommerceSkuSelectQueryPredicate_6bfc12fff19619c142f759c3a85aa30659306378':
+    /** @description Recursive Boolean predicate: use explicit leaves { field, op, value }, nonempty { and: [...] } / { or: [...] } groups, or { not: predicate }. Field-value maps such as { fieldName: value } are not supported inside where. The isNull and isNotNull operators omit value; in and notIn require nonempty value arrays. Use only fields, operators and value types admitted by this schema and respect its query limits. Omit where for no added restriction. Supplied named filters combine with where by AND. */
+    'CommerceSkuSelectQueryPredicate_8bdbeec68753567c80f489c2071001167d8cc4ca':
       | {
           /** @enum {string} */
           field: 'code';
@@ -5086,7 +5096,8 @@ export interface components {
       /** @default true */
       signed?: boolean;
     };
-    'TrainingRecordSelectQueryPredicate_12e26675b7b232083b85f3bb960e6f1048755230':
+    /** @description Recursive Boolean predicate: use explicit leaves { field, op, value }, nonempty { and: [...] } / { or: [...] } groups, or { not: predicate }. Field-value maps such as { fieldName: value } are not supported inside where. The isNull and isNotNull operators omit value; in and notIn require nonempty value arrays. Use only fields, operators and value types admitted by this schema and respect its query limits. Omit where for no added restriction. Supplied named filters combine with where by AND. */
+    'TrainingRecordSelectQueryPredicate_5d7645eb449dede52c248d2b353769a1eb9528c6':
       | {
           /** @enum {string} */
           field: 'name';
@@ -5489,7 +5500,8 @@ export interface components {
           signed?: boolean;
         }
       | undefined;
-    'TrainingStudentSelectQueryPredicate_1a30b20933e90ac2c50faf88c8a6099328e0ded8':
+    /** @description Recursive Boolean predicate: use explicit leaves { field, op, value }, nonempty { and: [...] } / { or: [...] } groups, or { not: predicate }. Field-value maps such as { fieldName: value } are not supported inside where. The isNull and isNotNull operators omit value; in and notIn require nonempty value arrays. Use only fields, operators and value types admitted by this schema and respect its query limits. Omit where for no added restriction. Supplied named filters combine with where by AND. */
+    'TrainingStudentSelectQueryPredicate_52faf9b0777604cfccabc1d562ef60a2e5b2deb9':
       | {
           /** @enum {string} */
           field: 'id';
@@ -6002,6 +6014,175 @@ export interface components {
       password: string;
       captcha?: unknown;
     };
+    'mcp-auth.dto.authorizationSummary': {
+      clientName: string;
+      resource: string;
+      scope: string;
+      options: components['schemas']['mcp-auth.dto.mcpScopeOption'][];
+      expiresAt: number;
+    };
+    'mcp-auth.dto.mcpScopeOption': {
+      scope: string;
+      name: string;
+      description: string;
+      tools: components['schemas']['mcp-auth.dto.mcpScopeTool'][];
+      allowed: boolean;
+      /** @enum {string|null} */
+      reason?:
+        | 'outside_requested_scope'
+        | 'outside_client_scope'
+        | 'tools_unavailable'
+        | null
+        | undefined;
+    };
+    'mcp-auth.dto.mcpScopeTool': {
+      name: string;
+      controller: string;
+      action: string;
+      controllerSummary: string;
+      summary: string;
+      description: string;
+      readOnly: boolean;
+      available: boolean;
+    };
+    'mcp-auth.dto.authorizationRedirect': {
+      redirectUrl: string;
+    };
+    'mcp-auth.dto.authorizationDecision': {
+      request: string;
+      allow: boolean;
+      scope?: ('mcp:all' | 'mcp:read') | string | undefined;
+    };
+    'mcp-auth.dto.authorizationGrantMineRes': {
+      list: components['schemas']['mcp-auth.dto.authorizationGrant'][];
+      total: string;
+      pageCount: number;
+      pageSize: number;
+      pageNo: number;
+    };
+    'mcp-auth.dto.authorizationGrant': {
+      /**
+       * Format: date-time
+       * @description Created At
+       */
+      createdAt: Date;
+      /** @description ID */
+      id: number | string;
+      resource: string;
+      scope: string;
+      /** @default  */
+      requestedScope?: string;
+      /** @enum {string} */
+      state: 'pending' | 'codeReady' | 'tokenActive' | 'denied' | 'revoked';
+      expiresAt: number;
+      tokenExpiresAt: number;
+      /** @default false */
+      refreshEnabled?: boolean;
+      /** @default 0 */
+      refreshExpiresAt?: number;
+      clientId: string;
+      clientName: string;
+    };
+    'mcp-auth.dto.customScopeMineRes': {
+      list: components['schemas']['mcp-auth.dto.customScopeView'][];
+    };
+    'mcp-auth.dto.customScopeView': {
+      /**
+       * Format: date-time
+       * @description Created At
+       */
+      createdAt: Date;
+      /**
+       * Format: date-time
+       * @description Updated At
+       */
+      updatedAt: Date;
+      /** @description ID */
+      id: number | string;
+      scope: string;
+      /**
+       * Name
+       * @description Use 1–100 letters, digits, underscores or hyphens. Names are case-sensitive; test becomes mcp:custom:test.
+       */
+      name: string;
+      /** @description Description */
+      description: string;
+      /** @description Tools */
+      tools: components['schemas']['mcp-auth.dto.mcpToolIdentity'][];
+    };
+    'mcp-auth.dto.mcpToolIdentity': {
+      name: string;
+      controller: string;
+      action: string;
+    };
+    'mcp-auth.dto.mcpTool': {
+      name: string;
+      controller: string;
+      action: string;
+      controllerSummary: string;
+      summary: string;
+      description: string;
+      readOnly: boolean;
+    };
+    'mcp-auth.dto.customScopeCreate_1ff20af69286149eb0b25291d9450172f7bd0054': {
+      /**
+       * Name
+       * @description Use 1–100 letters, digits, underscores or hyphens. Names are case-sensitive; test becomes mcp:custom:test.
+       */
+      name: string;
+      /** @description Description */
+      description: string;
+      /** @description Tools */
+      tools: components['schemas']['mcp-auth.dto.mcpToolIdentity'][];
+    };
+    'test-mcp.dto.categoryPublicSelectRes': {
+      list: components['schemas']['test-mcp.dto.categoryPublic'][];
+      total: string;
+      pageCount: number;
+      pageSize: number;
+      pageNo: number;
+    };
+    'test-mcp.dto.categoryPublic': {
+      id: number | string;
+      name: string;
+      description?: string | undefined;
+    };
+    'test-mcp.dto.productPublicSelectRes': {
+      list: components['schemas']['test-mcp.dto.productPublic'][];
+      total: string;
+      pageCount: number;
+      pageSize: number;
+      pageNo: number;
+    };
+    'test-mcp.dto.productPublic': {
+      id: number | string;
+      title: string;
+      description?: string | undefined;
+      categoryId: number | string;
+      categoryName: string;
+      priceCents: number;
+      available: number;
+      skuAvailables: components['schemas']['test-mcp.dto.productPublicSku'][];
+    };
+    'test-mcp.dto.productPublicSku': {
+      id: number | string;
+      code: string;
+      priceCents: number;
+      available: number;
+    };
+    'test-mcp.dto.productPublicDetail_2d063d28bc7243bed02ebd8bddf1212a93c6305b':
+      | {
+          id: number | string;
+          title: string;
+          description?: string | undefined;
+          categoryId: number | string;
+          categoryName: string;
+          priceCents: number;
+          available: number;
+          skuAvailables: components['schemas']['test-mcp.dto.productPublicSku'][];
+          descriptionHtml?: string | undefined;
+        }
+      | undefined;
     /** @description Create Product */
     'test-rest.dto.productCreate': {
       /** @description Name */
@@ -6064,7 +6245,8 @@ export interface components {
       /** @description Operations */
       _operationsRow?: unknown;
     };
-    'TestRestProductSelectQueryPredicate_6f0bf47e65b9343a2afb89a23596aca3dad50313':
+    /** @description Recursive Boolean predicate: use explicit leaves { field, op, value }, nonempty { and: [...] } / { or: [...] } groups, or { not: predicate }. Field-value maps such as { fieldName: value } are not supported inside where. The isNull and isNotNull operators omit value; in and notIn require nonempty value arrays. Use only fields, operators and value types admitted by this schema and respect its query limits. Omit where for no added restriction. Supplied named filters combine with where by AND. */
+    'TestRestProductSelectQueryPredicate_f1ad438326f24b325310489202991e4fba89700b':
       | {
           /** @enum {string} */
           field: 'name';
@@ -6391,7 +6573,8 @@ export interface components {
       /** @description Amount */
       amount: number;
     };
-    'TestOrderQueryQueryPredicate_0ba00e95609398d05aa5f48387ae2e7b3638cb10':
+    /** @description Recursive Boolean predicate: use explicit leaves { field, op, value }, nonempty { and: [...] } / { or: [...] } groups, or { not: predicate }. Field-value maps such as { fieldName: value } are not supported inside where. The isNull and isNotNull operators omit value; in and notIn require nonempty value arrays. Use only fields, operators and value types admitted by this schema and respect its query limits. Omit where for no added restriction. Supplied named filters combine with where by AND. */
+    'TestOrderQueryQueryPredicate_c8db73513567a95fc6ee516ad7800e472749f6dc':
       | {
           /** @enum {string} */
           field: 'orderNo';
@@ -6460,7 +6643,8 @@ export interface components {
       pageSize: number;
       pageNo: number;
     };
-    'TestOrderQueryPageQueryPredicate_2ac91e8ccbe06af23a8af5e36238058a7473772a':
+    /** @description Recursive Boolean predicate: use explicit leaves { field, op, value }, nonempty { and: [...] } / { or: [...] } groups, or { not: predicate }. Field-value maps such as { fieldName: value } are not supported inside where. The isNull and isNotNull operators omit value; in and notIn require nonempty value arrays. Use only fields, operators and value types admitted by this schema and respect its query limits. Omit where for no added restriction. Supplied named filters combine with where by AND. */
+    'TestOrderQueryPageQueryPredicate_d70b338779a27af13b495572382d0bd4d2d05fe8':
       | {
           /** @enum {string} */
           field: 'orderNo';
@@ -6519,7 +6703,8 @@ export interface components {
       min_stars?: string | undefined;
       max_stars?: string | undefined;
     };
-    'TestPostSelectQueryPredicate_d656479b876f92e6314ae1b5fc8aef786abc46e1':
+    /** @description Recursive Boolean predicate: use explicit leaves { field, op, value }, nonempty { and: [...] } / { or: [...] } groups, or { not: predicate }. Field-value maps such as { fieldName: value } are not supported inside where. The isNull and isNotNull operators omit value; in and notIn require nonempty value arrays. Use only fields, operators and value types admitted by this schema and respect its query limits. Omit where for no added restriction. Supplied named filters combine with where by AND. */
+    'TestPostSelectQueryPredicate_8e7798840241a6ca2a2638e9efcb0dd99340c602':
       | {
           /** @enum {string} */
           field: 'title';
@@ -6658,7 +6843,7 @@ export interface components {
       max_stars?: string | undefined;
     };
     'test-vona.dto.postSelectReq': {
-      where?: components['schemas']['TestPostSelectQueryPredicate_d656479b876f92e6314ae1b5fc8aef786abc46e1'];
+      where?: components['schemas']['TestPostSelectQueryPredicate_8e7798840241a6ca2a2638e9efcb0dd99340c602'];
       orders?:
         | {
             /** @enum {string} */
@@ -6798,175 +6983,6 @@ export interface components {
       fullName3?: string | undefined;
       fullName4?: string | undefined;
     };
-    'mcp-auth.dto.authorizationSummary': {
-      clientName: string;
-      resource: string;
-      scope: string;
-      options: components['schemas']['mcp-auth.dto.mcpScopeOption'][];
-      expiresAt: number;
-    };
-    'mcp-auth.dto.mcpScopeOption': {
-      scope: string;
-      name: string;
-      description: string;
-      tools: components['schemas']['mcp-auth.dto.mcpScopeTool'][];
-      allowed: boolean;
-      /** @enum {string|null} */
-      reason?:
-        | 'outside_requested_scope'
-        | 'outside_client_scope'
-        | 'tools_unavailable'
-        | null
-        | undefined;
-    };
-    'mcp-auth.dto.mcpScopeTool': {
-      name: string;
-      controller: string;
-      action: string;
-      controllerSummary: string;
-      summary: string;
-      description: string;
-      readOnly: boolean;
-      available: boolean;
-    };
-    'mcp-auth.dto.authorizationRedirect': {
-      redirectUrl: string;
-    };
-    'mcp-auth.dto.authorizationDecision': {
-      request: string;
-      allow: boolean;
-      scope?: ('mcp:all' | 'mcp:read') | string | undefined;
-    };
-    'mcp-auth.dto.authorizationGrantMineRes': {
-      list: components['schemas']['mcp-auth.dto.authorizationGrant'][];
-      total: string;
-      pageCount: number;
-      pageSize: number;
-      pageNo: number;
-    };
-    'mcp-auth.dto.authorizationGrant': {
-      /**
-       * Format: date-time
-       * @description Created At
-       */
-      createdAt: Date;
-      /** @description ID */
-      id: number | string;
-      resource: string;
-      scope: string;
-      /** @default  */
-      requestedScope?: string;
-      /** @enum {string} */
-      state: 'pending' | 'codeReady' | 'tokenActive' | 'denied' | 'revoked';
-      expiresAt: number;
-      tokenExpiresAt: number;
-      /** @default false */
-      refreshEnabled?: boolean;
-      /** @default 0 */
-      refreshExpiresAt?: number;
-      clientId: string;
-      clientName: string;
-    };
-    'mcp-auth.dto.customScopeMineRes': {
-      list: components['schemas']['mcp-auth.dto.customScopeView'][];
-    };
-    'mcp-auth.dto.customScopeView': {
-      /**
-       * Format: date-time
-       * @description Created At
-       */
-      createdAt: Date;
-      /**
-       * Format: date-time
-       * @description Updated At
-       */
-      updatedAt: Date;
-      /** @description ID */
-      id: number | string;
-      scope: string;
-      /**
-       * Name
-       * @description Use 1–100 letters, digits, underscores or hyphens. Names are case-sensitive; test becomes mcp:custom:test.
-       */
-      name: string;
-      /** @description Description */
-      description: string;
-      /** @description Tools */
-      tools: components['schemas']['mcp-auth.dto.mcpToolIdentity'][];
-    };
-    'mcp-auth.dto.mcpToolIdentity': {
-      name: string;
-      controller: string;
-      action: string;
-    };
-    'mcp-auth.dto.mcpTool': {
-      name: string;
-      controller: string;
-      action: string;
-      controllerSummary: string;
-      summary: string;
-      description: string;
-      readOnly: boolean;
-    };
-    'mcp-auth.dto.customScopeCreate_1ff20af69286149eb0b25291d9450172f7bd0054': {
-      /**
-       * Name
-       * @description Use 1–100 letters, digits, underscores or hyphens. Names are case-sensitive; test becomes mcp:custom:test.
-       */
-      name: string;
-      /** @description Description */
-      description: string;
-      /** @description Tools */
-      tools: components['schemas']['mcp-auth.dto.mcpToolIdentity'][];
-    };
-    'mcp-test.dto.categoryPublicSelectRes': {
-      list: components['schemas']['mcp-test.dto.categoryPublic'][];
-      total: string;
-      pageCount: number;
-      pageSize: number;
-      pageNo: number;
-    };
-    'mcp-test.dto.categoryPublic': {
-      id: number | string;
-      name: string;
-      description?: string | undefined;
-    };
-    'mcp-test.dto.productPublicSelectRes': {
-      list: components['schemas']['mcp-test.dto.productPublic'][];
-      total: string;
-      pageCount: number;
-      pageSize: number;
-      pageNo: number;
-    };
-    'mcp-test.dto.productPublic': {
-      id: number | string;
-      title: string;
-      description?: string | undefined;
-      categoryId: number | string;
-      categoryName: string;
-      priceCents: number;
-      available: number;
-      skuAvailables: components['schemas']['mcp-test.dto.productPublicSku'][];
-    };
-    'mcp-test.dto.productPublicSku': {
-      id: number | string;
-      code: string;
-      priceCents: number;
-      available: number;
-    };
-    'mcp-test.dto.productPublicDetail_2d063d28bc7243bed02ebd8bddf1212a93c6305b':
-      | {
-          id: number | string;
-          title: string;
-          description?: string | undefined;
-          categoryId: number | string;
-          categoryName: string;
-          priceCents: number;
-          available: number;
-          skuAvailables: components['schemas']['mcp-test.dto.productPublicSku'][];
-          descriptionHtml?: string | undefined;
-        }
-      | undefined;
   };
   responses: never;
   parameters: never;
@@ -7370,7 +7386,8 @@ export interface operations {
   CommerceMemberAddress_mine: {
     parameters: {
       query?: {
-        where?: components['schemas']['CommerceAddressMineQueryPredicate_55d0e8946cbe9e934eacaad301acea8f728589e2'];
+        /** @description Recursive Boolean predicate: use explicit leaves { field, op, value }, nonempty { and: [...] } / { or: [...] } groups, or { not: predicate }. Field-value maps such as { fieldName: value } are not supported inside where. The isNull and isNotNull operators omit value; in and notIn require nonempty value arrays. Use only fields, operators and value types admitted by this schema and respect its query limits. Omit where for no added restriction. Supplied named filters combine with where by AND. */
+        where?: components['schemas']['CommerceAddressMineQueryPredicate_dc2a69005a769a476af75f8ddcac9f6b01986cbc'];
         orders?:
           | {
               /** @enum {string} */
@@ -7519,7 +7536,8 @@ export interface operations {
         createdAt?: string | undefined;
         recipientName?: string | undefined;
         phone?: string | undefined;
-        where?: components['schemas']['CommerceAddressSelectQueryPredicate_80c49864b2153857280bcd6fae57bf0e3f28c529'];
+        /** @description Recursive Boolean predicate: use explicit leaves { field, op, value }, nonempty { and: [...] } / { or: [...] } groups, or { not: predicate }. Field-value maps such as { fieldName: value } are not supported inside where. The isNull and isNotNull operators omit value; in and notIn require nonempty value arrays. Use only fields, operators and value types admitted by this schema and respect its query limits. Omit where for no added restriction. Supplied named filters combine with where by AND. */
+        where?: components['schemas']['CommerceAddressSelectQueryPredicate_281fb5dbb12729e4fcf775d43464b6d1dee7f1c4'];
         orders?:
           | {
               /** @enum {string} */
@@ -8149,7 +8167,8 @@ export interface operations {
       query?: {
         createdAt?: string | undefined;
         name?: string | undefined;
-        where?: components['schemas']['CommerceCouponTemplateSelectQueryPredicate_6f0bf47e65b9343a2afb89a23596aca3dad50313'];
+        /** @description Recursive Boolean predicate: use explicit leaves { field, op, value }, nonempty { and: [...] } / { or: [...] } groups, or { not: predicate }. Field-value maps such as { fieldName: value } are not supported inside where. The isNull and isNotNull operators omit value; in and notIn require nonempty value arrays. Use only fields, operators and value types admitted by this schema and respect its query limits. Omit where for no added restriction. Supplied named filters combine with where by AND. */
+        where?: components['schemas']['CommerceCouponTemplateSelectQueryPredicate_f1ad438326f24b325310489202991e4fba89700b'];
         orders?:
           | {
               /** @enum {string} */
@@ -8488,7 +8507,8 @@ export interface operations {
           | 'expired'
           | null
           | undefined;
-        where?: components['schemas']['CommerceOrderMineQueryPredicate_f9aee760a2098afd454bcecd0e927d9bfb63d77f'];
+        /** @description Recursive Boolean predicate: use explicit leaves { field, op, value }, nonempty { and: [...] } / { or: [...] } groups, or { not: predicate }. Field-value maps such as { fieldName: value } are not supported inside where. The isNull and isNotNull operators omit value; in and notIn require nonempty value arrays. Use only fields, operators and value types admitted by this schema and respect its query limits. Omit where for no added restriction. Supplied named filters combine with where by AND. */
+        where?: components['schemas']['CommerceOrderMineQueryPredicate_b384b6f552106d32a751938d95717f1347ff2cc9'];
         orders?:
           | {
               /** @enum {string} */
@@ -8784,7 +8804,8 @@ export interface operations {
       query?: {
         createdAt?: string | undefined;
         state?: string | undefined;
-        where?: components['schemas']['CommerceOrderSelectQueryPredicate_a32b689e5c62edf5889e5875801d3b1c6f275ba6'];
+        /** @description Recursive Boolean predicate: use explicit leaves { field, op, value }, nonempty { and: [...] } / { or: [...] } groups, or { not: predicate }. Field-value maps such as { fieldName: value } are not supported inside where. The isNull and isNotNull operators omit value; in and notIn require nonempty value arrays. Use only fields, operators and value types admitted by this schema and respect its query limits. Omit where for no added restriction. Supplied named filters combine with where by AND. */
+        where?: components['schemas']['CommerceOrderSelectQueryPredicate_da2274d737fe5ffedcfa26bc0a7e6fab61ef3b5f'];
         orders?:
           | {
               /** @enum {string} */
@@ -8848,7 +8869,8 @@ export interface operations {
       query?: {
         createdAt?: string | undefined;
         skuId?: number | string | undefined;
-        where?: components['schemas']['CommerceStockAuditSelectQueryPredicate_6ed3143d5729b6b0c088585fbdc8eee7a7e109cc'];
+        /** @description Recursive Boolean predicate: use explicit leaves { field, op, value }, nonempty { and: [...] } / { or: [...] } groups, or { not: predicate }. Field-value maps such as { fieldName: value } are not supported inside where. The isNull and isNotNull operators omit value; in and notIn require nonempty value arrays. Use only fields, operators and value types admitted by this schema and respect its query limits. Omit where for no added restriction. Supplied named filters combine with where by AND. */
+        where?: components['schemas']['CommerceStockAuditSelectQueryPredicate_18925a5c8530f6f0f81e9aa4ed03244d4cdbbc36'];
         orders?:
           | {
               /** @enum {string} */
@@ -8940,7 +8962,8 @@ export interface operations {
       query?: {
         createdAt?: string | undefined;
         skuId?: number | string | undefined;
-        where?: components['schemas']['CommerceStockBalanceSelectQueryPredicate_6ed3143d5729b6b0c088585fbdc8eee7a7e109cc'];
+        /** @description Recursive Boolean predicate: use explicit leaves { field, op, value }, nonempty { and: [...] } / { or: [...] } groups, or { not: predicate }. Field-value maps such as { fieldName: value } are not supported inside where. The isNull and isNotNull operators omit value; in and notIn require nonempty value arrays. Use only fields, operators and value types admitted by this schema and respect its query limits. Omit where for no added restriction. Supplied named filters combine with where by AND. */
+        where?: components['schemas']['CommerceStockBalanceSelectQueryPredicate_18925a5c8530f6f0f81e9aa4ed03244d4cdbbc36'];
         orders?:
           | {
               /** @enum {string} */
@@ -9004,7 +9027,8 @@ export interface operations {
       query?: {
         createdAt?: string | undefined;
         name?: string | undefined;
-        where?: components['schemas']['CommerceCategorySelectQueryPredicate_6f0bf47e65b9343a2afb89a23596aca3dad50313'];
+        /** @description Recursive Boolean predicate: use explicit leaves { field, op, value }, nonempty { and: [...] } / { or: [...] } groups, or { not: predicate }. Field-value maps such as { fieldName: value } are not supported inside where. The isNull and isNotNull operators omit value; in and notIn require nonempty value arrays. Use only fields, operators and value types admitted by this schema and respect its query limits. Omit where for no added restriction. Supplied named filters combine with where by AND. */
+        where?: components['schemas']['CommerceCategorySelectQueryPredicate_f1ad438326f24b325310489202991e4fba89700b'];
         orders?:
           | {
               /** @enum {string} */
@@ -9152,7 +9176,8 @@ export interface operations {
       query?: {
         createdAt?: string | undefined;
         title?: string | undefined;
-        where?: components['schemas']['CommerceProductSelectQueryPredicate_deb90652e4f202e098ba09b36626875a1a6e90e4'];
+        /** @description Recursive Boolean predicate: use explicit leaves { field, op, value }, nonempty { and: [...] } / { or: [...] } groups, or { not: predicate }. Field-value maps such as { fieldName: value } are not supported inside where. The isNull and isNotNull operators omit value; in and notIn require nonempty value arrays. Use only fields, operators and value types admitted by this schema and respect its query limits. Omit where for no added restriction. Supplied named filters combine with where by AND. */
+        where?: components['schemas']['CommerceProductSelectQueryPredicate_c7173b5725d5509026a89427a16667ed875cee88'];
         orders?:
           | {
               /** @enum {string} */
@@ -9353,7 +9378,8 @@ export interface operations {
       query?: {
         createdAt?: string | undefined;
         code?: string | undefined;
-        where?: components['schemas']['CommerceSkuSelectQueryPredicate_6bfc12fff19619c142f759c3a85aa30659306378'];
+        /** @description Recursive Boolean predicate: use explicit leaves { field, op, value }, nonempty { and: [...] } / { or: [...] } groups, or { not: predicate }. Field-value maps such as { fieldName: value } are not supported inside where. The isNull and isNotNull operators omit value; in and notIn require nonempty value arrays. Use only fields, operators and value types admitted by this schema and respect its query limits. Omit where for no added restriction. Supplied named filters combine with where by AND. */
+        where?: components['schemas']['CommerceSkuSelectQueryPredicate_8bdbeec68753567c80f489c2071001167d8cc4ca'];
         orders?:
           | {
               /** @enum {string} */
@@ -9600,7 +9626,8 @@ export interface operations {
         createdAt?: string | undefined;
         name?: string | undefined;
         studentId?: string | undefined;
-        where?: components['schemas']['TrainingRecordSelectQueryPredicate_12e26675b7b232083b85f3bb960e6f1048755230'];
+        /** @description Recursive Boolean predicate: use explicit leaves { field, op, value }, nonempty { and: [...] } / { or: [...] } groups, or { not: predicate }. Field-value maps such as { fieldName: value } are not supported inside where. The isNull and isNotNull operators omit value; in and notIn require nonempty value arrays. Use only fields, operators and value types admitted by this schema and respect its query limits. Omit where for no added restriction. Supplied named filters combine with where by AND. */
+        where?: components['schemas']['TrainingRecordSelectQueryPredicate_5d7645eb449dede52c248d2b353769a1eb9528c6'];
         orders?:
           | {
               /** @enum {string} */
@@ -9750,7 +9777,8 @@ export interface operations {
         name?: string | undefined;
         /** @description 1=Foundation Track; 2=Progress Track; 3=Advanced Workshop */
         level?: 1 | 2 | 3 | undefined;
-        where?: components['schemas']['TrainingStudentSelectQueryPredicate_1a30b20933e90ac2c50faf88c8a6099328e0ded8'];
+        /** @description Recursive Boolean predicate: use explicit leaves { field, op, value }, nonempty { and: [...] } / { or: [...] } groups, or { not: predicate }. Field-value maps such as { fieldName: value } are not supported inside where. The isNull and isNotNull operators omit value; in and notIn require nonempty value arrays. Use only fields, operators and value types admitted by this schema and respect its query limits. Omit where for no added restriction. Supplied named filters combine with where by AND. */
+        where?: components['schemas']['TrainingStudentSelectQueryPredicate_52faf9b0777604cfccabc1d562ef60a2e5b2deb9'];
         orders?:
           | {
               /** @enum {string} */
@@ -9818,7 +9846,8 @@ export interface operations {
         name?: string | undefined;
         /** @description 1=Foundation Track; 2=Progress Track; 3=Advanced Workshop */
         level?: 1 | 2 | 3 | undefined;
-        where?: components['schemas']['TrainingStudentSelectQueryPredicate_1a30b20933e90ac2c50faf88c8a6099328e0ded8'];
+        /** @description Recursive Boolean predicate: use explicit leaves { field, op, value }, nonempty { and: [...] } / { or: [...] } groups, or { not: predicate }. Field-value maps such as { fieldName: value } are not supported inside where. The isNull and isNotNull operators omit value; in and notIn require nonempty value arrays. Use only fields, operators and value types admitted by this schema and respect its query limits. Omit where for no added restriction. Supplied named filters combine with where by AND. */
+        where?: components['schemas']['TrainingStudentSelectQueryPredicate_52faf9b0777604cfccabc1d562ef60a2e5b2deb9'];
         aggrs?: {
           count?: ('*' | 'imageId')[] | undefined;
         };
@@ -9852,7 +9881,8 @@ export interface operations {
         name?: string | undefined;
         /** @description 1=Foundation Track; 2=Progress Track; 3=Advanced Workshop */
         level?: 1 | 2 | 3 | undefined;
-        where?: components['schemas']['TrainingStudentSelectQueryPredicate_1a30b20933e90ac2c50faf88c8a6099328e0ded8'];
+        /** @description Recursive Boolean predicate: use explicit leaves { field, op, value }, nonempty { and: [...] } / { or: [...] } groups, or { not: predicate }. Field-value maps such as { fieldName: value } are not supported inside where. The isNull and isNotNull operators omit value; in and notIn require nonempty value arrays. Use only fields, operators and value types admitted by this schema and respect its query limits. Omit where for no added restriction. Supplied named filters combine with where by AND. */
+        where?: components['schemas']['TrainingStudentSelectQueryPredicate_52faf9b0777604cfccabc1d562ef60a2e5b2deb9'];
         aggrs?: {
           count?: ('*' | 'imageId')[] | undefined;
         };
@@ -10449,12 +10479,529 @@ export interface operations {
       };
     };
   };
+  Authorization_summary: {
+    parameters: {
+      query: {
+        request: string;
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data: components['schemas']['mcp-auth.dto.authorizationSummary'];
+          };
+        };
+      };
+    };
+    authToken: true;
+  };
+  Authorization_decision: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['mcp-auth.dto.authorizationDecision'];
+      };
+    };
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data: components['schemas']['mcp-auth.dto.authorizationRedirect'];
+          };
+        };
+      };
+    };
+    authToken: true;
+  };
+  McpAuthAuthorizationGrant_mine: {
+    parameters: {
+      query?: {
+        pageNo?: number;
+        pageSize?: number;
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data: components['schemas']['mcp-auth.dto.authorizationGrantMineRes'];
+          };
+        };
+      };
+    };
+    authToken: true;
+  };
+  McpAuthAuthorizationGrant_revokeMine: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: number | string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data?: unknown;
+          };
+        };
+      };
+    };
+    authToken: true;
+  };
+  McpAuthAuthorizationGrant_deleteMine: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: number | string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data?: unknown;
+          };
+        };
+      };
+    };
+    authToken: true;
+  };
+  McpAuthCustomScope_mine: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data: components['schemas']['mcp-auth.dto.customScopeMineRes'];
+          };
+        };
+      };
+    };
+    authToken: true;
+  };
+  McpAuthCustomScope_catalog: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data: components['schemas']['mcp-auth.dto.mcpTool'][];
+          };
+        };
+      };
+    };
+    authToken: true;
+  };
+  McpAuthCustomScope_createMine: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['mcp-auth.dto.customScopeCreate_1ff20af69286149eb0b25291d9450172f7bd0054'];
+      };
+    };
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data: components['schemas']['mcp-auth.dto.customScopeView'];
+          };
+        };
+      };
+    };
+    authToken: true;
+  };
+  McpAuthCustomScope_updateMine: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: number | string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['mcp-auth.dto.customScopeCreate_1ff20af69286149eb0b25291d9450172f7bd0054'];
+      };
+    };
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data: components['schemas']['mcp-auth.dto.customScopeView'];
+          };
+        };
+      };
+    };
+    authToken: true;
+  };
+  McpAuthCustomScope_deleteMine: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: number | string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data?: unknown;
+          };
+        };
+      };
+    };
+    authToken: true;
+  };
+  TestMcpCatalog_categories: {
+    parameters: {
+      query?: {
+        pageNo?: number;
+        pageSize?: number;
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data: components['schemas']['test-mcp.dto.categoryPublicSelectRes'];
+          };
+        };
+      };
+    };
+  };
+  TestMcpCatalog_products: {
+    parameters: {
+      query?: {
+        pageNo?: number;
+        pageSize?: number;
+        categoryId?: number | string | undefined;
+        title?: string | undefined;
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data: components['schemas']['test-mcp.dto.productPublicSelectRes'];
+          };
+        };
+      };
+    };
+  };
+  TestMcpCatalog_detail: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: number | string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data?: components['schemas']['test-mcp.dto.productPublicDetail_2d063d28bc7243bed02ebd8bddf1212a93c6305b'];
+          };
+        };
+      };
+    };
+  };
+  TestMcpCatalog_excluded: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data: components['schemas']['test-mcp.dto.categoryPublicSelectRes'];
+          };
+        };
+      };
+    };
+  };
+  TestMcpToolFixture_status: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data: {
+              count: number;
+            };
+          };
+        };
+      };
+    };
+  };
+  TestMcpToolFixture_effect: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        label: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': {
+          amount: number;
+          priority?: number | undefined;
+          note?: string | undefined;
+        };
+      };
+    };
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data: {
+              count: number;
+              label: string;
+              priority?: number | undefined;
+              note?: string | undefined;
+            };
+          };
+        };
+      };
+    };
+  };
+  TestMcpToolFixture_array: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data: string[];
+          };
+        };
+      };
+    };
+  };
+  TestMcpToolFixture_unsupported: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'text/plain': string;
+        };
+      };
+    };
+  };
+  TestMcpToolFixture_excluded: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'text/plain': string;
+        };
+      };
+    };
+  };
+  TestMcpToolFixture_closed: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data: {
+              count: number;
+            };
+          };
+        };
+      };
+    };
+  };
   TestRestProduct_select: {
     parameters: {
       query?: {
         createdAt?: string | undefined;
         name?: string | undefined;
-        where?: components['schemas']['TestRestProductSelectQueryPredicate_6f0bf47e65b9343a2afb89a23596aca3dad50313'];
+        /** @description Recursive Boolean predicate: use explicit leaves { field, op, value }, nonempty { and: [...] } / { or: [...] } groups, or { not: predicate }. Field-value maps such as { fieldName: value } are not supported inside where. The isNull and isNotNull operators omit value; in and notIn require nonempty value arrays. Use only fields, operators and value types admitted by this schema and respect its query limits. Omit where for no added restriction. Supplied named filters combine with where by AND. */
+        where?: components['schemas']['TestRestProductSelectQueryPredicate_f1ad438326f24b325310489202991e4fba89700b'];
         orders?:
           | {
               /** @enum {string} */
@@ -11403,7 +11950,8 @@ export interface operations {
         orderNo?: string | undefined;
         remark?: string | undefined;
         userName?: string | undefined;
-        where?: components['schemas']['TestOrderQueryQueryPredicate_0ba00e95609398d05aa5f48387ae2e7b3638cb10'];
+        /** @description Recursive Boolean predicate: use explicit leaves { field, op, value }, nonempty { and: [...] } / { or: [...] } groups, or { not: predicate }. Field-value maps such as { fieldName: value } are not supported inside where. The isNull and isNotNull operators omit value; in and notIn require nonempty value arrays. Use only fields, operators and value types admitted by this schema and respect its query limits. Omit where for no added restriction. Supplied named filters combine with where by AND. */
+        where?: components['schemas']['TestOrderQueryQueryPredicate_c8db73513567a95fc6ee516ad7800e472749f6dc'];
         orders?:
           | {
               /** @enum {string} */
@@ -11439,7 +11987,8 @@ export interface operations {
       query?: {
         orderNo?: string | undefined;
         remark?: string | undefined;
-        where?: components['schemas']['TestOrderQueryPageQueryPredicate_2ac91e8ccbe06af23a8af5e36238058a7473772a'];
+        /** @description Recursive Boolean predicate: use explicit leaves { field, op, value }, nonempty { and: [...] } / { or: [...] } groups, or { not: predicate }. Field-value maps such as { fieldName: value } are not supported inside where. The isNull and isNotNull operators omit value; in and notIn require nonempty value arrays. Use only fields, operators and value types admitted by this schema and respect its query limits. Omit where for no added restriction. Supplied named filters combine with where by AND. */
+        where?: components['schemas']['TestOrderQueryPageQueryPredicate_d70b338779a27af13b495572382d0bd4d2d05fe8'];
         orders?:
           | {
               /** @enum {string} */
@@ -11478,7 +12027,8 @@ export interface operations {
         createdAt?: string | undefined;
         title?: string | undefined;
         userName?: string | undefined;
-        where?: components['schemas']['TestPostSelectQueryPredicate_d656479b876f92e6314ae1b5fc8aef786abc46e1'];
+        /** @description Recursive Boolean predicate: use explicit leaves { field, op, value }, nonempty { and: [...] } / { or: [...] } groups, or { not: predicate }. Field-value maps such as { fieldName: value } are not supported inside where. The isNull and isNotNull operators omit value; in and notIn require nonempty value arrays. Use only fields, operators and value types admitted by this schema and respect its query limits. Omit where for no added restriction. Supplied named filters combine with where by AND. */
+        where?: components['schemas']['TestPostSelectQueryPredicate_8e7798840241a6ca2a2638e9efcb0dd99340c602'];
         aggrs?: {
           count?: ('*' | 'stars')[] | undefined;
           sum?: 'stars'[] | undefined;
@@ -11515,7 +12065,8 @@ export interface operations {
         createdAt?: string | undefined;
         title?: string | undefined;
         userName?: string | undefined;
-        where?: components['schemas']['TestPostSelectQueryPredicate_d656479b876f92e6314ae1b5fc8aef786abc46e1'];
+        /** @description Recursive Boolean predicate: use explicit leaves { field, op, value }, nonempty { and: [...] } / { or: [...] } groups, or { not: predicate }. Field-value maps such as { fieldName: value } are not supported inside where. The isNull and isNotNull operators omit value; in and notIn require nonempty value arrays. Use only fields, operators and value types admitted by this schema and respect its query limits. Omit where for no added restriction. Supplied named filters combine with where by AND. */
+        where?: components['schemas']['TestPostSelectQueryPredicate_8e7798840241a6ca2a2638e9efcb0dd99340c602'];
         aggrs?: {
           count?: ('*' | 'stars')[] | undefined;
           sum?: 'stars'[] | undefined;
@@ -11551,7 +12102,8 @@ export interface operations {
         createdAt?: string | undefined;
         title?: string | undefined;
         userName?: string | undefined;
-        where?: components['schemas']['TestPostSelectQueryPredicate_d656479b876f92e6314ae1b5fc8aef786abc46e1'];
+        /** @description Recursive Boolean predicate: use explicit leaves { field, op, value }, nonempty { and: [...] } / { or: [...] } groups, or { not: predicate }. Field-value maps such as { fieldName: value } are not supported inside where. The isNull and isNotNull operators omit value; in and notIn require nonempty value arrays. Use only fields, operators and value types admitted by this schema and respect its query limits. Omit where for no added restriction. Supplied named filters combine with where by AND. */
+        where?: components['schemas']['TestPostSelectQueryPredicate_8e7798840241a6ca2a2638e9efcb0dd99340c602'];
         orders?:
           | {
               /** @enum {string} */
@@ -11589,7 +12141,8 @@ export interface operations {
         createdAt?: string | undefined;
         title?: string | undefined;
         userName?: string | undefined;
-        where?: components['schemas']['TestPostSelectQueryPredicate_d656479b876f92e6314ae1b5fc8aef786abc46e1'];
+        /** @description Recursive Boolean predicate: use explicit leaves { field, op, value }, nonempty { and: [...] } / { or: [...] } groups, or { not: predicate }. Field-value maps such as { fieldName: value } are not supported inside where. The isNull and isNotNull operators omit value; in and notIn require nonempty value arrays. Use only fields, operators and value types admitted by this schema and respect its query limits. Omit where for no added restriction. Supplied named filters combine with where by AND. */
+        where?: components['schemas']['TestPostSelectQueryPredicate_8e7798840241a6ca2a2638e9efcb0dd99340c602'];
         orders?:
           | {
               /** @enum {string} */
@@ -11833,522 +12386,6 @@ export interface operations {
             code: string;
             message: string;
             data?: unknown;
-          };
-        };
-      };
-    };
-  };
-  Authorization_summary: {
-    parameters: {
-      query: {
-        request: string;
-      };
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          'application/json': {
-            code: string;
-            message: string;
-            data: components['schemas']['mcp-auth.dto.authorizationSummary'];
-          };
-        };
-      };
-    };
-    authToken: true;
-  };
-  Authorization_decision: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    requestBody: {
-      content: {
-        'application/json': components['schemas']['mcp-auth.dto.authorizationDecision'];
-      };
-    };
-    responses: {
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          'application/json': {
-            code: string;
-            message: string;
-            data: components['schemas']['mcp-auth.dto.authorizationRedirect'];
-          };
-        };
-      };
-    };
-    authToken: true;
-  };
-  McpAuthAuthorizationGrant_mine: {
-    parameters: {
-      query?: {
-        pageNo?: number;
-        pageSize?: number;
-      };
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          'application/json': {
-            code: string;
-            message: string;
-            data: components['schemas']['mcp-auth.dto.authorizationGrantMineRes'];
-          };
-        };
-      };
-    };
-    authToken: true;
-  };
-  McpAuthAuthorizationGrant_revokeMine: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path: {
-        id: number | string;
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          'application/json': {
-            code: string;
-            message: string;
-            data?: unknown;
-          };
-        };
-      };
-    };
-    authToken: true;
-  };
-  McpAuthAuthorizationGrant_deleteMine: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path: {
-        id: number | string;
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          'application/json': {
-            code: string;
-            message: string;
-            data?: unknown;
-          };
-        };
-      };
-    };
-    authToken: true;
-  };
-  McpAuthCustomScope_mine: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          'application/json': {
-            code: string;
-            message: string;
-            data: components['schemas']['mcp-auth.dto.customScopeMineRes'];
-          };
-        };
-      };
-    };
-    authToken: true;
-  };
-  McpAuthCustomScope_catalog: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          'application/json': {
-            code: string;
-            message: string;
-            data: components['schemas']['mcp-auth.dto.mcpTool'][];
-          };
-        };
-      };
-    };
-    authToken: true;
-  };
-  McpAuthCustomScope_createMine: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    requestBody: {
-      content: {
-        'application/json': components['schemas']['mcp-auth.dto.customScopeCreate_1ff20af69286149eb0b25291d9450172f7bd0054'];
-      };
-    };
-    responses: {
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          'application/json': {
-            code: string;
-            message: string;
-            data: components['schemas']['mcp-auth.dto.customScopeView'];
-          };
-        };
-      };
-    };
-    authToken: true;
-  };
-  McpAuthCustomScope_updateMine: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path: {
-        id: number | string;
-      };
-      cookie?: never;
-    };
-    requestBody: {
-      content: {
-        'application/json': components['schemas']['mcp-auth.dto.customScopeCreate_1ff20af69286149eb0b25291d9450172f7bd0054'];
-      };
-    };
-    responses: {
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          'application/json': {
-            code: string;
-            message: string;
-            data: components['schemas']['mcp-auth.dto.customScopeView'];
-          };
-        };
-      };
-    };
-    authToken: true;
-  };
-  McpAuthCustomScope_deleteMine: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path: {
-        id: number | string;
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          'application/json': {
-            code: string;
-            message: string;
-            data?: unknown;
-          };
-        };
-      };
-    };
-    authToken: true;
-  };
-  McpTestCatalog_categories: {
-    parameters: {
-      query?: {
-        pageNo?: number;
-        pageSize?: number;
-      };
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          'application/json': {
-            code: string;
-            message: string;
-            data: components['schemas']['mcp-test.dto.categoryPublicSelectRes'];
-          };
-        };
-      };
-    };
-  };
-  McpTestCatalog_products: {
-    parameters: {
-      query?: {
-        pageNo?: number;
-        pageSize?: number;
-        categoryId?: number | string | undefined;
-        title?: string | undefined;
-      };
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          'application/json': {
-            code: string;
-            message: string;
-            data: components['schemas']['mcp-test.dto.productPublicSelectRes'];
-          };
-        };
-      };
-    };
-  };
-  McpTestCatalog_detail: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path: {
-        id: number | string;
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          'application/json': {
-            code: string;
-            message: string;
-            data?: components['schemas']['mcp-test.dto.productPublicDetail_2d063d28bc7243bed02ebd8bddf1212a93c6305b'];
-          };
-        };
-      };
-    };
-  };
-  McpTestCatalog_excluded: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          'application/json': {
-            code: string;
-            message: string;
-            data: components['schemas']['mcp-test.dto.categoryPublicSelectRes'];
-          };
-        };
-      };
-    };
-  };
-  McpTestToolFixture_status: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          'application/json': {
-            code: string;
-            message: string;
-            data: {
-              count: number;
-            };
-          };
-        };
-      };
-    };
-  };
-  McpTestToolFixture_effect: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path: {
-        label: string;
-      };
-      cookie?: never;
-    };
-    requestBody: {
-      content: {
-        'application/json': {
-          amount: number;
-          priority?: number | undefined;
-          note?: string | undefined;
-        };
-      };
-    };
-    responses: {
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          'application/json': {
-            code: string;
-            message: string;
-            data: {
-              count: number;
-              label: string;
-              priority?: number | undefined;
-              note?: string | undefined;
-            };
-          };
-        };
-      };
-    };
-  };
-  McpTestToolFixture_array: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          'application/json': {
-            code: string;
-            message: string;
-            data: string[];
-          };
-        };
-      };
-    };
-  };
-  McpTestToolFixture_unsupported: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          'text/plain': string;
-        };
-      };
-    };
-  };
-  McpTestToolFixture_excluded: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          'text/plain': string;
-        };
-      };
-    };
-  };
-  McpTestToolFixture_closed: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          'application/json': {
-            code: string;
-            message: string;
-            data: {
-              count: number;
-            };
           };
         };
       };

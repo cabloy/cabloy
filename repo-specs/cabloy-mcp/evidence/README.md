@@ -1,5 +1,22 @@
 # MCP Evidence Handling
 
+## Fixture module relocation (2026-11-11)
+
+Current ownership is `a-test/test-mcp` at `vona/src/suite-vendor/a-test/modules/test-mcp`. The backend `cabloy-mcp` suite contains only `cabloy-mcp` and `mcp-auth`; fixture-to-runtime reuse remains one-way.
+
+| Historical identity/location | Present-day identity/location |
+| --- | --- |
+| `mcp-test` / `vona-module-mcp-test` | `test-mcp` / `vona-module-test-mcp` |
+| `vona/src/suite/cabloy-mcp/modules/mcp-test/` or `vona/src/suite-vendor/cabloy-mcp/modules/mcp-test/` | `vona/src/suite-vendor/a-test/modules/test-mcp/` |
+| Fixture `test/businessTools.test.ts`, `test/catalog.test.ts`, `test/permission.test.ts` | Same relative test filenames under the new module |
+| Earlier standalone `test/localHttp.test.ts`, later `qualification/localHttp.test.ts` | `vona/src/suite-vendor/a-test/modules/test-mcp/qualification/localHttp.test.ts` |
+| `PROJECT_DISABLED_MODULES=mcp-test` in an old invocation | Use `PROJECT_DISABLED_MODULES=test-mcp` for a new invocation |
+| Module-derived default `mcp-test_*` tool names | Module-derived default `test-mcp_*` tool names |
+
+This is a navigation/current-execution mapping, not a claim that every historical entrypoint still exists. Earlier `devHttp.test.ts` shared-owner proof predates the separate normal-owner migration; current authenticated HTTP tests belong to `vona/src/suite-vendor/cabloy-mcp/modules/cabloy-mcp/test/businessHttp.test.ts`. The standalone qualification requires the managed no-listener startup described in the [current guide](../../../repo-docs/mcp/mcp-guide.md#automated-verification).
+
+Historical logs, executed commands/results, ADR decisions, progress entries and source-hash snapshots are intentionally unchanged, including paths naming `mcp-test`. Hashes continue to identify the original source bytes. Explicit `mcp_test_action_*` tool names, `x-mcp-test-owner`, `commerce_*` tools and unrelated protocol strings are not module-derived names and remain compatible. Launcher commands `mcp:test:local` and `mcp:commerce:local` are unchanged. This mapping is neither a rerun nor new evidence of the relocated module; no previous proof or WBS/ATP status is promoted.
+
 ## Path redaction (2026-10-17)
 
 At the user's request, retained Phase 10 and Phase 20 evidence has been sanitized to remove local machine and checkout locations:
