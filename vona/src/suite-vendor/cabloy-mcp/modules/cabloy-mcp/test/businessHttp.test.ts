@@ -532,6 +532,10 @@ describe('businessHttp.test.ts', { concurrency: false, timeout: 180000 }, () => 
         );
         assert.equal(initialized.status, 200);
         assert.equal(initialized.body.result.protocolVersion, '2025-11-25');
+        assert.deepEqual(initialized.body.result.serverInfo, {
+          name: app.meta.env.APP_NAME?.trim() || 'cabloy-mcp-actions',
+          version: app.meta.env.APP_VERSION?.trim() || '0.1.0',
+        });
       }
       const listed = await send('tools/list', {}, { legacy, headers });
       assert.equal(listed.status, 200);

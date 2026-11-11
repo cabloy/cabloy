@@ -533,8 +533,12 @@ export async function createControllerToolServer(
     const contractInputCheck = fromJsonSchema(
       toolContract.inputSchema as Parameters<typeof fromJsonSchema>[0],
     )['~standard'];
+    const env = app.meta.env;
     const server = new Server(
-      { name: 'cabloy-mcp-actions', version: '0.1.0' },
+      {
+        name: env.APP_NAME?.trim() || 'cabloy-mcp-actions',
+        version: env.APP_VERSION?.trim() || '0.1.0',
+      },
       { capabilities: { tools: {} } },
     );
     server.setRequestHandler('tools/list', () =>

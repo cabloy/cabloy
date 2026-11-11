@@ -73,13 +73,13 @@ async function connect(server: Server) {
     await client.send({ jsonrpc: '2.0', id: requestId, method, params } as JSONRPCRequest);
     return await response;
   };
-  await request('initialize', {
+  const initialized = await request('initialize', {
     protocolVersion: '2025-11-25',
     capabilities: {},
     clientInfo: { name: 'business-tool-test', version: '1.0.0' },
   });
   await client.send({ jsonrpc: '2.0', method: 'notifications/initialized' });
-  return { request, close: () => server.close() };
+  return { request, serverInfo: initialized.result.serverInfo, close: () => server.close() };
 }
 
 const toolContractToolName = 'cabloy_tool_contract';
@@ -240,6 +240,48 @@ async function withStudentToolPermissions(fn: () => Promise<void>) {
 }
 
 describe('businessTools.test.ts', { concurrency: false, timeout: 60000 }, () => {
+  it('reports application identity with trimmed values and independent defaults during initialization', async () => {
+    await app.bean.executor.mockCtx(async () => {
+      for (const [env, expected] of [
+        [
+          { APP_NAME: '  school-prod  ', APP_VERSION: '  2.3.0  ' },
+          { name: 'school-prod', version: '2.3.0' },
+        ],
+        [
+          { APP_NAME: undefined, APP_VERSION: undefined },
+          { name: 'cabloy-mcp-actions', version: '0.1.0' },
+        ],
+        [
+          { APP_NAME: '', APP_VERSION: ' \t ' },
+          { name: 'cabloy-mcp-actions', version: '0.1.0' },
+        ],
+        [
+          { APP_NAME: ' \t ', APP_VERSION: '  2.3.0  ' },
+          { name: 'cabloy-mcp-actions', version: '2.3.0' },
+        ],
+        [
+          { APP_NAME: '  school-prod  ', APP_VERSION: '' },
+          { name: 'school-prod', version: '0.1.0' },
+        ],
+      ] as const) {
+        const meta = Object.create(app.meta);
+        Object.defineProperty(meta, 'env', { value: { ...app.meta.env, ...env } });
+        const application: typeof app = Object.create(app);
+        Object.defineProperty(application, 'meta', { value: meta });
+        const client = await connect(
+          await createControllerToolServer(application, 'mcp:read', {
+            includeTool: () => false,
+          }),
+        );
+        try {
+          assert.deepEqual(client.serverInfo, expected);
+        } finally {
+          await client.close();
+        }
+      }
+    });
+  });
+
   it('compacts only native query bindings and extracts exact finite generated operands without mutation', async () => {
     class QueryModel {}
     const query = {
