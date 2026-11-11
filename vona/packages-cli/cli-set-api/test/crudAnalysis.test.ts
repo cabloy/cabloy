@@ -435,10 +435,13 @@ describe('default CRUD analysis generation', { concurrency: false }, () => {
           Delete: false,
           DeleteBulk: false,
         };
+        assert.equal(controller.match(/discovery:/g)?.length, 1);
         for (const [action, readOnly] of Object.entries(actions)) {
+          const discovery =
+            action === 'Select' ? "    discovery: { output: [['list', 'items']] },\n" : '';
           assert.ok(
             controller.includes(
-              `@Mcp.tool({\n    description: $locale('Record${action}Description'),\n    readOnly: ${readOnly},\n  })\n  @Web.`,
+              `@Mcp.tool({\n    description: $locale('Record${action}Description'),\n    readOnly: ${readOnly},\n${discovery}  })\n  @Web.`,
             ),
             action,
           );

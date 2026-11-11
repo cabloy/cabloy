@@ -43,6 +43,7 @@ export class Controller<%=argv.resourceNameCapitalize%> extends BeanBase {
   @Mcp.tool({
     description: $locale('<%=argv.resourceNameCapitalize%>SelectDescription'),
     readOnly: true,
+    discovery: { output: [['list', 'items']] },
   })
   @Web.get('', { summary: $locale('<%=argv.resourceNameCapitalize%>Select') })
   @Api.body(Dto<%=argv.resourceNameCapitalize%>SelectRes)
