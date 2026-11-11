@@ -9,14 +9,13 @@ import { fileURLToPath } from 'node:url';
 import { assertTestAppIdentity, SymbolBeanContainerInstances } from 'vona';
 import { app } from 'vona-mock';
 import { SymbolRouterMiddleware } from 'vona-module-a-executor';
-
 import {
-  createFixtureTransport,
   FixtureTransportError,
   readFixtureBody,
-  writeFixtureFailure,
-} from '../../src/lib/transport.ts';
-import { checkFixtureIngress, fixtureIngressLimits } from '../../src/lib/transportIngress.ts';
+  checkFixtureIngress,
+  fixtureIngressLimits,
+} from 'vona-module-cabloy-mcp';
+import { createFixtureTransport, writeFixtureFailure } from 'vona-module-cabloy-mcp/testing';
 
 type Transport = ReturnType<typeof createFixtureTransport>;
 type TransportOptions = Parameters<typeof createFixtureTransport>[3];
@@ -117,7 +116,7 @@ export interface NativeTransportFixture {
   close: () => Promise<void>;
 }
 
-const selectedFile = 'src/suite/cabloy-mcp/modules/cabloy-mcp/qualification/transport.test.ts';
+const selectedFile = 'src/suite-vendor/a-test/modules/test-mcp/qualification/transport.test.ts';
 const methods = ['POST', 'GET', 'DELETE'] as const;
 const modes = new Set([
   'json',
@@ -173,7 +172,7 @@ function assertDedicatedChild() {
     process.argv.length === 5 &&
     process.argv[2] !== undefined &&
     resolve(process.argv[2], selectedFile) ===
-      fileURLToPath(new URL('../../qualification/transport.test.ts', import.meta.url));
+      fileURLToPath(new URL('../transport.test.ts', import.meta.url));
   if (
     !app.meta.isTest ||
     env.META_MODE !== 'test' ||

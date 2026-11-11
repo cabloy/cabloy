@@ -26,7 +26,20 @@ The eight ordinary runtime/auth test files now belong to `a-test/test-mcp`. Use 
 | `vona/src/suite-vendor/cabloy-mcp/modules/cabloy-mcp/test/{businessHttp,config,transportGuards}.test.ts` | `vona/src/suite-vendor/a-test/modules/test-mcp/test/cabloy-mcp/` with the same filenames |
 | `vona/src/suite-vendor/cabloy-mcp/modules/mcp-auth/test/{authorization,authorizationGrant,customScope,passport,registration}.test.ts` | `vona/src/suite-vendor/a-test/modules/test-mcp/test/mcp-auth/` with the same filenames |
 
-The three existing fixture tests remain at `test-mcp/test/`. Production-module qualification tests and the six runtime `test/support/` files used by qualification remain in place. Recursive automatic discovery follows the new test owner; explicit file selectors remain usable when `PROJECT_DISABLED_MODULES=test-mcp` intentionally excludes fixture runtime resources. This consolidation changes test location, not production runtime ownership or historical WBS/ATP acceptance status.
+The three existing fixture tests remain at `test-mcp/test/`. At this ordinary-test consolidation stage, production-module qualification tests and the six runtime `test/support/` files used by qualification remained in place; the subsequent qualification relocation below supersedes that location. Recursive automatic discovery follows the new test owner; explicit file selectors remain usable when `PROJECT_DISABLED_MODULES=test-mcp` intentionally excludes fixture runtime resources. This consolidation changes test location, not production runtime ownership or historical WBS/ATP acceptance status.
+
+## Qualification relocation (2026-11-11)
+
+The six runtime-module qualification tests and their six dedicated support files now belong to `a-test/test-mcp`, alongside the existing `qualification/localHttp.test.ts`.
+
+| Historical location | Present-day location |
+| --- | --- |
+| `vona/src/suite-vendor/cabloy-mcp/modules/cabloy-mcp/qualification/` | `vona/src/suite-vendor/a-test/modules/test-mcp/qualification/`, preserving test filenames |
+| `vona/src/suite-vendor/cabloy-mcp/modules/cabloy-mcp/test/support/` | `vona/src/suite-vendor/a-test/modules/test-mcp/qualification/support/`, preserving helper filenames |
+
+Qualification and its support remain outside automatic `test/**/*.ts` discovery. The existing `test:mcp:no-listener` command selects the same six gate tests at their current locations. Native `transport.test.ts` still requires a separate exact single-file managed no-listener invocation; do not add it to the batch or use a directory glob. See the [current guide](../../../repo-docs/mcp/mcp-guide.md#automated-verification).
+
+Cross-module qualification access uses the explicit source-only `vona-module-cabloy-mcp/testing` export for the existing owner/transport seams. This repository dev/test entry is not a compiled production entry; the runtime root export and inert-source assertions are unchanged. Historical commands, logs, source hashes and acceptance statuses retain their original revision attribution; this mapping alone establishes no new WBS/ATP proof.
 
 ## Path redaction (2026-10-17)
 

@@ -21,6 +21,11 @@
       "import": "./src/index.ts",
       "default": "./dist/index.js"
     },
+    "./testing": {
+      "types": "./src/lib/testing.ts",
+      "import": "./src/lib/testing.ts",
+      "default": "./src/lib/testing.ts"
+    },
     "./package.json": "./package.json"
   },
   "scripts": {

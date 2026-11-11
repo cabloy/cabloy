@@ -1,4 +1,8 @@
 import type { RequestBoundary } from 'vona';
+import type {
+  ProductionOwnerContext,
+  ProductionOwnerDrainReport,
+} from 'vona-module-cabloy-mcp/testing';
 
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
@@ -13,17 +17,12 @@ import {
   SymbolBeanContainerInstances,
 } from 'vona';
 import { app } from 'vona-mock';
-
-import type {
-  ProductionOwnerContext,
-  ProductionOwnerDrainReport,
-} from '../src/lib/productionRequestOwner.ts';
-
 import {
   createProductionRequestOwner,
   productionOwnerLimits,
-} from '../src/lib/productionRequestOwner.ts';
-import { createRequestBoundaryOwner } from '../src/lib/requestBoundaryOwner.ts';
+  createRequestBoundaryOwner,
+} from 'vona-module-cabloy-mcp/testing';
+
 import {
   barrier,
   boundaryIO,
@@ -31,8 +30,8 @@ import {
   safeEvent,
   turns,
   waitFor,
-} from '../test/support/productionBoundaryFixture.ts';
-import { controlledScope } from '../test/support/requestBoundaryFoundationFixture.ts';
+} from './support/productionBoundaryFixture.ts';
+import { controlledScope } from './support/requestBoundaryFoundationFixture.ts';
 
 const owners: ReturnType<typeof createProductionRequestOwner>[] = [];
 function owner() {
@@ -1238,7 +1237,10 @@ describe(
       { timeout: 15_000 },
       async t => {
         const source = await readFile(
-          new URL('../src/lib/productionRequestOwner.ts', import.meta.url),
+          new URL(
+            '../../../../cabloy-mcp/modules/cabloy-mcp/src/lib/productionRequestOwner.ts',
+            import.meta.url,
+          ),
           'utf8',
         );
         assert.equal(
@@ -1247,7 +1249,10 @@ describe(
           ),
           false,
         );
-        const index = await readFile(new URL('../src/index.ts', import.meta.url), 'utf8');
+        const index = await readFile(
+          new URL('../../../../cabloy-mcp/modules/cabloy-mcp/src/index.ts', import.meta.url),
+          'utf8',
+        );
         assert.equal(index.includes('productionRequestOwner'), false);
         const current = owner();
         record(t, 'inert-source-scope', 'source-scope', current, 0, false, false);

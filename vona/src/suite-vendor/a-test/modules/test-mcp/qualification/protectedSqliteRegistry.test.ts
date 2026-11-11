@@ -20,7 +20,7 @@ import {
   poison,
   projection,
   proof,
-} from '../test/support/protectedSqliteRegistryFixture.ts';
+} from './support/protectedSqliteRegistryFixture.ts';
 
 function withBoundary<T>(continuation: () => T): T {
   return runWithRequestBoundary(createRequestBoundary(), continuation);

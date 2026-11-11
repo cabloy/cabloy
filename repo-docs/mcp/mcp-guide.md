@@ -169,13 +169,13 @@ npm run test
 npm --prefix vona run test:mcp:no-listener
 ```
 
-The ordinary test command uses the managed application listener, including the business HTTP tests. The no-listener command starts a separate managed test run with `SERVER_LISTEN_DISABLE=true` and explicitly selects six qualification entrypoints under the backend `cabloy-mcp` and `test-mcp` modules. They cover request boundaries, the protected SQLite registry, existing-ready composition, ingress interception, and the fixture-owned local HTTP transport. Both commands retain the managed runner's disposable-resource ownership and cleanup rules.
+The ordinary test command uses the managed application listener, including the business HTTP tests. The no-listener command starts a separate managed test run with `SERVER_LISTEN_DISABLE=true` and explicitly selects six qualification entrypoints under the backend `a-test/test-mcp` module. They cover request boundaries, the protected SQLite registry, existing-ready composition, ingress interception, and the fixture-owned local HTTP transport. Both commands retain the managed runner's disposable-resource ownership and cleanup rules.
 
 The SQLite, PostgreSQL, MySQL, and PostgreSQL coverage workflows require the no-listener gate separately. The ordinary coverage command retains its own report; the qualification gate does not overwrite it.
 
 Do not move these qualification entrypoints into automatic `test/**/*.ts` discovery, disable the listener for the ordinary business HTTP tests, or toggle the shared listener between suites. Listener-absence assertions are part of the qualification contract.
 
-`vona/src/suite-vendor/cabloy-mcp/modules/cabloy-mcp/qualification/transport.test.ts` is a different native transport qualification with an exact single-file managed-child requirement. It is intentionally not included in `test:mcp:no-listener`; do not replace the explicit file selection with a qualification-directory glob.
+`vona/src/suite-vendor/a-test/modules/test-mcp/qualification/transport.test.ts` is a different native transport qualification with an exact single-file managed-child requirement. It is intentionally not included in `test:mcp:no-listener`; do not replace the explicit file selection with a qualification-directory glob.
 
 ## Source reading pointers
 

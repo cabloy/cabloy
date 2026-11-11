@@ -1,13 +1,9 @@
 import type { IncomingMessage, ServerResponse } from 'node:http';
+import type { ProductionOwnerContext, ProductionOwnerPorts } from 'vona-module-cabloy-mcp/testing';
 
 import assert from 'node:assert/strict';
 import { EventEmitter } from 'node:events';
 import { setImmediate as nextTurn } from 'node:timers/promises';
-
-import type {
-  ProductionOwnerContext,
-  ProductionOwnerPorts,
-} from '../../src/lib/productionRequestOwner.ts';
 
 import { boundedProof } from './boundedProof.ts';
 

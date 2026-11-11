@@ -21,9 +21,8 @@ import {
   ServiceTransactionAsyncLocalStorage,
 } from 'vona-module-a-orm';
 import { createProtectedSqliteRegistry } from 'vona-module-a-ormdialect';
+import { productionOwnerLimits, createRequestBoundaryOwner } from 'vona-module-cabloy-mcp/testing';
 
-import { productionOwnerLimits } from '../../src/lib/productionRequestOwner.ts';
-import { createRequestBoundaryOwner } from '../../src/lib/requestBoundaryOwner.ts';
 import { boundaryIO } from './productionBoundaryFixture.ts';
 import { createProtectedSqliteFixture } from './protectedSqliteRegistryFixture.ts';
 

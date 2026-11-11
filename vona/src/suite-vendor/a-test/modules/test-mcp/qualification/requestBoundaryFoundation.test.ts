@@ -43,7 +43,7 @@ import {
   rejectsIdentity,
   spanFixture,
   turns,
-} from '../test/support/requestBoundaryFoundationFixture.ts';
+} from './support/requestBoundaryFoundationFixture.ts';
 
 const ROOT_CONTEXT = Object.getOwnPropertyDescriptor(
   ServiceTelemetry.prototype,
