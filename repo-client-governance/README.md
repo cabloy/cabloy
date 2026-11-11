@@ -59,6 +59,14 @@ Verify these stages separately:
 
 Implicit selection is a client/model decision, not a guarantee that every matching request will use the skill. Explicit invocation can help test or request a workflow, but does not grant business authority or replace backend enforcement. Keep server regressions and live client observations distinct; if loading evidence is unavailable, report that limit rather than inferring skill use.
 
+## Connection naming and multiple servers
+
+See [Connection names and multiple servers](../repo-docs/mcp/mcp-browser-authorization.md#connection-names-and-multiple-servers) for the naming convention and the distinction between client-local names, protocol server identity and original tool names. `cabloy_<business-or-site>_<environment>` is recommended labeling, not a required prefix, capability test or skill trigger. The query skill works with other client aliases.
+
+Resolve the user's target before sending business arguments. Keep discovery, `cabloy_tool_contract` lookup and execution on that selected connection, and pass the original tool name without the client alias in the helper arguments. Ask when the business/site or environment is ambiguous; do not silently switch after errors or empty results, or reuse another connection's contract.
+
+For a multi-server client check, use two already-authorized connections with overlapping tool names and distinguishable known results. Verify that a target-specific request stays on the selected connection for both lookup and execution; an ambiguous request asks before reading rows; and an unavailable or denied target is reported without a fallback call. A successful query on one server alone does not establish these properties. Do not create extra connections, change permissions or inspect credentials merely to obtain this evidence.
+
 ## Contract and safety boundary
 
 - Contract lookup is metadata retrieval, not execution of the target Action, a row query or a trial write. The helper is visible with any visible Action and checks the exact target's current scope and guards afresh for all target types.

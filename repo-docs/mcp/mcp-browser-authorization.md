@@ -96,6 +96,28 @@ scopes = ["mcp:read"]
 
 To enable refresh, explicitly register `grant_types: ["authorization_code", "refresh_token"]` (either request order is accepted). The server persists and returns that canonical pair; code exchange then returns both tokens. Omitted `grant_types` or explicit `["authorization_code"]` remain code-only. Refresh-only, unrelated or duplicate grants and unsupported scopes remain invalid. Existing code-only registrations, pending grants and legacy opaque tokens are not upgraded: obtain a new pair-capable registration and fresh authorization.
 
+### Connection names and multiple servers
+
+Distinguish these identities when configuring a client:
+
+| Identity                     | Example                                                    | Meaning                                                                                                            |
+| ---------------------------- | ---------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------ |
+| Client-local connection name | `cabloy_school_prod` in `[mcp_servers.cabloy_school_prod]` | Identifies one configured connection in the client.                                                                |
+| Protocol `serverInfo.name`   | `cabloy-mcp-actions`                                       | Identifies the current Controller-tool server implementation, not a particular deployment or instance.             |
+| Server-published `tool.name` | `training-student_student_select`                          | Identifies an operation within that server. A client may present it with an additional namespace or display alias. |
+
+The `cabloy` connection name in the scope example is illustrative, not required. For multiple connections, prefer `cabloy_<business-or-site>_<environment>`, such as `cabloy_school_prod`, `cabloy_school_test` and `cabloy_store_prod`. Use distinct names within the client's configuration namespace, prioritize business/environment clarity, and keep names stable, short and free of credentials or sensitive identifiers. Lowercase ASCII letters, digits and underscores are a conservative convention, not a complete Codex or MCP name-validation specification; follow the client's supported syntax.
+
+A `cabloy_` prefix can help people and, where the client exposes it, an Agent recognize the source. It is optional branding, not a capability test, automatic skill trigger or authorization rule. Skills must not require that prefix. Tool namespace/display behavior is client-specific; do not assume a universal prefix format or mechanically strip one to recover a server tool name.
+
+A connection name is only a label: `prod`, `test` or `readonly` does not establish the effective environment or permissions. Renaming it does not change the endpoint, OAuth resource, server-owned instance routing or selected consent Site. Configure those through their existing supported mechanisms. Distinct SSR Site page entries can share one backend `/mcp` and authority; do not duplicate a connection solely because the frontend entry differs. Decide whether separate connections are needed from their actual endpoints, authorization resources, instance/data scopes or business capabilities, not website labels alone.
+
+For each operation, resolve the user's intended business/site and environment using the client's available connection information and current tool descriptions. A name is a selection hint, not proof of identity or authority. If multiple connections still fit and the target is unclear, ask before sending business arguments or reading rows; do not query every server to guess the intended target.
+
+Keep the selected connection and original server tool name together throughout discovery, contract lookup and execution. Multiple deployments can publish the same `serverInfo.name`, business tool names and `cabloy_tool_contract`; identical names do not imply the same data, contract or permissions. Call the helper on the selected connection and pass only the original tool name in its `tool` argument, without a client connection prefix or extra server selector. Execute the business tool on that same connection. Do not reuse another connection's contract or silently switch after a denial, missing tool, empty result or transport failure. If the user explicitly chooses a different target, discover and retrieve its contract afresh, and keep results attributed to their source rather than silently merging environments.
+
+The [client query skill](https://github.com/cabloy/cabloy/tree/main/repo-client-governance/skills/cabloy-mcp-query) follows this same-connection rule without depending on a particular client alias.
+
 ### Native client compatibility
 
 DCR accepts an omitted `application_type` or exactly `application_type: "native"` as a request-only compatibility hint. It is validated and discarded, not persisted or echoed. Other values, including `web`, null, wrong types, case and whitespace variants, remain invalid. This does not introduce OIDC application-type semantics or implement semantics for ignored registration metadata. Exact redirects, client authentication, scopes and PKCE remain required.

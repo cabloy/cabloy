@@ -110,6 +110,10 @@ Business skills organize a user's task; they do not define a second API or secur
 
 Organize a skill around a business task, not one wrapper per tool. It may coordinate several tools, but must discover available operations and use their current contracts instead of copying field, operator, enum or schema catalogs. Request only the contract section needed for the next step. A skill reference cannot establish current permissions, available tools or runtime configuration values.
 
+### Select the intended connection
+
+With multiple servers, keep the selected connection and original tool name together: discover the tool, retrieve its contract and execute it on that same connection. Client aliases help identify a business/site and environment but do not establish capabilities, permissions or data scope; a `cabloy_` prefix is optional. Identical tool names on different connections are not interchangeable. Clarify an ambiguous target before business reads and never silently switch servers after a failure or empty result. See [Connection names and multiple servers](/mcp/mcp-browser-authorization#connection-names-and-multiple-servers) for the naming convention and identity boundaries.
+
 ### Package task knowledge with the skill
 
 Keep the core workflow, critical constraints and conditions for reading additional material in `SKILL.md`. Package the business terminology, counting rules, task prerequisites, decision rules and examples an Agent needs in the skill's `references/`, with explicit relative links and reading conditions from `SKILL.md`. Obtaining the complete skill directory should be sufficient; an end-user task must not require a monorepo checkout or source inspection. Reference files are not necessarily loaded automatically, so do not hide essential safety requirements only in them.
