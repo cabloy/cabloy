@@ -23,7 +23,8 @@ describe('performAction.test.ts', { concurrency: false }, () => {
         );
         assert.deepEqual(result, { id: 123, url: mockUrl('performAction/echo') });
         await assert.rejects(
-          app.bean.executor.performAction('post', '/test/vona/performAction/missing'),
+          // Intentionally bypass the generated path type to exercise a missing route.
+          app.bean.executor.performAction('post', '/test/vona/performAction/missing' as never),
           { code: 404, status: 404 },
         );
         assert.deepEqual(messages, []);
