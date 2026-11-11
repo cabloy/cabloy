@@ -2,8 +2,10 @@ import type { JSONRPCMessage, JSONRPCRequest, Server } from '@modelcontextprotoc
 import type { TestContext } from 'node:test';
 import type { BeanExecutor } from 'vona-module-a-executor';
 import type { IMcpToolOptions } from 'vona-module-a-openapiutils';
+import type { IAnalysisPolicy, IQueryPolicy } from 'vona-module-a-orm';
 import type { IPassport } from 'vona-module-a-user';
 
+import { OpenApiGeneratorV31, OpenAPIRegistry } from '@cabloy/zod-to-openapi';
 import { fromJsonSchema, InMemoryTransport } from '@modelcontextprotocol/server';
 import assert from 'node:assert/strict';
 import { after, before, describe, it } from 'node:test';
@@ -20,12 +22,17 @@ import { $schema, Mcp, SymbolMcpOptions } from 'vona-module-a-openapiutils';
 import * as orm from 'vona-module-a-orm';
 import { recordResourceNameToRoutePath } from 'vona-module-a-web';
 import { createControllerToolServer, createSharedBusinessToolServer } from 'vona-module-cabloy-mcp';
+import z from 'zod';
 
+import type { ToolSchema } from '../../cabloy-mcp/src/lib/controllerToolSchema.ts';
+
+import { compactToolSchema } from '../../cabloy-mcp/src/lib/controllerToolContract.ts';
 import {
   beginToolCall,
   recordToolCall,
   summarizeToolQueries,
 } from '../../cabloy-mcp/src/lib/controllerToolDiagnostics.ts';
+import { controllerToolQuery } from '../../cabloy-mcp/src/lib/controllerToolQuery.ts';
 import {
   closeMutationInputSchema,
   isPrimitiveSchema,
@@ -72,6 +79,8 @@ async function connect(server: Server) {
   return { request, close: () => server.close() };
 }
 
+const toolContractToolName = 'cabloy_tool_contract';
+const retiredQueryCapabilitiesToolName = 'cabloy_query_capabilities';
 const toolName = 'commerce_products_search';
 const detailToolName = 'commerce_product_detail';
 const categoryToolName = 'commerce_categories_list';
@@ -99,6 +108,36 @@ async function nativeStudentQuery() {
   // Legacy Student modules do not export studentQuery.
   const student = (await import('vona-module-training-student')) as Record<string, any>;
   return student.studentQuery;
+}
+
+async function nativeStudentInput(action = 'select'): Promise<Record<string, any>> {
+  const controller = recordResourceNameToRoutePath['training-student:student'].controller;
+  const document = await app.bean.openapi.generateJsonOfControllerAction(
+    controller,
+    action,
+    'V31',
+    {
+      includeExcluded: true,
+      schemaTarget: 'mcp',
+    },
+  );
+  const operation = Object.values(document.paths ?? {})
+    .map(path => (path as any).get)
+    .find(Boolean);
+  assert.ok(operation, `native Student ${action} operation exists`);
+  return toolSchema(
+    {
+      type: 'object',
+      properties: Object.fromEntries(
+        operation.parameters.map((parameter: any) => [parameter.name, parameter.schema]),
+      ),
+      required: operation.parameters
+        .filter((parameter: any) => parameter.required)
+        .map((parameter: any) => parameter.name),
+      additionalProperties: false,
+    },
+    document.components?.schemas ?? {},
+  );
 }
 
 function studentActionIsScoped(action: string) {
@@ -198,6 +237,417 @@ async function withStudentToolPermissions(fn: () => Promise<void>) {
 }
 
 describe('businessTools.test.ts', { concurrency: false, timeout: 60000 }, () => {
+  it('compacts only native query bindings and extracts exact finite generated operands without mutation', async () => {
+    class QueryModel {}
+    const query = {
+      name: 'McpCompactOperandFixture',
+      modelClass: QueryModel,
+      modelLike: QueryModel,
+      fields: {
+        title: {
+          type: 'string',
+          schema: z.string(),
+          nullable: true,
+          operators: ['eq', 'in', 'isNull', 'isNotNull'],
+        },
+        level: {
+          type: 'enum',
+          schema: z.union([z.literal(1), z.literal(2), z.literal(3)]),
+          nullable: false,
+          operators: ['eq', 'in'],
+        },
+        id: {
+          type: 'identity',
+          schema: z.string().regex(/^\d+$/),
+          nullable: false,
+          operators: ['eq', 'in'],
+        },
+        createdAt: {
+          type: 'timestamp',
+          schema: z.iso.datetime({ offset: true }),
+          nullable: false,
+          operators: ['gte'],
+        },
+        day: { type: 'date', schema: z.iso.date(), nullable: false, operators: ['eq'] },
+      },
+      pagination: true,
+      orderable: ['title'],
+      projection: { mode: 'fixed' },
+      defaults: { pageNo: 1, pageSize: 20, orders: [{ field: 'title', direction: 'asc' }] },
+      limits: { ...orm.queryDefaultLimits, maxStringLength: 12, maxListItems: 3 },
+      bindings: {},
+      conveniences: {},
+    } as unknown as IQueryPolicy;
+    const analysis = {
+      modelClass: QueryModel,
+      modelLike: QueryModel,
+      groups: ['level'],
+      aggrs: { count: ['*', 'id'] },
+      defaults: {
+        group: { groups: ['level'], aggrs: { count: ['*'] } },
+        aggregate: { aggrs: { count: ['*', 'id'] } },
+      },
+      limits: { maxGroups: 1, maxMetrics: 2, maxGroupRows: 10 },
+    } as unknown as IAnalysisPolicy;
+    const registry = new OpenAPIRegistry();
+    registry.register(
+      'CompactQuery',
+      z.strictObject({
+        ...orm.queryControlSchemas(query),
+        title: z.string().optional().openapi({ description: 'Named UI filter' }),
+      }),
+    );
+    const generated = new OpenApiGeneratorV31(registry.definitions).generateDocument({
+      openapi: '3.1.0',
+      info: { title: 'MCP query extraction fixture', version: '1' },
+    });
+    const schemas = generated.components!.schemas! as Record<string, any>;
+    const ref = { $ref: '#/components/schemas/CompactQuery' };
+    const native = resolveSchema(ref, schemas);
+    const predicate = resolveSchema(native.properties.where, schemas);
+    const leaves = predicate.anyOf
+      .map((branch: any) => resolveSchema(branch, schemas))
+      .filter((branch: any) => branch.properties?.field);
+    assert.equal(leaves.length, 9);
+    const snapshot = JSON.stringify(schemas);
+    for (const { flat, field, mode } of [
+      { flat: true, mode: 'select' },
+      { flat: false, mode: 'select' },
+      { flat: true, field: 'criteria', mode: 'group' },
+      { flat: false, field: 'criteria', mode: 'aggregate' },
+    ] as const) {
+      const group: Record<string, any> = field
+        ? {
+            type: 'object',
+            properties: { [field]: ref, untouched: { type: 'string' } },
+            additionalProperties: false,
+          }
+        : ref;
+      const input: Record<string, any> = flat
+        ? group
+        : {
+            type: 'object',
+            properties: {
+              query: group,
+              params: { type: 'object', properties: { id: { type: 'string' } } },
+            },
+            required: ['query', 'params'],
+            additionalProperties: false,
+          };
+      const inputSnapshot = JSON.stringify(input);
+      const projected = controllerToolQuery(
+        input,
+        schemas,
+        [
+          {
+            type: 'query',
+            ...(field ? { field } : {}),
+            query,
+            ...(mode === 'select' ? {} : { analysis, analysisMode: mode }),
+          },
+        ],
+        flat,
+      );
+      const [binding] = projected.bindings;
+      const argumentPath = [...(flat ? [] : ['query']), ...(field ? [field] : [])];
+      assert.deepEqual(binding.argumentPath, argumentPath);
+      assert.equal(binding.mode, mode);
+      assert.deepEqual(binding.capabilities.query, orm.queryCapabilities(query));
+      assert.deepEqual(
+        binding.capabilities.analysis,
+        mode === 'select' ? undefined : orm.analysisCapabilities(analysis, mode),
+      );
+      const compact = argumentPath.reduce((schema, key) => schema.properties[key], projected.input);
+      assert.deepEqual(Object.keys(compact.properties.where).sort(), [
+        'additionalProperties',
+        'description',
+        'type',
+      ]);
+      assert.equal(compact.properties.where.type, 'object');
+      assert.match(compact.properties.where.description, /cabloy_tool_contract/);
+      const expectedControls = structuredClone(native);
+      delete expectedControls.properties.where;
+      delete expectedControls.properties.orders.filter;
+      assert.deepEqual(binding.querySchema, toolSchema(expectedControls, schemas));
+      assert.deepEqual(binding.predicates, toolSchema({ anyOf: leaves }, schemas));
+      const published = toolSchema(projected.input, schemas);
+      assert.doesNotMatch(JSON.stringify(published), /QueryPredicate|"capabilities":/);
+      assert.equal(published.$defs, undefined, 'unused predicate definitions disappear');
+      assert.deepEqual(compact.properties.title, native.properties.title);
+      assert.deepEqual(compact.properties.pageSize, native.properties.pageSize);
+      if (field) {
+        const projectedGroup = flat ? projected.input : projected.input.properties.query;
+        assert.deepEqual(projectedGroup.properties.untouched, group.properties!.untouched);
+      }
+      if (!flat) assert.deepEqual(projected.input.properties.params, input.properties!.params);
+      assert.equal(JSON.stringify(input), inputSnapshot);
+      assert.equal(JSON.stringify(schemas), snapshot);
+      const check = fromJsonSchema(binding.predicates as Parameters<typeof fromJsonSchema>[0])[
+        '~standard'
+      ];
+      for (const value of [
+        { field: 'title', op: 'eq', value: 'a' },
+        { field: 'title', op: 'in', value: ['a', 'b'] },
+        { field: 'title', op: 'isNull' },
+        { field: 'title', op: 'isNotNull' },
+        { field: 'level', op: 'eq', value: 2 },
+        { field: 'level', op: 'in', value: [1, 3] },
+        { field: 'id', op: 'eq', value: '12' },
+        { field: 'id', op: 'in', value: ['12', '13'] },
+        { field: 'createdAt', op: 'gte', value: '2026-01-01T00:00:00.000Z' },
+        { field: 'day', op: 'eq', value: '2026-01-01' },
+      ])
+        assert.equal((await check.validate(value)).issues, undefined, JSON.stringify(value));
+      for (const value of [
+        { field: 'title', op: 'eq', value: 'x'.repeat(13) },
+        { field: 'title', op: 'eq', value: null },
+        { field: 'title', op: 'in', value: [] },
+        { field: 'title', op: 'in', value: ['a', 'b', 'c', 'd'] },
+        { field: 'title', op: 'isNull', value: null },
+        { field: 'level', op: 'eq', value: 4 },
+        { field: 'level', op: 'eq', value: '2' },
+        { field: 'id', op: 'eq', value: 12 },
+        { field: 'id', op: 'in', value: ['invalid'] },
+        { field: 'createdAt', op: 'gte', value: 'not-a-date' },
+        { field: 'day', op: 'eq', value: '2026-01-01T00:00:00.000Z' },
+        { field: 'title', op: 'eq', value: 'a', injected: true },
+        { or: [{ field: 'title', op: 'eq', value: 'a' }] },
+      ])
+        assert.ok((await check.validate(value)).issues, JSON.stringify(value));
+    }
+    assert.deepEqual(
+      controllerToolQuery(native, schemas, [], true),
+      { input: native, bindings: [] },
+      'a property named where does not create a policy binding',
+    );
+    const cyclicSchemas = {
+      ...schemas,
+      Loop: { type: 'object', properties: { next: { $ref: '#/components/schemas/Loop' } } },
+    };
+    const cyclicControl = structuredClone(native);
+    cyclicControl.properties.extra = { $ref: '#/components/schemas/Loop' };
+    assert.throws(
+      () => controllerToolQuery(cyclicControl, cyclicSchemas, [{ type: 'query', query }], true),
+      /Recursive query capability/,
+    );
+    const cyclicOperand = structuredClone(predicate);
+    cyclicOperand.anyOf[0].properties.value = { $ref: '#/components/schemas/Loop' };
+    assert.throws(
+      () =>
+        controllerToolQuery(
+          {
+            ...native,
+            properties: { ...native.properties, where: cyclicOperand },
+          },
+          cyclicSchemas,
+          [{ type: 'query', query }],
+          true,
+        ),
+      /Recursive query capability/,
+    );
+    assert.throws(
+      () =>
+        controllerToolQuery(
+          { type: 'object', properties: { where: { type: 'object' } } },
+          {},
+          [{ type: 'query', query }],
+          true,
+        ),
+      /Unsupported query predicate/,
+    );
+    assert.throws(
+      () =>
+        controllerToolQuery(native, schemas, [{ type: 'query', field: 'missing', query }], true),
+      /Query binding unavailable/,
+    );
+    assert.equal(JSON.stringify(schemas), snapshot);
+  });
+
+  it('compacts explicit object and array paths on cloned schemas without retaining hidden definitions', async () => {
+    const schemas = {
+      Body: {
+        type: ['object', 'null'],
+        properties: {
+          amount: { type: 'integer', minimum: 1 },
+          privateGraph: { $ref: '#/components/schemas/Private' },
+        },
+        required: ['amount'],
+        additionalProperties: false,
+      },
+      Private: {
+        type: 'object',
+        properties: {
+          secret: { type: 'string' },
+          children: { type: 'array', items: { $ref: '#/components/schemas/Private' } },
+        },
+      },
+      Item: {
+        type: 'object',
+        properties: { name: { type: 'string' } },
+        required: ['name'],
+        additionalProperties: false,
+      },
+    };
+    const source = {
+      type: 'object',
+      properties: {
+        body: { $ref: '#/components/schemas/Body' },
+        list: { type: ['array', 'null'], items: { $ref: '#/components/schemas/Item' } },
+        items: { type: 'object', properties: { keep: { type: 'boolean' } } },
+        total: { type: 'integer', minimum: 0 },
+      },
+      required: ['body', 'list', 'total'],
+      additionalProperties: false,
+    };
+    const paths = [['body'], ['list', 'items']];
+    const snapshot = JSON.stringify({ source, schemas, paths });
+    const full = toolSchema(source, schemas);
+    assert.ok(full.$defs!.Private, 'full contract retains reachable recursive definitions');
+    assert.equal(full.$defs!.Private.properties.children.items.$ref, '#/$defs/Private');
+    for (const direction of ['input', 'output'] as const) {
+      const compact = toolSchema(compactToolSchema(source, schemas, paths, direction), schemas);
+      assert.deepEqual(compact.required, source.required);
+      assert.equal(compact.additionalProperties, false);
+      assert.deepEqual(compact.properties!.total, source.properties.total);
+      assert.deepEqual(
+        compact.properties!.items,
+        source.properties.items,
+        'items is an ordinary property on objects',
+      );
+      const body = resolveSchema(compact.properties!.body as ToolSchema, compact.$defs ?? {});
+      assert.deepEqual(body.type, ['object', 'null']);
+      assert.equal(body.additionalProperties, true);
+      assert.equal(body.properties, undefined);
+      assert.equal(body.required, undefined);
+      assert.match(body.description, /cabloy_tool_contract/);
+      const list = compact.properties!.list as ToolSchema;
+      assert.deepEqual(list.type, ['array', 'null']);
+      assert.equal(list.items.type, 'object');
+      assert.equal(list.items.additionalProperties, true);
+      assert.equal(list.items.properties, undefined);
+      assert.equal(
+        compact.$defs,
+        undefined,
+        'definitions reachable only through compact nodes disappear',
+      );
+      const check = fromJsonSchema(compact as Parameters<typeof fromJsonSchema>[0])['~standard'];
+      assert.equal(
+        (await check.validate({ body: { any: true }, list: [{ any: true }], total: 0 })).issues,
+        undefined,
+      );
+      assert.equal((await check.validate({ body: null, list: null, total: 0 })).issues, undefined);
+      assert.ok((await check.validate({ body: 1, list: [], total: 0 })).issues);
+      assert.ok((await check.validate({ body: {}, list: [1], total: 0 })).issues);
+      compact.properties!.total.minimum = 99;
+      assert.equal(JSON.stringify({ source, schemas, paths }), snapshot);
+    }
+    const array = compactToolSchema(source, schemas, [['list']], 'output');
+    assert.deepEqual(array.properties!.list.type, ['array', 'null']);
+    assert.deepEqual(array.properties!.list.items, {});
+    const objectItems = compactToolSchema(source, schemas, [['items']], 'input');
+    assert.equal(objectItems.properties!.items.additionalProperties, true);
+    assert.equal(objectItems.properties!.items.properties, undefined);
+    const unprojected = compactToolSchema(source, schemas, [], 'input');
+    assert.deepEqual(unprojected, source);
+    assert.notEqual(unprojected, source);
+    assert.equal(JSON.stringify({ source, schemas, paths }), snapshot);
+  });
+
+  it('rejects invalid discovery paths rather than silently broadening schema projection', () => {
+    const source = {
+      type: 'object',
+      properties: {
+        body: { type: 'object', properties: { nested: { type: 'object' } } },
+        primitive: { type: 'string' },
+        list: {
+          type: 'array',
+          items: { type: 'object', properties: { nested: { type: 'object' } } },
+        },
+        union: { anyOf: [{ type: 'object' }, { type: 'null' }] },
+        one: { oneOf: [{ type: 'object' }] },
+        all: { type: 'object', allOf: [{ type: 'object' }] },
+        mixed: { type: ['object', 'string'] },
+      },
+    };
+    const snapshot = JSON.stringify(source);
+    for (const paths of [
+      [[]],
+      [['missing']],
+      [['primitive']],
+      [['primitive', 'nested']],
+      [['list', 'nested']],
+      [['list', 'items', 'nested']],
+      [['body'], ['body']],
+      [['body'], ['body', 'nested']],
+      [['body', 'nested'], ['body']],
+      [['list'], ['list', 'items']],
+      [['union']],
+      [['one']],
+      [['all']],
+      [['mixed']],
+    ]) {
+      for (const direction of ['input', 'output'] as const) {
+        assert.throws(
+          () => compactToolSchema(source, {}, paths, direction),
+          { name: 'Error', message: new RegExp(`Invalid MCP discovery\\.${direction} path:`) },
+          JSON.stringify(paths),
+        );
+      }
+    }
+    assert.equal(JSON.stringify(source), snapshot);
+  });
+
+  it('publishes reachable recursive definitions as $defs without mutating OpenAPI', async () => {
+    const ref = '#/components/schemas/Node~1With~0Escape';
+    const source = {
+      type: 'object',
+      properties: { node: { $ref: ref, description: 'Root node' } },
+      required: ['node'],
+    };
+    const schemas = {
+      'Node/With~Escape': {
+        type: 'object',
+        properties: {
+          label: { type: 'string' },
+          children: { type: 'array', items: { $ref: ref } },
+        },
+        required: ['label'],
+        additionalProperties: false,
+      },
+      'Private': { type: 'object', properties: { secret: { type: 'string' } } },
+    };
+    const snapshot = JSON.stringify({ source, schemas });
+    const published = toolSchema(source, schemas);
+    assert.equal(published.components, undefined);
+    assert.deepEqual(Object.keys(published.$defs!), ['Node/With~Escape']);
+    assert.deepEqual(published.properties!.node, {
+      $ref: '#/$defs/Node~1With~0Escape',
+      description: 'Root node',
+    });
+    const node = resolveSchema(published.properties!.node, published.$defs!);
+    assert.equal(node.description, 'Root node');
+    assert.equal(node.properties.children.items.$ref, '#/$defs/Node~1With~0Escape');
+    const check = fromJsonSchema(published as Parameters<typeof fromJsonSchema>[0])['~standard'];
+    assert.equal(
+      (await check.validate({ node: { label: 'parent', children: [{ label: 'child' }] } })).issues,
+      undefined,
+    );
+    assert.ok(
+      (await check.validate({ node: { label: 'parent', children: [{ label: 1 }] } })).issues,
+    );
+    assert.equal(JSON.stringify({ source, schemas }), snapshot);
+    assert.equal(toolSchema({ type: 'object' }, schemas).$defs, undefined);
+    assert.throws(() => toolSchema(source, {}), /Unresolved action schema reference/);
+    assert.throws(
+      () =>
+        toolSchema(
+          { type: 'object', properties: { node: { $ref: 'https://example.com/node' } } },
+          {},
+        ),
+      /Unsupported schema reference/,
+    );
+  });
+
   it('closes cloned mutation shapes without changing maps, metadata or source contracts', async () => {
     const metadata = { type: 'object', properties: { label: { type: 'string' } } };
     const node = {
@@ -233,7 +683,7 @@ describe('businessTools.test.ts', { concurrency: false, timeout: 60000 }, () => 
     const snapshot = JSON.stringify({ source, node });
     const schema = toolSchema(source, { Node: node });
     closeMutationInputSchema(schema);
-    const copied = (schema as any).components.schemas.Node;
+    const copied = (schema as any).$defs.Node;
     assert.equal(copied.additionalProperties, false);
     assert.deepEqual(copied.rest, metadata);
     assert.deepEqual(copied.default, metadata);
@@ -346,7 +796,7 @@ describe('businessTools.test.ts', { concurrency: false, timeout: 60000 }, () => 
     ];
     const native = new Date(dateValue);
     const nativeArgs = { trainingRecords: [{ trainingTime: native, day: native }] };
-    const serialized = serializeDateTransport(nativeArgs, transport, dateSchemas);
+    const serialized = serializeDateTransport(nativeArgs, transport, transport.$defs ?? {});
     assert.deepEqual(serialized, {
       trainingRecords: [{ trainingTime: dateValue, day: '2026-05-12' }],
     });
@@ -643,13 +1093,51 @@ describe('businessTools.test.ts', { concurrency: false, timeout: 60000 }, () => 
             assert.match(tool.description, /named filters are additional AND constraints/);
             const where = resolveSchema(
               tool.inputSchema.properties.where,
-              tool.inputSchema.components?.schemas ?? {},
+              tool.inputSchema.$defs ?? {},
             );
-            assert.match(where.description, /explicit leaves \{ field, op, value \}/);
-            assert.match(where.description, /Field-value maps.*are not supported inside where/);
-            assert.match(where.description, /isNull and isNotNull operators omit value/);
-            assert.match(where.description, /admitted by this schema/);
-            assert.deepEqual(where.filter.capabilities.query.fields.level.operators, ['eq', 'gte']);
+            assert.deepEqual(Object.keys(where).sort(), [
+              'additionalProperties',
+              'description',
+              'type',
+            ]);
+            assert.equal(where.type, 'object');
+            assert.match(where.description, /explicit \{field,op,value\} leaves/);
+            assert.match(where.description, /no field-value shorthand/);
+            assert.match(where.description, /cabloy_tool_contract/);
+            assert.doesNotMatch(JSON.stringify(tool.inputSchema), /QueryPredicate|"capabilities":/);
+            const capabilityResponse = await shared.request('tools/call', {
+              name: toolContractToolName,
+              arguments: { tool: tool.name, section: 'query' },
+            });
+            assert.equal(capabilityResponse.error, undefined);
+            const [binding] = capabilityResponse.result.structuredContent.bindings;
+            assert.deepEqual(binding.argumentPath, []);
+            assert.equal(binding.mode, actionName);
+            assert.deepEqual(binding.capabilities.query.fields.level.operators, ['eq', 'gte']);
+            assert.equal(binding.querySchema.properties.where, undefined);
+            const nativeInput = await nativeStudentInput(actionName);
+            const fullInput = await shared.request('tools/call', {
+              name: toolContractToolName,
+              arguments: { tool: tool.name, section: 'input' },
+            });
+            assert.equal(fullInput.error, undefined);
+            assert.deepEqual(fullInput.result.structuredContent, {
+              contractVersion: 1,
+              tool: tool.name,
+              section: 'input',
+              schema: nativeInput,
+            });
+            const nativePredicate = resolveSchema(
+              nativeInput.properties.where,
+              nativeInput.$defs ?? {},
+            );
+            assert.deepEqual(
+              binding.predicates,
+              {
+                anyOf: nativePredicate.anyOf.filter((branch: any) => branch.properties?.field),
+              },
+              'capability operands retain exact native generated leaf schemas',
+            );
             const validator = fromJsonSchema(tool.inputSchema)['~standard'];
             const controls = actionName === 'select' ? {} : { aggrs: { count: ['*'] } };
             assert.equal(
@@ -666,22 +1154,26 @@ describe('businessTools.test.ts', { concurrency: false, timeout: 60000 }, () => 
               ).issues,
               undefined,
             );
-            assert.ok(
-              (
-                await validator.validate({
-                  ...controls,
-                  where: { or: [{ level: 1 }, { level: 2 }] },
-                })
-              ).issues,
-            );
-            assert.ok(
-              (
-                await validator.validate({
-                  ...controls,
-                  where: { field: 'level', op: 'in', value: [1, 2] },
-                })
-              ).issues,
-            );
+            for (const where of [
+              { or: [{ level: 1 }, { level: 2 }] },
+              { field: 'level', op: 'in', value: [1, 2] },
+            ]) {
+              assert.equal(
+                (await validator.validate({ ...controls, where })).issues,
+                undefined,
+                'compact SDK schema admits objects, not their native query semantics',
+              );
+              const rejected = await shared.request('tools/call', {
+                name: tool.name,
+                arguments: { ...controls, where },
+              });
+              assert.equal(rejected.error?.code, -32602);
+              assert.equal(
+                action.mock.callCount(),
+                0,
+                'invalid query semantics still precede dispatch',
+              );
+            }
           } else {
             assert.equal(tool.description, businessDescription, tool.name);
           }
@@ -721,16 +1213,18 @@ describe('businessTools.test.ts', { concurrency: false, timeout: 60000 }, () => 
         if (query) {
           const where = resolveSchema(
             select.inputSchema.properties.where,
-            select.inputSchema.components?.schemas ?? {},
+            select.inputSchema.$defs ?? {},
           );
           const nativeWhere = resolveSchema(
             nativeSelect.properties.where,
             nativeDocument.components.schemas,
           );
-          assert.equal(where.description, nativeWhere.description);
+          assert.notEqual(where.description, nativeWhere.description);
+          assert.match(nativeWhere.description, /Recursive Boolean predicate/);
+          assert.match(where.description, /cabloy_tool_contract/);
           const orders = resolveSchema(
             select.inputSchema.properties.orders,
-            select.inputSchema.components?.schemas ?? {},
+            select.inputSchema.$defs ?? {},
           );
           assert.ok(!orders.description?.includes('Recursive Boolean predicate'));
         }
@@ -755,11 +1249,13 @@ describe('businessTools.test.ts', { concurrency: false, timeout: 60000 }, () => 
           assert.equal((await selectCheck.validate({ level })).issues, undefined);
         }
         if (query) {
-          const whereSchema = resolveSchema(
-            select.inputSchema.properties.where,
-            select.inputSchema.components.schemas,
-          );
-          const capabilities = whereSchema.filter.capabilities.query;
+          const capabilityResponse = await shared.request('tools/call', {
+            name: toolContractToolName,
+            arguments: { tool: select.name, section: 'query' },
+          });
+          assert.equal(capabilityResponse.error, undefined);
+          const capabilities =
+            capabilityResponse.result.structuredContent.bindings[0].capabilities.query;
           assert.deepEqual(capabilities.defaults.orders, [
             { field: 'createdAt', direction: 'desc' },
           ]);
@@ -801,13 +1297,17 @@ describe('businessTools.test.ts', { concurrency: false, timeout: 60000 }, () => 
             },
             orders: [{ field: 'name', direction: 'asc' }],
           };
-          assert.ok(
-            select.inputSchema.components?.schemas,
-            'actual generated recursion stays reachable',
+          assert.equal(
+            select.inputSchema.$defs,
+            undefined,
+            'compact discovery drops unused recursive definitions',
           );
-          assert.ok(JSON.stringify(select.inputSchema).includes('QueryPredicate'));
-          // This compiles the actual tools/list schema, not a synthetic recursive surrogate.
+          assert.equal(JSON.stringify(select.inputSchema).includes('QueryPredicate'), false);
           assert.equal((await selectCheck.validate(recursive)).issues, undefined);
+          const nativeInput = await nativeStudentInput();
+          assert.ok(nativeInput.$defs, 'native runtime query remains fully recursive');
+          const nativeCheck = fromJsonSchema(nativeInput)['~standard'];
+          assert.equal((await nativeCheck.validate(recursive)).issues, undefined);
           for (const where of [
             { name: 'Student' },
             { field: 'mobile', op: 'eq', value: 'private' },
@@ -815,8 +1315,24 @@ describe('businessTools.test.ts', { concurrency: false, timeout: 60000 }, () => 
             { field: 'level', op: 'eq', value: '2' },
             { and: [] },
             { field: 'level', op: 'eq', value: 2, injected: true },
-          ])
-            assert.ok((await selectCheck.validate({ where })).issues, JSON.stringify(where));
+          ]) {
+            assert.equal(
+              (await selectCheck.validate({ where })).issues,
+              undefined,
+              JSON.stringify(where),
+            );
+            assert.ok((await nativeCheck.validate({ where })).issues, JSON.stringify(where));
+            const rejected = await shared.request('tools/call', {
+              name: select.name,
+              arguments: { where },
+            });
+            assert.equal(rejected.error?.code, -32602, JSON.stringify(where));
+            assert.equal(
+              action.mock.callCount(),
+              0,
+              'compact discovery never weakens runtime semantics',
+            );
+          }
         } else {
           // Legacy queryPage retains ORM controls/defaults and an unrestricted numeric level filter.
           const ormQuery = app.util.getModuleConfigRaw('a-orm')?.rest?.query;
@@ -847,13 +1363,44 @@ describe('businessTools.test.ts', { concurrency: false, timeout: 60000 }, () => 
         ]);
         assert.equal(select.outputSchema.properties.total.type, 'string');
         assert.equal(select.outputSchema.properties.list.type, 'array');
-        const selectItemRef = select.outputSchema.properties.list.items.$ref;
+        const compactItem = select.outputSchema.properties.list.items;
+        assert.equal(compactItem.type, 'object');
+        assert.equal(compactItem.additionalProperties, true);
+        assert.equal(compactItem.properties, undefined);
+        assert.equal(compactItem.$ref, undefined);
+        assert.match(compactItem.description, /cabloy_tool_contract/);
+        const selectOverview = await shared.request('tools/call', {
+          name: toolContractToolName,
+          arguments: { tool: select.name },
+        });
+        assert.equal(selectOverview.error, undefined);
+        assert.deepEqual(selectOverview.result.structuredContent.output, {
+          type: 'object',
+          compactPaths: [['list', 'items']],
+        });
+        const selectOutput = await shared.request('tools/call', {
+          name: toolContractToolName,
+          arguments: { tool: select.name, section: 'output' },
+        });
+        assert.equal(selectOutput.error, undefined);
+        const fullSelectOutput = selectOutput.result.structuredContent.schema;
+        assert.deepEqual(selectOutput.result.structuredContent, {
+          contractVersion: 1,
+          tool: select.name,
+          section: 'output',
+          schema: fullSelectOutput,
+        });
+        assert.deepEqual(
+          JSON.parse(selectOutput.result.content[0].text),
+          selectOutput.result.structuredContent,
+        );
+        const selectItemRef = fullSelectOutput.properties.list.items.$ref;
         assert.equal(typeof selectItemRef, 'string');
-        assert.ok(selectItemRef.startsWith('#/components/schemas/'));
-        const selectItem =
-          select.outputSchema.components.schemas[
-            selectItemRef.slice('#/components/schemas/'.length)
-          ];
+        assert.ok(selectItemRef.startsWith('#/$defs/'));
+        const selectItem = resolveSchema(
+          fullSelectOutput.properties.list.items,
+          fullSelectOutput.$defs,
+        );
         assert.ok(selectItem);
         for (const field of [
           'id',
@@ -1006,11 +1553,7 @@ describe('businessTools.test.ts', { concurrency: false, timeout: 60000 }, () => 
         assert.equal(create.inputSchema.additionalProperties, false);
         assert.equal(create.inputSchema.properties.body, undefined, 'one body binds flat');
         const resolveCreateSchema = (schema: any) =>
-          schema.$ref
-            ? create.inputSchema.components.schemas[
-                schema.$ref.slice('#/components/schemas/'.length)
-              ]
-            : schema;
+          resolveSchema(schema, create.inputSchema.$defs ?? {});
         const content = resolveCreateSchema(create.inputSchema.properties.content);
         const record = resolveCreateSchema(create.inputSchema.properties.trainingRecords.items);
         const subject = resolveCreateSchema(record.properties.trainingRecordSubjects.items);
@@ -1149,11 +1692,7 @@ describe('businessTools.test.ts', { concurrency: false, timeout: 60000 }, () => 
         assert.deepEqual(update.inputSchema.required.toSorted(), ['body', 'params']);
         assert.equal(update.inputSchema.additionalProperties, false);
         const resolveUpdateSchema = (schema: any) =>
-          schema.$ref
-            ? update.inputSchema.components.schemas[
-                schema.$ref.slice('#/components/schemas/'.length)
-              ]
-            : schema;
+          resolveSchema(schema, update.inputSchema.$defs ?? {});
         const updateParams = resolveUpdateSchema(update.inputSchema.properties.params);
         const updateBody = resolveUpdateSchema(update.inputSchema.properties.body);
         assert.deepEqual(Object.keys(updateParams.properties), ['id']);
@@ -1772,6 +2311,181 @@ describe('businessTools.test.ts', { concurrency: false, timeout: 60000 }, () => 
     });
   });
 
+  it('scopes tool contract sections to exact currently authorized Actions without catalog entries or dispatch', async t => {
+    if (!app.meta.modules['training-student'] || !(await nativeStudentQuery())) return;
+    await withStudentToolPermissions(async () => {
+      const sharedServer = await createSharedBusinessToolServer(app, 'mcp:read');
+      const clients: Awaited<ReturnType<typeof connect>>[] = [];
+      const action = mockOwnedPerformAction(t, async () => {
+        assert.fail('query capability discovery must never dispatch an Action');
+      });
+      const passport = app.bean.passport.current;
+      try {
+        const shared = await connect(sharedServer);
+        clients.push(shared);
+        const listed = await shared.request('tools/list');
+        assert.equal(listed.error, undefined);
+        const builtin = listed.result.tools.filter(
+          (tool: any) => tool.name === toolContractToolName,
+        );
+        assert.equal(builtin.length, 1);
+        assert.deepEqual(Object.keys(builtin[0].inputSchema.properties), ['tool', 'section']);
+        assert.deepEqual(builtin[0].inputSchema.properties.section.enum, [
+          'overview',
+          'input',
+          'output',
+          'query',
+        ]);
+        assert.ok(
+          !builtin[0].inputSchema.required.includes('section'),
+          'section is optional and defaults at dispatch',
+        );
+        assert.deepEqual(builtin[0].inputSchema.required, ['tool']);
+        assert.equal(builtin[0].inputSchema.additionalProperties, false);
+        assert.equal(builtin[0].annotations.readOnlyHint, true);
+        const catalog = await sharedServer.catalog();
+        assert.equal(
+          catalog.some(item => item.name === toolContractToolName),
+          false,
+          'the built-in is not an Action and cannot enter the consent catalog',
+        );
+        const select = catalog.find(item => item.name === 'training-student_student_select');
+        assert.ok(select);
+        const scope = 'mcp:custom:Query_capabilities_fixture' as const;
+        const exact = await connect(
+          await createControllerToolServer(app, scope, {
+            toolAccess: [select],
+          }),
+        );
+        const rebound = await connect(
+          await createControllerToolServer(app, scope, {
+            toolAccess: [{ ...select, action: 'summary' }],
+          }),
+        );
+        const noQuery = await connect(
+          await createControllerToolServer(app, scope, {
+            toolAccess: catalog.filter(item => item.name === statusToolName),
+          }),
+        );
+        clients.push(exact, rebound, noQuery);
+        assert.deepEqual(
+          (await exact.request('tools/list')).result.tools.map((tool: any) => tool.name),
+          [select.name, toolContractToolName],
+        );
+        assert.deepEqual((await rebound.request('tools/list')).result.tools, []);
+        assert.deepEqual(
+          (await noQuery.request('tools/list')).result.tools.map((tool: any) => tool.name),
+          [statusToolName, toolContractToolName],
+        );
+        const lookup = (client: typeof shared, tool: string, section = 'query') =>
+          client.request('tools/call', {
+            name: toolContractToolName,
+            arguments: { tool, section },
+          });
+        const overview = await lookup(exact, select.name, 'overview');
+        assert.equal(overview.error, undefined);
+        assert.deepEqual(overview.result.structuredContent, {
+          contractVersion: 1,
+          tool: select.name,
+          readOnly: true,
+          sections: ['overview', 'input', 'output', 'query'],
+          input: { type: 'object', compactPaths: [['where']] },
+          output: { type: 'object', compactPaths: [['list', 'items']] },
+        });
+        assert.doesNotMatch(
+          JSON.stringify(overview.result.structuredContent),
+          /"(?:schema|properties|\$defs)":/,
+        );
+        const accepted = await lookup(exact, select.name);
+        assert.equal(accepted.error, undefined);
+        const content = accepted.result.structuredContent;
+        assert.deepEqual(Object.keys(content).sort(), ['bindings', 'grammarVersion', 'tool']);
+        assert.equal(content.grammarVersion, 1);
+        assert.equal(content.tool, select.name);
+        assert.equal(content.bindings.length, 1);
+        assert.deepEqual(content.bindings[0].argumentPath, []);
+        assert.equal(content.bindings[0].mode, 'select');
+        assert.deepEqual(JSON.parse(accepted.result.content[0].text), content);
+        for (const section of ['overview', 'input', 'output', 'query']) {
+          for (const [client, target] of [
+            [rebound, select.name],
+            [noQuery, select.name],
+            [exact, 'training-student_student_group'],
+          ] as const) {
+            assert.deepEqual((await lookup(client, target, section)).error, {
+              code: -32602,
+              message: 'Tool unavailable',
+            });
+          }
+        }
+        const nonqueryOverview = await lookup(noQuery, statusToolName, 'overview');
+        assert.equal(nonqueryOverview.error, undefined);
+        assert.deepEqual(nonqueryOverview.result.structuredContent.sections, [
+          'overview',
+          'input',
+          'output',
+        ]);
+        for (const [client, target] of [
+          [rebound, select.name],
+          [noQuery, select.name],
+          [exact, 'training-student_student_group'],
+          [shared, toolContractToolName],
+          [shared, statusToolName],
+          [shared, `client_${select.name}`],
+          [shared, 'unknown_query_tool'],
+        ] as const) {
+          assert.deepEqual(
+            (await lookup(client, target)).error,
+            { code: -32602, message: 'Tool unavailable' },
+            target,
+          );
+        }
+        for (const args of [
+          undefined,
+          {},
+          { tool: 1 },
+          { tool: '' },
+          { tool: `namespace.${select.name}` },
+          { tool: select.name, extra: true },
+          { tool: select.name, where: {} },
+          ...[null, '', 'full', 'QUERY', 1, [], {}].map(section => ({
+            tool: select.name,
+            section,
+          })),
+          { tool: select.name, section: 'output', extra: true },
+        ]) {
+          const invalid = await shared.request('tools/call', {
+            name: toolContractToolName,
+            arguments: args,
+          });
+          assert.deepEqual(invalid.error, { code: -32602, message: 'Invalid tool arguments' });
+        }
+        await app.bean.passport.setCurrent(undefined);
+        for (const client of [shared, exact]) {
+          const after = await client.request('tools/list');
+          assert.equal(after.error, undefined);
+          assert.equal(
+            after.result.tools.some((tool: any) => tool.name === select.name),
+            false,
+          );
+          if (client === exact) assert.deepEqual(after.result.tools, []);
+          for (const section of ['overview', 'input', 'output', 'query']) {
+            assert.deepEqual(
+              (await lookup(client, select.name, section)).error,
+              { code: -32602, message: 'Tool unavailable' },
+              'the same server rechecks fresh target guards for every contract section',
+            );
+          }
+        }
+        assert.equal(action.mock.callCount(), 0);
+      } finally {
+        await app.bean.passport.setCurrent(passport);
+        action.mock.restore();
+        for (const client of clients) await client.close();
+      }
+    });
+  });
+
   it('bounds native query semantics before recursive SDK validation and exposes only safe query diagnostics', async t => {
     if (!app.meta.modules['training-student']) return;
     const query = await nativeStudentQuery();
@@ -1791,10 +2505,7 @@ describe('businessTools.test.ts', { concurrency: false, timeout: 60000 }, () => 
         const tool = listed.result.tools.find(
           (item: any) => item.name === 'training-student_student_select',
         );
-        const limits = resolveSchema(
-          tool.inputSchema.properties.where,
-          tool.inputSchema.components.schemas,
-        ).filter.capabilities.query.limits;
+        const limits = query.limits;
         const call = (arguments_: Record<string, unknown>) =>
           client.request('tools/call', {
             name: tool.name,
@@ -2417,6 +3128,204 @@ describe('businessTools.test.ts', { concurrency: false, timeout: 60000 }, () => 
     });
   });
 
+  it('discovers nonquery contracts through native guards and retrieves full grouped mutation input without dispatch', async t => {
+    await app.bean.executor.mockCtx(async () => {
+      const permission = app.ctx.bean.permission;
+      const original = permission.checkPermissionControllerActionGuards;
+      let denied = false;
+      const guards = t.mock.method(
+        permission,
+        'checkPermissionControllerActionGuards',
+        async function (this: typeof permission, ...args: Parameters<typeof original>) {
+          assert.equal(args[0], ControllerToolFixture);
+          assert.equal(args[1], 'effect');
+          return !denied && (await original.apply(this, args));
+        },
+      );
+      const action = mockOwnedPerformAction(t, async () => {
+        assert.fail('contract listing and lookup must not dispatch Actions');
+      });
+      const includeTool = (identity: { controller: string; action: string }) =>
+        identity.controller === 'mcp-test.controller.toolFixture' && identity.action === 'effect';
+      const server = await createControllerToolServer(app, 'mcp:all', { includeTool });
+      const all = await connect(server);
+      const read = await connect(
+        await createControllerToolServer(app, 'mcp:read', { includeTool }),
+      );
+      const lookup = (section?: string, tool = effectToolName) =>
+        all.request('tools/call', {
+          name: toolContractToolName,
+          arguments: { tool, ...(section === undefined ? {} : { section }) },
+        });
+      try {
+        const listed = await all.request('tools/list');
+        assert.equal(listed.error, undefined);
+        assert.deepEqual(
+          listed.result.tools.map((tool: any) => tool.name),
+          [effectToolName, toolContractToolName],
+        );
+        assert.ok(guards.mock.callCount() > 0, 'nonquery discovery falls back to the native guard');
+        assert.deepEqual(
+          (await read.request('tools/list')).result.tools,
+          [],
+          'scope-hidden Actions do not expose the helper',
+        );
+        const effect = listed.result.tools[0];
+        const snapshot = JSON.stringify(effect);
+        assert.equal(effect.inputSchema.properties.body.type, 'object');
+        assert.equal(effect.inputSchema.properties.body.additionalProperties, true);
+        assert.equal(effect.inputSchema.properties.body.properties, undefined);
+        const overview = await lookup();
+        assert.equal(overview.error, undefined);
+        assert.deepEqual(overview.result.structuredContent, {
+          contractVersion: 1,
+          tool: effectToolName,
+          readOnly: false,
+          sections: ['overview', 'input', 'output'],
+          input: { type: 'object', compactPaths: [['body']] },
+          output: { type: 'object', compactPaths: [] },
+        });
+        assert.deepEqual(
+          JSON.parse(overview.result.content[0].text),
+          overview.result.structuredContent,
+        );
+        assert.deepEqual(
+          (await lookup('overview')).result,
+          overview.result,
+          'overview is the default section',
+        );
+        assert.doesNotMatch(
+          JSON.stringify(overview.result.structuredContent),
+          /"(?:schema|properties|\$defs)":/,
+        );
+        const input = await lookup('input');
+        assert.equal(input.error, undefined);
+        const schema = input.result.structuredContent.schema;
+        assert.deepEqual(input.result.structuredContent, {
+          contractVersion: 1,
+          tool: effectToolName,
+          section: 'input',
+          schema,
+        });
+        assert.deepEqual(Object.keys(schema.properties).sort(), ['body', 'params']);
+        assert.deepEqual(schema.required.toSorted(), ['body', 'params']);
+        assert.equal(schema.additionalProperties, false);
+        const body = resolveSchema(schema.properties.body, schema.$defs ?? {});
+        assert.equal(body.additionalProperties, false);
+        assert.equal(body.properties.amount.type, 'integer');
+        assert.equal(body.properties.amount.minimum, 1);
+        assert.equal(body.properties.amount.maximum, 3);
+        assert.equal(body.properties.priority.type, 'integer');
+        assert.deepEqual(body.properties.note.type, ['string', 'null']);
+        assert.ok(!body.required.includes('priority'));
+        assert.ok(!body.required.includes('note'));
+        const args = { params: { label: 'contract-only' }, body: { amount: 2 } };
+        const fullCheck = fromJsonSchema(schema)['~standard'];
+        const compactCheck = fromJsonSchema(effect.inputSchema)['~standard'];
+        assert.equal((await fullCheck.validate(args)).issues, undefined);
+        for (const body of [
+          { amount: 4 },
+          { amount: 2, priority: null },
+          { amount: 2, private: true },
+        ]) {
+          const invalid = { ...args, body };
+          assert.equal(
+            (await compactCheck.validate(invalid)).issues,
+            undefined,
+            'compact discovery intentionally leaves the body open',
+          );
+          assert.ok(
+            (await fullCheck.validate(invalid)).issues,
+            'full contract retains mutation constraints',
+          );
+          const rejected = await all.request('tools/call', {
+            name: effectToolName,
+            arguments: invalid,
+          });
+          assert.deepEqual(rejected.error, { code: -32602, message: 'Invalid tool arguments' });
+        }
+        const output = await lookup('output');
+        assert.equal(output.error, undefined);
+        assert.deepEqual(output.result.structuredContent, {
+          contractVersion: 1,
+          tool: effectToolName,
+          section: 'output',
+          schema: effect.outputSchema,
+        });
+        assert.deepEqual(
+          (await lookup('query')).error,
+          { code: -32602, message: 'Tool unavailable' },
+          'nonquery Actions have no query section',
+        );
+        const catalog = await server.catalog();
+        assert.deepEqual(
+          catalog.map(item => item.name),
+          [effectToolName],
+          'helper never enters Action consent catalog',
+        );
+        const guardsBeforeLookup = guards.mock.callCount();
+        await lookup('input');
+        assert.ok(
+          guards.mock.callCount() > guardsBeforeLookup,
+          'each lookup rechecks the native target guard',
+        );
+        for (const arguments_ of [
+          undefined,
+          {},
+          { tool: effectToolName, section: null },
+          { tool: effectToolName, section: 'all' },
+          { tool: effectToolName, section: 1 },
+          { tool: effectToolName, section: 'input', extra: true },
+        ]) {
+          const invalid = await all.request('tools/call', {
+            name: toolContractToolName,
+            arguments: arguments_,
+          });
+          assert.deepEqual(invalid.error, { code: -32602, message: 'Invalid tool arguments' });
+        }
+        for (const arguments_ of [
+          { tool: effectToolName },
+          { tool: effectToolName, section: 'query' },
+        ]) {
+          const retired = await all.request('tools/call', {
+            name: retiredQueryCapabilitiesToolName,
+            arguments: arguments_,
+          });
+          assert.deepEqual(
+            retired.error,
+            { code: -32602, message: 'Tool unavailable' },
+            'old helper is not an alias',
+          );
+        }
+        assert.equal(
+          JSON.stringify(effect),
+          snapshot,
+          'full lookups do not mutate compact discovery',
+        );
+        denied = true;
+        assert.deepEqual(
+          (await all.request('tools/list')).result.tools,
+          [],
+          'helper disappears with the last guarded Action',
+        );
+        assert.deepEqual(await server.catalog(), []);
+        for (const section of ['overview', 'input', 'output', 'query']) {
+          assert.deepEqual(
+            (await lookup(section)).error,
+            { code: -32602, message: 'Tool unavailable' },
+            section,
+          );
+        }
+        assert.equal(action.mock.callCount(), 0);
+      } finally {
+        action.mock.restore();
+        guards.mock.restore();
+        await read.close();
+        await all.close();
+      }
+    });
+  });
+
   it('requires an explicit authorization scope and blocks write tools before ordinary Action dispatch', async () => {
     await app.bean.executor.mockCtx(async () => {
       await assert.rejects(
@@ -2446,14 +3355,23 @@ describe('businessTools.test.ts', { concurrency: false, timeout: 60000 }, () => 
         assert.deepEqual(Object.keys(effect.inputSchema.properties).sort(), ['body', 'params']);
         assert.deepEqual(effect.inputSchema.required.toSorted(), ['body', 'params']);
         assert.equal(effect.inputSchema.additionalProperties, false);
-        const body = effect.inputSchema.properties.body;
+        assert.equal(effect.inputSchema.properties.body.type, 'object');
+        assert.equal(effect.inputSchema.properties.body.additionalProperties, true);
+        assert.equal(effect.inputSchema.properties.body.properties, undefined);
+        const fullInput = await all.request('tools/call', {
+          name: toolContractToolName,
+          arguments: { tool: effectToolName, section: 'input' },
+        });
+        assert.equal(fullInput.error, undefined);
+        const fullSchema = fullInput.result.structuredContent.schema;
+        const body = resolveSchema(fullSchema.properties.body, fullSchema.$defs ?? {});
         assert.equal(body.properties.priority.type, 'integer');
         assert.deepEqual(body.properties.note.type, ['string', 'null']);
         assert.ok(!body.required.includes('priority'));
         assert.ok(!body.required.includes('note'));
         assert.equal(effect.outputSchema.properties.priority.type, 'integer');
         assert.deepEqual(effect.outputSchema.properties.note.type, ['string', 'null']);
-        const inputCheck = fromJsonSchema(effect.inputSchema)['~standard'];
+        const inputCheck = fromJsonSchema(fullSchema)['~standard'];
         const outputCheck = fromJsonSchema(effect.outputSchema)['~standard'];
         const args = { params: { label: 'scope-proof' }, body: { amount: 2 } };
         assert.equal((await inputCheck.validate(args)).issues, undefined);
@@ -2567,7 +3485,7 @@ describe('businessTools.test.ts', { concurrency: false, timeout: 60000 }, () => 
       try {
         assert.deepEqual(
           (await readBound.request('tools/list')).result.tools.map((item: any) => item.name),
-          [statusToolName],
+          [statusToolName, toolContractToolName],
         );
         assert.equal(
           (await readBound.request('tools/call', { name: effectToolName })).error?.code,
@@ -2576,7 +3494,7 @@ describe('businessTools.test.ts', { concurrency: false, timeout: 60000 }, () => 
         );
         assert.deepEqual(
           (await exact.request('tools/list')).result.tools.map((item: any) => item.name),
-          [statusToolName],
+          [statusToolName, toolContractToolName],
         );
         assert.deepEqual((await rebound.request('tools/list')).result.tools, []);
         const allowed = await exact.request('tools/call', { name: statusToolName });
@@ -2675,8 +3593,13 @@ describe('businessTools.test.ts', { concurrency: false, timeout: 60000 }, () => 
   it('validates Action-local options after includeTool filtering', async t => {
     await app.bean.executor.mockCtx(async () => {
       const original = appMetadata.getOwnMetadata;
-      let configuration: 'local-options' | 'invalid-name' | 'duplicate' | 'invalid-pick' =
-        'local-options';
+      let configuration:
+        | 'local-options'
+        | 'invalid-name'
+        | 'duplicate'
+        | 'reserved-name'
+        | 'retired-name'
+        | 'invalid-pick' = 'local-options';
       const metadata = t.mock.method(
         appMetadata,
         'getOwnMetadata',
@@ -2698,6 +3621,9 @@ describe('businessTools.test.ts', { concurrency: false, timeout: 60000 }, () => 
             }
             if (configuration === 'invalid-name') return { ...value, name: 'invalid tool name' };
             if (configuration === 'duplicate') return { ...value, name: categoryToolName };
+            if (configuration === 'reserved-name') return { ...value, name: toolContractToolName };
+            if (configuration === 'retired-name')
+              return { ...value, name: retiredQueryCapabilitiesToolName };
             return { ...value, output: { pick: ['missing'] } };
           }
           return value;
@@ -2721,9 +3647,35 @@ describe('businessTools.test.ts', { concurrency: false, timeout: 60000 }, () => 
         } finally {
           await client.close();
         }
+        configuration = 'retired-name';
+        const reused = await connect(
+          await createControllerToolServer(app, 'mcp:read', {
+            includeTool: identity =>
+              identity.controller === 'mcp-test.controller.toolFixture' &&
+              identity.action === 'status',
+          }),
+        );
+        try {
+          assert.deepEqual(
+            (await reused.request('tools/list')).result.tools.map((tool: any) => tool.name),
+            [retiredQueryCapabilitiesToolName, toolContractToolName],
+            'the retired helper name has no reserved-name behavior',
+          );
+          const response = await reused.request('tools/call', {
+            name: retiredQueryCapabilitiesToolName,
+          });
+          assert.deepEqual(
+            response.result.structuredContent,
+            { count: toolFixtureState.count },
+            'an explicit Action may use the retired name without helper fallback',
+          );
+        } finally {
+          await reused.close();
+        }
         for (const [mode, expected] of [
           ['invalid-name', /Invalid or duplicate MCP tool name/],
           ['duplicate', /Invalid or duplicate MCP tool name/],
+          ['reserved-name', /Invalid or duplicate MCP tool name/],
           ['invalid-pick', /Invalid MCP output.pick/],
         ] as const) {
           configuration = mode;
@@ -2738,7 +3690,7 @@ describe('businessTools.test.ts', { concurrency: false, timeout: 60000 }, () => 
             assert.deepEqual(filtered.diagnostics, []);
             assert.deepEqual(
               (await selected.request('tools/list')).result.tools.map((tool: any) => tool.name),
-              [categoryToolName],
+              [categoryToolName, toolContractToolName],
             );
           } finally {
             await selected.close();
@@ -2864,6 +3816,35 @@ describe('businessTools.test.ts', { concurrency: false, timeout: 60000 }, () => 
         ] as const) {
           const tool = tools.find((tool: any) => tool.name === name);
           assert.deepEqual(Object.keys(tool.outputSchema.properties), ['result']);
+          const fullOutput = await client.request('tools/call', {
+            name: toolContractToolName,
+            arguments: { tool: name, section: 'output' },
+          });
+          assert.equal(fullOutput.error, undefined);
+          assert.deepEqual(fullOutput.result.structuredContent, {
+            contractVersion: 1,
+            tool: name,
+            section: 'output',
+            schema: tool.outputSchema,
+          });
+          assert.deepEqual(fullOutput.result.structuredContent.schema.required, ['result']);
+          assert.equal(fullOutput.result.structuredContent.schema.additionalProperties, false);
+          const resultSchema = fullOutput.result.structuredContent.schema.properties.result;
+          assert.equal(resultSchema.type, name === scalarToolName ? 'integer' : 'array');
+          if (name === arrayToolName) assert.deepEqual(resultSchema.items, { type: 'string' });
+          const overview = await client.request('tools/call', {
+            name: toolContractToolName,
+            arguments: { tool: name },
+          });
+          assert.deepEqual(overview.result.structuredContent.sections, [
+            'overview',
+            'input',
+            'output',
+          ]);
+          assert.deepEqual(overview.result.structuredContent.output, {
+            type: 'object',
+            compactPaths: [],
+          });
           const response = await client.request('tools/call', { name });
           assert.equal(response.error, undefined);
           assert.notEqual(response.result.isError, true);
@@ -2909,6 +3890,34 @@ describe('businessTools.test.ts', { concurrency: false, timeout: 60000 }, () => 
       // Isolate output parsing only; guarded real controller behavior is covered by businessHttp.
       const action = mockOwnedPerformAction(t, async () => raw);
       try {
+        const listed = await client.request('tools/list');
+        const summary = listed.result.tools.find(
+          (tool: any) => tool.name === 'training-student_student_summary',
+        );
+        const fullOutput = await client.request('tools/call', {
+          name: toolContractToolName,
+          arguments: { tool: summary.name, section: 'output' },
+        });
+        assert.equal(fullOutput.error, undefined);
+        assert.deepEqual(fullOutput.result.structuredContent, {
+          contractVersion: 1,
+          tool: summary.name,
+          section: 'output',
+          schema: summary.outputSchema,
+        });
+        assert.deepEqual(
+          Object.keys(fullOutput.result.structuredContent.schema.properties).sort(),
+          ['descriptionLength', 'id', 'level', 'levelTitle', 'name', 'summaryText'],
+        );
+        assert.doesNotMatch(
+          JSON.stringify(fullOutput.result.structuredContent.schema),
+          /"(?:mobile|descriptionMarkdown|descriptionHtml)":|#\/components\/schemas\//,
+        );
+        assert.equal(
+          action.mock.callCount(),
+          0,
+          'full output lookup does not execute the summary Action',
+        );
         const call = () =>
           client.request('tools/call', {
             name: 'training-student_student_summary',
@@ -2965,11 +3974,9 @@ describe('businessTools.test.ts', { concurrency: false, timeout: 60000 }, () => 
           });
           const responseSchema = schemas[appResource.getBeanFullName(DtoCategoryPublicSelectRes)!];
           assert.ok('properties' in responseSchema);
-          assert.deepEqual(categoryTool.outputSchema.properties, responseSchema.properties);
+          assert.deepEqual(categoryTool.outputSchema, toolSchema(responseSchema, schemas));
           assert.deepEqual(
-            categoryTool.outputSchema.components.schemas[
-              appResource.getBeanFullName(DtoCategoryPublic)!
-            ],
+            categoryTool.outputSchema.$defs[appResource.getBeanFullName(DtoCategoryPublic)!],
             schemas[appResource.getBeanFullName(DtoCategoryPublic)!],
           );
           assert.deepEqual(Object.keys(categoryTool.inputSchema.properties).sort(), [
@@ -2989,7 +3996,7 @@ describe('businessTools.test.ts', { concurrency: false, timeout: 60000 }, () => 
           assert.equal(tool.inputSchema.properties.pageSize.maximum, 100);
           assert.equal(tool.inputSchema.additionalProperties, false);
           assert.equal(tool.outputSchema.properties.total.type, 'string');
-          assert.ok(tool.outputSchema.components.schemas);
+          assert.ok(tool.outputSchema.$defs);
           const args = { title: 'Wireless Headphones', pageNo: 1, pageSize: 1 };
           const response = await client.request('tools/call', { name: toolName, arguments: args });
           assert.equal(response.error, undefined);
@@ -3162,7 +4169,7 @@ describe('businessTools.test.ts', { concurrency: false, timeout: 60000 }, () => 
         assert.deepEqual(tool.inputSchema.required, ['id']);
         assert.equal(tool.inputSchema.additionalProperties, false);
         assert.ok(tool.outputSchema.properties.descriptionHtml);
-        assert.ok(tool.outputSchema.components.schemas);
+        assert.ok(tool.outputSchema.$defs);
         const search = await client.request('tools/call', {
           name: toolName,
           arguments: { title: 'Wireless Headphones', pageSize: 1 },

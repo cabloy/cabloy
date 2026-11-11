@@ -58,6 +58,7 @@ export interface IMcpAuthRegistrationConfig {
 }
 
 export interface IMcpAuthRegistrationRequest {
+  [key: string]: unknown;
   application_type?: 'native';
   client_name: string;
   redirect_uris: string[];

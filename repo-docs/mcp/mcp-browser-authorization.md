@@ -75,7 +75,7 @@ The direct JSON response uses HTTP `201` and contains a server-issued opaque `cl
 
 Redirect URIs must be exact HTTPS values, or HTTP for exactly `localhost`, `127.0.0.1` or `[::1]` while `allowLoopbackHttp` is true (the module default). An explicit `false` disables that exception. Lookalikes, other loopback addresses and arbitrary HTTP hosts are not allowed.
 
-Unknown metadata, duplicate members, forwarded headers, instance selectors, query strings, oversized/malformed JSON and unsupported metadata are rejected. The server fixes the resource to the canonical `${origin}/mcp`. Registration creates a client identity, not user authentication, a local role, tenant access, an authorization code or a token. Explicit consent and PKCE remain required.
+Unrecognized top-level registration metadata, including `client_uri` and client-specific extensions, is accepted and ignored: it is not persisted or echoed, and URLs in ignored metadata are not fetched. Recognized fields still require supported values. Duplicate JSON members, forwarded headers, instance selectors in the request URL or headers, query strings and oversized/malformed JSON remain rejected. Ignored body fields such as `resource` or `instanceName` cannot select authority: the server fixes the resource to the canonical `${origin}/mcp` and derives the instance itself. Registration creates a client identity, not user authentication, a local role, tenant access, an authorization code or a token. Explicit consent and PKCE remain required.
 
 DCR and its metadata advertisement are available with the existing AS/MCP ingress; there is no `registration.enabled` field or separate activation step. Body/redirect limits and registration rate limiting remain in effect.
 
@@ -98,7 +98,7 @@ To enable refresh, explicitly register `grant_types: ["authorization_code", "ref
 
 ### Native client compatibility
 
-DCR accepts an omitted `application_type` or exactly `application_type: "native"` as a request-only compatibility hint. It is validated and discarded, not persisted or echoed. Other values, including `web`, null, wrong types, case and whitespace variants, remain invalid. This does not introduce OIDC application-type semantics or unrestricted RFC 7591 metadata support. Exact redirects, client authentication, scopes and PKCE remain required.
+DCR accepts an omitted `application_type` or exactly `application_type: "native"` as a request-only compatibility hint. It is validated and discarded, not persisted or echoed. Other values, including `web`, null, wrong types, case and whitespace variants, remain invalid. This does not introduce OIDC application-type semantics or implement semantics for ignored registration metadata. Exact redirects, client authentication, scopes and PKCE remain required.
 
 ### Personal scopes from account security
 

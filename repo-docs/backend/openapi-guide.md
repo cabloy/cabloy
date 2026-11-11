@@ -67,6 +67,7 @@ The decorator records metadata; it does not start an MCP server, register a tran
 - `name` is an Action-local public tool name override.
 - `description` accepts Action-local text or locale metadata. In Cabloy's MCP mapper, it takes precedence over that Action's own OpenAPI description, summary and Controller/Action identity.
 - `readOnly` declares the Action-local read classification; absent an explicit value, Cabloy's mapper infers it from GET. `output.pick` declares that Action's output field selection. Neither inherits Controller defaults. Runtime interpretation and enforcement belong to the consuming MCP implementation, not the decorator.
+- `discovery.input` and `discovery.output` declare Action-local schema-compaction paths for tool discovery only. They do not change HTTP contracts, runtime validators or returned data. See [Compact selected declaration schemas](/mcp/mcp-controller-tools#compact-selected-declaration-schemas) for paths and full public contract retrieval.
 
 MCP metadata is independent of ordinary OpenAPI publication. Publishing an HTTP action does not opt it into MCP, and `@Api.exclude()` is not an MCP authorization boundary. Neither the decorator nor `readOnly: true` grants permission, proves the absence of side effects, or supplies tenant isolation, confirmation, transactions, or replay safety.
 

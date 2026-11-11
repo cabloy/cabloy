@@ -47,6 +47,7 @@ export class ControllerStudent extends BeanBase {
   @Mcp.tool({
     description: $locale('StudentSelectDescription'),
     readOnly: true,
+    discovery: { output: [['list', 'items']] },
   })
   @Web.get('', { summary: $locale('StudentSelect') })
   @Api.body(DtoStudentSelectRes)

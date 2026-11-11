@@ -13,9 +13,12 @@ import { isMcpScope } from 'vona-module-mcp-auth';
 import z from 'zod';
 
 import type { IToolCallDiagnostic } from './controllerToolDiagnostics.ts';
+import type { IControllerQueryCapability } from './controllerToolQuery.ts';
 import type { ToolSchema } from './controllerToolSchema.ts';
 
+import { compactToolSchema, toolContract, toolContractName } from './controllerToolContract.ts';
 import { beginToolCall, recordToolCall } from './controllerToolDiagnostics.ts';
+import { controllerToolQuery } from './controllerToolQuery.ts';
 import {
   closeMutationInputSchema,
   isPrimitiveSchema,
@@ -61,6 +64,10 @@ interface IControllerTool {
   summary: string;
   tool: Tool;
   readOnly: boolean;
+  queryCapabilities: IControllerQueryCapability[];
+  inputContract: ToolSchema;
+  outputContract: ToolSchema;
+  compactPaths: { input: string[][]; output: string[][] };
   call(args: Record<string, unknown>, diagnostic: IToolCallDiagnostic): Promise<CallToolResult>;
 }
 
@@ -113,7 +120,7 @@ export async function createControllerToolServer(
         const name =
           options.name ??
           `${controller.beanOptions.beanFullName.replace('.controller.', '_').replace(/[^\w-]/g, '_')}_${route.action}`;
-        if (!/^[\w-]{1,128}$/.test(name) || tools.has(name)) {
+        if (!/^[\w-]{1,128}$/.test(name) || tools.has(name) || name === toolContractName) {
           throw new Error(`Invalid or duplicate MCP tool name: ${name}`);
         }
         try {
@@ -270,35 +277,75 @@ export async function createControllerToolServer(
           }
           const direct = output.type === 'object';
           const readOnly = options.readOnly ?? route.routeMethod === 'get';
-          const inputSchema = toolSchema(input, schemas);
-          if (!readOnly) closeMutationInputSchema(inputSchema);
-          const outputSchema = toolSchema(
-            direct
-              ? output
-              : {
-                  type: 'object',
-                  properties: { result: rawOutput },
-                  required: ['result'],
-                  additionalProperties: false,
-                },
+          const runtimeInputSchema = toolSchema(input, schemas);
+          if (!readOnly) closeMutationInputSchema(runtimeInputSchema);
+          let discoveryInput = input;
+          let queryCapabilities: IControllerQueryCapability[] = [];
+          if (queryBindings.length) {
+            try {
+              const projected = controllerToolQuery(input, schemas, queryBindings, flat);
+              discoveryInput = projected.input;
+              queryCapabilities = projected.bindings;
+            } catch (error) {
+              if (!(error instanceof UnsupportedActionContract)) throw error;
+              diagnostics.push({
+                controller: controller.beanOptions.beanFullName,
+                action: route.action,
+                reason: `Query compaction unavailable: ${error.message}`,
+              });
+            }
+          }
+          const fullOutput = direct
+            ? output
+            : {
+                type: 'object',
+                properties: { result: rawOutput },
+                required: ['result'],
+                additionalProperties: false,
+              };
+          const outputContract = toolSchema(fullOutput, schemas);
+          const inputPaths = options.discovery?.input ?? [];
+          const outputPaths = options.discovery?.output ?? [];
+          const inputSchema = toolSchema(
+            compactToolSchema(discoveryInput, schemas, inputPaths, 'input'),
             schemas,
           );
-          const inputCheck = fromJsonSchema(inputSchema as Parameters<typeof fromJsonSchema>[0])[
-            '~standard'
-          ];
+          if (!readOnly) closeMutationInputSchema(inputSchema);
+          const outputSchema = toolSchema(
+            compactToolSchema(fullOutput, schemas, outputPaths, 'output'),
+            schemas,
+          );
+          const compactPaths = {
+            input: [
+              ...queryCapabilities
+                .map(binding => [...binding.argumentPath, 'where'])
+                .filter(
+                  path => !inputPaths.some(parent => parent.every((part, i) => part === path[i])),
+                ),
+              ...inputPaths,
+            ],
+            output: outputPaths,
+          };
+          const inputCheck = fromJsonSchema(
+            runtimeInputSchema as Parameters<typeof fromJsonSchema>[0],
+          )['~standard'];
           const outputCheck = isPrimitiveSchema(rawOutput, schemas)
-            ? fromJsonSchema(outputSchema as Parameters<typeof fromJsonSchema>[0])['~standard']
+            ? fromJsonSchema(outputContract as Parameters<typeof fromJsonSchema>[0])['~standard']
             : undefined;
           const description = options.description
             ? app.meta.text(options.description)
             : operation.description ||
               operation.summary ||
               `${controller.beanOptions.beanFullName}#${route.action}`;
+          const queryDescription = queryBindings.length
+            ? `${description}\n\nFor alternatives within one query, prefer a single call using where.or rather than separate calls and client-side merging. Use where.and for combined constraints; named filters are additional AND constraints. ${queryCapabilities.length ? `Before constructing where, call ${toolContractName} with {"tool":"${name}","section":"query"} for current argument paths, admitted fields, operators, exact operands and limits. The compact object declaration is not the full validation contract.` : 'Follow the full inputSchema for argument locations, admitted fields, operators and value types.'}`
+            : description;
           const tool: Tool = {
             name,
-            description: queryBindings.length
-              ? `${description}\n\nFor alternatives within one query, prefer a single call using where.or rather than separate calls and client-side merging. Use where.and for combined constraints. Follow the schema-declared argument location and where predicate syntax; named filters are additional AND constraints. Available fields, operators and value types are defined by inputSchema.`
-              : description,
+            description:
+              inputPaths.length || outputPaths.length
+                ? `${queryDescription}\n\nSome input or output subtrees have compact discovery declarations. Call ${toolContractName} with {"tool":"${name}"} for an overview, or section "input" / "output" for the complete public contract. Compaction does not change validation or returned business data.`
+                : queryDescription,
             inputSchema,
             outputSchema,
             annotations: {
@@ -315,6 +362,10 @@ export async function createControllerToolServer(
             summary: operation.summary ?? '',
             tool,
             readOnly,
+            queryCapabilities,
+            inputContract: runtimeInputSchema,
+            outputContract,
+            compactPaths,
             async call(args, diagnostic) {
               const values = flat ? { [keys[0]]: args } : args;
               const bound: Record<string, unknown> = {};
@@ -341,7 +392,7 @@ export async function createControllerToolServer(
                   }
                 }
                 const checked = await inputCheck.validate(
-                  serializeDateTransport(args, inputSchema, schemas),
+                  serializeDateTransport(args, runtimeInputSchema, runtimeInputSchema.$defs ?? {}),
                 );
                 if (checked.issues) throw new ProtocolError(-32602, 'Invalid tool arguments');
                 for (const key of keys) {
@@ -452,12 +503,7 @@ export async function createControllerToolServer(
         // Guard checks temporarily own route state on this context, so never fan them out.
         for (const item of tools.values()) {
           if (!allowed(item)) continue;
-          if (
-            serverOptions.isToolVisible &&
-            !(await serverOptions.isToolVisible({ ...item.identity }, item.controller))
-          ) {
-            continue;
-          }
+          if (!(await targetVisible(item))) continue;
           visible.push(item);
         }
       } catch {
@@ -465,23 +511,96 @@ export async function createControllerToolServer(
       }
       return visible;
     }
+    async function targetVisible(item: IControllerTool): Promise<boolean> {
+      try {
+        return serverOptions.isToolVisible
+          ? await serverOptions.isToolVisible({ ...item.identity }, item.controller)
+          : await app.ctx.bean.permission.checkPermissionControllerActionGuards(
+              item.controller,
+              item.identity.action,
+            );
+      } catch {
+        throw new ProtocolError(-32603, 'Tool discovery failed');
+      }
+    }
+    const contractInputCheck = fromJsonSchema(
+      toolContract.inputSchema as Parameters<typeof fromJsonSchema>[0],
+    )['~standard'];
     const server = new Server(
       { name: 'cabloy-mcp-actions', version: '0.1.0' },
       { capabilities: { tools: {} } },
     );
     server.setRequestHandler('tools/list', () =>
       track(async () => {
-        return { tools: (await visibleTools()).map(item => item.tool) };
+        const visible = await visibleTools();
+        return {
+          tools: [...visible.map(item => item.tool), ...(visible.length ? [toolContract] : [])],
+        };
       }),
     );
     server.setRequestHandler('tools/call', request =>
       track(async () => {
         if (!app.ctx) throw new ProtocolError(-32603, 'Request context required');
+        const contractCall = request.params.name === toolContractName;
         const tool = tools.get(request.params.name);
         const admitted = tool && allowed(tool);
-        const diagnostic = beginToolCall(admitted ? tool.tool.name : 'unavailable');
+        const diagnostic = beginToolCall(
+          contractCall ? toolContractName : admitted ? tool.tool.name : 'unavailable',
+        );
         recordToolCall(app, diagnostic, 'received');
         try {
+          if (contractCall) {
+            const args = request.params.arguments ?? {};
+            if ((await contractInputCheck.validate(args)).issues) {
+              diagnostic.outcome = 'invalid_arguments';
+              throw new ProtocolError(-32602, 'Invalid tool arguments');
+            }
+            const target = tools.get(args.tool as string);
+            const section = args.section ?? 'overview';
+            if (
+              !target ||
+              !allowed(target) ||
+              !(await targetVisible(target)) ||
+              (section === 'query' && !target.queryCapabilities.length)
+            ) {
+              diagnostic.outcome = 'unavailable';
+              throw new ProtocolError(-32602, 'Tool unavailable');
+            }
+            const structuredContent =
+              section === 'query'
+                ? { grammarVersion: 1, tool: target.tool.name, bindings: target.queryCapabilities }
+                : section === 'input' || section === 'output'
+                  ? {
+                      contractVersion: 1,
+                      tool: target.tool.name,
+                      section,
+                      schema: section === 'input' ? target.inputContract : target.outputContract,
+                    }
+                  : {
+                      contractVersion: 1,
+                      tool: target.tool.name,
+                      readOnly: target.readOnly,
+                      sections: [
+                        'overview',
+                        'input',
+                        'output',
+                        ...(target.queryCapabilities.length ? ['query'] : []),
+                      ],
+                      input: {
+                        type: target.inputContract.type,
+                        compactPaths: target.compactPaths.input,
+                      },
+                      output: {
+                        type: target.outputContract.type,
+                        compactPaths: target.compactPaths.output,
+                      },
+                    };
+            diagnostic.outcome = 'success';
+            return {
+              content: [{ type: 'text' as const, text: JSON.stringify(structuredContent) }],
+              structuredContent,
+            };
+          }
           if (!admitted) {
             diagnostic.outcome = 'unavailable';
             throw new ProtocolError(-32602, 'Tool unavailable');

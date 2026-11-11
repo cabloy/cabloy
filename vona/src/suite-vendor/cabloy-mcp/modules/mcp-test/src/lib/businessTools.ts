@@ -4,6 +4,7 @@ import type { VonaApplication } from 'vona';
 import { ProtocolError, Server } from '@modelcontextprotocol/server';
 import { appResource, runWithZodQueryCoercion } from 'vona';
 import { $schema } from 'vona-module-a-openapiutils';
+import { toolSchema } from 'vona-module-cabloy-mcp';
 import z from 'zod';
 
 import { DtoCategoryPublic } from '../dto/categoryPublic.tsx';
@@ -46,29 +47,34 @@ export async function createBusinessToolServer(
     const searchTool: Tool = {
       name: 'commerce_products_search',
       description: 'Search published, available products using the synthetic MCP test catalog.',
-      inputSchema: {
-        ...schemas[appResource.getBeanFullName(DtoProductPublicSelectReq)!],
-        additionalProperties: false,
-      } as Tool['inputSchema'],
-      outputSchema: {
-        ...schemas[appResource.getBeanFullName(DtoProductPublicSelectRes)!],
-        // Retain document-local references to the existing public product/SKU DTOs.
-        components: { schemas },
-      } as Tool['outputSchema'],
+      inputSchema: toolSchema(
+        {
+          ...schemas[appResource.getBeanFullName(DtoProductPublicSelectReq)!],
+          additionalProperties: false,
+        },
+        schemas,
+      ),
+      outputSchema: toolSchema(
+        schemas[appResource.getBeanFullName(DtoProductPublicSelectRes)!],
+        schemas,
+      ),
       annotations: { readOnlyHint: true, destructiveHint: false, openWorldHint: false },
     };
     const categoriesTool: Tool = {
       name: 'commerce_categories_list',
       description:
         'List published categories in the synthetic MCP test directory, including categories without available products.',
-      inputSchema: {
-        ...schemas[appResource.getBeanFullName(DtoCategoryPublicSelectReq)!],
-        additionalProperties: false,
-      } as Tool['inputSchema'],
-      outputSchema: {
-        ...schemas[appResource.getBeanFullName(DtoCategoryPublicSelectRes)!],
-        components: { schemas },
-      } as Tool['outputSchema'],
+      inputSchema: toolSchema(
+        {
+          ...schemas[appResource.getBeanFullName(DtoCategoryPublicSelectReq)!],
+          additionalProperties: false,
+        },
+        schemas,
+      ),
+      outputSchema: toolSchema(
+        schemas[appResource.getBeanFullName(DtoCategoryPublicSelectRes)!],
+        schemas,
+      ),
       annotations: { readOnlyHint: true, destructiveHint: false, openWorldHint: false },
     };
     const publicSchema = schemas[appResource.getBeanFullName(DtoProductPublic)!];
@@ -83,17 +89,19 @@ export async function createBusinessToolServer(
     const detailTool: Tool = {
       name: 'commerce_product_detail',
       description: 'View one published, available product using the synthetic MCP test catalog.',
-      inputSchema: {
-        type: 'object',
-        properties: { id: publicSchema.properties.id },
-        required: ['id'],
-        additionalProperties: false,
-        components: { schemas },
-      } as unknown as Tool['inputSchema'],
-      outputSchema: {
-        ...schemas[appResource.getBeanFullName(DtoProductPublicDetail)!],
-        components: { schemas },
-      } as Tool['outputSchema'],
+      inputSchema: toolSchema(
+        {
+          type: 'object',
+          properties: { id: publicSchema.properties.id },
+          required: ['id'],
+          additionalProperties: false,
+        },
+        schemas,
+      ),
+      outputSchema: toolSchema(
+        schemas[appResource.getBeanFullName(DtoProductPublicDetail)!],
+        schemas,
+      ),
       annotations: { readOnlyHint: true, destructiveHint: false, openWorldHint: false },
     };
     const detailInput = z.strictObject({

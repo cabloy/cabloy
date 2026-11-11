@@ -118,17 +118,7 @@ export class ServiceRegistration extends BeanBase {
 
   private validateRequest(request: IMcpAuthRegistrationRequest, config: IMcpAuthConfig) {
     if (!request || typeof request !== 'object') throw new OAuthError('invalid_client_metadata');
-    const keys = Object.keys(request);
-    const allowed = new Set([
-      'application_type',
-      'client_name',
-      'redirect_uris',
-      'token_endpoint_auth_method',
-      'grant_types',
-      'response_types',
-      'scope',
-    ]);
-    if (keys.some(key => !allowed.has(key))) throw new OAuthError('invalid_client_metadata');
+    // Ignore unrecognized metadata; only validated fields enter persistence and the response.
     // Request-only compatibility hint; it does not change registered metadata or redirect policy.
     if (request.application_type !== undefined && request.application_type !== 'native') {
       throw new OAuthError('invalid_client_metadata');

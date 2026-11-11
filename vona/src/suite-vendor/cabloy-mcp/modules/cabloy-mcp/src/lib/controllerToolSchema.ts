@@ -4,15 +4,20 @@ export type ToolSchema = Record<string, any>;
 
 export class UnsupportedActionContract extends Error {}
 
+function schemaRefKey(ref: string): string | undefined {
+  const prefix = ['#/components/schemas/', '#/$defs/'].find(prefix => ref.startsWith(prefix));
+  return prefix ? ref.slice(prefix.length).replace(/~1/g, '/').replace(/~0/g, '~') : undefined;
+}
+
 export function resolveSchema(schema: ToolSchema, schemas: Record<string, ToolSchema>): ToolSchema {
   const visited = new Set<string>();
   while (schema.$ref) {
     const ref = schema.$ref as string;
-    if (!ref.startsWith('#/components/schemas/') || visited.has(ref)) {
+    const key = schemaRefKey(ref);
+    if (key === undefined || visited.has(ref)) {
       throw new UnsupportedActionContract('Unsupported schema reference');
     }
     visited.add(ref);
-    const key = ref.slice('#/components/schemas/'.length).replace(/~1/g, '/').replace(/~0/g, '~');
     const target = schemas[key];
     if (!target) throw new Error('Unresolved action schema reference');
     const { $ref: _ref, ...siblings } = schema;
@@ -21,11 +26,12 @@ export function resolveSchema(schema: ToolSchema, schemas: Record<string, ToolSc
   return schema;
 }
 
-// Keep only reachable definitions, so projections cannot publish the original private DTO.
+// Publish OpenAPI references as JSON Schema $defs, retaining only reachable definitions
+// so projections cannot publish the original private DTO.
 export function toolSchema(
   schema: ToolSchema,
   schemas: Record<string, ToolSchema>,
-): Tool['inputSchema'] {
+): Tool['inputSchema'] & { $defs?: Record<string, ToolSchema> } {
   const root = JSON.parse(JSON.stringify(schema));
   const definitions: Record<string, ToolSchema> = {};
   function visit(value: any): void {
@@ -35,7 +41,8 @@ export function toolSchema(
       if (!ref.startsWith('#/components/schemas/')) {
         throw new UnsupportedActionContract('Unsupported schema reference');
       }
-      const key = ref.slice('#/components/schemas/'.length).replace(/~1/g, '/').replace(/~0/g, '~');
+      const key = schemaRefKey(ref)!;
+      value.$ref = `#/$defs/${ref.slice('#/components/schemas/'.length)}`;
       if (!schemas[key]) throw new Error('Unresolved action schema reference');
       if (!definitions[key]) {
         definitions[key] = JSON.parse(JSON.stringify(schemas[key]));
@@ -45,7 +52,7 @@ export function toolSchema(
     for (const child of Object.values(value)) visit(child);
   }
   visit(root);
-  if (Object.keys(definitions).length) root.components = { schemas: definitions };
+  if (Object.keys(definitions).length) root.$defs = definitions;
   return root as Tool['inputSchema'];
 }
 
@@ -56,8 +63,8 @@ export function closeMutationInputSchema(root: ToolSchema): void {
     visited.add(schema);
     if (schema.$ref) {
       const ref = schema.$ref as string;
-      const key = ref.slice('#/components/schemas/'.length).replace(/~1/g, '/').replace(/~0/g, '~');
-      visit(root.components?.schemas?.[key]);
+      const key = schemaRefKey(ref);
+      if (ref.startsWith('#/$defs/') && key !== undefined) visit(root.$defs?.[key]);
     }
     if (schema.properties && schema.additionalProperties === undefined) {
       schema.additionalProperties = false;
@@ -101,8 +108,8 @@ function resolveTransportSchema(
   let current = schema;
   while (typeof current.$ref === 'string') {
     const ref = current.$ref as string;
-    if (!ref.startsWith('#/components/schemas/') || refs.has(ref)) return undefined;
-    const key = ref.slice('#/components/schemas/'.length).replace(/~1/g, '/').replace(/~0/g, '~');
+    const key = schemaRefKey(ref);
+    if (key === undefined || refs.has(ref)) return undefined;
     const target = schemas[key];
     if (!target) return undefined;
     refs.add(ref);

@@ -28,6 +28,7 @@ import {
   fixtureIngressLimits,
   handleMcpRequest,
   mcpTransportSnapshot,
+  toolSchema,
 } from 'vona-module-cabloy-mcp';
 import { getMcpIssuer } from 'vona-module-mcp-auth';
 
@@ -46,6 +47,7 @@ const studentSelectName = 'training-student_student_select';
 const studentViewName = 'training-student_student_view';
 const studentGroupName = 'training-student_student_group';
 const studentAggregateName = 'training-student_student_aggregate';
+const contractName = 'cabloy_tool_contract';
 const publicReadNames = [
   categoriesName,
   searchName,
@@ -544,6 +546,20 @@ describe('businessHttp.test.ts', { concurrency: false, timeout: 180000 }, () => 
           assert.ok(names.includes(name), 'public opted-in fixtures remain discoverable');
         }
         assert.equal(names.includes('mcp_test_action_effect'), token === allToken);
+        assert.equal(
+          names.includes(contractName),
+          true,
+          'visible nonquery Actions also expose the generic contract lookup',
+        );
+        assert.equal(names.at(-1), contractName);
+        assert.equal(names.includes('cabloy_query_capabilities'), false, 'the old tool is removed');
+        const oldLookup = await send(
+          'tools/call',
+          { name: 'cabloy_query_capabilities', arguments: { tool: 'mcp_test_action_status' } },
+          { legacy, headers },
+        );
+        assert.deepEqual(oldLookup.body.error, { code: -32602, message: 'Invalid params' });
+        assert.equal(oldLookup.body.result, undefined);
       }
       if (trainingDisabled) {
         for (const [name, args] of [
@@ -571,6 +587,189 @@ describe('businessHttp.test.ts', { concurrency: false, timeout: 180000 }, () => 
     }
     assert.equal(app.server, server);
     assert.ok(app.server?.listening, 'per-request cleanup does not close shared server');
+  });
+
+  it('resolves compact nonquery contracts from native metadata and executes unchanged Actions over both transports', async t => {
+    if (!app.meta.modules['mcp-test']) return;
+    const { ControllerToolFixture, toolFixtureState } = await import('vona-module-mcp-test');
+    const effectName = 'mcp_test_action_effect';
+    const initial = toolFixtureState.count;
+    const allToken = await redeemBearer('mcp:all');
+    const native = await app.bean.executor.mockCtx(
+      async () => {
+        const document = JSON.parse(
+          JSON.stringify(
+            await app.bean.openapi.generateJsonOfControllerAction(
+              ControllerToolFixture,
+              'effect',
+              'V31',
+              { includeExcluded: true, schemaTarget: 'mcp' },
+            ),
+          ),
+        );
+        const operation = Object.values(document.paths)
+          .map((item: any) => item.post)
+          .find(Boolean);
+        const schemas = document.components.schemas;
+        const body = toolSchema(operation.requestBody.content['application/json'].schema, schemas);
+        const envelope = resolveSchema(
+          operation.responses['200'].content['application/json'].schema,
+          schemas,
+        );
+        return { body, output: toolSchema(envelope.properties.data, schemas) };
+      },
+      { instanceName: '' },
+    );
+    const original = app.bean.executor.performAction;
+    const dispatched = mockOwnedPerformAction(t, async function (this: BeanExecutor, ...args) {
+      return await original.apply(this, args);
+    });
+    try {
+      for (const legacy of [false, true]) {
+        const options = { legacy, headers: { authorization: `Bearer ${allToken}` } };
+        const listed = await send('tools/list', {}, options);
+        assert.equal(listed.body.error, undefined);
+        const effect = listed.body.result.tools.find((tool: any) => tool.name === effectName);
+        assert.ok(effect);
+        assert.equal(listed.body.result.tools.at(-1).name, contractName);
+        assert.deepEqual(Object.keys(effect.inputSchema.properties), ['params', 'body']);
+        assert.equal(effect.inputSchema.properties.body.type, 'object');
+        assert.equal(effect.inputSchema.properties.body.additionalProperties, true);
+        assert.equal(effect.inputSchema.properties.body.properties, undefined);
+        assert.match(effect.inputSchema.properties.body.description, /cabloy_tool_contract/);
+        const lookup = (tool: string, section?: 'overview' | 'input' | 'output' | 'query') =>
+          send(
+            'tools/call',
+            {
+              name: contractName,
+              arguments: { tool, ...(section === undefined ? {} : { section }) },
+            },
+            options,
+          );
+        const before = dispatched.mock.callCount();
+        const overview = output(await lookup(effectName));
+        assert.deepEqual(overview, {
+          contractVersion: 1,
+          tool: effectName,
+          readOnly: false,
+          sections: ['overview', 'input', 'output'],
+          input: { type: 'object', compactPaths: [['body']] },
+          output: { type: 'object', compactPaths: [] },
+        });
+        assert.deepEqual(output(await lookup(effectName, 'overview')), overview);
+        const inputContract = output(await lookup(effectName, 'input'));
+        const outputContract = output(await lookup(effectName, 'output'));
+        for (const [section, contract] of [
+          ['input', inputContract],
+          ['output', outputContract],
+        ]) {
+          assert.deepEqual(Object.keys(contract).sort(), [
+            'contractVersion',
+            'schema',
+            'section',
+            'tool',
+          ]);
+          assert.equal(contract.contractVersion, 1);
+          assert.equal(contract.tool, effectName);
+          assert.equal(contract.section, section);
+        }
+        const fullBody = resolveSchema(
+          inputContract.schema.properties.body,
+          inputContract.schema.$defs ?? {},
+        );
+        assert.deepEqual(fullBody.properties, native.body.properties);
+        assert.deepEqual(fullBody.required, native.body.required);
+        assert.equal(
+          fullBody.additionalProperties,
+          false,
+          'runtime mutation closure survives full lookup',
+        );
+        assert.deepEqual(outputContract.schema, native.output);
+        const inputCheck = fromJsonSchema(inputContract.schema)['~standard'];
+        const discoveryCheck = fromJsonSchema(effect.inputSchema)['~standard'];
+        const args = {
+          params: { label: `HTTP contract ${legacy ? 'legacy' : 'modern'}` },
+          body: {
+            amount: (native.body.properties as Record<string, any>).amount.minimum,
+            priority: 0,
+            note: null,
+          },
+        };
+        assert.equal(args.body.amount, 1, 'input operands come from the native Action schema');
+        assert.equal((await inputCheck.validate(args)).issues, undefined);
+        const invalidArgs = { ...args, body: { ...args.body, amount: 4 } };
+        assert.equal((await discoveryCheck.validate(invalidArgs)).issues, undefined);
+        assert.ok(
+          (await inputCheck.validate(invalidArgs)).issues,
+          'full input retains amount constraints',
+        );
+        const invalid = await send(
+          'tools/call',
+          { name: effectName, arguments: invalidArgs },
+          options,
+        );
+        assert.equal(invalid.body.error?.code, -32602);
+        assert.equal(invalid.body.result, undefined);
+        for (const tool of [effectName, 'unknown_contract_target', contractName]) {
+          const unavailable = await lookup(tool, 'query');
+          assert.deepEqual(unavailable.body.error, { code: -32602, message: 'Invalid params' });
+          assert.equal(unavailable.body.result, undefined);
+        }
+        for (const section of ['overview', 'input', 'output'] as const) {
+          const unavailable = await lookup('unknown_contract_target', section);
+          assert.deepEqual(unavailable.body.error, { code: -32602, message: 'Invalid params' });
+          assert.equal(unavailable.body.result, undefined);
+        }
+        const readDenied = await send(
+          'tools/call',
+          { name: contractName, arguments: { tool: effectName, section: 'input' } },
+          { legacy, headers: { authorization: `Bearer ${bearer}` } },
+        );
+        assert.deepEqual(readDenied.body.error, { code: -32602, message: 'Invalid params' });
+        assert.equal(
+          dispatched.mock.callCount(),
+          before,
+          'metadata, lookup and invalid input never dispatch',
+        );
+        const count = toolFixtureState.count;
+        const result = output(
+          await send('tools/call', { name: effectName, arguments: args }, options),
+        );
+        assert.deepEqual(result, {
+          count: count + 1,
+          label: args.params.label,
+          priority: 0,
+          note: null,
+        });
+        assert.equal(
+          (await fromJsonSchema(outputContract.schema)['~standard'].validate(result)).issues,
+          undefined,
+        );
+        assert.equal(toolFixtureState.count, count + 1);
+        assert.equal(
+          dispatched.mock.callCount(),
+          before + 1,
+          'only the real Action call causes its effect',
+        );
+        for (const [tool, expected] of [
+          ['mcp_test_action_scalar', { result: 7 }],
+          ['mcp_test_action_array', { result: ['safe', 'array'] }],
+        ] as const) {
+          const contract = output(await lookup(tool, 'output'));
+          assert.deepEqual(Object.keys(contract.schema.properties), ['result']);
+          assert.deepEqual(contract.schema.required, ['result']);
+          const wrapped = output(await send('tools/call', { name: tool, arguments: {} }, options));
+          assert.deepEqual(wrapped, expected);
+          assert.equal(
+            (await fromJsonSchema(contract.schema)['~standard'].validate(wrapped)).issues,
+            undefined,
+          );
+        }
+      }
+    } finally {
+      dispatched.mock.restore();
+      toolFixtureState.count = initial;
+    }
   });
 
   it('makes unsupported, unannotated and unapproved sibling names uncallable under both scopes and transports', async t => {
@@ -924,6 +1123,11 @@ describe('businessHttp.test.ts', { concurrency: false, timeout: 180000 }, () => 
           assert.equal(listed.body.error, undefined);
           const tools = listed.body.result.tools;
           const names = studentToolNames(tools);
+          assert.equal(
+            tools.some((tool: any) => tool.name === contractName),
+            tools.some((tool: any) => tool.name !== contractName),
+            'any visible Action, not just a query target, derives the generic lookup',
+          );
           assert.deepEqual(
             names.toSorted(),
             [
@@ -961,17 +1165,19 @@ describe('businessHttp.test.ts', { concurrency: false, timeout: 180000 }, () => 
               const schema = tool.inputSchema;
               const body = resolveSchema(
                 tool.name === studentCreateName ? schema : schema.properties.body,
-                schema.components?.schemas ?? {},
+                schema.$defs ?? {},
               );
               assertLevelMetadata(tool.name, body.properties.level);
             }
-            if ([studentViewName, studentSummaryName, studentSelectName].includes(tool.name)) {
-              const schema = tool.outputSchema;
-              const student =
-                tool.name === studentSelectName
-                  ? resolveSchema(schema.properties.list.items, schema.components?.schemas ?? {})
-                  : schema;
-              assertLevelMetadata(tool.name, student.properties.level);
+            if ([studentViewName, studentSummaryName].includes(tool.name)) {
+              assertLevelMetadata(tool.name, tool.outputSchema.properties.level);
+            }
+            if (tool.name === studentSelectName) {
+              const item = tool.outputSchema.properties.list.items;
+              assert.equal(item.type, 'object');
+              assert.equal(item.additionalProperties, true);
+              assert.equal(item.properties, undefined, 'discovery omits the full list item schema');
+              assert.match(item.description, /cabloy_tool_contract/);
             }
           }
           const createTool = tools.find((tool: any) => tool.name === studentCreateName);
@@ -1036,7 +1242,85 @@ describe('businessHttp.test.ts', { concurrency: false, timeout: 180000 }, () => 
             studentSummaryName,
           ].toSorted(),
         );
+        const lookup = (
+          tool: string,
+          section: 'overview' | 'input' | 'output' | 'query' = 'query',
+        ) => send('tools/call', { name: contractName, arguments: { tool, section } }, options);
+        assert.equal(output(await lookup(studentSelectName)).tool, studentSelectName);
+        const selectOutput = output(await lookup(studentSelectName, 'output'));
+        assert.deepEqual(Object.keys(selectOutput).sort(), [
+          'contractVersion',
+          'schema',
+          'section',
+          'tool',
+        ]);
+        assert.equal(selectOutput.contractVersion, 1);
+        assert.equal(selectOutput.tool, studentSelectName);
+        assert.equal(selectOutput.section, 'output');
+        const selectItem = resolveSchema(
+          selectOutput.schema.properties.list.items,
+          selectOutput.schema.$defs ?? {},
+        );
+        assertLevelMetadata(studentSelectName, selectItem.properties.level);
+        for (const section of ['overview', 'input', 'output'] as const) {
+          const summaryContract = output(await lookup(studentSummaryName, section));
+          assert.equal(summaryContract.contractVersion, 1);
+          assert.equal(summaryContract.tool, studentSummaryName);
+          if (section === 'overview') {
+            assert.equal(summaryContract.readOnly, true);
+            assert.deepEqual(summaryContract.sections, ['overview', 'input', 'output']);
+            assert.equal(summaryContract.schema, undefined);
+            assert.equal(summaryContract.input.schema, undefined);
+            assert.equal(summaryContract.output.schema, undefined);
+          } else {
+            assert.equal(summaryContract.section, section);
+            if (section === 'output') {
+              assert.deepEqual(
+                Object.keys(summaryContract.schema.properties).sort(),
+                studentSummaryFields,
+              );
+              for (const field of ['mobile', 'descriptionMarkdown', 'descriptionHtml']) {
+                assert.equal(JSON.stringify(summaryContract.schema).includes(`"${field}"`), false);
+              }
+            }
+          }
+        }
+        const nonquery = await lookup(studentSummaryName);
+        assert.deepEqual(nonquery.body.error, { code: -32602, message: 'Invalid params' });
+        assert.equal(
+          nonquery.body.result,
+          undefined,
+          'visible nonquery target has no query section',
+        );
+        for (const spy of business) {
+          assert.equal(spy.mock.callCount(), 0, 'contract lookup never executes business work');
+        }
         granted = [];
+        for (const section of ['overview', 'input', 'output'] as const) {
+          const unavailable = await lookup(studentSummaryName, section);
+          assert.equal(unavailable.status, 200);
+          assert.deepEqual(unavailable.body.error, { code: -32602, message: 'Invalid params' });
+          assert.equal(
+            unavailable.body.result,
+            undefined,
+            'nonquery revocation is checked freshly',
+          );
+        }
+        // HTTP deliberately sanitizes the mapper's Tool unavailable into Invalid params.
+        for (const name of [
+          studentSelectName,
+          studentGroupName,
+          studentAggregateName,
+          studentSummaryName,
+          'mcp-test_catalog_excluded',
+          `client_${studentSelectName}`,
+          'unknown_query_target',
+        ]) {
+          const unavailable = await lookup(name);
+          assert.equal(unavailable.status, 200);
+          assert.deepEqual(unavailable.body.error, { code: -32602, message: 'Invalid params' });
+          assert.equal(unavailable.body.result, undefined);
+        }
         for (const [name, args] of [
           [studentSelectName, { name: 'unused', pageNo: 1, pageSize: 1 }],
           [studentGroupName, { name: 'unused' }],
@@ -1166,6 +1450,11 @@ describe('businessHttp.test.ts', { concurrency: false, timeout: 180000 }, () => 
       const catalog = await personal('catalog');
       assert.equal(catalog.status, 200, `personal scope catalog: ${JSON.stringify(catalog.body)}`);
       const tools = catalog.body.data as IMcpToolCatalogItem[];
+      assert.equal(
+        tools.some(tool => tool.name === contractName),
+        false,
+        'the derived lookup tool is not a consentable Action catalog entry',
+      );
       const selected = tools.find(tool => tool.name === studentSelectName);
       const sibling = tools.find(tool => tool.name === studentGroupName);
       const view = tools.find(tool => tool.name === studentViewName);
@@ -1226,8 +1515,43 @@ describe('businessHttp.test.ts', { concurrency: false, timeout: 180000 }, () => 
       assert.equal(listed.body.error, undefined);
       assert.deepEqual(
         listed.body.result.tools.map((tool: any) => tool.name),
-        [studentSelectName],
+        [studentSelectName, contractName],
+        'one exact query grant derives lookup without granting sibling Actions',
       );
+      const lookup = (tool: string, section: 'overview' | 'input' | 'output' | 'query' = 'query') =>
+        send(
+          'tools/call',
+          { name: contractName, arguments: { tool, section } },
+          options(token.access_token),
+        );
+      for (const section of ['overview', 'input', 'output'] as const) {
+        const selectedContract = output(await lookup(studentSelectName, section));
+        assert.equal(selectedContract.contractVersion, 1);
+        assert.equal(selectedContract.tool, studentSelectName);
+        for (const name of [sibling.name, view.name, contractName, 'unknown_contract_target']) {
+          const unavailable = await lookup(name, section);
+          assert.deepEqual(unavailable.body.error, { code: -32602, message: 'Invalid params' });
+          assert.equal(unavailable.body.result, undefined, 'lookup never widens the exact subset');
+        }
+      }
+      const contract = output(await lookup(studentSelectName));
+      assert.equal(contract.grammarVersion, 1);
+      assert.equal(contract.tool, studentSelectName);
+      assert.equal(contract.bindings.length, 1);
+      assert.deepEqual(contract.bindings[0].argumentPath, []);
+      assert.equal(contract.bindings[0].mode, 'select');
+      assert.equal(contract.bindings[0].querySchema.properties.where, undefined);
+      for (const name of [sibling.name, view.name, contractName]) {
+        const unavailable = await lookup(name);
+        assert.deepEqual(unavailable.body.error, { code: -32602, message: 'Invalid params' });
+        assert.equal(unavailable.body.result, undefined);
+      }
+      assert.equal(
+        dispatched.mock.callCount(),
+        0,
+        'exact-scope lookup performs no Action dispatch',
+      );
+      assert.equal(select.mock.callCount(), 0);
       const excluded = await send(
         'tools/call',
         { name: sibling.name, arguments: {} },
@@ -1237,7 +1561,13 @@ describe('businessHttp.test.ts', { concurrency: false, timeout: 180000 }, () => 
       assert.equal(excluded.body.error?.code, -32602);
       assert.equal(excluded.body.result, undefined);
       assert.equal(dispatched.mock.callCount(), 0, 'authorized sibling is rejected predispatch');
-      const query = { name: `MCP custom scope absent ${randomUUID()}`, pageNo: 1, pageSize: 1 };
+      const leafCheck = fromJsonSchema({
+        type: 'object',
+        ...contract.bindings[0].predicates,
+      })['~standard'];
+      const where = { field: 'name', op: 'eq', value: `MCP custom scope absent ${randomUUID()}` };
+      assert.equal((await leafCheck.validate(where)).issues, undefined);
+      const query = { where, pageNo: 1, pageSize: 1 };
       const call = () =>
         send(
           'tools/call',
@@ -1248,6 +1578,15 @@ describe('businessHttp.test.ts', { concurrency: false, timeout: 180000 }, () => 
       assert.equal(dispatched.mock.callCount(), 1);
       assert.equal(select.mock.callCount(), 1, 'allowed tool executes its ordinary service');
       selectAllowed = false;
+      for (const section of ['overview', 'input', 'output', 'query'] as const) {
+        const deniedLookup = await lookup(studentSelectName, section);
+        assert.deepEqual(deniedLookup.body.error, { code: -32602, message: 'Invalid params' });
+        assert.equal(deniedLookup.body.result, undefined);
+      }
+      const revokedList = await send('tools/list', {}, options(token.access_token));
+      assert.deepEqual(revokedList.body.result.tools, [], 'revocation also removes derived lookup');
+      assert.equal(dispatched.mock.callCount(), 1, 'fresh target guards deny lookup predispatch');
+      assert.equal(select.mock.callCount(), 1);
       const denied = await call();
       assert.equal(denied.status, 200);
       assert.equal(denied.body.error, undefined);
@@ -1274,8 +1613,38 @@ describe('businessHttp.test.ts', { concurrency: false, timeout: 180000 }, () => 
       assert.equal(replacedList.status, 200);
       assert.deepEqual(
         replacedList.body.result.tools.map((tool: any) => tool.name),
-        [studentViewName],
+        [studentViewName, contractName],
+        'an exact nonquery-only grant still derives generic contract lookup',
       );
+      for (const legacy of [false, true]) {
+        const replacedOptions = { legacy, ...options(replacement.access_token) };
+        for (const section of ['overview', 'input', 'output'] as const) {
+          const viewContract = output(
+            await send(
+              'tools/call',
+              { name: contractName, arguments: { tool: studentViewName, section } },
+              replacedOptions,
+            ),
+          );
+          assert.equal(viewContract.tool, studentViewName);
+          assert.equal(viewContract.contractVersion, 1);
+          const excluded = await send(
+            'tools/call',
+            { name: contractName, arguments: { tool: studentSelectName, section } },
+            replacedOptions,
+          );
+          assert.deepEqual(excluded.body.error, { code: -32602, message: 'Invalid params' });
+          assert.equal(excluded.body.result, undefined);
+        }
+        const queryUnavailable = await send(
+          'tools/call',
+          { name: contractName, arguments: { tool: studentViewName, section: 'query' } },
+          replacedOptions,
+        );
+        assert.deepEqual(queryUnavailable.body.error, { code: -32602, message: 'Invalid params' });
+        assert.equal(queryUnavailable.body.result, undefined);
+      }
+      assert.equal(dispatched.mock.callCount(), 2, 'nonquery contracts also avoid Action dispatch');
       const deleted = await personal(`deleteMine/${scopeId}`, 'DELETE');
       assert.equal(deleted.status, 200, `personal scope delete: ${JSON.stringify(deleted.body)}`);
       await assertInvalidated(replacement);
@@ -2678,22 +3047,53 @@ describe('businessHttp.test.ts', { concurrency: false, timeout: 180000 }, () => 
     // A missing AST in MCP must fail the AST regressions, not select the legacy branch.
     const nativeStudent = (await import('vona-module-training-student')) as Record<string, any>;
     const studentQuery = nativeStudent.studentQuery;
-    const nativeQueryCapabilities = await app.bean.executor.mockCtx(
+    const nativeQueryContract = await app.bean.executor.mockCtx(
       async () => {
         const document = JSON.parse(
           JSON.stringify(
-            await app.bean.openapi.generateJsonOfClass(nativeStudent.DtoStudentSelectReq, 'V31'),
+            await app.bean.openapi.generateJsonOfControllerAction(
+              nativeStudent.ControllerStudent,
+              'select',
+              'V31',
+              { includeExcluded: true, schemaTarget: 'mcp' },
+            ),
           ),
         );
-        const schema =
-          document.components.schemas[
-            appResource.getBeanFullName(nativeStudent.DtoStudentSelectReq)!
-          ];
-        const where = resolveSchema(schema.properties.where, document.components.schemas);
-        return where.filter?.capabilities?.query;
+        const operation = Object.values(document.paths)
+          .map((item: any) => item.get)
+          .find(Boolean);
+        const schemas = document.components.schemas;
+        const properties = Object.fromEntries(
+          operation.parameters.map((parameter: any) => [parameter.name, parameter.schema]),
+        ) as Record<string, any>;
+        const where = resolveSchema(properties.where, schemas);
+        const controls = JSON.parse(JSON.stringify(properties));
+        delete controls.where;
+        for (const schema of Object.values(controls) as any[]) {
+          if (schema.filter?.capabilities) {
+            delete schema.filter.capabilities;
+            if (!Object.keys(schema.filter).length) delete schema.filter;
+          }
+        }
+        return {
+          query: where.filter?.capabilities?.query,
+          controls: toolSchema(
+            { type: 'object', properties: controls, required: [], additionalProperties: false },
+            schemas,
+          ),
+          predicates: toolSchema(
+            {
+              anyOf: where.anyOf
+                .map((branch: any) => resolveSchema(branch, schemas))
+                .filter((branch: any) => branch.properties?.field && branch.properties?.op),
+            },
+            schemas,
+          ),
+        };
       },
       { instanceName: '' },
     );
+    const nativeQueryCapabilities = nativeQueryContract.query;
     assert.equal(
       Boolean(studentQuery),
       Boolean(nativeQueryCapabilities),
@@ -3183,20 +3583,187 @@ describe('businessHttp.test.ts', { concurrency: false, timeout: 180000 }, () => 
           const selectTool = listed.body.result.tools.find(
             (tool: any) => tool.name === studentSelectName,
           );
-          assert.ok(
-            selectTool.inputSchema.components?.schemas,
-            'HTTP tools/list retains recursive definitions',
+          const capabilityTool = listed.body.result.tools.find(
+            (tool: any) => tool.name === contractName,
           );
-          const queryCapabilities = resolveSchema(
-            selectTool.inputSchema.properties.where,
-            selectTool.inputSchema.components.schemas,
-          ).filter.capabilities.query;
+          assert.ok(capabilityTool, 'authorized query discovery appends the built-in lookup');
+          assert.equal(listed.body.result.tools.at(-1).name, contractName);
+          assert.equal(capabilityTool.outputSchema, undefined, 'schema fragments are result data');
+          assert.deepEqual(capabilityTool.inputSchema.required, ['tool']);
+          assert.deepEqual(Object.keys(capabilityTool.inputSchema.properties), ['tool', 'section']);
+          assert.deepEqual(capabilityTool.inputSchema.properties.section.enum, [
+            'overview',
+            'input',
+            'output',
+            'query',
+          ]);
+          assert.equal(capabilityTool.inputSchema.properties.tool.type, 'string');
+          assert.equal(capabilityTool.inputSchema.additionalProperties, false);
+          const lookupCheck = fromJsonSchema(capabilityTool.inputSchema)['~standard'];
+          const beforeLookup = observedCalls.length;
+          for (const args of [
+            {},
+            { tool: 1 },
+            { tool: studentSelectName, extra: true },
+            { tool: studentSelectName, section: 'unsupported' },
+            { tool: studentSelectName, section: 1 },
+          ]) {
+            assert.ok((await lookupCheck.validate(args)).issues);
+            const invalid = await send(
+              'tools/call',
+              { name: contractName, arguments: args },
+              options,
+            );
+            assert.equal(invalid.body.error?.code, -32602);
+            assert.equal(invalid.body.result, undefined);
+          }
+          const capability = output(
+            await send(
+              'tools/call',
+              { name: contractName, arguments: { tool: studentSelectName, section: 'query' } },
+              options,
+            ),
+          );
+          assert.deepEqual(Object.keys(capability).sort(), ['bindings', 'grammarVersion', 'tool']);
+          assert.equal(capability.grammarVersion, 1);
+          assert.equal(capability.tool, studentSelectName);
+          assert.equal(capability.bindings.length, 1);
+          const binding = capability.bindings[0];
+          assert.deepEqual(binding.argumentPath, []);
+          assert.equal(binding.mode, 'select');
+          assert.deepEqual(binding.capabilities, { query: nativeQueryCapabilities });
+          assert.deepEqual(binding.querySchema, nativeQueryContract.controls);
           assert.deepEqual(
-            queryCapabilities,
-            nativeQueryCapabilities,
-            'MCP retains the native DTO public-query contract',
+            binding.predicates,
+            nativeQueryContract.predicates,
+            'lookup returns every exact native leaf including operand constraints, without Boolean recursion',
           );
+          assert.equal(binding.querySchema.properties.where, undefined);
+          const queryCapabilities = binding.capabilities.query;
           assert.deepEqual(queryCapabilities.fields.id.operators, ['eq', 'in']);
+          for (const [name, mode] of [
+            [studentGroupName, 'group'],
+            [studentAggregateName, 'aggregate'],
+          ]) {
+            const analysis = output(
+              await send(
+                'tools/call',
+                { name: contractName, arguments: { tool: name, section: 'query' } },
+                options,
+              ),
+            );
+            assert.equal(analysis.tool, name);
+            assert.equal(analysis.bindings.length, 1);
+            assert.deepEqual(analysis.bindings[0].argumentPath, []);
+            assert.equal(analysis.bindings[0].mode, mode);
+            assert.deepEqual(analysis.bindings[0].capabilities.query, nativeQueryCapabilities);
+            assert.ok(analysis.bindings[0].capabilities.analysis);
+            assert.equal(analysis.bindings[0].querySchema.properties.where, undefined);
+            assert.deepEqual(analysis.bindings[0].predicates, binding.predicates);
+          }
+          const overview = output(
+            await send(
+              'tools/call',
+              { name: contractName, arguments: { tool: studentSelectName } },
+              options,
+            ),
+          );
+          assert.deepEqual(overview, {
+            contractVersion: 1,
+            tool: studentSelectName,
+            readOnly: true,
+            sections: ['overview', 'input', 'output', 'query'],
+            input: { type: 'object', compactPaths: [['where']] },
+            output: { type: 'object', compactPaths: [['list', 'items']] },
+          });
+          const fullInput = output(
+            await send(
+              'tools/call',
+              { name: contractName, arguments: { tool: studentSelectName, section: 'input' } },
+              options,
+            ),
+          );
+          assert.equal(fullInput.section, 'input');
+          assert.equal(fullInput.contractVersion, 1);
+          const fullWhere = resolveSchema(
+            fullInput.schema.properties.where,
+            fullInput.schema.$defs ?? {},
+          );
+          assert.ok(fullWhere.anyOf, 'full input retains the native recursive grammar');
+          assert.deepEqual(fullWhere.filter.capabilities.query, nativeQueryCapabilities);
+          assert.equal(
+            (await fromJsonSchema(fullInput.schema)['~standard'].validate(selectQuery)).issues,
+            undefined,
+            'full input contract accepts the query used for the real HTTP Action',
+          );
+          const fullOutput = output(
+            await send(
+              'tools/call',
+              { name: contractName, arguments: { tool: studentSelectName, section: 'output' } },
+              options,
+            ),
+          );
+          assert.equal(fullOutput.section, 'output');
+          assert.equal(fullOutput.contractVersion, 1);
+          assert.ok(
+            resolveSchema(fullOutput.schema.properties.list.items, fullOutput.schema.$defs ?? {})
+              .properties.mobile,
+            'full output retains the serialized Student result contract',
+          );
+          const compactItem = selectTool.outputSchema.properties.list.items;
+          assert.equal(compactItem.type, 'object');
+          assert.equal(compactItem.additionalProperties, true);
+          assert.equal(compactItem.properties, undefined);
+          assert.match(compactItem.description, /cabloy_tool_contract/);
+          assert.equal(observedCalls.length, beforeLookup, 'lookup never dispatches an Action');
+          const compactWhere = selectTool.inputSchema.properties.where;
+          assert.deepEqual(Object.keys(compactWhere).sort(), [
+            'additionalProperties',
+            'description',
+            'type',
+          ]);
+          assert.equal(compactWhere.type, 'object');
+          assert.equal(compactWhere.additionalProperties, true);
+          assert.match(compactWhere.description, /cabloy_tool_contract/);
+          assert.equal(
+            selectTool.inputSchema.$defs,
+            undefined,
+            'unreachable predicates are pruned',
+          );
+          assert.equal(selectTool.inputSchema.properties.orders.filter?.capabilities, undefined);
+          for (const [name, schema] of Object.entries(
+            nativeQueryContract.controls.properties as Record<string, unknown>,
+          )) {
+            assert.deepEqual(
+              selectTool.inputSchema.properties[name],
+              schema,
+              `${name} retains its native named-filter/control metadata`,
+            );
+          }
+          for (const schema of [
+            selectTool.inputSchema,
+            selectTool.outputSchema,
+            fullInput.schema,
+            fullOutput.schema,
+            binding.querySchema,
+            binding.predicates,
+          ]) {
+            assert.equal(schema.components, undefined);
+            const refs: string[] = [];
+            const visit = (value: any) => {
+              if (!value || typeof value !== 'object') return;
+              if (typeof value.$ref === 'string') refs.push(value.$ref);
+              for (const child of Object.values(value)) visit(child);
+            };
+            visit(schema);
+            if (schema === fullOutput.schema) {
+              assert.ok(refs.length, 'the full Student output still exercises references');
+            }
+            for (const ref of refs) {
+              assert.ok(ref.startsWith('#/$defs/'), ref);
+              assert.ok(resolveSchema({ $ref: ref }, schema.$defs ?? {}));
+            }
+          }
           assert.equal(
             selectTool.inputSchema.properties.id,
             undefined,
@@ -3206,13 +3773,35 @@ describe('businessHttp.test.ts', { concurrency: false, timeout: 180000 }, () => 
           assert.equal(
             (await check.validate(selectQuery)).issues,
             undefined,
-            'actual generated AST accepts the near-envelope-depth query',
+            'published compact input accepts a valid near-envelope-depth query',
           );
+          const predicateCheck = fromJsonSchema({
+            type: 'object',
+            ...binding.predicates,
+          })['~standard'];
           const beforeInvalid = observedCalls.length;
           for (const query of [
             { where: { name } },
             { where: { field: 'mobile', op: 'eq', value: mobile } },
             { where: { field: 'level', op: 'eq', value: '2' } },
+            { where: { field: 'level', op: 'eq', value: 4 } },
+            { where: { field: 'id', op: 'in', value: [] } },
+            { where: { field: 'name', op: 'eq', value: name, extra: true } },
+          ]) {
+            assert.equal(
+              (await check.validate(query)).issues,
+              undefined,
+              'compact public where intentionally accepts arbitrary objects',
+            );
+            assert.ok((await predicateCheck.validate(query.where)).issues, JSON.stringify(query));
+            const rejected = await select(token, legacy, query);
+            assert.equal(rejected.status, 200);
+            assert.equal(rejected.body.error?.code, -32602);
+            assert.equal(rejected.body.result, undefined);
+          }
+          for (const query of [
+            { where: [] },
+            { where: 'invalid' },
             { orders: 'createdAt,desc' },
             { orders: [['createdAt', 'desc']] },
             { columns: ['id'] },
@@ -3473,6 +4062,63 @@ describe('businessHttp.test.ts', { concurrency: false, timeout: 180000 }, () => 
     }
   });
 
+  it('accepts Inspector registration metadata and ignores unknown authority hints', async () => {
+    const response = await openHttp({
+      target: '/mcp/register',
+      body: JSON.stringify({
+        redirect_uris: ['http://127.0.0.1:6274/oauth/callback'],
+        token_endpoint_auth_method: 'none',
+        grant_types: ['authorization_code'],
+        response_types: ['code'],
+        client_name: 'MCP Inspector',
+        client_uri: 'https://github.com/modelcontextprotocol/inspector',
+        scope: 'mcp:read',
+        application_type: 'native',
+        resource: 'https://other.example.test/mcp',
+        instanceName: 'shareTest',
+        vendor_options: { features: ['example'] },
+      }),
+    }).response;
+    const clientId = response.body.client_id as string | undefined;
+    try {
+      assert.equal(response.status, 201);
+      assert.ok(clientId);
+      assert.equal(response.headers['cache-control'], 'no-store');
+      assert.equal(response.body.client_name, 'MCP Inspector');
+      assert.deepEqual(response.body.redirect_uris, ['http://127.0.0.1:6274/oauth/callback']);
+      assert.equal(response.body.scope, 'mcp:read');
+      assert.equal(response.body.token_endpoint_auth_method, 'none');
+      assert.deepEqual(response.body.grant_types, ['authorization_code']);
+      assert.deepEqual(response.body.response_types, ['code']);
+      for (const key of [
+        'client_uri',
+        'application_type',
+        'resource',
+        'instanceName',
+        'vendor_options',
+        'client_secret',
+      ]) {
+        assert.equal(Object.hasOwn(response.body, key), false, key);
+      }
+      await app.bean.executor.mockCtx(async () => {
+        const client = await app.scope('mcp-auth').service.registration.resolve(clientId, resource);
+        assert.ok(client);
+        assert.deepEqual(client.resources, [resource]);
+        assert.equal(client.scope, 'mcp:read');
+      });
+    } finally {
+      if (clientId) {
+        await app.bean.executor.mockCtx(() =>
+          app
+            .scope('mcp-auth')
+            .model.client.builderSelect()
+            .where({ oauthClientId: clientId })
+            .delete(),
+        );
+      }
+    }
+  });
+
   it('enforces the direct DCR HTTP boundary and rejects malformed registration requests', async () => {
     const validBody = JSON.stringify({
       client_name: 'HTTP negative-case client',
@@ -3554,7 +4200,11 @@ describe('businessHttp.test.ts', { concurrency: false, timeout: 180000 }, () => 
     await assertError(
       {
         target: '/mcp/register',
-        body: JSON.stringify({ ...JSON.parse(validBody), application_type: 'native', resource }),
+        body: JSON.stringify({
+          ...JSON.parse(validBody),
+          client_uri: 'https://client.example.test/about',
+          scope: 'offline_access',
+        }),
       },
       400,
       'invalid_client_metadata',

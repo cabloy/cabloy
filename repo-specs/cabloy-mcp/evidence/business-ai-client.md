@@ -1491,3 +1491,75 @@ The user's earlier report that an interaction worked and another approximately 2
 **Commit-closeout verification:** the final unified managed selection covering JWT, ordinary Passport, Passport sessions, MCP registration, authorization and business HTTP passed **63/63**, **0 failed**, **0 skipped**, exit **0**. The documentation build after adding this record and its guide link passed, exit **0**; scoped documentation formatting, evidence-path checks, both new relative links and whitespace checks also passed. The original checkout remained clean. These checks verify the repository increment, not the exact worker revision that produced the user-supplied logs.
 
 The operational event meanings and suppression limits are documented in [Server-side refresh evidence](../../../repo-docs/mcp/mcp-browser-authorization.md#server-side-refresh-evidence). No server restart, database reset, credential replay, environment/port change or push is part of this closeout. Unrelated Zova textlint dependency changes are excluded from the refresh commit and left untouched.
+
+## User-reported Codex generic tool-contract compatibility (recorded 2026-11-11)
+
+### Attribution and procedure
+
+The user supplied a Codex read-only compatibility report and requested its archival in this spec. This is **user-reported client evidence**, not assistant-executed MCP calls, an independently captured transport transcript or a raw discovery response. The date above is the recording date; the exact client execution timestamp and Codex version were not supplied. The client namespace `mcp__test__` identifies its connection label only, not an endpoint, instance or runtime configuration.
+
+The reported procedure used **six `cabloy_tool_contract` calls and one Student select call**, with no skill installed, loaded or used. The user reported no local-file reads, log searches, environment or business-data changes, or calls to the removed query helper. The assistant did not replay the procedure while recording it. The generic helper replaces the old query-only entry point; this observation does not depend on an old-tool alias or fallback.
+
+Recording checkout: Cabloy Basic, HEAD `90fea47b916901608d45b59ace1c94458fe8413d`, with existing approved uncommitted implementation/documentation changes. This is recording context only, **not an attestation of the worker-loaded source** used by Codex. Mechanism and public contract boundaries are documented in [Retrieve one tool's contract](../../../repo-docs/mcp/mcp-controller-tools.md#retrieve-one-tools-contract).
+
+### Minimized observations
+
+The user distinguished exact server-published names from client callable identifiers:
+
+| Server name used in helper arguments | Client callable identifier |
+| --- | --- |
+| `cabloy_tool_contract` | `mcp__test__cabloy_tool_contract` |
+| `training-student_student_select` | `mcp__test__training_student_student_select` |
+| `training-student_student_summary` | `mcp__test__training_student_student_summary` |
+
+The model-visible select description supplied its exact server name, and helper responses matched the requested target. The helper declaration exposed required `tool: string` and optional `section: "overview" | "input" | "output" | "query"`. The select declaration retained compact `where?: { [key: string]: unknown }` and `list: Array<{ [key: string]: unknown }>` surfaces, alongside `total: string` and numeric pagination fields. These are **model-visible declaration observations**, not proof that the server published the TypeScript word `unknown`.
+
+**Raw `tools/list` was not obtained.** The report relies on model-visible declarations and helper/business results; it does not establish raw client discovery, wire serialization or the client's declaration-conversion implementation.
+
+| Call | Helper arguments | Reported result |
+| --- | --- | --- |
+| 1 | `{"tool":"training-student_student_select"}` | Default overview: `contractVersion: 1`, exact target, sections `overview/input/output/query`, input compact paths `[["where"]]`, output compact paths `[["list","items"]]`; no full schema embedded in overview. |
+| 2 | `{"tool":"training-student_student_select","section":"input"}` | Full input schema returned as result data: explicit predicate leaves and recursive `and/or/not`; all inspected references resolved within its own `$defs`. |
+| 3 | `{"tool":"training-student_student_select","section":"output"}` | Full public output schema returned as result data: required `list/total/pageNo/pageSize/pageCount`; row fields included `id/name/level/createdAt/updatedAt/mobile/image`. Row/image references resolved within this output's own `$defs`, without borrowing input definitions. Schema field visibility is not disclosure of row values. |
+| 4 | `{"tool":"training-student_student_select","section":"query"}` | Native payload retained `grammarVersion: 1`, exact target, a binding with `argumentPath: []`, `mode: "select"`, `capabilities/querySchema/predicates`; no new generic schema wrapper. `level` admitted numeric `1/2/3` for `eq/gte`; pagination admitted `pageNo >= 1` and `pageSize` from 1 through 100. Full input supported `where.or`. |
+| 5 | `{"tool":"training-student_student_summary"}` | Nonquery overview offered `overview/input/output`, with no query section. |
+| 6 | `{"tool":"training-student_student_summary","section":"output"}` | Public output projection contained exactly `id/name/level/levelTitle/descriptionLength/summaryText`, all required, with `additionalProperties: false`; no mobile or full note fields. No summary business call was made. |
+
+Reported reference examples included `#/$defs/TrainingStudentSelectQueryPredicate_52faf9b0777604cfccabc1d562ef60a2e5b2deb9` and `#/$defs/TrainingStudentSelectQueryPredicate` in input, and `#/$defs/training-student.dto.studentSelectResItem` in output. The report observed no truncation or hidden content in the inspected results based on visible structures and reference checks, not merely a successful helper status. These are reported inspections, not independently retained complete schema captures.
+
+The **one** business call used the exact select tool with:
+
+```json
+{
+  "where": {
+    "or": [
+      { "field": "level", "op": "eq", "value": 1 },
+      { "field": "level", "op": "eq", "value": 2 }
+    ]
+  },
+  "pageNo": 1,
+  "pageSize": 10
+}
+```
+
+The user reported success with `isError: false`, two rows whose levels were `[1, 2]`, `total: "2"` (string), `pageNo: 1`, `pageSize: 10` and `pageCount: 1`. There was no query splitting, client-side merging or retry. Row judgments apply only to the returned page; names, mobile values, notes and complete records are not retained here.
+
+### Disposition and limits
+
+The bounded **no-skill overview → full input/output/query retrieval → one native OR select** path passes **by user report**. The nonquery summary observation additionally supports exact public output projection retrieval, not execution of that Action. Expected compact `unknown` placeholders remained in model-visible declarations while detailed contracts were usable as result data. Successful execution does not prove complete declaration rendering; declaration `unknown` does not prove server-published `unknown`.
+
+No universal compatibility claim follows for other clients, tools, input/output forms, recursion shapes, query limits or pagination boundaries. Exact Codex version, execution timestamp, endpoint, account/instance/database/runtime, granted scopes/effective permissions, dependency versions, worker-loaded source revision, wire capture and client/server exit codes were not supplied. This record adds no negative authorization, revocation, cross-instance, mutation, production or release proof. No further client replay is required to archive this bounded reported result.
+
+Supporting associations are `PRD-MCP-CONTRACT-01`, `SRS-MCP-CATALOG-01`, `WBS-MCP-30-01`, `WBS-MCP-40-01`, `ATP-MCP-CONTRACT-01` (contract projection) and `ATP-MCP-CALL-01` (valid call/result adaptation), not full acceptance of those requirements or tasks. Historical evidence is preserved. Original blocked WBS parents and full ATPs remain unchanged; the original baseline stays **0/12 verified**, and the separately verified personal-scope increment keeps the expanded register at **1/13 verified**.
+
+This archival increment changes only this evidence record and its derived progress summary. No new MCP/business call, runtime test, source implementation, service restart, credential/configuration access, environment/port change, database reset, installation, deployment, commit or push is performed for recording. No secrets, private row values, full identities or machine-local paths are retained in this addition.
+
+### Recording checks
+
+- `npm run spec:check -- cabloy-mcp`: **exit 1**, 69 definitions inspected, with **25 missing-link findings in two unchanged historical owners**: `decisions/0008-mcp-limits-audit-telemetry-redaction.md` and `wbs-mcp-20-01-execution-dossier.md`. Findings concern old `vona/src/suite/cabloy-mcp/...` source paths and unavailable local phase-20 logs. Neither owner was changed by this archival increment; no historical-link repair or full-audit pass is claimed.
+- `npm run spec:charts:check -- cabloy-mcp`: **exit 0**, existing English charts current at **1/13 verified**, with no chart edits or status promotion.
+- Scoped `npm run evidence:check -- -- ...` over this record and `progress.md`: **exit 0**. This checks machine-local paths, not secret absence or client-evidence authenticity.
+- Scoped `oxfmt --check`: **exit 0** for the matched progress file; this evidence record is formatter-ignored and was manually checked for Markdown and minimized sensitive content. Both added relative links and their heading fragments passed targeted checks. `git diff --check` passed.
+- `npm run docs:build`: **exit 0**. The public documentation build does not render these suite-spec records and is not spec acceptance or runtime/client proof.
+
+These documentary results do not independently authenticate the supplied report or close any full ATP. No runtime suite or further client/business call was run for archival.

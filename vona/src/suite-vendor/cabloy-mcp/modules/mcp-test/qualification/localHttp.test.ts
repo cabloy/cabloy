@@ -242,7 +242,7 @@ describe('localHttp.test.ts', { concurrency: false, timeout: 60000 }, () => {
       assert.equal(categories.outputSchema.properties.total.type, 'string');
       for (const tool of [search, detail, categories]) {
         assert.equal(tool.annotations.readOnlyHint, true);
-        assert.ok(tool.outputSchema.components.schemas);
+        assert.ok(tool.outputSchema.$defs);
       }
       assert.deepEqual(local.snapshot(), {
         active: 0,

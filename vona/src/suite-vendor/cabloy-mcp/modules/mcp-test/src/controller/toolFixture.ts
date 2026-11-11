@@ -24,7 +24,7 @@ export class ControllerToolFixture extends BeanBase {
     return { count: toolFixtureState.count };
   }
 
-  @Mcp.tool({ name: 'mcp_test_action_effect' })
+  @Mcp.tool({ name: 'mcp_test_action_effect', discovery: { input: [['body']] } })
   @Web.post('effect/:label')
   @Api.body(
     z.object({

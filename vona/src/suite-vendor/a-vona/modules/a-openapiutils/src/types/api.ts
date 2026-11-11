@@ -43,6 +43,11 @@ export interface IMcpToolOptions {
   readOnly?: boolean;
   /** The top-level response fields exposed by this action. */
   output?: { pick: string[] };
+  /** Declaration-only compaction paths from the final MCP argument/result root. */
+  discovery?: {
+    input?: string[][];
+    output?: string[][];
+  };
 }
 
 export interface IOpenapiOptions {

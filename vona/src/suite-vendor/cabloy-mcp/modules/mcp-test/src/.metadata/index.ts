@@ -142,10 +142,12 @@ declare module 'vona-module-a-web' {
         '/mcp/test/catalog/categories': undefined;
 '/mcp/test/catalog/products': undefined;
 '/mcp/test/catalog/products/:id': undefined;
+'/mcp/test/catalog/excluded': undefined;
 '/mcp/test/actions/status': undefined;
 '/mcp/test/actions/scalar': undefined;
 '/mcp/test/actions/array': undefined;
 '/mcp/test/actions/unsupported': undefined;
+'/mcp/test/actions/excluded': undefined;
 '/mcp/test/actions/closed': undefined;
     }
 export interface IApiPathPostRecord{

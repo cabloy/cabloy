@@ -221,18 +221,70 @@ describe('registration.test.ts', { concurrency: false }, () => {
     );
   });
 
-  it('validates exact bounded metadata and rejects unsupported authority', async () => {
+  it('ignores unknown registration metadata without persisting, echoing or granting authority', async () => {
+    const extensions = {
+      client_uri: 'https://client.example.test/about',
+      vendor_enabled: true,
+      vendor_version: 1,
+      vendor_optional: null,
+      vendor_features: ['example'],
+      vendor_options: { nested: { scope: 'mcp:all' } },
+    };
+    const response = await app.bean.executor.mockCtx(() =>
+      service().register(
+        {
+          ...publicRequest,
+          application_type: 'native',
+          scope: 'mcp:read',
+          ...extensions,
+          resource: 'https://other.example.test/mcp',
+          instanceName: 'shareTest',
+          state: 'revoked',
+          client_id: 'caller-authored-id',
+          client_secret: 'caller-authored-secret',
+        },
+        resource,
+      ),
+    );
+    try {
+      assert.equal(response.scope, 'mcp:read');
+      assert.equal(response.token_endpoint_auth_method, 'none');
+      assert.notEqual(response.client_id, 'caller-authored-id');
+      for (const key of [
+        ...Object.keys(extensions),
+        'application_type',
+        'resource',
+        'instanceName',
+        'state',
+        'client_secret',
+      ]) {
+        assert.equal(Object.hasOwn(response, key), false, key);
+      }
+      await app.bean.executor.mockCtx(async () => {
+        const row = await model().get({ oauthClientId: response.client_id });
+        assert.ok(row);
+        for (const key of Object.keys(extensions)) {
+          assert.equal(Object.hasOwn(row, key), false, key);
+        }
+        assert.equal(row.resource, resource.resource);
+        assert.equal(row.state, 'active');
+        assert.equal(row.scope, 'mcp:read');
+        assert.equal(row.secretSha256, null);
+        const resolved = await service().resolve(response.client_id, resource.resource);
+        assert.ok(resolved);
+        assert.deepEqual(resolved.resources, [resource.resource]);
+        assert.equal(resolved.scope, 'mcp:read');
+        assert.equal(resolved.authentication, 'none');
+      });
+    } finally {
+      await app.bean.executor.mockCtx(() =>
+        model().builderSelect().where({ oauthClientId: response.client_id }).delete(),
+      );
+    }
+  });
+
+  it('validates recognized bounded metadata and rejects unsupported values', async () => {
     const invalidRequests: Array<[string, unknown, string]> = [
-      [
-        'unknown field',
-        { ...publicRequest, resource: resource.resource },
-        'invalid_client_metadata',
-      ],
-      [
-        'native with unknown field',
-        { ...publicRequest, application_type: 'native', resource: resource.resource },
-        'invalid_client_metadata',
-      ],
       ...['web', 'other', '', 'Native', ' native', 'native ', null, 1, true, [], {}].map(
         application_type =>
           [
