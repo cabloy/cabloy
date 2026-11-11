@@ -1586,9 +1586,23 @@ test(
       expect(token.scope).toBe(scope.scope);
       const listed = await callMcp(request, 'tools/list', {}, token.access_token);
       expect(listed.status()).toBe(200);
+      // The metadata helper is derived from visible Actions, not an additional business grant.
       expect((await listed.json()).result.tools.map((tool: { name: string }) => tool.name)).toEqual(
-        ['training-student_student_select'],
+        ['training-student_student_select', 'cabloy_tool_contract'],
       );
+      const excludedContract = await callMcp(
+        request,
+        'tools/call',
+        {
+          name: 'cabloy_tool_contract',
+          arguments: { tool: 'training-student_student_group', section: 'overview' },
+        },
+        token.access_token,
+      );
+      expect(excludedContract.status()).toBe(200);
+      const excludedContractBody = await excludedContract.json();
+      expect(excludedContractBody.error).toEqual({ code: -32602, message: 'Invalid params' });
+      expect(excludedContractBody.result).toBeUndefined();
       const selected = await callMcp(
         request,
         'tools/call',

@@ -83,14 +83,7 @@ export class BeanModelCrudInner<TRecord extends {}> extends BeanModelView<TRecor
     // datas
     const datas = await builder;
     // debug
-    this.$loggerChild('model').debug(() => {
-      let tip = String(datas.length);
-      const id = cast(datas[0])?.id;
-      if (!isNil(id)) {
-        tip = `${tip}/${id}`;
-      }
-      return `model.select: ${tip}, ${builder.toQuery()}`;
-    });
+    this.$loggerChild('model').debug(() => `model.select: ${table}, rows=${datas.length}`);
     const rows = (await this.dialect.select(builder, datas, () =>
       this.columns(table),
     )) as TRecord[];
@@ -167,7 +160,7 @@ export class BeanModelCrudInner<TRecord extends {}> extends BeanModelView<TRecor
     // where
     this.prepareWhere(builder, table, params.where, options);
     // ready
-    this.$loggerChild('model').debug(() => `model.count: ${builder.toQuery()}`);
+    this.$loggerChild('model').debug(() => `model.count: ${table}`);
     const res = await builder;
     return normalizeAggregateValue(this.extractFirstValue(res), 'count');
   }
@@ -193,7 +186,7 @@ export class BeanModelCrudInner<TRecord extends {}> extends BeanModelView<TRecor
     // ready
     const res = await builder;
     // debug
-    this.$loggerChild('model').debug(() => `model.increment: ${res}, ${builder.toQuery()}`);
+    this.$loggerChild('model').debug(() => `model.increment: ${table}, rows=${res}`);
     return res as unknown as number;
   }
 
@@ -228,17 +221,9 @@ export class BeanModelCrudInner<TRecord extends {}> extends BeanModelView<TRecor
     // builder
     const builder = this.builder<TRecord>(table);
     // dialect insert
-    const [ids, builder2] = await this.dialect.insert(builder, datas);
+    const [ids] = await this.dialect.insert(builder, datas);
     // debug
-    this.$loggerChild('model').debug(() => {
-      let tip = String(ids.length);
-      const id = ids[0];
-      if (!isNil(id)) {
-        tip = `${tip}/${id}`;
-      }
-      const query = this._ellipsis‌Logger(builder2.toQuery());
-      return `model.insert: ${tip}, ${query}`;
-    });
+    this.$loggerChild('model').debug(() => `model.insert: ${table}, rows=${ids.length}`);
     // combine
     const result: any[] = [];
     const dataDefault = await this.defaultData(table);
@@ -288,10 +273,7 @@ export class BeanModelCrudInner<TRecord extends {}> extends BeanModelView<TRecor
     // ready
     const resCount = await builder;
     // debug
-    this.$loggerChild('model').debug(() => {
-      const query = this._ellipsis‌Logger(builder.toQuery());
-      return `model.update: ${resCount}, ${query}`;
-    });
+    this.$loggerChild('model').debug(() => `model.update: ${table}, rows=${resCount}`);
     // ok
     return data;
   }
@@ -320,6 +302,6 @@ export class BeanModelCrudInner<TRecord extends {}> extends BeanModelView<TRecor
     // ready
     const resCount = await builder;
     // debug
-    this.$loggerChild('model').debug(() => `model.delete: ${resCount}, ${builder.toQuery()}`);
+    this.$loggerChild('model').debug(() => `model.delete: ${table}, rows=${resCount}`);
   }
 }

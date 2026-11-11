@@ -1,7 +1,6 @@
 import { createVNode, toRaw } from 'vue';
 import { BeanBase, deepEqual, disposeInstance, Use } from 'zova';
 import { Bean } from 'zova-module-a-bean';
-import { Log } from 'zova-module-a-logger';
 
 import type { IBehaviors, IBehaviorTag } from '../types/behavior.ts';
 
@@ -49,7 +48,6 @@ export class BeanBehaviorsHolder extends BeanBase {
     return behaviors;
   }
 
-  @Log({ args: false, childName: 'behavior', level: 'debug' })
   private _getBehaviorRoot(behaviors?: IBehaviors) {
     if (!behaviors) {
       behaviors = this._getBehaviors();

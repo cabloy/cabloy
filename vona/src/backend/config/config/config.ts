@@ -116,12 +116,14 @@ export default async function (app: VonaApplication) {
         return { transports: [this.bean.logger.makeTransportFile(clientInfo, 'access')] };
       },
       default(this: VonaApplication, clientInfo: ILoggerOptionsClientInfo) {
+        const consoleTransport = this.bean.logger.makeTransportConsole(clientInfo);
+        if (this.meta.isTest) consoleTransport.level = 'warn';
         const transports = [
           this.bean.logger.makeTransportFile(clientInfo, 'error', 'error'),
           this.bean.logger.makeTransportFile(clientInfo, 'warn', 'warn'),
           this.bean.logger.makeTransportFile(clientInfo, 'http', 'http'),
           this.bean.logger.makeTransportFile(clientInfo, 'combined'),
-          this.bean.logger.makeTransportConsole(clientInfo),
+          consoleTransport,
         ];
         return { transports };
       },

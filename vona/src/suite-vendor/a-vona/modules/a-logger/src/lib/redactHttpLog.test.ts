@@ -113,6 +113,40 @@ test('access configuration uses only a normal threshold file transport', async (
   assert.deepEqual(calls, [[clientInfo, 'access']]);
 });
 
+test('test console threshold leaves file diagnostics and non-test console unchanged', async () => {
+  for (const isTest of [true, false]) {
+    const files: any[][] = [];
+    const consoleTransport = { level: 'silly' };
+    const clientInfo = { clientName: 'default', level: () => 'debug', child: () => undefined };
+    const app = {
+      meta: { env: {}, isTest },
+      bean: {
+        logger: {
+          makeTransportFile(...args: any[]) {
+            files.push(args);
+            return { args };
+          },
+          makeTransportConsole(info: unknown) {
+            assert.equal(info, clientInfo);
+            return consoleTransport;
+          },
+        },
+      },
+    };
+    const config = await createConfig(app as any);
+    const diagnostic = (config.logger!.clients!.default as Function).call(app, clientInfo);
+    assert.equal(diagnostic.transports.at(-1), consoleTransport);
+    assert.equal(consoleTransport.level, isTest ? 'warn' : 'silly');
+    assert.deepEqual(files, [
+      [clientInfo, 'error', 'error'],
+      [clientInfo, 'warn', 'warn'],
+      [clientInfo, 'http', 'http'],
+      [clientInfo, 'combined'],
+    ]);
+    assert.equal(clientInfo.level(), 'debug');
+  }
+});
+
 test('access filtering can be disabled independently of business debug', () => {
   let accessLevel: 'info' | false = 'info';
   const access = formatLoggerFilter({ level: () => accessLevel, child: undefined });

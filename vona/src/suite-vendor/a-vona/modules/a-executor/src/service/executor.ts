@@ -2,7 +2,6 @@ import type { IApiPathRecordMethodMap } from 'vona-module-a-web';
 
 import { combineParamsAndQuery } from '@cabloy/utils';
 import { BeanBase, cast, deepExtend, getRequestBoundary } from 'vona';
-import { Aspect } from 'vona-module-a-aspect';
 import { Service } from 'vona-module-a-bean';
 
 import type { IGeneralInfoOptions, IPerformActionOptions } from '../types/executor.ts';
@@ -11,7 +10,6 @@ import { SymbolRouterMiddleware } from '../types/executor.ts';
 
 @Service()
 export class ServiceExecutor extends BeanBase {
-  @Aspect.aopMethod('a-logger:log', { level: 'debug' })
   async performActionInner<METHOD extends keyof IApiPathRecordMethodMap>(
     method: METHOD,
     url: string,
