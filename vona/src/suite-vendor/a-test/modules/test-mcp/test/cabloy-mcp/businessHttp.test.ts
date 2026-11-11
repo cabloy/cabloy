@@ -29,12 +29,10 @@ import {
   handleMcpRequest,
   mcpTransportSnapshot,
   toolSchema,
+  queryRepairHint,
+  resolveSchema,
 } from 'vona-module-cabloy-mcp';
-import { getMcpIssuer } from 'vona-module-mcp-auth';
-
-import { ServiceAuthorization } from '../../mcp-auth/src/service/authorization.ts';
-import { queryRepairHint } from '../src/lib/controllerToolContract.ts';
-import { resolveSchema } from '../src/lib/controllerToolSchema.ts';
+import { getMcpIssuer, ServiceAuthorization } from 'vona-module-mcp-auth';
 
 const version = '2026-07-28';
 const categoriesName = 'commerce_categories_list';

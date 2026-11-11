@@ -13,9 +13,20 @@ Current ownership is `a-test/test-mcp` at `vona/src/suite-vendor/a-test/modules/
 | `PROJECT_DISABLED_MODULES=mcp-test` in an old invocation | Use `PROJECT_DISABLED_MODULES=test-mcp` for a new invocation |
 | Module-derived default `mcp-test_*` tool names | Module-derived default `test-mcp_*` tool names |
 
-This is a navigation/current-execution mapping, not a claim that every historical entrypoint still exists. Earlier `devHttp.test.ts` shared-owner proof predates the separate normal-owner migration; current authenticated HTTP tests belong to `vona/src/suite-vendor/cabloy-mcp/modules/cabloy-mcp/test/businessHttp.test.ts`. The standalone qualification requires the managed no-listener startup described in the [current guide](../../../repo-docs/mcp/mcp-guide.md#automated-verification).
+This is a navigation/current-execution mapping, not a claim that every historical entrypoint still exists. Earlier `devHttp.test.ts` shared-owner proof predates the separate normal-owner migration; current authenticated HTTP tests belong to `vona/src/suite-vendor/a-test/modules/test-mcp/test/cabloy-mcp/businessHttp.test.ts`. The standalone qualification requires the managed no-listener startup described in the [current guide](../../../repo-docs/mcp/mcp-guide.md#automated-verification).
 
 Historical logs, executed commands/results, ADR decisions, progress entries and source-hash snapshots are intentionally unchanged, including paths naming `mcp-test`. Hashes continue to identify the original source bytes. Explicit `mcp_test_action_*` tool names, `x-mcp-test-owner`, `commerce_*` tools and unrelated protocol strings are not module-derived names and remain compatible. Launcher commands `mcp:test:local` and `mcp:commerce:local` are unchanged. This mapping is neither a rerun nor new evidence of the relocated module; no previous proof or WBS/ATP status is promoted.
+
+## Ordinary test consolidation (2026-11-11)
+
+The eight ordinary runtime/auth test files now belong to `a-test/test-mcp`. Use this mapping for navigation and new invocations; retained executed commands, results and source hashes still describe their original revisions.
+
+| Historical location | Present-day location |
+| --- | --- |
+| `vona/src/suite-vendor/cabloy-mcp/modules/cabloy-mcp/test/{businessHttp,config,transportGuards}.test.ts` | `vona/src/suite-vendor/a-test/modules/test-mcp/test/cabloy-mcp/` with the same filenames |
+| `vona/src/suite-vendor/cabloy-mcp/modules/mcp-auth/test/{authorization,authorizationGrant,customScope,passport,registration}.test.ts` | `vona/src/suite-vendor/a-test/modules/test-mcp/test/mcp-auth/` with the same filenames |
+
+The three existing fixture tests remain at `test-mcp/test/`. Production-module qualification tests and the six runtime `test/support/` files used by qualification remain in place. Recursive automatic discovery follows the new test owner; explicit file selectors remain usable when `PROJECT_DISABLED_MODULES=test-mcp` intentionally excludes fixture runtime resources. This consolidation changes test location, not production runtime ownership or historical WBS/ATP acceptance status.
 
 ## Path redaction (2026-10-17)
 

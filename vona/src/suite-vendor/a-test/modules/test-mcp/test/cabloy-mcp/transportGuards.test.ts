@@ -4,9 +4,12 @@ import assert from 'node:assert/strict';
 import { EventEmitter } from 'node:events';
 import { Readable } from 'node:stream';
 import { describe, it } from 'node:test';
-
-import { createFixtureResponseGate, readFixtureBody } from '../src/lib/transport.ts';
-import { checkFixtureIngress, checkProtocolIngress } from '../src/lib/transportIngress.ts';
+import {
+  createFixtureResponseGate,
+  readFixtureBody,
+  checkFixtureIngress,
+  checkProtocolIngress,
+} from 'vona-module-cabloy-mcp';
 
 const version = '2026-07-28';
 const meta = {

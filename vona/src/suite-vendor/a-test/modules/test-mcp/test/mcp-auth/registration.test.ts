@@ -1,22 +1,21 @@
-import assert from 'node:assert/strict';
-import { randomUUID } from 'node:crypto';
-import { after, before, describe, it } from 'node:test';
-import { acquireTestLock, app } from 'vona-mock';
-
 import type {
   IMcpAuthConfig,
   IMcpAuthRegistrationRequest,
   IMcpAuthResource,
-} from '../src/types/index.ts';
+} from 'vona-module-mcp-auth';
 
-import { config as defaultConfig } from '../src/config/config.ts';
+import assert from 'node:assert/strict';
+import { randomUUID } from 'node:crypto';
+import { after, before, describe, it } from 'node:test';
+import { acquireTestLock, app } from 'vona-mock';
 import {
+  config as defaultConfig,
   getMcpIssuer,
   OAuthError,
   resolveMcpResource,
   sha256,
   validateConfiguredRedirectUri,
-} from '../src/lib/authorization.ts';
+} from 'vona-module-mcp-auth';
 
 let resource: IMcpAuthResource;
 const redirectUri = 'https://client.example.test/callback';

@@ -1,15 +1,17 @@
 import type { TableIdentity } from 'table-identity';
+import type { DtoAuthorizationGrantMineRes, EntityAuthorization } from 'vona-module-mcp-auth';
 
 import assert from 'node:assert/strict';
 import { createHash, randomUUID } from 'node:crypto';
 import { describe, it } from 'node:test';
 import { acquireTestLock, app } from 'vona-mock';
-
-import type { DtoAuthorizationGrantMineRes } from '../src/dto/authorizationGrantMineRes.tsx';
-import type { EntityAuthorization } from '../src/entity/authorization.tsx';
-
-import { authorizationGrantColumns } from '../src/dto/authorizationGrant.tsx';
-import { getMcpIssuer, OAuthError, resolveMcpResource, sha256 } from '../src/lib/authorization.ts';
+import {
+  authorizationGrantColumns,
+  getMcpIssuer,
+  OAuthError,
+  resolveMcpResource,
+  sha256,
+} from 'vona-module-mcp-auth';
 
 const callback = 'https://grant-client.example.test/callback';
 const verifier = 'g'.repeat(43);

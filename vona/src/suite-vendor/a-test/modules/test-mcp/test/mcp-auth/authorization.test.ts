@@ -1,32 +1,30 @@
 import type { TableIdentity } from 'table-identity';
 import type { VonaApplication } from 'vona';
 import type { BeanSsrSiteBase, IDecoratorSsrSiteOptions } from 'vona-module-a-ssr';
+import type {
+  IMcpTokenPayload,
+  IMcpAuthConfig,
+  IMcpAuthResource,
+  TypeMcpClientAuthentication,
+  TypeMcpGrantTypes,
+} from 'vona-module-mcp-auth';
 
 import assert from 'node:assert/strict';
 import { createHash, randomBytes, randomUUID } from 'node:crypto';
 import { before, describe, it } from 'node:test';
 import { setTimeout } from 'node:timers/promises';
 import { acquireTestLock, app } from 'vona-mock';
-
-import type { IMcpTokenPayload } from '../src/lib/authToken.ts';
-import type {
-  IMcpAuthConfig,
-  IMcpAuthResource,
-  TypeMcpClientAuthentication,
-  TypeMcpGrantTypes,
-} from '../src/types/index.ts';
-
-import { MiddlewareSystemAuthorization } from '../src/bean/middlewareSystem.authorization.ts';
-import { config as defaultConfig } from '../src/config/config.ts';
 import {
+  MiddlewareSystemAuthorization,
+  config as defaultConfig,
   getMcpAuthConfig,
   getMcpIssuer,
   OAuthError,
   resolveMcpResource,
   sha256,
   validateMcpAuthConfig,
-} from '../src/lib/authorization.ts';
-import { ServiceAuthorization } from '../src/service/authorization.ts';
+  ServiceAuthorization,
+} from 'vona-module-mcp-auth';
 
 let resource: IMcpAuthResource;
 const verifier = 'v'.repeat(43);

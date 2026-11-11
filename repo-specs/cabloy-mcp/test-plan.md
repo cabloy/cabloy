@@ -12,7 +12,7 @@ The [PRD](./prd.md) owns product outcomes; the [SRS](./srs.md) owns technical co
 
 ## Current execution locations (2026-11-11)
 
-Fixture tests now belong to `a-test/test-mcp` at `vona/src/suite-vendor/a-test/modules/test-mcp`, outside the runtime/auth-only `cabloy-mcp` suite. Prospective invocations below use the new fixture name and current locations; `PROJECT_DISABLED_MODULES=test-mcp` excludes it. Standalone HTTP qualification lives at `qualification/localHttp.test.ts`, not `test/localHttp.test.ts`, and requires a managed no-listener run. See [automated verification](../../repo-docs/mcp/mcp-guide.md#automated-verification) for the current paired listener/no-listener gates.
+Fixture and ordinary MCP tests now belong to `a-test/test-mcp` at `vona/src/suite-vendor/a-test/modules/test-mcp`, outside the runtime/auth-only `cabloy-mcp` suite. Runtime tests live in `test/cabloy-mcp/`, authorization tests in `test/mcp-auth/`, and the three original fixture tests remain in `test/`. Short references below such as `cabloy-mcp/test/businessHttp.test.ts` identify the original runtime test group; use `test-mcp/test/cabloy-mcp/businessHttp.test.ts` for its current location. Prospective invocations below use current paths. `PROJECT_DISABLED_MODULES=test-mcp` excludes the fixture module and its tests from automatic discovery, but an explicit file selector still executes the selected test and can verify normal runtime behavior without fixture resources. Standalone HTTP qualification lives at `qualification/localHttp.test.ts`, not `test/localHttp.test.ts`, and requires a managed no-listener run. See [automated verification](../../repo-docs/mcp/mcp-guide.md#automated-verification) for the current paired listener/no-listener gates.
 
 Dated source-move/generation procedures retain their historical premises, not instructions to recreate old owners or rerun completed migrations. Historical logs, executed commands, results and source hashes remain unchanged; use the [evidence mapping](./evidence/README.md#fixture-module-relocation-2026-11-11) when navigating them. Explicit `mcp_test_action_*`, `x-mcp-test-owner` and `commerce_*` names remain compatible; only module-derived default `mcp-test_*` names follow the rename to `test-mcp_*`. Updated paths do not requalify old tool counts, contracts or runtime results, and no WBS/ATP status changes.
 
@@ -31,8 +31,8 @@ Main's later verification uses installed Node v24.11.0 command-locally, affected
 
 ```sh
 SERVER_LISTEN_DISABLE=true npm run test -- src/suite-vendor/a-test/modules/test-mcp/test/businessTools.test.ts src/suite/a-training/modules/training-student/test/student.test.ts
-PROJECT_DISABLED_MODULES=test-mcp SERVER_LISTEN_DISABLE=false npm run test -- src/suite-vendor/cabloy-mcp/modules/cabloy-mcp/test/businessHttp.test.ts
-PROJECT_DISABLED_MODULES=test-mcp PROJECT_DISABLED_SUITES=a-training SERVER_LISTEN_DISABLE=false npm run test -- src/suite-vendor/cabloy-mcp/modules/cabloy-mcp/test/businessHttp.test.ts
+PROJECT_DISABLED_MODULES=test-mcp SERVER_LISTEN_DISABLE=false npm run test -- src/suite-vendor/a-test/modules/test-mcp/test/cabloy-mcp/businessHttp.test.ts
+PROJECT_DISABLED_MODULES=test-mcp PROJECT_DISABLED_SUITES=a-training SERVER_LISTEN_DISABLE=false npm run test -- src/suite-vendor/a-test/modules/test-mcp/test/cabloy-mcp/businessHttp.test.ts
 npm run test:e2e -- mcp-authorization
 ```
 
@@ -57,8 +57,8 @@ Main's subsequent verification uses installed Node v24.11.0 command-locally, for
 
 ```sh
 SERVER_LISTEN_DISABLE=true npm run test -- src/suite-vendor/a-test/modules/test-mcp/test/businessTools.test.ts src/suite/a-training/modules/training-student/test/student.test.ts
-PROJECT_DISABLED_MODULES=test-mcp SERVER_LISTEN_DISABLE=false npm run test -- src/suite-vendor/cabloy-mcp/modules/cabloy-mcp/test/businessHttp.test.ts
-PROJECT_DISABLED_MODULES=test-mcp PROJECT_DISABLED_SUITES=a-training SERVER_LISTEN_DISABLE=false npm run test -- src/suite-vendor/cabloy-mcp/modules/cabloy-mcp/test/businessHttp.test.ts
+PROJECT_DISABLED_MODULES=test-mcp SERVER_LISTEN_DISABLE=false npm run test -- src/suite-vendor/a-test/modules/test-mcp/test/cabloy-mcp/businessHttp.test.ts
+PROJECT_DISABLED_MODULES=test-mcp PROJECT_DISABLED_SUITES=a-training SERVER_LISTEN_DISABLE=false npm run test -- src/suite-vendor/a-test/modules/test-mcp/test/cabloy-mcp/businessHttp.test.ts
 npm run test:e2e -- mcp-authorization
 ```
 
@@ -80,8 +80,8 @@ Focused checks:
 
   ```sh
   SERVER_LISTEN_DISABLE=true npm run test -- src/suite-vendor/a-test/modules/test-mcp/test/businessTools.test.ts src/suite/a-training/modules/training-student/test/student.test.ts
-  PROJECT_DISABLED_MODULES=test-mcp SERVER_LISTEN_DISABLE=false npm run test -- src/suite-vendor/cabloy-mcp/modules/cabloy-mcp/test/businessHttp.test.ts
-  PROJECT_DISABLED_MODULES=test-mcp PROJECT_DISABLED_SUITES=a-training SERVER_LISTEN_DISABLE=false npm run test -- src/suite-vendor/cabloy-mcp/modules/cabloy-mcp/test/businessHttp.test.ts
+  PROJECT_DISABLED_MODULES=test-mcp SERVER_LISTEN_DISABLE=false npm run test -- src/suite-vendor/a-test/modules/test-mcp/test/cabloy-mcp/businessHttp.test.ts
+  PROJECT_DISABLED_MODULES=test-mcp PROJECT_DISABLED_SUITES=a-training SERVER_LISTEN_DISABLE=false npm run test -- src/suite-vendor/a-test/modules/test-mcp/test/cabloy-mcp/businessHttp.test.ts
   npm run test:e2e -- mcp-authorization
   ```
 
@@ -106,8 +106,8 @@ The execution owner uses installed Node 24.11.0 command-locally and runs sequent
 
 ```sh
 SERVER_LISTEN_DISABLE=true npm run test -- src/suite-vendor/a-test/modules/test-mcp/test/businessTools.test.ts
-PROJECT_DISABLED_MODULES=test-mcp SERVER_LISTEN_DISABLE=false npm run test -- src/suite-vendor/cabloy-mcp/modules/cabloy-mcp/test/businessHttp.test.ts
-PROJECT_DISABLED_MODULES=test-mcp PROJECT_DISABLED_SUITES=a-training SERVER_LISTEN_DISABLE=false npm run test -- src/suite-vendor/cabloy-mcp/modules/cabloy-mcp/test/businessHttp.test.ts
+PROJECT_DISABLED_MODULES=test-mcp SERVER_LISTEN_DISABLE=false npm run test -- src/suite-vendor/a-test/modules/test-mcp/test/cabloy-mcp/businessHttp.test.ts
+PROJECT_DISABLED_MODULES=test-mcp PROJECT_DISABLED_SUITES=a-training SERVER_LISTEN_DISABLE=false npm run test -- src/suite-vendor/a-test/modules/test-mcp/test/cabloy-mcp/businessHttp.test.ts
 npm run test:e2e -- mcp-authorization
 ```
 
@@ -124,7 +124,7 @@ Use installed Node 24.11.0 command-locally and run sequentially through the exis
 
 ```sh
 SERVER_LISTEN_DISABLE=false npm run test -- src/suite-vendor/a-test/modules/test-image/test/imageNative.test.ts src/suite-vendor/a-test/modules/test-vona/test/application.test.ts
-PROJECT_DISABLED_MODULES=test-mcp SERVER_LISTEN_DISABLE=false npm run test -- src/suite-vendor/cabloy-mcp/modules/cabloy-mcp/test/businessHttp.test.ts
+PROJECT_DISABLED_MODULES=test-mcp SERVER_LISTEN_DISABLE=false npm run test -- src/suite-vendor/a-test/modules/test-mcp/test/cabloy-mcp/businessHttp.test.ts
 ```
 
 Run scoped format/lint/native checks for image-native, test-image and cabloy-mcp, docs build/local-link checks, spec audit, chart generation/freshness and scoped evidence-path/diff checks. Retain actual revision/dirty attribution, measured results/failures and minimized user-reported URL-shape observations in existing `evidence/business-ai-client.md`, then update progress/charts. Keep historical relative-URL observations and completed view proof distinct from corrected-output proof. Absolute URLs/local managed delivery do not establish external reachability or client rendering. No full ATP/parent/release closure: verified 0/12 and unrelated gates remain unchanged.
@@ -142,8 +142,8 @@ The execution owner uses installed supported Node 24.11.0 through command-local 
 
 ```sh
 SERVER_LISTEN_DISABLE=true npm run test -- src/suite-vendor/a-test/modules/test-mcp/test/businessTools.test.ts src/suite/a-training/modules/training-student/test/student.test.ts
-PROJECT_DISABLED_MODULES=test-mcp SERVER_LISTEN_DISABLE=false npm run test -- src/suite-vendor/cabloy-mcp/modules/cabloy-mcp/test/businessHttp.test.ts
-PROJECT_DISABLED_MODULES=test-mcp PROJECT_DISABLED_SUITES=a-training SERVER_LISTEN_DISABLE=false npm run test -- src/suite-vendor/cabloy-mcp/modules/cabloy-mcp/test/businessHttp.test.ts
+PROJECT_DISABLED_MODULES=test-mcp SERVER_LISTEN_DISABLE=false npm run test -- src/suite-vendor/a-test/modules/test-mcp/test/cabloy-mcp/businessHttp.test.ts
+PROJECT_DISABLED_MODULES=test-mcp PROJECT_DISABLED_SUITES=a-training SERVER_LISTEN_DISABLE=false npm run test -- src/suite-vendor/a-test/modules/test-mcp/test/cabloy-mcp/businessHttp.test.ts
 npm run test:e2e -- mcp-authorization
 ```
 
@@ -161,8 +161,8 @@ Use supported installed Node 24.11.0 through command-local PATH, not persistent 
 
 ```sh
 SERVER_LISTEN_DISABLE=true npm run test -- src/suite-vendor/a-test/modules/test-mcp/test/businessTools.test.ts src/suite/a-training/modules/training-student/test/student.test.ts
-PROJECT_DISABLED_MODULES=test-mcp SERVER_LISTEN_DISABLE=false npm run test -- src/suite-vendor/cabloy-mcp/modules/cabloy-mcp/test/businessHttp.test.ts
-PROJECT_DISABLED_MODULES=test-mcp PROJECT_DISABLED_SUITES=a-training SERVER_LISTEN_DISABLE=false npm run test -- src/suite-vendor/cabloy-mcp/modules/cabloy-mcp/test/businessHttp.test.ts
+PROJECT_DISABLED_MODULES=test-mcp SERVER_LISTEN_DISABLE=false npm run test -- src/suite-vendor/a-test/modules/test-mcp/test/cabloy-mcp/businessHttp.test.ts
+PROJECT_DISABLED_MODULES=test-mcp PROJECT_DISABLED_SUITES=a-training SERVER_LISTEN_DISABLE=false npm run test -- src/suite-vendor/a-test/modules/test-mcp/test/cabloy-mcp/businessHttp.test.ts
 npm run test:e2e mcp-authorization
 ```
 
@@ -188,7 +188,7 @@ This is the **approved planned** verification package for the [normal-owner SRS 
 
 ### Required focused proof
 
-Historical source-move instruction (2026-10-26, not to be repeated): adapt existing tests, not a bespoke harness. Move reusable authenticated fixtures/assertions from `vona/src/suite/cabloy-mcp/modules/mcp-test/test/devHttp.test.ts` to approved new `vona/src/suite/cabloy-mcp/modules/cabloy-mcp/test/businessHttp.test.ts`; remove synthetic-positive assumptions and test-module imports from normal-owned tests, keeping fixture mapper/standalone assertions in `mcp-test`. Current tests are runtime-owned `vona/src/suite-vendor/cabloy-mcp/modules/cabloy-mcp/test/businessHttp.test.ts` and fixture-owned `vona/src/suite-vendor/a-test/modules/test-mcp/test/businessTools.test.ts` / `qualification/localHttp.test.ts`.
+Historical source-move instruction (2026-10-26, not to be repeated): adapt existing tests, not a bespoke harness. Move reusable authenticated fixtures/assertions from `vona/src/suite/cabloy-mcp/modules/mcp-test/test/devHttp.test.ts` to approved new `vona/src/suite/cabloy-mcp/modules/cabloy-mcp/test/businessHttp.test.ts`; remove synthetic-positive assumptions and test-module imports from normal-owned tests, keeping fixture mapper/standalone assertions in `mcp-test`. Current tests are centralized in `test-mcp`: runtime behavior is covered by `vona/src/suite-vendor/a-test/modules/test-mcp/test/cabloy-mcp/businessHttp.test.ts`, with fixture behavior covered by `vona/src/suite-vendor/a-test/modules/test-mcp/test/businessTools.test.ts` / `qualification/localHttp.test.ts`.
 
 1. **Normal ownership / transport:** with `test-mcp` excluded, authenticated modern and SDK-native stateless legacy discovery and lookup/summary calls work through normal `cabloy-mcp`; exactly one normal middleware owner and authenticated close hook are registered. Ordinary non-MCP behavior and the shared listener remain unchanged.
 2. **Construction admission / direct-call denial:** with fixture modules present, synthetic and unapproved annotated Actions are absent and directly uncallable under either scope. Admit exactly the two approved Action identities, not controller-prefix siblings. Excluded malformed/colliding annotated contracts cannot affect restricted-map construction before collision/schema handling; disabled/unregistered or non-opted-in routes remain unavailable. Generic mapper default behavior remains covered by fixture regressions.
@@ -202,10 +202,10 @@ Historical source-move instruction (2026-10-26, not to be repeated): adapt exist
 Run from repository root with Vona-relative patterns and invocation-local selectors only; no `.env*` edits. The normal test must distinguish explicitly selected Training absence and assert empty/unavailable behavior. Shared HTTP and standalone have incompatible listener requirements and remain separate invocations.
 
 ```sh
-SERVER_LISTEN_DISABLE=false npm run test -- src/suite-vendor/cabloy-mcp/modules/cabloy-mcp/test/businessHttp.test.ts
-PROJECT_DISABLED_MODULES=test-mcp SERVER_LISTEN_DISABLE=false npm run test -- src/suite-vendor/cabloy-mcp/modules/cabloy-mcp/test/businessHttp.test.ts
-PROJECT_DISABLED_MODULES=test-mcp PROJECT_DISABLED_SUITES=a-training SERVER_LISTEN_DISABLE=false npm run test -- src/suite-vendor/cabloy-mcp/modules/cabloy-mcp/test/businessHttp.test.ts
-SERVER_LISTEN_DISABLE=true npm run test -- src/suite-vendor/a-test/modules/test-mcp/test/businessTools.test.ts src/suite-vendor/a-test/modules/test-mcp/qualification/localHttp.test.ts src/suite-vendor/cabloy-mcp/modules/cabloy-mcp/test/config.test.ts src/suite-vendor/cabloy-mcp/modules/cabloy-mcp/test/transportGuards.test.ts
+SERVER_LISTEN_DISABLE=false npm run test -- src/suite-vendor/a-test/modules/test-mcp/test/cabloy-mcp/businessHttp.test.ts
+PROJECT_DISABLED_MODULES=test-mcp SERVER_LISTEN_DISABLE=false npm run test -- src/suite-vendor/a-test/modules/test-mcp/test/cabloy-mcp/businessHttp.test.ts
+PROJECT_DISABLED_MODULES=test-mcp PROJECT_DISABLED_SUITES=a-training SERVER_LISTEN_DISABLE=false npm run test -- src/suite-vendor/a-test/modules/test-mcp/test/cabloy-mcp/businessHttp.test.ts
+SERVER_LISTEN_DISABLE=true npm run test -- src/suite-vendor/a-test/modules/test-mcp/test/businessTools.test.ts src/suite-vendor/a-test/modules/test-mcp/qualification/localHttp.test.ts src/suite-vendor/a-test/modules/test-mcp/test/cabloy-mcp/config.test.ts src/suite-vendor/a-test/modules/test-mcp/test/cabloy-mcp/transportGuards.test.ts
 ```
 
 Scoped work owns `app.bean.executor.mockCtx(...)`; each intentionally competing operation uses a separate context, and precise test-owned resources are removed in reverse dependency order in `finally`. Restore scoped listeners/spies. Managed root tests own disposable run-specific resources; ordinary dev-process presence alone is not a blocker. Do not use raw runner shortcuts, set `TEST_CONCURRENCY=false`, reset development data or interfere with retained historical resources.
@@ -231,7 +231,7 @@ The user accepted the simplified two-read MVP and approved the finite [dossier](
 Run once initially, with bounded repairs/reruns only for actual affected failures:
 
 ```sh
-PROJECT_DISABLED_MODULES=test-mcp SERVER_LISTEN_DISABLE=false npm run test -- src/suite-vendor/cabloy-mcp/modules/cabloy-mcp/test/businessHttp.test.ts
+PROJECT_DISABLED_MODULES=test-mcp SERVER_LISTEN_DISABLE=false npm run test -- src/suite-vendor/a-test/modules/test-mcp/test/cabloy-mcp/businessHttp.test.ts
 node scripts/typecheck.ts native vona --noEmit --incremental false --composite false --project src/suite-vendor/cabloy-mcp/modules/cabloy-mcp/tsconfig.json
 ```
 

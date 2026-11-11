@@ -1,16 +1,18 @@
 import type { TableIdentity } from 'table-identity';
+import type {
+  DtoCustomScopeCreate,
+  IMcpTokenPayload,
+  IMcpAuthResource,
+  IMcpToolIdentity,
+  TypeMcpScope,
+} from 'vona-module-mcp-auth';
 
 import assert from 'node:assert/strict';
 import { createHash, randomUUID } from 'node:crypto';
 import { before, describe, it } from 'node:test';
 import { setTimeout as delay } from 'node:timers/promises';
 import { acquireTestLock, app } from 'vona-mock';
-
-import type { DtoCustomScopeCreate } from '../src/dto/customScopeCreate.tsx';
-import type { IMcpTokenPayload } from '../src/lib/authToken.ts';
-import type { IMcpAuthResource, IMcpToolIdentity, TypeMcpScope } from '../src/types/index.ts';
-
-import { getMcpIssuer, OAuthError, resolveMcpResource, sha256 } from '../src/lib/authorization.ts';
+import { getMcpIssuer, OAuthError, resolveMcpResource, sha256 } from 'vona-module-mcp-auth';
 
 const trainingDisabled = (process.env.PROJECT_DISABLED_SUITES ?? '')
   .split(',')

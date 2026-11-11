@@ -19,7 +19,7 @@ Deliver a security-first remote MCP capability for Cabloy Basic that lets an aut
 
 ## Current execution-location mapping (2026-11-11)
 
-The approved fixture relocation uses `a-test/test-mcp` at `vona/src/suite-vendor/a-test/modules/test-mcp`; the backend `cabloy-mcp` suite contains only runtime `cabloy-mcp` and authorization `mcp-auth`. Current mapper-test targets below use `test-mcp`. Dated source-move/generation dossiers retain their historical starting paths and commands, not instructions to recreate `mcp-test` or repeat completed migrations. For a new invocation use the [evidence mapping](./evidence/README.md#fixture-module-relocation-2026-11-11), current `test-mcp` exclusion selector, and `qualification/localHttp.test.ts` for standalone HTTP qualification. Explicit `mcp_test_action_*` and `x-mcp-test-owner` remain unchanged. This note neither executes checks nor changes evidence, task status or approval scope.
+The approved fixture relocation uses `a-test/test-mcp` at `vona/src/suite-vendor/a-test/modules/test-mcp`; the backend `cabloy-mcp` suite contains only runtime `cabloy-mcp` and authorization `mcp-auth`. Current mapper-test targets below use `test-mcp`. Ordinary runtime and authorization tests are also centralized there in `test/cabloy-mcp/` and `test/mcp-auth/`; the three fixture tests remain at `test/`. Short historical group references such as `cabloy-mcp/test/businessHttp.test.ts` map to `test-mcp/test/cabloy-mcp/businessHttp.test.ts`. Qualification tests and their runtime-module `test/support/` fixtures remain in place. Explicit file selectors can still run runtime tests with `PROJECT_DISABLED_MODULES=test-mcp`, which excludes fixture resources and automatic discovery rather than the explicitly selected file. Dated source-move/generation dossiers retain their historical starting paths and commands, not instructions to recreate `mcp-test` or repeat completed migrations. For a new invocation use the [evidence mapping](./evidence/README.md#fixture-module-relocation-2026-11-11), current `test-mcp` exclusion selector, and `qualification/localHttp.test.ts` for standalone HTTP qualification. Explicit `mcp_test_action_*` and `x-mcp-test-owner` remain unchanged. This note neither executes checks nor changes evidence, task status or approval scope.
 
 ## Work Breakdown Structure
 
@@ -469,7 +469,7 @@ Acceptance checks:
 **Verification package — prospective, not run by generation (paths updated for current ownership):**
 
 - Permission regressions and shared HTTP qualification, with the ordinary managed listener:
-  `npm run test -- src/suite-vendor/a-vona/modules/a-permission/test/permission.test.ts src/suite-vendor/cabloy-mcp/modules/cabloy-mcp/test/businessHttp.test.ts`.
+  `npm run test -- src/suite-vendor/a-vona/modules/a-permission/test/permission.test.ts src/suite-vendor/a-test/modules/test-mcp/test/cabloy-mcp/businessHttp.test.ts`.
 - Mapper/standalone regressions separately, respecting their existing no-listener setup:
   `SERVER_LISTEN_DISABLE=true npm run test -- src/suite-vendor/a-test/modules/test-mcp/test/businessTools.test.ts src/suite-vendor/a-test/modules/test-mcp/qualification/localHttp.test.ts`.
 - Actual Training-disabled composition:

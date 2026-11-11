@@ -3,10 +3,10 @@ import type { VonaApplication } from 'vona';
 
 import assert from 'node:assert/strict';
 import { describe, it } from 'node:test';
+import { config } from 'vona-module-cabloy-mcp';
 
-import loadModuleConfigs from '../../../../../../packages-vona/vona-core/src/lib/module/config.ts';
-import configureApplication from '../../../../../backend/config/config/config.ts';
-import { config } from '../src/config/config.ts';
+import loadModuleConfigs from '../../../../../../../packages-vona/vona-core/src/lib/module/config.ts';
+import configureApplication from '../../../../../../backend/config/config/config.ts';
 
 function createApplication(enabled?: string): VonaApplication {
   return {

@@ -31,7 +31,11 @@ export {
 } from './lib/resourceServer.ts';
 export { OAuthError } from 'vona-module-mcp-auth';
 export type { IMcpAuthResource } from 'vona-module-mcp-auth';
-export { FixtureTransportError, readFixtureBody } from './lib/transport.ts';
+export {
+  createFixtureResponseGate,
+  FixtureTransportError,
+  readFixtureBody,
+} from './lib/transport.ts';
 export {
   checkFixtureIngress,
   checkProtocolIngress,
