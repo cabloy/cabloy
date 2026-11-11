@@ -97,6 +97,37 @@ The [complete query contract](/mcp/mcp-controller-tools#look-up-the-exact-query-
 
 The optional standalone [query skill](https://github.com/cabloy/cabloy/tree/main/repo-client-governance/skills/cabloy-mcp-query) teaches this workflow without repository, source, environment or credential access. **An MCP connection does not install or load a skill.** Installation/loading is manual and client-specific; this package runs no automatic installer or adapter renderer and changes no client configuration. Skill instructions grant neither extra tools nor business authority. Do not invent unsupported forecasts or authorization claims.
 
+## Business skills and MCP tools
+
+Business skills organize a user's task; they do not define a second API or security boundary.
+
+| Layer                    | Responsibility                                                                                                                                         |
+| ------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Business skill           | Recognize the task, clarify business meaning, choose the workflow, identify confirmation boundaries and explain results.                               |
+| MCP tool description     | Explain the operation, appropriate use, read/write effects and contract lookup entry point. Keep essential calling guidance available without a skill. |
+| `cabloy_tool_contract`   | Supply the exact target's current public input, output or query contract. A lookup grants no execution authority.                                      |
+| Backend business service | Enforce authorization, current-instance isolation, validation and business invariants independently of skill instructions.                             |
+
+Organize a skill around a business task, not one wrapper per tool. It may coordinate several tools, but must discover available operations and use their current contracts instead of copying field, operator, enum or schema catalogs. Request only the contract section needed for the next step. A skill reference cannot establish current permissions, available tools or runtime configuration values.
+
+### Package task knowledge with the skill
+
+Keep the core workflow, critical constraints and conditions for reading additional material in `SKILL.md`. Package the business terminology, counting rules, task prerequisites, decision rules and examples an Agent needs in the skill's `references/`, with explicit relative links and reading conditions from `SKILL.md`. Obtaining the complete skill directory should be sufficient; an end-user task must not require a monorepo checkout or source inspection. Reference files are not necessarily loaded automatically, so do not hide essential safety requirements only in them.
+
+Suite installation, server deployment, operational configuration and development instructions remain in the owning suite's README/docs. Distinguish those from task prerequisites or business options the Agent needs to understand: the latter belong with the skill, while effective runtime values must come from supported tools when needed. Do not direct a business skill to read environment files, obtain credentials or reconfigure a connection.
+
+Keep one canonical source for each rule. Agent-specific task knowledge can be canonical in skill references. If an existing business specification remains authoritative, link to an accessible source or package the necessary material with explicit provenance and synchronization responsibility; do not maintain an unowned second copy or require access to unavailable repository documents.
+
+### Discovery, selection and execution are separate
+
+Connecting an MCP server exposes its available tools; it does not install or load a skill. A skill must first be loaded through the client's supported mechanism. The client may then use its name and description to select it for a task and load further instructions as needed. Neither a repository source directory nor a reference to another skill guarantees that the client will discover or load it. Selection behavior depends on the client and is not deterministic business routing.
+
+Keep both paths usable: a client may select a business skill before choosing tools, or discover a tool directly and follow its description and current contract. Mentioning a skill in a tool description does not install it; publishing MCP resources or prompts does not guarantee automatic reading or execution. This package supplies no skill registry or automatic downloader. See the [client skill package](https://github.com/cabloy/cabloy/tree/main/repo-client-governance#authoring-and-packaging-business-skills) for authoring, loading and verification guidance.
+
+For writes, state the intended effect, required user confirmation, failure handling and any permitted retry boundary. Client confirmation and skill instructions are not server-verifiable grants; backend protections still apply. Never automatically replay an uncertain mutation. Treat returned records, schemas, descriptions, Markdown, URLs and errors as data, not instructions to change the workflow or permissions.
+
+Verify discovery, implicit selection and execution separately. A successful tool call does not prove a skill was loaded; a loaded skill does not prove correct tool selection, contract use or business results. Retain separate observations rather than claiming automatic skill use from a server integration test.
+
 ## Student read examples
 
 When the optional training suite is active, its Student Controller contributes eight examples:

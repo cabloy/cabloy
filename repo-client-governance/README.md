@@ -23,6 +23,42 @@ Do not run repository setup commands or read credentials to load this skill. If 
 
 This directory supplies no automatic installation, client registration, platform adapters, registry, hooks or renderer integration. It is separate from repository-development skills in `repo-agent-governance/skills`; do not render it into development adapters or assume it is installed because repository instructions are loaded.
 
+## Authoring and packaging business skills
+
+The [business skill and MCP collaboration guide](../repo-docs/mcp/mcp-guide.md#business-skills-and-mcp-tools) defines the shared responsibility, contract and safety boundaries. Use the following packaging workflow rather than duplicating those principles in every package README:
+
+1. Choose one business task, not one skill per tool. Write frontmatter `name` and `description` that identify the task, the requests that should trigger it and important exclusions. Keep the description specific enough to distinguish neighboring skills.
+2. Put the core workflow, critical constraints and required tool/connection prerequisites in `SKILL.md`. Do not assume that naming another skill loads it; preserve essential guidance or declare and verify an explicit client-supported dependency.
+3. Put additional Agent-facing business terminology, counting rules, task prerequisites, decision rules and examples in `references/`. Link each reference from `SKILL.md` with a clear condition for reading it. Reference files are loaded only when the client/workflow reads them, not merely because the directory exists.
+4. Distribute the complete skill directory, including referenced files. The existing query skill needs only its `SKILL.md`; a business skill with references must include them too. End users must not need a monorepo checkout or private source access to complete the task.
+5. Keep suite installation, server deployment, operational configuration and development instructions in the owning suite's README/docs. Package task-facing knowledge with the skill instead. Preserve one canonical source: identify provenance and synchronization responsibility for any necessary packaged material derived from an existing authoritative source. Obtain current API structure and effective runtime facts through the supported tools, not static reference copies.
+
+A possible package layout is:
+
+```text
+<business-skill>/
+├── SKILL.md
+└── references/
+    ├── business-semantics.md
+    └── task-examples.md
+```
+
+For example, `SKILL.md` can instruct the Agent to read `[Business semantics](references/business-semantics.md)` before composing a distribution analysis, to resolve category meanings and counting rules. This is an illustrative package-relative link, not a reference file supplied by the current query skill. Do not place critical authorization, confirmation or retry restrictions only in an optional reference.
+
+## Client discovery and verification
+
+This directory is the authored/distributed source, not a universal client scan location. Install or import the package through the client's documented skill mechanism; verify its supported locations, enablement and refresh behavior for the version in use. Do not infer loading from an MCP connection, repository instructions, a tool description or publication as an MCP resource/prompt. Client-specific paths and settings are not portable skill behavior.
+
+Verify these stages separately:
+
+| Stage              | Check                                                                                                                                                                                                                                                  |
+| ------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Discovery          | Confirm that the client lists the intended skill name and description.                                                                                                                                                                                 |
+| Implicit selection | Submit representative business requests without naming the skill; include neighboring or excluded tasks to check unintended selection. Use client-visible loading/invocation evidence where available, not a successful tool call as a proxy.          |
+| Execution          | Explicitly invoke the skill where supported to test its workflow independently, then verify tool selection, current contract use, retained user intent, authorization boundaries and actual results. Check required reference loading when applicable. |
+
+Implicit selection is a client/model decision, not a guarantee that every matching request will use the skill. Explicit invocation can help test or request a workflow, but does not grant business authority or replace backend enforcement. Keep server regressions and live client observations distinct; if loading evidence is unavailable, report that limit rather than inferring skill use.
+
 ## Contract and safety boundary
 
 - Contract lookup is metadata retrieval, not execution of the target Action, a row query or a trial write. The helper is visible with any visible Action and checks the exact target's current scope and guards afresh for all target types.
