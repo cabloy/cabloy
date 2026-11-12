@@ -914,7 +914,7 @@ describe('localHttp.test.ts', { concurrency: false, timeout: 60000 }, () => {
       AopMethodLog.prototype,
       '_logResult',
       function (this: AopMethodLog, ...args: Parameters<AopMethodLog['_logResult']>) {
-        // Keep the oversized fixture out of logs without changing the real response.
+        // Fail-safe: keep the fixture out of logs if result logging is reintroduced.
         if (args[2]?.list?.[0]?.description === description) {
           suppressedResultLogs++;
           return;
@@ -928,7 +928,11 @@ describe('localHttp.test.ts', { concurrency: false, timeout: 60000 }, () => {
         arguments: { title: 'Wireless Headphones', pageSize: 1 },
       });
       assert.equal(realReadFinished, true);
-      assert.ok(suppressedResultLogs > 0, 'oversized fixture result logging was suppressed');
+      assert.equal(
+        suppressedResultLogs,
+        0,
+        'oversized fixture result never reaches AOP result logging',
+      );
       assert.equal(response.status, 500);
       assert.deepEqual(response.body, {
         jsonrpc: '2.0',
