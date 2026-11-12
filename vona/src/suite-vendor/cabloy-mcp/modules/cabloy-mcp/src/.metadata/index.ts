@@ -1,4 +1,48 @@
 // eslint-disable
+import type { TypeControllerOptionsActions } from 'vona-module-a-openapi';
+/** controller: begin */
+export * from '../controller/accessTokenTest.ts';
+import type { IControllerOptionsAccessTokenTest } from '../controller/accessTokenTest.ts';
+import 'vona-module-a-web';
+declare module 'vona-module-a-web' {
+
+    export interface IControllerRecord {
+      'cabloy-mcp:accessTokenTest': IControllerOptionsAccessTokenTest;
+    }
+
+
+}
+declare module 'vona-module-cabloy-mcp' {
+
+        export interface ControllerAccessTokenTest {
+          /** @internal */
+          get scope(): ScopeModuleCabloyMcp;
+        }
+
+          export interface ControllerAccessTokenTest {
+            get $beanFullName(): 'cabloy-mcp.controller.accessTokenTest';
+            get $onionName(): 'cabloy-mcp:accessTokenTest';
+            get $onionOptions(): IControllerOptionsAccessTokenTest;
+          }
+}
+/** controller: end */
+/** controller: begin */
+// @ts-ignore ignore
+import type { ControllerAccessTokenTest } from '../controller/accessTokenTest.ts';
+declare module 'vona-module-cabloy-mcp' {
+
+    export interface IControllerOptionsAccessTokenTest {
+      actions?: TypeControllerOptionsActions<ControllerAccessTokenTest>;
+    }
+}
+declare module 'vona-module-a-web' {
+  export interface IApiPathGetRecord{
+        '/cabloy/mcp/accessTokenTest/read': undefined;
+    }
+
+}
+
+/** controller: end */
 /** middlewareSystem: begin */
 export * from '../bean/middlewareSystem.mcp.ts';
 export * from '../bean/middlewareSystem.resourceMetadata.ts';
