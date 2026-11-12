@@ -130,20 +130,20 @@ In the current public monorepo, Basic-specific Zova flavors include:
 - `cabloyBasicAdmin`
 - `cabloyBasicWeb`
 
-Representative frontend-side contract-generation commands include:
+Configure module ownership when needed, then use the managed isolated contract path by default for AI development:
 
 ```bash
 npm run zova :openapi:config training-student
-npm run zova :openapi:generate training-student
-```
-
-When no development service should be started or reused, use the isolated contract path instead:
-
-```bash
 npm run contract:generate:isolated -- training-student
 ```
 
 This starts a disposable test-mode Vona service, verifies its signed readiness response and OpenAPI document, runs the same Zova generator, and cleans its claim-backed test resources after success. The generated SDK output is still shared workspace output; serialize concurrent generation and inspect or repair it explicitly rather than expecting rollback.
+
+Use the direct generation command only as a deliberate exception when a specific development or external Swagger source is required:
+
+```bash
+npm run zova :openapi:generate training-student
+```
 
 A practical forward-chain sequence is:
 
@@ -210,14 +210,30 @@ If the endpoint still belongs to an existing business resource, prefer keeping `
 
 ## Cabloy Start workflow
 
-In the sibling public Start repository, the same collaboration idea applies, but the frontend flavor names differ.
+In the sibling public Start repository, the same collaboration idea applies, but the frontend flavor names differ. The root contract-generation entrypoint is the same as in Basic:
+
+```bash
+npm run contract:generate:isolated -- <module-name>
+```
 
 Representative Start-specific flavors include:
 
 - `cabloyStartAdmin`
 - `cabloyStartWeb`
 
-Before documenting or automating this path for Start, confirm:
+After generation, build the affected Start SSR/REST pairs through the shared coordinator:
+
+```bash
+npm run build:zova:isolated -- cabloyStartAdmin cabloyStartWeb
+```
+
+If Vona consumes the refreshed Zova output, synchronize its dependency state afterward:
+
+```bash
+npm run deps:vona
+```
+
+Run `deps:vona` only when the reverse-chain handoff requires it; generation alone does not require an unconditional dependency sync. Before documenting or automating this path for Start, confirm:
 
 1. the `__CABLOY_START__` marker
 2. the Start repo’s `package.json`

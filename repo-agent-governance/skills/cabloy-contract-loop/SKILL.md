@@ -67,9 +67,9 @@ Interpretation:
 
 Then classify whether the task is really a contract-loop task.
 
-These four modes are shared across Cabloy Basic and Cabloy Start. Edition detection chooses the operational branch, but does not change the core contract-loop model.
+These five modes are shared across Cabloy Basic and Cabloy Start. Edition detection chooses the operational branch, but does not change the core contract-loop model.
 
-Use this skill in four common entry modes.
+Use this skill in five common entry modes.
 
 ### Mode A: forward chain
 

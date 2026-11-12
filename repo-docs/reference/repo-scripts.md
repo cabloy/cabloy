@@ -359,6 +359,7 @@ Cabloy Start exposes the equivalent Start repository surface:
 - `npm run test`
 - `npm run db:reset`
 - `npm run test:e2e`
+- `npm run contract:generate:isolated -- <module-name>`
 - `npm run tsc`
 
 Cabloy Start does not expose Basic Commerce or root documentation wrappers.

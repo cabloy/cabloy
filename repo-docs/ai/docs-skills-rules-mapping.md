@@ -166,7 +166,7 @@ Use this quick rule:
 
 - full architecture explanation → [Admin Resource and Web Self-Service](/fullstack/admin-resource-and-web-self-service)
 - concise repo-wide default → `repo-agent-governance/policies/repository.md`, rendered to policy adapters
-- contract regeneration, consumer-boundary choice, and verification routing → `cabloy-contract-loop`
+- contract regeneration, consumer-boundary choice, and verification routing → `cabloy-contract-loop` (default SDK generation: `npm run contract:generate:isolated -- <module-name>` in both editions)
 - extend the existing contract-loop skill references and evals; do not create an Order-specific skill
 
 ### Example: “How should AI remove an existing module cleanly?”

@@ -59,19 +59,19 @@ Representative use case:
 
 Example: generate OpenAPI-based frontend services for module `training-student`.
 
-The direct command is the fast path when a development Swagger service is already available:
-
-```bash
-npm run zova :openapi:generate training-student
-```
-
-In Cabloy Basic, when generation should use a fresh isolated test-mode Vona service instead:
+For Cabloy Basic and Cabloy Start, AI development should default to managed isolated generation, even when a development Swagger service is currently available:
 
 ```bash
 npm run contract:generate:isolated -- training-student
 ```
 
 The isolated command uses the same generator and preserves module ownership validation, but manages a disposable service, claim, and test resources without starting Playwright. Generated files under `zova/src/**` are shared workspace output, not run-owned temporary files; serialize concurrent SDK generation and do not expect automatic rollback.
+
+The direct command remains available when an explicitly selected development or external Swagger service is the intended source:
+
+```bash
+npm run zova :openapi:generate training-student
+```
 
 For an explicitly authorized run that must skip historical-claim reaping, use the standalone `--skip-expired-claim-reaping` flag. In this strict lane, generated environment source contains selected keys rather than resolved values, configuration reaches the bootstrap child in memory, service/generator stdout and stderr are discarded, and framework file logging is prevented before transport construction. Failures remain failures with categorical diagnostics and retained current-run claims/resources; there is no automatic retry or fallback to development Swagger. This is not a network or arbitrary-filesystem sandbox, and it does not authorize Provider operations or prove custom seed/logging behavior. See [Strict isolated generation](/reference/repo-scripts#test-isolation-and-development-data) for resource and diagnostic boundaries.
 
