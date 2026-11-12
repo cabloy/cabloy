@@ -1,5 +1,20 @@
 # Changelog
 
+## 5.1.277
+
+### Features
+
+- Add update functionality.
+- Move HTTP logging functionality into the HTTP module.
+
+### Improvements
+
+- Enhance the MCP schema.
+- Improve isolated contract generation.
+- Update type definitions.
+- Update business tools tests.
+- Document module dependencies.
+
 ## 5.1.276
 
 ### Features
