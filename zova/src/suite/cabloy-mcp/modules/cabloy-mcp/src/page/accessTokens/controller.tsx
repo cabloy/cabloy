@@ -279,11 +279,11 @@ export class ControllerPageAccessTokens extends BeanControllerPageBase {
           this._generation += 1;
         },
         slotDefault: () => (
-          <div data-testid="mcp-access-token-reveal" class="space-y-4">
+          <div data-testid="mcp-access-token-reveal" class="flex flex-col gap-4">
             <p role="alert" class="text-sm text-warning">
               {this.scope.locale.McpAccessTokenOneTimeHelp()}
             </p>
-            <label class="form-control gap-2">
+            <label class="flex flex-col gap-2">
               <span class="label-text">{this.scope.locale.McpAccessTokenSecret()}</span>
               <textarea
                 data-testid="mcp-access-token-secret"
@@ -296,7 +296,7 @@ export class ControllerPageAccessTokens extends BeanControllerPageBase {
             </label>
             <ZButton
               data-testid="mcp-access-token-copy-secret"
-              class="btn btn-outline btn-sm"
+              class="btn btn-outline btn-sm self-start"
               onPerform={async () => {
                 if (!this._revealedToken) return;
                 await this.$performCommand('basic-commands:copy', {
@@ -306,7 +306,7 @@ export class ControllerPageAccessTokens extends BeanControllerPageBase {
             >
               {this.scope.locale.McpAccessTokenCopySecret()}
             </ZButton>
-            <label class="form-control gap-2">
+            <label class="flex flex-col gap-2">
               <span class="label-text">{this.scope.locale.McpAccessTokenResource()}</span>
               <input
                 data-testid="mcp-access-token-resource"
@@ -318,7 +318,7 @@ export class ControllerPageAccessTokens extends BeanControllerPageBase {
             </label>
             <ZButton
               data-testid="mcp-access-token-copy-resource"
-              class="btn btn-outline btn-sm"
+              class="btn btn-outline btn-sm self-start"
               onPerform={async () => {
                 if (!this._revealedToken) return;
                 await this.$performCommand('basic-commands:copy', {

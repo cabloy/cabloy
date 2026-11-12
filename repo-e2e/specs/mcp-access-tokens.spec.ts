@@ -254,6 +254,20 @@ async function createBrowserToken(
   expect(deadline <= after + expiresIn * 1000 + 1000).toBe(true);
   // Boolean-only polling avoids locator assertions retaining a reveal's accessibility snapshot.
   await expect.poll(() => page.getByTestId('mcp-access-token-reveal').isVisible()).toBe(true);
+  await expect
+    .poll(() =>
+      page.evaluate(() => {
+        const copy = document.querySelector('[data-testid="mcp-access-token-copy-secret"]');
+        const resource = document.querySelector('[data-testid="mcp-access-token-resource"]');
+        const label = resource?.closest('label');
+        return (
+          !!copy &&
+          !!label &&
+          label.getBoundingClientRect().top >= copy.getBoundingClientRect().bottom
+        );
+      }),
+    )
+    .toBe(true);
   const revealed = await page.evaluate(() => {
     const input = document.querySelector<HTMLTextAreaElement>(
       '[data-testid="mcp-access-token-secret"]',
