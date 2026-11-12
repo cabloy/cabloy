@@ -1,5 +1,24 @@
 # Changelog
 
+## 5.1.273
+
+### Features
+
+- Add an MCP tool contract.
+
+### Bug Fixes
+
+- Fix date parsing in JSON.
+- Correct test claims and other test issues.
+
+### Improvements
+
+- Enhance MCP server information, tools, debugging, and error hints.
+- Refactor logging and query joins.
+- Refactor MCP tests and rename `mcp-test` to `test-mcp`.
+- Update the `performAction` tests.
+- Refresh the dependency lockfile.
+
 ## 5.1.272
 
 ### Bug Fixes
