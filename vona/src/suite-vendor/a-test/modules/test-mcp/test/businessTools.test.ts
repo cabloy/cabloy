@@ -746,10 +746,12 @@ describe('businessTools.test.ts', { concurrency: false, timeout: 60000 }, () => 
     assert.equal(Object.hasOwn(node, 'rest'), false);
     assert.equal(Object.hasOwn(node, 'errorMessage'), false);
     assert.equal(node.properties.children.items.$ref, '#/$defs/Node');
-    assert.equal(published.properties!.node.$ref, '#/$defs/Node');
-    assert.equal(published.properties!.node.description, field.description);
-    assert.equal(Object.hasOwn(published.properties!.node, 'rest'), false);
-    assert.equal(Object.hasOwn(published.properties!.node, 'errorMessage'), false);
+    const nodeRef = published.properties!.node;
+    assert.ok(nodeRef && typeof nodeRef === 'object' && !Array.isArray(nodeRef));
+    assert.equal(nodeRef.$ref, '#/$defs/Node');
+    assert.equal(nodeRef.description, field.description);
+    assert.equal(Object.hasOwn(nodeRef, 'rest'), false);
+    assert.equal(Object.hasOwn(nodeRef, 'errorMessage'), false);
     assert.equal(JSON.stringify({ source, schemas }), snapshot);
 
     const schemaPositions: ToolSchema = {
