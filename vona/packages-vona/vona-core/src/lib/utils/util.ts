@@ -63,9 +63,9 @@ export class AppUtil extends BeanSimple {
     const config = this.ctx ? this.ctx.config : this.app.config;
     const protocol = config.server.serve.protocol;
     if (this.app.meta.isProd && !protocol) {
-      throw new Error(
-        'Configure config.server.serve.protocol (SERVER_SERVE_PROTOCOL) in production',
-      );
+      this.app.meta.logger
+        .get()
+        .warn('Configure config.server.serve.protocol (SERVER_SERVE_PROTOCOL) in production');
     }
     return protocol || this.ctx?.protocol || 'http';
   }
@@ -74,7 +74,9 @@ export class AppUtil extends BeanSimple {
     const config = this.ctx ? this.ctx.config : this.app.config;
     let host = config.server.serve.host;
     if (this.app.meta.isProd && !host) {
-      throw new Error('Configure config.server.serve.host (SERVER_SERVE_HOST) in production');
+      this.app.meta.logger
+        .get()
+        .warn('Configure config.server.serve.host (SERVER_SERVE_HOST) in production');
     }
     host ||= this.ctx?.host;
     if (!host) {

@@ -18,6 +18,7 @@ describe('application.test.ts', { concurrency: false }, () => {
       host: string;
     },
     port = '',
+    warnings: string[] = [],
   ) => {
     const util = new AppUtil();
     Object.defineProperty(util, 'app', {
@@ -29,13 +30,14 @@ describe('application.test.ts', { concurrency: false }, () => {
           isDev: mode === 'dev',
           isTest: mode === 'test',
           env: { SERVER_LISTEN_PORT: port },
+          logger: { get: () => ({ warn: (message: string) => warnings.push(message) }) },
         },
       },
     });
     return util;
   };
 
-  it('requires each production serve field even with a request origin', () => {
+  it('warns for missing production serve fields and keeps origin fallbacks', () => {
     const configured = { protocol: 'https', host: 'public.example.test' };
     for (const field of ['protocol', 'host'] as const) {
       const serve = { ...configured, [field]: '' };
@@ -43,18 +45,29 @@ describe('application.test.ts', { concurrency: false }, () => {
         const context = withContext
           ? { config: { server: { serve } }, protocol: 'http', host: 'request.example.test' }
           : undefined;
-        const util = createUtil('prod', withContext ? configured : serve, context, '7102');
-        const checkError = (error: unknown) => {
-          assert(error instanceof Error);
-          assert.equal(Object.getPrototypeOf(error), Error.prototype);
-          assert(error.message.includes(`config.server.serve.${field}`));
-          assert(error.message.includes(`SERVER_SERVE_${field.toUpperCase()}`));
-          return true;
+        const warnings: string[] = [];
+        const util = createUtil(
+          'prod',
+          withContext ? configured : serve,
+          context,
+          '7102',
+          warnings,
+        );
+        const expected = {
+          protocol: serve.protocol || context?.protocol || 'http',
+          host: serve.host || context?.host || 'localhost:7102',
         };
-        assert.throws(() => util[field], checkError);
-        assert.throws(() => util.getAbsoluteUrl('/callback'), checkError);
+        const message = `Configure config.server.serve.${field} (SERVER_SERVE_${field.toUpperCase()}) in production`;
+        assert.equal(util[field], expected[field]);
+        assert.deepEqual(warnings, [message]);
         const otherField = field === 'protocol' ? 'host' : 'protocol';
         assert.equal(util[otherField], configured[otherField]);
+        assert.deepEqual(warnings, [message]);
+        assert.equal(
+          util.getAbsoluteUrl('/callback'),
+          `${expected.protocol}://${expected.host}/callback`,
+        );
+        assert(warnings.every(warning => warning === message));
       }
     }
   });
@@ -75,8 +88,8 @@ describe('application.test.ts', { concurrency: false }, () => {
     assert.equal(scopedUtil.getAbsoluteUrl('/callback'), 'https://instance.example.test/callback');
   });
 
-  it('keeps per-field configured, request and requestless fallbacks in dev/test', () => {
-    for (const mode of ['dev', 'test'] as const) {
+  it('keeps per-field configured, request and requestless fallbacks in every mode', () => {
+    for (const mode of ['dev', 'test', 'prod'] as const) {
       for (const protocol of ['', 'https']) {
         for (const host of ['', 'configured.example.test']) {
           const serve = { protocol, host };
