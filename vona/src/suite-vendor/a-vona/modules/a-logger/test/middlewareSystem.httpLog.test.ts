@@ -96,7 +96,7 @@ async function serve(next: (ctx: VonaContext) => Promise<unknown>) {
         assert.equal(name, 'res');
         assert.equal(client, 'access');
         return {
-          info(message: () => string) {
+          http(message: () => string) {
             logs.push(JSON.parse(message()));
             published.resolve();
           },
@@ -212,7 +212,7 @@ describe('HTTP logger', { concurrency: false }, () => {
         },
         $loggerChild: (_name: string, client: string) => {
           assert.equal(client, 'access');
-          return { info: (message: () => string) => logs.push(JSON.parse(message())) };
+          return { http: (message: () => string) => logs.push(JSON.parse(message())) };
         },
       });
       await middleware.execute({}, async () => {});
@@ -369,7 +369,7 @@ describe('HTTP logger', { concurrency: false }, () => {
         },
       });
       middleware.$loggerChild = () => ({
-        info(message: () => string) {
+        http(message: () => string) {
           observed.push(storage.getStore());
           logs.push(JSON.parse(message()));
           if (failLogger) throw new Error('diagnostic sink failure');

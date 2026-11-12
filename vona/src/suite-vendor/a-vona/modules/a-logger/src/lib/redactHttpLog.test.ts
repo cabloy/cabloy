@@ -147,30 +147,36 @@ test('test console threshold leaves file diagnostics and non-test console unchan
   }
 });
 
-test('access filtering can be disabled independently of business debug', () => {
-  let accessLevel: 'info' | false = 'info';
+test('access http records require an enabled http or more verbose threshold independently of business debug', () => {
+  let accessLevel: 'info' | 'http' | 'debug' | false = 'info';
   const access = formatLoggerFilter({ level: () => accessLevel, child: undefined });
   const diagnostic = formatLoggerFilter({ level: 'debug', child: undefined });
-  assert.ok(access.transform({ level: 'info', message: 'request' }, access.options));
-  accessLevel = false;
-  let evaluations = 0;
-  assert.equal(
-    access.transform(
+  for (const level of ['info', 'http', 'debug', false] as const) {
+    accessLevel = level;
+    let evaluations = 0;
+    const result = access.transform(
       {
-        level: 'info',
+        level: 'http',
         message: () => {
           evaluations++;
           return 'request';
         },
       },
       access.options,
-    ),
-    false,
-  );
-  assert.equal(evaluations, 0);
-  assert.ok(
-    diagnostic.transform({ level: 'debug', message: 'business stage' }, diagnostic.options),
-  );
+    );
+    if (level === 'http' || level === 'debug') {
+      assert.ok(result);
+      assert.equal(result.level, 'http');
+      assert.equal(result.message, 'request');
+      assert.equal(evaluations, 1);
+    } else {
+      assert.equal(result, false);
+      assert.equal(evaluations, 0);
+    }
+    assert.ok(
+      diagnostic.transform({ level: 'debug', message: 'business stage' }, diagnostic.options),
+    );
+  }
 });
 
 for (const event of ['finish', 'close']) {
@@ -193,7 +199,7 @@ for (const event of ['finish', 'close']) {
         $loggerChild: (name: string, client: string) => {
           assert.equal(name, 'res');
           assert.equal(client, 'access');
-          return { info: (message: () => string) => records.push(JSON.parse(message())) };
+          return { http: (message: () => string) => records.push(JSON.parse(message())) };
         },
       };
       await MiddlewareSystemHttpLog.prototype.execute.call(fake as any, {}, async () => {});
@@ -298,7 +304,7 @@ test('one deferred access message snapshots entry and first-terminal state befor
     $loggerChild: (name: string, client: string) => {
       assert.equal(name, 'res');
       assert.equal(client, 'access');
-      return { info: (message: () => string) => pending.push({ level: 'info', name, message }) };
+      return { http: (message: () => string) => pending.push({ level: 'http', name, message }) };
     },
   };
   await MiddlewareSystemHttpLog.prototype.execute.call(fake as any, {}, async () => {
@@ -325,10 +331,10 @@ test('one deferred access message snapshots entry and first-terminal state befor
   assert.equal(res.listenerCount('finish'), 0);
   assert.equal(res.listenerCount('close'), 0);
 
-  const rejectedLevel = formatLoggerFilter({ level: 'warn', child: undefined });
-  const rejectedChild = formatLoggerFilter({ level: 'info', child: ['other'] });
+  const rejectedLevel = formatLoggerFilter({ level: 'info', child: undefined });
+  const rejectedChild = formatLoggerFilter({ level: 'http', child: ['other'] });
   const disabled = formatLoggerFilter({ level: false, child: undefined });
-  const accepted = formatLoggerFilter({ level: 'info', child: ['res'] });
+  const accepted = formatLoggerFilter({ level: 'http', child: ['res'] });
   const info = pending[0]!;
   assert.equal(typeof info.message, 'function');
   let evaluations = 0;
@@ -360,7 +366,7 @@ test('one deferred access message snapshots entry and first-terminal state befor
 for (const failure of [false, true]) {
   test(`actual access projection waits for terminal status after downstream ${failure ? 'error' : 'success'}`, async () => {
     const output: string[] = [];
-    const filter = formatLoggerFilter({ level: 'info', child: undefined });
+    const filter = formatLoggerFilter({ level: 'http', child: undefined });
     const headers = Object.freeze({
       authorization: secret,
       cookie: secret,
@@ -388,8 +394,8 @@ for (const failure of [false, true]) {
         assert.equal(name, 'res');
         assert.equal(client, 'access');
         return {
-          info: (message: () => string) => {
-            const info = filter.transform({ level: 'info', name, message }, filter.options);
+          http: (message: () => string) => {
+            const info = filter.transform({ level: 'http', name, message }, filter.options);
             assert.ok(info);
             output.push(info.message);
           },
@@ -456,7 +462,7 @@ for (const headersSent of [false, true]) {
     res.on('close', onClose);
     const fake = {
       ctx: { req: { method: 'GET', url: '/stream' }, res, state: {} },
-      $loggerChild: () => ({ info: (message: () => string) => messages.push(message) }),
+      $loggerChild: () => ({ http: (message: () => string) => messages.push(message) }),
     };
     await MiddlewareSystemHttpLog.prototype.execute.call(fake as any, {}, async () => {});
     assert.equal(messages.length, 0);
@@ -493,7 +499,7 @@ test('close after writableFinished is finished even without a finish event', asy
   });
   const fake = {
     ctx: { req: { method: 'GET', url: '/stream' }, res, state: {} },
-    $loggerChild: () => ({ info: (message: () => string) => records.push(JSON.parse(message())) }),
+    $loggerChild: () => ({ http: (message: () => string) => records.push(JSON.parse(message())) }),
   };
   await MiddlewareSystemHttpLog.prototype.execute.call(fake as any, {}, async () => {});
   res.writableFinished = true;
@@ -517,7 +523,7 @@ for (const event of ['finish', 'close']) {
     const state: { staticFileServed?: boolean } = {};
     const fake = {
       ctx: { req: { method: 'POST', url: '/pending' }, res, state },
-      $loggerChild: () => ({ info: (message: () => string) => messages.push(message) }),
+      $loggerChild: () => ({ http: (message: () => string) => messages.push(message) }),
     };
     const ready = Promise.withResolvers<void>();
     let nextSettled = false;
@@ -564,7 +570,7 @@ for (const writableFinished of [false, true]) {
     const fake = {
       ctx: { req: { method: 'GET', url: '/already-terminal' }, res, state: {} },
       $loggerChild: () => ({
-        info: (message: () => string) => records.push(JSON.parse(message())),
+        http: (message: () => string) => records.push(JSON.parse(message())),
       }),
     };
     let nextCalls = 0;

@@ -32,7 +32,7 @@ export class MiddlewareSystemHttpLog extends BeanBase implements IMiddlewareSyst
         outcome: 'finished' | 'aborted';
       }) => {
         if (getRequestBoundary()) return;
-        logger.info(() => JSON.stringify(record));
+        logger.http(() => JSON.stringify(record));
       },
     );
     let ended = false;

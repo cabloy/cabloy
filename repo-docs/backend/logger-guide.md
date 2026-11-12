@@ -91,15 +91,16 @@ In the VSCode workflow, the `recordloggerclient` snippet can generate the client
 
 ## HTTP access logs versus diagnostics
 
-The application config separates HTTP access records from diagnostic logs using the `access` client. Each eligible request produces one terminal result through the `res` child at `info`, rather than separate request and response records. It does not use the default client's `http` level. Clients select purpose and routing, while levels select verbosity within a client. Raising diagnostic logging to `debug` therefore does not send access records to the diagnostic console or `combined.log`.
+The application config separates HTTP access records from diagnostic logs using the `access` client. Each eligible request produces one terminal result through the `res` child at `http`, rather than separate request and response records. It does not use the default client. Clients select purpose and routing, while levels select verbosity within a client. Raising diagnostic logging to `debug` therefore does not send access records to the diagnostic console or `combined.log`.
 
 By default, `access` has only a normal threshold-filtered file transport, writing `access.log` under the configured log directory and using the existing rotation settings. Managed isolated test runs use their run-owned `.app-test-<runId>/logs` directory. The default client's existing transports remain available for other explicit logger calls.
 
 Control access logging independently:
 
-- `LOGGER_CLIENT_ACCESS=info` keeps ordinary access records.
+- Outside test mode, the default `info` threshold suppresses HTTP access records. Explicit `LOGGER_CLIENT_ACCESS=info` or `true` also suppresses them.
+- `LOGGER_CLIENT_ACCESS=http` enables ordinary access records; more verbose thresholds such as `debug` also include them. Test mode defaults to `debug`, so access records remain enabled unless explicitly filtered out.
 - `LOGGER_CLIENT_ACCESS=false` disables access output without disabling business diagnostics.
-- `this.bean.logger.setFilterLevel(false, 'access')` changes the same filter at runtime; `setFilterLevel('info', 'access')` restores it.
+- `this.bean.logger.setFilterLevel(false, 'access')` changes the same filter at runtime; `setFilterLevel('http', 'access')` enables access records, while `setFilterLevel('info', 'access')` suppresses them.
 
 The file transport must follow the client threshold: use `makeTransportFile(clientInfo, 'access')`, without a strict-level argument. Strict-level file transports have different filtering semantics and do not follow the client's disable switch.
 
