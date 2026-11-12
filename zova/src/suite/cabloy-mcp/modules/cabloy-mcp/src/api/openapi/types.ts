@@ -1855,6 +1855,22 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  '/api/cabloy/mcp/accessTokenTest/read': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['CabloyMcpAccessTokenTest_read'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   '/api/mcp/test/catalog/categories': {
     parameters: {
       query?: never;
@@ -10918,6 +10934,29 @@ export interface operations {
       };
     };
     authToken: true;
+  };
+  CabloyMcpAccessTokenTest_read: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data: string[];
+          };
+        };
+      };
+    };
   };
   TestMcpCatalog_categories: {
     parameters: {
