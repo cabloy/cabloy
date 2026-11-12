@@ -597,7 +597,6 @@ export async function reapBeforeIsolatedRun(
   await reap(vonaDir, {
     ttlSeconds: parseTestClaimTtlSeconds(),
     now: Date.now(),
-    isInactive: claim => isTestClaimInactive(claim),
     warn: message => console.error(message),
   });
 }

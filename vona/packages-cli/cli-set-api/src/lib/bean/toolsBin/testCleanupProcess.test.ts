@@ -1,10 +1,14 @@
+import assert from 'node:assert/strict';
 import { mkdir, mkdtemp, realpath, rm, writeFile } from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
 import { test } from 'node:test';
 import { createTestClaim, getTestClaimRedisPrefix, writeTestClaim } from 'vona-core';
 
-import { prepareCleanupProcess } from '../../../../../../../scripts/testClaimCleanup.ts';
+import {
+  cleanTestClaim,
+  prepareCleanupProcess,
+} from '../../../../../../../scripts/testClaimCleanup.ts';
 
 // A fake source config exercises child registration/current resolution/IPC but
 // never opens a database, Redis connection, listener, migration or seed.
@@ -41,6 +45,26 @@ test('cleanup helper launches via process.execPath and resolves only fake source
     await writeTestClaim(claimPath, manifest);
     const session = await prepareCleanupProcess(manifest, claimPath);
     await session.close();
+
+    for (const failure of ['drift', 'unknown']) {
+      await writeFile(
+        path.join(configDir, 'config.ts'),
+        failure === 'drift'
+          ? 'export default () => ({ meta: { mode: "test", flavor: "normal" }, database: { testDatabase: true }, redis: { clients: { cache: { host: "different", port: 6379, db: 0, keyPrefix: true } } } });'
+          : 'export default () => { throw new Error("memory-only-secret://private-host/private-path"); };',
+      );
+      const warnings: string[] = [];
+      const result = await cleanTestClaim(claimPath, {
+        expiredBefore: Date.parse(manifest.createdAt) + 1,
+        warn: message => warnings.push(message),
+      });
+      const reason =
+        failure === 'drift'
+          ? 'cleanup Redis endpoint or namespace drift'
+          : 'unsafe roots, configuration drift, or inspection failure';
+      assert.deepEqual(result, { status: 'skipped', reason });
+      assert.deepEqual(warnings, [`Retained test claim ${path.basename(claimPath)}: ${reason}`]);
+    }
   } finally {
     await rm(project, { recursive: true, force: true });
   }

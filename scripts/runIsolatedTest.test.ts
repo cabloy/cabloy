@@ -55,8 +55,11 @@ const isolationSource = resolve(
 
 test('claim reaping defaults remain enabled and unit/e2e/contract opt-outs never call the reaper', async () => {
   const calls: string[] = [];
-  const reap = async (projectPath: string) => {
+  const reap: Parameters<typeof reapBeforeIsolatedRun>[3] = async (projectPath, options) => {
     calls.push(projectPath);
+    assert.ok(Number.isSafeInteger(options?.ttlSeconds));
+    assert.ok(Number.isFinite(options?.now));
+    assert.equal(Object.hasOwn(options!, 'isInactive'), false);
     return [];
   };
   for (const kind of ['unit', 'cov', 'e2e', 'contract'] as const) {

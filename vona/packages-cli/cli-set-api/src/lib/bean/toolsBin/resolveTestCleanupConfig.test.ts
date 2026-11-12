@@ -16,7 +16,7 @@ import { resolveTestCleanupConfig } from './resolveTestCleanupConfig.ts';
 
 const runId = '20261011010203-deadbeef';
 const projectPath = '/canonical-checkout/vona';
-function fixture() {
+function fixture(dialect: 'pg' | 'mysql' = 'pg') {
   const prefix = getDatabaseTestPrefix(getTestAppName(runId), 'share');
   const paths = getTestClaimPaths(projectPath, runId);
   const claim: TestClaimManifest = {
@@ -33,16 +33,16 @@ function fixture() {
     ],
     databases: [
       {
-        clientName: 'pg',
+        clientName: dialect,
         scope: 'share',
         prefix,
         endpoint: {
-          dialect: 'pg',
+          dialect,
           transport: 'tcp',
           host: 'override-db',
           port: 6543,
           tls: false,
-          adminDatabase: 'postgres',
+          adminDatabase: dialect === 'pg' ? 'postgres' : 'mysql',
         },
         creations: [{ name: `${prefix}20261011-010203`, stage: 'intent' }],
       },
@@ -64,7 +64,12 @@ function fixture() {
       testDatabase: true,
       defaultClient: 'pg',
       base: { connection: { host: 'base-db', port: 5432, password: 'memory-only-secret' } },
-      clients: { pg: { client: 'pg', connection: { database: 'postgres', user: 'user' } } },
+      clients: {
+        [dialect]: {
+          client: dialect,
+          connection: { database: dialect === 'pg' ? 'postgres' : 'mysql', user: 'user' },
+        },
+      },
     },
     redis: {
       base: { host: 'base-redis', port: 6379, db: 0, password: 'memory-only-secret' },
@@ -73,7 +78,7 @@ function fixture() {
     instance: { instances: {} },
   };
   const override = {
-    database: { clients: { pg: { connection: { host: 'override-db', port: 6543 } } } },
+    database: { clients: { [dialect]: { connection: { host: 'override-db', port: 6543 } } } },
     redis: { clients: { cache: { host: 'override-redis', port: 6380, db: 4 } } },
   };
   const env = {
@@ -115,6 +120,120 @@ test('current source config evaluation and ordered deep precedence, credentials 
   assert.equal(resolved.redisOptions.get('cache')!.host, 'override-redis');
   assert.equal(resolved.redisOptions.get('cache')!.keyPrefix, undefined);
   assert.ok(!JSON.stringify(f.claim).includes('memory-only-secret'));
+});
+
+test('historical pg/mysql clients resolve after switching the default to sqlite3', async () => {
+  for (const dialect of ['pg', 'mysql'] as const) {
+    const f = fixture(dialect);
+    f.base.database.defaultClient = 'sqlite3';
+    Object.assign(f.base.database.clients, { sqlite3: { client: 'better-sqlite3' } });
+    const resolved = await resolveTestCleanupConfig(f.claim, f.deps);
+    assert.deepEqual([...resolved.databaseOptions.keys()], [dialect]);
+    assert.equal(resolved.databaseOptions.get(dialect)!.client, dialect);
+    assert.equal(resolved.databaseOptions.get(dialect)!.connection.host, 'override-db');
+    assert.equal(
+      resolved.databaseOptions.get(dialect)!.connection.database,
+      dialect === 'pg' ? 'postgres' : 'mysql',
+    );
+
+    f.override.database.clients[dialect].connection.host = 'different';
+    await assert.rejects(resolveTestCleanupConfig(f.claim, f.deps), {
+      reasonCode: 'databaseEndpoint',
+      message: 'cleanup database endpoint drift',
+    });
+    delete f.base.database.clients[dialect];
+    delete f.override.database.clients[dialect];
+    await assert.rejects(resolveTestCleanupConfig(f.claim, f.deps), {
+      reasonCode: 'databaseClient',
+      message: 'cleanup database client missing',
+    });
+  }
+});
+
+test('historical defaults rebuild derived isolate clients without changing the loaded environment', async () => {
+  for (const dialect of ['pg', 'mysql'] as const) {
+    const f = fixture(dialect);
+    const loadedEnv = { ...f.env, DATABASE_DEFAULT_CLIENT: 'sqlite3' };
+    f.deps.loadEnvs = () => loadedEnv;
+    const prefix = getDatabaseTestPrefix(getTestAppName(runId), 'isolate-isolateTest');
+    f.claim.databases.push({
+      ...f.claim.databases[0],
+      clientName: 'isolateTest',
+      scope: 'isolate-isolateTest',
+      prefix,
+      creations: [{ name: `${prefix}20261011-010203`, stage: 'intent' }],
+    });
+    // The mysql config key selects mysql2, as in the application config.
+    if (dialect === 'mysql') {
+      f.base.database.clients.mysql.client = 'mysql2' as any;
+      for (const database of f.claim.databases) database.endpoint.dialect = 'mysql2';
+    }
+    let isolateClient = 'isolateTest';
+    let isolateHost = 'override-db';
+    const processDefault = process.env.DATABASE_DEFAULT_CLIENT;
+    const loadConfig = f.deps.loadConfig;
+    f.deps.loadConfig = async file => {
+      const loader = await loadConfig(file);
+      return {
+        default: async app => {
+          const config = await loader.default(app);
+          if (file !== 'local') return config;
+          const selected = (app.meta.env as unknown as typeof loadedEnv).DATABASE_DEFAULT_CLIENT;
+          assert.equal(selected, dialect);
+          const historical = {
+            ...f.base.database.clients[dialect],
+            connection: {
+              ...f.base.database.clients[dialect].connection,
+              ...f.override.database.clients[dialect].connection,
+              host: isolateHost,
+            },
+          };
+          return {
+            ...f.override,
+            database: {
+              ...f.override.database,
+              defaultClient: selected,
+              clients: { ...f.override.database.clients, isolateTest: historical },
+            },
+            instance: { instances: { isolateTest: { isolate: true, isolateClient } } },
+          };
+        },
+      };
+    };
+    const resolved = await resolveTestCleanupConfig(f.claim, f.deps);
+    assert.deepEqual([...resolved.databaseOptions.keys()], [dialect, 'isolateTest']);
+    assert.deepEqual(
+      resolved.databaseOptions.get('isolateTest'),
+      resolved.databaseOptions.get(dialect),
+    );
+    assert.equal(loadedEnv.DATABASE_DEFAULT_CLIENT, 'sqlite3');
+    assert.equal(process.env.DATABASE_DEFAULT_CLIENT, processDefault);
+
+    isolateHost = 'different';
+    await assert.rejects(resolveTestCleanupConfig(f.claim, f.deps), {
+      reasonCode: 'databaseEndpoint',
+    });
+    isolateHost = 'override-db';
+    isolateClient = 'different';
+    await assert.rejects(resolveTestCleanupConfig(f.claim, f.deps), {
+      reasonCode: 'databaseScope',
+    });
+  }
+});
+
+test('namespace and isolate-client protections survive a default-client switch', async () => {
+  const f = fixture();
+  f.base.database.defaultClient = 'sqlite3';
+  f.claim.databases[0].prefix += 'foreign';
+  await assert.rejects(resolveTestCleanupConfig(f.claim, f.deps), {
+    reasonCode: 'databaseNamespace',
+  });
+  f.claim.databases[0].scope = 'isolate-example';
+  f.claim.databases[0].prefix = getDatabaseTestPrefix(getTestAppName(runId), 'isolate-example');
+  f.claim.databases[0].creations[0].name = `${f.claim.databases[0].prefix}20261011-010203`;
+  await assert.rejects(resolveTestCleanupConfig(f.claim, f.deps), {
+    reasonCode: 'databaseScope',
+  });
 });
 
 test('current configuration drift and unsupported targets fail before any driver access', async () => {

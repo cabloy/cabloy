@@ -18,6 +18,7 @@ import {
 } from 'vona-core';
 
 import { createConfigUtils } from './configUtils.ts';
+import { TestCleanupConfigError } from './testCleanupErrors.ts';
 
 export interface TestCleanupResolvedConfig {
   databaseOptions: Map<string, Record<string, any>>;
@@ -64,13 +65,17 @@ export async function resolveTestCleanupConfig(
         },
       }),
   };
-  const env = deps.loadEnvs();
+  const env = { ...deps.loadEnvs() };
+  const shared = claim.databases.filter(database => database.scope === 'share');
+  // Rebuild default-derived isolate clients for this run without changing process env.
+  // Exact recorded endpoints and scopes must still match the resulting current config.
+  if (shared.length === 1) env.DATABASE_DEFAULT_CLIENT = shared[0].clientName;
   if (
     env.META_MODE !== 'test' ||
     env.VONA_TEST_RUN_ID !== claim.runId ||
     env.APP_NAME !== getTestAppName(claim.runId)
   ) {
-    throw new Error('Cleanup config identity mismatch');
+    throw new TestCleanupConfigError('identity');
   }
   const app = deps.createApp(env);
   const loaders = await Promise.all(deps.files.map(file => deps.loadConfig(file)));
@@ -87,31 +92,30 @@ export async function resolveTestCleanupConfig(
     config.meta?.flavor !== 'normal' ||
     config.database?.testDatabase !== true
   ) {
-    throw new Error('Unsupported cleanup config mode');
+    throw new TestCleanupConfigError('mode');
   }
   const databaseOptions = new Map<string, Record<string, any>>();
   const redisOptions = new Map<string, Record<string, any>>();
   for (const database of claim.databases) {
+    // The recorded client owns this resource; today's default only selects new runs.
     const client = config.database.clients?.[database.clientName];
-    if (!client) throw new Error('Cleanup database client missing');
+    if (!client) throw new TestCleanupConfigError('databaseClient');
     // Built-in dialect defaults only shape pools/afterCreate, never endpoints.
     // Admin cleanup uses a dedicated bounded pool instead of application hooks.
     const options = mergeTestClaimDatabaseOptions(config.database.base, undefined, client);
     const endpoint = normalizeTestClaimDatabaseEndpoint(options, claim.projectPath, claim.runId);
     if (!isDeepStrictEqual(endpoint, database.endpoint))
-      throw new Error('Cleanup database endpoint drift');
+      throw new TestCleanupConfigError('databaseEndpoint');
     if (database.prefix !== getDatabaseTestPrefix(getTestAppName(claim.runId), database.scope))
-      throw new Error('Cleanup database namespace drift');
+      throw new TestCleanupConfigError('databaseNamespace');
     if (database.scope !== 'share') {
       const instance = config.instance?.instances?.[database.scope.slice('isolate-'.length)];
       if (!instance?.isolate || instance.isolateClient !== database.clientName)
-        throw new Error('Cleanup database scope drift');
-    } else if (config.database.defaultClient !== database.clientName) {
-      throw new Error('Cleanup default database client drift');
+        throw new TestCleanupConfigError('databaseScope');
     }
     if (endpoint.dialect !== 'better-sqlite3') {
       if (options.connection.database !== endpoint.adminDatabase)
-        throw new Error('Cleanup administrative target drift');
+        throw new TestCleanupConfigError('databaseAdmin');
       for (const creation of database.creations)
         assertDisposableDatabaseName(creation.name, database.prefix);
     }
@@ -120,7 +124,7 @@ export async function resolveTestCleanupConfig(
   for (const resource of claim.redis) {
     const client = config.redis?.clients?.[resource.clientName];
     if (!client || config.redis.base?.keyPrefix !== undefined)
-      throw new Error('Unsupported cleanup Redis prefix');
+      throw new TestCleanupConfigError('redisTarget');
     const options = mergeTestClaimRedisOptions(config.redis.base, client);
     const endpoint = normalizeTestClaimRedisEndpoint(options);
     const owned = getTestClaimRedisPrefix(claim.runId, resource.clientName);
@@ -130,10 +134,10 @@ export async function resolveTestCleanupConfig(
       owned.prefix !== resource.prefix ||
       owned.kind !== resource.kind
     ) {
-      throw new Error('Cleanup Redis endpoint or namespace drift');
+      throw new TestCleanupConfigError('redisEndpoint');
     }
     if (resource.kind === 'client' ? options.keyPrefix !== true : options.keyPrefix !== undefined)
-      throw new Error('Cleanup Redis prefix drift');
+      throw new TestCleanupConfigError('redisPrefix');
     delete options.keyPrefix;
     redisOptions.set(resource.clientName, options);
   }

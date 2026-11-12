@@ -10,6 +10,10 @@ import type {
 } from '../vona/packages-vona/vona-core/src/lib/core/testClaim.ts';
 
 import {
+  isTestCleanupConfigCode,
+  TestCleanupConfigError,
+} from '../vona/packages-cli/cli-set-api/src/lib/bean/toolsBin/testCleanupErrors.ts';
+import {
   assertTestClaimSafePath,
   loadTestClaim,
   TEST_CLAIM_DIRECTORY,
@@ -29,6 +33,7 @@ export interface TestClaimCleanupSession {
 }
 export interface TestClaimCleanupOptions {
   projectPath?: string;
+  expiredBefore?: number;
   isInactive?: (
     claim: TestClaimManifest,
   ) => Promise<boolean | { inactive: boolean; reason?: string }>;
@@ -81,6 +86,9 @@ export async function cleanTestClaim(
   claimPath: string,
   options: TestClaimCleanupOptions = {},
 ): Promise<TestClaimCleanupResult> {
+  const expiredBefore = options.expiredBefore;
+  if (expiredBefore !== undefined && !Number.isFinite(expiredBefore))
+    throw new TypeError('Invalid test claim expiry cutoff');
   claimPath = path.resolve(claimPath);
   // An unsafe shared namespace is fatal to the invocation, not a skippable claim.
   await assertTestClaimPrivateDirectory(path.dirname(claimPath), false);
@@ -109,19 +117,24 @@ export async function cleanTestClaim(
   let session: TestClaimCleanupSession | undefined;
   let sequenceStarted = false;
   try {
-    // Re-read after locking; the runner must have closed its single inventory broker.
+    // Re-read under lock; historical expiry does not imply the inventory broker has closed.
     claim = await loadTestClaim(claimPath);
+    if (expiredBefore !== undefined && Date.parse(claim.createdAt) >= expiredBefore)
+      return skip('claim has not expired');
     await validateLocalRoots(claim);
     if (claim.databases.length || claim.redis.length)
       session = await (options.prepare ?? prepareCleanupProcess)(claim, claimPath);
-    if (!options.isInactive) return skip('process inactivity inspector unavailable');
-    const evidence = await options.isInactive(claim);
-    if (!(typeof evidence === 'boolean' ? evidence : evidence.inactive)) {
-      const reason = typeof evidence === 'boolean' ? undefined : evidence.reason;
-      return skip(`live or uncertain process ownership${reason ? `: ${reason}` : ''}`);
+    if (expiredBefore === undefined) {
+      if (!options.isInactive) return skip('process inactivity inspector unavailable');
+      const evidence = await options.isInactive(claim);
+      if (!(typeof evidence === 'boolean' ? evidence : evidence.inactive)) {
+        const reason = typeof evidence === 'boolean' ? undefined : evidence.reason;
+        return skip(`live or uncertain process ownership${reason ? `: ${reason}` : ''}`);
+      }
     }
     sequenceStarted = true;
     claim.status = 'cleaning';
+    // The process gate is satisfied by expiry or verified current-run inactivity, not termination.
     claim.cleanup.processes = true;
     await writeTestClaim(claimPath, claim);
     for (const db of claim.databases) {
@@ -174,10 +187,12 @@ export async function cleanTestClaim(
     await loadTestClaim(claimPath);
     await deleteTestClaimFile(claimPath);
     return { status: 'cleaned' };
-  } catch {
+  } catch (error) {
     const reason = sequenceStarted
       ? 'cleanup failed; remaining resources journaled for retry'
-      : 'unsafe roots, configuration drift, or inspection failure';
+      : error instanceof TestCleanupConfigError
+        ? new TestCleanupConfigError(error.reasonCode).message
+        : 'unsafe roots, configuration drift, or inspection failure';
     warn(`Retained test claim ${path.basename(claimPath)}: ${reason}`);
     return { status: sequenceStarted ? 'failed' : 'skipped', reason };
   } finally {
@@ -233,7 +248,9 @@ export async function reapExpiredTestClaims(
       continue;
     }
     if ((now - Date.parse(claim.createdAt)) / 1000 <= ttl) continue;
-    results.push(await cleanTestClaim(claimPath, { ...options, projectPath }));
+    results.push(
+      await cleanTestClaim(claimPath, { ...options, projectPath, expiredBefore: now - ttl * 1000 }),
+    );
   }
   return results;
 }
@@ -297,8 +314,15 @@ export async function prepareCleanupProcess(
     if (!operation) return;
     pending.delete(value.id);
     clearTimeout(operation.timer);
-    if (value.ok) operation.resolve();
-    else operation.reject(new Error('Cleanup helper rejected operation'));
+    if (value.ok) {
+      operation.resolve();
+    } else {
+      operation.reject(
+        isTestCleanupConfigCode(value.code)
+          ? new TestCleanupConfigError(value.code)
+          : new Error('Cleanup helper rejected operation'),
+      );
+    }
   });
   const request = (command: string, args: object = {}) =>
     new Promise<void>((resolve, reject) => {

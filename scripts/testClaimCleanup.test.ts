@@ -18,6 +18,10 @@ import { test } from 'node:test';
 import type { TestClaimCleanupSession } from './testClaimCleanup.ts';
 
 import {
+  isTestCleanupConfigCode,
+  TestCleanupConfigError,
+} from '../vona/packages-cli/cli-set-api/src/lib/bean/toolsBin/testCleanupErrors.ts';
+import {
   createTestClaim,
   getTestClaimRedisPrefix,
   loadTestClaim,
@@ -36,14 +40,14 @@ import {
 
 const runId = '20261011010203-deadbeef';
 const inactive = async () => true;
-async function fixture(remote = false) {
+async function fixture(remote = false, ownerHost = os.hostname()) {
   const parent = await mkdtemp(path.join(await realpath(os.tmpdir()), 'claim-cleanup-'));
   const project = path.join(parent, 'vona');
   await mkdir(project);
   const { claimPath, manifest } = await createTestClaim(project, runId, 'unit', {
     pid: process.pid,
     startTime: 'test-start',
-    host: os.hostname(),
+    host: ownerHost,
   });
   for (const local of manifest.locals) {
     await mkdir(local.path);
@@ -101,23 +105,106 @@ test('TTL defaults, positive safe integers and exact expiry boundary', async () 
   const f = await fixture();
   try {
     const created = Date.parse(f.manifest.createdAt);
+    for (const now of [created - 1, created + 999, created + 1000]) {
+      assert.deepEqual(await reapExpiredTestClaims(f.project, { now, ttlSeconds: 1 }), []);
+      await lstat(f.claimPath);
+    }
     assert.deepEqual(
-      await reapExpiredTestClaims(f.project, {
-        now: created + 1000,
-        ttlSeconds: 1,
-        isInactive: inactive,
-      }),
-      [],
-    );
-    assert.deepEqual(
-      await reapExpiredTestClaims(f.project, {
-        now: created + 1001,
-        ttlSeconds: 1,
-        isInactive: inactive,
-      }),
+      await reapExpiredTestClaims(f.project, { now: created + 1001, ttlSeconds: 1 }),
       [{ status: 'cleaned' }],
     );
     await absent(f.claimPath);
+  } finally {
+    await f.close();
+  }
+});
+
+test('expired claims ignore host and process liveness while releasing only inventoried resources', async () => {
+  for (const host of [os.hostname(), `${os.hostname()}-other`]) {
+    const f = await fixture(true, host);
+    const actions: string[] = [];
+    let inspections = 0;
+    try {
+      f.manifest.processes.push(
+        { id: 'pending-browser', role: 'browser', stage: 'pending' },
+        {
+          id: 'guardian',
+          role: 'guardian',
+          stage: 'registered',
+          pid: process.pid,
+          containment: 'windows-job',
+          jobId: '12345678-1234-1234-1234-123456789abc',
+          startTime: '123456789',
+          host,
+        },
+      );
+      await writeTestClaim(f.claimPath, f.manifest);
+      assert.deepEqual(
+        await reapExpiredTestClaims(f.project, {
+          now: Date.parse(f.manifest.createdAt) + 1001,
+          ttlSeconds: 1,
+          isInactive: async () => {
+            inspections++;
+            throw new Error('Historical process inspection must not run');
+          },
+          prepare: async () => ({
+            async dropDatabase(db, name) {
+              assert.equal(name, db.creations[0].name);
+              actions.push('database');
+            },
+            async clearRedis(resource) {
+              assert.equal(resource.prefix, f.manifest.redis[0].prefix);
+              actions.push('redis');
+            },
+            async close() {
+              actions.push('close');
+            },
+          }),
+        }),
+        [{ status: 'cleaned' }],
+      );
+      assert.equal(inspections, 0);
+      assert.deepEqual(actions, ['database', 'redis', 'close']);
+      await absent(f.claimPath);
+      for (const local of f.manifest.locals) await absent(local.path);
+      assert.equal(await readFile(path.join(f.project, '.app/sentinel'), 'utf8'), 'development');
+      assert.equal(await readFile(path.join(f.project, 'coverage/sentinel'), 'utf8'), 'keep');
+    } finally {
+      await f.close();
+    }
+  }
+});
+
+test('cleanup rechecks expiry under lock before configuration or process inspection', async () => {
+  const f = await fixture(true);
+  let preparations = 0;
+  let inspections = 0;
+  try {
+    const created = Date.parse(f.manifest.createdAt);
+    for (const expiredBefore of [created - 1, created]) {
+      assert.deepEqual(
+        await cleanTestClaim(f.claimPath, {
+          expiredBefore,
+          isInactive: async () => {
+            inspections++;
+            return true;
+          },
+          prepare: async () => {
+            preparations++;
+            throw new Error('Unexpired claim must not prepare cleanup');
+          },
+        }),
+        { status: 'skipped', reason: 'claim has not expired' },
+      );
+      assert.deepEqual(await loadTestClaim(f.claimPath), f.manifest);
+      for (const local of f.manifest.locals) await lstat(local.path);
+      await absent(`${f.claimPath}.cleanup.lock`);
+    }
+    for (const expiredBefore of [Number.NaN, Infinity, -Infinity]) {
+      await assert.rejects(cleanTestClaim(f.claimPath, { expiredBefore }), /Invalid.*cutoff/);
+    }
+    assert.equal(preparations, 0);
+    assert.equal(inspections, 0);
   } finally {
     await f.close();
   }
@@ -205,6 +292,42 @@ test('inactive checks retain categorical reasons with a generic fallback and no 
   }
 });
 
+test('preparation reports only fixed config categories, never arbitrary error details', async () => {
+  for (const code of ['databaseClient', 'databaseEndpoint', 'databaseNamespace', 'databaseScope'])
+    assert.equal(isTestCleanupConfigCode(code), true);
+  for (const code of [undefined, null, {}, '__proto__', 'constructor', 'secret://private-host'])
+    assert.equal(isTestCleanupConfigCode(code), false);
+
+  const known = new TestCleanupConfigError('databaseEndpoint');
+  known.message = 'secret://private-host/private-path';
+  for (const error of [known, new Error('secret://private-host/private-path')]) {
+    const f = await fixture(true);
+    const warnings: string[] = [];
+    try {
+      const reason =
+        error === known
+          ? 'cleanup database endpoint drift'
+          : 'unsafe roots, configuration drift, or inspection failure';
+      assert.deepEqual(
+        await cleanTestClaim(f.claimPath, {
+          expiredBefore: Date.parse(f.manifest.createdAt) + 1,
+          warn: message => warnings.push(message),
+          prepare: async () => {
+            throw error;
+          },
+        }),
+        { status: 'skipped', reason },
+      );
+      assert.deepEqual(warnings, [`Retained test claim ${path.basename(f.claimPath)}: ${reason}`]);
+      assert.deepEqual(await loadTestClaim(f.claimPath), f.manifest);
+      for (const local of f.manifest.locals) await lstat(local.path);
+      await absent(`${f.claimPath}.cleanup.lock`);
+    } finally {
+      await f.close();
+    }
+  }
+});
+
 test('partial failure retains progress and retries only remaining resources', async () => {
   const f = await fixture(true);
   let drops = 0;
@@ -267,6 +390,43 @@ test('live, missing inspector, drifted config, malformed manifest and unmarked r
   }
 });
 
+test('expired claims retain invalid manifests, unsafe roots and configuration drift', async () => {
+  for (const reason of ['drift', 'malformed', 'unmarked', 'wrong-owner', 'symlink']) {
+    const f = await fixture(reason === 'drift');
+    let preparations = 0;
+    try {
+      if (reason === 'malformed') await writeFile(f.claimPath, '{');
+      const marker = path.join(f.manifest.locals[0].path, '.vona-test-owner');
+      if (reason === 'unmarked') await rm(marker);
+      if (reason === 'wrong-owner') await writeFile(marker, 'another-run\n');
+      if (reason === 'symlink') {
+        await rm(f.manifest.locals[0].path, { recursive: true });
+        await symlink(
+          path.join(f.project, '.app'),
+          f.manifest.locals[0].path,
+          process.platform === 'win32' ? 'junction' : 'dir',
+        );
+      }
+      const results = await reapExpiredTestClaims(f.project, {
+        now: Date.parse(f.manifest.createdAt) + 1001,
+        ttlSeconds: 1,
+        prepare: async () => {
+          preparations++;
+          throw new Error('Configuration drift');
+        },
+      });
+      assert.equal(results.length, 1, reason);
+      assert.equal(results[0].status, 'skipped', reason);
+      assert.equal(preparations, reason === 'drift' ? 1 : 0);
+      await lstat(f.claimPath);
+      assert.equal(await readFile(path.join(f.project, '.app/sentinel'), 'utf8'), 'development');
+      assert.equal(await readFile(path.join(f.project, 'coverage/sentinel'), 'utf8'), 'keep');
+    } finally {
+      await f.close();
+    }
+  }
+});
+
 test('exclusive cleaners skip contenders; orphaned old lock is never taken over', async () => {
   const f = await fixture();
   let release!: () => void;
@@ -303,7 +463,6 @@ test('exclusive cleaners skip contenders; orphaned old lock is never taken over'
     const result = await reapExpiredTestClaims(second.project, {
       now: Date.parse(second.manifest.createdAt) + 10000,
       ttlSeconds: 1,
-      isInactive: inactive,
     });
     assert.equal(result[0].status, 'skipped');
     await lstat(second.claimPath);

@@ -2,6 +2,8 @@ import { register, createRequire } from 'node:module';
 import path from 'node:path';
 import { pathToFileURL } from 'node:url';
 
+import { TestCleanupConfigError } from './testCleanupErrors.ts';
+
 // Register before dynamically importing source config/framework (decorators and
 // workspace TS exports). Dependencies resolve from this checkout's Vona install.
 register(import.meta.resolve('@swc-node/register/esm'), pathToFileURL(`${process.cwd()}/`));
@@ -15,6 +17,7 @@ process.on('message', (message: any) => {
   queue = queue
     .then(async () => {
       let ok = false;
+      let code: string | undefined;
       try {
         if (message.command === 'prepare') {
           if (claim || typeof message.claimPath !== 'string')
@@ -127,10 +130,12 @@ process.on('message', (message: any) => {
           throw new Error('Unknown cleanup operation');
         }
         ok = true;
-      } catch {
-        /* The IPC protocol deliberately contains no raw errors/config. */
+      } catch (error) {
+        // The IPC protocol carries only fixed config categories, never raw errors/config.
+        if (message.command === 'prepare' && error instanceof TestCleanupConfigError)
+          code = error.reasonCode;
       }
-      if (process.connected) process.send?.({ id: message.id, ok });
+      if (process.connected) process.send?.({ id: message.id, ok, code });
     })
     .catch(() => {});
 });
