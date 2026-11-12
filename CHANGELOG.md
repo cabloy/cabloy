@@ -1,5 +1,16 @@
 # Changelog
 
+## 5.1.274
+
+### Features
+- Add MCP access token support.
+- Update application functionality.
+
+### Improvements
+- Enhance `app.util.host`.
+- Synchronize the release dependency lockfile.
+- Update local HTTP tests.
+
 ## 5.1.273
 
 ### Features
