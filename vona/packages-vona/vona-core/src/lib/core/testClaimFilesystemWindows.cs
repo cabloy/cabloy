@@ -167,7 +167,7 @@ namespace Cabloy {
         }
         static void ParentPrivate(string file) { using (SafeFileHandle parent = Open(Path.GetDirectoryName(file), true, 0, ShareRead | ShareWrite)) Private(parent); }
         static Dictionary<string, object> Success() { return new Dictionary<string, object> { { "ok", true } }; }
-        public static Dictionary<string, object> Execute(string command, string file, bool allowMissing, string content, string expected) {
+        public static Dictionary<string, object> Execute(string command, string file, bool allowMissing, string content, string expected, double expiredBefore) {
             try {
                 file = Canonical(file);
                 Dictionary<string, object> result = Success();
@@ -187,10 +187,17 @@ namespace Cabloy {
                     }
                     ParentPrivate(file);
                     if (command == "read") { using (SafeFileHandle h = Open(file, false, GenericRead)) result["content"] = Read(h); return result; }
-                    if (command == "delete" || command == "release-lock") {
+                    if (command == "delete" || command == "release-lock" || command == "delete-expired-lock") {
                         using (SafeFileHandle h = Open(file, false, GenericRead | DeleteAccess)) {
                             Private(h);
-                            if (command == "release-lock") {
+                            if (command == "delete-expired-lock") {
+                                FileInformation info = Info(h, false);
+                                long writeTime = ((long)(uint)info.Write.dwHighDateTime << 32) | (uint)info.Write.dwLowDateTime;
+                                double modified = (writeTime - 116444736000000000L) / 10000.0;
+                                if (Double.IsNaN(expiredBefore) || Double.IsInfinity(expiredBefore) || modified >= expiredBefore)
+                                    return new Dictionary<string, object> { { "ok", false }, { "code", "EEXIST" } };
+                            }
+                            if (command == "release-lock" || command == "delete-expired-lock") {
                                 // Read through a non-owning SafeFileHandle so the delete handle stays live.
                                 using (SafeFileHandle borrowed = new SafeFileHandle(h.DangerousGetHandle(), false)) {
                                     if (Read(borrowed) != expected) throw Unsafe();

@@ -9,6 +9,7 @@ import {
   realpath,
   rm,
   symlink,
+  utimes,
   writeFile,
 } from 'node:fs/promises';
 import os from 'node:os';
@@ -427,7 +428,7 @@ test('expired claims retain invalid manifests, unsafe roots and configuration dr
   }
 });
 
-test('exclusive cleaners skip contenders; orphaned old lock is never taken over', async () => {
+test('exclusive cleaners skip contenders, including historical cleanup against a fresh lock', async () => {
   const f = await fixture();
   let release!: () => void;
   let acquired!: () => void;
@@ -447,6 +448,15 @@ test('exclusive cleaners skip contenders; orphaned old lock is never taken over'
     });
     await ready;
     assert.equal((await cleanTestClaim(f.claimPath, { isInactive: inactive })).status, 'skipped');
+    const warnings: string[] = [];
+    const result = await reapExpiredTestClaims(f.project, {
+      now: Date.now(),
+      ttlSeconds: 86400,
+      warn: warning => warnings.push(warning),
+    });
+    assert.equal(result[0].status, 'skipped');
+    assert.equal(warnings.length, 1);
+    assert.match(warnings[0], /unexpired or changed/);
     release();
     assert.equal((await first).status, 'cleaned');
     await absent(`${f.claimPath}.cleanup.lock`);
@@ -454,21 +464,60 @@ test('exclusive cleaners skip contenders; orphaned old lock is never taken over'
     release?.();
     await f.close();
   }
-  const second = await fixture();
-  try {
-    await createTestClaimFile(
-      `${second.claimPath}.cleanup.lock`,
-      JSON.stringify({ pid: 999999, startTime: 'ancient', token: 'orphan' }),
-    );
-    const result = await reapExpiredTestClaims(second.project, {
-      now: Date.parse(second.manifest.createdAt) + 10000,
-      ttlSeconds: 1,
-    });
-    assert.equal(result[0].status, 'skipped');
-    await lstat(second.claimPath);
-    await lstat(`${second.claimPath}.cleanup.lock`);
-  } finally {
-    await second.close();
+});
+
+test('historical cleanup recovers expired locks and reuses guarded resource cleanup', async () => {
+  for (const contents of [
+    'truncated {',
+    JSON.stringify({ pid: process.pid, hostname: 'foreign' }),
+  ]) {
+    const f = await fixture(true);
+    const lockPath = `${f.claimPath}.cleanup.lock`;
+    const created = Date.parse(f.manifest.createdAt);
+    const actions: string[] = [];
+    const warnings: string[] = [];
+    try {
+      await createTestClaimFile(lockPath, contents);
+      await utimes(lockPath, new Date(created), new Date(created));
+      // Current-run cleanup and unexpired claims must not reclaim even an old lock.
+      assert.equal((await cleanTestClaim(f.claimPath, { isInactive: inactive })).status, 'skipped');
+      assert.equal(
+        (await cleanTestClaim(f.claimPath, { expiredBefore: created })).reason,
+        'claim has not expired',
+      );
+      assert.equal(await readFile(lockPath, 'utf8'), contents);
+      assert.deepEqual(
+        await reapExpiredTestClaims(f.project, {
+          now: created + 10000,
+          ttlSeconds: 1,
+          warn: warning => warnings.push(warning),
+          isInactive: async () => {
+            throw new Error('Historical cleanup must not inspect processes');
+          },
+          prepare: async () => ({
+            async dropDatabase(db, name) {
+              assert.equal(name, db.creations[0].name);
+              actions.push('database');
+            },
+            async clearRedis(resource) {
+              assert.equal(resource.prefix, f.manifest.redis[0].prefix);
+              actions.push('redis');
+            },
+            async close() {
+              actions.push('close');
+            },
+          }),
+        }),
+        [{ status: 'cleaned' }],
+      );
+      assert.deepEqual(actions, ['database', 'redis', 'close']);
+      assert.deepEqual(warnings, []);
+      await absent(f.claimPath);
+      await absent(lockPath);
+      for (const local of f.manifest.locals) await absent(local.path);
+    } finally {
+      await f.close();
+    }
   }
 });
 

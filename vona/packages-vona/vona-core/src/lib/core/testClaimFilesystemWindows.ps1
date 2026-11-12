@@ -10,7 +10,7 @@ try {
     $request = $line | ConvertFrom-Json -AsHashtable
     $result = [Cabloy.TestClaimFilesystem]::Execute(
       [string]$request.command, [string]$request.path, [bool]$request.allowMissing,
-      [string]$request.content, [string]$request.expected)
+      [string]$request.content, [string]$request.expected, [double]$request.expiredBefore)
     [Console]::Out.WriteLine(($result | ConvertTo-Json -Compress))
     [Console]::Out.Flush()
   }

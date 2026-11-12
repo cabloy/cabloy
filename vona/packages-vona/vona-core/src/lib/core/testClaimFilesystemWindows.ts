@@ -14,11 +14,13 @@ export interface WindowsTestClaimFilesystemRequest {
     | 'create'
     | 'replace'
     | 'delete'
-    | 'release-lock';
+    | 'release-lock'
+    | 'delete-expired-lock';
   path: string;
   allowMissing?: boolean;
   content?: string;
   expected?: string;
+  expiredBefore?: number;
 }
 
 // Both source and bundled dist consumers use the checked-in, published src assets.

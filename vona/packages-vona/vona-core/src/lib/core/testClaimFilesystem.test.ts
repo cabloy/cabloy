@@ -11,6 +11,7 @@ import {
   realpath,
   rm,
   symlink,
+  utimes,
   writeFile,
 } from 'node:fs/promises';
 import os from 'node:os';
@@ -94,6 +95,77 @@ test('cleanup lock contention is exclusive and release never unlinks a replaceme
     await lstat(lockPath);
     await replacement.release();
     await assert.rejects(lstat(lockPath), { code: 'ENOENT' });
+  } finally {
+    await f.close();
+  }
+});
+
+test('expired cleanup locks recover by file age without parsing their metadata', async () => {
+  const cutoff = Date.parse('2026-10-12T00:00:00Z');
+  for (const content of [
+    '',
+    'incomplete {',
+    JSON.stringify({ pid: process.pid, hostname: 'other' }),
+  ]) {
+    const f = await fixture();
+    try {
+      await createTestClaimFile(f.file, content);
+      await utimes(f.file, new Date(cutoff - 1000), new Date(cutoff - 1000));
+      await assert.rejects(acquireTestClaimCleanupLock(f.file), { code: 'EEXIST' });
+      const lock = await acquireTestClaimCleanupLock(f.file, cutoff);
+      const replacement = await readTestClaimFile(f.file);
+      assert.notEqual(replacement, content);
+      await assert.rejects(acquireTestClaimCleanupLock(f.file, cutoff), { code: 'EEXIST' });
+      assert.equal(await readTestClaimFile(f.file), replacement);
+      await lock.release();
+    } finally {
+      await f.close();
+    }
+  }
+});
+
+test('expired lock contenders leave one exclusive winner and retain unsafe aliases', async () => {
+  const f = await fixture();
+  const cutoff = Date.parse('2026-10-12T00:00:00Z');
+  try {
+    await createTestClaimFile(f.file, 'old');
+    await utimes(f.file, new Date(cutoff - 1000), new Date(cutoff - 1000));
+    const results = await Promise.allSettled([
+      acquireTestClaimCleanupLock(f.file, cutoff),
+      acquireTestClaimCleanupLock(f.file, cutoff),
+    ]);
+    const winners = results.filter(result => result.status === 'fulfilled');
+    assert.equal(winners.length, 1);
+    await winners[0].value.release();
+    await createTestClaimFile(f.file, 'sentinel');
+    await utimes(f.file, new Date(cutoff - 1000), new Date(cutoff - 1000));
+    const alias = path.join(f.directory, 'alias.lock');
+    await link(f.file, alias);
+    await assert.rejects(acquireTestClaimCleanupLock(alias, cutoff));
+    assert.equal(await readFile(f.file, 'utf8'), 'sentinel');
+  } finally {
+    await f.close();
+  }
+});
+
+test('lock expiry is strict and an old owner cannot release its TTL replacement', async () => {
+  const f = await fixture();
+  const cutoff = Date.parse('2026-10-12T00:00:00Z');
+  try {
+    const old = await acquireTestClaimCleanupLock(f.file);
+    const content = await readTestClaimFile(f.file);
+    for (const modified of [cutoff, cutoff + 1000]) {
+      await utimes(f.file, new Date(modified), new Date(modified));
+      await assert.rejects(acquireTestClaimCleanupLock(f.file, cutoff), { code: 'EEXIST' });
+      assert.equal(await readTestClaimFile(f.file), content);
+    }
+    for (const invalid of [Number.NaN, Infinity, -Infinity])
+      await assert.rejects(acquireTestClaimCleanupLock(f.file, invalid), /Invalid.*cutoff/);
+    await utimes(f.file, new Date(cutoff - 1000), new Date(cutoff - 1000));
+    const replacement = await acquireTestClaimCleanupLock(f.file, cutoff);
+    await assert.rejects(old.release());
+    await lstat(f.file);
+    await replacement.release();
   } finally {
     await f.close();
   }

@@ -105,13 +105,15 @@ export async function cleanTestClaim(
   } catch {
     return skip('malformed or unsafe manifest');
   }
+  if (expiredBefore !== undefined && Date.parse(claim.createdAt) >= expiredBefore)
+    return skip('claim has not expired');
   const lockPath = `${claimPath}.cleanup.lock`;
   let lock;
   try {
-    lock = await acquireTestClaimCleanupLock(lockPath);
+    lock = await acquireTestClaimCleanupLock(lockPath, expiredBefore);
   } catch (error) {
     if ((error as NodeJS.ErrnoException).code === 'EEXIST')
-      return skip('cleanup lock present; inspect manually, age never permits takeover');
+      return skip('cleanup lock present; unexpired or changed during acquisition');
     return skip('cannot acquire safe cleanup lock');
   }
   let session: TestClaimCleanupSession | undefined;
@@ -197,7 +199,7 @@ export async function cleanTestClaim(
     return { status: sequenceStarted ? 'failed' : 'skipped', reason };
   } finally {
     if (session) await session.close().catch(() => {});
-    // Do not remove a replacement lock. No automatic orphan-lock takeover.
+    // Token-check release; historical lock recovery is authorized separately by TTL.
     try {
       await lock.release();
     } catch {
@@ -230,7 +232,12 @@ export async function reapExpiredTestClaims(
   const results: TestClaimCleanupResult[] = [];
   for (const name of await readdir(directory)) {
     if (name.endsWith('.cleanup.lock')) {
-      warn(`Cleanup lock retained for manual inspection: ${name}`);
+      if (
+        (await exists(path.join(directory, name))) &&
+        !(await exists(path.join(directory, name.slice(0, -'.cleanup.lock'.length))))
+      ) {
+        warn(`Cleanup lock without a claim retained for manual inspection: ${name}`);
+      }
       continue;
     }
     if (!name.endsWith('.json')) continue;

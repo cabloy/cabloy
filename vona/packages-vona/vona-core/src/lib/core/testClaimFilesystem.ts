@@ -1,5 +1,5 @@
 import { randomBytes } from 'node:crypto';
-import { constants, lstatSync } from 'node:fs';
+import { constants, lstatSync, unlinkSync } from 'node:fs';
 import { lstat, mkdir, open, rename, unlink } from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
@@ -107,7 +107,7 @@ function checkContent(content: string) {
 export async function readTestClaimFile(file: string): Promise<string> {
   if (process.platform === 'win32') {
     const value = await windowsTestClaimFilesystem({ command: 'read', path: path.resolve(file) });
-    if (typeof value.content !== 'string') throw new Error('Invalid test claim file response');
+    if (typeof value.content !== 'string') throw new TypeError('Invalid test claim file response');
     return value.content;
   }
   assertPrivateFile(file);
@@ -197,11 +197,60 @@ export async function deleteTestClaimFile(file: string) {
 export interface TestClaimFilesystemLock {
   release(): Promise<void>;
 }
-export async function acquireTestClaimCleanupLock(file: string): Promise<TestClaimFilesystemLock> {
+async function deleteExpiredCleanupLock(file: string, expiredBefore: number) {
+  if (process.platform === 'win32') {
+    const expected = await readTestClaimFile(file);
+    await windowsTestClaimFilesystem({
+      command: 'delete-expired-lock',
+      path: path.resolve(file),
+      expected,
+      expiredBefore,
+    });
+    return;
+  }
+  assertPrivateFile(file);
+  const observed = lstatSync(file);
+  if (observed.mtimeMs >= expiredBefore)
+    throw Object.assign(new Error('Cleanup lock has not expired'), { code: 'EEXIST' });
+  // Read opaquely: old, incomplete lock metadata does not determine eligibility.
+  const expected = await readTestClaimFile(file);
+  const currentContent = await readTestClaimFile(file);
+  assertPrivateFile(file);
+  const current = lstatSync(file);
+  if (
+    currentContent !== expected ||
+    current.dev !== observed.dev ||
+    current.ino !== observed.ino ||
+    current.mtimeMs !== observed.mtimeMs ||
+    current.ctimeMs !== observed.ctimeMs ||
+    current.size !== observed.size
+  ) {
+    throw Object.assign(new Error('Cleanup lock changed during expiry inspection'), {
+      code: 'EEXIST',
+    });
+  }
+  // No async gap after the final check. POSIX still has no atomic compare-and-unlink:
+  // TTL is a lifetime policy, not fencing against an arbitrarily paused cleaner.
+  unlinkSync(file);
+}
+
+export async function acquireTestClaimCleanupLock(
+  file: string,
+  expiredBefore?: number,
+): Promise<TestClaimFilesystemLock> {
+  if (expiredBefore !== undefined && !Number.isFinite(expiredBefore))
+    throw new TypeError('Invalid cleanup lock expiry cutoff');
   const token = randomBytes(24).toString('hex');
   const content = `${JSON.stringify({ pid: process.pid, hostname: os.hostname(), startTime: String(Date.now() - process.uptime() * 1000), token })}\n`;
-  // Existence, never age, is the ownership gate. A crash leaves the lock for inspection.
-  await createTestClaimFile(file, content);
+  try {
+    await createTestClaimFile(file, content);
+  } catch (error) {
+    if (expiredBefore === undefined || (error as NodeJS.ErrnoException).code !== 'EEXIST')
+      throw error;
+    await deleteExpiredCleanupLock(file, expiredBefore);
+    // One exclusive retry only; never reclaim a contender's newly created lock.
+    await createTestClaimFile(file, content);
+  }
   let released = false;
   return {
     async release() {
@@ -213,7 +262,7 @@ export async function acquireTestClaimCleanupLock(file: string): Promise<TestCla
           expected: content,
         });
       } else {
-        // Exact serialized token-bearing identity; never remove a replacement lock.
+        // Reject an observed replacement; POSIX read/unlink is not an atomic CAS.
         if ((await readTestClaimFile(file)) !== content)
           throw new Error('Test claim cleanup lock identity changed');
         await unlink(file);
