@@ -689,6 +689,103 @@ describe('businessTools.test.ts', { concurrency: false, timeout: 60000 }, () => 
     );
   });
 
+  it('removes MCP presentation metadata only at schema positions without changing business data', async () => {
+    const data = {
+      rest: { render: 'business data' },
+      errorMessage: 'business message',
+      $ref: 'https://example.com/literal-data',
+      properties: { rest: 'literal property' },
+    };
+    const field = {
+      type: 'string',
+      title: 'Business field',
+      description: 'At least two characters',
+      minLength: 2,
+      rest: { render: 'UI component', $ref: '#/components/schemas/UnusedUI' },
+      errorMessage: { minLength: 'UI validation message' },
+    };
+    const source: ToolSchema = {
+      type: 'object',
+      properties: {
+        rest: field,
+        errorMessage: field,
+        node: { $ref: '#/components/schemas/Node', ...field, type: 'object' },
+      },
+      required: ['rest', 'errorMessage'],
+      additionalProperties: false,
+      rest: { form: { visible: true } },
+      errorMessage: { required: 'UI required message' },
+      default: data,
+      examples: [data],
+      const: data,
+      enum: [data],
+      filter: { capabilities: data },
+    };
+    const schemas = {
+      Node: {
+        type: 'object',
+        properties: { children: { type: 'array', items: { $ref: '#/components/schemas/Node' } } },
+        rest: { render: 'Tree' },
+        errorMessage: { type: 'UI type message' },
+      },
+    };
+    const snapshot = JSON.stringify({ source, schemas });
+    const published = toolSchema(source, schemas);
+    const { rest: _rest, errorMessage: _errorMessage, ...semanticField } = field;
+    assert.equal(Object.hasOwn(published, 'rest'), false);
+    assert.equal(Object.hasOwn(published, 'errorMessage'), false);
+    assert.deepEqual(published.properties!.rest, semanticField);
+    assert.deepEqual(published.properties!.errorMessage, semanticField);
+    assert.deepEqual(published.required, ['rest', 'errorMessage']);
+    assert.equal(published.additionalProperties, false);
+    for (const key of ['default', 'examples', 'const', 'enum', 'filter']) {
+      assert.deepEqual(published[key], source[key], `${key} retains literal business data`);
+    }
+    assert.deepEqual(Object.keys(published.$defs!), ['Node']);
+    const node = published.$defs!.Node;
+    assert.equal(Object.hasOwn(node, 'rest'), false);
+    assert.equal(Object.hasOwn(node, 'errorMessage'), false);
+    assert.equal(node.properties.children.items.$ref, '#/$defs/Node');
+    assert.equal(published.properties!.node.$ref, '#/$defs/Node');
+    assert.equal(published.properties!.node.description, field.description);
+    assert.equal(Object.hasOwn(published.properties!.node, 'rest'), false);
+    assert.equal(Object.hasOwn(published.properties!.node, 'errorMessage'), false);
+    assert.equal(JSON.stringify({ source, schemas }), snapshot);
+
+    const schemaPositions: ToolSchema = {
+      properties: { rest: field, errorMessage: field },
+      patternProperties: { '^value': field },
+      $defs: { local: field },
+      definitions: { legacy: field },
+      dependentSchemas: { rest: field },
+      dependencies: { rest: field, errorMessage: ['rest'] },
+    };
+    for (const key of [
+      'items',
+      'additionalItems',
+      'additionalProperties',
+      'unevaluatedItems',
+      'unevaluatedProperties',
+      'propertyNames',
+      'contains',
+      'not',
+      'if',
+      'then',
+      'else',
+      'contentSchema',
+    ]) {
+      schemaPositions[key] = field;
+    }
+    for (const key of ['allOf', 'anyOf', 'oneOf', 'prefixItems']) {
+      schemaPositions[key] = [field];
+    }
+    const expected = JSON.stringify(schemaPositions, (_key, value) =>
+      value === field ? semanticField : value,
+    );
+    assert.deepEqual(toolSchema(schemaPositions, {}), JSON.parse(expected));
+    assert.deepEqual(toolSchema({ items: [field] }, {}), { items: [semanticField] });
+  });
+
   it('closes cloned mutation shapes without changing maps, metadata or source contracts', async () => {
     const metadata = { type: 'object', properties: { label: { type: 'string' } } };
     const node = {
@@ -726,7 +823,7 @@ describe('businessTools.test.ts', { concurrency: false, timeout: 60000 }, () => 
     closeMutationInputSchema(schema);
     const copied = (schema as any).$defs.Node;
     assert.equal(copied.additionalProperties, false);
-    assert.deepEqual(copied.rest, metadata);
+    assert.equal(Object.hasOwn(copied, 'rest'), false);
     assert.deepEqual(copied.default, metadata);
     assert.deepEqual(copied.examples, [metadata]);
     assert.equal(JSON.stringify({ source, node }), snapshot);
@@ -1460,18 +1557,23 @@ describe('businessTools.test.ts', { concurrency: false, timeout: 60000 }, () => 
         }
         assert.equal(selectItem.properties.mobile.type, 'string');
         assert.ok(selectItem.properties.level.title);
-        assert.deepEqual(selectItem.properties.level, nativeSelectItem.properties.level);
-        assert.deepEqual(select.inputSchema.properties.level, nativeSelect.properties.level);
+        assert.deepEqual(
+          selectItem.properties.level,
+          toolSchema(nativeSelectItem.properties.level, nativeDocument.components.schemas),
+        );
+        assert.deepEqual(
+          select.inputSchema.properties.level,
+          toolSchema(nativeSelect.properties.level, nativeDocument.components.schemas),
+        );
         if (query) assert.ok(selectItem.properties.level.description);
         assert.equal(
           select.inputSchema.properties.level.description,
           selectItem.properties.level.description,
         );
         assert.equal(select.inputSchema.properties.level.title, selectItem.properties.level.title);
-        assert.equal(
-          select.inputSchema.properties.level.rest.form.render,
-          nativeSelect.properties.level.rest.form.render,
-        );
+        assert.ok(nativeSelect.properties.level.rest.form.render);
+        assert.equal(Object.hasOwn(select.inputSchema.properties.level, 'rest'), false);
+        assert.equal(Object.hasOwn(selectItem.properties.level, 'rest'), false);
         assert.ok(!selectItem.required.includes('imageId'));
         for (const args of [
           ...(query ? [null, '1', 1.5, 0, 4] : [null, '1']).map(level => ({ level })),
@@ -4019,7 +4121,7 @@ describe('businessTools.test.ts', { concurrency: false, timeout: 60000 }, () => 
           assert.deepEqual(categoryTool.outputSchema, toolSchema(responseSchema, schemas));
           assert.deepEqual(
             categoryTool.outputSchema.$defs[appResource.getBeanFullName(DtoCategoryPublic)!],
-            schemas[appResource.getBeanFullName(DtoCategoryPublic)!],
+            toolSchema(schemas[appResource.getBeanFullName(DtoCategoryPublic)!], schemas),
           );
           assert.deepEqual(Object.keys(categoryTool.inputSchema.properties).sort(), [
             'pageNo',

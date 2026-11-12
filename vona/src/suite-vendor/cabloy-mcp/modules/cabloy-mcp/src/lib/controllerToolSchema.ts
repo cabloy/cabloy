@@ -26,7 +26,7 @@ export function resolveSchema(schema: ToolSchema, schemas: Record<string, ToolSc
   return schema;
 }
 
-// Publish OpenAPI references as JSON Schema $defs, retaining only reachable definitions
+// Publish MCP contracts without UI metadata, retaining only reachable definitions
 // so projections cannot publish the original private DTO.
 export function toolSchema(
   schema: ToolSchema,
@@ -36,6 +36,8 @@ export function toolSchema(
   const definitions: Record<string, ToolSchema> = {};
   function visit(value: any): void {
     if (!value || typeof value !== 'object') return;
+    delete value.rest;
+    delete value.errorMessage;
     if (typeof value.$ref === 'string') {
       const ref = value.$ref as string;
       if (!ref.startsWith('#/components/schemas/')) {
@@ -49,7 +51,40 @@ export function toolSchema(
         visit(definitions[key]);
       }
     }
-    for (const child of Object.values(value)) visit(child);
+    // Traverse schema positions only; defaults, examples and extension values are data.
+    for (const map of [
+      value.properties,
+      value.patternProperties,
+      value.$defs,
+      value.definitions,
+      value.dependentSchemas,
+      value.dependencies,
+    ]) {
+      for (const child of Object.values(map ?? {})) {
+        if (!Array.isArray(child)) visit(child);
+      }
+    }
+    for (const key of [
+      'items',
+      'additionalItems',
+      'additionalProperties',
+      'unevaluatedItems',
+      'unevaluatedProperties',
+      'propertyNames',
+      'contains',
+      'not',
+      'if',
+      'then',
+      'else',
+      'contentSchema',
+    ]) {
+      const child = value[key];
+      if (Array.isArray(child)) child.forEach(visit);
+      else visit(child);
+    }
+    for (const key of ['allOf', 'anyOf', 'oneOf', 'prefixItems']) {
+      for (const child of value[key] ?? []) visit(child);
+    }
   }
   visit(root);
   if (Object.keys(definitions).length) root.$defs = definitions;

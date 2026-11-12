@@ -1020,7 +1020,10 @@ describe('businessHttp.test.ts', { concurrency: false, timeout: 180000 }, () => 
             const schema = document.components.schemas[appResource.getBeanFullName(Class)!];
             const level = resolveSchema(schema.properties.level, document.components.schemas);
             assert.ok(level.title || level.description, `${name} has native level metadata`);
-            return [name, { title: level.title, description: level.description, rest: level.rest }];
+            if (name === studentCreateName) {
+              assert.ok(level.rest, 'native OpenAPI retains UI metadata');
+            }
+            return [name, { title: level.title, description: level.description }];
           }),
         );
       },
@@ -1028,10 +1031,12 @@ describe('businessHttp.test.ts', { concurrency: false, timeout: 180000 }, () => 
     );
     const assertLevelMetadata = (name: string, level: any) => {
       assert.deepEqual(
-        { title: level.title, description: level.description, rest: level.rest },
+        { title: level.title, description: level.description },
         nativeLevelMetadata.get(name),
-        `${name} retains native DTO level metadata`,
+        `${name} retains native DTO level semantics`,
       );
+      assert.equal(Object.hasOwn(level, 'rest'), false, `${name} omits UI metadata`);
+      assert.equal(Object.hasOwn(level, 'errorMessage'), false, `${name} omits error templates`);
     };
     const business = [
       t.mock.method(ControllerStudent.prototype, 'create'),
