@@ -85,4 +85,33 @@ export default {
   McpScopeNoAllowedOption:
     'No scope can be granted for this request. Deny it and start a new request from the application.',
   McpGrantedScope: 'Granted scope',
+  Close: 'Close',
+  McpAccessTokens: 'MCP access tokens',
+  McpAccessTokensHelp: 'Create a personal access token to connect an MCP client with your account.',
+  McpAccessTokenRetention:
+    'Expired and revoked tokens remain listed until you delete them. Tokens cannot be edited or refreshed.',
+  McpAccessTokenCreate: 'Create access token',
+  McpAccessTokenCreated: 'Access token created',
+  McpAccessTokenCreateFailed:
+    'The access token could not be created. Check the form and try again.',
+  McpAccessTokenScopeHelp:
+    'mcp:read allows read-only tools. Choose one of your personal scopes for a specific set of tools. Your account permissions still apply.',
+  McpAccessTokenLifetimeDays: 'Lifetime (days)',
+  McpAccessTokenExpiryHelp:
+    'Duration in days, starting at creation. The default is 7 days; there is no product maximum.',
+  McpAccessTokenOneTimeHelp:
+    'Copy this token now and keep it secure. It is shown only once and cannot be recovered after closing this dialog. Anyone with the token can use the granted access.',
+  McpAccessTokenSecret: 'Access token',
+  McpAccessTokenResource: 'MCP server URL',
+  McpAccessTokenCopySecret: 'Copy token',
+  McpAccessTokenCopyResource: 'Copy server URL',
+  McpAccessTokenDeleteConfirm:
+    'Delete this access token? It will stop working immediately. This cannot be undone.',
+  McpAccessTokenActive: 'Active',
+  McpAccessTokenExpired: 'Expired',
+  McpAccessTokenRevoked: 'Revoked',
+  McpAccessTokensLoading: 'Loading MCP access tokens…',
+  McpAccessTokensLoadFailed:
+    'The token list could not be updated. Retry to load the latest records.',
+  McpAccessTokensEmpty: 'You have no personal MCP access tokens yet.',
 };

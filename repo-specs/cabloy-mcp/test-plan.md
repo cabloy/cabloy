@@ -10,6 +10,17 @@ PRD requirement -> SRS contract -> PDP/WBS task -> ATP scenario -> observed evid
 
 The [PRD](./prd.md) owns product outcomes; the [SRS](./srs.md) owns technical contracts; the [PDP/WBS](./pdp-wbs.md) owns sequencing and completion checks. `ATP-MCP-*` declarations are scenarios, not evidence or status. Planning, static audits, and chart generation never prove runtime acceptance.
 
+## Personal access-token increment (2026-11-12)
+
+`WBS-MCP-20-06` reuses bounded subsets of `ATP-MCP-AUTH-01`–`03`, `ATP-MCP-INSTANCE-01`, `ATP-MCP-CONTRACT-01` and `ATP-MCP-CALL-02`. These are required checks, not predeclared results:
+
+- Focused `test-mcp/test/mcp-auth/accessToken.test.ts`: seven-day default and a longer finite lifetime beyond OAuth caps, matching signed/persisted deadlines, no refresh issuance or browser identity change; safe own API metadata and strict body validation; anonymous/cross-user/cross-instance/cross-kind denial; current lookup/resource/deletion/expiry and retained expired/revoked status; personal refresh/reissue rejection without mutation; exact custom snapshot, current authorized tool availability and definition-change invalidation. Own each scoped operation with `mockCtx`, and precisely clean synthetic persisted resources in `finally`.
+- Existing authorization/adapter/grant/custom-scope suites cover affected OAuth code/refresh/legacy/account and permission behavior. Reuse those tests rather than rebuilding unchanged generic login/site assurance.
+- `repo-e2e/specs/mcp-access-tokens.spec.ts`: Account entry → independent page → create/read default → one-time reveal → real MCP discovery/read → close/reload/navigation secret absence → delete cancellation/confirmation → rejected token; a long-lived custom-scope token and definition invalidation. Use ordinary owned account fixtures, managed runner, no trace/video/screenshots and no credential-valued assertions/logs.
+- Verify backend/OpenAPI output, regenerated frontend SDK/schema/metadata, root typechecks, paired Admin/Web SSR+REST builds and `deps:vona`, scoped format/lint, documentation links/build. Record actual results in progress; do not change full ATP or historical parent status.
+
+Canonical user instructions remain in the [suite guide](../../vona/src/suite-vendor/cabloy-mcp/docs/access-tokens.md), not copied into evidence. Keep v1 and verify fresh managed schema; no development database reset is authorized.
+
 ## Current execution locations (2026-11-11)
 
 Fixture and ordinary MCP tests now belong to `a-test/test-mcp` at `vona/src/suite-vendor/a-test/modules/test-mcp`, outside the runtime/auth-only `cabloy-mcp` suite. Runtime tests live in `test/cabloy-mcp/`, authorization tests in `test/mcp-auth/`, and the three original fixture tests remain in `test/`. Short references below such as `cabloy-mcp/test/businessHttp.test.ts` identify the original runtime test group; use `test-mcp/test/cabloy-mcp/businessHttp.test.ts` for its current location. Prospective invocations below use current paths. `PROJECT_DISABLED_MODULES=test-mcp` excludes the fixture module and its tests from automatic discovery, but an explicit file selector still executes the selected test and can verify normal runtime behavior without fixture resources. Standalone HTTP qualification lives at `qualification/localHttp.test.ts`, not `test/localHttp.test.ts`, and requires a managed no-listener run. See [automated verification](../../repo-docs/mcp/mcp-guide.md#automated-verification) for the current paired listener/no-listener gates.

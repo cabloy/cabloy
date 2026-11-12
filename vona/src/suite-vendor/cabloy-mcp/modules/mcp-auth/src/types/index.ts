@@ -101,6 +101,7 @@ export interface IMcpAuthConfig {
   pendingTtl: number;
   codeTtl: number;
   tokenTtl: number;
+  personalTokenTtl: number;
   refreshTokenTtl: number;
   allowLoopbackHttp: boolean;
 }

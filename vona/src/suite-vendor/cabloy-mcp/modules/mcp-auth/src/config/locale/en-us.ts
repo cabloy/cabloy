@@ -10,4 +10,9 @@ export default {
   CustomScopeNameHelp:
     'Use 1–100 letters, digits, underscores or hyphens. Names are case-sensitive; test becomes mcp:custom:test.',
   Tools: 'Tools',
+  AccessTokenScope: 'Scope',
+  AccessTokenScopeHelp: 'Choose mcp:read, mcp:all, or one of your current personal MCP scopes.',
+  AccessTokenExpiresIn: 'Lifetime (seconds)',
+  AccessTokenExpiresInHelp:
+    'A positive whole number of seconds. Defaults to seven days; no product maximum.',
 };

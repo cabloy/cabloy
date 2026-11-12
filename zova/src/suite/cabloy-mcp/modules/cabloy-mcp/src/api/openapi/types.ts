@@ -1642,6 +1642,54 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  '/api/mcp/auth/accessToken/mine': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['McpAuthAccessToken_mine'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/mcp/auth/accessToken/createMine': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['McpAuthAccessToken_createMine'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/mcp/auth/accessToken/deleteMine/{id}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post?: never;
+    delete: operations['McpAuthAccessToken_deleteMine'];
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   '/mcp/auth/summary': {
     parameters: {
       query?: never;
@@ -6013,6 +6061,52 @@ export interface components {
       username: string;
       password: string;
       captcha?: unknown;
+    };
+    'mcp-auth.dto.accessTokenMineRes': {
+      list: components['schemas']['mcp-auth.dto.accessToken'][];
+      total: string;
+      pageCount: number;
+      pageSize: number;
+      pageNo: number;
+    };
+    'mcp-auth.dto.accessToken': {
+      /**
+       * Format: date-time
+       * @description Created At
+       */
+      createdAt: Date;
+      /** @description ID */
+      id: number | string;
+      /** @default  */
+      name?: string;
+      scope: string;
+      tokenExpiresAt: number;
+      /** @enum {string} */
+      status: 'active' | 'expired' | 'revoked';
+    };
+    'mcp-auth.dto.accessTokenCreateRes': {
+      /** @description ID */
+      id: number | string;
+      resource: string;
+      scope: string;
+      tokenExpiresAt: number;
+      accessToken: string;
+    };
+    'mcp-auth.dto.accessTokenCreate': {
+      /** @description Name */
+      name: string;
+      /**
+       * Scope
+       * @description Choose mcp:read, mcp:all, or one of your current personal MCP scopes.
+       * @default mcp:read
+       */
+      scope?: string;
+      /**
+       * Lifetime (seconds)
+       * @description A positive whole number of seconds. Defaults to seven days; no product maximum.
+       * @default 604800
+       */
+      expiresIn?: number;
     };
     'mcp-auth.dto.authorizationSummary': {
       clientName: string;
@@ -10478,6 +10572,87 @@ export interface operations {
         };
       };
     };
+  };
+  McpAuthAccessToken_mine: {
+    parameters: {
+      query?: {
+        pageNo?: number;
+        pageSize?: number;
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data: components['schemas']['mcp-auth.dto.accessTokenMineRes'];
+          };
+        };
+      };
+    };
+    authToken: true;
+  };
+  McpAuthAccessToken_createMine: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['mcp-auth.dto.accessTokenCreate'];
+      };
+    };
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data: components['schemas']['mcp-auth.dto.accessTokenCreateRes'];
+          };
+        };
+      };
+    };
+    authToken: true;
+  };
+  McpAuthAccessToken_deleteMine: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: number | string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data?: unknown;
+          };
+        };
+      };
+    };
+    authToken: true;
   };
   Authorization_summary: {
     parameters: {

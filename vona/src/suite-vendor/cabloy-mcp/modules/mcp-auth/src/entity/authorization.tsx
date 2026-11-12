@@ -13,14 +13,20 @@ export interface IEntityOptionsAuthorization extends IDecoratorEntityOptions {}
 
 @Entity<IEntityOptionsAuthorization>('mcpAuthAuthorization')
 export class EntityAuthorization extends EntityBase {
+  @Api.field(z.enum(['oauth', 'personal']).default('oauth'))
+  issuanceKind: 'oauth' | 'personal';
+
+  @Api.field(z.string().max(100).default(''))
+  name: string;
+
   @Api.field()
   requestDigest: string;
 
-  @Api.field(v.tableIdentity())
-  clientId: TableIdentity;
+  @Api.field(v.tableIdentity(), v.nullable())
+  clientId: TableIdentity | null;
 
-  @Api.field()
-  oauthClientId: string;
+  @Api.field(z.string().nullable())
+  oauthClientId: string | null;
 
   @Api.field()
   issuer: string;

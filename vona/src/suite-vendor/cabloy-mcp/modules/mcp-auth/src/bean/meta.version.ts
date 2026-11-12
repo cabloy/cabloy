@@ -10,9 +10,12 @@ export class MetaVersion extends BeanBase implements IMetaVersionUpdate {
     const authorization = this.scope.entity.authorization;
     await this.bean.model.createTable(authorization.$table, table => {
       table.basicFields();
+      // Approved unreleased schema: fold personal grants into fileVersion=1.
+      table.string(authorization.issuanceKind, 16).notNullable().defaultTo('oauth');
+      table.string(authorization.name, 100).notNullable().defaultTo('');
       table.string(authorization.requestDigest, 64).notNullable();
-      table.tableIdentity(authorization.clientId).notNullable();
-      table.string(authorization.oauthClientId, 255).notNullable();
+      table.tableIdentity(authorization.clientId).nullable();
+      table.string(authorization.oauthClientId, 255).nullable();
       table.string(authorization.issuer, 2048).notNullable();
       table.string(authorization.resource, 2048).notNullable();
       table.string(authorization.redirectUri, 2048).notNullable();

@@ -1,0 +1,10 @@
+COMMAND: ./node_modules/.bin/oxfmt --check scoped files: 51
+Checking formatting...
+
+All matched files use the correct format.
+Finished in 48ms on 46 files using 12 threads.
+EXIT: 0
+COMMAND: ./node_modules/.bin/oxlint --disable-nested-config scoped files: 39
+EXIT: 0
+COMMAND: git diff scoped files: 1
+EXIT: 0

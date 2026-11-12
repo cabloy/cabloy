@@ -1,0 +1,19 @@
+
+> cabloy@5.1.273 tsc:zova
+> pnpm --dir zova run tsc
+
+$ npm run tsc:native
+
+> tsc:native
+> npm run prerun && node ../scripts/typecheck.ts native zova --noEmit --incremental false --project tsconfig.vue-tsc.json
+
+
+> prerun
+> npm run zova :tools:deps
+
+
+> zova
+> node ./packages-cli/cli/src/bin/zova.ts :tools:deps
+
+zova front:tools:deps at zova
+

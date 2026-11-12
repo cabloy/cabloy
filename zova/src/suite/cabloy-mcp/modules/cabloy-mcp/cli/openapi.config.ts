@@ -14,6 +14,9 @@ export default function (): ZovaOpenapiConfigModule {
         'McpAuthCustomScope_createMine',
         'McpAuthCustomScope_updateMine',
         'McpAuthCustomScope_deleteMine',
+        'McpAuthAccessToken_mine',
+        'McpAuthAccessToken_createMine',
+        'McpAuthAccessToken_deleteMine',
       ],
     },
   };

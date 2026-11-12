@@ -247,6 +247,22 @@ Acceptance checks:
 - Verify backend DTO/OpenAPI truth and regenerated consumers, a few connected personal-CRUD/consent SSR/browser flows, precise synthetic cleanup and existing all/read/code-only/refresh regressions through existing managed infrastructure. Retain source revision, exact commands/results and sanitized artifacts; do not invent passing evidence or require a new verification pipeline.
 - Stop at this connected increment. Historical proof, unrelated blocked parents, whole Proposed ADRs, full ATP status and release gates stay unchanged; new planning is not implementation-complete or verified.
 
+#### WBS-MCP-20-06: Deliver personal MCP access tokens for non-OAuth clients
+
+Traceability: `PRD-MCP-ACCESS-02`, `PRD-MCP-IDENTITY-01`, `PRD-MCP-IDENTITY-02`, `PRD-MCP-IDENTITY-03`, `SRS-MCP-AUTH-01`, `SRS-MCP-AUTH-02`, `SRS-MCP-AUTH-03`, `SRS-MCP-AUTH-04`, `SRS-MCP-API-01`, `SRS-MCP-UI-01`, `SRS-MCP-UI-02`, `ATP-MCP-AUTH-01`, `ATP-MCP-AUTH-02`, `ATP-MCP-AUTH-03`, `ATP-MCP-INSTANCE-01`, `ATP-MCP-CONTRACT-01`, `ATP-MCP-CALL-02`.
+
+Dependencies: none.
+
+Reuse delivered authorization and personal-scope subsets without closing unrelated blocked parents.
+
+Tasks and finite exit:
+
+- Extend `mcp-auth` v1 creation schema with explicit issuance kind/name/nullable client bindings, per the confirmed keep-v1 decision. Create personal access-only signed JWTs through the existing client, directly active with digest/current-state verification; no fake OAuth client, new identity, refresh or generic API-key/JWT abstraction.
+- Add strict authenticated owner/instance/kind-scoped list/create/delete API, safe status metadata and no-store responses. Personal default seven days with no product maximum for a positive, finite, representable duration; unchanged OAuth TTL limits. Retain expired/revoked personal records, isolate OAuth management/exchange/legacy/refresh and preserve all current scope/account/instance/business checks.
+- Generate consumers and add the independent Account Security page using model-owned safe list state, schema-backed creation, confirmed delete and transient one-time secret reveal with lifecycle cleanup. No edit/renew/refresh UI, new Site or environment change.
+- Pass focused managed backend tests and neighboring OAuth/custom-scope regressions, a few credential-safe integrated-SSR browser flows, generated-contract/type checks, paired Admin/Web builds and dependency synchronization, scoped style/link checks and docs build. Record actual commands/results, including failures; no automatic dev reset or commit.
+- Stop after this connected increment. Full ATPs, unrelated blocked parents and deployment/release gates stay unchanged; planning or isolated helpers do not constitute delivery proof.
+
 ### Phase 30: Candidate catalog and authorization policy
 
 Dependencies: `WBS-MCP-20-01`, `WBS-MCP-20-02`, `WBS-MCP-20-03`.

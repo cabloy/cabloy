@@ -290,6 +290,7 @@ export class ControllerPageAccount extends BeanControllerPageBase {
   private _renderSecurityCard(current: AccountCurrent) {
     const authorizationsPath = this.$router.getPagePath('/cabloy/mcp/authorizations');
     const scopesPath = this.$router.getPagePath('/cabloy/mcp/scopes');
+    const accessTokensPath = this.$router.getPagePath('/cabloy/mcp/accessTokens');
     return (
       <section class="card border border-base-300 bg-base-100 shadow-sm">
         <div class="card-body gap-4">
@@ -303,6 +304,15 @@ export class ControllerPageAccount extends BeanControllerPageBase {
           {scopesPath && (
             <a class="link link-primary" href={scopesPath}>
               {this.scope.locale.AccountMcpScopes()}
+            </a>
+          )}
+          {accessTokensPath && (
+            <a
+              data-testid="account-mcp-access-tokens"
+              class="link link-primary"
+              href={accessTokensPath}
+            >
+              {this.scope.locale.AccountMcpAccessTokens()}
             </a>
           )}
         </div>

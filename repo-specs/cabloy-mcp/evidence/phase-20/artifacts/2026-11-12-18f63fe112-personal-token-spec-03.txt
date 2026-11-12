@@ -1,0 +1,32 @@
+
+> cabloy@5.1.273 spec:check
+> node ./repo-agent-governance/tools/spec-audit/audit.mjs cabloy-mcp --lightweight
+
+repo-specs/cabloy-mcp: lightweight planning structure failed (70 definitions).
+decisions/0008-mcp-limits-audit-telemetry-redaction.md:210 [link-target] Missing local link target: ../../../vona/src/suite/cabloy-mcp/modules/cabloy-mcp/src/lib/transport.ts.
+wbs-mcp-20-01-execution-dossier.md:162 [link-target] Missing local link target: ./evidence/phase-20/artifacts/native-core-install-1.log.
+wbs-mcp-20-01-execution-dossier.md:162 [link-target] Missing local link target: ./evidence/phase-20/artifacts/native-core-sdk-checkpoint-1.log.
+wbs-mcp-20-01-execution-dossier.md:377 [link-target] Missing local link target: ../../vona/src/suite/cabloy-mcp/modules/cabloy-mcp/src/config/config.ts.
+wbs-mcp-20-01-execution-dossier.md:514 [link-target] Missing local link target: ./evidence/phase-20/artifacts/ingress-proxy-stop-checks-1.log.
+wbs-mcp-20-01-execution-dossier.md:526 [link-target] Missing local link target: ./evidence/phase-20/artifacts/ingress-proxy-owner-types-1.log.
+wbs-mcp-20-01-execution-dossier.md:536 [link-target] Missing local link target: ./evidence/phase-20/artifacts/ingress-proxy-baseline-1.log.
+wbs-mcp-20-01-execution-dossier.md:540 [link-target] Missing local link target: ./evidence/phase-20/artifacts/ingress-proxy-mcp-types-1.log.
+wbs-mcp-20-01-execution-dossier.md:540 [link-target] Missing local link target: ./evidence/phase-20/artifacts/ingress-proxy-composite-1.log.
+wbs-mcp-20-01-execution-dossier.md:540 [link-target] Missing local link target: ./evidence/phase-20/artifacts/ingress-proxy-format-1.log.
+wbs-mcp-20-01-execution-dossier.md:540 [link-target] Missing local link target: ./evidence/phase-20/artifacts/ingress-proxy-baseline-2.log.
+wbs-mcp-20-01-execution-dossier.md:540 [link-target] Missing local link target: ./evidence/phase-20/artifacts/ingress-proxy-mcp-types-2.log.
+wbs-mcp-20-01-execution-dossier.md:540 [link-target] Missing local link target: ./evidence/phase-20/artifacts/ingress-proxy-composite-2.log.
+wbs-mcp-20-01-execution-dossier.md:540 [link-target] Missing local link target: ./evidence/phase-20/artifacts/ingress-proxy-format-2.log.
+wbs-mcp-20-01-execution-dossier.md:540 [link-target] Missing local link target: ./evidence/phase-20/artifacts/ingress-proxy-lint-1.log.
+wbs-mcp-20-01-execution-dossier.md:546 [link-target] Missing local link target: ./evidence/phase-20/artifacts/ingress-proxy-included-1.log.
+wbs-mcp-20-01-execution-dossier.md:546 [link-target] Missing local link target: ./evidence/phase-20/artifacts/ingress-proxy-excluded-1.log.
+wbs-mcp-20-01-execution-dossier.md:554 [link-target] Missing local link target: ./evidence/phase-20/artifacts/ingress-proxy-final-checks-1.log.
+wbs-mcp-20-01-execution-dossier.md:578 [link-target] Missing local link target: ../../vona/src/suite/cabloy-mcp/modules/cabloy-mcp/src/lib/productionRequestOwner.ts.
+wbs-mcp-20-01-execution-dossier.md:579 [link-target] Missing local link target: ../../vona/src/suite/cabloy-mcp/modules/cabloy-mcp/src/config/config.ts.
+wbs-mcp-20-01-execution-dossier.md:764 [link-target] Missing local link target: ./evidence/phase-20/artifacts/owner-drain-runtime-projection-1-sanitized.log.
+wbs-mcp-20-01-execution-dossier.md:770 [link-target] Missing local link target: ./evidence/phase-20/artifacts/owner-drain-spec-1.log.
+wbs-mcp-20-01-execution-dossier.md:770 [link-target] Missing local link target: ./evidence/phase-20/artifacts/owner-drain-charts-1.log.
+wbs-mcp-20-01-execution-dossier.md:770 [link-target] Missing local link target: ./evidence/phase-20/artifacts/owner-drain-chart-freshness-1.log.
+wbs-mcp-20-01-execution-dossier.md:770 [link-target] Missing local link target: ./evidence/phase-20/artifacts/owner-drain-docs-1.log.
+Present owners, exact references, progress, and local links; full-chain coverage not checked.
+Static structure only; approval, semantic sufficiency, implementation, and evidence authenticity require human review.

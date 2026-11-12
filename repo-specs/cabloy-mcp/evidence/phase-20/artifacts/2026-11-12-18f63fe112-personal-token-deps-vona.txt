@@ -1,0 +1,25 @@
+
+> cabloy@5.1.273 deps:vona
+> pnpm --dir vona run vona :tools:deps
+
+Scope: all 159 workspace projects
+[WARN] The store at <PRIVATE_PATH> is not used because packages cannot be hard linked from it into this project. Using the store at <PRIVATE_PATH> instead. Set storeDir to choose the store.
+✓ Lockfile passes supply-chain policies (verified 2h ago)
+Progress: resolved 0, reused 34, downloaded 0, added 0
+Progress: resolved 0, reused 115, downloaded 0, added 0
+.../a-vona/modules/a-telemetry           | [WARN] deprecated @opentelemetry/sdk-trace-base@2.12.0
+.../a-vona/modules/a-telemetry           | [WARN] deprecated @opentelemetry/sdk-trace-node@2.12.0
+Progress: resolved 0, reused 381, downloaded 0, added 0
+[WARN] 5 deprecated subdependencies found: cron-parser@4.9.0, glob@7.2.3, inflight@1.0.6, prebuild-install@7.1.3, sourcemap-codec@1.4.8
+Packages: +6
+++++++
+Progress: resolved 6, reused 461, downloaded 0, added 6, done
+[WARN] Issues with peer dependencies found. Run "pnpm peers check" to list them.
+Done in 4.4s using pnpm v12.14.0
+$ node ./packages-cli/cli/src/bin/vona.ts :tools:deps
+vona api:tools:deps at vona
+
+===> pnpm install
+Scope: all 159 workspace projects
+Already up to date
+Done in 39ms using pnpm v12.14.0

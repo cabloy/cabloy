@@ -2,7 +2,7 @@
 
 <Badge type="info" text="Basic" />
 
-This guide explains how an MCP client connects to Cabloy Basic's authenticated shared `/mcp` endpoint. The authorization server uses RFC 7591 Dynamic Client Registration (DCR), existing Cabloy login, explicit consent and authorization code exchange with PKCE. Static configuration clients are not supported.
+This guide explains how an MCP client connects to Cabloy Basic's authenticated shared `/mcp` endpoint. The authorization server uses RFC 7591 Dynamic Client Registration (DCR), existing Cabloy login, explicit consent and authorization code exchange with PKCE. Static OAuth client registrations are not supported. Clients that cannot perform OAuth but can send a Bearer header may instead use [personal MCP access tokens](https://github.com/cabloy/cabloy/blob/main/vona/src/suite-vendor/cabloy-mcp/docs/access-tokens.md), managed separately under Account → Security.
 
 Read [MCP Integration Guide](/mcp/mcp-guide) for endpoint ownership and admission, and [MCP Controller Tools](/mcp/mcp-controller-tools) for Action mapping and business examples. The [independent local test launcher](/mcp/mcp-commerce-local) is anonymous and rejects credentials; do not send OAuth tokens to it.
 
@@ -34,7 +34,7 @@ Backend `mcp-auth` owns client registrations, authorization state, personal scop
 
 Ordinary Cabloy login, refresh, temporary and OAuth credentials are not MCP tokens, and MCP credentials cannot become ordinary login credentials. Configured TTL values and OAuth `expires_in` use seconds; an `expiresAt` timestamp uses epoch milliseconds.
 
-Shared/role/nested scopes, a generalized scope policy engine, Client ID Metadata Documents (CIMD), remembered consent, general management UI, public registration update/delete endpoints and `offline_access` are not supported.
+Shared/role/nested scopes, a generalized scope policy engine, Client ID Metadata Documents (CIMD), remembered consent, management UI beyond personal scopes/authorizations/access tokens, public registration update/delete endpoints and `offline_access` are not supported.
 
 ## Endpoints and authority
 
@@ -173,7 +173,7 @@ Set `MCP_AUTH_SSR_SITE` or override `config.modules['mcp-auth'].ssrSite` to sele
 
 ### Existing databases and authority changes
 
-`mcp-auth` currently keeps `vonaModule.fileVersion: 1`. Its current version-1 schema includes personal scopes, requested/effective scope bindings and refresh grant fields. Editing that path does not replay an already-applied version 1: an existing v1 database needs a separately approved upgrade or disposable-data strategy. Fresh isolated tests initialize the current schema; they do not upgrade a development database. `npm run db:reset` is destructive and requires explicit approval, never an automatic troubleshooting step.
+`mcp-auth` currently keeps `vonaModule.fileVersion: 1`. Its current version-1 schema includes personal scopes, requested/effective scope bindings, refresh grant fields and personal access-token issuance/name fields with nullable OAuth client bindings. Editing that path does not replay an already-applied version 1: an existing v1 database needs a separately approved upgrade or disposable-data strategy. Fresh isolated tests initialize the current schema; they do not upgrade a development database. `npm run db:reset` is destructive and requires explicit approval, never an automatic troubleshooting step.
 
 Old origin-only issuer values differ from the exact `${origin}/mcp` issuer. Grants, codes and access tokens carrying the old issuer fail exact comparison and require fresh authorization. Do not rewrite them, relax matching or reset a database to preserve them.
 
@@ -260,7 +260,7 @@ MCP reuses Passport's auth-token lifecycle through static JWT client selection. 
 
 The adapter reloads current user, auth ownership/provider and roles. Its fixed `options: { stateless: false, strategy: 'reissue' }` retains stateful grant validation regardless of ordinary session/provider overrides. Other clients retain existing auth/session behavior.
 
-Verification is read-only: access requires the current generation, while refresh can pass an otherwise valid older generation into reissue for replay-family revocation. Generation 0 creation activates the grant; later generations rotate it atomically with validated resource/scope operation input. The existing authorization row is the family, storing only the current nonce digest rather than plaintext credentials or a second identity/history store.
+Verification is read-only: access requires the current generation, while refresh can pass an otherwise valid older generation into reissue for replay-family revocation. For OAuth, generation 0 creation activates the grant; later generations rotate it atomically with validated resource/scope operation input. Personal issuance creates an explicitly personal, generation-1 active row and signs only the existing `mcpAccess` client; it never signs a refresh credential or replaces the browser Passport. Personal validation retains the same current-state/account/resource/instance/scope checks, excluding only inapplicable OAuth client/redirect checks. The existing authorization row is the family, storing only the current nonce digest rather than plaintext credentials or a second identity/history store.
 
 The selected `passportAuthTokenClient` survives the MCP Passport handoff and clears with current state. Ordinary signin, refresh, temporary-token and OAuth helpers reject conversion from attached MCP authority. See [Auth Guide](/backend/auth-guide#auth-token-lifecycle-and-adapter-selection) and [JWT Guide](/backend/jwt-guide#explicit-pairs-and-scoped-passport-flows).
 

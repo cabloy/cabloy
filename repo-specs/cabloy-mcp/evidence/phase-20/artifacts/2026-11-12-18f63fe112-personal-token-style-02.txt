@@ -1,0 +1,10 @@
+COMMAND: ./node_modules/.bin/oxfmt --check
+Checking formatting...
+
+All matched files use the correct format.
+Finished in 37ms on 46 files using 12 threads.
+EXIT: 0
+COMMAND: ./node_modules/.bin/oxlint --disable-nested-config
+EXIT: 0
+COMMAND: git diff
+EXIT: 0

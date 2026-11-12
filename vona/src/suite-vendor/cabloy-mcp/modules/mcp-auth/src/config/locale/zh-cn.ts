@@ -10,4 +10,8 @@ export default {
   CustomScopeNameHelp:
     '请输入 1–100 个英文字母、数字、下划线或连字符。名称区分大小写；test 对应 mcp:custom:test。',
   Tools: '工具',
+  AccessTokenScope: '范围',
+  AccessTokenScopeHelp: '选择 mcp:read、mcp:all 或当前拥有的一个个人 MCP 范围。',
+  AccessTokenExpiresIn: '有效期（秒）',
+  AccessTokenExpiresInHelp: '请输入正整数秒数。默认七天，不设产品上限。',
 };

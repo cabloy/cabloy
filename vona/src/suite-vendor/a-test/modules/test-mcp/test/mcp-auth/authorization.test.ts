@@ -123,6 +123,7 @@ async function withFixture(
     codeTtl: 60,
     tokenTtl: 2 * 60 * 60,
     refreshTokenTtl: 604800,
+    personalTokenTtl: 604800,
     allowLoopbackHttp: true,
   };
   try {
@@ -211,6 +212,7 @@ describe('authorization.test.ts', { concurrency: false }, () => {
       codeTtl: 60,
       tokenTtl: 2 * 60 * 60,
       refreshTokenTtl: 604800,
+      personalTokenTtl: 604800,
       allowLoopbackHttp: true,
     });
     assert.equal(validateMcpAuthConfig(config), config);

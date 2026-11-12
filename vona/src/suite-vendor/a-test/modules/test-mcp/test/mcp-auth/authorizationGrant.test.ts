@@ -300,6 +300,10 @@ describe('authorizationGrant.test.ts', { concurrency: false }, () => {
         clientId: '999999999999998',
         oauthClientId: `missing-${randomUUID()}`,
       });
+      assert.ok(first.clientId);
+      assert.ok(second.oauthClientId);
+      const firstClientId = first.clientId;
+      const secondOAuthClientId = second.oauthClientId;
       const third = await insertGrant(fixture, owner, { state: 'revoked' });
       const hidden = await insertGrant(fixture, owner);
       const foreign = await insertGrant(fixture, other);
@@ -335,7 +339,7 @@ describe('authorizationGrant.test.ts', { concurrency: false }, () => {
         // Same identifier for another resource must never supply its display name.
         const wrongResource = `${getMcpIssuer(app)}/different`;
         const client = await scope().model.client.insert({
-          oauthClientId: second.oauthClientId,
+          oauthClientId: secondOAuthClientId,
           name: 'Wrong resource client',
           resource: wrongResource,
           redirectUris: [callback],
@@ -345,7 +349,7 @@ describe('authorizationGrant.test.ts', { concurrency: false }, () => {
           state: 'active',
           clientIdIssuedAt: Math.floor(Date.now() / 1000),
         });
-        fixture.clientIds.push(second.oauthClientId);
+        fixture.clientIds.push(secondOAuthClientId);
         return client;
       });
       for (const [method, path] of [
@@ -439,7 +443,7 @@ describe('authorizationGrant.test.ts', { concurrency: false }, () => {
         assert.equal(row.clientId, second.oauthClientId);
         assert.equal(row.clientName, second.oauthClientId);
       }
-      await app.bean.executor.mockCtx(() => scope().model.client.deleteById(first.clientId));
+      await app.bean.executor.mockCtx(() => scope().model.client.deleteById(firstClientId));
       const deletedClient = await api('GET', '/mine', owner);
       for (const row of deletedClient.body.data.list) {
         assert.equal(typeof row.clientId, 'string');

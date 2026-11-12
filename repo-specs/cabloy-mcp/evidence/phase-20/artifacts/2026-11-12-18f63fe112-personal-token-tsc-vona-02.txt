@@ -1,0 +1,23 @@
+
+> cabloy@5.1.273 tsc:vona
+> pnpm --dir vona run tsc
+
+$ npm run tsc:native
+
+> tsc:native
+> npm run prerun && node ../scripts/typecheck.ts native vona --noEmit --incremental false --project tsconfig.json
+
+
+> prerun
+> npm run vona :tools:deps
+
+
+> vona
+> node ./packages-cli/cli/src/bin/vona.ts :tools:deps
+
+vona api:tools:deps at vona
+
+===> pnpm install
+Scope: all 159 workspace projects
+Already up to date
+Done in 50ms using pnpm v12.14.0

@@ -1,0 +1,19 @@
+
+> cabloy@5.1.273 test:e2e
+> node scripts/runIsolatedTest.ts e2e mcp-access-tokens --reporter=line --trace=off --retries=0
+
+vona api:bin:dev at vona
+
+<claude-code-hint v="1" type="plugin" value="stripe@claude-plugins-official" />
+
+===> <PRIVATE_PATH> node_modules/.pnpm/@playwright+test@1.62.1/node_modules/@playwright/test/cli.js test --config repo-e2e/config/playwright.config.ts ^repo-e2e/specs/mcp-access-tokens\.spec\.ts$ --reporter=line --trace=off --retries=0
+
+Running 2 tests using 1 worker
+
+[1/2] repo-e2e/specs/mcp-access-tokens.spec.ts:357:1 › MCP access tokens: Account discovery, seven-day read token, one-time copy and confirmed deletion @web @ssr @mcp @flow @account
+2026-11-12T07:21:26.020Z debug [module] modules preload: a-bean
+2026-11-12T07:21:26.023Z debug [module] modules monkey: a-fetch,a-model,a-ssr,a-router,a-openapi,a-api,a-bean,a-icon,a-ssrhmr,a-style,basic-app,devui-adapter,home-base,home-passport,basic-adapter,basic-pageentry,a-command,a-ssrserver
+[2/2] repo-e2e/specs/mcp-access-tokens.spec.ts:455:1 › MCP access tokens: personal scope selection accepts a finite year and scope deletion invalidates it @web @ssr @mcp @flow
+  2 passed (7.0s)
+E2E target: http://127.0.0.1:50100
+App shutdown gracefully: 49267

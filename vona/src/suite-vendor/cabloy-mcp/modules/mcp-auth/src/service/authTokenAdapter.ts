@@ -15,6 +15,7 @@ import type { EntityAuthorization } from '../entity/authorization.tsx';
 import type {
   IMcpAuthTokenInput,
   IMcpLegacyTokenPayload,
+  IMcpOAuthTokenPayload,
   IMcpTokenPayload,
 } from '../lib/authToken.ts';
 import type { IMcpToolIdentity, TypeMcpScope } from '../types/index.ts';
@@ -44,7 +45,7 @@ export class ServiceAuthTokenAdapter extends BeanBase implements IAuthTokenAdapt
   }
 
   getJwtOptions(data: IPayloadData): IJwtCreateOptions {
-    const payload = this.payload(data);
+    const payload = this.oauthPayload(data);
     if (payload.mcp.generation < 1) throw new OAuthError('invalid_grant');
     const config = this.scope.service.authorization.configForResource(payload.mcp.resource);
     const refreshExpiresIn = payload.mcp.refreshEnabled
@@ -61,7 +62,7 @@ export class ServiceAuthTokenAdapter extends BeanBase implements IAuthTokenAdapt
 
   async create(data: IPayloadData, _ttl?: number, input?: unknown): Promise<IMcpTokenPayload> {
     this.ensureAutocommit();
-    const payload = this.payload(data);
+    const payload = this.oauthPayload(data);
     const binding = this.input(payload, input, true);
     if (payload.mcp.generation > 0) return await this.rotate(payload, binding);
     const row = await this.row(payload);
@@ -124,6 +125,7 @@ export class ServiceAuthTokenAdapter extends BeanBase implements IAuthTokenAdapt
   async verify(data: IPayloadData, options?: IAuthTokenVerifyOptions): Promise<boolean> {
     const payload = this.payload(data);
     const refresh = options?.operation === 'refresh';
+    if (refresh && payload.mcp.kind === 'personal') return false;
     if (options?.clientName !== (refresh ? 'mcpRefresh' : 'mcpAccess')) return false;
     this.input(payload, options.input, refresh);
     const row = await this.row(payload, refresh);
@@ -158,7 +160,7 @@ export class ServiceAuthTokenAdapter extends BeanBase implements IAuthTokenAdapt
   }
 
   private async rotate(
-    payload: IMcpTokenPayload,
+    payload: IMcpOAuthTokenPayload,
     input: IMcpAuthTokenInput,
   ): Promise<IMcpTokenPayload> {
     this.input(payload, input, true);
@@ -302,7 +304,24 @@ export class ServiceAuthTokenAdapter extends BeanBase implements IAuthTokenAdapt
       await this.removeLegacy(data as IMcpLegacyTokenPayload);
       return;
     }
-    await this.revokeFamily(await this.row(this.payload(data), true));
+    const payload = this.payload(data);
+    const row = await this.row(payload, true);
+    if (payload.mcp.kind === 'personal') {
+      await this.scope.service.authorization.loadPassport(
+        payload.userId,
+        payload.authId,
+        'invalid_grant',
+        400,
+      );
+      if (
+        row.state !== 'tokenActive' ||
+        Number(row.tokenExpiresAt) <= Date.now() ||
+        !equalDigest(sha256(payload.token), row.tokenDigest)
+      ) {
+        throw new OAuthError('invalid_grant');
+      }
+    }
+    await this.revokeFamily(row);
   }
 
   private async removeLegacy(payload: IMcpLegacyTokenPayload): Promise<void> {
@@ -327,6 +346,7 @@ export class ServiceAuthTokenAdapter extends BeanBase implements IAuthTokenAdapt
       .builderSelect()
       .where({
         id: mcp.grantId,
+        issuanceKind: 'oauth',
         oauthClientId: mcp.clientId,
         issuer: mcp.issuer,
         resource: mcp.resource,
@@ -356,7 +376,15 @@ export class ServiceAuthTokenAdapter extends BeanBase implements IAuthTokenAdapt
       mcp.version !== 1 ||
       typeof mcp.grantId !== 'string' ||
       !/^[1-9]\d*$/.test(mcp.grantId) ||
-      typeof mcp.clientId !== 'string' ||
+      (mcp.kind !== undefined && mcp.kind !== 'oauth' && mcp.kind !== 'personal') ||
+      (mcp.kind === 'personal'
+        ? Object.prototype.hasOwnProperty.call(mcp, 'clientId') ||
+          mcp.generation !== 1 ||
+          mcp.refreshEnabled !== false ||
+          mcp.refreshExpiresAt !== 0 ||
+          !Number.isSafeInteger(mcp.tokenExpiresAt) ||
+          mcp.tokenExpiresAt <= 0
+        : typeof mcp.clientId !== 'string' || !mcp.clientId) ||
       typeof mcp.issuer !== 'string' ||
       typeof mcp.resource !== 'string' ||
       mcp.instanceName !== this.ctx.instanceName ||
@@ -374,6 +402,12 @@ export class ServiceAuthTokenAdapter extends BeanBase implements IAuthTokenAdapt
       throw new OAuthError('invalid_grant');
     }
     return payload;
+  }
+
+  private oauthPayload(data: IPayloadData): IMcpOAuthTokenPayload {
+    const payload = this.payload(data);
+    if (payload.mcp.kind === 'personal') throw new OAuthError('invalid_grant');
+    return payload as IMcpOAuthTokenPayload;
   }
 
   private input(
@@ -408,7 +442,12 @@ export class ServiceAuthTokenAdapter extends BeanBase implements IAuthTokenAdapt
     );
     if (
       !row ||
-      row.oauthClientId !== mcp.clientId ||
+      row.issuanceKind !== (mcp.kind ?? 'oauth') ||
+      (mcp.kind === 'personal'
+        ? row.clientId !== null ||
+          row.oauthClientId !== null ||
+          Number(row.tokenExpiresAt) !== mcp.tokenExpiresAt
+        : row.oauthClientId !== mcp.clientId) ||
       row.issuer !== mcp.issuer ||
       row.resource !== mcp.resource ||
       String(row.userId) !== String(payload.userId) ||
@@ -423,7 +462,7 @@ export class ServiceAuthTokenAdapter extends BeanBase implements IAuthTokenAdapt
     ) {
       throw new OAuthError('invalid_grant');
     }
-    await this.scope.service.authorization.validateBindings(
+    await this.scope.service.authorization.validateGrantBindings(
       row,
       this.scope.service.authorization.configForResource(mcp.resource),
     );
@@ -431,10 +470,10 @@ export class ServiceAuthTokenAdapter extends BeanBase implements IAuthTokenAdapt
   }
 
   private next(
-    payload: IMcpTokenPayload,
+    payload: IMcpOAuthTokenPayload,
     generation: number,
     refreshExpiresAt: number,
-  ): IMcpTokenPayload {
+  ): IMcpOAuthTokenPayload {
     return {
       ...payload,
       token: randomBytes(32).toString('base64url'),
@@ -447,6 +486,7 @@ export class ServiceAuthTokenAdapter extends BeanBase implements IAuthTokenAdapt
       .builderSelect()
       .where({
         id: row.id,
+        issuanceKind: row.issuanceKind,
         clientId: row.clientId,
         oauthClientId: row.oauthClientId,
         resource: row.resource,

@@ -1,0 +1,178 @@
+{
+  "baseline": "18f63fe1124dfcafe0042f0509ddb5dc12a765f3",
+  "scope": "Lifetime-days presentation follow-up; original 43-path scope rehashed after paired build, dependency synchronization and passing browser rerun. Backend unchanged and not rerun.",
+  "files": [
+    {
+      "path": "repo-e2e/specs/mcp-access-tokens.spec.ts",
+      "sha256": "896f2749cef66e11abe4ea5a0e5584b09ae271878819c69a604375cf9f9470e1"
+    },
+    {
+      "path": "vona/pnpm-lock.yaml",
+      "sha256": "53c9b4a3d28e971b37043bcd62c9edaf888e2d249d80c0a87e543588c73aff06"
+    },
+    {
+      "path": "vona/src/suite-vendor/a-test/modules/test-mcp/test/mcp-auth/accessToken.test.ts",
+      "sha256": "7d5272e2fa54534ba6918c3a0fb70bb122ac0e9d782279b0d39b9618ae43d9b3"
+    },
+    {
+      "path": "vona/src/suite-vendor/a-test/modules/test-mcp/test/mcp-auth/authorization.test.ts",
+      "sha256": "3ac96f3b613df00020841ece86a7dea05d4d6e99429931ac907cad5cb3547145"
+    },
+    {
+      "path": "vona/src/suite-vendor/a-test/modules/test-mcp/test/mcp-auth/authorizationGrant.test.ts",
+      "sha256": "1656ea1b0cfbcbd0b1997b268bb050fbe386d31e5d769184e84a0829b33eaadd"
+    },
+    {
+      "path": "vona/src/suite-vendor/cabloy-mcp/README.md",
+      "sha256": "31fed6a897cdee04809219a465a3d1302a51b044c8ffb9d9a2c1fc9598b1ae85"
+    },
+    {
+      "path": "vona/src/suite-vendor/cabloy-mcp/docs/access-tokens.md",
+      "sha256": "69c4a8039e600126b7df2125d8b8a733547cb127d17041828c2604b2c4e7e464"
+    },
+    {
+      "path": "vona/src/suite-vendor/cabloy-mcp/modules/mcp-auth/src/.metadata/index.ts",
+      "sha256": "6ab7bb56e4a2214554682f03a501951783b5a2b34b0d893c484de9af57803d85"
+    },
+    {
+      "path": "vona/src/suite-vendor/cabloy-mcp/modules/mcp-auth/src/bean/meta.version.ts",
+      "sha256": "7230dbdcad4deae7534da1c39a12db40d0d45543e1f3fdaa066e534bc91b17f5"
+    },
+    {
+      "path": "vona/src/suite-vendor/cabloy-mcp/modules/mcp-auth/src/config/config.ts",
+      "sha256": "a05d94746a4697103802ab7357cae9c18f0dfb7cd4854e52d00b8322dbd1f4ba"
+    },
+    {
+      "path": "vona/src/suite-vendor/cabloy-mcp/modules/mcp-auth/src/config/locale/en-us.ts",
+      "sha256": "1c93a7d0d9c37f33c86c59b10c6b5720e7ba0abd6d879f801fd96b3702ecbaee"
+    },
+    {
+      "path": "vona/src/suite-vendor/cabloy-mcp/modules/mcp-auth/src/config/locale/zh-cn.ts",
+      "sha256": "8876ec47e5a91bbf84491aa094c26eeee96b72b9352c545a66456c3889ff7c96"
+    },
+    {
+      "path": "vona/src/suite-vendor/cabloy-mcp/modules/mcp-auth/src/controller/accessToken.ts",
+      "sha256": "d31ce7c244d53233ab6b05b84d3bb68dd964ff798dd3b8e6252350a31fc42471"
+    },
+    {
+      "path": "vona/src/suite-vendor/cabloy-mcp/modules/mcp-auth/src/dto/accessToken.tsx",
+      "sha256": "9684c7902991a854f2c910baf4242155379370de28e5eb2e25afe51ecbf6281f"
+    },
+    {
+      "path": "vona/src/suite-vendor/cabloy-mcp/modules/mcp-auth/src/dto/accessTokenCreate.tsx",
+      "sha256": "8642fa65648144fc5ed6740f72dadc3c9239e44cf58cd16b2eb0e132023f8234"
+    },
+    {
+      "path": "vona/src/suite-vendor/cabloy-mcp/modules/mcp-auth/src/dto/accessTokenCreateRes.tsx",
+      "sha256": "0998ffb93d182c03d9d3c67a85cf9bef7c877a0ce0d3edac1522435e85a60a6d"
+    },
+    {
+      "path": "vona/src/suite-vendor/cabloy-mcp/modules/mcp-auth/src/dto/accessTokenMineReq.tsx",
+      "sha256": "0a37ecdc51a396bab0baf271704343b1526af4745d572730119b5547c051b2d2"
+    },
+    {
+      "path": "vona/src/suite-vendor/cabloy-mcp/modules/mcp-auth/src/dto/accessTokenMineRes.tsx",
+      "sha256": "808396a47465d271b494a5a21f85a1ab74a34fd1ec167a1aeae9a72e6fec416d"
+    },
+    {
+      "path": "vona/src/suite-vendor/cabloy-mcp/modules/mcp-auth/src/entity/authorization.tsx",
+      "sha256": "55b5c94514b86625cdcb13a481d3ff068d016c503793ec04804e28cdc9c9a95c"
+    },
+    {
+      "path": "vona/src/suite-vendor/cabloy-mcp/modules/mcp-auth/src/index.ts",
+      "sha256": "7957518b2ad5e97fcc28ac2bb526845543d385c02fc8b6db87d362d637cc9e90"
+    },
+    {
+      "path": "vona/src/suite-vendor/cabloy-mcp/modules/mcp-auth/src/lib/authToken.ts",
+      "sha256": "01fa1d84cdd5cc8edb75b996e07343c28a1af5e780c76404bab6802e3e988d62"
+    },
+    {
+      "path": "vona/src/suite-vendor/cabloy-mcp/modules/mcp-auth/src/lib/authorization.ts",
+      "sha256": "99cadf8368f6fa0200a4f2957656856a62346d7723e6cfa15920983530a7155c"
+    },
+    {
+      "path": "vona/src/suite-vendor/cabloy-mcp/modules/mcp-auth/src/service/accessToken.ts",
+      "sha256": "a62e82dd00326618f0811ecedc544117cc50cf96b66ba5995beae0d9aa26d2be"
+    },
+    {
+      "path": "vona/src/suite-vendor/cabloy-mcp/modules/mcp-auth/src/service/authTokenAdapter.ts",
+      "sha256": "56fa919815ad3bece492b8984d3d892a664fdb46c95228e6d06e020f39cb3930"
+    },
+    {
+      "path": "vona/src/suite-vendor/cabloy-mcp/modules/mcp-auth/src/service/authorization.ts",
+      "sha256": "a683d03ad8889bcf8d0f520f4505dcae3afeaa8a701837e5eabbbeb4791786f1"
+    },
+    {
+      "path": "vona/src/suite-vendor/cabloy-mcp/modules/mcp-auth/src/service/authorizationGrant.ts",
+      "sha256": "d83c4e6abc50feda8bbbee817b131c2b197dca50ff8d07f47584d8aee883cc0b"
+    },
+    {
+      "path": "vona/src/suite-vendor/cabloy-mcp/modules/mcp-auth/src/types/index.ts",
+      "sha256": "577803f8d735bc3031b90600ab0a9e50f47db1c406d23af2dac9d7532611ea8f"
+    },
+    {
+      "path": "zova/pnpm-lock.yaml",
+      "sha256": "9f026b2aa30fa413c983aeab08308f46deb095fdc34058a3eeec142be55f3889"
+    },
+    {
+      "path": "zova/src/suite/a-home/modules/home-user/src/config/locale/en-us.ts",
+      "sha256": "4e85335e2a82e24c9bd7ade970fc83723842940b3328c3e6f0477f2e0c0adcfe"
+    },
+    {
+      "path": "zova/src/suite/a-home/modules/home-user/src/config/locale/zh-cn.ts",
+      "sha256": "97a1cb8d8366e7241ea0d69502ef807fd1ba0f5924e585c3db209a296947bb01"
+    },
+    {
+      "path": "zova/src/suite/a-home/modules/home-user/src/page/account/controller.tsx",
+      "sha256": "c56f11086d31908c7c022f07e0fd4b60a5f5068117d38d81dd56d6ff9d335f91"
+    },
+    {
+      "path": "zova/src/suite/cabloy-mcp/modules/cabloy-mcp/cli/openapi.config.ts",
+      "sha256": "b8f83721176fac7fc3f07521c5fd80b381910d46f89ebd18e72570c9e77a9dde"
+    },
+    {
+      "path": "zova/src/suite/cabloy-mcp/modules/cabloy-mcp/src/.metadata/index.ts",
+      "sha256": "80884481d123dcfe0b190075ed49fc35bcaf13c874b30307f9583f1f2014cfff"
+    },
+    {
+      "path": "zova/src/suite/cabloy-mcp/modules/cabloy-mcp/src/.metadata/page/accessTokens.ts",
+      "sha256": "fea965dd9658d71c99bd3567eba7ef48b0acca6394dee400cc7b85120bcca317"
+    },
+    {
+      "path": "zova/src/suite/cabloy-mcp/modules/cabloy-mcp/src/api/mcpAuthAccessToken.ts",
+      "sha256": "10d1ede3feb474a19d1a2b7fba5306620ec66b6311e0bb49879d52dc695d66a9"
+    },
+    {
+      "path": "zova/src/suite/cabloy-mcp/modules/cabloy-mcp/src/api/openapi/schemas.ts",
+      "sha256": "da67df3021c63db7820a44cb1644c62075a7d51131318732f5a9b40a2f4aacdc"
+    },
+    {
+      "path": "zova/src/suite/cabloy-mcp/modules/cabloy-mcp/src/api/openapi/types.ts",
+      "sha256": "2044997e08bbff631972bbb521c19b5d01870e36f07b57a5c7f58342d33397d2"
+    },
+    {
+      "path": "zova/src/suite/cabloy-mcp/modules/cabloy-mcp/src/apiSchema/mcpAuthAccessToken.ts",
+      "sha256": "c650cfbf55c4ef8528666ad1c75131535ae2c1343c84d517d6feac684f0eb629"
+    },
+    {
+      "path": "zova/src/suite/cabloy-mcp/modules/cabloy-mcp/src/config/locale/en-us.ts",
+      "sha256": "3112dbf0553d820c56af94cd55ac88cea1ee7652b1485a6a6a4eb90800c93103"
+    },
+    {
+      "path": "zova/src/suite/cabloy-mcp/modules/cabloy-mcp/src/config/locale/zh-cn.ts",
+      "sha256": "267aa41250b177e3a8244c0e15ba95829c58f07c6f5b1ee3c6e715fc35bf8aef"
+    },
+    {
+      "path": "zova/src/suite/cabloy-mcp/modules/cabloy-mcp/src/model/accessTokens.ts",
+      "sha256": "f98de79d62d4859eed77399eea3be2a6e977546037830ae7ad620ffde3c488bb"
+    },
+    {
+      "path": "zova/src/suite/cabloy-mcp/modules/cabloy-mcp/src/page/accessTokens/controller.tsx",
+      "sha256": "f8669ce09ea0640d3697b054408ee205b6e93c1aec3ed08af8c09621cc7c231a"
+    },
+    {
+      "path": "zova/src/suite/cabloy-mcp/modules/cabloy-mcp/src/routes.ts",
+      "sha256": "87fc58dbde8c554af37d2cdb7ad3d2299276c8539a45c092ba0cdde79dd606f1"
+    }
+  ]
+}

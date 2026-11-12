@@ -15,7 +15,7 @@ export function mcpRefreshEvidence(
   payload: IMcpTokenPayload | IMcpLegacyTokenPayload,
 ) {
   const grant = payload.mcp;
-  if (grant.version !== 1 || grant.generation <= 1) return undefined;
+  if (grant.version !== 1 || grant.kind === 'personal' || grant.generation <= 1) return undefined;
   return {
     event,
     family: sha256(
@@ -54,20 +54,41 @@ export interface IMcpLegacyTokenPayload extends IPayloadData {
   };
 }
 
-export interface IMcpTokenPayload extends IPayloadData {
+interface IMcpGrantPayload {
+  version: 1;
+  grantId: string;
+  issuer: string;
+  resource: string;
+  instanceName: string;
+  scope: TypeMcpScope;
+}
+
+export interface IMcpOAuthTokenPayload extends IPayloadData {
   userId: TableIdentity;
   authId: TableIdentity;
   token: string;
-  mcp: {
-    version: 1;
-    grantId: string;
+  mcp: IMcpGrantPayload & {
+    /** Absent only on legacy signed OAuth grants. */
+    kind?: 'oauth';
     clientId: string;
-    issuer: string;
-    resource: string;
-    instanceName: string;
-    scope: TypeMcpScope;
     generation: number;
     refreshEnabled: boolean;
     refreshExpiresAt: number;
   };
 }
+
+export interface IMcpPersonalTokenPayload extends IPayloadData {
+  userId: TableIdentity;
+  authId: TableIdentity;
+  token: string;
+  mcp: IMcpGrantPayload & {
+    kind: 'personal';
+    clientId?: never;
+    generation: 1;
+    refreshEnabled: false;
+    refreshExpiresAt: 0;
+    tokenExpiresAt: number;
+  };
+}
+
+export type IMcpTokenPayload = IMcpOAuthTokenPayload | IMcpPersonalTokenPayload;

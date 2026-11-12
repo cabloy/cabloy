@@ -1,0 +1,31 @@
+
+> cabloy@5.1.273 tsc:vona
+> pnpm --dir vona run tsc
+
+$ npm run tsc:native
+
+> tsc:native
+> npm run prerun && node ../scripts/typecheck.ts native vona --noEmit --incremental false --project tsconfig.json
+
+
+> prerun
+> npm run vona :tools:deps
+
+
+> vona
+> node ./packages-cli/cli/src/bin/vona.ts :tools:deps
+
+vona api:tools:deps at vona
+
+===> pnpm install
+Scope: all 159 workspace projects
+Already up to date
+Done in 42ms using pnpm v12.14.0
+src/suite-vendor/a-test/modules/test-mcp/test/mcp-auth/authorizationGrant.test.ts(338,11): error TS2322: Type 'string | null' is not assignable to type 'string | undefined'.
+  Type 'null' is not assignable to type 'string | undefined'.
+src/suite-vendor/a-test/modules/test-mcp/test/mcp-auth/authorizationGrant.test.ts(348,32): error TS2345: Argument of type 'string | null' is not assignable to parameter of type 'string'.
+  Type 'null' is not assignable to type 'string'.
+src/suite-vendor/a-test/modules/test-mcp/test/mcp-auth/authorizationGrant.test.ts(442,77): error TS2345: Argument of type 'TableIdentity | null' is not assignable to parameter of type 'TableIdentity'.
+  Type 'null' is not assignable to type 'TableIdentity'.
+TypeScript (native) failed: exit code 1
+[ELIFECYCLE] Command failed with exit code 1.

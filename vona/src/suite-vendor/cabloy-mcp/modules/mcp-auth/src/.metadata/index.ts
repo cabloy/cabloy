@@ -183,6 +183,10 @@ declare module 'vona-module-mcp-auth' {
       getById<T extends IModelGetOptions<EntityAuthorization,ModelAuthorization>>(id: TableIdentity, options?: T): Promise<TypeModelRelationResult<EntityAuthorization, ModelAuthorization, T> | undefined>;
 updateById<T extends IModelUpdateOptions<EntityAuthorization,ModelAuthorization>>(id: TableIdentity, data: TypeModelMutateRelationData<EntityAuthorization,ModelAuthorization, T>, options?: T): Promise<TypeModelMutateRelationData<EntityAuthorization,ModelAuthorization, T>>;
 deleteById<T extends IModelDeleteOptions<EntityAuthorization,ModelAuthorization>>(id: TableIdentity, options?: T): Promise<void>;
+getByName<T extends IModelGetOptions<EntityAuthorization,ModelAuthorization>>(name?: string, options?: T): Promise<TypeModelRelationResult<EntityAuthorization, ModelAuthorization, T> | undefined>;
+getByNameEqI<T extends IModelGetOptions<EntityAuthorization,ModelAuthorization>>(name?: string, options?: T): Promise<TypeModelRelationResult<EntityAuthorization, ModelAuthorization, T> | undefined>;
+selectByName<T extends IModelSelectParams<EntityAuthorization,ModelAuthorization,ModelJoins>, ModelJoins extends TypeModelsClassLikeGeneral | undefined = undefined>(name?: string, params?: T, options?: IModelMethodOptions, modelJoins?: ModelJoins): Promise<TypeModelRelationResult<EntityAuthorization, ModelAuthorization, T>[]>;
+selectByNameEqI<T extends IModelSelectParams<EntityAuthorization,ModelAuthorization,ModelJoins>, ModelJoins extends TypeModelsClassLikeGeneral | undefined = undefined>(name?: string, params?: T, options?: IModelMethodOptions, modelJoins?: ModelJoins): Promise<TypeModelRelationResult<EntityAuthorization, ModelAuthorization, T>[]>;
     }
 export interface ModelClient {
       [SymbolKeyEntity]: EntityClient;
@@ -276,6 +280,11 @@ declare module 'vona-module-a-orm' {
 }
 /** model: end */
 /** dto: begin */
+export * from '../dto/accessToken.tsx';
+export * from '../dto/accessTokenCreate.tsx';
+export * from '../dto/accessTokenCreateRes.tsx';
+export * from '../dto/accessTokenMineReq.tsx';
+export * from '../dto/accessTokenMineRes.tsx';
 export * from '../dto/authorizationDecision.ts';
 export * from '../dto/authorizationGrant.tsx';
 export * from '../dto/authorizationGrantMineReq.tsx';
@@ -285,6 +294,11 @@ export * from '../dto/authorizationSummary.ts';
 export * from '../dto/customScopeCreate.tsx';
 export * from '../dto/customScopeView.tsx';
 export * from '../dto/mcpTool.ts';
+import type { IDtoOptionsAccessToken } from '../dto/accessToken.tsx';
+import type { IDtoOptionsAccessTokenCreate } from '../dto/accessTokenCreate.tsx';
+import type { IDtoOptionsAccessTokenCreateRes } from '../dto/accessTokenCreateRes.tsx';
+import type { IDtoOptionsAccessTokenMineReq } from '../dto/accessTokenMineReq.tsx';
+import type { IDtoOptionsAccessTokenMineRes } from '../dto/accessTokenMineRes.tsx';
 import type { IDtoOptionsAuthorizationDecision } from '../dto/authorizationDecision.ts';
 import type { IDtoOptionsAuthorizationGrant } from '../dto/authorizationGrant.tsx';
 import type { IDtoOptionsAuthorizationGrantMineReq } from '../dto/authorizationGrantMineReq.tsx';
@@ -295,7 +309,12 @@ import { type IDecoratorDtoOptions } from 'vona-module-a-web';
 declare module 'vona-module-a-web' {
 
     export interface IDtoRecord {
-      'mcp-auth:authorizationDecision': IDtoOptionsAuthorizationDecision;
+      'mcp-auth:accessToken': IDtoOptionsAccessToken;
+'mcp-auth:accessTokenCreate': IDtoOptionsAccessTokenCreate;
+'mcp-auth:accessTokenCreateRes': IDtoOptionsAccessTokenCreateRes;
+'mcp-auth:accessTokenMineReq': IDtoOptionsAccessTokenMineReq;
+'mcp-auth:accessTokenMineRes': IDtoOptionsAccessTokenMineRes;
+'mcp-auth:authorizationDecision': IDtoOptionsAuthorizationDecision;
 'mcp-auth:authorizationGrant': IDtoOptionsAuthorizationGrant;
 'mcp-auth:authorizationGrantMineReq': IDtoOptionsAuthorizationGrantMineReq;
 'mcp-auth:authorizationGrantMineRes': IDtoOptionsAuthorizationGrantMineRes;
@@ -313,6 +332,11 @@ declare module 'vona-module-mcp-auth' {
 }
 /** dto: end */
 /** dto: begin */
+import type { DtoAccessToken } from '../dto/accessToken.tsx';
+import type { DtoAccessTokenCreate } from '../dto/accessTokenCreate.tsx';
+import type { DtoAccessTokenCreateRes } from '../dto/accessTokenCreateRes.tsx';
+import type { DtoAccessTokenMineReq } from '../dto/accessTokenMineReq.tsx';
+import type { DtoAccessTokenMineRes } from '../dto/accessTokenMineRes.tsx';
 import type { DtoAuthorizationDecision } from '../dto/authorizationDecision.ts';
 import type { DtoAuthorizationGrant } from '../dto/authorizationGrant.tsx';
 import type { DtoAuthorizationGrantMineReq } from '../dto/authorizationGrantMineReq.tsx';
@@ -323,6 +347,26 @@ import type { DtoCustomScopeCreate } from '../dto/customScopeCreate.tsx';
 import type { DtoCustomScopeView } from '../dto/customScopeView.tsx';
 import type { DtoMcpTool } from '../dto/mcpTool.ts';
 declare module 'vona-module-mcp-auth' {
+
+    export interface IDtoOptionsAccessToken {
+      fields?: TypeEntityOptionsFields<DtoAccessToken, IDtoOptionsAccessToken[TypeSymbolKeyFieldsMore]>;
+    }
+
+    export interface IDtoOptionsAccessTokenCreate {
+      fields?: TypeEntityOptionsFields<DtoAccessTokenCreate, IDtoOptionsAccessTokenCreate[TypeSymbolKeyFieldsMore]>;
+    }
+
+    export interface IDtoOptionsAccessTokenCreateRes {
+      fields?: TypeEntityOptionsFields<DtoAccessTokenCreateRes, IDtoOptionsAccessTokenCreateRes[TypeSymbolKeyFieldsMore]>;
+    }
+
+    export interface IDtoOptionsAccessTokenMineReq {
+      fields?: TypeEntityOptionsFields<DtoAccessTokenMineReq, IDtoOptionsAccessTokenMineReq[TypeSymbolKeyFieldsMore]>;
+    }
+
+    export interface IDtoOptionsAccessTokenMineRes {
+      fields?: TypeEntityOptionsFields<DtoAccessTokenMineRes, IDtoOptionsAccessTokenMineRes[TypeSymbolKeyFieldsMore]>;
+    }
 
     export interface IDtoOptionsAuthorizationDecision {
       fields?: TypeEntityOptionsFields<DtoAuthorizationDecision, IDtoOptionsAuthorizationDecision[TypeSymbolKeyFieldsMore]>;
@@ -362,9 +406,11 @@ declare module 'vona-module-mcp-auth' {
 }
 /** dto: end */
 /** controller: begin */
+export * from '../controller/accessToken.ts';
 export * from '../controller/authorization.ts';
 export * from '../controller/authorizationGrant.ts';
 export * from '../controller/customScope.ts';
+import type { IControllerOptionsAccessToken } from '../controller/accessToken.ts';
 import type { IControllerOptionsAuthorization } from '../controller/authorization.ts';
 import type { IControllerOptionsAuthorizationGrant } from '../controller/authorizationGrant.ts';
 import type { IControllerOptionsCustomScope } from '../controller/customScope.ts';
@@ -372,7 +418,8 @@ import 'vona-module-a-web';
 declare module 'vona-module-a-web' {
 
     export interface IControllerRecord {
-      'mcp-auth:authorization': IControllerOptionsAuthorization;
+      'mcp-auth:accessToken': IControllerOptionsAccessToken;
+'mcp-auth:authorization': IControllerOptionsAuthorization;
 'mcp-auth:authorizationGrant': IControllerOptionsAuthorizationGrant;
 'mcp-auth:customScope': IControllerOptionsCustomScope;
     }
@@ -380,6 +427,17 @@ declare module 'vona-module-a-web' {
 
 }
 declare module 'vona-module-mcp-auth' {
+
+        export interface ControllerAccessToken {
+          /** @internal */
+          get scope(): ScopeModuleMcpAuth;
+        }
+
+          export interface ControllerAccessToken {
+            get $beanFullName(): 'mcp-auth.controller.accessToken';
+            get $onionName(): 'mcp-auth:accessToken';
+            get $onionOptions(): IControllerOptionsAccessToken;
+          }
 
         export interface ControllerAuthorization {
           /** @internal */
@@ -417,12 +475,18 @@ declare module 'vona-module-mcp-auth' {
 /** controller: end */
 /** controller: begin */
 // @ts-ignore ignore
+import type { ControllerAccessToken } from '../controller/accessToken.ts';
+// @ts-ignore ignore
 import type { ControllerAuthorization } from '../controller/authorization.ts';
 // @ts-ignore ignore
 import type { ControllerAuthorizationGrant } from '../controller/authorizationGrant.ts';
 // @ts-ignore ignore
 import type { ControllerCustomScope } from '../controller/customScope.ts';
 declare module 'vona-module-mcp-auth' {
+
+    export interface IControllerOptionsAccessToken {
+      actions?: TypeControllerOptionsActions<ControllerAccessToken>;
+    }
 
     export interface IControllerOptionsAuthorization {
       actions?: TypeControllerOptionsActions<ControllerAuthorization>;
@@ -438,19 +502,22 @@ declare module 'vona-module-mcp-auth' {
 }
 declare module 'vona-module-a-web' {
   export interface IApiPathGetRecord{
-        '//mcp/auth/summary': undefined;
+        '/mcp/auth/accessToken/mine': undefined;
+'//mcp/auth/summary': undefined;
 '/mcp/auth/authorizationGrant/mine': undefined;
 '/mcp/auth/customScope/mine': undefined;
 '/mcp/auth/customScope/catalog': undefined;
     }
 export interface IApiPathPostRecord{
-        '//mcp/auth/decision': undefined;
+        '/mcp/auth/accessToken/createMine': undefined;
+'//mcp/auth/decision': undefined;
 '/mcp/auth/authorizationGrant/revokeMine/:id': undefined;
 '/mcp/auth/customScope/createMine': undefined;
 '/mcp/auth/customScope/updateMine/:id': undefined;
     }
 export interface IApiPathDeleteRecord{
-        '/mcp/auth/authorizationGrant/deleteMine/:id': undefined;
+        '/mcp/auth/accessToken/deleteMine/:id': undefined;
+'/mcp/auth/authorizationGrant/deleteMine/:id': undefined;
 '/mcp/auth/customScope/deleteMine/:id': undefined;
     }
 
@@ -484,6 +551,7 @@ declare module 'vona-module-mcp-auth' {
 }
 /** middlewareSystem: end */
 /** service: begin */
+export * from '../service/accessToken.ts';
 export * from '../service/authTokenAdapter.ts';
 export * from '../service/authorization.ts';
 export * from '../service/authorizationGrant.ts';
@@ -494,7 +562,8 @@ import 'vona-module-a-bean';
 declare module 'vona-module-a-bean' {
 
     export interface IServiceRecord {
-      'mcp-auth:authTokenAdapter': never;
+      'mcp-auth:accessToken': never;
+'mcp-auth:authTokenAdapter': never;
 'mcp-auth:authorization': never;
 'mcp-auth:authorizationGrant': never;
 'mcp-auth:customScope': never;
@@ -504,6 +573,16 @@ declare module 'vona-module-a-bean' {
 
 }
 declare module 'vona-module-mcp-auth' {
+
+        export interface ServiceAccessToken {
+          /** @internal */
+          get scope(): ScopeModuleMcpAuth;
+        }
+
+          export interface ServiceAccessToken {
+            get $beanFullName(): 'mcp-auth.service.accessToken';
+            get $onionName(): 'mcp-auth:accessToken';
+          }
 
         export interface ServiceAuthTokenAdapter {
           /** @internal */
@@ -557,13 +636,15 @@ declare module 'vona-module-mcp-auth' {
 }
 /** service: end */
 /** service: begin */
+import type { ServiceAccessToken } from '../service/accessToken.ts';
 import type { ServiceAuthTokenAdapter } from '../service/authTokenAdapter.ts';
 import type { ServiceAuthorization } from '../service/authorization.ts';
 import type { ServiceAuthorizationGrant } from '../service/authorizationGrant.ts';
 import type { ServiceCustomScope } from '../service/customScope.ts';
 import type { ServiceRegistration } from '../service/registration.ts';
 export interface IModuleService {
-  'authTokenAdapter': ServiceAuthTokenAdapter;
+  'accessToken': ServiceAccessToken;
+'authTokenAdapter': ServiceAuthTokenAdapter;
 'authorization': ServiceAuthorization;
 'authorizationGrant': ServiceAuthorizationGrant;
 'customScope': ServiceCustomScope;
@@ -575,7 +656,8 @@ export interface IModuleService {
 import 'vona';
 declare module 'vona' {
   export interface IBeanRecordGeneral {
-    'mcp-auth.service.authTokenAdapter': ServiceAuthTokenAdapter;
+    'mcp-auth.service.accessToken': ServiceAccessToken;
+'mcp-auth.service.authTokenAdapter': ServiceAuthTokenAdapter;
 'mcp-auth.service.authorization': ServiceAuthorization;
 'mcp-auth.service.authorizationGrant': ServiceAuthorizationGrant;
 'mcp-auth.service.customScope': ServiceCustomScope;

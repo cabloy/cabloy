@@ -143,6 +143,14 @@ export function validateMcpAuthConfig(config: IMcpAuthConfig): IMcpAuthConfig {
   for (const ttl of [config.pendingTtl, config.codeTtl, config.tokenTtl]) {
     if (!Number.isSafeInteger(ttl) || ttl <= 0 || ttl > 86400) invalid();
   }
+  // Personal grants have no product cap, only safely representable finite deadlines.
+  if (
+    !Number.isSafeInteger(config.personalTokenTtl) ||
+    config.personalTokenTtl <= 0 ||
+    !Number.isSafeInteger(Date.now() + config.personalTokenTtl * 1000)
+  ) {
+    invalid();
+  }
   if (
     !Number.isSafeInteger(config.refreshTokenTtl) ||
     config.refreshTokenTtl <= 0 ||

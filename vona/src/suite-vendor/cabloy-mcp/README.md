@@ -4,6 +4,7 @@ This suite maps explicitly opted-in Vona Controller Actions to MCP tools while r
 
 ## Guides
 
+- [Personal MCP access tokens](docs/access-tokens.md): independent Account Security page, one-time token creation, finite lifetimes, status and deletion for clients without OAuth support.
 - [Connected-client query guide](docs/query-guide.md): compact declarations, exact-target `cabloy_tool_contract` lookup and native query composition, with or without an optional skill.
 - [MCP Integration Guide](../../../../repo-docs/mcp/mcp-guide.md): runtime ownership, admission, authorization and operational boundaries.
 - [MCP Controller Tools](../../../../repo-docs/mcp/mcp-controller-tools.md): decorator options, argument/result mapping, examples and diagnostics.

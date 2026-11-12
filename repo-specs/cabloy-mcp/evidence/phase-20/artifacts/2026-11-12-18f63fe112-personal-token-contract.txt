@@ -1,0 +1,34 @@
+
+> cabloy@5.1.273 contract:generate:isolated
+> node scripts/generateOpenapiIsolated.ts cabloy-mcp
+
+vona api:bin:dev at vona
+
+<claude-code-hint v="1" type="plugin" value="stripe@claude-plugins-official" />
+2026-11-12T05:08:30.301Z debug [module] modules preload: a-bean
+2026-11-12T05:08:30.303Z debug [module] modules monkey: a-fetch,a-model,a-ssr,a-router,a-openapi,a-api,a-bean,a-icon,a-ssrhmr,a-style,basic-app,devui-adapter,home-base,home-passport,basic-adapter,basic-pageentry,a-command,a-ssrserver
+zova front:openapi:generate at .
+
+(1/1)=> cabloy-mcp
+Finished in 37ms on 1 files using 1 threads.
+Finished in 23ms on 1 files using 1 threads.
+Finished in 22ms on 1 files using 1 threads.
+Finished in 20ms on 1 files using 1 threads.
+Finished in 21ms on 1 files using 1 threads.
+Finished in 20ms on 1 files using 1 threads.
+Finished in 23ms on 1 files using 1 threads.
+Finished in 20ms on 1 files using 1 threads.
+Finished in 21ms on 1 files using 1 threads.
+Finished in 20ms on 1 files using 1 threads.
+Finished in 21ms on 1 files using 1 threads.
+Finished in 21ms on 1 files using 1 threads.
+zova front:tools:metadata at zova
+
+(1/1)=> cabloy-mcp
+Finished in 42ms on 1 files using 1 threads.
+Finished in 19ms on 1 files using 1 threads.
+Finished in 22ms on 1 files using 1 threads.
+Finished in 23ms on 1 files using 1 threads.
+Finished in 25ms on 1 files using 1 threads.
+Finished in 25ms on 1 files using 1 threads.
+App shutdown gracefully: 14056

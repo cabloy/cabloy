@@ -4,6 +4,7 @@ export default {
   AccountSecurity: 'Account Security',
   AccountMcpAuthorizations: 'MCP authorizations',
   AccountMcpScopes: 'MCP scopes',
+  AccountMcpAccessTokens: 'MCP access tokens',
   AccountUserName: 'User name',
   AccountDisplayName: 'Display name',
   AccountLocale: 'Locale',

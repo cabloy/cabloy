@@ -78,6 +78,8 @@ export class ServiceAuthorization extends BeanBase {
     const request = randomBytes(32).toString('base64url');
     const deadline = Date.now() + config.pendingTtl * 1000;
     await this.scope.model.authorization.insert({
+      issuanceKind: 'oauth',
+      name: '',
       requestDigest: sha256(request),
       clientId: client.id,
       oauthClientId: client.clientId,
@@ -266,6 +268,7 @@ export class ServiceAuthorization extends BeanBase {
     const row = await this.scope.model.authorization
       .builderSelect()
       .where({
+        issuanceKind: 'oauth',
         codeDigest,
         clientId: client.id,
         oauthClientId: client.clientId,
@@ -285,8 +288,9 @@ export class ServiceAuthorization extends BeanBase {
       token: codeDigest,
       mcp: {
         version: 1,
+        kind: 'oauth',
         grantId: String(row.id),
-        clientId: row.oauthClientId,
+        clientId: row.oauthClientId!,
         issuer: row.issuer,
         resource,
         instanceName: this.ctx.instanceName!,
@@ -332,7 +336,13 @@ export class ServiceAuthorization extends BeanBase {
     }
     const row = await this.scope.model.authorization
       .builderSelect()
-      .where({ tokenDigest: sha256(token), resource, state: 'tokenActive', tokenVersion: 0 })
+      .where({
+        issuanceKind: 'oauth',
+        tokenDigest: sha256(token),
+        resource,
+        state: 'tokenActive',
+        tokenVersion: 0,
+      })
       .where('tokenExpiresAt', '>', Date.now())
       .first();
     if (!row) throw new OAuthError('invalid_token', 401);
@@ -346,7 +356,7 @@ export class ServiceAuthorization extends BeanBase {
       mcp: {
         version: 0,
         grantId: String(row.id),
-        clientId: row.oauthClientId,
+        clientId: row.oauthClientId!,
         issuer: row.issuer,
         resource: row.resource,
         instanceName: this.ctx.instanceName!,
@@ -385,21 +395,25 @@ export class ServiceAuthorization extends BeanBase {
         } catch {
           continue;
         }
-        if (data) await this.scope.service.authTokenAdapter.remove(data);
+        if (data) {
+          const payload = this.scope.service.authTokenAdapter.payload(data);
+          if (payload.mcp.kind === 'personal') return;
+          await this.scope.service.authTokenAdapter.remove(data);
+        }
         return;
       }
       return;
     }
     const row = await this.scope.model.authorization
       .builderSelect()
-      .where({ tokenDigest: sha256(token), state: 'tokenActive' })
+      .where({ issuanceKind: 'oauth', tokenDigest: sha256(token), state: 'tokenActive' })
       .first();
     if (!row) return;
     this.configForResource(row.resource);
     await this.scope.model.authorization
       .builderSelect()
       .where(this.bindings(row))
-      .where({ tokenDigest: sha256(token), state: 'tokenActive' })
+      .where({ issuanceKind: 'oauth', tokenDigest: sha256(token), state: 'tokenActive' })
       .update({ state: 'revoked', tokenDigest: '', expiresAt: Date.now() });
   }
 
@@ -409,6 +423,7 @@ export class ServiceAuthorization extends BeanBase {
     const now = Date.now();
     const rows = await this.scope.model.authorization
       .builderSelect()
+      .where({ issuanceKind: 'oauth' })
       .where('expiresAt', '<=', now)
       .orderBy('id')
       .limit(100)
@@ -420,6 +435,7 @@ export class ServiceAuthorization extends BeanBase {
           'id',
           rows.map(row => row.id),
         )
+        .where({ issuanceKind: 'oauth' })
         .where('expiresAt', '<=', now)
         .delete();
     }
@@ -445,6 +461,13 @@ export class ServiceAuthorization extends BeanBase {
     error = 'invalid_grant',
     status = 400,
   ): Promise<IMcpAuthResolvedClient> {
+    if (
+      row.issuanceKind !== 'oauth' ||
+      typeof row.oauthClientId !== 'string' ||
+      row.clientId === null
+    ) {
+      throw new OAuthError(error, status);
+    }
     const client = await this.resolveClient(row.oauthClientId, row.resource);
     if (
       row.issuer !== getMcpIssuer(this.app) ||
@@ -476,6 +499,43 @@ export class ServiceAuthorization extends BeanBase {
     return client;
   }
 
+  /** Shared admission; only OAuth grants depend on a registered client and redirect. */
+  async validateGrantBindings(
+    row: EntityAuthorization,
+    config: IMcpAuthConfig,
+    error = 'invalid_grant',
+    status = 400,
+  ): Promise<IMcpAuthResolvedClient | undefined> {
+    if (row.issuanceKind === 'oauth')
+      return await this.validateBindings(row, config, error, status);
+    if (
+      row.issuanceKind !== 'personal' ||
+      row.clientId !== null ||
+      row.oauthClientId !== null ||
+      row.issuer !== getMcpIssuer(this.app) ||
+      !isMcpScope(row.scope) ||
+      row.userId === undefined ||
+      row.authId === undefined ||
+      row.tokenVersion !== 1 ||
+      row.refreshGeneration !== 1 ||
+      Boolean(row.refreshEnabled) ||
+      Number(row.refreshExpiresAt) !== 0 ||
+      !Number.isSafeInteger(Number(row.tokenExpiresAt)) ||
+      Number(row.tokenExpiresAt) <= 0
+    ) {
+      throw new OAuthError(error, status);
+    }
+    if (isMcpCustomScope(row.scope)) {
+      try {
+        const definition = await this.scope.service.customScope.resolve(row.userId, row.scope);
+        if (!sameTools(definition.tools, row.scopeTools)) throw new OAuthError(error, status);
+      } catch {
+        throw new OAuthError(error, status);
+      }
+    }
+    return undefined;
+  }
+
   /** Runtime custom authority is a live owned definition AND the admitted grant's exact snapshot. */
   async resolveToolAccess(
     scope: TypeMcpScope,
@@ -502,7 +562,10 @@ export class ServiceAuthorization extends BeanBase {
           userId,
           scope,
           state: 'tokenActive',
-          oauthClientId: payload.mcp.clientId,
+          issuanceKind:
+            payload.mcp.version === 1 && payload.mcp.kind === 'personal' ? 'personal' : 'oauth',
+          oauthClientId: payload.mcp.clientId ?? null,
+          authId: payload.authId,
           issuer: payload.mcp.issuer,
           resource: payload.mcp.resource,
         })
@@ -512,12 +575,15 @@ export class ServiceAuthorization extends BeanBase {
         !row ||
         !sameTools(row.scopeTools, tools) ||
         (payload.mcp.version === 1 &&
-          (row.refreshGeneration !== payload.mcp.generation ||
+          (row.tokenVersion !== 1 ||
+            row.refreshGeneration !== payload.mcp.generation ||
+            (payload.mcp.kind === 'personal' &&
+              Number(row.tokenExpiresAt) !== payload.mcp.tokenExpiresAt) ||
             !equalDigest(row.tokenDigest, sha256(payload.token))))
       ) {
         throw new OAuthError('invalid_scope');
       }
-      await this.validateBindings(row, this.configForResource(row.resource), 'invalid_scope');
+      await this.validateGrantBindings(row, this.configForResource(row.resource), 'invalid_scope');
       tools = normalizeToolIdentities(row.scopeTools);
       readOnly = Boolean(row.scopeReadOnly);
     }
@@ -609,6 +675,7 @@ export class ServiceAuthorization extends BeanBase {
   bindings(row: EntityAuthorization) {
     return {
       id: row.id,
+      issuanceKind: 'oauth' as const,
       issuer: row.issuer,
       clientId: row.clientId,
       oauthClientId: row.oauthClientId,
@@ -625,7 +692,7 @@ export class ServiceAuthorization extends BeanBase {
     if (!opaquePattern.test(request)) throw new OAuthError('invalid_request');
     const row = await this.scope.model.authorization
       .builderSelect()
-      .where({ requestDigest: sha256(request), state: 'pending' })
+      .where({ issuanceKind: 'oauth', requestDigest: sha256(request), state: 'pending' })
       .where('pendingExpiresAt', '>', Date.now())
       .first();
     if (!row) throw new OAuthError('invalid_request');

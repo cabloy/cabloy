@@ -18,7 +18,7 @@ export class ServiceAuthorizationGrant extends BeanBase {
   ): Promise<DtoAuthorizationGrantMineRes> {
     const result = await this.scope.model.authorization.selectAndCount({
       ...$compileQuery(this.scope.model.authorization, authorizationGrantMineQuery, query, {
-        scopeWhere: { userId },
+        scopeWhere: { userId, issuanceKind: 'oauth' },
       }),
       columns: [...authorizationGrantColumns, 'clientId', 'oauthClientId'],
       include: { client: true },
@@ -27,7 +27,7 @@ export class ServiceAuthorizationGrant extends BeanBase {
       ...result,
       list: result.list.map(row => ({
         id: row.id,
-        clientId: row.oauthClientId,
+        clientId: row.oauthClientId ?? '',
         resource: row.resource,
         scope: row.scope,
         requestedScope: row.requestedScope || row.scope,
@@ -40,7 +40,9 @@ export class ServiceAuthorizationGrant extends BeanBase {
         clientName:
           (row.client?.oauthClientId === row.oauthClientId && row.client.resource === row.resource
             ? row.client.name
-            : undefined) || row.oauthClientId,
+            : undefined) ||
+          row.oauthClientId ||
+          '',
       })),
     };
   }
@@ -48,12 +50,12 @@ export class ServiceAuthorizationGrant extends BeanBase {
   async revokeMine(userId: TableIdentity, id: TableIdentity): Promise<void> {
     await this.scope.model.authorization
       .builderSelect()
-      .where({ id, userId })
+      .where({ id, userId, issuanceKind: 'oauth' })
       .whereIn('state', ['codeReady', 'tokenActive'])
       .update({ state: 'revoked', codeDigest: '', tokenDigest: '', expiresAt: Date.now() });
   }
 
   async deleteMine(userId: TableIdentity, id: TableIdentity): Promise<void> {
-    await this.scope.model.authorization.delete({ id, userId });
+    await this.scope.model.authorization.delete({ id, userId, issuanceKind: 'oauth' });
   }
 }

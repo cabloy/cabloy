@@ -1,0 +1,151 @@
+
+> cabloy@5.1.273 test:e2e
+> node scripts/runIsolatedTest.ts e2e mcp-access-tokens --reporter=line --trace=off --retries=0
+
+vona api:bin:dev at vona
+
+<claude-code-hint v="1" type="plugin" value="stripe@claude-plugins-official" />
+
+===> <PRIVATE_PATH> node_modules/.pnpm/@playwright+test@1.62.1/node_modules/@playwright/test/cli.js test --config repo-e2e/config/playwright.config.ts ^repo-e2e/specs/mcp-access-tokens\.spec\.ts$ --reporter=line --trace=off --retries=0
+
+Running 2 tests using 1 worker
+
+[1/2] repo-e2e/specs/mcp-access-tokens.spec.ts:356:1 › MCP access tokens: Account discovery, seven-day read token, one-time copy and confirmed deletion @web @ssr @mcp @flow @account
+2026-11-12T05:24:02.107Z debug [module] modules preload: a-bean
+2026-11-12T05:24:02.109Z debug [module] modules monkey: a-fetch,a-model,a-ssr,a-router,a-openapi,a-api,a-bean,a-icon,a-ssrhmr,a-style,basic-app,devui-adapter,home-base,home-passport,basic-adapter,basic-pageentry,a-command,a-ssrserver
+repo-e2e/specs/mcp-access-tokens.spec.ts:356:1 › MCP access tokens: Account discovery, seven-day read token, one-time copy and confirmed deletion @web @ssr @mcp @flow @account
+{"runId":"20261112052355-d8d529cd","testId":"d509483193c3868efcd2-4d496df65e18bc858016","project":"","retry":0}
+browser diagnostics: consoleErrors=0 pageErrors=0 dropped=0
+
+  1) repo-e2e/specs/mcp-access-tokens.spec.ts:356:1 › MCP access tokens: Account discovery, seven-day read token, one-time copy and confirmed deletion @web @ssr @mcp @flow @account 
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: getByTestId('mcp-access-token-create-form')
+    Expected: visible
+    Timeout: 5000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeVisible" with timeout 5000ms
+      - waiting for getByTestId('mcp-access-token-create-form')
+
+
+      224 |   await page.getByTestId('mcp-access-token-create').click();
+      225 |   const form = page.getByTestId('mcp-access-token-create-form');
+    > 226 |   await expect(form).toBeVisible();
+          |                      ^
+      227 |   await expect(page.getByTestId('mcp-access-token-scope')).toHaveValue('mcp:read');
+      228 |   await expect(page.getByTestId('mcp-access-token-expires-in')).toHaveValue(String(sevenDays));
+      229 |   await page.getByTestId('mcp-access-token-name').fill(name);
+        at createBrowserToken (repo-e2e/specs/mcp-access-tokens.spec.ts:226:22)
+        at repo-e2e/specs/mcp-access-tokens.spec.ts:370:21
+
+    attachment #1: browser-diagnostics (text/plain) ────────────────────────────────────────────────
+    {"runId":"20261112052355-d8d529cd","testId":"d509483193c3868efcd2-4d496df65e18bc858016","project":"","retry":0}
+    browser diagnostics: consoleErrors=0 pageErrors=0 dropped=0
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: vona/.app-test-20261112052355-d8d529cd/test-results/mcp-access-tokens-MCP-acce-efe7e-copy-and-confirmed-deletion/error-context.md
+
+
+[2/2] repo-e2e/specs/mcp-access-tokens.spec.ts:454:1 › MCP access tokens: personal scope selection accepts a finite year and scope deletion invalidates it @web @ssr @mcp @flow
+2026-11-12T05:24:09.038Z error [a-error.filter.error] {"code":422,"status":422,"method":"POST","path":"/api/mcp/auth/customScope/createMine"} [
+  {
+    "expected": "string",
+    "code": "invalid_type",
+    "path": [
+      "description"
+    ],
+    "message": "Invalid input: expected string, received undefined"
+  }
+]
+Error: [
+  {
+    "expected": "string",
+    "code": "invalid_type",
+    "path": [
+      "description"
+    ],
+    "message": "Invalid input: expected string, received undefined"
+  }
+]
+    at ErrorClass.throw (vona/packages-vona/vona-core/src/lib/bean/resource/error/errorClass.ts:32:21)
+    at app.<computed> [as throw] (vona/packages-vona/vona-core/src/lib/module/errors.ts:23:43)
+    at BeanValidator._validateSchema (vona/src/suite-vendor/a-vona/modules/a-validation/src/bean/bean.validator.ts:70:30)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async BeanValidator.validateSchema (vona/src/suite-vendor/a-vona/modules/a-validation/src/bean/bean.validator.ts:38:20)
+    at async PipeValid.transform (vona/src/suite-vendor/a-vona/modules/a-web/src/bean/pipe.valid.ts:20:20)
+    at async _transformArgument (vona/src/suite-vendor/a-vona/modules/a-web/src/lib/middleware/middlewarePipe.ts:53:17)
+    at async _transformArguments (vona/src/suite-vendor/a-vona/modules/a-web/src/lib/middleware/middlewarePipe.ts:40:23)
+    at async middlewarePipe (vona/src/suite-vendor/a-vona/modules/a-web/src/lib/middleware/middlewarePipe.ts:11:46)
+    at async InterceptorBodyRes.execute (vona/src/suite-vendor/a-vona/modules/a-body/src/bean/interceptor.bodyRes.ts:19:21)
+repo-e2e/specs/mcp-access-tokens.spec.ts:454:1 › MCP access tokens: personal scope selection accepts a finite year and scope deletion invalidates it @web @ssr @mcp @flow
+{"runId":"20261112052355-d8d529cd","testId":"d509483193c3868efcd2-bc630e7597396d7e4e01","project":"","retry":0}
+browser diagnostics: consoleErrors=0 pageErrors=0 dropped=0
+
+  2) repo-e2e/specs/mcp-access-tokens.spec.ts:454:1 › MCP access tokens: personal scope selection accepts a finite year and scope deletion invalidates it @web @ssr @mcp @flow 
+
+    Error: expect(received).toBe(expected) // Object.is equality
+
+    Expected: true
+    Received: false
+
+      484 |         },
+      485 |       });
+    > 486 |       expect(createdScope.ok()).toBe(true);
+          |                                 ^
+      487 |       const scope = (await createdScope.json()).data as PersonalScope;
+      488 |       await loginBrowser(page, account);
+      489 |       const token = await createBrowserToken(page, origin, name, scope.scope, oneYear);
+        at repo-e2e/specs/mcp-access-tokens.spec.ts:486:33
+
+    attachment #1: browser-diagnostics (text/plain) ────────────────────────────────────────────────
+    {"runId":"20261112052355-d8d529cd","testId":"d509483193c3868efcd2-bc630e7597396d7e4e01","project":"","retry":0}
+    browser diagnostics: consoleErrors=0 pageErrors=0 dropped=0
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: vona/.app-test-20261112052355-d8d529cd/test-results/mcp-access-tokens-MCP-acce-a1554-ope-deletion-invalidates-it/error-context.md
+
+
+  2 failed
+    repo-e2e/specs/mcp-access-tokens.spec.ts:356:1 › MCP access tokens: Account discovery, seven-day read token, one-time copy and confirmed deletion @web @ssr @mcp @flow @account 
+    repo-e2e/specs/mcp-access-tokens.spec.ts:454:1 › MCP access tokens: personal scope selection accepts a finite year and scope deletion invalidates it @web @ssr @mcp @flow 
+node:internal/errors:985
+  const err = new Error(message);
+              ^
+
+Error: Command failed: <PRIVATE_PATH> node_modules/.pnpm/@playwright+test@1.62.1/node_modules/@playwright/test/cli.js test --config repo-e2e/config/playwright.config.ts ^repo-e2e/specs/mcp-access-tokens\.spec\.ts$ --reporter=line --trace=off --retries=0
+    at genericNodeError (node:internal/errors:985:15)
+    at wrappedFn (node:internal/errors:539:14)
+    at checkExecSyncError (node:child_process:925:11)
+    at execFileSync (node:child_process:961:15)
+    at runPlaywright (repo-e2e/scripts/runE2e.ts:32:3)
+    at main (repo-e2e/scripts/runE2e.ts:69:3)
+    at async repo-e2e/scripts/runE2e.ts:80:23 {
+  status: 1,
+  signal: null,
+  output: [ null, null, null ],
+  pid: 39532,
+  stdout: null,
+  stderr: null
+}
+
+Node.js v24.11.0
+App shutdown gracefully: 39400
+Isolated test claim and resources retained for inspection: vona/.vona-test-claim/20261112052355-d8d529cd.json
+scripts/runIsolatedTest.ts:469
+      throw new Error(`Isolated test exited: ${result.result?.signal ?? result.result?.code}`);
+            ^
+
+Error: Isolated test exited: 1
+    at runIsolatedProcess (scripts/runIsolatedTest.ts:469:13)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async withIsolatedVona (scripts/runIsolatedTest.ts:416:14)
+    at async withIsolatedRun.skipExpiredClaimReaping.skipExpiredClaimReaping (scripts/runIsolatedTest.ts:740:7)
+    at async withIsolatedRunInternal (scripts/runIsolatedTest.ts:667:14)
+    at async withIsolatedRun (scripts/runIsolatedTest.ts:611:12)
+    at async runIsolatedTest (scripts/runIsolatedTest.ts:731:3)
+    at async scripts/runIsolatedTest.ts:757:3
+
+Node.js v24.11.0
