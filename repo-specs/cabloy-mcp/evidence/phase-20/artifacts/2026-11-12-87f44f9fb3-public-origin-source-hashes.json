@@ -1,0 +1,58 @@
+{
+  "baseline": "87f44f9fb374a35949a3f2069e2e98e99f11af69",
+  "scope": "Shared AppUtil production origin guard and MCP delegation; 12 changed source/test/docs paths plus unchanged browser regression spec. Logs precede only formatting and the final corrected authority test fixture; final managed backend and typecheck cover that fixture.",
+  "files": [
+    {
+      "path": "repo-docs/backend/image-guide.md",
+      "sha256": "1219ba608ba04250ed12ea905bb3349d3e72efbe039778866d11cec8258adfe0"
+    },
+    {
+      "path": "repo-docs/backend/runtime-and-flavors.md",
+      "sha256": "73a5c2332d4e69c4926907a8ae4ad5bf80f42ddde97449ffb1a51e1e2e1f2d9b"
+    },
+    {
+      "path": "repo-docs/mcp/mcp-browser-authorization.md",
+      "sha256": "e7af889b9f7cc2b485171c66e07deacf3e55e5e925c57a8c306c13f1d2ea8be3"
+    },
+    {
+      "path": "repo-docs/mcp/mcp-commerce-local.md",
+      "sha256": "4c6fbccd664078a74439fa3071d0dec950f730c0dbc693705aa9a0f6a87356d5"
+    },
+    {
+      "path": "repo-e2e/specs/mcp-access-tokens.spec.ts",
+      "sha256": "896f2749cef66e11abe4ea5a0e5584b09ae271878819c69a604375cf9f9470e1"
+    },
+    {
+      "path": "vona/packages-vona/vona-core/src/lib/utils/util.ts",
+      "sha256": "a079d580994b9a862f72d0d7436ce788da172a73e8015f708676c76d1b4c304d"
+    },
+    {
+      "path": "vona/src/suite-vendor/a-test/modules/test-mcp/test/cabloy-mcp/businessHttp.test.ts",
+      "sha256": "e56626ac1c2aa0b2adbe5328db623ff364b8e05e6002c826270d73f2e31bd926"
+    },
+    {
+      "path": "vona/src/suite-vendor/a-test/modules/test-mcp/test/mcp-auth/authorization.test.ts",
+      "sha256": "61286b4e586ad34e5365aab4e372d5885c717449bb0f38daa27e7368213b47ac"
+    },
+    {
+      "path": "vona/src/suite-vendor/a-test/modules/test-vona/test/application.test.ts",
+      "sha256": "f7ace06856c10fc3c469daa9b4f5cbf7ff43ca749a94a2a0204de3217e4f59a9"
+    },
+    {
+      "path": "vona/src/suite-vendor/cabloy-mcp/modules/cabloy-mcp/src/bean/middlewareSystem.resourceMetadata.ts",
+      "sha256": "2d5ff1300227e1be538eb6e5e4edf6bbea82ab54deb24fdbb9fd6f3316f59cf6"
+    },
+    {
+      "path": "vona/src/suite-vendor/cabloy-mcp/modules/cabloy-mcp/src/lib/mcpTransport.ts",
+      "sha256": "60b3dff3d3264ccd2fc02c64e2c6571b19d49f7ddf2a0560e0cacac7431d657b"
+    },
+    {
+      "path": "vona/src/suite-vendor/cabloy-mcp/modules/cabloy-mcp/src/lib/resourceServer.ts",
+      "sha256": "3b422f18ad0ce5a604c60dde414b57554a35ad1210f3575ea5e3c1263e98eae8"
+    },
+    {
+      "path": "vona/src/suite-vendor/cabloy-mcp/modules/mcp-auth/src/lib/authorization.ts",
+      "sha256": "243dc77eda208f6278eb4f84a4ae7c8b6307436ce0955583cd2f346801f2af84"
+    }
+  ]
+}

@@ -19,7 +19,7 @@ import path from 'node:path';
 import { after, before, describe, it } from 'node:test';
 import { setTimeout as delay } from 'node:timers/promises';
 import { isDeepStrictEqual } from 'node:util';
-import { appResource } from 'vona';
+import { appResource, AppUtil } from 'vona';
 import { acquireTestLock, app } from 'vona-mock';
 import { BeanExecutor } from 'vona-module-a-executor';
 import { BeanRbacScope } from 'vona-module-a-rbac';
@@ -879,7 +879,14 @@ describe('businessHttp.test.ts', { concurrency: false, timeout: 180000 }, () => 
   });
 
   it('admits production to authentication while retaining readiness and authority denials', async () => {
-    for (const scenario of ['ready', 'not-ready', 'closing', 'disabled', 'missing-authority']) {
+    for (const scenario of [
+      'ready',
+      'not-ready',
+      'closing',
+      'disabled',
+      'missing-authority',
+      'wrong-host',
+    ]) {
       let status = 0;
       let headers: Record<string, string> = {};
       let body = '';
@@ -912,6 +919,7 @@ describe('businessHttp.test.ts', { concurrency: false, timeout: 180000 }, () => 
               codeTtl: 60,
               tokenTtl: 900,
               refreshTokenTtl: 604800,
+              personalTokenTtl: 604800,
               allowLoopbackHttp: true,
             },
           },
@@ -930,12 +938,15 @@ describe('businessHttp.test.ts', { concurrency: false, timeout: 180000 }, () => 
           return assert.fail('admission fixtures must not enter business execution');
         },
       } as unknown as VonaApplication;
+      const util = new AppUtil();
+      Object.defineProperty(util, 'app', { value: productionApp });
+      Object.defineProperty(productionApp, 'util', { value: util });
       const req = {
         url: '/mcp',
         method: 'POST',
         rawHeaders: [
           'host',
-          'mcp.example.test',
+          scenario === 'wrong-host' ? 'other.example.test' : 'mcp.example.test',
           'content-type',
           'application/json',
           'accept',
@@ -954,7 +965,11 @@ describe('businessHttp.test.ts', { concurrency: false, timeout: 180000 }, () => 
         },
       } as unknown as ServerResponse;
       await handleMcpRequest(productionApp, req, res);
-      assert.equal(status, scenario === 'ready' ? 401 : 503, scenario);
+      assert.equal(
+        status,
+        scenario === 'ready' ? 401 : scenario === 'wrong-host' ? 400 : 503,
+        scenario,
+      );
       assert.equal(contexts, scenario === 'ready' ? 1 : 0, scenario);
       assert.equal(headers['cache-control'], 'no-store');
       assert.equal(
@@ -4486,7 +4501,8 @@ describe('businessHttp.test.ts', { concurrency: false, timeout: 180000 }, () => 
       200,
     );
     for (const [options, status] of [
-      [{ headers: { host: `unregistered.example.test:${port}` } }, 400],
+      // The existing request context supplies the fallback; nonloopback HTTP is forbidden.
+      [{ headers: { host: `unregistered.example.test:${port}` } }, 503],
       [{ headers: { forwarded: 'for=192.0.2.1' } }, 403],
       [{ headers: { cookie: 'token=forbidden' } }, 403],
       [{ headers: { 'proxy-authorization': 'Bearer forbidden' } }, 403],

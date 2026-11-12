@@ -1,0 +1,50 @@
+{
+  "baseline": "87f44f9fb374a35949a3f2069e2e98e99f11af69",
+  "scope": "Shared public-origin correction: remove synthetic context and async propagation; current changed source/test/docs plus unchanged browser spec. Earlier wrapped artifacts are historical only.",
+  "files": [
+    {
+      "path": "repo-docs/backend/image-guide.md",
+      "sha256": "1219ba608ba04250ed12ea905bb3349d3e72efbe039778866d11cec8258adfe0"
+    },
+    {
+      "path": "repo-docs/backend/runtime-and-flavors.md",
+      "sha256": "73a5c2332d4e69c4926907a8ae4ad5bf80f42ddde97449ffb1a51e1e2e1f2d9b"
+    },
+    {
+      "path": "repo-docs/mcp/mcp-browser-authorization.md",
+      "sha256": "fdd9ee9f7b7ce4f5a1d82db07d0230165be1eab26274410fdc41cd3a76ea3482"
+    },
+    {
+      "path": "repo-docs/mcp/mcp-commerce-local.md",
+      "sha256": "e429686fb6af020267a73a5702c44507f3648d4c2b26575602403225ae66ddc6"
+    },
+    {
+      "path": "repo-e2e/specs/mcp-access-tokens.spec.ts",
+      "sha256": "896f2749cef66e11abe4ea5a0e5584b09ae271878819c69a604375cf9f9470e1"
+    },
+    {
+      "path": "vona/packages-vona/vona-core/src/lib/utils/util.ts",
+      "sha256": "a079d580994b9a862f72d0d7436ce788da172a73e8015f708676c76d1b4c304d"
+    },
+    {
+      "path": "vona/src/suite-vendor/a-test/modules/test-mcp/test/cabloy-mcp/businessHttp.test.ts",
+      "sha256": "c8c84e836f64b826881edc8d69bb31c992c802ae2a7c6e08a632cbf5203545d9"
+    },
+    {
+      "path": "vona/src/suite-vendor/a-test/modules/test-mcp/test/mcp-auth/authorization.test.ts",
+      "sha256": "61286b4e586ad34e5365aab4e372d5885c717449bb0f38daa27e7368213b47ac"
+    },
+    {
+      "path": "vona/src/suite-vendor/a-test/modules/test-vona/test/application.test.ts",
+      "sha256": "f7ace06856c10fc3c469daa9b4f5cbf7ff43ca749a94a2a0204de3217e4f59a9"
+    },
+    {
+      "path": "vona/src/suite-vendor/cabloy-mcp/modules/cabloy-mcp/src/lib/resourceServer.ts",
+      "sha256": "085c36832a8f7f46ac7ecae8c66f6d4ec3f789076f88b1ecdc9fe31f7683bd14"
+    },
+    {
+      "path": "vona/src/suite-vendor/cabloy-mcp/modules/mcp-auth/src/lib/authorization.ts",
+      "sha256": "243dc77eda208f6278eb4f84a4ae7c8b6307436ce0955583cd2f346801f2af84"
+    }
+  ]
+}

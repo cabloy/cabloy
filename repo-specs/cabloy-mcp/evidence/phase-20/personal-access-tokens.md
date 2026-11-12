@@ -78,6 +78,35 @@ Follow-up artifacts use prefix `2026-11-12-18f63fe112-personal-token-days-` in [
 
 The backend is unchanged from its passing regression and was not rerun for this presentation-only change. The prior specification-audit baseline failures remain unchanged; no additional audit or release qualification is claimed. Follow-up evidence passed path checking and was inspected for machine-local paths and token-shaped values.
 
+## Shared public-origin follow-up
+
+The maintainer requested that MCP reuse `app.util.getAbsoluteUrl()` and that production requirements belong to the shared `AppUtil` getters. Each getter now rejects its missing effective configured field in production with an ordinary actionable error. Context config still takes precedence over root config; dev/test configured → request → HTTP/localhost fallbacks remain available. MCP retains canonical-origin, HTTPS/explicit loopback-HTTP, resource and instance checks.
+
+The initial follow-up supplied a short-lived anonymous context at raw `/mcp` ingress. The maintainer subsequently rejected that wrapper because `AppUtil` already supports an absent context. The wrapper and its async propagation have now been removed: ingress directly resolves the resource and validates the single incoming Host against it. Without an ambient context, origin resolution uses configured values or the framework's requestless fallback. Metadata still uses the resolved resource as its issuer. Bindings remain exact; `localhost` and `127.0.0.1` are not interchangeable. The artifacts below describe the earlier wrapped revision, not this correction.
+
+This follow-up is attributed to baseline `87f44f9fb374a35949a3f2069e2e98e99f11af69` plus the uncommitted origin diff, not to the earlier personal-token source snapshots. Artifacts use prefix `2026-11-12-87f44f9fb3-public-origin-` in [artifacts](./artifacts/):
+
+- `backend-03.txt`: managed root regression of `application.test.ts`, `mcp-auth/authorization.test.ts`, `mcp-auth/accessToken.test.ts` and `cabloy-mcp/businessHttp.test.ts`: **56 passed / 0 failed**, exit 0. Covers production field requirements and configured-host mismatch, nonproduction fallback, OAuth/personal authorization, raw transports, resource metadata and guarded business execution.
+- `tsc.txt`: final `npm run tsc:vona`, exit 0.
+- `e2e.txt`: existing credential-safe `mcp-access-tokens` browser flows: **2 passed / 0 failed**, exit 0. Browser issuance and raw admission agree at the explicit local origin. Captures remain disabled. This run precedes only formatting and the final backend-only authority fixture correction.
+- `docs.txt`: `npm run docs:build`, exit 0 with the ordinary chunk-size warning. No new navigation or links were introduced in the four affected public pages.
+- `style.txt`: scoped formatter, root-config source lint and whitespace checks, exit 0.
+- [Source attribution](./artifacts/2026-11-12-87f44f9fb3-public-origin-source-hashes.json): SHA-256 for the 12 affected source/test/docs files and the unchanged browser regression spec; evidence prose/artifacts are outside this manifest.
+
+Failure history is retained rather than presented as passing evidence:
+
+- `tsc-initial.txt`: the first attempt treated the owned context runner as synchronous. Its actual Promise return required async resource resolution and `await` in transport, metadata handler and middleware. Final typecheck passes.
+- `backend-initial-stopped.txt`: the pre-`await` run failed raw-transport assertions and stalled during shutdown. Its owned background task was stopped; its process tree was subsequently absent. No successful cleanup or complete test-summary claim is made for this run, and no manual database/Redis cleanup or reset was performed.
+- `backend-02.txt`: **55 passed / 1 failed**, exit 1. The unconfigured local-origin fixture still expected an unregistered nonloopback HTTP Host to fail an old configured-host comparison (400); shared fallback instead reaches the retained MCP HTTPS policy (503). The assertion now expects that rejection, and a separate configured production Host mismatch asserts 400. No origin validation or binding was relaxed; the final run passed all 56 cases.
+
+### Removal of the redundant context wrapper
+
+The actual shared endpoint is invoked by `middlewareSystem.mcp` inside the existing system-middleware context. Creating another context for origin resolution was unnecessary. Direct calls without a context are also supported by `AppUtil`. Removed the wrapper and restored synchronous resource/metadata resolution and callers. The public guides now describe the existing-context/requestless behavior rather than synthetic Host/TLS propagation.
+
+Correction artifacts use prefix `2026-11-12-87f44f9fb3-public-origin-noctx-` in [artifacts](./artifacts/): `backend-02.txt` records **56/56 passing**, `tsc.txt` records a passing backend typecheck, `e2e.txt` records **2/2 passing** credential-safe browser flows, and `docs.txt` records a passing docs build. Scoped formatter/lint/diff checks also passed. `backend-initial.txt` retains the initial **55/56** result: changing the unknown-Host expectation to 400 was incorrect because the existing middleware context still supplies that Host to the nonproduction fallback, and MCP's HTTP policy rejects it with 503. Restoring 503 does not require the removed wrapper. The [corrected source manifest](./artifacts/2026-11-12-87f44f9fb3-public-origin-noctx-source-hashes.json) attributes the current revision separately from the earlier wrapped revision.
+
+No frontend source/contract changes, rebuild, schema change, development reset, environment edit, commit or push was performed for this origin follow-up. Successful managed runs report their own completion; failed-run resources remain runner-owned/retained. Earlier specification-audit baseline failures were not rerun or reclassified by these focused checks.
+
 ## Remaining boundary
 
 The approved functional increment has passed its focused backend and browser checks. The full lightweight specification command is not clean because of the 25 confirmed baseline missing-link defects above; this is explicitly reported, not treated as a passing audit. Existing initialized v1 databases still need a separately approved migration or disposable-data strategy before using these new columns. No reset, deployment or release advancement follows automatically from this bounded implementation.

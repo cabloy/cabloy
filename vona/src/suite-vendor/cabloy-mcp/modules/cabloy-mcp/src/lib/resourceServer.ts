@@ -2,16 +2,11 @@ import type { IncomingMessage, ServerResponse } from 'node:http';
 import type { VonaApplication } from 'vona';
 import type { IMcpAuthResource } from 'vona-module-mcp-auth';
 
-import {
-  getMcpIssuer,
-  mcpSupportedScopes,
-  OAuthError,
-  resolveMcpResource,
-} from 'vona-module-mcp-auth';
+import { mcpSupportedScopes, OAuthError, resolveMcpResource } from 'vona-module-mcp-auth';
 
 export const mcpResourceMetadataPath = '/.well-known/oauth-protected-resource/mcp';
 
-/** Authority is selected only from the backend public origin, never proxy headers. */
+/** Resolve authority through AppUtil without creating a request context. */
 export function resolveMcpRequestResource(app: VonaApplication, req: IncomingMessage) {
   const hosts: string[] = [];
   for (let index = 0; index < req.rawHeaders.length; index += 2) {
@@ -107,7 +102,7 @@ export function handleMcpResourceMetadata(
       throw new OAuthError('invalid_request', 405);
     }
     const resource = resolveMcpRequestResource(app, req);
-    const issuer = getMcpIssuer(app);
+    const issuer = resource.resource;
     body = {
       resource: resource.resource,
       authorization_servers: [issuer],

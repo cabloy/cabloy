@@ -1,0 +1,707 @@
+
+> cabloy@5.1.273 test
+> cd vona && npm run test -- --ci src/suite-vendor/a-test/modules/test-vona/test/application.test.ts src/suite-vendor/a-test/modules/test-mcp/test/mcp-auth/authorization.test.ts src/suite-vendor/a-test/modules/test-mcp/test/mcp-auth/accessToken.test.ts src/suite-vendor/a-test/modules/test-mcp/test/cabloy-mcp/businessHttp.test.ts
+
+
+> test
+> node ../scripts/runIsolatedTest.ts unit --ci src/suite-vendor/a-test/modules/test-vona/test/application.test.ts src/suite-vendor/a-test/modules/test-mcp/test/mcp-auth/authorization.test.ts src/suite-vendor/a-test/modules/test-mcp/test/mcp-auth/accessToken.test.ts src/suite-vendor/a-test/modules/test-mcp/test/cabloy-mcp/businessHttp.test.ts
+
+
+> prerun
+> npm run vona :tools:deps
+
+
+> vona
+> node ./packages-cli/cli/src/bin/vona.ts :tools:deps
+
+vona api:tools:deps at vona
+
+===> pnpm install
+Scope: all 159 workspace projects
+Already up to date
+Done in 71ms using pnpm v12.14.0
+vona api:bin:test at vona
+
+<claude-code-hint v="1" type="plugin" value="stripe@claude-plugins-official" />
+▶ application.test.ts
+  ✔ requires each production serve field even with a request origin (0.694792ms)
+  ✔ uses complete production serve config and prefers context config over root config (0.079917ms)
+  ✔ keeps per-field configured, request and requestless fallbacks in dev/test (0.122125ms)
+  ✔ uses the loopback fallback for requestless absolute URLs (0.059542ms)
+  ✔ creates anonymous contexts from the listener origin (0.086334ms)
+  ✔ keeps listener origin for nested anonymous contexts (0.118458ms)
+  ✔ preserves supplied requests and uses their origin when serve is unset (1.55375ms)
+✔ application.test.ts (3.37425ms)
+▶ authorization.test.ts
+  ✔ validates policy defaults and derives issuer and exact host authority from the backend (218.816958ms)
+  ✔ shares request-origin fallback while retaining MCP origin validation (0.554208ms)
+  ✔ maps the SSR site environment value into module config (0.114ms)
+  ✔ prioritizes the configured enabled SSR site and otherwise selects the shortest publicPath (65.614292ms)
+  ✔ uses existing real login and one-row digests through approval, exchange and revocation (311.378458ms)
+  ✔ rejects tampered internal client references and cannot rebind a grant to a recreated external identifier (190.8805ms)
+  ✔ rotates signed refresh grants and revokes the whole family on older refresh replay (263.220125ms)
+  ✔ rejects wrong clients and token purposes without rotating or revoking a valid family (142.272375ms)
+  ✔ refreshes after access expiry while cleanup retains the live refresh family (131.533833ms)
+  ✔ renews the refresh deadline and cleans up only after access and renewed family expiry (3147.779041ms)
+  ✔ allows refresh scope narrowing but never expands the current family authority (332.034583ms)
+  ✔ commits concurrent refresh replay revocation across separate contexts (138.130167ms)
+  ✔ preserves exact legacy opaque-token lookup, scope checks, expiry and revocation (130.690208ms)
+  ✔ inherits the registered scope and canonicalizes requests for both discovered scopes (995.236917ms)
+  ✔ rejects read-client escalation before persisting an authorization (43.856833ms)
+  ✔ rechecks client-scope containment at summary, decision, exchange and token lookup (159.254208ms)
+  ✔ rejects noncanonical persisted authorization scopes without silently promoting them (162.644541ms)
+  ✔ rejects invalid contracts before persistence and enforces current instance and confidentiality (150.730209ms)
+  ✔ denies and expires pending/code state without issuing, and rejects ambient issuance transactions (164.303875ms)
+  ✔ authenticates dynamically registered confidential clients by Basic digest only (116.448292ms)
+  ✔ has exactly one durable decision and redemption winner across separate contexts (121.735083ms)
+✔ authorization.test.ts (6988.839958ms)
+▶ accessToken.test.ts
+  ✔ issues finite default-seven-day and 365-day tokens without refresh or changing browser identity (95.470875ms)
+2026-11-12T08:01:51.323Z debug [module] modules preload: a-bean
+2026-11-12T08:01:51.325Z debug [module] modules monkey: a-fetch,a-model,a-ssr,a-router,a-openapi,a-api,a-bean,a-icon,a-ssrhmr,a-style,basic-app,devui-adapter,home-base,home-passport,basic-adapter,basic-pageentry,a-command,a-ssrserver
+2026-11-12T08:01:51.367Z error [a-error.filter.error] {"code":401,"status":401,"method":"GET","path":"/api/mcp/auth/accessToken/mine"} Unauthorized
+Error: Unauthorized
+    at ErrorClass.throw (vona/packages-vona/vona-core/src/lib/bean/resource/error/errorClass.ts:32:21)
+    at app.<computed> [as throw] (vona/packages-vona/vona-core/src/lib/module/errors.ts:23:43)
+    at GuardPassport.execute (vona/src/suite-vendor/a-vona/modules/a-user/src/bean/guard.passport.ts:36:34)
+    at async middlewareGuard (vona/src/suite-vendor/a-vona/modules/a-web/src/lib/middleware/middlewareGuard.ts:7:20)
+    at async MiddlewareSsrPassport.execute (vona/src/suite-vendor/a-cabloy/modules/a-ssr/src/bean/middleware.ssrPassport.ts:21:20)
+    at async routeStartMiddleware (vona/src/suite-vendor/a-vona/modules/a-web/src/bean/bean.router.ts:154:17)
+    at async vona/node_modules/.pnpm/@cabloy+koa-static-cache@6.0.1_supports-color@7.2.0/node_modules/@cabloy/koa-static-cache/index.js:80:18
+    at async vona/src/suite-vendor/a-vona/modules/a-static/src/bean/middlewareSystem.static.ts:93:17
+    at async xframe (vona/src/suite-vendor/a-vona/modules/a-security/src/lib/middlewares/xframe.ts:4:9)
+    at async xssProtection (vona/src/suite-vendor/a-vona/modules/a-security/src/lib/middlewares/xssProtection.ts:4:9)
+2026-11-12T08:01:51.373Z error [a-error.filter.error] {"code":401,"status":401,"method":"POST","path":"/api/mcp/auth/accessToken/createMine"} Unauthorized
+Error: Unauthorized
+    at ErrorClass.throw (vona/packages-vona/vona-core/src/lib/bean/resource/error/errorClass.ts:32:21)
+    at app.<computed> [as throw] (vona/packages-vona/vona-core/src/lib/module/errors.ts:23:43)
+    at GuardPassport.execute (vona/src/suite-vendor/a-vona/modules/a-user/src/bean/guard.passport.ts:36:34)
+    at async middlewareGuard (vona/src/suite-vendor/a-vona/modules/a-web/src/lib/middleware/middlewareGuard.ts:7:20)
+    at async MiddlewareSsrPassport.execute (vona/src/suite-vendor/a-cabloy/modules/a-ssr/src/bean/middleware.ssrPassport.ts:21:20)
+    at async routeStartMiddleware (vona/src/suite-vendor/a-vona/modules/a-web/src/bean/bean.router.ts:154:17)
+    at async vona/node_modules/.pnpm/@cabloy+koa-static-cache@6.0.1_supports-color@7.2.0/node_modules/@cabloy/koa-static-cache/index.js:46:63
+    at async vona/src/suite-vendor/a-vona/modules/a-static/src/bean/middlewareSystem.static.ts:93:17
+    at async xframe (vona/src/suite-vendor/a-vona/modules/a-security/src/lib/middlewares/xframe.ts:4:9)
+    at async xssProtection (vona/src/suite-vendor/a-vona/modules/a-security/src/lib/middlewares/xssProtection.ts:4:9)
+2026-11-12T08:01:51.392Z error [a-error.filter.error] {"code":401,"status":401,"method":"DELETE","path":"/api/mcp/auth/accessToken/deleteMine/999999999999999"} Unauthorized
+Error: Unauthorized
+    at ErrorClass.throw (vona/packages-vona/vona-core/src/lib/bean/resource/error/errorClass.ts:32:21)
+    at app.<computed> [as throw] (vona/packages-vona/vona-core/src/lib/module/errors.ts:23:43)
+    at GuardPassport.execute (vona/src/suite-vendor/a-vona/modules/a-user/src/bean/guard.passport.ts:36:34)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async middlewareGuard (vona/src/suite-vendor/a-vona/modules/a-web/src/lib/middleware/middlewareGuard.ts:7:20)
+    at async MiddlewareSsrPassport.execute (vona/src/suite-vendor/a-cabloy/modules/a-ssr/src/bean/middleware.ssrPassport.ts:21:20)
+    at async routeStartMiddleware (vona/src/suite-vendor/a-vona/modules/a-web/src/bean/bean.router.ts:154:17)
+    at async vona/node_modules/.pnpm/@cabloy+koa-static-cache@6.0.1_supports-color@7.2.0/node_modules/@cabloy/koa-static-cache/index.js:46:63
+    at async vona/src/suite-vendor/a-vona/modules/a-static/src/bean/middlewareSystem.static.ts:93:17
+    at async xframe (vona/src/suite-vendor/a-vona/modules/a-security/src/lib/middlewares/xframe.ts:4:9)
+2026-11-12T08:01:51.466Z error [a-error.filter.error] {"code":422,"status":422,"method":"POST","path":"/api/mcp/auth/accessToken/createMine"} [
+  {
+    "expected": "string",
+    "code": "invalid_type",
+    "path": [
+      "name"
+    ],
+    "message": "Invalid input: expected string, received undefined"
+  }
+]
+Error: [
+  {
+    "expected": "string",
+    "code": "invalid_type",
+    "path": [
+      "name"
+    ],
+    "message": "Invalid input: expected string, received undefined"
+  }
+]
+    at ErrorClass.throw (vona/packages-vona/vona-core/src/lib/bean/resource/error/errorClass.ts:32:21)
+    at app.<computed> [as throw] (vona/packages-vona/vona-core/src/lib/module/errors.ts:23:43)
+    at BeanValidator._validateSchema (vona/src/suite-vendor/a-vona/modules/a-validation/src/bean/bean.validator.ts:70:30)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async BeanValidator.validateSchema (vona/src/suite-vendor/a-vona/modules/a-validation/src/bean/bean.validator.ts:38:20)
+    at async PipeValid.transform (vona/src/suite-vendor/a-vona/modules/a-web/src/bean/pipe.valid.ts:20:20)
+    at async _transformArgument (vona/src/suite-vendor/a-vona/modules/a-web/src/lib/middleware/middlewarePipe.ts:53:17)
+    at async _transformArguments (vona/src/suite-vendor/a-vona/modules/a-web/src/lib/middleware/middlewarePipe.ts:40:23)
+    at async middlewarePipe (vona/src/suite-vendor/a-vona/modules/a-web/src/lib/middleware/middlewarePipe.ts:11:46)
+    at async InterceptorBodyRes.execute (vona/src/suite-vendor/a-vona/modules/a-body/src/bean/interceptor.bodyRes.ts:19:21)
+2026-11-12T08:01:51.475Z error [a-error.filter.error] {"code":422,"status":422,"method":"POST","path":"/api/mcp/auth/accessToken/createMine"} [
+  {
+    "origin": "number",
+    "code": "too_small",
+    "minimum": 0,
+    "inclusive": false,
+    "path": [
+      "expiresIn"
+    ],
+    "message": "Too small: expected number to be >0"
+  }
+]
+Error: [
+  {
+    "origin": "number",
+    "code": "too_small",
+    "minimum": 0,
+    "inclusive": false,
+    "path": [
+      "expiresIn"
+    ],
+    "message": "Too small: expected number to be >0"
+  }
+]
+    at ErrorClass.throw (vona/packages-vona/vona-core/src/lib/bean/resource/error/errorClass.ts:32:21)
+    at app.<computed> [as throw] (vona/packages-vona/vona-core/src/lib/module/errors.ts:23:43)
+    at BeanValidator._validateSchema (vona/src/suite-vendor/a-vona/modules/a-validation/src/bean/bean.validator.ts:70:30)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async BeanValidator.validateSchema (vona/src/suite-vendor/a-vona/modules/a-validation/src/bean/bean.validator.ts:38:20)
+    at async PipeValid.transform (vona/src/suite-vendor/a-vona/modules/a-web/src/bean/pipe.valid.ts:20:20)
+    at async _transformArgument (vona/src/suite-vendor/a-vona/modules/a-web/src/lib/middleware/middlewarePipe.ts:53:17)
+    at async _transformArguments (vona/src/suite-vendor/a-vona/modules/a-web/src/lib/middleware/middlewarePipe.ts:40:23)
+    at async middlewarePipe (vona/src/suite-vendor/a-vona/modules/a-web/src/lib/middleware/middlewarePipe.ts:11:46)
+    at async InterceptorBodyRes.execute (vona/src/suite-vendor/a-vona/modules/a-body/src/bean/interceptor.bodyRes.ts:19:21)
+2026-11-12T08:01:51.484Z error [a-error.filter.error] {"code":422,"status":422,"method":"POST","path":"/api/mcp/auth/accessToken/createMine"} [
+  {
+    "expected": "int",
+    "format": "safeint",
+    "code": "invalid_type",
+    "path": [
+      "expiresIn"
+    ],
+    "message": "Invalid input: expected int, received number"
+  }
+]
+Error: [
+  {
+    "expected": "int",
+    "format": "safeint",
+    "code": "invalid_type",
+    "path": [
+      "expiresIn"
+    ],
+    "message": "Invalid input: expected int, received number"
+  }
+]
+    at ErrorClass.throw (vona/packages-vona/vona-core/src/lib/bean/resource/error/errorClass.ts:32:21)
+    at app.<computed> [as throw] (vona/packages-vona/vona-core/src/lib/module/errors.ts:23:43)
+    at BeanValidator._validateSchema (vona/src/suite-vendor/a-vona/modules/a-validation/src/bean/bean.validator.ts:70:30)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async BeanValidator.validateSchema (vona/src/suite-vendor/a-vona/modules/a-validation/src/bean/bean.validator.ts:38:20)
+    at async PipeValid.transform (vona/src/suite-vendor/a-vona/modules/a-web/src/bean/pipe.valid.ts:20:20)
+    at async _transformArgument (vona/src/suite-vendor/a-vona/modules/a-web/src/lib/middleware/middlewarePipe.ts:53:17)
+    at async _transformArguments (vona/src/suite-vendor/a-vona/modules/a-web/src/lib/middleware/middlewarePipe.ts:40:23)
+    at async middlewarePipe (vona/src/suite-vendor/a-vona/modules/a-web/src/lib/middleware/middlewarePipe.ts:11:46)
+    at async InterceptorBodyRes.execute (vona/src/suite-vendor/a-vona/modules/a-body/src/bean/interceptor.bodyRes.ts:19:21)
+2026-11-12T08:01:51.493Z error [a-error.filter.error] {"code":422,"status":422,"method":"POST","path":"/api/mcp/auth/accessToken/createMine"} [
+  {
+    "origin": "number",
+    "code": "too_small",
+    "minimum": 0,
+    "inclusive": false,
+    "path": [
+      "expiresIn"
+    ],
+    "message": "Too small: expected number to be >0"
+  }
+]
+Error: [
+  {
+    "origin": "number",
+    "code": "too_small",
+    "minimum": 0,
+    "inclusive": false,
+    "path": [
+      "expiresIn"
+    ],
+    "message": "Too small: expected number to be >0"
+  }
+]
+    at ErrorClass.throw (vona/packages-vona/vona-core/src/lib/bean/resource/error/errorClass.ts:32:21)
+    at app.<computed> [as throw] (vona/packages-vona/vona-core/src/lib/module/errors.ts:23:43)
+    at BeanValidator._validateSchema (vona/src/suite-vendor/a-vona/modules/a-validation/src/bean/bean.validator.ts:70:30)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async BeanValidator.validateSchema (vona/src/suite-vendor/a-vona/modules/a-validation/src/bean/bean.validator.ts:38:20)
+    at async PipeValid.transform (vona/src/suite-vendor/a-vona/modules/a-web/src/bean/pipe.valid.ts:20:20)
+    at async _transformArgument (vona/src/suite-vendor/a-vona/modules/a-web/src/lib/middleware/middlewarePipe.ts:53:17)
+    at async _transformArguments (vona/src/suite-vendor/a-vona/modules/a-web/src/lib/middleware/middlewarePipe.ts:40:23)
+    at async middlewarePipe (vona/src/suite-vendor/a-vona/modules/a-web/src/lib/middleware/middlewarePipe.ts:11:46)
+    at async InterceptorBodyRes.execute (vona/src/suite-vendor/a-vona/modules/a-body/src/bean/interceptor.bodyRes.ts:19:21)
+2026-11-12T08:01:51.502Z error [a-error.filter.error] {"code":422,"status":422,"method":"POST","path":"/api/mcp/auth/accessToken/createMine"} [
+  {
+    "expected": "int",
+    "format": "safeint",
+    "code": "invalid_type",
+    "path": [
+      "expiresIn"
+    ],
+    "message": "Invalid input: expected int, received number"
+  }
+]
+Error: [
+  {
+    "expected": "int",
+    "format": "safeint",
+    "code": "invalid_type",
+    "path": [
+      "expiresIn"
+    ],
+    "message": "Invalid input: expected int, received number"
+  }
+]
+    at ErrorClass.throw (vona/packages-vona/vona-core/src/lib/bean/resource/error/errorClass.ts:32:21)
+    at app.<computed> [as throw] (vona/packages-vona/vona-core/src/lib/module/errors.ts:23:43)
+    at BeanValidator._validateSchema (vona/src/suite-vendor/a-vona/modules/a-validation/src/bean/bean.validator.ts:70:30)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async BeanValidator.validateSchema (vona/src/suite-vendor/a-vona/modules/a-validation/src/bean/bean.validator.ts:38:20)
+    at async PipeValid.transform (vona/src/suite-vendor/a-vona/modules/a-web/src/bean/pipe.valid.ts:20:20)
+    at async _transformArgument (vona/src/suite-vendor/a-vona/modules/a-web/src/lib/middleware/middlewarePipe.ts:53:17)
+    at async _transformArguments (vona/src/suite-vendor/a-vona/modules/a-web/src/lib/middleware/middlewarePipe.ts:40:23)
+    at async middlewarePipe (vona/src/suite-vendor/a-vona/modules/a-web/src/lib/middleware/middlewarePipe.ts:11:46)
+    at async InterceptorBodyRes.execute (vona/src/suite-vendor/a-vona/modules/a-body/src/bean/interceptor.bodyRes.ts:19:21)
+2026-11-12T08:01:51.509Z error [a-error.filter.error] {"code":422,"status":422,"method":"POST","path":"/api/mcp/auth/accessToken/createMine"} [
+  {
+    "code": "too_big",
+    "maximum": 9007199254740991,
+    "note": "Integers must be within the safe integer range.",
+    "origin": "int",
+    "inclusive": true,
+    "path": [
+      "expiresIn"
+    ],
+    "message": "Too big: expected int to be <=9007199254740991"
+  },
+  {
+    "code": "too_big",
+    "maximum": 9007199254740991,
+    "note": "Integers must be within the safe integer range.",
+    "origin": "int",
+    "inclusive": true,
+    "path": [
+      "expiresIn"
+    ],
+    "message": "Too big: expected int to be <=9007199254740991"
+  }
+]
+Error: [
+  {
+    "code": "too_big",
+    "maximum": 9007199254740991,
+    "note": "Integers must be within the safe integer range.",
+    "origin": "int",
+    "inclusive": true,
+    "path": [
+      "expiresIn"
+    ],
+    "message": "Too big: expected int to be <=9007199254740991"
+  },
+  {
+    "code": "too_big",
+    "maximum": 9007199254740991,
+    "note": "Integers must be within the safe integer range.",
+    "origin": "int",
+    "inclusive": true,
+    "path": [
+      "expiresIn"
+    ],
+    "message": "Too big: expected int to be <=9007199254740991"
+  }
+]
+    at ErrorClass.throw (vona/packages-vona/vona-core/src/lib/bean/resource/error/errorClass.ts:32:21)
+    at app.<computed> [as throw] (vona/packages-vona/vona-core/src/lib/module/errors.ts:23:43)
+    at BeanValidator._validateSchema (vona/src/suite-vendor/a-vona/modules/a-validation/src/bean/bean.validator.ts:70:30)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async BeanValidator.validateSchema (vona/src/suite-vendor/a-vona/modules/a-validation/src/bean/bean.validator.ts:38:20)
+    at async PipeValid.transform (vona/src/suite-vendor/a-vona/modules/a-web/src/bean/pipe.valid.ts:20:20)
+    at async _transformArgument (vona/src/suite-vendor/a-vona/modules/a-web/src/lib/middleware/middlewarePipe.ts:53:17)
+    at async _transformArguments (vona/src/suite-vendor/a-vona/modules/a-web/src/lib/middleware/middlewarePipe.ts:40:23)
+    at async middlewarePipe (vona/src/suite-vendor/a-vona/modules/a-web/src/lib/middleware/middlewarePipe.ts:11:46)
+    at async InterceptorBodyRes.execute (vona/src/suite-vendor/a-vona/modules/a-body/src/bean/interceptor.bodyRes.ts:19:21)
+2026-11-12T08:01:51.513Z error [a-error.filter.error] {"code":422,"status":422,"method":"POST","path":"/api/mcp/auth/accessToken/createMine"} [
+  {
+    "code": "unrecognized_keys",
+    "keys": [
+      "userId"
+    ],
+    "path": [],
+    "message": "Unrecognized key: \"userId\""
+  }
+]
+Error: [
+  {
+    "code": "unrecognized_keys",
+    "keys": [
+      "userId"
+    ],
+    "path": [],
+    "message": "Unrecognized key: \"userId\""
+  }
+]
+    at ErrorClass.throw (vona/packages-vona/vona-core/src/lib/bean/resource/error/errorClass.ts:32:21)
+    at app.<computed> [as throw] (vona/packages-vona/vona-core/src/lib/module/errors.ts:23:43)
+    at BeanValidator._validateSchema (vona/src/suite-vendor/a-vona/modules/a-validation/src/bean/bean.validator.ts:70:30)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async BeanValidator.validateSchema (vona/src/suite-vendor/a-vona/modules/a-validation/src/bean/bean.validator.ts:38:20)
+    at async PipeValid.transform (vona/src/suite-vendor/a-vona/modules/a-web/src/bean/pipe.valid.ts:20:20)
+    at async _transformArgument (vona/src/suite-vendor/a-vona/modules/a-web/src/lib/middleware/middlewarePipe.ts:53:17)
+    at async _transformArguments (vona/src/suite-vendor/a-vona/modules/a-web/src/lib/middleware/middlewarePipe.ts:40:23)
+    at async middlewarePipe (vona/src/suite-vendor/a-vona/modules/a-web/src/lib/middleware/middlewarePipe.ts:11:46)
+    at async InterceptorBodyRes.execute (vona/src/suite-vendor/a-vona/modules/a-body/src/bean/interceptor.bodyRes.ts:19:21)
+2026-11-12T08:01:51.518Z error [a-error.filter.error] {"code":422,"status":422,"method":"POST","path":"/api/mcp/auth/accessToken/createMine"} [
+  {
+    "code": "unrecognized_keys",
+    "keys": [
+      "authId"
+    ],
+    "path": [],
+    "message": "Unrecognized key: \"authId\""
+  }
+]
+Error: [
+  {
+    "code": "unrecognized_keys",
+    "keys": [
+      "authId"
+    ],
+    "path": [],
+    "message": "Unrecognized key: \"authId\""
+  }
+]
+    at ErrorClass.throw (vona/packages-vona/vona-core/src/lib/bean/resource/error/errorClass.ts:32:21)
+    at app.<computed> [as throw] (vona/packages-vona/vona-core/src/lib/module/errors.ts:23:43)
+    at BeanValidator._validateSchema (vona/src/suite-vendor/a-vona/modules/a-validation/src/bean/bean.validator.ts:70:30)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async BeanValidator.validateSchema (vona/src/suite-vendor/a-vona/modules/a-validation/src/bean/bean.validator.ts:38:20)
+    at async PipeValid.transform (vona/src/suite-vendor/a-vona/modules/a-web/src/bean/pipe.valid.ts:20:20)
+    at async _transformArgument (vona/src/suite-vendor/a-vona/modules/a-web/src/lib/middleware/middlewarePipe.ts:53:17)
+    at async _transformArguments (vona/src/suite-vendor/a-vona/modules/a-web/src/lib/middleware/middlewarePipe.ts:40:23)
+    at async middlewarePipe (vona/src/suite-vendor/a-vona/modules/a-web/src/lib/middleware/middlewarePipe.ts:11:46)
+    at async InterceptorBodyRes.execute (vona/src/suite-vendor/a-vona/modules/a-body/src/bean/interceptor.bodyRes.ts:19:21)
+2026-11-12T08:01:51.522Z error [a-error.filter.error] {"code":422,"status":422,"method":"POST","path":"/api/mcp/auth/accessToken/createMine"} [
+  {
+    "code": "unrecognized_keys",
+    "keys": [
+      "resource"
+    ],
+    "path": [],
+    "message": "Unrecognized key: \"resource\""
+  }
+]
+Error: [
+  {
+    "code": "unrecognized_keys",
+    "keys": [
+      "resource"
+    ],
+    "path": [],
+    "message": "Unrecognized key: \"resource\""
+  }
+]
+    at ErrorClass.throw (vona/packages-vona/vona-core/src/lib/bean/resource/error/errorClass.ts:32:21)
+    at app.<computed> [as throw] (vona/packages-vona/vona-core/src/lib/module/errors.ts:23:43)
+    at BeanValidator._validateSchema (vona/src/suite-vendor/a-vona/modules/a-validation/src/bean/bean.validator.ts:70:30)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async BeanValidator.validateSchema (vona/src/suite-vendor/a-vona/modules/a-validation/src/bean/bean.validator.ts:38:20)
+    at async PipeValid.transform (vona/src/suite-vendor/a-vona/modules/a-web/src/bean/pipe.valid.ts:20:20)
+    at async _transformArgument (vona/src/suite-vendor/a-vona/modules/a-web/src/lib/middleware/middlewarePipe.ts:53:17)
+    at async _transformArguments (vona/src/suite-vendor/a-vona/modules/a-web/src/lib/middleware/middlewarePipe.ts:40:23)
+    at async middlewarePipe (vona/src/suite-vendor/a-vona/modules/a-web/src/lib/middleware/middlewarePipe.ts:11:46)
+    at async InterceptorBodyRes.execute (vona/src/suite-vendor/a-vona/modules/a-body/src/bean/interceptor.bodyRes.ts:19:21)
+2026-11-12T08:01:51.536Z error [a-error.filter.error] {"code":422,"status":422,"method":"POST","path":"/api/mcp/auth/accessToken/createMine"} [
+  {
+    "code": "unrecognized_keys",
+    "keys": [
+      "refreshEnabled"
+    ],
+    "path": [],
+    "message": "Unrecognized key: \"refreshEnabled\""
+  }
+]
+Error: [
+  {
+    "code": "unrecognized_keys",
+    "keys": [
+      "refreshEnabled"
+    ],
+    "path": [],
+    "message": "Unrecognized key: \"refreshEnabled\""
+  }
+]
+    at ErrorClass.throw (vona/packages-vona/vona-core/src/lib/bean/resource/error/errorClass.ts:32:21)
+    at app.<computed> [as throw] (vona/packages-vona/vona-core/src/lib/module/errors.ts:23:43)
+    at BeanValidator._validateSchema (vona/src/suite-vendor/a-vona/modules/a-validation/src/bean/bean.validator.ts:70:30)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async BeanValidator.validateSchema (vona/src/suite-vendor/a-vona/modules/a-validation/src/bean/bean.validator.ts:38:20)
+    at async PipeValid.transform (vona/src/suite-vendor/a-vona/modules/a-web/src/bean/pipe.valid.ts:20:20)
+    at async _transformArgument (vona/src/suite-vendor/a-vona/modules/a-web/src/lib/middleware/middlewarePipe.ts:53:17)
+    at async _transformArguments (vona/src/suite-vendor/a-vona/modules/a-web/src/lib/middleware/middlewarePipe.ts:40:23)
+    at async middlewarePipe (vona/src/suite-vendor/a-vona/modules/a-web/src/lib/middleware/middlewarePipe.ts:11:46)
+    at async InterceptorBodyRes.execute (vona/src/suite-vendor/a-vona/modules/a-body/src/bean/interceptor.bodyRes.ts:19:21)
+2026-11-12T08:01:51.543Z error [a-error.filter.error] {"code":422,"status":422,"method":"POST","path":"/api/mcp/auth/accessToken/createMine"} [
+  {
+    "origin": "string",
+    "code": "invalid_format",
+    "format": "regex",
+    "pattern": "/^mcp:(?:all|read|custom:[\\w-]{1,100})$/",
+    "path": [
+      "scope"
+    ],
+    "message": "Invalid string: must match pattern /^mcp:(?:all|read|custom:[\\w-]{1,100})$/"
+  }
+]
+Error: [
+  {
+    "origin": "string",
+    "code": "invalid_format",
+    "format": "regex",
+    "pattern": "/^mcp:(?:all|read|custom:[\\w-]{1,100})$/",
+    "path": [
+      "scope"
+    ],
+    "message": "Invalid string: must match pattern /^mcp:(?:all|read|custom:[\\w-]{1,100})$/"
+  }
+]
+    at ErrorClass.throw (vona/packages-vona/vona-core/src/lib/bean/resource/error/errorClass.ts:32:21)
+    at app.<computed> [as throw] (vona/packages-vona/vona-core/src/lib/module/errors.ts:23:43)
+    at BeanValidator._validateSchema (vona/src/suite-vendor/a-vona/modules/a-validation/src/bean/bean.validator.ts:70:30)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async BeanValidator.validateSchema (vona/src/suite-vendor/a-vona/modules/a-validation/src/bean/bean.validator.ts:38:20)
+    at async PipeValid.transform (vona/src/suite-vendor/a-vona/modules/a-web/src/bean/pipe.valid.ts:20:20)
+    at async _transformArgument (vona/src/suite-vendor/a-vona/modules/a-web/src/lib/middleware/middlewarePipe.ts:53:17)
+    at async _transformArguments (vona/src/suite-vendor/a-vona/modules/a-web/src/lib/middleware/middlewarePipe.ts:40:23)
+    at async middlewarePipe (vona/src/suite-vendor/a-vona/modules/a-web/src/lib/middleware/middlewarePipe.ts:11:46)
+    at async InterceptorBodyRes.execute (vona/src/suite-vendor/a-vona/modules/a-body/src/bean/interceptor.bodyRes.ts:19:21)
+2026-11-12T08:01:51.549Z error [a-error.filter.error] {"code":422,"status":422,"method":"GET","path":"/api/mcp/auth/accessToken/mine"} [
+  {
+    "origin": "number",
+    "code": "too_big",
+    "maximum": 100,
+    "inclusive": true,
+    "path": [
+      "pageSize"
+    ],
+    "message": "Too big: expected number to be <=100"
+  }
+]
+Error: [
+  {
+    "origin": "number",
+    "code": "too_big",
+    "maximum": 100,
+    "inclusive": true,
+    "path": [
+      "pageSize"
+    ],
+    "message": "Too big: expected number to be <=100"
+  }
+]
+    at ErrorClass.throw (vona/packages-vona/vona-core/src/lib/bean/resource/error/errorClass.ts:32:21)
+    at app.<computed> [as throw] (vona/packages-vona/vona-core/src/lib/module/errors.ts:23:43)
+    at BeanValidator._validateSchema (vona/src/suite-vendor/a-vona/modules/a-validation/src/bean/bean.validator.ts:70:30)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async BeanValidator.validateSchema (vona/src/suite-vendor/a-vona/modules/a-validation/src/bean/bean.validator.ts:38:20)
+    at async PipeValid.transform (vona/src/suite-vendor/a-vona/modules/a-web/src/bean/pipe.valid.ts:20:20)
+    at async _transformArgument (vona/src/suite-vendor/a-vona/modules/a-web/src/lib/middleware/middlewarePipe.ts:53:17)
+    at async _transformArguments (vona/src/suite-vendor/a-vona/modules/a-web/src/lib/middleware/middlewarePipe.ts:40:23)
+    at async middlewarePipe (vona/src/suite-vendor/a-vona/modules/a-web/src/lib/middleware/middlewarePipe.ts:11:46)
+    at async InterceptorBodyRes.execute (vona/src/suite-vendor/a-vona/modules/a-body/src/bean/interceptor.bodyRes.ts:19:21)
+2026-11-12T08:01:51.556Z error [a-error.filter.error] {"code":422,"status":422,"method":"GET","path":"/api/mcp/auth/accessToken/mine"} [
+  {
+    "origin": "number",
+    "code": "too_small",
+    "minimum": 1,
+    "inclusive": true,
+    "path": [
+      "pageNo"
+    ],
+    "message": "Too small: expected number to be >=1"
+  }
+]
+Error: [
+  {
+    "origin": "number",
+    "code": "too_small",
+    "minimum": 1,
+    "inclusive": true,
+    "path": [
+      "pageNo"
+    ],
+    "message": "Too small: expected number to be >=1"
+  }
+]
+    at ErrorClass.throw (vona/packages-vona/vona-core/src/lib/bean/resource/error/errorClass.ts:32:21)
+    at app.<computed> [as throw] (vona/packages-vona/vona-core/src/lib/module/errors.ts:23:43)
+    at BeanValidator._validateSchema (vona/src/suite-vendor/a-vona/modules/a-validation/src/bean/bean.validator.ts:70:30)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async BeanValidator.validateSchema (vona/src/suite-vendor/a-vona/modules/a-validation/src/bean/bean.validator.ts:38:20)
+    at async PipeValid.transform (vona/src/suite-vendor/a-vona/modules/a-web/src/bean/pipe.valid.ts:20:20)
+    at async _transformArgument (vona/src/suite-vendor/a-vona/modules/a-web/src/lib/middleware/middlewarePipe.ts:53:17)
+    at async _transformArguments (vona/src/suite-vendor/a-vona/modules/a-web/src/lib/middleware/middlewarePipe.ts:40:23)
+    at async middlewarePipe (vona/src/suite-vendor/a-vona/modules/a-web/src/lib/middleware/middlewarePipe.ts:11:46)
+    at async InterceptorBodyRes.execute (vona/src/suite-vendor/a-vona/modules/a-body/src/bean/interceptor.bodyRes.ts:19:21)
+2026-11-12T08:01:51.580Z error [a-error.filter.error] {"code":422,"status":422,"method":"GET","path":"/api/mcp/auth/accessToken/mine"} [
+  {
+    "code": "unrecognized_keys",
+    "keys": [
+      "userId"
+    ],
+    "path": [],
+    "message": "Unrecognized key: \"userId\""
+  }
+]
+Error: [
+  {
+    "code": "unrecognized_keys",
+    "keys": [
+      "userId"
+    ],
+    "path": [],
+    "message": "Unrecognized key: \"userId\""
+  }
+]
+    at ErrorClass.throw (vona/packages-vona/vona-core/src/lib/bean/resource/error/errorClass.ts:32:21)
+    at app.<computed> [as throw] (vona/packages-vona/vona-core/src/lib/module/errors.ts:23:43)
+    at BeanValidator._validateSchema (vona/src/suite-vendor/a-vona/modules/a-validation/src/bean/bean.validator.ts:70:30)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async BeanValidator.validateSchema (vona/src/suite-vendor/a-vona/modules/a-validation/src/bean/bean.validator.ts:38:20)
+    at async PipeValid.transform (vona/src/suite-vendor/a-vona/modules/a-web/src/bean/pipe.valid.ts:20:20)
+    at async _transformArgument (vona/src/suite-vendor/a-vona/modules/a-web/src/lib/middleware/middlewarePipe.ts:53:17)
+    at async _transformArguments (vona/src/suite-vendor/a-vona/modules/a-web/src/lib/middleware/middlewarePipe.ts:40:23)
+    at async middlewarePipe (vona/src/suite-vendor/a-vona/modules/a-web/src/lib/middleware/middlewarePipe.ts:11:46)
+    at async InterceptorBodyRes.execute (vona/src/suite-vendor/a-vona/modules/a-body/src/bean/interceptor.bodyRes.ts:19:21)
+2026-11-12T08:01:51.596Z error [a-error.filter.error] {"code":422,"status":422,"method":"GET","path":"/api/mcp/auth/accessToken/mine"} [
+  {
+    "code": "unrecognized_keys",
+    "keys": [
+      "columns"
+    ],
+    "path": [],
+    "message": "Unrecognized key: \"columns\""
+  }
+]
+Error: [
+  {
+    "code": "unrecognized_keys",
+    "keys": [
+      "columns"
+    ],
+    "path": [],
+    "message": "Unrecognized key: \"columns\""
+  }
+]
+    at ErrorClass.throw (vona/packages-vona/vona-core/src/lib/bean/resource/error/errorClass.ts:32:21)
+    at app.<computed> [as throw] (vona/packages-vona/vona-core/src/lib/module/errors.ts:23:43)
+    at BeanValidator._validateSchema (vona/src/suite-vendor/a-vona/modules/a-validation/src/bean/bean.validator.ts:70:30)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async BeanValidator.validateSchema (vona/src/suite-vendor/a-vona/modules/a-validation/src/bean/bean.validator.ts:38:20)
+    at async PipeValid.transform (vona/src/suite-vendor/a-vona/modules/a-web/src/bean/pipe.valid.ts:20:20)
+    at async _transformArgument (vona/src/suite-vendor/a-vona/modules/a-web/src/lib/middleware/middlewarePipe.ts:53:17)
+    at async _transformArguments (vona/src/suite-vendor/a-vona/modules/a-web/src/lib/middleware/middlewarePipe.ts:40:23)
+    at async middlewarePipe (vona/src/suite-vendor/a-vona/modules/a-web/src/lib/middleware/middlewarePipe.ts:11:46)
+    at async InterceptorBodyRes.execute (vona/src/suite-vendor/a-vona/modules/a-body/src/bean/interceptor.bodyRes.ts:19:21)
+2026-11-12T08:01:51.604Z error [a-error.filter.error] {"code":422,"status":422,"method":"GET","path":"/api/mcp/auth/accessToken/mine"} [
+  {
+    "code": "unrecognized_keys",
+    "keys": [
+      "where"
+    ],
+    "path": [],
+    "message": "Unrecognized key: \"where\""
+  }
+]
+Error: [
+  {
+    "code": "unrecognized_keys",
+    "keys": [
+      "where"
+    ],
+    "path": [],
+    "message": "Unrecognized key: \"where\""
+  }
+]
+    at ErrorClass.throw (vona/packages-vona/vona-core/src/lib/bean/resource/error/errorClass.ts:32:21)
+    at app.<computed> [as throw] (vona/packages-vona/vona-core/src/lib/module/errors.ts:23:43)
+    at BeanValidator._validateSchema (vona/src/suite-vendor/a-vona/modules/a-validation/src/bean/bean.validator.ts:70:30)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async BeanValidator.validateSchema (vona/src/suite-vendor/a-vona/modules/a-validation/src/bean/bean.validator.ts:38:20)
+    at async PipeValid.transform (vona/src/suite-vendor/a-vona/modules/a-web/src/bean/pipe.valid.ts:20:20)
+    at async _transformArgument (vona/src/suite-vendor/a-vona/modules/a-web/src/lib/middleware/middlewarePipe.ts:53:17)
+    at async _transformArguments (vona/src/suite-vendor/a-vona/modules/a-web/src/lib/middleware/middlewarePipe.ts:40:23)
+    at async middlewarePipe (vona/src/suite-vendor/a-vona/modules/a-web/src/lib/middleware/middlewarePipe.ts:11:46)
+    at async InterceptorBodyRes.execute (vona/src/suite-vendor/a-vona/modules/a-body/src/bean/interceptor.bodyRes.ts:19:21)
+  ✔ authenticates ordinary users, accepts only strict create/list inputs and returns safe owned pages (1490.617166ms)
+  ✔ keeps personal-token and OAuth-grant management disjoint while accepting kindless OAuth JWTs (206.26525ms)
+  ✔ requires the bound resource and instance and invalidates lookup immediately on owner deletion (107.396666ms)
+  ✔ retains expired and revoked personal rows in safe management lists after cleanupExpired (108.137959ms)
+  ✔ rejects personal refresh and reissue even with a refresh-purpose signature without mutating the row (142.695208ms)
+  ✔ captures an owned custom snapshot, enforces exact tool access and invalidates tokens on rename or deletion (492.560208ms)
+✔ accessToken.test.ts (2643.570625ms)
+▶ businessHttp.test.ts
+  ✔ owns ingress and close exactly once and shares modern/legacy discovery on the managed listener (728.931458ms)
+  ✔ resolves compact nonquery contracts from native metadata and executes unchanged Actions over both transports (2150.367375ms)
+  ✔ makes unsupported, unannotated and unapproved sibling names uncallable under both scopes and transports (2039.328458ms)
+  ✔ denies unknown modes before any downstream application or request access (0.24825ms)
+  ✔ admits production to authentication while retaining readiness and authority denials (0.493875ms)
+  ✔ discovers only currently authorized student Actions without business work and reauthorizes calls (9619.530125ms)
+  ✔ enforces a personal custom scope exact subset through consent, Action checks and edit/delete invalidation (3328.253334ms)
+  ✔ creates one owned student aggregate only with all scope and independent current create authority (1508.792458ms)
+  ✔ creates a basic-fields-only student, updates its root and independently authorizes serialized MCP view (268.350459ms)
+  ✔ updates an owned aggregate through guarded PATCH and authorized view without crossing root or child ownership (3295.799167ms)
+  ✔ soft-deletes one owned aggregate through guarded DELETE with independent current delete authority (1820.623292ms)
+  ✔ guards student reads and independent select/summary with current roles across modern/legacy read scopes and instance boundaries (12420.909875ms)
+  ✔ accepts Inspector registration metadata and ignores unknown authority hints (4.414542ms)
+  ✔ enforces the direct DCR HTTP boundary and rejects malformed registration requests (18.646166ms)
+  ✔ refreshes an explicitly opted-in OAuth grant over HTTP and retains read access after wrong-client refresh attempts (246.118ms)
+  ✔ uses only the automatically resolved canonical instance and rejects conflicting selectors before dispatch (103.4175ms)
+2026-11-12T08:02:30.457Z error [a-error.filter.error] {"bytesParsed":0,"code":"HPE_INVALID_EOF_STATE","reason":"Invalid EOF state","headerSent":true,"method":"POST","path":"/mcp"} Parse Error
+Error: Parse Error
+    at socketOnEnd (node:_http_server:844:22)
+    at Socket.emit (node:events:520:35)
+    at endReadableNT (node:internal/streams/readable:1701:12)
+    at process.processTicksAndRejections (node:internal/process/task_queues:90:21)
+  ✔ requires canonical backend authority and bearer while retaining protocol guards and cancellation ownership (122.899208ms)
+  ✔ retains signed and opaque MCP provenance in guarded Actions and rejects ordinary credential conversion (185.160458ms)
+  ✔ publishes direct resource metadata and rejects missing, JWT, revoked and expired tokens without business dispatch (257.010083ms)
+2026-11-12T08:02:30.957Z error [a-error.filter.error] {"code":401,"status":401,"method":"POST","path":"/mcp/auth/decision"} Unauthorized
+Error: Unauthorized
+    at ErrorClass.throw (vona/packages-vona/vona-core/src/lib/bean/resource/error/errorClass.ts:32:21)
+    at app.<computed> [as throw] (vona/packages-vona/vona-core/src/lib/module/errors.ts:23:43)
+    at GuardPassport.execute (vona/src/suite-vendor/a-vona/modules/a-user/src/bean/guard.passport.ts:36:34)
+    at async middlewareGuard (vona/src/suite-vendor/a-vona/modules/a-web/src/lib/middleware/middlewareGuard.ts:7:20)
+    at async MiddlewareSsrPassport.execute (vona/src/suite-vendor/a-cabloy/modules/a-ssr/src/bean/middleware.ssrPassport.ts:21:20)
+    at async routeStartMiddleware (vona/src/suite-vendor/a-vona/modules/a-web/src/bean/bean.router.ts:154:17)
+    at async vona/node_modules/.pnpm/@cabloy+koa-static-cache@6.0.1_supports-color@7.2.0/node_modules/@cabloy/koa-static-cache/index.js:46:63
+    at async vona/src/suite-vendor/a-vona/modules/a-static/src/bean/middlewareSystem.static.ts:93:17
+    at async xframe (vona/src/suite-vendor/a-vona/modules/a-security/src/lib/middlewares/xframe.ts:4:9)
+    at async xssProtection (vona/src/suite-vendor/a-vona/modules/a-security/src/lib/middlewares/xssProtection.ts:4:9)
+2026-11-12T08:02:30.963Z error [a-error.filter.error] {"code":403,"status":403,"method":"POST","path":"/mcp/auth/decision"} Forbidden
+Error: Forbidden
+    at ErrorClass.throw (vona/packages-vona/vona-core/src/lib/bean/resource/error/errorClass.ts:32:21)
+    at app.<computed> [as throw] (vona/packages-vona/vona-core/src/lib/module/errors.ts:23:43)
+    at MiddlewareSystemAuthorization.execute (vona/src/suite-vendor/cabloy-mcp/modules/mcp-auth/src/bean/middlewareSystem.authorization.ts:123:71)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async BeanExecutor._newCtxInnerStep2 (vona/src/suite-vendor/a-vona/modules/a-executor/src/bean/bean.executor.ts:243:19)
+    at async execute (vona/src/suite-vendor/a-vona/modules/a-executor/src/bean/bean.executor.ts:200:24)
+    at async vona/packages-vona/vona-core/src/lib/core/asyncLocalStorage.ts:36:24
+    at async BeanExecutor._newCtxInnerStep1 (vona/src/suite-vendor/a-vona/modules/a-executor/src/bean/bean.executor.ts:202:111)
+2026-11-12T08:02:30.969Z error [a-error.filter.error] {"code":403,"status":403,"method":"POST","path":"/mcp/auth/decision"} Forbidden
+Error: Forbidden
+    at ErrorClass.throw (vona/packages-vona/vona-core/src/lib/bean/resource/error/errorClass.ts:32:21)
+    at app.<computed> [as throw] (vona/packages-vona/vona-core/src/lib/module/errors.ts:23:43)
+    at MiddlewareSystemAuthorization.execute (vona/src/suite-vendor/cabloy-mcp/modules/mcp-auth/src/bean/middlewareSystem.authorization.ts:123:71)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async BeanExecutor._newCtxInnerStep2 (vona/src/suite-vendor/a-vona/modules/a-executor/src/bean/bean.executor.ts:243:19)
+    at async execute (vona/src/suite-vendor/a-vona/modules/a-executor/src/bean/bean.executor.ts:200:24)
+    at async vona/packages-vona/vona-core/src/lib/core/asyncLocalStorage.ts:36:24
+    at async BeanExecutor._newCtxInnerStep1 (vona/src/suite-vendor/a-vona/modules/a-executor/src/bean/bean.executor.ts:202:111)
+  ✔ rejects anonymous, cross-origin, missing-origin and GET decisions without changing pending state (20.374667ms)
+  ✔ drains actual approved-Action work without closing the shared listener (87.140208ms)
+✔ businessHttp.test.ts (38365.579625ms)
+✔ ---done--- (0.025792ms)
+App shutdown gracefully: 12128
+ℹ tests 56
+ℹ suites 5
+ℹ pass 56
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 48057.754625

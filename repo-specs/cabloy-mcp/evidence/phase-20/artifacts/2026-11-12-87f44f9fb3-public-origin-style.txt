@@ -1,0 +1,10 @@
+./node_modules/.bin/oxfmt --check repo-docs/backend/image-guide.md repo-docs/backend/runtime-and-flavors.md repo-docs/mcp/mcp-browser-authorization.md repo-docs/mcp/mcp-commerce-local.md vona/packages-vona/vona-core/src/lib/utils/util.ts vona/src/suite-vendor/a-test/modules/test-mcp/test/cabloy-mcp/businessHttp.test.ts vona/src/suite-vendor/a-test/modules/test-mcp/test/mcp-auth/authorization.test.ts vona/src/suite-vendor/a-test/modules/test-vona/test/application.test.ts vona/src/suite-vendor/cabloy-mcp/modules/cabloy-mcp/src/bean/middlewareSystem.resourceMetadata.ts vona/src/suite-vendor/cabloy-mcp/modules/cabloy-mcp/src/lib/mcpTransport.ts vona/src/suite-vendor/cabloy-mcp/modules/cabloy-mcp/src/lib/resourceServer.ts vona/src/suite-vendor/cabloy-mcp/modules/mcp-auth/src/lib/authorization.ts
+Checking formatting...
+
+All matched files use the correct format.
+Finished in 39ms on 12 files using 12 threads.
+Exit 0
+./node_modules/.bin/oxlint --disable-nested-config vona/packages-vona/vona-core/src/lib/utils/util.ts vona/src/suite-vendor/a-test/modules/test-mcp/test/cabloy-mcp/businessHttp.test.ts vona/src/suite-vendor/a-test/modules/test-mcp/test/mcp-auth/authorization.test.ts vona/src/suite-vendor/a-test/modules/test-vona/test/application.test.ts vona/src/suite-vendor/cabloy-mcp/modules/cabloy-mcp/src/bean/middlewareSystem.resourceMetadata.ts vona/src/suite-vendor/cabloy-mcp/modules/cabloy-mcp/src/lib/mcpTransport.ts vona/src/suite-vendor/cabloy-mcp/modules/cabloy-mcp/src/lib/resourceServer.ts vona/src/suite-vendor/cabloy-mcp/modules/mcp-auth/src/lib/authorization.ts
+Exit 0
+git diff --check
+Exit 0

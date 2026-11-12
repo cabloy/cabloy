@@ -13,6 +13,7 @@ import assert from 'node:assert/strict';
 import { createHash, randomBytes, randomUUID } from 'node:crypto';
 import { before, describe, it } from 'node:test';
 import { setTimeout } from 'node:timers/promises';
+import { AppUtil } from 'vona';
 import { acquireTestLock, app } from 'vona-mock';
 import {
   MiddlewareSystemAuthorization,
@@ -235,9 +236,7 @@ describe('authorization.test.ts', { concurrency: false }, () => {
       false,
     );
 
-    const { protocol, host } = app.config.server.serve;
-    const port = app.meta.env.SERVER_LISTEN_PORT;
-    const origin = `${protocol || 'http'}://${host || (port ? `localhost:${port}` : 'localhost')}`;
+    const origin = app.util.getAbsoluteUrl();
     assert.equal(getMcpIssuer(app), `${origin}/mcp`);
     assert.equal(resource.resource, getMcpIssuer(app));
     const url = new URL(resource.resource);
@@ -269,6 +268,39 @@ describe('authorization.test.ts', { concurrency: false }, () => {
       },
       { instanceName: 'shareTest' as any },
     );
+  });
+
+  it('shares request-origin fallback while retaining MCP origin validation', async () => {
+    const ctx = app.createAnonymousContext({
+      headers: { host: '127.0.0.1:7102' },
+      method: 'POST',
+      url: '/mcp',
+      socket: { encrypted: false },
+    });
+    await app.ctxStorage.run(ctx, () => {
+      assert.equal(getMcpIssuer(app), `${app.util.getAbsoluteUrl()}/mcp`);
+      assert.equal(getMcpIssuer(app), 'http://127.0.0.1:7102/mcp');
+    });
+    for (const [protocol, host] of [
+      ['http', 'mcp.example.test'],
+      ['https', 'MCP.example.test'],
+      ['https', 'mcp.example.test/path'],
+      ['https', 'user@mcp.example.test'],
+      ['https', 'mcp.example.test?query=1'],
+      ['https', 'mcp.example.test#fragment'],
+    ]) {
+      const application = {
+        meta: { isProd: true },
+        config: {
+          server: { serve: { protocol, host } },
+          modules: { 'mcp-auth': { ...defaultConfig(app), allowLoopbackHttp: false } },
+        },
+      } as unknown as VonaApplication;
+      const util = new AppUtil();
+      Object.defineProperty(util, 'app', { value: application });
+      Object.defineProperty(application, 'util', { value: util });
+      assert.throws(() => getMcpIssuer(application), OAuthError);
+    }
   });
 
   it('maps the SSR site environment value into module config', () => {

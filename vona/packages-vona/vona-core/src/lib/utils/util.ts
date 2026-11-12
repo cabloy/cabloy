@@ -61,12 +61,22 @@ export class AppUtil extends BeanSimple {
 
   get protocol() {
     const config = this.ctx ? this.ctx.config : this.app.config;
-    return config.server.serve.protocol || this.ctx?.protocol || 'http';
+    const protocol = config.server.serve.protocol;
+    if (this.app.meta.isProd && !protocol) {
+      throw new Error(
+        'Configure config.server.serve.protocol (SERVER_SERVE_PROTOCOL) in production',
+      );
+    }
+    return protocol || this.ctx?.protocol || 'http';
   }
 
   get host() {
     const config = this.ctx ? this.ctx.config : this.app.config;
-    let host = config.server.serve.host || this.ctx?.host;
+    let host = config.server.serve.host;
+    if (this.app.meta.isProd && !host) {
+      throw new Error('Configure config.server.serve.host (SERVER_SERVE_HOST) in production');
+    }
+    host ||= this.ctx?.host;
     if (!host) {
       const port = this.app.meta.env.SERVER_LISTEN_PORT;
       host = port ? `localhost:${port}` : 'localhost';
