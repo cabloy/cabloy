@@ -58,6 +58,14 @@ Before running, check if the working tree is clean (the script will also check).
 
 If a step fails partway through, the remaining steps can be run individually using the `--changelog-only`, `--publish-only`, or `--release-only` flags.
 
+### Publication Completion
+
+- Treat a successful `npm publish` exit as publication acceptance, then finish the remaining requested release steps.
+- npm registry metadata, tarballs, and dist-tags may take several minutes to become visible. Do not add post-publication polling, `npm view` checks, tarball availability checks, or waits for `latest` to advance.
+- Do not mark the release incomplete or keep a verification task open solely because registry visibility is delayed. Do not republish because an immediate registry query returns `404` or an older dist-tag.
+- Investigate publication errors when the publish command fails. Verify installation availability separately only when the user explicitly requests it.
+- Report successful publication without claiming separately verified installation availability; mention propagation delay briefly only when relevant.
+
 ### Environment Requirements
 
 - `ANTHROPIC_AUTH_TOKEN` — Required for AI changelog generation

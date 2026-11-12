@@ -319,7 +319,7 @@
     {
       "adapter": "claude",
       "category": "command",
-      "sha256": "fc19d8c7b20da465f0a3a399836a9032bd31c7b126fa925dd2e0add9ea6eb794",
+      "sha256": "bfe0ed151ce96a3bc4a24b5d9f57ac0f0a2bc39300f3d7dfda491b82861724fa",
       "source": "commands/release.md",
       "target": ".claude/commands/release.md"
     },
