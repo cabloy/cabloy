@@ -6,11 +6,23 @@ export class StyleLayoutAdmin extends BeanStyleBase {
   cTab: string;
   cHeaderActions: string;
   cHeader: string;
+  cHeaderTabs: string;
   cTabItems: string;
   cTabItemsMenu: string;
 
   protected async __init__() {
+    this.cHeaderTabs = this.$style({
+      height: '36px',
+      minHeight: '36px',
+      paddingBlock: 0,
+      $nest: {
+        '& .tab': { height: '36px' },
+      },
+    });
     this.cHeader = this.$style({
+      height: '56px',
+      minHeight: '56px',
+      paddingBlock: 0,
       $nest: {
         '& .header-title': { minWidth: 0 },
         '&:has(.tab-items) .header-title': {

@@ -820,6 +820,8 @@ test(
           for (const label of await labels.all()) await expect(label).toBeHidden();
         }
         const before = await readGeometry();
+        expect(before.boxes[0]?.height).toBe(56);
+        expect(before.boxes[1]?.height).toBe(36);
         expect(before.shape).toEqual({
           wrappers: 1,
           panels: 1,

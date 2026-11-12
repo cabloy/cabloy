@@ -77,7 +77,9 @@ export class RenderHeader extends BeanRenderBase {
             </div>
           </div>
         </div>
-        <div class="navbar bg-base-300 w-full">{this.$$r.$$renderTabs.renderTabs()}</div>
+        <div class={classes('navbar bg-base-300 w-full', this.cHeaderTabs)}>
+          {this.$$r.$$renderTabs.renderTabs()}
+        </div>
       </>
     );
   }
