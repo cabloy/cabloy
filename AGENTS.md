@@ -49,6 +49,7 @@ Before inventing a custom implementation path:
 ## AI development rules
 
 - Prefer CLI-backed workflows over manual scaffolding whenever Vona or Zova already provides a generator, refactor, metadata, or verification command.
+- Declare business-module package and lifecycle dependencies at the owning module or suite boundary (`package.json`, `vonaModule.dependencies`, or `zovaModule.dependencies`) and register the module in the active application composition. Do not add ordinary business-module closure entries to workspace `vona/package.original.json` or `zova/package.original.json`, and never hand-edit generated workspace manifests, lockfiles, or `.zova-rest` packages; run `npm run deps:vona` and/or `npm run deps:zova` to regenerate the working dependency closure.
 - The Cabloy contract-loop model applies to both Cabloy Basic and Cabloy Start; detect the edition to choose commands and output paths, not to redefine the workflow model.
 - Treat contract-loop work as one of four branches: forward chain, reverse chain, consumer drift, or local dependency drift.
 - For the forward chain, change backend contract truth first and regenerate frontend consumers rather than hand-patching them.

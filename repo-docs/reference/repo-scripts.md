@@ -16,6 +16,20 @@ Run root `npm run init` deliberately after a fresh clone, recovery of generated 
 
 For Zova scripts-only changes, author `zova/package.original.json` and synchronize only its `scripts` field into the existing generated manifest, preserving the dependency closure; no initialization or reinstall is needed for that synchronization. The canonical [new-flavor script procedure](/fullstack/ssr-site-and-flavor-setup#_3-add-durable-scripts-and-root-wrappers) includes root/nested JSON examples and the synchronization command. A new suite is not automatically part of `build:zova:all`; default shipped-artifact membership must be explicit.
 
+### Business-module dependency boundary
+
+Do not use a workspace `package.original.json` as the registration point for an ordinary business module. Keep the dependency declarations at the owning module or suite boundary, then let the dependency tools project them into the generated workspace closure:
+
+| Concern                     | Durable source                                                                 | What to do                                                                                                                                                      |
+| --------------------------- | ------------------------------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Package availability        | The owning module or suite `package.json`                                      | Declare package dependencies needed by that module or suite.                                                                                                    |
+| Module lifecycle dependency | `vonaModule.dependencies` or `zovaModule.dependencies`                         | Declare required module presence, ordering, or minimum compatible versions.                                                                                     |
+| Application composition     | The active Vona/Zova suite or application metadata                             | Register the module in the application that should load it.                                                                                                     |
+| Workspace bootstrap         | `vona/package.original.json` or `zova/package.original.json`                   | Maintain only genuine workspace-level bootstrap dependencies and scripts; do not add business-module closure entries here merely to make a module discoverable. |
+| Generated closure           | `vona/package.json`, `zova/package.json`, lockfiles, and `.zova-rest` packages | Treat as tool output. Do not hand-edit these files.                                                                                                             |
+
+After changing module or suite package metadata, composition, or module dependencies, run the relevant `npm run deps:zova` and/or `npm run deps:vona` command and verify module discovery. When a frontend change is handed back to Vona, build every affected paired SSR/REST flavor before `npm run deps:vona`; a REST-only build is not sufficient. See [Vona Module Dependencies](/backend/module-dependencies), [Modules and Suites](/frontend/modules-and-suites), and [Suites and Modules](/fullstack/suites-and-modules) for the ownership rules.
+
 ## Cabloy Basic entrypoints
 
 Cabloy Basic exposes these shared root scripts:
