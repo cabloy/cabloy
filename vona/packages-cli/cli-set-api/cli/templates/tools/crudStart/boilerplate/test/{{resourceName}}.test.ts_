@@ -38,27 +38,29 @@ describe('<%=argv.resourceName%>.test.ts', { concurrency: false }, () => {
       let <%=argv.resourceName%>Id: Entity<%=argv.resourceNameCapitalize%>['id'] | undefined;
       try {
         // create
-        <%=argv.resourceName%>Id = await app.bean.executor.performAction('post', '<%=argv.moduleActionPathRaw%>', { body: data });
+        <%=argv.resourceName%>Id = await app.bean.executor.performAction('post', '<%=argv.moduleActionPathRaw%>', { innerAccess: false, body: data });
         assert.equal(!!<%=argv.resourceName%>Id, true);
         // findMany
         const selectRes: Dto<%=argv.resourceNameCapitalize%>SelectRes = await app.bean.executor.performAction('get', '<%=argv.moduleActionPathRaw%>', {
+          innerAccess: false,
           query: { where: JSON.stringify({ field: 'id', op: 'eq', value: $makeSchema(v.tableIdentity()).parse(<%=argv.resourceName%>Id) }) },
         });
         assert.equal(selectRes.list.findIndex(item => item.name === data.name) > -1, true);
         // update
         const updateRes = await app.bean.executor.performAction('patch', '<%=argv.moduleActionPathRaw%>/:id', {
+          innerAccess: false,
           params: { id: <%=argv.resourceName%>Id },
           body: dataUpdate,
         });
         assert.equal(updateRes, null);
         // findOne
-        let <%=argv.resourceName%>: Entity<%=argv.resourceNameCapitalize%> = await app.bean.executor.performAction('get', '<%=argv.moduleActionPathRaw%>/:id', { params: { id: <%=argv.resourceName%>Id } });
+        let <%=argv.resourceName%>: Entity<%=argv.resourceNameCapitalize%> = await app.bean.executor.performAction('get', '<%=argv.moduleActionPathRaw%>/:id', { innerAccess: false, params: { id: <%=argv.resourceName%>Id } });
         assert.equal(<%=argv.resourceName%>.name, dataUpdate.name);
         // delete
-        const deleteRes = await app.bean.executor.performAction('delete', '<%=argv.moduleActionPathRaw%>/:id', { params: { id: <%=argv.resourceName%>.id } });
+        const deleteRes = await app.bean.executor.performAction('delete', '<%=argv.moduleActionPathRaw%>/:id', { innerAccess: false, params: { id: <%=argv.resourceName%>.id } });
         assert.equal(deleteRes, null);
         // findOne
-        <%=argv.resourceName%> = await app.bean.executor.performAction('get', '<%=argv.moduleActionPathRaw%>/:id', { params: { id: <%=argv.resourceName%>.id } });
+        <%=argv.resourceName%> = await app.bean.executor.performAction('get', '<%=argv.moduleActionPathRaw%>/:id', { innerAccess: false, params: { id: <%=argv.resourceName%>.id } });
         assert.equal(<%=argv.resourceName%>, undefined);
       } finally {
         if (<%=argv.resourceName%>Id) {

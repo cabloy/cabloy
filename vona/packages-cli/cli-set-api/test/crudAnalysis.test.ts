@@ -102,6 +102,35 @@ async function read(root: string, file: string) {
   return await fs.readFile(path.join(root, file), 'utf8');
 }
 
+function assertExternalActionCalls(source: string, fileName: string) {
+  const file = ts.createSourceFile(fileName, source, ts.ScriptTarget.Latest, true);
+  let calls = 0;
+  function visit(node: ts.Node) {
+    if (
+      ts.isCallExpression(node) &&
+      ts.isPropertyAccessExpression(node.expression) &&
+      node.expression.name.text === 'performAction'
+    ) {
+      calls++;
+      const options = node.arguments[2];
+      assert.ok(options && ts.isObjectLiteralExpression(options), fileName);
+      assert.ok(
+        options.properties.some(
+          property =>
+            ts.isPropertyAssignment(property) &&
+            ts.isIdentifier(property.name) &&
+            property.name.text === 'innerAccess' &&
+            property.initializer.kind === ts.SyntaxKind.FalseKeyword,
+        ),
+        `${fileName}: performAction must use innerAccess: false`,
+      );
+    }
+    ts.forEachChild(node, visit);
+  }
+  visit(file);
+  assert.ok(calls > 0, `${fileName}: expected performAction calls`);
+}
+
 describe('default CRUD analysis generation', { concurrency: false }, () => {
   it('removes analysis flags from command options and usage without adding questions', () => {
     for (const definition of [crud, basic, start]) {
@@ -320,6 +349,7 @@ describe('default CRUD analysis generation', { concurrency: false }, () => {
           assert.match(source, /RecordAggregate/);
         }
         const analysisTest = await read(moduleRoot, 'test/recordAnalysis.test.ts');
+        assertExternalActionCalls(analysisTest, 'test/recordAnalysis.test.ts');
         assert.doesNotMatch(analysisTest, /normalizeRecordCount|normalizes only/);
         assert.match(
           analysisTest,
@@ -390,6 +420,7 @@ describe('default CRUD analysis generation', { concurrency: false }, () => {
           assert.match(actionTest, /group: `\$\{controllerBeanFullName\}#select`/);
           assert.match(actionTest, /aggregate: `\$\{controllerBeanFullName\}#select`/);
         } else {
+          assertExternalActionCalls(actionTest, 'test/record.test.ts');
           assert.match(
             actionTest,
             /const actions = \['create', 'select', 'view', 'update', 'delete', 'group', 'aggregate'\]/,
