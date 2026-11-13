@@ -118,21 +118,28 @@ export class ControllerLayoutMine extends BeanControllerBase {
     }
   }
 
+  private _getMcpMenuGroup() {
+    if (!this.$passport.roles?.some(role => role.mcpAccess === true)) return;
+    return {
+      title: 'MCP',
+      items: [
+        { path: '/cabloy/mcp/scopes', title: this.scope.locale.McpScopes() },
+        { path: '/cabloy/mcp/authorizations', title: this.scope.locale.McpAuthorizations() },
+        { path: '/cabloy/mcp/accessTokens', title: this.scope.locale.McpAccessTokens() },
+      ],
+    };
+  }
+
   get menuGroups() {
-    return [
+    const mcpMenuGroup = this._getMcpMenuGroup();
+    const groups = [
       {
         title: undefined,
         items: [{ path: '/home/user/account', title: this.scope.locale['Account Settings']() }],
       },
-      {
-        title: 'MCP',
-        items: [
-          { path: '/cabloy/mcp/scopes', title: this.scope.locale.McpScopes() },
-          { path: '/cabloy/mcp/authorizations', title: this.scope.locale.McpAuthorizations() },
-          { path: '/cabloy/mcp/accessTokens', title: this.scope.locale.McpAccessTokens() },
-        ],
-      },
-    ]
+      ...(mcpMenuGroup ? [mcpMenuGroup] : []),
+    ];
+    return groups
       .map(group => ({
         ...group,
         items: group.items
