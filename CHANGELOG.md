@@ -1,8 +1,16 @@
 # Changelog
 
+## 5.1.282
+
+### Features
+
+- Add MCP access for home users.
+- Add MCP access for system users.
+
 ## 5.1.281
 
 ### Improvements
+
 - Enhance the Mine layout.
 
 ## 5.1.280
