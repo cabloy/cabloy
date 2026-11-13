@@ -1,0 +1,17 @@
+export default {
+  'Home': '首页',
+  'PersonalCenter': '个人中心',
+  'Account Settings': '账户设置',
+  'McpScopes': 'MCP权限范围',
+  'McpAuthorizations': 'MCP授权',
+  'McpAccessTokens': 'MCP访问令牌',
+  'Language': '语言',
+  'ColorMode': '明暗模式',
+  'Account': '账户',
+  'Logout': '退出登录',
+  'Login': '登录',
+  'NotLoggedIn': '未登录',
+  'ThemeLight': '亮色',
+  'ThemeDark': '暗色',
+  'ThemeAuto': '自动',
+};

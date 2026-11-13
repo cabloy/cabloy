@@ -633,8 +633,48 @@ test(
       expect(documentResponse?.url()).toContain(accountPath);
       const html = await documentResponse!.text();
       expect(html).toContain('Account Settings');
+      expect(html).toContain('data-testid="layout-mine"');
+      expect(html).toContain('data-testid="mine-navigation"');
       await expect(page.locator('html')).toHaveAttribute('data-zova-hydrated', 'web');
       await expect(page.getByRole('heading', { name: 'Account Settings' })).toBeVisible();
+      const navigation = page.getByTestId('mine-navigation');
+      await expect(navigation.getByRole('link')).toHaveText([
+        'Account Settings',
+        'MCP scopes',
+        'MCP authorizations',
+        'MCP access tokens',
+      ]);
+      await expect(
+        navigation.getByRole('link', { name: 'Account Settings', exact: true }),
+      ).toHaveAttribute('aria-current', 'page');
+      for (const item of [
+        { title: 'MCP scopes', path: '/cabloy/mcp/scopes' },
+        { title: 'MCP authorizations', path: '/cabloy/mcp/authorizations' },
+        { title: 'MCP access tokens', path: '/cabloy/mcp/accessTokens' },
+      ]) {
+        await navigation.getByRole('link', { name: item.title, exact: true }).click();
+        await expect(page).toHaveURL(item.path);
+        await expect(page.getByRole('heading', { name: item.title, exact: true })).toBeVisible();
+        await expect(
+          navigation.getByRole('link', { name: item.title, exact: true }),
+        ).toHaveAttribute('aria-current', 'page');
+        const response = await page.reload({ waitUntil: 'load' });
+        expect(response?.ok()).toBeTruthy();
+        expect(await response!.text()).toContain('data-testid="layout-mine"');
+        await expect(page.locator('html')).toHaveAttribute('data-zova-hydrated', 'web');
+        await expect(page.getByRole('heading', { name: item.title, exact: true })).toBeVisible();
+      }
+      await page.setViewportSize({ width: 390, height: 844 });
+      await expect(navigation).not.toBeVisible();
+      const toggle = page.getByTestId('mine-menu-toggle');
+      await toggle.click();
+      await expect(toggle).toHaveAttribute('aria-expanded', 'true');
+      await expect(navigation).toBeVisible();
+      await navigation.getByRole('link', { name: 'Account Settings', exact: true }).click();
+      await expect(page).toHaveURL(accountPath);
+      await expect(page.getByRole('heading', { name: 'Account Settings' })).toBeVisible();
+      await expect(navigation).not.toBeVisible();
+      await expect(toggle).toHaveAttribute('aria-expanded', 'false');
       expect(pageErrors).toEqual([]);
       expect(consoleErrors).toEqual([]);
     } finally {
@@ -777,6 +817,23 @@ test(
     await expect(page).toHaveURL(/\/home\/user\/account(?:\?|$)/);
     await expect(page.getByRole('heading', { name: 'Account Settings' })).toBeVisible();
     await expect(userMenu).not.toHaveAttribute('open', '');
+    await expect(page.getByTestId('layout-mine')).toBeVisible();
+    const navigation = page.getByTestId('mine-navigation');
+    await expect(
+      navigation.getByRole('link', { name: 'Account Settings', exact: true }),
+    ).toHaveAttribute('href', '/admin/home/user/account');
+    await navigation.getByRole('link', { name: 'MCP scopes', exact: true }).click();
+    await expect(page).toHaveURL(/\/admin\/cabloy\/mcp\/scopes$/);
+    await expect(page.getByRole('heading', { name: 'MCP scopes', exact: true })).toBeVisible();
+    await expect(navigation.getByRole('link', { name: 'MCP scopes', exact: true })).toHaveAttribute(
+      'aria-current',
+      'page',
+    );
+    const response = await page.reload({ waitUntil: 'load' });
+    expect(response?.ok()).toBeTruthy();
+    expect(await response!.text()).toContain('data-testid="layout-mine"');
+    await expect(page.locator('html')).toHaveAttribute('data-zova-hydrated', 'admin');
+    await expect(navigation).toBeVisible();
   },
 );
 

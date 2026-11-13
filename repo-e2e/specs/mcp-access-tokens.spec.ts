@@ -127,8 +127,10 @@ async function loginBrowser(page: Page, account: McpAccount) {
   await page.getByRole('button', { name: 'Login', exact: true }).click();
   expect((await login).ok()).toBe(true);
   await expect(page).toHaveURL(accountPath);
-  const link = page.getByTestId('account-mcp-access-tokens');
-  await expect(link).toHaveText('MCP access tokens');
+  const link = page
+    .getByTestId('mine-navigation')
+    .getByRole('link', { name: 'MCP access tokens', exact: true });
+  await expect(link).toBeVisible();
   await expect(link).toHaveAttribute('href', accessTokensPath);
   await link.click();
   await expect(page).toHaveURL(accessTokensPath);
@@ -402,7 +404,14 @@ test(
       } finally {
         await page.evaluate(() => navigator.clipboard.writeText(''));
       }
-      await closeReveal(page);
+      // Browser Back remains available while the modal is open and must clear its secret.
+      await page.goBack({ waitUntil: 'load' });
+      await expect(page).toHaveURL(accountPath);
+      const navigation = page.getByTestId('mine-navigation');
+      await expect(page.getByTestId('mcp-access-token-reveal')).toHaveCount(0);
+      await verifySecretAbsent(page, token);
+      await navigation.getByRole('link', { name: 'MCP access tokens', exact: true }).click();
+      await expect(page).toHaveURL(accessTokensPath);
       const entry = page.locator(`article[data-mcp-access-token-id="${token.id}"]`);
       await expect(entry.getByRole('heading', { name, exact: true })).toBeVisible();
       await expect(entry.getByText('mcp:read', { exact: true })).toBeVisible();
@@ -421,7 +430,10 @@ test(
       await expect(entry).toBeVisible();
       await verifySecretAbsent(page, token);
       await page.goto(accountPath, { waitUntil: 'load' });
-      await page.getByTestId('account-mcp-access-tokens').click();
+      await page
+        .getByTestId('mine-navigation')
+        .getByRole('link', { name: 'MCP access tokens', exact: true })
+        .click();
       await expect(entry).toBeVisible();
       await verifySecretAbsent(page, token);
 

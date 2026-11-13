@@ -1,0 +1,17 @@
+export default {
+  'Home': 'Home',
+  'PersonalCenter': 'Personal center',
+  'Account Settings': 'Account Settings',
+  'McpScopes': 'MCP scopes',
+  'McpAuthorizations': 'MCP authorizations',
+  'McpAccessTokens': 'MCP access tokens',
+  'Language': 'Language',
+  'ColorMode': 'Color mode',
+  'Account': 'Account',
+  'Logout': 'Logout',
+  'Login': 'Login',
+  'NotLoggedIn': 'Not logged in',
+  'ThemeLight': 'Light',
+  'ThemeDark': 'Dark',
+  'ThemeAuto': 'Auto',
+};

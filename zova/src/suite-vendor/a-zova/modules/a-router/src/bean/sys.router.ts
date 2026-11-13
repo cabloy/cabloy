@@ -381,8 +381,11 @@ export class SysRouter extends BeanBase {
     } else {
       if (layout === undefined || layout === 'default') {
         layout = this.sys.config.layout.component.default;
-      } else if (layout === 'empty') {
-        layout = this.sys.config.layout.component.empty;
+      } else if (typeof layout === 'string') {
+        const components = this.sys.config.layout.component;
+        if (Object.hasOwn(components, layout)) {
+          layout = components[layout as keyof typeof components];
+        }
       }
       routeNameParent = `$:${name}`;
       routeData = {

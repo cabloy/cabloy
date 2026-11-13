@@ -14,16 +14,16 @@ export const routes: IModuleRoute[] = [
   {
     path: 'authorizations',
     component: ZPageAuthorizations,
-    meta: { requiresAuth: true, ssrProfile: 'session' },
+    meta: { layout: 'mine', requiresAuth: true, ssrProfile: 'session' },
   },
   {
     path: 'scopes',
     component: ZPageScopes,
-    meta: { requiresAuth: true, ssrProfile: 'session' },
+    meta: { layout: 'mine', requiresAuth: true, ssrProfile: 'session' },
   },
   {
     path: 'accessTokens',
     component: ZPageAccessTokens,
-    meta: { requiresAuth: true, ssrProfile: 'session' },
+    meta: { layout: 'mine', requiresAuth: true, ssrProfile: 'session' },
   },
 ];

@@ -258,10 +258,10 @@ export class ControllerPageAccount extends BeanControllerPageBase {
             );
           }}
         />
-        <label class="form-control gap-2">
+        <label class="flex min-w-0 flex-col gap-2">
           <span class="label-text">{this.scope.locale.AccountUserName()}</span>
           <input
-            class="input"
+            class="input min-w-0"
             type="text"
             readonly
             autocomplete="username"
@@ -288,33 +288,11 @@ export class ControllerPageAccount extends BeanControllerPageBase {
   }
 
   private _renderSecurityCard(current: AccountCurrent) {
-    const authorizationsPath = this.$router.getPagePath('/cabloy/mcp/authorizations');
-    const scopesPath = this.$router.getPagePath('/cabloy/mcp/scopes');
-    const accessTokensPath = this.$router.getPagePath('/cabloy/mcp/accessTokens');
     return (
       <section class="card border border-base-300 bg-base-100 shadow-sm">
         <div class="card-body gap-4">
           <h2 class="card-title">{this.scope.locale.AccountSecurity()}</h2>
           {current.hasSimpleAuth ? this._renderChangePassword() : this._renderSetPassword(current)}
-          {authorizationsPath && (
-            <a class="link link-primary" href={authorizationsPath}>
-              {this.scope.locale.AccountMcpAuthorizations()}
-            </a>
-          )}
-          {scopesPath && (
-            <a class="link link-primary" href={scopesPath}>
-              {this.scope.locale.AccountMcpScopes()}
-            </a>
-          )}
-          {accessTokensPath && (
-            <a
-              data-testid="account-mcp-access-tokens"
-              class="link link-primary"
-              href={accessTokensPath}
-            >
-              {this.scope.locale.AccountMcpAccessTokens()}
-            </a>
-          )}
         </div>
       </section>
     );

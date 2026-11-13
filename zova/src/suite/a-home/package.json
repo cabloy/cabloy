@@ -13,6 +13,7 @@
     "zova-module-home-indexweb": "^5.0.0",
     "zova-module-home-layoutadmin": "^5.0.6",
     "zova-module-home-layoutempty": "^5.0.6",
+    "zova-module-home-layoutmine": "^5.0.0",
     "zova-module-home-layoutweb": "^5.0.0",
     "zova-module-home-login": "^5.0.8",
     "zova-module-home-passport": "^5.0.6",

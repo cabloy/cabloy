@@ -102,6 +102,7 @@ export default function (sys: ZovaSys) {
     component: {
       empty: env.LAYOUT_COMPONENT_EMPTY,
       default: env.LAYOUT_COMPONENT_DEFAULT,
+      mine: env.LAYOUT_COMPONENT_MINE,
     },
   };
 

@@ -10,6 +10,7 @@ export const routes: IModuleRoute[] = [
     path: 'account',
     component: ZPageAccount,
     meta: {
+      layout: 'mine',
       requiresAuth: true,
       ssrProfile: 'session',
     },
