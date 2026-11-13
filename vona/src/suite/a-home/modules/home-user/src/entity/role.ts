@@ -24,6 +24,9 @@ export class EntityRole extends EntityBase implements IRole {
   @Api.field(v.array(z.string()))
   siteIds: string[];
 
+  @Api.field(v.title($locale('RoleMcpAccess')), v.default(false))
+  mcpAccess: boolean;
+
   @Api.field(v.default(false))
   builtin: boolean;
 }

@@ -17,6 +17,7 @@ export default {
   RoleName: '角色名',
   RoleTitle: '角色标题',
   RoleLocales: '角色本地化文本',
+  RoleMcpAccess: 'MCP 访问权限',
   User: '用户',
   UserName: '用户名',
   UserAvatar: '头像',

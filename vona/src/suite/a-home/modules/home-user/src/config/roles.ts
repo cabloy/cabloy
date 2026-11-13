@@ -6,6 +6,7 @@ export interface IRoleConfig {
   title: string;
   titleLocales?: LocalizedTextMap;
   siteIds: string[];
+  mcpAccess: boolean;
   builtin: boolean;
 }
 
@@ -17,6 +18,7 @@ export const builtinRoles: Record<string, IRoleConfig> = {
       'zh-cn': '注册用户',
     },
     siteIds: [roleSiteIdAll],
+    mcpAccess: true,
   },
   systemAdmin: {
     title: 'System Administrator',
@@ -25,5 +27,6 @@ export const builtinRoles: Record<string, IRoleConfig> = {
       'zh-cn': '系统管理员',
     },
     siteIds: [roleSiteIdAll],
+    mcpAccess: true,
   },
 };

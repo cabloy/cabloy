@@ -14,12 +14,14 @@ describe('role.test.ts', { concurrency: false }, () => {
         scope.config.builtinRoles.registeredUser.siteIds,
       );
       assert.equal(roleRegisteredUser?.builtin, true);
+      assert.equal(roleRegisteredUser?.mcpAccess, true);
 
       const roleSystemAdmin = await scope.model.role.getByName('systemAdmin');
       assert.equal(roleSystemAdmin?.title, 'System Administrator');
       assert.deepEqual(roleSystemAdmin?.titleLocales, { 'zh-cn': '系统管理员' });
       assert.deepEqual(roleSystemAdmin?.siteIds, scope.config.builtinRoles.systemAdmin.siteIds);
       assert.equal(roleSystemAdmin?.builtin, true);
+      assert.equal(roleSystemAdmin?.mcpAccess, true);
 
       await app.bean.passport.signinMock();
       const passport = await app.bean.executor.performAction('get', '/home/user/passport/current');
@@ -34,13 +36,42 @@ describe('role.test.ts', { concurrency: false }, () => {
         scope.config.builtinRoles.registeredUser.siteIds,
       );
       assert.equal(passportRegisteredUser?.builtin, true);
+      assert.equal(passportRegisteredUser?.mcpAccess, true);
 
       const passportSystemAdmin = passport.roles.find((role: any) => role.name === 'systemAdmin');
       assert.equal(passportSystemAdmin?.title, 'System Administrator');
       assert.deepEqual(passportSystemAdmin?.titleLocales, { 'zh-cn': '系统管理员' });
       assert.deepEqual(passportSystemAdmin?.siteIds, scope.config.builtinRoles.systemAdmin.siteIds);
       assert.equal(passportSystemAdmin?.builtin, true);
+      assert.equal(passportSystemAdmin?.mcpAccess, true);
     });
+  });
+
+  it('model:role defaults MCP access to false and persists explicit changes', async () => {
+    let roleId: string | undefined;
+    try {
+      await app.bean.executor.mockCtx(async () => {
+        const model = app.scope('home-user').model.role;
+        const role = await model.insert({
+          name: `home-user-mcp-access-${crypto.randomUUID()}`,
+          title: 'Home User MCP Access Role',
+          siteIds: ['admin'],
+          builtin: false,
+        });
+        roleId = String(role.id);
+        assert.equal((await model.getById(role.id))?.mcpAccess, false);
+
+        await model.update({ id: role.id, mcpAccess: true });
+        assert.equal((await model.getById(role.id))?.mcpAccess, true);
+
+        await model.update({ id: role.id, mcpAccess: false });
+        assert.equal((await model.getById(role.id))?.mcpAccess, false);
+      });
+    } finally {
+      await app.bean.executor.mockCtx(async () => {
+        if (roleId) await app.scope('home-user').model.role.deleteById(roleId);
+      });
+    }
   });
 
   it('bean:role emits only actual membership changes', async () => {

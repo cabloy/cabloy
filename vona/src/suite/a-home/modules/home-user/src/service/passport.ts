@@ -35,6 +35,7 @@ export class ServicePassport extends BeanBase {
           'title',
           'titleLocales',
           'siteIds',
+          'mcpAccess',
           'builtin',
         ],
       },
