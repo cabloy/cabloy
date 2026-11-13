@@ -109,6 +109,7 @@ export class ServiceAuthorization extends BeanBase {
 
   async summary(request: string): Promise<DtoAuthorizationSummary> {
     const passport = await this.currentPassport();
+    this.checkMcpAccess(passport, 'access_denied', 403);
     const row = await this.pending(request);
     const config = this.configForResource(row.resource);
     const client = await this.validateBindings(row, config);
@@ -130,6 +131,7 @@ export class ServiceAuthorization extends BeanBase {
     this.ensureAutocommit();
     if (typeof allow !== 'boolean') throw new OAuthError('invalid_request');
     const passport = await this.currentPassport();
+    if (allow) this.checkMcpAccess(passport, 'access_denied', 403);
     const row = await this.pending(request);
     const config = this.configForResource(row.resource);
     const client = await this.validateBindings(row, config);
@@ -281,7 +283,7 @@ export class ServiceAuthorization extends BeanBase {
       .first();
     if (!row) throw new OAuthError('invalid_grant');
     await this.validateBindings(row, config);
-    const passport = await this.loadPassport(row.userId, row.authId, 'invalid_grant', 400);
+    const passport = await this.loadMcpPassport(row.userId, row.authId, 'invalid_grant', 400);
     const payload: IMcpTokenPayload = {
       userId: row.userId!,
       authId: row.authId!,
@@ -348,7 +350,7 @@ export class ServiceAuthorization extends BeanBase {
     if (!row) throw new OAuthError('invalid_token', 401);
     if (!isMcpScope(row.scope)) throw new OAuthError('insufficient_scope', 403);
     await this.validateBindings(row, config, 'invalid_token', 401);
-    const passport = await this.loadPassport(row.userId, row.authId, 'invalid_token', 401);
+    const passport = await this.loadMcpPassport(row.userId, row.authId, 'invalid_token', 401);
     const payload: IMcpLegacyTokenPayload = {
       userId: row.userId!,
       authId: row.authId!,
@@ -715,6 +717,25 @@ export class ServiceAuthorization extends BeanBase {
     );
   }
 
+  async loadMcpPassport(
+    userId: TableIdentity | undefined,
+    authId: TableIdentity | undefined,
+    error: string,
+    status: number,
+  ): Promise<IPassport> {
+    const passport = await this.loadPassport(userId, authId, error, status);
+    this.checkMcpAccess(passport, error, status);
+    return passport;
+  }
+
+  private checkMcpAccess(passport: IPassport, error: string, status: number): void {
+    if (!passport.roles?.some(role => role.mcpAccess === true)) {
+      this.$logger.debug('mcp.access.denied');
+      throw new OAuthError(error, status);
+    }
+  }
+
+  // Identity-only loading also serves credential revocation after MCP access is removed.
   async loadPassport(
     userId: TableIdentity | undefined,
     authId: TableIdentity | undefined,
@@ -765,9 +786,9 @@ export class ServiceAuthorization extends BeanBase {
     }
     const memberships = await users.roleUser.builderSelect().where({ userId }).select('roleId');
     const roles = memberships.length
-      ? await users.role.builderSelect().whereIn(
-          'id',
-          memberships.map(item => item.roleId),
+      ? await users.role.select(
+          { where: { id: memberships.map(item => item.roleId) } },
+          { cache: { enable: false } },
         )
       : [];
     return { user, auth, roles };

@@ -657,6 +657,20 @@ export type ApiSchemaPayMockDtoMockRefundCompletePartial =
   Partial<ApiSchemaPayMockDtoMockRefundComplete>;
 export type ApiSchemaTestCaptchaDtoSignin = components['schemas']['test-captcha.dto.signin'];
 export type ApiSchemaTestCaptchaDtoSigninPartial = Partial<ApiSchemaTestCaptchaDtoSignin>;
+export type ApiSchemaMcpAuthDtoAccessTokenMineRes =
+  components['schemas']['mcp-auth.dto.accessTokenMineRes'];
+export type ApiSchemaMcpAuthDtoAccessTokenMineResPartial =
+  Partial<ApiSchemaMcpAuthDtoAccessTokenMineRes>;
+export type ApiSchemaMcpAuthDtoAccessToken = components['schemas']['mcp-auth.dto.accessToken'];
+export type ApiSchemaMcpAuthDtoAccessTokenPartial = Partial<ApiSchemaMcpAuthDtoAccessToken>;
+export type ApiSchemaMcpAuthDtoAccessTokenCreateRes =
+  components['schemas']['mcp-auth.dto.accessTokenCreateRes'];
+export type ApiSchemaMcpAuthDtoAccessTokenCreateResPartial =
+  Partial<ApiSchemaMcpAuthDtoAccessTokenCreateRes>;
+export type ApiSchemaMcpAuthDtoAccessTokenCreate =
+  components['schemas']['mcp-auth.dto.accessTokenCreate'];
+export type ApiSchemaMcpAuthDtoAccessTokenCreatePartial =
+  Partial<ApiSchemaMcpAuthDtoAccessTokenCreate>;
 export type ApiSchemaMcpAuthDtoAuthorizationSummary =
   components['schemas']['mcp-auth.dto.authorizationSummary'];
 export type ApiSchemaMcpAuthDtoAuthorizationSummaryPartial =

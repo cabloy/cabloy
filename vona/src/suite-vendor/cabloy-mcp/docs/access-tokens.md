@@ -28,7 +28,9 @@ OAuth grants remain on the separate authorizations page. Neither management API 
 
 ## Authorization and scope changes
 
-The token is bound to its issuing user/auth record, canonical issuer/resource and instance. Every request reloads current account/auth/provider/role state and checks the current authorization row, nonce digest, generation and expiry. Existing tool policy, RBAC, business ownership and data scope still apply; neither `mcp:all` nor a custom scope grants missing permissions.
+The token is bound to its issuing user/auth record, canonical issuer/resource and instance. Creation and every external use require a current directly assigned role with `mcpAccess: true`; see [role-level MCP admission](../../../../../repo-docs/mcp/mcp-browser-authorization.md#role-level-mcp-admission) for defaults and any-role semantics. Losing eligibility blocks creation/use but preserves listing and deletion. Restoring eligibility permits an otherwise-valid token again; delete it for permanent invalidation.
+
+Every request reloads current account/auth/provider/role state and checks the current authorization row, nonce digest, generation and expiry. Existing tool policy, RBAC, business ownership and data scope still apply; neither `mcp:all` nor a custom scope grants missing permissions.
 
 A custom token captures its exact tool ceiling at issuance and requires a currently owned, valid definition and currently authorized tools. Renaming, changing the selected tools or deleting that definition invalidates linked tokens; a description-only edit does not. Expanding a definition cannot silently expand an already-issued token.
 

@@ -35,6 +35,7 @@ interface Fixture {
   tokenIds: TableIdentity[];
   scopeIds: TableIdentity[];
   clientIds: string[];
+  roleIds: TableIdentity[];
 }
 
 async function asUser<T>(user: UserFixture, operation: () => Promise<T>): Promise<T> {
@@ -82,7 +83,7 @@ async function withFixture(operation: (fixture: Fixture) => Promise<void>) {
   // MCP authorization suites temporarily replace issuer/registration policy and
   // run instance-wide expiration cleanup under this same fixture-domain lock.
   const release = await acquireTestLock('test-mcp');
-  const fixture: Fixture = { users: [], tokenIds: [], scopeIds: [], clientIds: [] };
+  const fixture: Fixture = { users: [], tokenIds: [], scopeIds: [], clientIds: [], roleIds: [] };
   try {
     await context(async () => {
       for (let index = 0; index < 2; index++) {
@@ -138,6 +139,9 @@ async function withFixture(operation: (fixture: Fixture) => Promise<void>) {
             .model.roleUser.delete({ userId: user.id }, { disableDeleted: true });
           await app.bean.user.removeById(user.id);
         }
+        for (const id of fixture.roleIds.toReversed()) {
+          await app.scope('home-user').model.role.deleteById(id);
+        }
       });
     } finally {
       release();
@@ -158,10 +162,13 @@ async function create(
   });
 }
 
-async function expectOAuth(operation: () => Promise<unknown>, code: string) {
+async function expectOAuth(operation: () => Promise<unknown>, code: string, status?: number) {
   await assert.rejects(
     operation,
-    error => error instanceof OAuthError && error.oauthError === code,
+    error =>
+      error instanceof OAuthError &&
+      error.oauthError === code &&
+      (status === undefined || error.status === status),
   );
 }
 
@@ -427,6 +434,86 @@ describe('accessToken.test.ts', { concurrency: false }, () => {
       );
       await asUser(owner, async () =>
         assert.equal(String(app.bean.passport.currentUser?.id), String(owner.id)),
+      );
+    });
+  });
+
+  it('suspends personal issuance and existing tokens on a fresh role flag without blocking management or revocation', async () => {
+    await withFixture(async fixture => {
+      const [owner] = fixture.users;
+      const roleId = await context(async () => {
+        const role = await app.scope('home-user').model.role.insert({
+          name: `mcp-personal-admission-${randomUUID()}`,
+          title: 'Personal MCP admission regression',
+          siteIds: ['admin'],
+          builtin: false,
+        });
+        fixture.roleIds.push(role.id);
+        assert.equal(
+          (await app.scope('home-user').model.role.getById(role.id))?.mcpAccess,
+          false,
+          'ordinary roles do not implicitly grant MCP access',
+        );
+        await app.bean.role.replaceUserRoleIds(owner.id, [role.id]);
+        return role.id;
+      });
+      await expectOAuth(() => create(fixture, owner), 'access_denied', 403);
+      assert.equal(
+        (await api('POST', `${basePath}/createMine`, owner, { name: 'Denied issuance' }, fixture))
+          .response.status,
+        403,
+      );
+      await context(async () => {
+        assert.equal(
+          (await scope().service.accessToken.mine(owner.id, { pageNo: 1, pageSize: 20 })).total,
+          '0',
+        );
+        await app.scope('home-user').model.role.updateById(roleId, { mcpAccess: true });
+      });
+      const token = await create(fixture, owner);
+      const revoked = await create(fixture, owner, { name: 'Revocable while suspended' });
+      const before = await context(async () => {
+        await scope().service.authorization.lookupContext(token.accessToken, token.resource);
+        const row = await scope().model.authorization.getById(token.id);
+        assert.ok(row);
+        await app.scope('home-user').model.role.updateById(roleId, { mcpAccess: false });
+        return row;
+      });
+      await context(async () => {
+        await expectOAuth(
+          () => scope().service.authorization.lookupContext(token.accessToken, token.resource),
+          'invalid_token',
+          401,
+        );
+        assert.deepEqual(await scope().model.authorization.getById(token.id), before);
+      });
+      await expectOAuth(() => create(fixture, owner), 'access_denied', 403);
+      const page = await api('GET', `${basePath}/mine`, owner);
+      assert.equal(page.response.status, 200);
+      assert.equal(page.body.data.total, '2', 'suspension does not delete personal grants');
+      await context(() =>
+        app.scope('home-user').model.role.updateById(roleId, { mcpAccess: true }),
+      );
+      await context(async () => {
+        const current = await scope().service.authorization.lookupContext(
+          token.accessToken,
+          token.resource,
+        );
+        assert.equal(String(current.passport.user?.id), String(owner.id));
+        await app.scope('home-user').model.role.updateById(roleId, { mcpAccess: false });
+      });
+      await context(async () => {
+        const payload = await app.bean.jwt.get('mcpAccess').verify(revoked.accessToken);
+        assert.ok(payload);
+        await scope().service.authTokenAdapter.remove(payload);
+        assert.equal((await scope().model.authorization.getById(revoked.id))?.state, 'revoked');
+      });
+      assert.equal(
+        (await api('DELETE', `${basePath}/deleteMine/${token.id}`, owner)).response.status,
+        200,
+      );
+      await context(async () =>
+        assert.equal(await scope().model.authorization.getById(token.id), undefined),
       );
     });
   });

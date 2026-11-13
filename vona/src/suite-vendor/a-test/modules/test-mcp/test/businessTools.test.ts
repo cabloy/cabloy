@@ -1054,7 +1054,13 @@ describe('businessTools.test.ts', { concurrency: false, timeout: 60000 }, () => 
         };
         assert.equal((await names(all)).includes(name), false, 'the Action requires its own role');
         passport.roles = [
-          { id: 'mcp-resource-admin', name: 'systemAdmin', title: 'Admin', siteIds: [] },
+          {
+            id: 'mcp-resource-admin',
+            name: 'systemAdmin',
+            title: 'Admin',
+            siteIds: [],
+            mcpAccess: true,
+          },
         ];
         await app.bean.passport.setCurrent(passport);
         assert.equal(

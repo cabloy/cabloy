@@ -54,6 +54,18 @@ Production requires the explicit trusted public serve pair (`SERVER_SERVE_PROTOC
 
 Recognized dev/test/prod modes use the same authenticated, permission-checked boundary. Unknown modes, not-ready, closing, disabled state and invalid required authority configuration fail closed. The resource integration is enabled by default; only literal `CABLOY_MCP_ENABLED=false` disables its environment-derived default, while ordinary application overrides remain supported. This resource gate does not itself disable `mcp-auth` registration, authorization, token exchange or authorization-server discovery; those endpoints enforce their own readiness, shutdown and authority/configuration checks.
 
+## Role-level MCP admission
+
+External MCP access requires at least one of the user's **current, directly assigned roles** to have `mcpAccess: true`. New ordinary roles default to `false`; the builtin `registeredUser` and `systemAdmin` roles both initialize to `true`. This is an any-role grant: a role with `false` does not override another role's `true`, and no roles means no admission. There is no role-name-based administrator bypass.
+
+This channel gate is independent of `siteIds`, which controls frontend Site admission. It does not grant tools, business permissions, ownership or data access. Tool scopes and current Action guards remain authoritative after MCP admission. Public discovery and client registration do not grant user eligibility, and trusted in-process MCP factories are outside this external-channel gate.
+
+The backend reloads current authority for consent summary/approval, authorization-code exchange, personal token creation, refresh and each external MCP request; a stale browser Passport or an already-issued credential cannot preserve eligibility. Consent approval and personal issuance fail with `access_denied` (403), code exchange/refresh with `invalid_grant` (400), and external access with `invalid_token` (401) when no current role grants admission.
+
+Removing the last allowing membership or disabling its `mcpAccess` blocks the next admission, not work already admitted. It suspends eligibility without automatically revoking or deleting grants: restoring eligibility permits otherwise-valid credentials again. Use the existing revoke/delete operations for permanent invalidation. Authenticated users can still deny consent and list, revoke or delete their own credentials after losing MCP eligibility.
+
+`home-user.vonaModule.fileVersion` remains **1**; the field and builtin values are part of its current version-1 creation/initialization path. An already-applied version 1 does not replay automatically. Fresh isolated verification does not update development databases, and a no-version-bump decision does not authorize a database reset.
+
 ## Register a client
 
 Send a direct JSON request:

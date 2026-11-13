@@ -39,6 +39,7 @@ interface Fixture {
   clientSecret?: string;
   userId: TableIdentity;
   name: string;
+  roleIds: TableIdentity[];
 }
 
 function service() {
@@ -83,10 +84,13 @@ async function accessPayload(token: string): Promise<IMcpTokenPayload> {
   assert.ok(payload, 'MCP access signature must verify');
   return payload as IMcpTokenPayload;
 }
-async function expectOAuth(operation: () => Promise<unknown>, code: string) {
+async function expectOAuth(operation: () => Promise<unknown>, code: string, status?: number) {
   await assert.rejects(
     operation,
-    error => error instanceof OAuthError && error.oauthError === code,
+    error =>
+      error instanceof OAuthError &&
+      error.oauthError === code &&
+      (status === undefined || error.status === status),
   );
 }
 async function asUser<T>(fixture: Fixture, operation: () => Promise<T>): Promise<T> {
@@ -117,6 +121,7 @@ async function withFixture(
   let userId: TableIdentity | undefined;
   let authId: TableIdentity | undefined;
   let profileId: TableIdentity | undefined;
+  const roleIds: TableIdentity[] = [];
   const config: IMcpAuthConfig = {
     ssrSite: undefined,
     registration: { ...defaultConfig(app).registration! },
@@ -152,7 +157,7 @@ async function withFixture(
       const auth = await app.scope('a-auth').model.auth.get({ userId });
       authId = auth!.id;
     });
-    await operation({ config, clientId: clientId!, clientSecret, userId: userId!, name });
+    await operation({ config, clientId: clientId!, clientSecret, userId: userId!, name, roleIds });
   } finally {
     try {
       await app.bean.executor.mockCtx(async () => {
@@ -167,12 +172,28 @@ async function withFixture(
           await app.scope('home-user').model.roleUser.delete({ userId });
           await app.bean.user.removeById(userId);
         }
+        for (const roleId of roleIds.toReversed()) {
+          await app.scope('home-user').model.role.deleteById(roleId);
+        }
       });
     } finally {
       Object.assign(app.config.modules['mcp-auth'], original);
       release();
     }
   }
+}
+async function ownRole(fixture: Fixture, mcpAccess = false) {
+  return await app.bean.executor.mockCtx(async () => {
+    const role = await app.scope('home-user').model.role.insert({
+      name: `mcp-admission-${randomUUID()}`,
+      title: 'MCP admission regression',
+      siteIds: ['admin'],
+      builtin: false,
+      mcpAccess,
+    });
+    fixture.roleIds.push(role.id);
+    return role.id;
+  });
 }
 async function issueCode(fixture: Fixture, scope = 'mcp:read') {
   const params = authorizationParams(fixture.clientId);
@@ -449,11 +470,17 @@ describe('authorization.test.ts', { concurrency: false }, () => {
         const context = await service().lookupContext(token.access_token, resource.resource);
         assert.equal(context.scope, 'mcp:read');
         assert.deepEqual(context.passport, passport);
-        await app.scope('home-user').model.roleUser.delete({ userId: fixture.userId });
-        assert.deepEqual((await service().lookup(token.access_token, resource.resource)).roles, []);
-        const current = await service().lookupContext(token.access_token, resource.resource);
-        assert.equal(current.scope, 'mcp:read');
-        assert.deepEqual(current.passport.roles, []);
+        await app.bean.role.replaceUserRoleIds(fixture.userId, []);
+        await expectOAuth(
+          () => service().lookup(token.access_token, resource.resource),
+          'invalid_token',
+          401,
+        );
+        await expectOAuth(
+          () => service().lookupContext(token.access_token, resource.resource),
+          'invalid_token',
+          401,
+        );
         await expectOAuth(
           () => service().exchange(tokenParams(clientId, code), undefined),
           'invalid_grant',
@@ -469,6 +496,120 @@ describe('authorization.test.ts', { concurrency: false }, () => {
         );
       });
     });
+  });
+
+  it('requires a current direct role grant for consent, uses any-role OR and still permits denial', async () => {
+    await withFixture(async fixture => {
+      const ordinaryRoleId = await ownRole(fixture);
+      const grantRoleId = await ownRole(fixture, true);
+      await app.bean.executor.mockCtx(() =>
+        app.bean.role.replaceUserRoleIds(fixture.userId, [ordinaryRoleId]),
+      );
+      const request = await app.bean.executor.mockCtx(() =>
+        service().authorize(authorizationParams(fixture.clientId), resource),
+      );
+      await asUser(fixture, async () => {
+        assert.equal(await app.bean.passport.isSystemAdmin(), false);
+        await expectOAuth(() => service().summary(request), 'access_denied', 403);
+        await expectOAuth(() => service().decide(request, true), 'access_denied', 403);
+        const row = await model().get({ requestDigest: sha256(request) });
+        assert.equal(row?.state, 'pending');
+        assert.equal(row?.codeDigest, '');
+        await app.bean.role.addUserId(grantRoleId, fixture.userId);
+        assert.equal((await service().summary(request)).scope, 'mcp:read');
+        // The browser Passport still has only its original false role; admission reloads membership.
+        assert.equal(
+          app.bean.passport.currentRoles?.some(role => role.mcpAccess),
+          false,
+        );
+        await app.bean.role.removeUserId(grantRoleId, fixture.userId);
+        await expectOAuth(() => service().decide(request, true), 'access_denied', 403);
+        const denied = await service().decide(request, false);
+        assert.equal(new URL(denied.redirectUrl).searchParams.get('error'), 'access_denied');
+        assert.equal((await model().get({ requestDigest: sha256(request) }))?.state, 'denied');
+      });
+      // A stale admin browser identity must not bypass the fresh direct-role check either.
+      await app.bean.executor.mockCtx(async () => {
+        const admin = await app.scope('home-user').model.role.getByName('systemAdmin');
+        assert.ok(admin);
+        assert.equal(admin.mcpAccess, true);
+        await app.bean.role.addUserId(admin.id, fixture.userId);
+      });
+      const next = await app.bean.executor.mockCtx(() =>
+        service().authorize(authorizationParams(fixture.clientId), resource),
+      );
+      await asUser(fixture, async () => {
+        assert.equal(await app.bean.passport.isSystemAdmin(), true);
+        await app.bean.role.replaceUserRoleIds(fixture.userId, []);
+        await expectOAuth(() => service().summary(next), 'access_denied', 403);
+        await expectOAuth(() => service().decide(next, true), 'access_denied', 403);
+      });
+    });
+  });
+
+  it('rechecks code exchange and suspends existing OAuth access and refresh until a role flag is restored', async () => {
+    await withFixture(
+      async fixture => {
+        const roleId = await ownRole(fixture, true);
+        await app.bean.executor.mockCtx(() =>
+          app.bean.role.replaceUserRoleIds(fixture.userId, [roleId]),
+        );
+        const { request, code } = await issueCode(fixture);
+        await app.bean.executor.mockCtx(() =>
+          app.scope('home-user').model.role.updateById(roleId, { mcpAccess: false }),
+        );
+        await expectOAuth(() => redeem(fixture, code), 'invalid_grant', 400);
+        await app.bean.executor.mockCtx(async () => {
+          const row = await model().get({ requestDigest: sha256(request) });
+          assert.equal(row?.state, 'codeReady');
+          assert.equal(row?.codeDigest, sha256(code));
+          assert.equal(row?.tokenDigest, '');
+          await app.scope('home-user').model.role.updateById(roleId, { mcpAccess: true });
+        });
+        const token = await redeem(fixture, code);
+        assert.ok(token.refresh_token);
+        const before = await app.bean.executor.mockCtx(async () => {
+          await service().lookup(token.access_token, resource.resource);
+          const row = await model().get({ requestDigest: sha256(request) });
+          assert.ok(row);
+          await app.scope('home-user').model.role.updateById(roleId, { mcpAccess: false });
+          return row;
+        });
+        await app.bean.executor.mockCtx(() =>
+          expectOAuth(
+            () => service().lookupContext(token.access_token, resource.resource),
+            'invalid_token',
+            401,
+          ),
+        );
+        await expectOAuth(() => refresh(fixture, token.refresh_token!), 'invalid_grant', 400);
+        await app.bean.executor.mockCtx(async () => {
+          assert.deepEqual(
+            await model().getById(before.id),
+            before,
+            'denial must not delete or revoke the grant',
+          );
+          await app.scope('home-user').model.role.updateById(roleId, { mcpAccess: true });
+        });
+        await app.bean.executor.mockCtx(async () => {
+          const passport = await service().lookup(token.access_token, resource.resource);
+          assert.equal(String(passport.user?.id), String(fixture.userId));
+        });
+        const restored = await refresh(fixture, token.refresh_token);
+        assert.ok(restored.refresh_token);
+        await app.bean.executor.mockCtx(async () => {
+          await service().lookup(restored.access_token, resource.resource);
+          await app.scope('home-user').model.role.updateById(roleId, { mcpAccess: false });
+        });
+        await app.bean.executor.mockCtx(async () => {
+          await service().revoke(restored.access_token);
+          assert.equal((await model().getById(before.id))?.state, 'revoked');
+        });
+      },
+      'none',
+      undefined,
+      ['authorization_code', 'refresh_token'],
+    );
   });
 
   it('rejects tampered internal client references and cannot rebind a grant to a recreated external identifier', async () => {
@@ -988,8 +1129,12 @@ describe('authorization.test.ts', { concurrency: false }, () => {
     );
   });
 
-  it('preserves exact legacy opaque-token lookup, scope checks, expiry and revocation', async () => {
+  it('preserves legacy opaque-token scope/expiry checks and suspends admission without blocking revocation', async () => {
     await withFixture(async fixture => {
+      const roleId = await ownRole(fixture, true);
+      await app.bean.executor.mockCtx(() =>
+        app.bean.role.replaceUserRoleIds(fixture.userId, [roleId]),
+      );
       const { request } = await issueCode(fixture);
       const opaque = randomBytes(32).toString('base64url');
       await app.bean.executor.mockCtx(async () => {
@@ -1034,6 +1179,12 @@ describe('authorization.test.ts', { concurrency: false }, () => {
         assert.equal(app.ctx.state.passportAuthTokenClient, undefined);
         assert.equal((await model().get({ id: row.id }))?.state, 'revoked');
         await model().updateById(row.id, { state: 'tokenActive', tokenDigest: sha256(opaque) });
+        await app.scope('home-user').model.role.updateById(roleId, { mcpAccess: false });
+        await expectOAuth(() => service().lookup(opaque, resource.resource), 'invalid_token', 401);
+        assert.equal((await model().getById(row.id))?.state, 'tokenActive');
+        await app.scope('home-user').model.role.updateById(roleId, { mcpAccess: true });
+        await service().lookup(opaque, resource.resource);
+        await app.scope('home-user').model.role.updateById(roleId, { mcpAccess: false });
         await service().revoke(opaque);
         assert.equal((await model().get({ id: row.id }))?.state, 'revoked');
         await expectOAuth(() => service().lookup(opaque, resource.resource), 'invalid_token');

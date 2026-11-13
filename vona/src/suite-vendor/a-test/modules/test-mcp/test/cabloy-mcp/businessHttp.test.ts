@@ -592,6 +592,54 @@ describe('businessHttp.test.ts', { concurrency: false, timeout: 180000 }, () => 
     assert.ok(app.server?.listening, 'per-request cleanup does not close shared server');
   });
 
+  it('rejects an existing bearer before dispatch when its last granting role is removed and restores it on reassignment', async t => {
+    assert.ok(fixtureUserId);
+    const userId = fixtureUserId;
+    const roleIds = await app.bean.executor.mockCtx(
+      async () => {
+        const roles = await app.bean.role.findAllByUserId(userId);
+        assert.ok(roles);
+        return roles.map(role => role.id);
+      },
+      { instanceName: '' },
+    );
+    assert.ok(roleIds.length);
+    const original = app.bean.executor.performAction;
+    const dispatched = mockOwnedPerformAction(t, async function (this: BeanExecutor, ...args) {
+      return await original.apply(this, args);
+    });
+    try {
+      await app.bean.executor.mockCtx(() => app.bean.role.replaceUserRoleIds(userId, []), {
+        instanceName: '',
+      });
+      for (const method of ['tools/list', 'tools/call']) {
+        const denied = await send(
+          method,
+          method === 'tools/call' ? { name: categoriesName, arguments: {} } : {},
+        );
+        assert.equal(denied.status, 401);
+        assert.match(String(denied.headers['www-authenticate']), /error="invalid_token"/);
+        assert.equal(denied.body.result, undefined);
+      }
+      assert.equal(
+        dispatched.mock.callCount(),
+        0,
+        'lost MCP admission never reaches Action dispatch',
+      );
+    } finally {
+      try {
+        await app.bean.executor.mockCtx(() => app.bean.role.replaceUserRoleIds(userId, roleIds), {
+          instanceName: '',
+        });
+      } finally {
+        dispatched.mock.restore();
+      }
+    }
+    const restored = await send('tools/list');
+    assert.equal(restored.status, 200, 'the original bearer resumes without reissuance');
+    assert.equal(restored.body.error, undefined);
+  });
+
   it('resolves compact nonquery contracts from native metadata and executes unchanged Actions over both transports', async t => {
     if (!app.meta.modules['test-mcp']) return;
     const { ControllerToolFixture, toolFixtureState } = await import('vona-module-test-mcp');

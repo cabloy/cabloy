@@ -36,7 +36,7 @@ export class ServiceAuthTokenAdapter extends BeanBase implements IAuthTokenAdapt
 
   async deserialize(data: IPayloadData): Promise<IPassport> {
     const payload = this.payload(data);
-    return await this.scope.service.authorization.loadPassport(
+    return await this.scope.service.authorization.loadMcpPassport(
       payload.userId,
       payload.authId,
       'invalid_grant',
@@ -189,7 +189,7 @@ export class ServiceAuthTokenAdapter extends BeanBase implements IAuthTokenAdapt
       await this.scope.service.authorization.validateBindings(row, getMcpAuthConfig(this.app));
       // Existing custom inheritance needs no visibility re-consent; new selections do.
       if (nextScope !== row.scope) {
-        const passport = await this.scope.service.authorization.loadPassport(
+        const passport = await this.scope.service.authorization.loadMcpPassport(
           row.userId,
           row.authId,
           'invalid_grant',

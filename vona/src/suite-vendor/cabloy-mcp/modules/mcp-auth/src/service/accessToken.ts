@@ -81,11 +81,11 @@ export class ServiceAccessToken extends BeanBase {
     ) {
       throw new OAuthError('invalid_request');
     }
-    const passport = await this.scope.service.authorization.loadPassport(
+    const passport = await this.scope.service.authorization.loadMcpPassport(
       userId,
       authId,
       'access_denied',
-      401,
+      403,
     );
     return await this.scope.service.customScope.withDefinitions(userId, [scope], async () => {
       let scopeTools: IMcpToolIdentity[] = [];
