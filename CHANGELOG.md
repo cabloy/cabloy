@@ -1,5 +1,11 @@
 # Changelog
 
+## 5.1.279
+
+### Features
+
+- Add mine layout.
+
 ## 5.1.278
 
 ### Features
