@@ -1,5 +1,10 @@
 # Changelog
 
+## 5.1.281
+
+### Improvements
+- Enhance the Mine layout.
+
 ## 5.1.280
 
 ### Bug Fixes
