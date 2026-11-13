@@ -1,5 +1,11 @@
 # Changelog
 
+## 5.1.278
+
+### Features
+
+- Add the mine layout.
+
 ## 5.1.277
 
 ### Features
