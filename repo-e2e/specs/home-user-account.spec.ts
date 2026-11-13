@@ -625,6 +625,11 @@ test(
 
       await page.goto('/login?returnTo=%2Fhome%2Fuser%2Faccount', { waitUntil: 'load' });
       await loginAccountFromPage(page, account, accountPath);
+      await page.evaluate(() => {
+        const passport = JSON.parse(localStorage.getItem('passport')!);
+        passport.user.displayName = 'stale-local-display-name';
+        localStorage.setItem('passport', JSON.stringify(passport));
+      });
 
       pageErrors.length = 0;
       consoleErrors.length = 0;
@@ -635,7 +640,30 @@ test(
       expect(html).toContain('Account Settings');
       expect(html).toContain('data-testid="layout-mine"');
       expect(html).toContain('data-testid="mine-navigation"');
+      expect(documentResponse!.headers()['cache-control']).toBe('private, no-store');
+      expect(html).not.toContain('stale-local-display-name');
+      const serverUserMenu = await page.evaluate(html => {
+        const document = new DOMParser().parseFromString(html, 'text/html');
+        const summary = document.querySelector('summary[aria-label="Account"]');
+        return {
+          displayName: summary?.querySelector('span')?.textContent,
+          avatar: summary?.querySelector('img')?.getAttribute('src'),
+          actions: Array.from(
+            summary?.parentElement?.querySelectorAll('ul > li > a, ul > li > button') ?? [],
+            action => action.textContent?.trim(),
+          ),
+        };
+      }, html);
+      expect(serverUserMenu.displayName).toBe(account.username);
+      expect(serverUserMenu.avatar).toEqual(expect.any(String));
+      expect(serverUserMenu.actions).toEqual(['Account Settings', 'Logout']);
       await expect(page.locator('html')).toHaveAttribute('data-zova-hydrated', 'web');
+      const userSummary = page
+        .getByTestId('header-actions')
+        .locator('summary[aria-label="Account"]');
+      await expect(userSummary).toContainText(account.username);
+      await expect(userSummary).not.toContainText('stale-local-display-name');
+      await expect(userSummary.locator('img')).toHaveAttribute('src', serverUserMenu.avatar!);
       await expect(page.getByRole('heading', { name: 'Account Settings' })).toBeVisible();
       const navigation = page.getByTestId('mine-navigation');
       await expect(navigation.getByRole('link')).toHaveText([
