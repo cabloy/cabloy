@@ -770,8 +770,8 @@ importers:
         specifier: ^5.1.34
         version: 5.1.34
       zova-module-a-layoutprofile:
-        specifier: ^5.0.9
-        version: 5.0.9
+        specifier: ^5.0.10
+        version: 5.0.10
       zova-module-a-logger:
         specifier: ^5.1.31
         version: 5.1.31
@@ -785,8 +785,8 @@ importers:
         specifier: ^5.1.65
         version: 5.1.65
       zova-module-a-pay:
-        specifier: ^5.0.16
-        version: 5.0.16
+        specifier: ^5.0.17
+        version: 5.0.17
       zova-module-a-rbac:
         specifier: ^5.0.4
         version: 5.0.4
@@ -821,8 +821,8 @@ importers:
         specifier: ^5.1.122
         version: 5.1.122(typescript@5.9.3)(vue@3.5.45(typescript@5.9.3))
       zova-module-pay-mock:
-        specifier: ^5.0.11
-        version: 5.0.11
+        specifier: ^5.0.12
+        version: 5.0.12
       zova-module-pay-paypal:
         specifier: ^5.0.5
         version: 5.0.5
@@ -9163,6 +9163,9 @@ packages:
   zova-module-a-interceptor@5.1.34:
     resolution: {integrity: sha512-etsT7qbzU23JqaXq4aAMbY7wfWAtaRQnKUlCu+fW88eoYrxRxZY61e6ojnXeHW3miJTkVk+wPSWlqKCb05S4oA==}
 
+  zova-module-a-layoutprofile@5.0.10:
+    resolution: {integrity: sha512-usyEOcnm6uAzKp/s/eVO0ILoGCmVmu6P/lI4rG7joR9CThoD9Yl8neXzj9ZHAzlk39RhzF4GpZTNiTIfFMW4cg==}
+
   zova-module-a-layoutprofile@5.0.8:
     resolution: {integrity: sha512-gStXBi0vkKgjEs0WNHvStw95CZ3kLZluAGT1hLu8zpC3K3xt14UBWzHrqj4VjMShzAr9L/Lhvu+Ac4Na049pvA==}
 
@@ -9186,6 +9189,9 @@ packages:
 
   zova-module-a-pay@5.0.16:
     resolution: {integrity: sha512-YAhRSPTHcs3kW1YnD1Wye+GZCvQu/PZzIWHppEMSXSGu2AGLwtAMMDz7Gg0RbVcMMfAE/nhszOd9QtXgGClTjA==}
+
+  zova-module-a-pay@5.0.17:
+    resolution: {integrity: sha512-LmHMzax2tjNrhWi3TQGdEG7Lq9Avfe2SFtA5yepEK2g7lYtTfet0X/HMDL8NzXF1v36DQ+ZgHGtTnX/Po2+KNg==}
 
   zova-module-a-rbac@5.0.4:
     resolution: {integrity: sha512-aF4EVZrUZYOKt1eaw/wPS0iJs4JyZvN/+CAc7qP/ppxS3iqqlHe0IeOOxHP41DQY6MmSHVNJ4pBFAmv7yR/7PA==}
@@ -9231,6 +9237,9 @@ packages:
 
   zova-module-pay-mock@5.0.11:
     resolution: {integrity: sha512-W/WiUp/2BsIeEJm4n755RMJ1DXrWzSuHoDriRfTOuMODLBQd2w2FnKTuljZZTrF4KWHAyeo+orr96C6YCNyHKw==}
+
+  zova-module-pay-mock@5.0.12:
+    resolution: {integrity: sha512-fFoWANTbqB6a6zmPlpy+59SvDzeCKbv7TdlgbPxbK04mw0ghJD3YmFRcNW2IQZFFX02QFQ7BRD29PGakPsgqWw==}
 
   zova-module-pay-paypal@5.0.5:
     resolution: {integrity: sha512-eKR6ggR0Kew7/YeHspBX6qjBaZ8430ijdJUCa/DLLEs10XAZ5wR4mq+OWo55GzTOrJ2z3B438BLAWq7L+00B3g==}
@@ -15070,6 +15079,8 @@ snapshots:
 
   zova-module-a-interceptor@5.1.34: {}
 
+  zova-module-a-layoutprofile@5.0.10: {}
+
   zova-module-a-layoutprofile@5.0.8: {}
 
   zova-module-a-layoutprofile@5.0.9: {}
@@ -15101,6 +15112,8 @@ snapshots:
   zova-module-a-pay@5.0.15: {}
 
   zova-module-a-pay@5.0.16: {}
+
+  zova-module-a-pay@5.0.17: {}
 
   zova-module-a-rbac@5.0.4: {}
 
@@ -15180,6 +15193,8 @@ snapshots:
   zova-module-pay-mock@5.0.10: {}
 
   zova-module-pay-mock@5.0.11: {}
+
+  zova-module-pay-mock@5.0.12: {}
 
   zova-module-pay-paypal@5.0.5: {}
 
