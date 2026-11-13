@@ -208,6 +208,11 @@ export class LocalCommon {
         // if (deps[key] && !isModule) continue;
         if (isModule) continue;
         if (deps[key]) continue;
+        const versionOriginal = moduleDepsOriginal[key];
+        if (versionOriginal) {
+          const comparison = _compareDependencyVersions(version, versionOriginal);
+          if (comparison === undefined || comparison <= 0) continue;
+        }
         moduleDepsOriginal[key] = version;
         changed = true;
       }
@@ -244,6 +249,18 @@ function _collectModuleDevs(
     }
   }
   return deps;
+}
+
+function _compareDependencyVersions(version: string, versionOriginal: string): number | undefined {
+  const range = semver.validRange(version);
+  const rangeOriginal = semver.validRange(versionOriginal);
+  if (!range || !rangeOriginal) return;
+
+  const minVersion = semver.minVersion(range);
+  const minVersionOriginal = semver.minVersion(rangeOriginal);
+  if (!minVersion || !minVersionOriginal) return;
+
+  return semver.compare(minVersion, minVersionOriginal);
 }
 
 // function _checkIfModuleOnlyDev(module: IModule) {
