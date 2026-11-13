@@ -1138,17 +1138,17 @@ test(
         name: 'MCP authorizations',
         exact: true,
       });
-      await expect(adminAuthorizationsLink).toHaveAttribute('href', authorizationsPath);
+      await expect(adminAuthorizationsLink).toHaveAttribute('href', `/admin${authorizationsPath}`);
       await adminAuthorizationsLink.click();
-      await expect(page).toHaveURL(authorizationsPath);
+      await expect(page).toHaveURL(`/admin${authorizationsPath}`);
       await expect(
         page.getByRole('heading', { name: 'MCP authorizations', exact: true }),
       ).toBeVisible();
       await expect(
         entry.getByRole('heading', { name: MCP_E2E_CLIENT_NAME, exact: true }),
       ).toBeVisible();
-      // The canonical Account link performs a document handoff to the protected Web page.
-      await expect(page.locator('html')).toHaveAttribute('data-zova-hydrated', 'web');
+      // Mine navigation keeps the shared protected page within the Admin site.
+      await expect(page.locator('html')).toHaveAttribute('data-zova-hydrated', 'admin');
 
       const revokePath = `${authorizationGrantApiPath}/revokeMine/${grantId}`;
       const deletePath = `${authorizationGrantApiPath}/deleteMine/${grantId}`;

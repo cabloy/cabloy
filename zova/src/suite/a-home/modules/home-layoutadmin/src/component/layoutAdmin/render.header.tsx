@@ -47,8 +47,12 @@ export class RenderHeader extends BeanRenderBase {
             }}
             class={classes('relative flex-none', this.cHeaderActions)}
             data-testid="header-actions"
-            onFocusout={event => this.onHeaderActionsFocusout(event)}
-            onKeydown={event => this.onHeaderActionsKeydown(event)}
+            onFocusout={event => {
+              if (!this.ctx.disposed) this.onHeaderActionsFocusout?.(event);
+            }}
+            onKeydown={event => {
+              if (!this.ctx.disposed) this.onHeaderActionsKeydown?.(event);
+            }}
           >
             <button
               type="button"

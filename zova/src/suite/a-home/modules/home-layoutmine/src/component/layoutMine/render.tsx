@@ -49,11 +49,18 @@ export class RenderLayoutMine extends BeanRenderBase {
             {this.scope.locale.PersonalCenter()}
           </ZButton>
           <div
-            ref={ref => this.setHeaderActionsElement((ref as HTMLDivElement | null) ?? undefined)}
+            ref={ref => {
+              if (!this.ctx.disposed)
+                this.setHeaderActionsElement?.((ref as HTMLDivElement | null) ?? undefined);
+            }}
             class="relative ml-auto flex-none lg:ml-0"
             data-testid="header-actions"
-            onFocusout={event => this.onHeaderActionsFocusout(event)}
-            onKeydown={event => this.onHeaderActionsKeydown(event)}
+            onFocusout={event => {
+              if (!this.ctx.disposed) this.onHeaderActionsFocusout?.(event);
+            }}
+            onKeydown={event => {
+              if (!this.ctx.disposed) this.onHeaderActionsKeydown?.(event);
+            }}
           >
             <ZButton
               type="button"
