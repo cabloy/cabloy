@@ -9,14 +9,33 @@ export class StyleLayoutMine extends BeanStyleBase {
     this.cLayout = this.$style({
       minHeight: '100dvh',
       $nest: {
-        '& > header > ul > li > details > ul': {
-          right: 0,
+        '& .header-actions-panel > ul > li > details > ul': {
           maxHeight: 'calc(100dvh - 5rem)',
           overflowY: 'auto',
           zIndex: 30,
         },
+        '@media (width < 64rem)': {
+          $nest: {
+            '& .header-actions-panel': {
+              width: '16rem',
+              maxWidth: 'calc(100vw - 1rem)',
+              maxHeight: 'calc(100dvh - 5rem)',
+              overflowY: 'auto',
+            },
+            '& .header-actions-panel > ul > li > details > ul': {
+              width: 'auto',
+              maxWidth: '100%',
+              whiteSpace: 'normal',
+              overflowWrap: 'anywhere',
+            },
+          },
+        },
         '@media (min-width: 64rem)': {
           $nest: {
+            '& .header-actions-panel > ul > li > details > ul': {
+              right: 0,
+              maxWidth: 'calc(100vw - 1rem)',
+            },
             '& > .mine-body': {
               display: 'grid',
               gridTemplateColumns: '16rem minmax(0, 1fr)',

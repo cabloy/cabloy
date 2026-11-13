@@ -17,6 +17,7 @@ export class RenderTheme extends BeanRenderBase {
         <details>
           <summary aria-label={this.scope.locale.ColorMode()} title={this.scope.locale.ColorMode()}>
             {$icon('::dark-theme', 24)}
+            <span class="lg:hidden">{this.scope.locale.ColorMode()}</span>
           </summary>
           <ClientOnly>
             <ul class="bg-base-100 rounded-t-none p-2 w-48">

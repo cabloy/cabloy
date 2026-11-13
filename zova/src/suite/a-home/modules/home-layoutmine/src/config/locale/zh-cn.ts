@@ -5,6 +5,7 @@ export default {
   'McpScopes': 'MCP权限范围',
   'McpAuthorizations': 'MCP授权',
   'McpAccessTokens': 'MCP访问令牌',
+  'MoreActions': '更多操作',
   'Language': '语言',
   'ColorMode': '明暗模式',
   'Account': '账户',

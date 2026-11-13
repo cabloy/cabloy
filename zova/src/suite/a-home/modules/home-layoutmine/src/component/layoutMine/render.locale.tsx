@@ -13,6 +13,7 @@ export class RenderLocale extends BeanRenderBase {
         <details>
           <summary aria-label={this.scope.locale.Language()} title={this.scope.locale.Language()}>
             {$icon('::language', 24)}
+            <span class="lg:hidden">{this.scope.locale.Language()}</span>
           </summary>
           <ClientOnly>
             <ul class="bg-base-100 rounded-t-none p-2 w-48">

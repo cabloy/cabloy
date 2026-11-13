@@ -664,8 +664,31 @@ test(
         await expect(page.locator('html')).toHaveAttribute('data-zova-hydrated', 'web');
         await expect(page.getByRole('heading', { name: item.title, exact: true })).toBeVisible();
       }
+      const headerActions = page.getByTestId('header-actions');
+      const moreActions = headerActions.getByRole('button', { name: 'More actions', exact: true });
+      const actionsPanel = headerActions.locator('.header-actions-panel');
+      await expect(moreActions).not.toBeVisible();
+      await expect(actionsPanel).toBeVisible();
       await page.setViewportSize({ width: 390, height: 844 });
       await expect(navigation).not.toBeVisible();
+      await expect(moreActions).toBeVisible();
+      await expect(actionsPanel).not.toBeVisible();
+      await moreActions.click();
+      await expect(moreActions).toHaveAttribute('aria-expanded', 'true');
+      await expect(actionsPanel).toBeVisible();
+      const accountMenu = headerActions.locator('summary[aria-label="Account"]');
+      await accountMenu.click();
+      await accountMenu.press('Escape');
+      await expect(accountMenu.locator('..')).not.toHaveAttribute('open', '');
+      await expect(actionsPanel).toBeVisible();
+      await accountMenu.press('Escape');
+      await expect(actionsPanel).not.toBeVisible();
+      await expect(moreActions).toBeFocused();
+      await moreActions.click();
+      await page
+        .getByRole('heading', { name: 'MCP access tokens', exact: true })
+        .click({ position: { x: 0, y: 0 } });
+      await expect(actionsPanel).not.toBeVisible();
       const toggle = page.getByTestId('mine-menu-toggle');
       await toggle.click();
       await expect(toggle).toHaveAttribute('aria-expanded', 'true');

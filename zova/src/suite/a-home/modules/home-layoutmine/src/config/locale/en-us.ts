@@ -5,6 +5,7 @@ export default {
   'McpScopes': 'MCP scopes',
   'McpAuthorizations': 'MCP authorizations',
   'McpAccessTokens': 'MCP access tokens',
+  'MoreActions': 'More actions',
   'Language': 'Language',
   'ColorMode': 'Color mode',
   'Account': 'Account',

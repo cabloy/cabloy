@@ -34,7 +34,7 @@ export class RenderUser extends BeanRenderBase {
                 ),
               }}
             />
-            <span class="h-lh max-w-32 truncate">
+            <span class="h-lh w-32 min-w-0 truncate">
               <ClientOnly
                 v-slots={{ placeholder: () => '', default: () => this.$passport.displayName }}
               />

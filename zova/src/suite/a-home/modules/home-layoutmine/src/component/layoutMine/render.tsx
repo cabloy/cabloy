@@ -33,22 +33,54 @@ export class RenderLayoutMine extends BeanRenderBase {
             <ZIcon name=":social:cabloy" width={24} />
           </a>
           <span class="min-w-0 flex-1 text-xl">{this.sys.env.APP_TITLE}</span>
+          <a class="btn btn-ghost shrink-0" href={this.app.$getPagePathHome()}>
+            {this.scope.locale.Home()}
+          </a>
           <ZButton
             data-testid="mine-menu-toggle"
             class="btn btn-ghost lg:hidden"
             aria-expanded={this.mobileMenuOpen}
             aria-controls="home-layoutmine-navigation"
             onPerform={() => {
+              this.closeHeaderActions();
               this.mobileMenuOpen = !this.mobileMenuOpen;
             }}
           >
             {this.scope.locale.PersonalCenter()}
           </ZButton>
-          <ul class="menu menu-horizontal ml-auto flex-wrap">
-            {this.$$renderLocale.render()}
-            {this.$$renderTheme.renderThemeDark()}
-            {this.$$renderUser.render()}
-          </ul>
+          <div
+            ref={ref => this.setHeaderActionsElement((ref as HTMLDivElement | null) ?? undefined)}
+            class="relative ml-auto flex-none lg:ml-0"
+            data-testid="header-actions"
+            onFocusout={event => this.onHeaderActionsFocusout(event)}
+            onKeydown={event => this.onHeaderActionsKeydown(event)}
+          >
+            <ZButton
+              type="button"
+              class="btn btn-square btn-ghost lg:hidden"
+              aria-label={this.scope.locale.MoreActions()}
+              title={this.scope.locale.MoreActions()}
+              aria-expanded={this.headerActionsOpen}
+              aria-controls={this.headerActionsId}
+              onPerform={() => this.toggleHeaderActions()}
+            >
+              <ZIcon name="::more-horiz" width={24} aria-hidden="true" />
+            </ZButton>
+            <div
+              id={this.headerActionsId}
+              class={classes(
+                'header-actions-panel absolute right-0 top-full z-30 rounded-box bg-base-100 shadow-lg lg:static lg:bg-transparent lg:shadow-none',
+                this.headerActionsOpen ? 'block' : 'hidden',
+                'lg:block',
+              )}
+            >
+              <ul class="menu w-full lg:w-auto lg:menu-horizontal">
+                {this.$$renderLocale.render()}
+                {this.$$renderTheme.renderThemeDark()}
+                {this.$$renderUser.render()}
+              </ul>
+            </div>
+          </div>
         </header>
         <div class="mine-body">
           <aside
