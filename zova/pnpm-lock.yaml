@@ -1129,7 +1129,7 @@ importers:
   src/suite-vendor/a-cabloy:
     dependencies:
       zova-module-a-layoutprofile:
-        specifier: ^5.0.9
+        specifier: ^5.0.10
         version: link:modules/a-layoutprofile
       zova-module-a-rbac:
         specifier: ^5.0.4
@@ -1168,10 +1168,10 @@ importers:
   src/suite-vendor/a-pay:
     dependencies:
       zova-module-a-pay:
-        specifier: ^5.0.16
+        specifier: ^5.0.17
         version: link:modules/a-pay
       zova-module-pay-mock:
-        specifier: ^5.0.11
+        specifier: ^5.0.12
         version: link:modules/pay-mock
       zova-module-pay-paypal:
         specifier: ^5.0.5
