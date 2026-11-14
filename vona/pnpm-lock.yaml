@@ -3530,6 +3530,9 @@ importers:
       '@modelcontextprotocol/server':
         specifier: 2.3.0
         version: 2.3.0
+      vona-module-a-ratelimit:
+        specifier: workspace:*
+        version: link:../../../a-vona/modules/a-ratelimit
       vona-module-mcp-auth:
         specifier: workspace:*
         version: link:../mcp-auth

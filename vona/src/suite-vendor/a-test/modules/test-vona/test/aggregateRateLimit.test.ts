@@ -8,7 +8,11 @@ import { describe, it } from 'node:test';
 import { setTimeout } from 'node:timers/promises';
 import { cast, compose } from 'vona';
 import { app } from 'vona-mock';
-import { MiddlewareSystemAggregate, ServiceRateLimit } from 'vona-module-a-ratelimit';
+import {
+  MiddlewareSystemAggregate,
+  ServiceRateLimit,
+  ServiceRateLimitAggregate,
+} from 'vona-module-a-ratelimit';
 
 const exemptPath = '/api/test/vona/performAction/rateLimitExempt';
 const limitedPath = '/api/test/vona/performAction/rateLimit';
@@ -32,9 +36,13 @@ async function withGate(
   fn: (request: Request) => Promise<void>,
 ) {
   await app.bean.executor.mockCtx(async () => {
+    const aggregate = app.bean._newBean(ServiceRateLimitAggregate);
+    Object.defineProperty(aggregate, 'scope', {
+      value: { service: { rateLimit: createService(command) } },
+    });
     const middleware = app.bean._newBean(MiddlewareSystemAggregate);
     Object.defineProperty(middleware, 'scope', {
-      value: { service: { rateLimit: createService(command) } },
+      value: { service: { rateLimitAggregate: aggregate } },
     });
     const policyName = `test-aggregate-${randomUUID()}`;
     // Keep admission and its listener local; never patch the shared application chain.
@@ -47,7 +55,9 @@ async function withGate(
         .newCtx(
           () => {
             app.ctx.onionsDynamic = {
-              interceptor: { 'a-ratelimit:rateLimit': { rateLimit: { name: policyName } } },
+              interceptor: {
+                'a-ratelimit:rateLimit': { rateLimit: { name: policyName } },
+              },
             };
             return cast(app).handleRequest(app.ctx, chain);
           },
@@ -134,7 +144,10 @@ describe('aggregateRateLimit.test.ts', { concurrency: false }, () => {
       await health.text();
       const preflight = await request('/aggregate-unknown', {
         method: 'OPTIONS',
-        headers: { 'origin': 'https://example.test', 'access-control-request-method': 'GET' },
+        headers: {
+          'origin': 'https://example.test',
+          'access-control-request-method': 'GET',
+        },
       });
       assert.notEqual(preflight.status, 429);
       await preflight.text();
@@ -145,7 +158,10 @@ describe('aggregateRateLimit.test.ts', { concurrency: false }, () => {
       assert.equal(rejected.status, 429);
       assert.equal(rejected.headers.get('retry-after'), '1');
       assert.equal(rejected.headers.get('ratelimit-limit'), null);
-      assert.deepEqual(await rejected.json(), { code: 429, message: 'Too Many Requests' });
+      assert.deepEqual(await rejected.json(), {
+        code: 429,
+        message: 'Too Many Requests',
+      });
     });
   });
 
@@ -183,11 +199,16 @@ describe('aggregateRateLimit.test.ts', { concurrency: false }, () => {
       await response.text();
     });
     await withGate('enforce', 1, unavailable, async request => {
-      const response = await request(exemptPath, { headers: { accept: 'text/html' } });
+      const response = await request(exemptPath, {
+        headers: { accept: 'text/html' },
+      });
       assert.equal(response.status, 503);
       assert.match(response.headers.get('content-type')!, /application\/json/);
       assert.equal(response.headers.get('retry-after'), null);
-      assert.deepEqual(await response.json(), { code: 503, message: 'Service Unavailable' });
+      assert.deepEqual(await response.json(), {
+        code: 503,
+        message: 'Service Unavailable',
+      });
     });
   });
 
@@ -225,7 +246,16 @@ describe('aggregateRateLimit.test.ts', { concurrency: false }, () => {
 
   it('requires valid explicit configuration even in observe mode', async () => {
     await app.bean.executor.mockCtx(async () => {
+      const aggregate = app.bean._newBean(ServiceRateLimitAggregate);
+      Object.defineProperty(aggregate, 'scope', {
+        value: {
+          service: { rateLimit: createService(async () => [1, 1_000]) },
+        },
+      });
       const middleware = app.bean._newBean(MiddlewareSystemAggregate);
+      Object.defineProperty(middleware, 'scope', {
+        value: { service: { rateLimitAggregate: aggregate } },
+      });
       let downstream = false;
       const next = async () => {
         downstream = true;

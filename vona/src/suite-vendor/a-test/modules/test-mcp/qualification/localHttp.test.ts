@@ -1,4 +1,5 @@
 import type { IncomingHttpHeaders, OutgoingHttpHeaders } from 'node:http';
+import type { IMiddlewareSystemOptionsAggregate } from 'vona-module-a-ratelimit';
 
 import assert from 'node:assert/strict';
 import { request } from 'node:http';
@@ -6,6 +7,7 @@ import { after, before, describe, it } from 'node:test';
 import { setTimeout as delay } from 'node:timers/promises';
 import { acquireTestLock, app } from 'vona-mock';
 import { $schema } from 'vona-module-a-openapiutils';
+import { ServiceRateLimit } from 'vona-module-a-ratelimit';
 
 import { AopMethodLog } from '../../../../../suite-vendor/a-vona/modules/a-logger/src/bean/aopMethod.log.ts';
 import { DtoCategoryPublicSelectRes } from '../src/dto/categoryPublicSelectRes.tsx';
@@ -253,6 +255,203 @@ describe('localHttp.test.ts', { concurrency: false, timeout: 60000 }, () => {
       assert.equal(app.server === undefined, true);
     } finally {
       await local.close();
+    }
+  });
+
+  it('applies configured aggregate admission once per local HTTP request before tool dispatch, preserving disabled defaults and observe behavior', async t => {
+    const local = await startLocalTransport(app);
+    const host = new URL(local.url).host;
+    const ownsRequest = () => app.ctx?.req.headers.host === host;
+    const middlewareSystem = app.bean.onion.middlewareSystem;
+    const originalOptions = middlewareSystem.getOnionOptions;
+    const originalAdmission = ServiceRateLimit.prototype.admitAggregate;
+    const executor = app.bean.executor;
+    const originalAction = executor.performAction;
+    let options: IMiddlewareSystemOptionsAggregate | undefined;
+    let admissions = 0;
+    let commands = 0;
+    let dispatched = 0;
+    let unavailable = false;
+    const paths: string[] = [];
+    const keys: string[] = [];
+    // Reuse the real service's validation, aggregate key and result calculation.
+    // Only this listener's Redis command is deterministic; other callers stay real.
+    const service = app.bean._newBean(ServiceRateLimit);
+    Object.defineProperty(service, 'bean', {
+      value: {
+        redis: {
+          get: () => ({
+            async rateLimitAdmit(key: string, windowMs: string) {
+              commands++;
+              keys.push(key);
+              assert.equal(windowMs, '1000');
+              if (unavailable) throw new Error('LOCAL_AGGREGATE_REDIS_DIAGNOSTIC');
+              return [commands, 1250];
+            },
+          }),
+        },
+      },
+    });
+    const configured = t.mock.method(
+      middlewareSystem,
+      'getOnionOptions',
+      function (...args: Parameters<typeof originalOptions>) {
+        if (ownsRequest() && app.ctx.path === '/mcp' && args[0] === 'a-ratelimit:aggregate') {
+          return options ?? originalOptions.apply(middlewareSystem, args);
+        }
+        return originalOptions.apply(middlewareSystem, args);
+      },
+    );
+    const admitted = t.mock.method(
+      ServiceRateLimit.prototype,
+      'admitAggregate',
+      function (this: ServiceRateLimit, ...args: Parameters<ServiceRateLimit['admitAggregate']>) {
+        if (!ownsRequest()) return originalAdmission.apply(this, args);
+        admissions++;
+        paths.push(app.ctx.path);
+        assert.equal(args[0], options?.rateLimit, 'one configured shared policy, not a tool quota');
+        return originalAdmission.apply(service, args);
+      },
+    );
+    const action = t.mock.method(
+      executor,
+      'performAction',
+      function (...args: Parameters<typeof originalAction>) {
+        if (ownsRequest()) dispatched++;
+        return originalAction.apply(executor, args);
+      },
+    );
+    try {
+      assert.equal(originalOptions.call(middlewareSystem, 'a-ratelimit:aggregate')?.enable, false);
+      assert.equal(
+        app.bean.onion.interceptor.getOnionOptions('a-ratelimit:rateLimit')?.enable,
+        false,
+        'identity/tool quotas are not implicitly enabled by aggregate admission',
+      );
+      toolOutput(
+        await send(local, 'tools/call', {
+          name: searchName,
+          arguments: { title: 'Wireless Headphones', pageSize: 1 },
+        }),
+      );
+      assert.equal(admissions, 0, 'disabled aggregate does not contact its service');
+      assert.equal(commands, 0);
+      assert.equal(dispatched, 1);
+      for (const selector of [{ match: '/not-mcp' }, { ignore: '/mcp' }]) {
+        options = { enable: true, ...selector, rateLimit: { mode: 'enforce', limit: 4 } };
+        assert.equal((await send(local, 'tools/list')).status, 200);
+        assert.equal(
+          admissions,
+          0,
+          'configured path selectors also apply to the dedicated listener',
+        );
+      }
+
+      options = { enable: true, rateLimit: { mode: 'enforce', limit: 4 } };
+      assert.equal((await send(local, 'server/discover')).status, 200);
+      assert.equal(admissions, 1);
+      assert.equal((await send(local, 'tools/list')).status, 200);
+      assert.equal(admissions, 2);
+      toolOutput(
+        await send(local, 'tools/call', { name: categoryName, arguments: { pageSize: 1 } }),
+      );
+      assert.equal(admissions, 3);
+      toolOutput(
+        await send(local, 'tools/call', {
+          name: searchName,
+          arguments: { title: 'Wireless Headphones', pageSize: 1 },
+        }),
+      );
+      assert.equal(admissions, 4, 'controller dispatch does not admit the accepted request twice');
+      assert.equal(dispatched, 3);
+      for (const legacy of [false, true]) {
+        const denied = await send(
+          local,
+          'tools/call',
+          {
+            name: legacy ? categoryName : searchName,
+            arguments: { pageSize: 1 },
+          },
+          legacy,
+        );
+        assert.equal(denied.status, 429);
+        assert.equal(denied.headers['retry-after'], '2');
+        assert.equal(denied.headers['ratelimit-limit'], undefined);
+        assert.equal(denied.headers['mcp-session-id'], undefined);
+        assert.deepEqual(denied.body, {
+          jsonrpc: '2.0',
+          id: null,
+          error: {
+            code: -32000,
+            message: 'Too Many Requests',
+            data: { kind: 'rate_limit', status: 429, limit: 4, retryAfterSeconds: 2 },
+          },
+        });
+        assert.equal(dispatched, 3, 'aggregate rejection never reaches a controller action');
+      }
+      assert.equal(admissions, 6, 'discovery, list and different tools consume the same budget');
+
+      options = { enable: true, rateLimit: { mode: 'observe', limit: 1 } };
+      toolOutput(
+        await send(local, 'tools/call', { name: categoryName, arguments: { pageSize: 1 } }),
+      );
+      assert.equal(admissions, 7, 'observe still counts an over-budget request');
+      assert.equal(dispatched, 4, 'observe does not reject an exhausted budget');
+      unavailable = true;
+      const observed = await send(local, 'tools/call', {
+        name: searchName,
+        arguments: { title: 'Wireless Headphones', pageSize: 1 },
+      });
+      toolOutput(observed);
+      assert.equal(observed.headers['retry-after'], undefined);
+      assert.equal(admissions, 8);
+      assert.equal(dispatched, 5, 'observe fails open on Redis unavailability');
+
+      options = { enable: true, rateLimit: { mode: 'enforce', limit: 4 } };
+      for (const legacy of [false, true]) {
+        const denied = await send(
+          local,
+          'tools/call',
+          {
+            name: searchName,
+            arguments: { pageSize: 1 },
+          },
+          legacy,
+        );
+        assert.equal(denied.status, 503);
+        assert.equal(denied.headers['retry-after'], undefined);
+        assert.equal(denied.headers['mcp-session-id'], undefined);
+        assert.deepEqual(denied.body, {
+          jsonrpc: '2.0',
+          id: null,
+          error: {
+            code: -32000,
+            message: 'Service Unavailable',
+            data: { kind: 'rate_limit_unavailable', status: 503 },
+          },
+        });
+        assert.equal(denied.text.includes('LOCAL_AGGREGATE_REDIS_DIAGNOSTIC'), false);
+        assert.equal(dispatched, 5, 'unavailable admission never dispatches a tool');
+      }
+      assert.equal(admissions, 10);
+      assert.equal(commands, admissions, 'exactly one Redis admission command per enabled request');
+      assert.equal(paths.length, admissions);
+      assert.ok(paths.every(path => path === '/mcp'));
+      assert.ok(keys.every(key => /^rate-limit:aggregate:v1:\d+$/.test(key)));
+      assert.deepEqual(local.snapshot(), {
+        active: 0,
+        contexts: 13,
+        settled: 13,
+        closing: false,
+      });
+    } finally {
+      try {
+        await local.close();
+      } finally {
+        action.mock.restore();
+        admitted.mock.restore();
+        configured.mock.restore();
+      }
     }
   });
 

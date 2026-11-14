@@ -2,6 +2,7 @@ import { catchError } from '@cabloy/utils';
 import assert from 'node:assert';
 import { describe, it } from 'node:test';
 import { app } from 'vona-mock';
+import { RateLimitError, RateLimitUnavailableError } from 'vona-module-a-ratelimit';
 
 const RateLimitPath = '/test/vona/performAction/rateLimit' as any;
 const RateLimitControllerPath = '/test/vona/performAction/rateLimitController' as any;
@@ -52,8 +53,15 @@ describe('rateLimit.test.ts', { concurrency: false }, () => {
             innerAccess: false,
           });
         });
-        assert.equal(error?.code, 429);
-        assert.equal(error?.status, 429);
+        assert.ok(error instanceof RateLimitError);
+        assert.equal(error.code, 429);
+        assert.equal(error.status, 429);
+        assert.deepEqual(error.errors, {
+          kind: 'rate_limit',
+          status: 429,
+          limit: 3,
+          retryAfterSeconds: 60,
+        });
       });
     } finally {
       restore();
@@ -81,8 +89,15 @@ describe('rateLimit.test.ts', { concurrency: false }, () => {
             innerAccess: false,
           });
         });
-        assert.equal(error?.code, 429);
-        assert.equal(error?.status, 429);
+        assert.ok(error instanceof RateLimitError);
+        assert.equal(error.code, 429);
+        assert.equal(error.status, 429);
+        assert.deepEqual(error.errors, {
+          kind: 'rate_limit',
+          status: 429,
+          limit: 2,
+          retryAfterSeconds: 60,
+        });
       });
     } finally {
       restore();
@@ -100,8 +115,10 @@ describe('rateLimit.test.ts', { concurrency: false }, () => {
             innerAccess: false,
           });
         });
-        assert.equal(error?.code, 503);
-        assert.equal(error?.status, 503);
+        assert.ok(error instanceof RateLimitUnavailableError);
+        assert.equal(error.code, 503);
+        assert.equal(error.status, 503);
+        assert.deepEqual(error.errors, { kind: 'rate_limit_unavailable', status: 503 });
       });
     } finally {
       restore();

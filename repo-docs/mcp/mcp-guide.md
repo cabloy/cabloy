@@ -52,6 +52,10 @@ Discovery checks the current Action guards afresh and sequentially for each scop
 
 `readOnly` must describe actual behavior. GET inference and a decorator annotation are not proof that an Action has no side effects.
 
+## Rate-limit boundary
+
+Both limiters remain opt-in. Shared `/mcp` and the managed dedicated local HTTP listener use the common transport's configured aggregate gate once per accepted exchange, after transport/body checks and the executor's initial lookup; earlier rejects are not counted. Controller tools separately retain identity policies on their real target Actions. See [Rate Limit Guide — MCP admission and error mapping](/backend/rate-limit-guide#mcp-admission-and-error-mapping) for the exact boundary, subject/IP caveat, shared budget, and safe error contracts.
+
 ## Mapping Action contracts
 
 The mapper reuses the Action's path parameters, query, JSON body, validation and response contract.

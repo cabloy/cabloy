@@ -12,6 +12,7 @@ import {
   WebStandardStreamableHTTPServerTransport,
 } from '@modelcontextprotocol/server';
 import { runWithZodQueryCoercion } from 'vona';
+import { RateLimitError, RateLimitUnavailableError } from 'vona-module-a-ratelimit';
 import { OAuthError } from 'vona-module-mcp-auth';
 
 import { queryRepairHint } from './controllerToolContract.ts';
@@ -57,6 +58,7 @@ export function fail(
   code = -32000,
   allow?: string,
   challenge?: string,
+  rateLimit?: RateLimitError | RateLimitUnavailableError,
 ) {
   if (res.destroyed || res.writableEnded) return;
   if (res.headersSent) {
@@ -69,14 +71,34 @@ export function fail(
     'connection': 'close',
     ...(allow ? { allow } : {}),
     ...(challenge ? { 'www-authenticate': challenge } : {}),
+    ...(rateLimit instanceof RateLimitError
+      ? { 'retry-after': String(rateLimit.errors.retryAfterSeconds) }
+      : {}),
   });
-  res.end(JSON.stringify(errorBody(code)));
+  const body = errorBody(code);
+  res.end(
+    JSON.stringify(
+      rateLimit
+        ? {
+            ...body,
+            error: {
+              ...body.error,
+              message: rateLimit.message,
+              data: rateLimit.errors,
+            },
+          }
+        : body,
+    ),
+  );
 }
 
 // Buffer only the selected JSON response, never an SSE stream or partial payload.
 async function boundedResponse(response: Response, requestId: unknown): Promise<Response> {
   if (response.status === 202 && response.body === null) {
-    return new Response(null, { status: 202, headers: { 'cache-control': 'no-store' } });
+    return new Response(null, {
+      status: 202,
+      headers: { 'cache-control': 'no-store' },
+    });
   }
   if (!response.headers.get('content-type')?.startsWith('application/json') || !response.body) {
     await response.body?.cancel();
@@ -144,14 +166,21 @@ async function boundedResponse(response: Response, requestId: unknown): Promise<
       error: {
         code: -32602,
         message: 'Invalid tool arguments',
-        data: { queryCode: data.queryCode, path: data.path, hint: queryRepairHint },
+        data: {
+          queryCode: data.queryCode,
+          path: data.path,
+          hint: queryRepairHint,
+        },
       },
     };
   }
   // Do not forward SDK diagnostic headers or other caller-controlled error data.
   return new Response(JSON.stringify(output), {
     status: response.status,
-    headers: { 'content-type': 'application/json', 'cache-control': 'no-store' },
+    headers: {
+      'content-type': 'application/json',
+      'cache-control': 'no-store',
+    },
   });
 }
 
@@ -204,6 +233,18 @@ export function createBusinessTransport(
       await app.bean.executor.newCtx(
         async () => {
           contexts++;
+          const denial = await app
+            .scope('a-ratelimit')
+            .service.rateLimitAggregate.admitConfigured();
+          if (abort.signal.aborted) return;
+          if (denial) {
+            const error =
+              denial.status === 429
+                ? new RateLimitError(denial.limit, denial.retryAfterSeconds)
+                : new RateLimitUnavailableError();
+            fail(res, denial.status, -32000, undefined, undefined, error);
+            return;
+          }
           if (initializeInstance) {
             try {
               await app.scope('a-instance').service.instance.initInstance();
@@ -289,7 +330,9 @@ export function createBusinessTransport(
                       let cancel!: () => void;
                       const cancelled = new Promise<never>((_resolve, reject) => {
                         cancel = () => reject(new Error('MCP_LOCAL_CANCELLED'));
-                        signal.addEventListener('abort', cancel, { once: true });
+                        signal.addEventListener('abort', cancel, {
+                          once: true,
+                        });
                       });
                       try {
                         // Native JSON close does not resolve its pending response wait.

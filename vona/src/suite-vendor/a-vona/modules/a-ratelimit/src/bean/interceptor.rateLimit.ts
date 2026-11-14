@@ -6,6 +6,8 @@ import { Interceptor } from 'vona-module-a-aspect';
 
 import type { IRateLimitPolicy, IRateLimitResult } from '../types/rateLimit.ts';
 
+import { RateLimitError, RateLimitUnavailableError } from '../lib/rateLimitError.ts';
+
 export interface IInterceptorOptionsRateLimit extends IDecoratorInterceptorOptionsGlobal {
   rateLimit?: Partial<IRateLimitPolicy>;
 }
@@ -39,7 +41,7 @@ export class InterceptorRateLimit extends BeanBase implements IInterceptorExecut
         error: error instanceof Error ? error.message : String(error),
       });
       if (policy.mode === 'observe') return next();
-      return this.app.throw(503);
+      throw new RateLimitUnavailableError();
     }
     if (policy.mode === 'observe') {
       if (!result.allowed) {
@@ -61,7 +63,7 @@ export class InterceptorRateLimit extends BeanBase implements IInterceptorExecut
       instanceName: this.ctx.instanceName,
       limit: result.limit,
     });
-    this.app.throw(429);
+    throw new RateLimitError(result.limit, result.retryAfterSeconds);
   }
 
   private _setHeaders(result: IRateLimitResult) {

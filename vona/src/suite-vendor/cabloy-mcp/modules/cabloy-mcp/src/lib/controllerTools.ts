@@ -8,6 +8,7 @@ import { fromJsonSchema, ProtocolError, Server } from '@modelcontextprotocol/ser
 import { appMetadata, runWithZodQueryCoercion } from 'vona';
 import { SymbolMcpOptions } from 'vona-module-a-openapiutils';
 import { checkQueryBudget, PublicQueryError, validateQuery } from 'vona-module-a-orm';
+import { RateLimitError, RateLimitUnavailableError } from 'vona-module-a-ratelimit';
 import { getCacheControllerRoutes } from 'vona-module-a-web';
 import { isMcpScope } from 'vona-module-mcp-auth';
 import z from 'zod';
@@ -463,6 +464,24 @@ export async function createControllerToolServer(
                   structuredContent,
                 };
               } catch (error) {
+                if (error instanceof RateLimitError || error instanceof RateLimitUnavailableError) {
+                  return {
+                    ...failure(
+                      error instanceof RateLimitError ? 'Too Many Requests' : 'Service Unavailable',
+                    ),
+                    _meta: {
+                      'cabloy/rateLimit':
+                        error instanceof RateLimitError
+                          ? {
+                              kind: 'rate_limit',
+                              status: 429,
+                              limit: error.errors.limit,
+                              retryAfterSeconds: error.errors.retryAfterSeconds,
+                            }
+                          : { kind: 'rate_limit_unavailable', status: 503 },
+                    },
+                  };
+                }
                 if (error instanceof PublicQueryError) {
                   throw new ProtocolError(-32602, 'Invalid tool arguments', {
                     queryCode: error.queryCode,

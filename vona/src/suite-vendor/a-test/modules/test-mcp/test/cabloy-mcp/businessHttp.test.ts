@@ -22,6 +22,7 @@ import { isDeepStrictEqual } from 'node:util';
 import { appResource, AppUtil } from 'vona';
 import { acquireTestLock, app } from 'vona-mock';
 import { BeanExecutor } from 'vona-module-a-executor';
+import { ServiceRateLimit } from 'vona-module-a-ratelimit';
 import { BeanRbacScope } from 'vona-module-a-rbac';
 import {
   closeMcpTransport,
@@ -590,6 +591,192 @@ describe('businessHttp.test.ts', { concurrency: false, timeout: 180000 }, () => 
     }
     assert.equal(app.server, server);
     assert.ok(app.server?.listening, 'per-request cleanup does not close shared server');
+  });
+
+  it('applies configured aggregate admission once before shared HTTP tool dispatch', async t => {
+    const onion = app.bean.onion.middlewareSystem;
+    const getOptions = onion.getOnionOptions;
+    let options = {
+      enable: true,
+      rateLimit: { mode: 'enforce' as 'enforce' | 'observe', limit: 1 },
+    };
+    const configured = t.mock.method(onion, 'getOnionOptions', function (this: typeof onion, name) {
+      const original = getOptions.call(this, name);
+      if (name !== 'a-ratelimit:aggregate' || app.ctx?.get('x-mcp-test-owner') !== requestOwner) {
+        return original;
+      }
+      return { ...original, ...options };
+    });
+    let admissions = 0;
+    let unavailable = false;
+    const admit = ServiceRateLimit.prototype.admitAggregate;
+    const admission = t.mock.method(
+      ServiceRateLimit.prototype,
+      'admitAggregate',
+      function (this: ServiceRateLimit, policy) {
+        if (app.ctx?.get('x-mcp-test-owner') !== requestOwner) return admit.call(this, policy);
+        admissions++;
+        if (unavailable) return Promise.reject(new Error('private Redis detail'));
+        return Promise.resolve({
+          allowed: admissions === 1,
+          limit: policy.limit,
+          remaining: 0,
+          resetAfterMs: 1000,
+          retryAfterSeconds: 1,
+        });
+      },
+    );
+    const original = app.bean.executor.performAction;
+    const dispatched = mockOwnedPerformAction(t, async function (...args) {
+      return original.apply(this, args);
+    });
+    const call = (legacy = false) =>
+      send(
+        'tools/call',
+        {
+          name: 'mcp_test_action_status',
+          arguments: {},
+        },
+        { legacy },
+      );
+    try {
+      output(await call());
+      assert.equal(admissions, 1, 'internal Action does not repeat application admission');
+      assert.equal(dispatched.mock.callCount(), 1);
+      for (const legacy of [false, true]) {
+        const denied = await call(legacy);
+        assert.equal(denied.status, 429);
+        assert.equal(denied.headers['retry-after'], '1');
+        assert.deepEqual(denied.body, {
+          jsonrpc: '2.0',
+          id: null,
+          error: {
+            code: -32000,
+            message: 'Too Many Requests',
+            data: { kind: 'rate_limit', status: 429, limit: 1, retryAfterSeconds: 1 },
+          },
+        });
+        await waitFor(() => !mcpTransportSnapshot(app)?.active);
+      }
+      assert.equal(admissions, 3);
+      assert.equal(dispatched.mock.callCount(), 1, 'aggregate denial never dispatches an Action');
+      unavailable = true;
+      const failed = await call();
+      assert.equal(failed.status, 503);
+      assert.equal(failed.headers['retry-after'], undefined);
+      assert.deepEqual(failed.body.error, {
+        code: -32000,
+        message: 'Service Unavailable',
+        data: { kind: 'rate_limit_unavailable', status: 503 },
+      });
+      assert.equal(dispatched.mock.callCount(), 1);
+      options = { ...options, rateLimit: { ...options.rateLimit, mode: 'observe' } };
+      output(await call());
+      unavailable = false;
+      output(await call());
+      assert.equal(admissions, 6, 'observe still checks both unavailable and exhausted admission');
+      options = { ...options, enable: false };
+      output(await call());
+      assert.equal(admissions, 6, 'disabled admission does not access the limiter');
+      assert.equal(dispatched.mock.callCount(), 4);
+    } finally {
+      dispatched.mock.restore();
+      admission.mock.restore();
+      configured.mock.restore();
+    }
+  });
+
+  it('preserves real Action identity-limit failures as safe tool results on both protocols', async t => {
+    const redis = app.bean.redis;
+    const get = redis.get;
+    let unavailable = false;
+    let commands = 0;
+    const limiter = t.mock.method(redis, 'get', function (this: typeof redis, name) {
+      if (name !== 'limiter' || app.ctx?.get('x-mcp-test-owner') !== requestOwner) {
+        return get.call(this, name);
+      }
+      return {
+        rateLimitAdmit: async (key: string, windowMs: string) => {
+          commands++;
+          assert.equal(windowMs, '60000');
+          assert.match(key, /^rate-limit:v1:/);
+          assert.match(decodeURIComponent(key), /get:\/mcp\/test\/actions\/status/);
+          assert.equal(String(app.bean.passport.currentAuth?.id), fixtureAuthId);
+          if (unavailable) throw new Error('private Redis detail');
+          return [3, 60_000];
+        },
+      } as any;
+    });
+    const original = app.bean.executor.performAction;
+    let spoof = false;
+    const dispatched = mockOwnedPerformAction(t, async function (method, path, actionOptions) {
+      if (spoof) {
+        throw Object.assign(new Error('private action detail'), {
+          code: 429,
+          status: 429,
+          errors: { kind: 'rate_limit', status: 429, limit: 2, retryAfterSeconds: 60 },
+        });
+      }
+      return original.call(this, method, path, {
+        ...actionOptions,
+        onions: {
+          interceptor: {
+            'a-ratelimit:rateLimit': {
+              enable: true,
+              rateLimit: { mode: 'enforce', limit: 2, windowMs: 60_000, key: 'subject' },
+            },
+          },
+        },
+      });
+    });
+    const call = (legacy: boolean) =>
+      send(
+        'tools/call',
+        {
+          name: 'mcp_test_action_status',
+          arguments: {},
+        },
+        { legacy },
+      );
+    try {
+      for (const legacy of [false, true]) {
+        unavailable = false;
+        const denied = await call(legacy);
+        assert.equal(denied.status, 200);
+        assert.equal(denied.body.error, undefined);
+        assert.equal(denied.body.result.isError, true);
+        assert.equal(denied.body.result.structuredContent, undefined);
+        assert.deepEqual(denied.body.result.content, [{ type: 'text', text: 'Too Many Requests' }]);
+        assert.deepEqual(denied.body.result._meta['cabloy/rateLimit'], {
+          kind: 'rate_limit',
+          status: 429,
+          limit: 2,
+          retryAfterSeconds: 60,
+        });
+        unavailable = true;
+        const failed = await call(legacy);
+        assert.equal(failed.status, 200);
+        assert.equal(failed.body.result.isError, true);
+        assert.deepEqual(failed.body.result.content, [
+          { type: 'text', text: 'Service Unavailable' },
+        ]);
+        assert.deepEqual(failed.body.result._meta['cabloy/rateLimit'], {
+          kind: 'rate_limit_unavailable',
+          status: 503,
+        });
+        spoof = true;
+        const unrelated = await call(legacy);
+        spoof = false;
+        assert.equal(unrelated.status, 200);
+        assert.equal(unrelated.body.result.isError, true);
+        assert.deepEqual(unrelated.body.result.content, [{ type: 'text', text: 'Action failed' }]);
+        assert.equal(unrelated.body.result._meta?.['cabloy/rateLimit'], undefined);
+      }
+      assert.equal(commands, 4, 'real identity interceptor calls its Redis admission service');
+    } finally {
+      dispatched.mock.restore();
+      limiter.mock.restore();
+    }
   });
 
   it('rejects an existing bearer before dispatch when its last granting role is removed and restores it on reassignment', async t => {

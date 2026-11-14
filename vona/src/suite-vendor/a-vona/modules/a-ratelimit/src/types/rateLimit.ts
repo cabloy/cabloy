@@ -26,3 +26,7 @@ export interface IRateLimitResult {
   resetAfterMs: number;
   retryAfterSeconds: number;
 }
+
+export type RateLimitAggregateDenial =
+  | { status: 429; limit: number; retryAfterSeconds: number }
+  | { status: 503 };

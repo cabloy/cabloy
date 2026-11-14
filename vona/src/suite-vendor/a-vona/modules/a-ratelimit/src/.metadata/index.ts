@@ -53,12 +53,14 @@ declare module 'vona-module-a-ratelimit' {
 /** middlewareSystem: end */
 /** service: begin */
 export * from '../service/rateLimit.ts';
+export * from '../service/rateLimitAggregate.ts';
 
 import 'vona-module-a-bean';
 declare module 'vona-module-a-bean' {
 
     export interface IServiceRecord {
       'a-ratelimit:rateLimit': never;
+'a-ratelimit:rateLimitAggregate': never;
     }
 
 
@@ -74,12 +76,24 @@ declare module 'vona-module-a-ratelimit' {
             get $beanFullName(): 'a-ratelimit.service.rateLimit';
             get $onionName(): 'a-ratelimit:rateLimit';
           }
+
+        export interface ServiceRateLimitAggregate {
+          /** @internal */
+          get scope(): ScopeModuleARatelimit;
+        }
+
+          export interface ServiceRateLimitAggregate {
+            get $beanFullName(): 'a-ratelimit.service.rateLimitAggregate';
+            get $onionName(): 'a-ratelimit:rateLimitAggregate';
+          }
 }
 /** service: end */
 /** service: begin */
 import type { ServiceRateLimit } from '../service/rateLimit.ts';
+import type { ServiceRateLimitAggregate } from '../service/rateLimitAggregate.ts';
 export interface IModuleService {
   'rateLimit': ServiceRateLimit;
+'rateLimitAggregate': ServiceRateLimitAggregate;
 }
 /** service: end */
 /** service: begin */
@@ -88,6 +102,7 @@ import 'vona';
 declare module 'vona' {
   export interface IBeanRecordGeneral {
     'a-ratelimit.service.rateLimit': ServiceRateLimit;
+'a-ratelimit.service.rateLimitAggregate': ServiceRateLimitAggregate;
   }
 }
 /** service: end */
