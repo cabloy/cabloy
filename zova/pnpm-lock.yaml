@@ -532,8 +532,8 @@ importers:
         version: link:src/suite/a-training/modules/training-student
     devDependencies:
       '@cabloy/cli':
-        specifier: ^3.1.33
-        version: 3.1.33(supports-color@10.2.2)(vue@3.5.42(typescript@5.9.3))
+        specifier: ^3.1.34
+        version: 3.1.34(supports-color@10.2.2)(vue@3.5.42(typescript@5.9.3))
       '@cabloy/lint':
         specifier: ^5.1.35
         version: 5.1.35(@typescript-eslint/eslint-plugin@8.70.0(@typescript-eslint/parser@8.70.0(eslint@10.10.0(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@5.9.3))(eslint@10.10.0(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@5.9.3))(@typescript-eslint/typescript-estree@8.70.0(supports-color@10.2.2)(typescript@5.9.3))(@typescript-eslint/utils@8.70.0(eslint@10.10.0(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@5.9.3))(eslint@10.10.0(jiti@2.7.0)(supports-color@10.2.2))(oxfmt@0.77.0)(oxlint@1.92.0)(supports-color@10.2.2)(typescript@5.9.3)(vue-eslint-parser@10.4.1(eslint@10.10.0(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2))
@@ -592,8 +592,8 @@ importers:
   packages-cli/cli:
     dependencies:
       '@cabloy/cli':
-        specifier: ^3.1.33
-        version: 3.1.33(supports-color@10.2.2)(vue@3.5.42(typescript@5.9.3))
+        specifier: ^3.1.34
+        version: 3.1.34(supports-color@10.2.2)(vue@3.5.42(typescript@5.9.3))
       '@cabloy/process-helper':
         specifier: ^3.1.11
         version: 3.1.11
@@ -604,7 +604,7 @@ importers:
         specifier: ^7.6.2
         version: 7.8.5
       zova-cli-set-front:
-        specifier: ^1.2.125
+        specifier: ^1.2.126
         version: link:../cli-set-front
     devDependencies:
       clean-package:
@@ -626,8 +626,8 @@ importers:
         specifier: ^7.28.6
         version: 7.29.7(@babel/core@7.29.7(supports-color@10.2.2))(supports-color@10.2.2)
       '@cabloy/cli':
-        specifier: ^3.1.33
-        version: 3.1.33(supports-color@10.2.2)(vue@3.5.42(typescript@5.9.3))
+        specifier: ^3.1.34
+        version: 3.1.34(supports-color@10.2.2)(vue@3.5.42(typescript@5.9.3))
       '@cabloy/extend':
         specifier: ^3.2.8
         version: 3.2.8
@@ -1025,7 +1025,7 @@ importers:
         specifier: ^5.1.103
         version: link:../zova-core
       zova-suite-a-zova:
-        specifier: ^5.1.190
+        specifier: ^5.1.191
         version: link:../../src/suite-vendor/a-zova
     devDependencies:
       clean-package:
@@ -1288,7 +1288,7 @@ importers:
         specifier: ^5.1.44
         version: link:modules/a-zod
       zova-module-a-zova:
-        specifier: ^5.1.122
+        specifier: ^5.1.123
         version: link:modules/a-zova
 
   src/suite-vendor/a-zova/modules/a-api:
@@ -1625,8 +1625,8 @@ importers:
         version: link:../../../../../packages-utils/zova-jsx
     devDependencies:
       '@cabloy/cli':
-        specifier: ^3.1.33
-        version: 3.1.33(supports-color@10.2.2)(vue@3.5.42(typescript@5.9.3))
+        specifier: ^3.1.34
+        version: 3.1.34(supports-color@10.2.2)(vue@3.5.42(typescript@5.9.3))
       '@types/luxon':
         specifier: ^3.7.1
         version: 3.7.5
@@ -2510,8 +2510,8 @@ packages:
   '@bufbuild/protobuf@2.15.0':
     resolution: {integrity: sha512-DAheWUkVr/SJTWCc+lg9dhY0eN4SaWlf4+bG1KzHeXbnqt0AfB/NX0Z+VunGlM1ki1B4zVvye27MpKh/svySUA==}
 
-  '@cabloy/cli@3.1.33':
-    resolution: {integrity: sha512-JmA23cv6VAD0gJExHpjWNsy5v7kTSgKwwIdxu6ihuSCD4cXFjMsGPhpmmEsXcVoZ0TgpYaq3DjbIoGmOYRpP7w==}
+  '@cabloy/cli@3.1.34':
+    resolution: {integrity: sha512-e+yKmSeLbmciZYcZrBzzwNNvujuKg/Z0dNaVnOzAZFR2LQsvMaDRq1C0S0mBigPk2DLHGH2eAoLGkMngzWcBAQ==}
 
   '@cabloy/compose@2.1.9':
     resolution: {integrity: sha512-b+EB7EDQz7dDdrvFEmRIpGpW0jvDEmYGChSbKx0wzki6AGCj0z3lNm4qnkgM5+CTQIKBU2FmvDcQjU5r6Cj6SA==}
@@ -8858,7 +8858,7 @@ snapshots:
 
   '@bufbuild/protobuf@2.15.0': {}
 
-  '@cabloy/cli@3.1.33(supports-color@10.2.2)(vue@3.5.42(typescript@5.9.3))':
+  '@cabloy/cli@3.1.34(supports-color@10.2.2)(vue@3.5.42(typescript@5.9.3))':
     dependencies:
       '@babel/parser': 7.29.8
       '@cabloy/module-glob': 5.3.21

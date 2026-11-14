@@ -2366,7 +2366,7 @@ importers:
         specifier: ^5.0.5
         version: link:modules/test-markdown
       vona-module-test-mcp:
-        specifier: ^5.0.9
+        specifier: ^5.0.10
         version: link:modules/test-mcp
       vona-module-test-pay:
         specifier: ^5.0.13
@@ -3519,7 +3519,7 @@ importers:
         specifier: workspace:^
         version: link:modules/cabloy-mcp
       vona-module-mcp-auth:
-        specifier: ^5.0.7
+        specifier: ^5.0.8
         version: link:modules/mcp-auth
 
   src/suite-vendor/cabloy-mcp/modules/cabloy-mcp:
