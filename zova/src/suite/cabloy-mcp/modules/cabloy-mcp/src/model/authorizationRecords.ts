@@ -30,16 +30,4 @@ export class ModelAuthorizationRecords extends BeanModelBase {
       },
     });
   }
-
-  deleteMine(id: TableIdentity) {
-    return this.$useMutationData({
-      mutationKey: ['deleteMine', id],
-      mutationFn: async () => {
-        await this.scope.api.mcpAuthAuthorizationGrant.deleteMine({ params: { id } });
-      },
-      onSuccess: async () => {
-        await this.$invalidateQueries({ queryKey: ['mine'] });
-      },
-    });
-  }
 }

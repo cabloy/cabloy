@@ -899,8 +899,8 @@ importers:
         specifier: ^5.1.34
         version: 5.1.34
       zova-module-a-layoutprofile:
-        specifier: ^5.0.9
-        version: 5.0.9
+        specifier: ^5.0.10
+        version: 5.0.10
       zova-module-a-logger:
         specifier: ^5.1.31
         version: 5.1.31
@@ -914,8 +914,8 @@ importers:
         specifier: ^5.1.65
         version: 5.1.65
       zova-module-a-pay:
-        specifier: ^5.0.16
-        version: 5.0.16
+        specifier: ^5.0.17
+        version: 5.0.17
       zova-module-a-rbac:
         specifier: ^5.0.4
         version: 5.0.4
@@ -950,8 +950,8 @@ importers:
         specifier: ^5.1.122
         version: 5.1.122(typescript@5.9.3)(vue@3.5.45(typescript@5.9.3))
       zova-module-pay-mock:
-        specifier: ^5.0.11
-        version: 5.0.11
+        specifier: ^5.0.12
+        version: 5.0.12
       zova-module-pay-paypal:
         specifier: ^5.0.5
         version: 5.0.5
@@ -9172,9 +9172,6 @@ packages:
   zova-module-a-layoutprofile@5.0.8:
     resolution: {integrity: sha512-gStXBi0vkKgjEs0WNHvStw95CZ3kLZluAGT1hLu8zpC3K3xt14UBWzHrqj4VjMShzAr9L/Lhvu+Ac4Na049pvA==}
 
-  zova-module-a-layoutprofile@5.0.9:
-    resolution: {integrity: sha512-yQUwZZu0VISR4Omr3BmUZYOu9+/Dwr8esJGJMSLbnMZEyxQj8KM4Fo/nLOWuK78yCaO2HwctLpSNQfpQWJxuuA==}
-
   zova-module-a-logger@5.1.31:
     resolution: {integrity: sha512-ES+ctpP5IbhpygxCLKPx3VktKc60wVcQH3Ndt42Mfmty948YJkpCRCawhWckQd3/Spxk6XB1o61F5s6AIHyboA==}
 
@@ -9189,9 +9186,6 @@ packages:
 
   zova-module-a-pay@5.0.15:
     resolution: {integrity: sha512-5nUPNrhnXCZBiKI/fGoaeziTdqHTSpa2tAgfcaEpS2BckghBPa7Q340E3iMVCgJUyP76cSnxnMcgDf1qwiQupA==}
-
-  zova-module-a-pay@5.0.16:
-    resolution: {integrity: sha512-YAhRSPTHcs3kW1YnD1Wye+GZCvQu/PZzIWHppEMSXSGu2AGLwtAMMDz7Gg0RbVcMMfAE/nhszOd9QtXgGClTjA==}
 
   zova-module-a-pay@5.0.17:
     resolution: {integrity: sha512-LmHMzax2tjNrhWi3TQGdEG7Lq9Avfe2SFtA5yepEK2g7lYtTfet0X/HMDL8NzXF1v36DQ+ZgHGtTnX/Po2+KNg==}
@@ -9237,9 +9231,6 @@ packages:
 
   zova-module-pay-mock@5.0.10:
     resolution: {integrity: sha512-f0lILC0M3ipfx2nodomYRdQG0zFtwxv2YALoVkOiOO03CiDycsKMfrUQQta9ec8KrIfNLJ6TM7Otat9/7GZ7+w==}
-
-  zova-module-pay-mock@5.0.11:
-    resolution: {integrity: sha512-W/WiUp/2BsIeEJm4n755RMJ1DXrWzSuHoDriRfTOuMODLBQd2w2FnKTuljZZTrF4KWHAyeo+orr96C6YCNyHKw==}
 
   zova-module-pay-mock@5.0.12:
     resolution: {integrity: sha512-fFoWANTbqB6a6zmPlpy+59SvDzeCKbv7TdlgbPxbK04mw0ghJD3YmFRcNW2IQZFFX02QFQ7BRD29PGakPsgqWw==}
@@ -15086,8 +15077,6 @@ snapshots:
 
   zova-module-a-layoutprofile@5.0.8: {}
 
-  zova-module-a-layoutprofile@5.0.9: {}
-
   zova-module-a-logger@5.1.31:
     dependencies:
       '@cabloy/logger': 1.1.25
@@ -15113,8 +15102,6 @@ snapshots:
       typestyle: 2.4.0
 
   zova-module-a-pay@5.0.15: {}
-
-  zova-module-a-pay@5.0.16: {}
 
   zova-module-a-pay@5.0.17: {}
 
@@ -15194,8 +15181,6 @@ snapshots:
       - vue
 
   zova-module-pay-mock@5.0.10: {}
-
-  zova-module-pay-mock@5.0.11: {}
 
   zova-module-pay-mock@5.0.12: {}
 

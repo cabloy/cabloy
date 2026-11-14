@@ -1000,7 +1000,7 @@ test.describe('MCP consent login recovery', () => {
 });
 
 test(
-  'MCP personal authorizations: ordinary account discovers, cancels and confirms revoke/delete',
+  'MCP personal authorizations: ordinary account discovers, cancels and confirms revoke',
   { tag: ['@web', '@ssr', '@mcp', '@flow', '@account'] },
   async ({ page, request, baseURL }) => {
     test.setTimeout(60_000);
@@ -1082,7 +1082,7 @@ test(
         entry.getByRole('heading', { name: MCP_E2E_CLIENT_NAME, exact: true }),
       ).toBeVisible();
       await expect(entry.getByRole('button', { name: 'Revoke', exact: true })).toBeEnabled();
-      await expect(entry.getByRole('button', { name: 'Delete', exact: true })).toBeEnabled();
+      await expect(entry.getByRole('button', { name: 'Delete', exact: true })).toHaveCount(0);
 
       const document = await page.request.get(authorizationsPath);
       expect(document.ok()).toBe(true);
@@ -1161,6 +1161,11 @@ test(
       const dialog = page.getByRole('dialog');
       await entry.getByRole('button', { name: 'Revoke', exact: true }).click();
       await expect(dialog).toBeVisible();
+      await expect(dialog).toContainText(
+        'MCP connections using it will lose access, and its access token, refresh token, and authorization code will stop working.',
+      );
+      await expect(dialog).toContainText('Reconnecting requires a new authorization.');
+      await expect(dialog).toContainText('Revoked records will be automatically cleaned up.');
       await dialog.getByRole('button', { name: 'No', exact: true }).click();
       await expect(dialog).toHaveCount(0);
       await expect(entry.getByRole('button', { name: 'Revoke', exact: true })).toBeEnabled();
@@ -1174,7 +1179,7 @@ test(
       expect((await revoked).ok()).toBe(true);
       await expect(dialog).toHaveCount(0);
       await expect(entry.getByRole('button', { name: 'Revoke', exact: true })).toHaveCount(0);
-      await expect(entry.getByRole('button', { name: 'Delete', exact: true })).toBeEnabled();
+      await expect(entry.getByRole('button', { name: 'Delete', exact: true })).toHaveCount(0);
       expect(mutations.revoke).toBe(1);
       const rejectedAccess = await callMcp(request, 'tools/list', {}, token.access_token);
       expect(rejectedAccess.status()).toBe(401);
@@ -1190,30 +1195,7 @@ test(
       expect(rejectedRefresh.status()).toBe(400);
       expect((await rejectedRefresh.json()).error).toBe('invalid_grant');
 
-      await entry.getByRole('button', { name: 'Delete', exact: true }).click();
-      await expect(dialog).toBeVisible();
-      await dialog.getByRole('button', { name: 'No', exact: true }).click();
-      await expect(dialog).toHaveCount(0);
-      await expect(
-        entry.getByRole('heading', { name: MCP_E2E_CLIENT_NAME, exact: true }),
-      ).toBeVisible();
       expect(mutations.delete).toBe(0);
-      await entry.getByRole('button', { name: 'Delete', exact: true }).click();
-      const deleted = waitForApiResponse(page, 'DELETE', deletePath);
-      await dialog.getByRole('button', { name: 'Yes', exact: true }).click();
-      expect((await deleted).ok()).toBe(true);
-      await expect(dialog).toHaveCount(0);
-      await expect(entry).toHaveCount(0);
-      expect(mutations.delete).toBe(1);
-      const remaining = await page.request.get(`${authorizationGrantApiPath}/mine`, {
-        headers: await loginMcpAccount(request, account),
-      });
-      expect(remaining.ok()).toBe(true);
-      expect(
-        (await remaining.json()).data.list.some(
-          (grant: { clientId: string }) => grant.clientId === client!.clientId,
-        ),
-      ).toBe(false);
       expect(errors).toEqual({ page: 0, console: 0, hydration: 0 });
     } finally {
       if (account) {

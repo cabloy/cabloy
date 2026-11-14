@@ -34,18 +34,6 @@ export class ControllerPageAuthorizations extends BeanControllerPageBase {
     await this.$$modelAuthorizationRecords.revokeMine(item.id).mutateAsync();
   }
 
-  async delete(item: AuthorizationItem) {
-    const confirmed = await this.$performCommand('basic-commands:confirm', {
-      text: this.scope.locale.McpAuthorizationDeleteConfirm(),
-    });
-    if (!confirmed) return;
-    await this.$$modelAuthorizationRecords.deleteMine(item.id).mutateAsync();
-    const pageCount = this.queryRecords?.data?.pageCount;
-    if (pageCount !== undefined && this.pageNo > Math.max(1, pageCount)) {
-      this.pageNo = Math.max(1, pageCount);
-    }
-  }
-
   private _status(state: AuthorizationItem['state']) {
     switch (state) {
       case 'pending':
@@ -82,16 +70,11 @@ export class ControllerPageAuthorizations extends BeanControllerPageBase {
         <div class="card-body gap-4">
           <div class="flex flex-wrap items-start justify-between gap-4">
             <h2 class="card-title break-words">{item.clientName}</h2>
-            <div class="flex gap-2">
-              {(item.state === 'codeReady' || item.state === 'tokenActive') && (
-                <ZButton class="btn btn-outline btn-sm" onPerform={() => this.revoke(item)}>
-                  {this.scope.locale.Revoke()}
-                </ZButton>
-              )}
-              <ZButton class="btn btn-error btn-outline btn-sm" onPerform={() => this.delete(item)}>
-                {this.scope.locale.Delete()}
+            {(item.state === 'codeReady' || item.state === 'tokenActive') && (
+              <ZButton class="btn btn-outline btn-sm" onPerform={() => this.revoke(item)}>
+                {this.scope.locale.Revoke()}
               </ZButton>
-            </div>
+            )}
           </div>
           <dl class="grid gap-4 text-sm sm:grid-cols-2">
             <div>

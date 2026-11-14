@@ -23,9 +23,7 @@ export default {
   McpAuthorizationsLoading: 'Loading MCP authorizations…',
   McpAuthorizationsLoadFailed: 'MCP authorizations could not be loaded. Please try again.',
   McpAuthorizationRevokeConfirm:
-    'Revoke this authorization? The application will no longer be able to use its access token, refresh token, or authorization code.',
-  McpAuthorizationDeleteConfirm:
-    'Delete this authorization record? Its tokens and authorization code will stop working. The application registration and your sign-in account will not be deleted.',
+    'Revoke this authorization? MCP connections using it will lose access, and its access token, refresh token, and authorization code will stop working. Reconnecting requires a new authorization. Revoked records will be automatically cleaned up.',
   McpAuthorizationStatus: 'Authorization status',
   McpAuthorizationCodeReady: 'Awaiting token exchange',
   McpAuthorizationTokenActive: 'Issued (check expiry below)',

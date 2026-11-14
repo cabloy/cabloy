@@ -19,9 +19,7 @@ export default {
   McpAuthorizationsLoading: '正在加载 MCP 授权记录…',
   McpAuthorizationsLoadFailed: '无法加载 MCP 授权记录，请重试。',
   McpAuthorizationRevokeConfirm:
-    '撤销此授权？应用将无法继续使用该授权的访问令牌、刷新令牌或授权码。',
-  McpAuthorizationDeleteConfirm:
-    '删除此授权记录？相关令牌及授权码将失效，但不会删除应用注册或您的登录账户。',
+    '撤销此授权？使用此授权的 MCP 连接将无法继续访问，相关访问令牌、刷新令牌和授权码将失效。重新连接需要重新授权。已撤销记录将由系统自动清理。',
   McpAuthorizationStatus: '授权状态',
   McpAuthorizationCodeReady: '等待兑换令牌',
   McpAuthorizationTokenActive: '已签发（有效期见下方）',
