@@ -19,13 +19,14 @@ Mapping is **closed by default**:
 - Controller-level decoration and Controller-default inheritance are not supported. Applying `@Mcp.tool()` to a class is rejected.
 - This is a breaking change with no compatibility layer: `Mcp.exclude` and `SymbolMcpExclude` are removed. To keep an Action closed, omit its Action-level tool decorator.
 
-Normal shared `/mcp` construction requires all of the following:
+Normal site-resource `/mcp/:ssrSiteId` construction requires all of the following:
 
 1. An enabled Controller.
 2. A registered Action route.
 3. Admission by the server-owned `includeTool` predicate, when supplied.
 4. Own Action-level `@Mcp.tool()` metadata.
-5. A supported MCP/OpenAPI contract.
+5. Admission of the requested SSR Site by the Action's optional `ssrSites`.
+6. A supported MCP/OpenAPI contract.
 
 OAuth scope eligibility and current business authorization apply independently. Opt-in alone is not exposure on the authenticated endpoint. `@Resource()` is not a generic admission requirement; loaded synthetic/test Controllers can contribute tools under the same rules. Module capability and Controller `meta.mode` filtering occur during startup, before this scan.
 
@@ -35,23 +36,34 @@ MCP metadata is independent of ordinary OpenAPI publication. `@Api.exclude()` is
 
 In this Cabloy Basic checkout, `:tools:crud`, `:tools:crudBasic`, and `:tools:crudStart` generate explicit Action-level opt-in for all eight Actions by default, without an `--mcp` flag. `select`, `group`, `aggregate`, and `view` use `readOnly: true`; `create`, `update`, `delete`, and `deleteBulk` use `readOnly: false`. This changes new scaffolds, not existing Controllers or the runtime admission rules above. Decorators do not activate an endpoint or grant business authority; bulk mutations remain potentially destructive and must preserve existing guards and instance/data scope.
 
+Generated MCP Actions target the ordinary Admin Site with `ssrSites: ['basic-siteadmin:admin']` in Basic or `ssrSites: ['start-siteadmin:admin']` in Start. These are SSR Site bean onion names, matching the menu's existing `site` selector format. This is a generation-time default; omitted runtime `ssrSites` still admits every Site. For a different audience, adapt the generated menu's public package import, Site options type, `site` selector and `group`, together with every relevant MCP Action's `ssrSites`, from the target Site definition. Menu visibility and MCP Site membership do not grant business authority.
+
 Generated descriptions use `$locale('<Resource><Action>Description')` with minimal truthful action text and English `TODO(mcp-description)` source comments. The CLI reminder asks for AI/manual refinement against the actual Action, DTO, and Service. **After business implementation and before completion**, fill these descriptions in every generated locale from the implemented inputs, result, scope, and material effects, including bulk selection scope and destructive or related-record effects when material. Remove resolved TODO comments in all generated locales; retain unresolved TODOs and explicitly report incomplete semantics. Verify `readOnly` against the final behavior and never infer atomicity, idempotency, rollback, recoverability, or authorization guarantees from a generated scaffold.
 
 See [CRUD Workflow](/backend/crud-workflow#generated-mcp-metadata-and-required-description-follow-up) for the generation and follow-up sequence. The Student examples below are separately authored contracts, not the default generated catalog.
 
 ## Options and defaults
 
-| Option        | Meaning                                                                                                                                                                                                                                                         |
-| ------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `name`        | Action-only public tool name override. The default is `module_controller_action`. Names must be unique and contain 1–128 letters, digits, `_` or `-`. Unsupported characters in the Controller identity are replaced by `_`; module-name hyphens are preserved. |
-| `description` | Action-scoped text or locale metadata. Falls back to that Action's OpenAPI description, summary, then Controller/Action identity. A class-level description is not inherited.                                                                                   |
-| `readOnly`    | Action-local read classification. If absent, infers `true` for GET and `false` for other methods; no Controller default applies.                                                                                                                                |
-| `output.pick` | Top-level object response field allowlist, applied to runtime validation/projection and the advertised schema closure. It does not alter the HTTP DTO.                                                                                                          |
-| `discovery`   | Optional `{ input?: string[][]; output?: string[][] }` paths that compact selected object/array schemas in tool declarations only. Full contracts remain available through `cabloy_tool_contract`.                                                              |
+| Option        | Meaning                                                                                                                                                                                                                                                                    |
+| ------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `name`        | Action-only public tool name override. The default is `module_controller_action`. Names must be unique and contain 1–128 letters, digits, `_` or `-`. Unsupported characters in the Controller identity are replaced by `_`; module-name hyphens are preserved.            |
+| `description` | Action-scoped text or locale metadata. Falls back to that Action's OpenAPI description, summary, then Controller/Action identity. A class-level description is not inherited.                                                                                              |
+| `readOnly`    | Action-local read classification. If absent, infers `true` for GET and `false` for other methods; no Controller default applies.                                                                                                                                           |
+| `ssrSites`    | Optional nonempty list of SSR Site bean onion names, for example `['commerce-siteweb:commerce']`. Omission admits every Site; `[]` is invalid. Simple Site IDs are not accepted. Filters construction before names, contracts and diagnostics, not business authorization. |
+| `output.pick` | Top-level object response field allowlist, applied to runtime validation/projection and the advertised schema closure. It does not alter the HTTP DTO.                                                                                                                     |
+| `discovery`   | Optional `{ input?: string[][]; output?: string[][] }` paths that compact selected object/array schemas in tool declarations only. Full contracts remain available through `cabloy_tool_contract`.                                                                         |
 
 All options are Action-local; no option is inherited from the Controller. `output.pick` is only the decorated Action's allowlist, not a merge with class defaults. Invalid names, duplicate names and unknown projection fields are configuration errors, not reasons to publish unvalidated output.
 
 The Student examples use default names such as `training-student_student_summary`, derived from `training-student.controller.student`. Clients must refresh discovery after a name change. A personal scope bound to the old exact name does not automatically admit the renamed tool; update the preset and authorize again.
+
+### Limit an Action to an SSR Site
+
+```ts
+@Mcp.tool({ ssrSites: ['commerce-siteweb:commerce'], readOnly: true })
+```
+
+This Action can enter the `/mcp/commerce` catalog but not `/mcp/web`. `ssrSites` uses SSR Site bean onion names such as `commerce-siteweb:commerce`, the same selectors used by menu `site` metadata; menus are unchanged. Simple Site IDs, flavor names and public paths are not accepted in `ssrSites`, and there is no dual-format compatibility. External `/mcp/:ssrSiteId` URLs, OAuth resource bindings and frontend `SITE_ID` still use simple IDs such as `commerce`, not bean onion names. Omit `ssrSites` to permit construction for every Site; `@Mcp.tool()` still requires all other admission checks. The filter applies before naming, collision checks, contract extraction and unsupported-contract diagnostics, so an Action excluded from the current Site is not exposed through known-name calls or `cabloy_tool_contract`. Restricting an Action's Site does not change its HTTP route, grant Site admission or bypass its current guards. Custom selections remain resource-scoped.
 
 GET inference and `readOnly: true` are not proof that an Action has no side effects. Classify actual behavior accurately: a misleading classification weakens the read-only scope boundary.
 
@@ -215,16 +227,16 @@ The metadata lives in `vona-module-a-openapiutils`; runtime mapping and MCP SDK 
 ```ts
 import { createControllerToolServer } from 'vona-module-cabloy-mcp';
 
-const server = await createControllerToolServer(app, scope);
+const server = await createControllerToolServer(app, scope, { ssrSiteId: 'web' });
 ```
 
-For this two-argument factory API, pass a **validated `mcp:read` or `mcp:all` scope** and dispatch within the authenticated application request context. Missing or unsupported scope fails closed. The factory creates a tool server, not OAuth ingress or a new authentication mechanism.
+Pass a **validated `mcp:read` or `mcp:all` scope** and an explicit enabled `ssrSiteId`, and dispatch within the authenticated application request context. Missing/unsupported scope or a missing/unavailable Site fails closed. Omitting the Site is not an all-Sites catalog. The factory creates a tool server, not OAuth ingress or a new authentication mechanism.
 
-Normal `/mcp` uses `createSharedBusinessToolServer`, which delegates to the shared service for construction and permission-aware discovery. Do not replace that composition with unrestricted factory discovery.
+Normal `/mcp/:ssrSiteId` ingress uses `createSharedBusinessToolServer`, which delegates to the shared service for Site-filtered construction and permission-aware discovery. Do not replace that composition with unrestricted factory discovery.
 
 - `mcp:read` lists only tools classified read-only and rejects direct calls to other tools, even when their names are known.
 - `mcp:all` permits both classifications within the admitted catalog, subject to independent business authorization.
-- Normal shared ingress also supports personal `mcp:custom:<name>` scopes. The shared service resolves the authenticated user's exact consented tool bindings and supplies server-owned `toolAccess` and read-only restrictions to the mapper. A custom scope without resolved bindings is not valid for the two-argument example. Custom selection narrows both listing and calling within the original request and registered client ceiling; it never grants business permissions. See [Personal scopes](/mcp/mcp-browser-authorization#personal-scopes-from-account-security).
+- Normal shared ingress also supports personal `mcp:custom:<name>` scopes. The shared service resolves the authenticated user's exact consented tool bindings and supplies server-owned `toolAccess` and read-only restrictions to the mapper. A custom scope without resolved bindings is not valid for the simple factory example. Custom selection narrows both listing and calling within the original request and registered client ceiling; it never grants business permissions. See [Personal scopes](/mcp/mcp-browser-authorization#personal-scopes-from-account-security).
 - Every business Action call uses ordinary `executor.performAction` with **`innerAccess: false`**, retaining Controller guards, RBAC, serialization, current user and instance/data scope. Neither the decorator nor an OAuth scope grants cross-instance access.
 
 ### Permission-aware discovery
@@ -245,9 +257,11 @@ When the optional training suite is active, its eight Student tools illustrate i
 
 These permissions do not imply one another. Select-only authority lists three reads; view-only authority lists two. All corresponding permissions permit eight Student tools under `mcp:all`, or five reads under `mcp:read`. A personal scope may narrow those selections further. Visibility establishes Action admission, not that a matching Student exists.
 
-Student tools are examples, not a catalog ceiling. Other eligible Controllers may contribute tools; without training, Student tools disappear without enabling fixture fallback. The independent anonymous launcher owned by `a-test/test-mcp` has exactly three synthetic fixtures and is a separate entrypoint. Its relocation from `mcp-test` changes module-derived default names from `mcp-test_*` to `test-mcp_*`, not explicit overrides such as `mcp_test_action_*`, the three `commerce_*` tools or protocol strings such as `x-mcp-test-owner`. Its fixed catalog is not the expected shared `/mcp` list: opted-in `test-mcp` Controller Actions may also qualify for the shared map when their module is active, under the same authentication, contract and permission rules.
+Student tools are examples, not a catalog ceiling. Other eligible Controllers may contribute tools; without training, Student tools disappear without enabling fixture fallback. The independent anonymous launcher owned by `a-test/test-mcp` has exactly three synthetic fixtures and is a separate entrypoint. Its relocation from `mcp-test` changes module-derived default names from `mcp-test_*` to `test-mcp_*`, not explicit overrides such as `mcp_test_action_*`, the three `commerce_*` tools or protocol strings such as `x-mcp-test-owner`. Its fixed catalog is not the expected `/mcp/:ssrSiteId` list: opted-in `test-mcp` Controller Actions may also qualify for the shared map when their module is active, under the same authentication, contract and permission rules.
 
 ## Student examples
+
+All eight Student tools select `basic-siteadmin:admin` and require the ordinary Admin `/mcp/admin` resource, not Web; this Site selection grants no authorization and leaves scope and Action guards independent.
 
 Student tool descriptions live in their Action-level `@Mcp.tool()` options, alongside read classification and output projection. `$locale('Student<Action>Description')` resolves through the backend `training-student` module's locale resources in the current request locale. The `@Web.xxx()` options retain HTTP OpenAPI summaries without duplicating MCP-specific descriptions; the mapper's OpenAPI description/summary fallback remains available when an Action omits its MCP description.
 
@@ -257,6 +271,7 @@ Student tool descriptions live in their Action-level `@Mcp.tool()` options, alon
 
 ```ts
 @Mcp.tool({
+  ssrSites: ['basic-siteadmin:admin'],
   description: $locale('StudentCreateDescription'),
   readOnly: false,
 })
@@ -308,6 +323,7 @@ This is **destructive aggregate soft deletion** of Student, content, training re
 
 ```ts
 @Mcp.tool({
+  ssrSites: ['basic-siteadmin:admin'],
   description: $locale('StudentSelectDescription'),
   readOnly: true,
   discovery: { output: [['list', 'items']] },
@@ -371,6 +387,7 @@ The summary Action declares a projection without changing its HTTP DTO, serializ
 
 ```ts
 @Mcp.tool({
+  ssrSites: ['basic-siteadmin:admin'],
   description: $locale('StudentSummaryDescription'),
   output: {
     pick: ['id', 'name', 'level', 'levelTitle', 'descriptionLength', 'summaryText'],
@@ -405,7 +422,7 @@ Dedicated protected audit, audit-outage availability gating and deployment-wide 
 
 The mapper supports ordinary typed **JSON/200** Actions with representable path/query/JSON-body contracts and ordinary response handling. Files, uploads, streams, native request/response bindings, header-dependent contracts, custom response wrappers and non-200 responses are outside this profile. Do not approximate an Action by silently dropping its HTTP semantics.
 
-Unsupported opted-in Actions are omitted and recorded in **`server.diagnostics`**, with `controller`, `action` and `reason` fields. These are operator-facing Controller/Action identifiers and bounded reasons, not machine-local paths or client error details. If a tool is missing, check module availability, Controller enablement, route registration, `includeTool`, own Action-level opt-in, scope and business authority, then inspect diagnostics for unsupported contracts. Undecorated Actions are skipped before names/contracts/diagnostics and have no unsupported-contract diagnostic entries.
+Unsupported opted-in Actions are omitted and recorded in **`server.diagnostics`**, with `controller`, `action` and `reason` fields. These are operator-facing Controller/Action identifiers and bounded reasons, not machine-local paths or client error details. If a tool is missing, check module availability, Controller enablement, route registration, `includeTool`, own Action-level opt-in, `ssrSites`, scope and business authority, then inspect diagnostics for unsupported contracts. Undecorated Actions are skipped before names/contracts/diagnostics and have no unsupported-contract diagnostic entries.
 
 Retained schema definitions are limited to those reachable from the advertised contract. A projection must not retain the original private DTO as an unused definition.
 

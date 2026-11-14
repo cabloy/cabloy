@@ -7,6 +7,7 @@ import { OAuthError } from 'vona-module-mcp-auth';
 import type { createBusinessTransport } from './businessTransport.ts';
 
 import {
+  mcpRequestSiteId,
   mcpResourceChallenge,
   resolveMcpRequestResource,
   sanitizeMcpRequest,
@@ -53,15 +54,21 @@ export async function handleMcpRequest(
     fail(res, 414);
     return;
   }
+  if (req.url === '/mcp') {
+    fail(res, 404);
+    return;
+  }
   // Parse only origin-form input; the synthetic base is never an authority.
   const url = URL.parse(req.url ?? '', 'http://mcp.invalid');
+  const ssrSiteId = url ? mcpRequestSiteId(url.pathname) : undefined;
   const queryField = app.config.instance.queryField;
   const selectors = new Set(['instanceName', ...(queryField ? [queryField] : [])]);
   if (
-    !req.url?.startsWith('/mcp') ||
+    !req.url?.startsWith('/mcp/') ||
     !url ||
+    !ssrSiteId ||
     url.hash ||
-    url.pathname !== '/mcp' ||
+    req.url.split('?')[0] !== url.pathname ||
     [...url.searchParams.keys()].some(key => !selectors.has(key)) ||
     [...new Set(url.searchParams.keys())].some(key => url.searchParams.getAll(key).length !== 1)
   ) {
@@ -70,7 +77,7 @@ export async function handleMcpRequest(
   }
   let resource: IMcpAuthResource;
   try {
-    resource = resolveMcpRequestResource(app, req);
+    resource = resolveMcpRequestResource(app, req, ssrSiteId);
   } catch (error) {
     fail(res, error instanceof OAuthError ? error.status : 503);
     return;
@@ -117,7 +124,7 @@ export async function handleMcpRequest(
   }
   // The bearer is passed only to the current-token lookup, never to JWT/authToken.
   // Remove credentials and caller selectors before creating the isolated ctx/SDK request.
-  sanitizeMcpRequest(app, req);
+  sanitizeMcpRequest(app, req, resource);
   const { createBusinessTransport } = await import('./businessTransport.ts');
   const { createSharedBusinessToolServer } = await import('./sharedBusinessTools.ts');
   let exchange = exchanges.get(app);

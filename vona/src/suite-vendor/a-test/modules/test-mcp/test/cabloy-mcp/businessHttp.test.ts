@@ -33,7 +33,7 @@ import {
   queryRepairHint,
   resolveSchema,
 } from 'vona-module-cabloy-mcp';
-import { getMcpIssuer, ServiceAuthorization } from 'vona-module-mcp-auth';
+import { getMcpIssuer, resolveMcpInstance, ServiceAuthorization } from 'vona-module-mcp-auth';
 
 const version = '2026-07-28';
 const categoriesName = 'commerce_categories_list';
@@ -84,8 +84,11 @@ const studentSummaryFields = [
 ].sort();
 let port: number;
 let bearer: string;
+let studentBearer: string;
 let origin: string;
 let resource: string;
+let studentResource: string;
+let fixtureStudentRoleId: string | undefined;
 let clientId: string;
 let dynamicClientId: string | undefined;
 let redirectUri: string;
@@ -130,7 +133,9 @@ async function redeemTokens(
   scope: 'mcp:all' | 'mcp:read' = 'mcp:read',
   oauthClientId = clientId,
   effectiveScope?: TypeMcpScope,
+  ssrSiteId = 'web',
 ) {
+  const resource = `${getMcpIssuer(app)}/${ssrSiteId}`;
   const verifier = randomBytes(32).toString('base64url');
   const requestId = await app.bean.executor.mockCtx(
     async () => {
@@ -144,7 +149,7 @@ async function redeemTokens(
           code_challenge_method: 'S256',
           code_challenge: createHash('sha256').update(verifier).digest('base64url'),
         }),
-        { resource, instanceName: '' },
+        { resource, instanceName: '', ssrSiteId },
       );
     },
     { instanceName: '' },
@@ -180,8 +185,8 @@ async function redeemTokens(
   return token.body as { access_token: string; refresh_token?: string };
 }
 
-async function redeemBearer(scope: 'mcp:all' | 'mcp:read' = 'mcp:read') {
-  const token = await redeemTokens(scope);
+async function redeemBearer(scope: 'mcp:all' | 'mcp:read' = 'mcp:read', ssrSiteId = 'web') {
+  const token = await redeemTokens(scope, clientId, undefined, ssrSiteId);
   assert.equal('refresh_token' in token, false);
   return token.access_token;
 }
@@ -206,7 +211,7 @@ function openHttp(
   const req = request({
     hostname: '127.0.0.1',
     port,
-    path: options.target ?? '/mcp',
+    path: options.target ?? '/mcp/web',
     method: options.method ?? 'POST',
     agent: false,
     headers: {
@@ -309,6 +314,18 @@ async function send(
   return response;
 }
 
+function sendStudent(
+  method: string,
+  params: Record<string, unknown> = {},
+  options: { headers?: OutgoingHttpHeaders; legacy?: boolean } = {},
+) {
+  return send(method, params, {
+    ...options,
+    target: '/mcp/admin',
+    headers: { authorization: `Bearer ${studentBearer}`, ...options.headers },
+  });
+}
+
 function output(response: Awaited<ReturnType<typeof send>>) {
   assert.equal(response.status, 200);
   assert.equal(response.body.error, undefined);
@@ -393,7 +410,8 @@ describe('businessHttp.test.ts', { concurrency: false, timeout: 180000 }, () => 
     const address = app.server.address();
     assert.ok(address && typeof address === 'object');
     port = address.port;
-    resource = getMcpIssuer(app);
+    resource = `${getMcpIssuer(app)}/web`;
+    studentResource = `${getMcpIssuer(app)}/admin`;
     origin = new URL(resource).origin;
     redirectUri = `${origin}/mcp-test-callback`;
     release = await acquireTestLock('test-mcp');
@@ -434,6 +452,19 @@ describe('businessHttp.test.ts', { concurrency: false, timeout: 180000 }, () => 
           true,
         );
         fixtureUserId = String(user.id);
+        const studentRole = await app.scope('home-user').model.role.insert({
+          name: `mcp-student-admin-${randomUUID()}`,
+          title: 'Owned Student MCP Admin admission',
+          siteIds: ['admin'],
+          builtin: false,
+          mcpAccess: true,
+        });
+        fixtureStudentRoleId = String(studentRole.id);
+        const roles = await app.bean.role.findAllByUserId(user.id);
+        await app.bean.role.replaceUserRoleIds(user.id, [
+          ...(roles ?? []).map(role => role.id),
+          studentRole.id,
+        ]);
         const authSimple = await app
           .scope('auth-simple')
           .service.authSimple.createForUser(user.id, 'mcp-test-password');
@@ -453,6 +484,7 @@ describe('businessHttp.test.ts', { concurrency: false, timeout: 180000 }, () => 
       { instanceName: '' },
     );
     bearer = await redeemBearer();
+    studentBearer = await redeemBearer('mcp:read', 'admin');
   });
   after(async () => {
     try {
@@ -477,11 +509,177 @@ describe('businessHttp.test.ts', { concurrency: false, timeout: 180000 }, () => 
             await app.scope('home-user').model.roleUser.delete({ userId: fixtureUserId });
             await app.bean.user.removeById(fixtureUserId);
           }
+          if (fixtureStudentRoleId) {
+            await app.scope('home-user').model.role.deleteById(fixtureStudentRoleId);
+          }
         },
         { instanceName: '' },
       );
     } finally {
       release?.();
+    }
+  });
+
+  it('isolates site catalogs, scope names, credentials and management mutations over real HTTP', async () => {
+    const ids: string[] = [];
+    const scopeIds: string[] = [];
+    let roleId: string | undefined;
+    let previousRoles: string[] = [];
+    const management = (
+      kind: string,
+      action: string,
+      site: string,
+      method = 'GET',
+      body?: object,
+    ) =>
+      openHttp({
+        target: `${app.util.combineApiPath(`/mcp/auth/${kind}/${action}`, '', true, true)}?ssrSiteId=${site}`,
+        method,
+        headers: { authorization: `Bearer ${browserToken}`, origin },
+        body: body === undefined ? undefined : JSON.stringify(body),
+      }).response;
+    try {
+      await app.bean.executor.mockCtx(async () => {
+        previousRoles = ((await app.bean.role.findAllByUserId(fixtureUserId!)) ?? []).map(role =>
+          String(role.id),
+        );
+        const role = await app.scope('home-user').model.role.insert({
+          name: `mcp-sites-${randomUUID()}`,
+          title: 'Owned cross-site MCP admission',
+          siteIds: ['web', 'admin'],
+          builtin: false,
+          mcpAccess: true,
+        });
+        roleId = String(role.id);
+        await app.bean.role.replaceUserRoleIds(fixtureUserId!, [...previousRoles, role.id]);
+      });
+      const name = `Cross-site-${randomUUID()}`;
+      const tokens: Record<string, string> = {};
+      const definitions: Record<string, { id: string; scope: string }> = {};
+      for (const site of ['web', 'admin']) {
+        const catalog = await management('customScope', 'catalog', site);
+        assert.equal(catalog.status, 200);
+        const tools = catalog.body.data as IMcpToolCatalogItem[];
+        assert.equal(
+          tools.some(tool => tool.name === 'mcp_test_action_scalar'),
+          site === 'web',
+        );
+        const selected = tools.find(
+          tool =>
+            tool.name === (site === 'web' ? 'mcp_test_action_scalar' : 'mcp_test_action_array'),
+        );
+        assert.ok(selected);
+        const created = await management('customScope', 'createMine', site, 'POST', {
+          name,
+          description: 'Same owner and name, different site authority',
+          tools: [
+            { name: selected.name, controller: selected.controller, action: selected.action },
+          ],
+        });
+        assert.equal(created.status, 200);
+        scopeIds.push(String(created.body.data.id));
+        definitions[site] = created.body.data;
+        assert.equal(created.body.data.resource, `${origin}/mcp/${site}`);
+        const token = await management('accessToken', 'createMine', site, 'POST', {
+          name,
+          scope: created.body.data.scope,
+        });
+        assert.equal(token.status, 200);
+        ids.push(String(token.body.data.id));
+        tokens[site] = token.body.data.accessToken;
+      }
+      assert.equal(definitions.web.scope, definitions.admin.scope);
+      assert.notEqual(String(definitions.web.id), String(definitions.admin.id));
+      for (const site of ['web', 'admin']) {
+        const own = await management('accessToken', 'mine', site);
+        assert.deepEqual(
+          own.body.data.list.map((row: any) => String(row.id)),
+          [ids[site === 'web' ? 0 : 1]],
+        );
+        const scopes = await management('customScope', 'mine', site);
+        assert.deepEqual(
+          scopes.body.data.list.map((row: any) => String(row.id)),
+          [String(definitions[site].id)],
+        );
+        const listed = await send(
+          'tools/list',
+          {},
+          { target: `/mcp/${site}`, headers: { authorization: `Bearer ${tokens[site]}` } },
+        );
+        assert.equal(listed.status, 200);
+        const selectedName = site === 'web' ? 'mcp_test_action_scalar' : 'mcp_test_action_array';
+        assert.ok(listed.body.result.tools.some((tool: any) => tool.name === selectedName));
+        assert.equal(
+          (
+            await send(
+              'tools/call',
+              { name: selectedName },
+              { target: `/mcp/${site}`, headers: { authorization: `Bearer ${tokens[site]}` } },
+            )
+          ).status,
+          200,
+        );
+        const otherSite = site === 'web' ? 'admin' : 'web';
+        for (const method of ['tools/list', 'tools/call']) {
+          const rejected = await send(
+            method,
+            method === 'tools/call' ? { name: selectedName } : {},
+            { target: `/mcp/${otherSite}`, headers: { authorization: `Bearer ${tokens[site]}` } },
+          );
+          assert.equal(rejected.status, 401);
+        }
+      }
+      const excluded = await send(
+        'tools/call',
+        { name: 'mcp_test_action_scalar' },
+        { target: '/mcp/admin', headers: { authorization: `Bearer ${tokens.admin}` } },
+      );
+      assert.deepEqual(excluded.body.error, { code: -32602, message: 'Invalid params' });
+      await management('accessToken', `deleteMine/${ids[0]}`, 'admin', 'DELETE');
+      await management('customScope', `deleteMine/${definitions.web.id}`, 'admin', 'DELETE');
+      assert.equal(
+        (await send('tools/list', {}, { headers: { authorization: `Bearer ${tokens.web}` } }))
+          .status,
+        200,
+      );
+      const deleted = await management(
+        'customScope',
+        `deleteMine/${definitions.web.id}`,
+        'web',
+        'DELETE',
+      );
+      assert.equal(deleted.status, 200);
+      assert.equal(
+        (await send('tools/list', {}, { headers: { authorization: `Bearer ${tokens.web}` } }))
+          .status,
+        401,
+      );
+      assert.equal(
+        (
+          await send(
+            'tools/list',
+            {},
+            { target: '/mcp/admin', headers: { authorization: `Bearer ${tokens.admin}` } },
+          )
+        ).status,
+        200,
+        'deleting a same-named Web scope never revokes Admin credentials',
+      );
+      for (const target of ['/mcp', '/mcp/missing']) {
+        const rejected = await send('tools/list', {}, { target });
+        assert.notEqual(rejected.status, 200, 'no legacy or unknown-site business ingress');
+      }
+    } finally {
+      await app.bean.executor.mockCtx(async () => {
+        for (const id of ids.toReversed())
+          await app.scope('mcp-auth').model.authorization.deleteById(id);
+        for (const id of scopeIds.toReversed())
+          await app.scope('mcp-auth').model.customScope.deleteById(id);
+        if (roleId) {
+          await app.bean.role.replaceUserRoleIds(fixtureUserId!, previousRoles);
+          await app.scope('home-user').model.role.deleteById(roleId);
+        }
+      });
     }
   });
 
@@ -1146,6 +1344,13 @@ describe('businessHttp.test.ts', { concurrency: false, timeout: 180000 }, () => 
           appClose: scenario === 'closing',
         },
         scope(name: string) {
+          if (name === 'a-ssr') {
+            return {
+              service: {
+                ssr: { getSitesEnabled: () => [{ beanOptions: { options: { siteId: 'web' } } }] },
+              },
+            };
+          }
           assert.equal(name, 'cabloy-mcp');
           return { config: { enabled: scenario !== 'disabled' } };
         },
@@ -1173,7 +1378,7 @@ describe('businessHttp.test.ts', { concurrency: false, timeout: 180000 }, () => 
           assert.deepEqual(input, {
             headers: { host: 'mcp.example.test' },
             method: 'POST',
-            url: '/mcp',
+            url: '/mcp/auth',
             socket: { encrypted: true },
           });
           return { instanceName: '' };
@@ -1186,7 +1391,7 @@ describe('businessHttp.test.ts', { concurrency: false, timeout: 180000 }, () => 
       Object.defineProperty(util, 'app', { value: productionApp });
       Object.defineProperty(productionApp, 'util', { value: util });
       const req = {
-        url: '/mcp',
+        url: '/mcp/web',
         method: 'POST',
         rawHeaders: [
           'host',
@@ -1219,7 +1424,7 @@ describe('businessHttp.test.ts', { concurrency: false, timeout: 180000 }, () => 
       assert.equal(
         headers['www-authenticate'],
         scenario === 'ready'
-          ? 'Bearer resource_metadata="https://mcp.example.test/.well-known/oauth-protected-resource/mcp"'
+          ? 'Bearer resource_metadata="https://mcp.example.test/.well-known/oauth-protected-resource/mcp/web"'
           : undefined,
       );
       assert.deepEqual(JSON.parse(body), {
@@ -1234,7 +1439,7 @@ describe('businessHttp.test.ts', { concurrency: false, timeout: 180000 }, () => 
   it('discovers only currently authorized student Actions without business work and reauthorizes calls', async t => {
     if (trainingDisabled) return;
     assert.ok(app.meta.modules['training-student']);
-    const allToken = await redeemBearer('mcp:all');
+    const allToken = await redeemBearer('mcp:all', 'admin');
     const {
       ControllerStudent,
       ModelStudent,
@@ -1378,14 +1583,14 @@ describe('businessHttp.test.ts', { concurrency: false, timeout: 180000 }, () => 
       { permissions: [], names: [] },
     ];
     try {
-      for (const { token, legacy } of [bearer, allToken].flatMap(token =>
+      for (const { token, legacy } of [studentBearer, allToken].flatMap(token =>
         [false, true].map(legacy => ({ token, legacy })),
       )) {
         const options = { legacy, headers: { authorization: `Bearer ${token}` } };
         for (const state of states) {
           granted = state.permissions.map(permission => `${controller}#${permission}`);
           const before = policyCalls.length;
-          const listed = await send('tools/list', {}, options);
+          const listed = await sendStudent('tools/list', {}, options);
           assert.equal(listed.status, 200);
           assert.equal(listed.body.error, undefined);
           const tools = listed.body.result.tools;
@@ -1498,7 +1703,7 @@ describe('businessHttp.test.ts', { concurrency: false, timeout: 180000 }, () => 
           }
         }
         granted = [`${controller}#select`, `${controller}#view`];
-        const visible = await send('tools/list', {}, options);
+        const visible = await sendStudent('tools/list', {}, options);
         assert.deepEqual(
           studentToolNames(visible.body.result.tools).toSorted(),
           [
@@ -1512,7 +1717,8 @@ describe('businessHttp.test.ts', { concurrency: false, timeout: 180000 }, () => 
         const lookup = (
           tool: string,
           section: 'overview' | 'input' | 'output' | 'query' = 'query',
-        ) => send('tools/call', { name: contractName, arguments: { tool, section } }, options);
+        ) =>
+          sendStudent('tools/call', { name: contractName, arguments: { tool, section } }, options);
         assert.equal(output(await lookup(studentSelectName)).tool, studentSelectName);
         const selectOutput = output(await lookup(studentSelectName, 'output'));
         assert.deepEqual(Object.keys(selectOutput).sort(), [
@@ -1595,7 +1801,7 @@ describe('businessHttp.test.ts', { concurrency: false, timeout: 180000 }, () => 
           [studentViewName, { id: '-1' }],
           [studentSummaryName, { id: '-1' }],
         ] as const) {
-          const denied = await send('tools/call', { name, arguments: args }, options);
+          const denied = await sendStudent('tools/call', { name, arguments: args }, options);
           assert.equal(denied.status, 200);
           assert.equal(denied.body.result.isError, true);
           assert.equal(denied.body.result.structuredContent, undefined);
@@ -1610,7 +1816,7 @@ describe('businessHttp.test.ts', { concurrency: false, timeout: 180000 }, () => 
         }
         granted = [`${controller}#select`, `${controller}#view`];
         broken = true;
-        const failed = await send('tools/list', {}, options);
+        const failed = await sendStudent('tools/list', {}, options);
         assert.equal(failed.status, 200);
         assert.equal(failed.body.error.code, -32603);
         assert.equal(failed.body.result, undefined, 'no partial or unfiltered fallback');
@@ -1620,7 +1826,7 @@ describe('businessHttp.test.ts', { concurrency: false, timeout: 180000 }, () => 
         );
         broken = false;
         granted = [`${controller}#view`];
-        const recovered = await send('tools/list', {}, options);
+        const recovered = await sendStudent('tools/list', {}, options);
         assert.deepEqual(studentToolNames(recovered.body.result.tools), [
           studentViewName,
           studentSummaryName,
@@ -1631,7 +1837,11 @@ describe('businessHttp.test.ts', { concurrency: false, timeout: 180000 }, () => 
       off();
       for (const spy of business) spy.mock.restore();
     }
-    const after = await send('tools/list', {}, { headers: { authorization: `Bearer ${bearer}` } });
+    const after = await sendStudent(
+      'tools/list',
+      {},
+      { headers: { authorization: `Bearer ${studentBearer}` } },
+    );
     assert.deepEqual(studentToolNames(after.body.result.tools), [], 'test policy was removed');
   });
 
@@ -1680,7 +1890,7 @@ describe('businessHttp.test.ts', { concurrency: false, timeout: 180000 }, () => 
     );
     const personal = (action: string, method = 'GET', body?: object) =>
       openHttp({
-        target: app.util.combineApiPath(`/mcp/auth/customScope/${action}`, '', true, true),
+        target: `${app.util.combineApiPath(`/mcp/auth/customScope/${action}`, '', true, true)}?ssrSiteId=admin`,
         method,
         headers: { authorization: `Bearer ${browserToken}`, origin },
         body: body === undefined ? undefined : JSON.stringify(body),
@@ -1694,12 +1904,12 @@ describe('businessHttp.test.ts', { concurrency: false, timeout: 180000 }, () => 
           grant_type: 'refresh_token',
           client_id: oauthClientId!,
           refresh_token: token,
-          resource,
+          resource: studentResource,
         }).toString(),
       }).response;
     const assertInvalidated = async (token: { access_token: string; refresh_token?: string }) => {
       const before = dispatched.mock.callCount();
-      const denied = await send(
+      const denied = await sendStudent(
         'tools/call',
         { name: studentSelectName, arguments: {} },
         options(token.access_token),
@@ -1764,20 +1974,20 @@ describe('businessHttp.test.ts', { concurrency: false, timeout: 180000 }, () => 
               response_types: ['code'],
               scope: 'mcp:all',
             },
-            { resource, instanceName: '' },
+            resolveMcpInstance(app, new URL(getMcpIssuer(app)).host),
           ),
         { instanceName: '' },
       );
       oauthClientId = registration.client_id;
       // The helper asserts the token response is custom, never the requested all ceiling.
-      const initial = await redeemTokens('mcp:all', oauthClientId, scope);
+      const initial = await redeemTokens('mcp:all', oauthClientId, scope, 'admin');
       assert.ok(initial.refresh_token);
       const renewed = await refresh(initial.refresh_token);
       assert.equal(renewed.status, 200);
       assert.equal(renewed.body.scope, scope, 'refresh retains the exact approved subset');
       assert.ok(renewed.body.refresh_token);
       const token = renewed.body as { access_token: string; refresh_token: string };
-      const listed = await send('tools/list', {}, options(token.access_token));
+      const listed = await sendStudent('tools/list', {}, options(token.access_token));
       assert.equal(listed.status, 200);
       assert.equal(listed.body.error, undefined);
       assert.deepEqual(
@@ -1786,7 +1996,7 @@ describe('businessHttp.test.ts', { concurrency: false, timeout: 180000 }, () => 
         'one exact query grant derives lookup without granting sibling Actions',
       );
       const lookup = (tool: string, section: 'overview' | 'input' | 'output' | 'query' = 'query') =>
-        send(
+        sendStudent(
           'tools/call',
           { name: contractName, arguments: { tool, section } },
           options(token.access_token),
@@ -1819,7 +2029,7 @@ describe('businessHttp.test.ts', { concurrency: false, timeout: 180000 }, () => 
         'exact-scope lookup performs no Action dispatch',
       );
       assert.equal(select.mock.callCount(), 0);
-      const excluded = await send(
+      const excluded = await sendStudent(
         'tools/call',
         { name: sibling.name, arguments: {} },
         options(token.access_token),
@@ -1836,7 +2046,7 @@ describe('businessHttp.test.ts', { concurrency: false, timeout: 180000 }, () => 
       assert.equal((await leafCheck.validate(where)).issues, undefined);
       const query = { where, pageNo: 1, pageSize: 1 };
       const call = () =>
-        send(
+        sendStudent(
           'tools/call',
           { name: studentSelectName, arguments: query },
           options(token.access_token),
@@ -1850,7 +2060,7 @@ describe('businessHttp.test.ts', { concurrency: false, timeout: 180000 }, () => 
         assert.deepEqual(deniedLookup.body.error, { code: -32602, message: 'Invalid params' });
         assert.equal(deniedLookup.body.result, undefined);
       }
-      const revokedList = await send('tools/list', {}, options(token.access_token));
+      const revokedList = await sendStudent('tools/list', {}, options(token.access_token));
       assert.deepEqual(
         revokedList.body.result.tools.map((tool: any) => tool.name),
         [logoutName],
@@ -1879,8 +2089,8 @@ describe('businessHttp.test.ts', { concurrency: false, timeout: 180000 }, () => 
       assert.equal(edited.body.data.scope, scope);
       assert.deepEqual(edited.body.data.tools, [binding(view)]);
       await assertInvalidated(token);
-      const replacement = await redeemTokens('mcp:all', oauthClientId, scope);
-      const replacedList = await send('tools/list', {}, options(replacement.access_token));
+      const replacement = await redeemTokens('mcp:all', oauthClientId, scope, 'admin');
+      const replacedList = await sendStudent('tools/list', {}, options(replacement.access_token));
       assert.equal(replacedList.status, 200);
       assert.deepEqual(
         replacedList.body.result.tools.map((tool: any) => tool.name),
@@ -1891,7 +2101,7 @@ describe('businessHttp.test.ts', { concurrency: false, timeout: 180000 }, () => 
         const replacedOptions = { legacy, ...options(replacement.access_token) };
         for (const section of ['overview', 'input', 'output'] as const) {
           const viewContract = output(
-            await send(
+            await sendStudent(
               'tools/call',
               { name: contractName, arguments: { tool: studentViewName, section } },
               replacedOptions,
@@ -1899,7 +2109,7 @@ describe('businessHttp.test.ts', { concurrency: false, timeout: 180000 }, () => 
           );
           assert.equal(viewContract.tool, studentViewName);
           assert.equal(viewContract.contractVersion, 1);
-          const excluded = await send(
+          const excluded = await sendStudent(
             'tools/call',
             { name: contractName, arguments: { tool: studentSelectName, section } },
             replacedOptions,
@@ -1907,7 +2117,7 @@ describe('businessHttp.test.ts', { concurrency: false, timeout: 180000 }, () => 
           assert.deepEqual(excluded.body.error, { code: -32602, message: 'Invalid params' });
           assert.equal(excluded.body.result, undefined);
         }
-        const queryUnavailable = await send(
+        const queryUnavailable = await sendStudent(
           'tools/call',
           { name: contractName, arguments: { tool: studentViewName, section: 'query' } },
           replacedOptions,
@@ -1968,8 +2178,8 @@ describe('businessHttp.test.ts', { concurrency: false, timeout: 180000 }, () => 
     } as DtoStudentCreate;
     let studentId: string | undefined;
     let off = () => {};
-    const allToken = await redeemBearer('mcp:all');
-    const revokedToken = await redeemBearer('mcp:all');
+    const allToken = await redeemBearer('mcp:all', 'admin');
+    const revokedToken = await redeemBearer('mcp:all', 'admin');
     const observedCalls: Array<{ method: unknown; path: unknown; options: any }> = [];
     const executor = app.bean.executor;
     const original = executor.performAction;
@@ -1988,7 +2198,7 @@ describe('businessHttp.test.ts', { concurrency: false, timeout: 180000 }, () => 
     );
     const create = t.mock.method(ServiceStudent.prototype, 'create');
     const call = (args: object = studentData, token = allToken, legacy = false) =>
-      send(
+      sendStudent(
         'tools/call',
         { name: studentCreateName, arguments: args },
         { legacy, headers: { authorization: `Bearer ${token}` } },
@@ -2053,7 +2263,7 @@ describe('businessHttp.test.ts', { concurrency: false, timeout: 180000 }, () => 
       off = allowStudentAction('create');
       for (const legacy of [false, true]) {
         const beforeList = create.mock.callCount();
-        const listed = await send(
+        const listed = await sendStudent(
           'tools/list',
           {},
           {
@@ -2067,15 +2277,15 @@ describe('businessHttp.test.ts', { concurrency: false, timeout: 180000 }, () => 
           beforeList,
           'create discovery is never a trial write',
         );
-        const readOptions = { legacy, headers: { authorization: `Bearer ${bearer}` } };
-        const readList = await send('tools/list', {}, readOptions);
+        const readOptions = { legacy, headers: { authorization: `Bearer ${studentBearer}` } };
+        const readList = await sendStudent('tools/list', {}, readOptions);
         assert.deepEqual(
           studentToolNames(readList.body.result.tools),
           [],
           'read scope hides even authorized create',
         );
         const before = observedCalls.length;
-        const denied = await call(studentData, bearer, legacy);
+        const denied = await call(studentData, studentBearer, legacy);
         assert.equal(denied.status, 200);
         assert.equal(denied.body.error?.code, -32602);
         assert.equal(denied.body.result, undefined);
@@ -2115,7 +2325,7 @@ describe('businessHttp.test.ts', { concurrency: false, timeout: 180000 }, () => 
           [studentViewName, { id: '-1' }],
         ] as const) {
           assertDenied(
-            await send(
+            await sendStudent(
               'tools/call',
               { name: toolName, arguments: args },
               {
@@ -2258,14 +2468,14 @@ describe('businessHttp.test.ts', { concurrency: false, timeout: 180000 }, () => 
       mobile: studentData.mobile,
       level: studentData.level,
     };
-    const allToken = await redeemBearer('mcp:all');
+    const allToken = await redeemBearer('mcp:all', 'admin');
     let studentId: string | undefined;
     const contentIds = new Set<string>();
     let off = () => {};
     const ownerValues = mockStudentCreateOwnerValues(t);
     try {
       off = allowStudentAction('create');
-      const response = await send(
+      const response = await sendStudent(
         'tools/call',
         { name: studentCreateName, arguments: studentData },
         { headers: { authorization: `Bearer ${allToken}` } },
@@ -2282,7 +2492,7 @@ describe('businessHttp.test.ts', { concurrency: false, timeout: 180000 }, () => 
       off = allowStudentAction('update');
       assert.deepEqual(
         output(
-          await send(
+          await sendStudent(
             'tools/call',
             { name: studentUpdateName, arguments: { params: { id: studentId }, body } },
             { headers: { authorization: `Bearer ${allToken}` } },
@@ -2295,10 +2505,10 @@ describe('businessHttp.test.ts', { concurrency: false, timeout: 180000 }, () => 
       off();
       off = allowStudentAction('view');
       const student = output(
-        await send(
+        await sendStudent(
           'tools/call',
           { name: studentViewName, arguments: { id: studentId } },
-          { headers: { authorization: `Bearer ${bearer}` } },
+          { headers: { authorization: `Bearer ${studentBearer}` } },
         ),
       );
       assert.equal(student.id, studentId);
@@ -2350,8 +2560,8 @@ describe('businessHttp.test.ts', { concurrency: false, timeout: 180000 }, () => 
       await import('vona-module-training-student');
     const { ModelRecord } = await import('vona-module-training-record');
     const { ModelSubject } = await import('vona-module-training-recordsubject');
-    const allToken = await redeemBearer('mcp:all');
-    const revokedToken = await redeemBearer('mcp:all');
+    const allToken = await redeemBearer('mcp:all', 'admin');
+    const revokedToken = await redeemBearer('mcp:all', 'admin');
     const suffix = randomUUID().slice(0, 8);
     const descriptionMarkdown = `# Owned MCP update\n\n${suffix}`;
     const trainingTime = new Date('2026-06-15T09:30:00.000Z');
@@ -2577,13 +2787,13 @@ describe('businessHttp.test.ts', { concurrency: false, timeout: 180000 }, () => 
       spies.push(...writes);
       const writeCounts = () => writes.map(spy => spy.mock.callCount());
       const call = (input: object = args, token = allToken, legacy = false) =>
-        send(
+        sendStudent(
           'tools/call',
           { name: studentUpdateName, arguments: input },
           { legacy, headers: { authorization: `Bearer ${token}` } },
         );
       const list = (token = allToken, legacy = false) =>
-        send('tools/list', {}, { legacy, headers: { authorization: `Bearer ${token}` } });
+        sendStudent('tools/list', {}, { legacy, headers: { authorization: `Bearer ${token}` } });
       const assertDenied = (response: Awaited<ReturnType<typeof send>>) => {
         assert.equal(response.status, 200);
         assert.equal(response.body.error, undefined);
@@ -2619,9 +2829,12 @@ describe('businessHttp.test.ts', { concurrency: false, timeout: 180000 }, () => 
         const listed = await list(allToken, legacy);
         assert.equal(listed.status, 200);
         assert.deepEqual(studentToolNames(listed.body.result.tools), [studentUpdateName]);
-        assert.deepEqual(studentToolNames((await list(bearer, legacy)).body.result.tools), []);
+        assert.deepEqual(
+          studentToolNames((await list(studentBearer, legacy)).body.result.tools),
+          [],
+        );
         const before = observedCalls.length;
-        const readDenied = await call(args, bearer, legacy);
+        const readDenied = await call(args, studentBearer, legacy);
         assert.equal(readDenied.status, 200);
         assert.equal(readDenied.body.error?.code, -32602);
         assert.equal(readDenied.body.result, undefined);
@@ -2733,7 +2946,7 @@ describe('businessHttp.test.ts', { concurrency: false, timeout: 180000 }, () => 
       assert.equal(update.mock.callCount(), 2);
       // Update does not silently grant read-back authority.
       assertDenied(
-        await send(
+        await sendStudent(
           'tools/call',
           { name: studentViewName, arguments: { id: target.id } },
           {
@@ -2745,12 +2958,12 @@ describe('businessHttp.test.ts', { concurrency: false, timeout: 180000 }, () => 
       off = allowStudentAction('view');
       for (const legacy of [false, true]) {
         const student = output(
-          await send(
+          await sendStudent(
             'tools/call',
             { name: studentViewName, arguments: { id: target.id } },
             {
               legacy,
-              headers: { authorization: `Bearer ${bearer}` },
+              headers: { authorization: `Bearer ${studentBearer}` },
             },
           ),
         );
@@ -2956,8 +3169,8 @@ describe('businessHttp.test.ts', { concurrency: false, timeout: 180000 }, () => 
   it('soft-deletes one owned aggregate through guarded DELETE with independent current delete authority', async t => {
     if (trainingDisabled) return;
     const { ServiceStudent } = await import('vona-module-training-student');
-    const allToken = await redeemBearer('mcp:all');
-    const revokedToken = await redeemBearer('mcp:all');
+    const allToken = await redeemBearer('mcp:all', 'admin');
+    const revokedToken = await redeemBearer('mcp:all', 'admin');
     const suffix = randomUUID().slice(0, 8);
     type OwnedAggregate = {
       name: string;
@@ -3115,13 +3328,13 @@ describe('businessHttp.test.ts', { concurrency: false, timeout: 180000 }, () => 
       const deletion = t.mock.method(ServiceStudent.prototype, 'delete');
       spies.push(deletion);
       const call = (args: object = { id: target.id! }, token = allToken, legacy = false) =>
-        send(
+        sendStudent(
           'tools/call',
           { name: studentDeleteName, arguments: args },
           { legacy, headers: { authorization: `Bearer ${token}` } },
         );
       const list = (token = allToken) =>
-        send('tools/list', {}, { headers: { authorization: `Bearer ${token}` } });
+        sendStudent('tools/list', {}, { headers: { authorization: `Bearer ${token}` } });
       const assertDenied = (response: Awaited<ReturnType<typeof send>>, text = 'Action failed') => {
         assert.equal(response.status, 200);
         assert.equal(response.body.error, undefined);
@@ -3155,10 +3368,10 @@ describe('businessHttp.test.ts', { concurrency: false, timeout: 180000 }, () => 
       const listed = await list();
       assert.equal(listed.status, 200);
       assert.deepEqual(studentToolNames(listed.body.result.tools), [studentDeleteName]);
-      assert.deepEqual(studentToolNames((await list(bearer)).body.result.tools), []);
+      assert.deepEqual(studentToolNames((await list(studentBearer)).body.result.tools), []);
       assert.equal(observedCalls.length, beforeList, 'delete listing performs no trial Action');
       const beforeInvalid = observedCalls.length;
-      const readDenied = await call({ id: target.id! }, bearer);
+      const readDenied = await call({ id: target.id! }, studentBearer);
       assert.equal(readDenied.status, 200);
       assert.equal(readDenied.body.error?.code, -32602);
       assert.equal(readDenied.body.result, undefined);
@@ -3232,7 +3445,7 @@ describe('businessHttp.test.ts', { concurrency: false, timeout: 180000 }, () => 
       }
       assert.deepEqual(await snapshot(unrelated), unrelatedBefore);
       assertDenied(
-        await send(
+        await sendStudent(
           'tools/call',
           { name: studentViewName, arguments: { id: target.id } },
           { headers: { authorization: `Bearer ${allToken}` } },
@@ -3241,10 +3454,10 @@ describe('businessHttp.test.ts', { concurrency: false, timeout: 180000 }, () => 
       off();
       off = allowStudentAction('view');
       assertDenied(
-        await send(
+        await sendStudent(
           'tools/call',
           { name: studentViewName, arguments: { id: target.id } },
-          { headers: { authorization: `Bearer ${bearer}` } },
+          { headers: { authorization: `Bearer ${studentBearer}` } },
         ),
         'Resource not found',
       );
@@ -3429,7 +3642,7 @@ describe('businessHttp.test.ts', { concurrency: false, timeout: 180000 }, () => 
     let otherStudentId: string | undefined;
     let adminRoleId: string | undefined;
     let membershipOwned = false;
-    const allToken = await redeemBearer('mcp:all');
+    const allToken = await redeemBearer('mcp:all', 'admin');
     const observedCalls: Array<{
       method: unknown;
       path: unknown;
@@ -3458,32 +3671,36 @@ describe('businessHttp.test.ts', { concurrency: false, timeout: 180000 }, () => 
         return result;
       },
     );
-    const call = (id: string, token = bearer, legacy = false) =>
-      send(
+    const call = (id: string, token = studentBearer, legacy = false) =>
+      sendStudent(
         'tools/call',
         { name: studentSummaryName, arguments: { id } },
         { legacy, headers: { authorization: `Bearer ${token}` } },
       );
-    const view = (id: string, token = bearer, legacy = false) =>
-      send(
+    const view = (id: string, token = studentBearer, legacy = false) =>
+      sendStudent(
         'tools/call',
         { name: studentViewName, arguments: { id } },
         { legacy, headers: { authorization: `Bearer ${token}` } },
       );
-    const select = (token = bearer, legacy = false, query: Record<string, unknown> = selectQuery) =>
-      send(
+    const select = (
+      token = studentBearer,
+      legacy = false,
+      query: Record<string, unknown> = selectQuery,
+    ) =>
+      sendStudent(
         'tools/call',
         { name: studentSelectName, arguments: query },
         { legacy, headers: { authorization: `Bearer ${token}` } },
       );
-    const group = (query: Record<string, unknown>, token = bearer, legacy = false) =>
-      send(
+    const group = (query: Record<string, unknown>, token = studentBearer, legacy = false) =>
+      sendStudent(
         'tools/call',
         { name: studentGroupName, arguments: query },
         { legacy, headers: { authorization: `Bearer ${token}` } },
       );
-    const aggregate = (query: Record<string, unknown>, token = bearer, legacy = false) =>
-      send(
+    const aggregate = (query: Record<string, unknown>, token = studentBearer, legacy = false) =>
+      sendStudent(
         'tools/call',
         { name: studentAggregateName, arguments: query },
         { legacy, headers: { authorization: `Bearer ${token}` } },
@@ -3694,7 +3911,7 @@ describe('businessHttp.test.ts', { concurrency: false, timeout: 180000 }, () => 
       assert.ok(otherStudentId);
       assert.ok(adminRoleId);
       // Neither OAuth scope grants ordinary users student-select or student-view authority.
-      for (const { token, legacy } of [bearer, allToken].flatMap(token =>
+      for (const { token, legacy } of [studentBearer, allToken].flatMap(token =>
         [false, true].map(legacy => ({ token, legacy })),
       )) {
         errorResult(await select(token, legacy), 'Action failed');
@@ -3740,7 +3957,7 @@ describe('businessHttp.test.ts', { concurrency: false, timeout: 180000 }, () => 
         };
       });
       try {
-        for (const { token, legacy } of [bearer, allToken].flatMap(token =>
+        for (const { token, legacy } of [studentBearer, allToken].flatMap(token =>
           [false, true].map(legacy => ({ token, legacy })),
         )) {
           const selected = assertSelect(await select(token, legacy));
@@ -3781,7 +3998,7 @@ describe('businessHttp.test.ts', { concurrency: false, timeout: 180000 }, () => 
           'the real guard resolves distinct inherited permissions on every transport/scope pair',
         );
         viewOnly = true;
-        for (const { token, legacy } of [bearer, allToken].flatMap(token =>
+        for (const { token, legacy } of [studentBearer, allToken].flatMap(token =>
           [false, true].map(legacy => ({ token, legacy })),
         )) {
           errorResult(await select(token, legacy), 'Action failed');
@@ -3849,12 +4066,12 @@ describe('businessHttp.test.ts', { concurrency: false, timeout: 180000 }, () => 
         descriptionLength: descriptionMarkdown.length,
         summaryText: `${name} is in level ${level}. Description length: ${descriptionMarkdown.length}.`,
       };
-      for (const { token, legacy } of [bearer, allToken].flatMap(token =>
+      for (const { token, legacy } of [studentBearer, allToken].flatMap(token =>
         [false, true].map(legacy => ({ token, legacy })),
       )) {
         if (studentQuery) {
           const options = { legacy, headers: { authorization: `Bearer ${token}` } };
-          const listed = await send('tools/list', {}, options);
+          const listed = await sendStudent('tools/list', {}, options);
           assert.equal(listed.body.error, undefined);
           const selectTool = listed.body.result.tools.find(
             (tool: any) => tool.name === studentSelectName,
@@ -3888,7 +4105,7 @@ describe('businessHttp.test.ts', { concurrency: false, timeout: 180000 }, () => 
             { tool: studentSelectName, section: 1 },
           ]) {
             assert.ok((await lookupCheck.validate(args)).issues);
-            const invalid = await send(
+            const invalid = await sendStudent(
               'tools/call',
               { name: contractName, arguments: args },
               options,
@@ -3897,7 +4114,7 @@ describe('businessHttp.test.ts', { concurrency: false, timeout: 180000 }, () => 
             assert.equal(invalid.body.result, undefined);
           }
           const capability = output(
-            await send(
+            await sendStudent(
               'tools/call',
               { name: contractName, arguments: { tool: studentSelectName, section: 'query' } },
               options,
@@ -3925,7 +4142,7 @@ describe('businessHttp.test.ts', { concurrency: false, timeout: 180000 }, () => 
             [studentAggregateName, 'aggregate'],
           ]) {
             const analysis = output(
-              await send(
+              await sendStudent(
                 'tools/call',
                 { name: contractName, arguments: { tool: name, section: 'query' } },
                 options,
@@ -3941,7 +4158,7 @@ describe('businessHttp.test.ts', { concurrency: false, timeout: 180000 }, () => 
             assert.deepEqual(analysis.bindings[0].predicates, binding.predicates);
           }
           const overview = output(
-            await send(
+            await sendStudent(
               'tools/call',
               { name: contractName, arguments: { tool: studentSelectName } },
               options,
@@ -3956,7 +4173,7 @@ describe('businessHttp.test.ts', { concurrency: false, timeout: 180000 }, () => 
             output: { type: 'object', compactPaths: [['list', 'items']] },
           });
           const fullInput = output(
-            await send(
+            await sendStudent(
               'tools/call',
               { name: contractName, arguments: { tool: studentSelectName, section: 'input' } },
               options,
@@ -3976,7 +4193,7 @@ describe('businessHttp.test.ts', { concurrency: false, timeout: 180000 }, () => 
             'full input contract accepts the query used for the real HTTP Action',
           );
           const fullOutput = output(
-            await send(
+            await sendStudent(
               'tools/call',
               { name: contractName, arguments: { tool: studentSelectName, section: 'output' } },
               options,
@@ -4127,7 +4344,7 @@ describe('businessHttp.test.ts', { concurrency: false, timeout: 180000 }, () => 
             assert.equal(JSON.stringify(rejected.body.error).includes(privateValue), false);
           }
           const recovery = output(
-            await send(
+            await sendStudent(
               'tools/call',
               { name: contractName, arguments: { tool: studentSelectName, section: 'query' } },
               options,
@@ -4174,7 +4391,7 @@ describe('businessHttp.test.ts', { concurrency: false, timeout: 180000 }, () => 
           { id: {} },
           { id: studentId, path: '/training/student' },
         ]) {
-          const invalid = await send(
+          const invalid = await sendStudent(
             'tools/call',
             { name: studentViewName, arguments: args },
             { legacy, headers: { authorization: `Bearer ${token}` } },
@@ -4255,7 +4472,7 @@ describe('businessHttp.test.ts', { concurrency: false, timeout: 180000 }, () => 
           count_imageId: '0',
         });
       }
-      const emptyPage = output(await select(bearer, false, selectEmptyPageQuery));
+      const emptyPage = output(await select(studentBearer, false, selectEmptyPageQuery));
       assert.deepEqual(
         emptyPage,
         normalizeSelect(observedCalls.at(-1)!.serialized!),
@@ -4269,12 +4486,12 @@ describe('businessHttp.test.ts', { concurrency: false, timeout: 180000 }, () => 
         pageCount: 1,
       });
       if (studentQuery) {
-        const columnsRejected = await select(bearer, false, selectColumnsQuery);
+        const columnsRejected = await select(studentBearer, false, selectColumnsQuery);
         assert.equal(columnsRejected.body.error?.code, -32602);
         assert.equal(columnsRejected.body.result, undefined);
       } else {
         // Legacy projection is admitted, then fails at its ordinary Action boundary.
-        errorResult(await select(bearer, false, selectColumnsQuery), 'Action failed');
+        errorResult(await select(studentBearer, false, selectColumnsQuery), 'Action failed');
       }
       const missing = errorResult(await call('-1'), 'Resource not found');
       const otherInstance = errorResult(await call(otherStudentId), 'Resource not found');
@@ -4342,7 +4559,7 @@ describe('businessHttp.test.ts', { concurrency: false, timeout: 180000 }, () => 
         },
         { instanceName: '' },
       );
-      for (const { token, legacy } of [bearer, allToken].flatMap(token =>
+      for (const { token, legacy } of [studentBearer, allToken].flatMap(token =>
         [false, true].map(legacy => ({ token, legacy })),
       )) {
         errorResult(await select(token, legacy), 'Action failed');
@@ -4574,10 +4791,10 @@ describe('businessHttp.test.ts', { concurrency: false, timeout: 180000 }, () => 
       method: 'GET',
     }).response;
     assert.equal(metadata.status, 200);
-    assert.equal(metadata.body.issuer, resource);
-    assert.equal(metadata.body.authorization_endpoint, `${resource}/auth`);
-    assert.equal(metadata.body.token_endpoint, `${resource}/token`);
-    assert.equal(metadata.body.registration_endpoint, `${resource}/register`);
+    assert.equal(metadata.body.issuer, getMcpIssuer(app));
+    assert.equal(metadata.body.authorization_endpoint, `${getMcpIssuer(app)}/auth`);
+    assert.equal(metadata.body.token_endpoint, `${getMcpIssuer(app)}/token`);
+    assert.equal(metadata.body.registration_endpoint, `${getMcpIssuer(app)}/register`);
     assert.deepEqual(metadata.body.grant_types_supported, ['authorization_code', 'refresh_token']);
     assert.deepEqual(metadata.body.scopes_supported, ['mcp:all', 'mcp:read']);
     assert.equal(metadata.headers['cache-control'], 'no-store');
@@ -4633,7 +4850,7 @@ describe('businessHttp.test.ts', { concurrency: false, timeout: 180000 }, () => 
                 response_types: ['code'],
                 scope: 'mcp:read',
               },
-              { resource, instanceName: '' },
+              resolveMcpInstance(app, new URL(getMcpIssuer(app)).host),
             ),
           { instanceName: '' },
         );
@@ -4641,7 +4858,7 @@ describe('businessHttp.test.ts', { concurrency: false, timeout: 180000 }, () => 
         assert.deepEqual(registration.grant_types, ['authorization_code', 'refresh_token']);
       }
       const [owner, wrongClient] = clients;
-      const token = await redeemTokens('mcp:read', owner);
+      const token = await redeemTokens('mcp:read', owner, undefined, 'admin');
       assert.ok(token.refresh_token);
       assert.match(token.refresh_token, /^[\w-]+\.[\w-]+\.[\w-]+$/);
       const refresh = (oauthClientId: string, refreshToken: string) =>
@@ -4652,11 +4869,11 @@ describe('businessHttp.test.ts', { concurrency: false, timeout: 180000 }, () => 
             grant_type: 'refresh_token',
             client_id: oauthClientId,
             refresh_token: refreshToken,
-            resource,
+            resource: studentResource,
           }).toString(),
         }).response;
       const read = (accessToken: string) =>
-        send(
+        sendStudent(
           'tools/call',
           { name: studentSelectName, arguments: { name: `MCP refresh absent ${randomUUID()}` } },
           { headers: { authorization: `Bearer ${accessToken}` } },
@@ -4756,7 +4973,7 @@ describe('businessHttp.test.ts', { concurrency: false, timeout: 180000 }, () => 
               response_types: ['code'],
               scope: 'mcp:read',
             },
-            { resource, instanceName: '' },
+            resolveMcpInstance(app, new URL(getMcpIssuer(app)).host),
           ),
         { instanceName: '' },
       );
@@ -4849,7 +5066,7 @@ describe('businessHttp.test.ts', { concurrency: false, timeout: 180000 }, () => 
     });
     const personal = (action: string, method = 'GET', body?: object) =>
       openHttp({
-        target: app.util.combineApiPath(`/mcp/auth/customScope/${action}`, '', true, true),
+        target: `${app.util.combineApiPath(`/mcp/auth/customScope/${action}`, '', true, true)}?ssrSiteId=admin`,
         method,
         headers: { authorization: `Bearer ${browserToken}`, origin },
         body: body === undefined ? undefined : JSON.stringify(body),
@@ -4886,20 +5103,20 @@ describe('businessHttp.test.ts', { concurrency: false, timeout: 180000 }, () => 
               response_types: ['code'],
               scope: 'mcp:all',
             },
-            { resource, instanceName: '' },
+            resolveMcpInstance(app, new URL(getMcpIssuer(app)).host),
           ),
         { instanceName: '' },
       );
       oauthClientId = registration.client_id;
-      const token = await redeemTokens('mcp:all', oauthClientId, scope);
+      const token = await redeemTokens('mcp:all', oauthClientId, scope, 'admin');
       assert.ok(token.refresh_token);
-      const listed = await send('tools/list', {}, options(token.access_token));
+      const listed = await sendStudent('tools/list', {}, options(token.access_token));
       assert.equal(listed.status, 200);
       assert.deepEqual(
         listed.body.result.tools.map((tool: any) => tool.name),
         [studentSelectName, contractName, logoutName],
       );
-      const excluded = await send(
+      const excluded = await sendStudent(
         'tools/call',
         { name: studentGroupName, arguments: {} },
         options(token.access_token),
@@ -4912,7 +5129,7 @@ describe('businessHttp.test.ts', { concurrency: false, timeout: 180000 }, () => 
       );
       off();
       off = undefined;
-      const noActions = await send('tools/list', {}, options(token.access_token));
+      const noActions = await sendStudent('tools/list', {}, options(token.access_token));
       assert.equal(noActions.status, 200);
       assert.deepEqual(
         noActions.body.result.tools.map((tool: any) => tool.name),
@@ -4920,7 +5137,7 @@ describe('businessHttp.test.ts', { concurrency: false, timeout: 180000 }, () => 
       );
       assert.deepEqual(
         output(
-          await send(
+          await sendStudent(
             'tools/call',
             { name: logoutName, arguments: {} },
             options(token.access_token),
@@ -4929,7 +5146,7 @@ describe('businessHttp.test.ts', { concurrency: false, timeout: 180000 }, () => 
         logoutResult,
         'empty arguments work without any visible business Action',
       );
-      const denied = await send('tools/list', {}, options(token.access_token));
+      const denied = await sendStudent('tools/list', {}, options(token.access_token));
       assert.equal(denied.status, 401);
       assert.match(String(denied.headers['www-authenticate']), /error="invalid_token"/);
       const refresh = await openHttp({
@@ -4939,7 +5156,7 @@ describe('businessHttp.test.ts', { concurrency: false, timeout: 180000 }, () => 
           grant_type: 'refresh_token',
           client_id: oauthClientId,
           refresh_token: token.refresh_token,
-          resource,
+          resource: studentResource,
         }).toString(),
       }).response;
       assert.equal(refresh.status, 400);
@@ -4969,7 +5186,7 @@ describe('businessHttp.test.ts', { concurrency: false, timeout: 180000 }, () => 
     try {
       for (const label of ['logout', 'survivor']) {
         const created = await openHttp({
-          target: app.util.combineApiPath('/mcp/auth/accessToken/createMine', '', true, true),
+          target: `${app.util.combineApiPath('/mcp/auth/accessToken/createMine', '', true, true)}?ssrSiteId=web`,
           headers: { authorization: `Bearer ${browserToken}`, origin },
           body: JSON.stringify({ name: `MCP ${label} ${randomUUID()}`, scope: 'mcp:read' }),
         }).response;
@@ -5019,15 +5236,15 @@ describe('businessHttp.test.ts', { concurrency: false, timeout: 180000 }, () => 
     const queryField = app.config.instance.queryField!;
     const headerField = app.config.instance.headerField!;
     for (const options of [
-      { target: '/mcp?instanceName=shareTest' },
-      { target: `/mcp?${encodeURIComponent(queryField)}=shareTest` },
+      { target: '/mcp/web?instanceName=shareTest' },
+      { target: `/mcp/web?${encodeURIComponent(queryField)}=shareTest` },
       { headers: { [headerField]: 'shareTest' } },
-      { target: '/mcp?instanceName=', headers: { [headerField]: 'shareTest' } },
-      { target: '/mcp?instanceName=unconfigured' },
+      { target: '/mcp/web?instanceName=', headers: { [headerField]: 'shareTest' } },
+      { target: '/mcp/web?instanceName=unconfigured' },
     ])
       assert.equal((await send('tools/list', {}, options)).status, 403);
     assert.equal(mcpTransportSnapshot(app)?.contexts ?? 0, contexts);
-    for (const target of ['/mcp', '/mcp?instanceName=']) {
+    for (const target of ['/mcp/web', '/mcp/web?instanceName=']) {
       const listed = await send('tools/list', {}, { target });
       assert.equal(listed.status, 200);
       assert.equal(listed.body.error, undefined);
@@ -5048,9 +5265,9 @@ describe('businessHttp.test.ts', { concurrency: false, timeout: 180000 }, () => 
       [{ headers: { 'proxy-authorization': 'Bearer forbidden' } }, 403],
       [{ headers: { authorization: 'synthetic-forbidden' } }, 401],
       [{ headers: { authorization: ['Bearer first', 'Bearer second'] } }, 401],
-      [{ target: '/mcp?instanceName=shareTest&instanceName=' }, 400],
-      [{ target: '/mcp?access_token=forbidden' }, 400],
-      [{ target: '/mcp?unexpected=1' }, 400],
+      [{ target: '/mcp/web?instanceName=shareTest&instanceName=' }, 400],
+      [{ target: '/mcp/web?access_token=forbidden' }, 400],
+      [{ target: '/mcp/web?unexpected=1' }, 400],
     ] as [{ headers?: OutgoingHttpHeaders; target?: string }, number][]) {
       assert.equal((await send('tools/list', {}, options)).status, status);
     }
@@ -5150,7 +5367,7 @@ describe('businessHttp.test.ts', { concurrency: false, timeout: 180000 }, () => 
       },
     );
     try {
-      const legacySigned = await redeemBearer();
+      const legacySigned = await redeemBearer('mcp:read', 'admin');
       ordinaryCode = await app.bean.executor.mockCtx(
         async () => {
           const grant = await app.scope('mcp-auth').model.authorization.get({
@@ -5173,10 +5390,10 @@ describe('businessHttp.test.ts', { concurrency: false, timeout: 180000 }, () => 
         },
         { instanceName: '' },
       );
-      for (const token of [bearer, opaque]) {
+      for (const token of [studentBearer, opaque]) {
         assert.deepEqual(
           output(
-            await send(
+            await sendStudent(
               'tools/call',
               { name: studentSelectName, arguments: { name: randomUUID() } },
               { headers: { authorization: `Bearer ${token}` } },
@@ -5207,12 +5424,12 @@ describe('businessHttp.test.ts', { concurrency: false, timeout: 180000 }, () => 
   it('publishes direct resource metadata and rejects missing, JWT, revoked and expired tokens without business dispatch', async t => {
     const metadata = await openHttp({
       method: 'GET',
-      target: '/.well-known/oauth-protected-resource/mcp',
+      target: '/.well-known/oauth-protected-resource/mcp/web',
     }).response;
     assert.equal(metadata.status, 200);
     assert.deepEqual(metadata.body, {
       resource,
-      authorization_servers: [resource],
+      authorization_servers: [getMcpIssuer(app)],
       scopes_supported: ['mcp:all', 'mcp:read'],
       bearer_methods_supported: ['header'],
     });
@@ -5223,7 +5440,7 @@ describe('businessHttp.test.ts', { concurrency: false, timeout: 180000 }, () => 
     assert.equal(missing.status, 401);
     assert.equal(
       missing.headers['www-authenticate'],
-      `Bearer resource_metadata="${origin}/.well-known/oauth-protected-resource/mcp"`,
+      `Bearer resource_metadata="${origin}/.well-known/oauth-protected-resource/mcp/web"`,
     );
     const held = mockOwnedPerformAction(t, async () => {
       throw new Error('unauthorized business dispatch');
@@ -5312,7 +5529,7 @@ describe('businessHttp.test.ts', { concurrency: false, timeout: 180000 }, () => 
             code_challenge_method: 'S256',
             code_challenge: createHash('sha256').update(verifier).digest('base64url'),
           }),
-          { resource, instanceName: '' },
+          { resource, instanceName: '', ssrSiteId: 'web' },
         ),
       { instanceName: '' },
     );
@@ -5353,7 +5570,7 @@ describe('businessHttp.test.ts', { concurrency: false, timeout: 180000 }, () => 
     if (trainingDisabled) {
       await closeMcpTransport(app);
       assert.equal(mcpTransportSnapshot(app)?.closing, true);
-      assert.equal((await send('tools/list')).status, 503);
+      assert.equal((await sendStudent('tools/list')).status, 503);
       assert.ok(app.server?.listening);
       return;
     }
@@ -5382,7 +5599,7 @@ describe('businessHttp.test.ts', { concurrency: false, timeout: 180000 }, () => 
         }
       },
     );
-    const pending = send('tools/call', {
+    const pending = sendStudent('tools/call', {
       name: studentSelectName,
       arguments: { name: randomUUID() },
     });
@@ -5397,7 +5614,7 @@ describe('businessHttp.test.ts', { concurrency: false, timeout: 180000 }, () => 
       assert.equal(workFinished, false);
       assert.equal(mcpTransportSnapshot(app)?.active, 1);
       assert.equal(
-        (await openHttp({ headers: { authorization: `Bearer ${bearer}` } }).response).status,
+        (await openHttp({ headers: { authorization: `Bearer ${studentBearer}` } }).response).status,
         503,
         'closing denies new work while old work drains',
       );
@@ -5407,11 +5624,11 @@ describe('businessHttp.test.ts', { concurrency: false, timeout: 180000 }, () => 
       assert.equal((await pending).status, 503);
       assert.equal(mcpTransportSnapshot(app)?.active, 0);
       assert.equal(mcpTransportSnapshot(app)?.closing, true);
-      assert.equal((await send('tools/list')).status, 503);
+      assert.equal((await sendStudent('tools/list')).status, 503);
       assert.ok(app.server?.listening);
       const metadata = await openHttp({
         method: 'GET',
-        target: '/.well-known/oauth-protected-resource/mcp',
+        target: '/.well-known/oauth-protected-resource/mcp/web',
       }).response;
       assert.equal(metadata.status, 200, 'ordinary routes retain the shared listener');
     } finally {

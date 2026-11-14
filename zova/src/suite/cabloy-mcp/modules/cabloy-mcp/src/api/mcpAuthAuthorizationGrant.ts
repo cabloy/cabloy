@@ -23,6 +23,8 @@ export type ApiApiMcpAuthAuthorizationGrantrevokeMinePath =
 export type ApiApiMcpAuthAuthorizationGrantrevokeMineMethod = 'post';
 export type ApiApiMcpAuthAuthorizationGrantrevokeMineRequestParams =
   paths[ApiApiMcpAuthAuthorizationGrantrevokeMinePath][ApiApiMcpAuthAuthorizationGrantrevokeMineMethod]['parameters']['path'];
+export type ApiApiMcpAuthAuthorizationGrantrevokeMineRequestQuery =
+  paths[ApiApiMcpAuthAuthorizationGrantrevokeMinePath][ApiApiMcpAuthAuthorizationGrantrevokeMineMethod]['parameters']['query'];
 export type ApiApiMcpAuthAuthorizationGrantrevokeMineResponseBody =
   paths[ApiApiMcpAuthAuthorizationGrantrevokeMinePath][ApiApiMcpAuthAuthorizationGrantrevokeMineMethod]['responses']['200']['content']['application/json']['data'];
 
@@ -34,14 +36,16 @@ export type ApiApiMcpAuthAuthorizationGrantdeleteMinePath =
 export type ApiApiMcpAuthAuthorizationGrantdeleteMineMethod = 'delete';
 export type ApiApiMcpAuthAuthorizationGrantdeleteMineRequestParams =
   paths[ApiApiMcpAuthAuthorizationGrantdeleteMinePath][ApiApiMcpAuthAuthorizationGrantdeleteMineMethod]['parameters']['path'];
+export type ApiApiMcpAuthAuthorizationGrantdeleteMineRequestQuery =
+  paths[ApiApiMcpAuthAuthorizationGrantdeleteMinePath][ApiApiMcpAuthAuthorizationGrantdeleteMineMethod]['parameters']['query'];
 export type ApiApiMcpAuthAuthorizationGrantdeleteMineResponseBody =
   paths[ApiApiMcpAuthAuthorizationGrantdeleteMinePath][ApiApiMcpAuthAuthorizationGrantdeleteMineMethod]['responses']['200']['content']['application/json']['data'];
 
 @Api()
 export class ApiMcpAuthAuthorizationGrant extends BeanApiBase {
   mine(
-    options?: {
-      query?: ApiApiMcpAuthAuthorizationGrantmineRequestQuery;
+    options: {
+      query: ApiApiMcpAuthAuthorizationGrantmineRequestQuery;
     } & IApiActionOptions,
   ) {
     return this.$fetch.get<any, ApiApiMcpAuthAuthorizationGrantmineResponseBody>(
@@ -54,6 +58,7 @@ export class ApiMcpAuthAuthorizationGrant extends BeanApiBase {
     body: undefined,
     options: {
       params: ApiApiMcpAuthAuthorizationGrantrevokeMineRequestParams;
+      query: ApiApiMcpAuthAuthorizationGrantrevokeMineRequestQuery;
     } & IApiActionOptions,
   ) {
     return this.$fetch.post<any, ApiApiMcpAuthAuthorizationGrantrevokeMineResponseBody>(
@@ -66,6 +71,7 @@ export class ApiMcpAuthAuthorizationGrant extends BeanApiBase {
   deleteMine(
     options: {
       params: ApiApiMcpAuthAuthorizationGrantdeleteMineRequestParams;
+      query: ApiApiMcpAuthAuthorizationGrantdeleteMineRequestQuery;
     } & IApiActionOptions,
   ) {
     return this.$fetch.delete<any, ApiApiMcpAuthAuthorizationGrantdeleteMineResponseBody>(

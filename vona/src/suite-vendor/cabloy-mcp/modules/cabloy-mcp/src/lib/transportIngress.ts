@@ -1,5 +1,7 @@
 import { Buffer } from 'node:buffer';
 
+import { mcpRequestSiteId } from './resourceServer.ts';
+
 export interface IProtocolIngressInput {
   rawHeaders: readonly string[];
   target: string | undefined;
@@ -146,7 +148,7 @@ function checkIngress(
   ) {
     return { status: 414 };
   }
-  if (input.target !== '/mcp') {
+  if (local ? input.target !== '/mcp' : !mcpRequestSiteId(input.target ?? '')) {
     return { status: 404 };
   }
 

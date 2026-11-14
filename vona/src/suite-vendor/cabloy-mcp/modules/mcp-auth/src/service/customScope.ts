@@ -67,15 +67,15 @@ export function sameTools(left: unknown, right: unknown): boolean {
 
 @Service()
 export class ServiceCustomScope extends BeanBase {
-  async catalog(): Promise<IMcpToolCatalogItem[]> {
+  async catalog(resource: string): Promise<IMcpToolCatalogItem[]> {
     // Runtime composition seam: no reverse package import or dependency edge.
-    return await this.app.scope('cabloy-mcp').service.sharedBusinessTools.catalog();
+    return await this.app.scope('cabloy-mcp').service.sharedBusinessTools.catalog(resource);
   }
 
-  async mine(userId: TableIdentity): Promise<DtoCustomScopeMineRes> {
+  async mine(userId: TableIdentity, resource: string): Promise<DtoCustomScopeMineRes> {
     const rows = await this.scope.model.customScope
       .builderSelect()
-      .where({ userId })
+      .where({ userId, resource })
       .orderBy('id', 'desc');
     return { list: rows.map(row => this.toView(row)) };
   }
@@ -83,6 +83,7 @@ export class ServiceCustomScope extends BeanBase {
   toView(row: EntityCustomScope): DtoCustomScopeView {
     return {
       id: row.id,
+      resource: row.resource,
       scope: row.scope,
       name: row.name,
       description: row.description,
@@ -92,50 +93,68 @@ export class ServiceCustomScope extends BeanBase {
     };
   }
 
-  async createMine(userId: TableIdentity, data: DtoCustomScopeCreate): Promise<EntityCustomScope> {
-    return await this.withOwnerLock(userId, async () => {
-      const parsed = await this.validate(data);
+  async createMine(
+    userId: TableIdentity,
+    resource: string,
+    data: DtoCustomScopeCreate,
+  ): Promise<EntityCustomScope> {
+    this.scope.service.authorization.configForResource(resource);
+    return await this.withOwnerLock(userId, resource, async () => {
+      const parsed = await this.validate(resource, data);
       const scope = `mcp:custom:${parsed.name}` as const;
-      await this.ensureUniqueName(userId, parsed.name);
-      return await this.scope.model.customScope.insert({ ...parsed, userId, scope });
+      await this.ensureUniqueName(userId, resource, parsed.name);
+      return await this.scope.model.customScope.insert({ ...parsed, userId, resource, scope });
     });
   }
 
   async updateMine(
     userId: TableIdentity,
+    resource: string,
     id: TableIdentity,
     data: DtoCustomScopeCreate,
   ): Promise<EntityCustomScope> {
-    return await this.withOwnerLock(userId, async () => {
-      const row = await this.scope.model.customScope.get({ id, userId });
+    return await this.withOwnerLock(userId, resource, async () => {
+      const row = await this.scope.model.customScope.get({ id, userId, resource });
       if (!row) this.app.throw(404);
-      const parsed = await this.validate(data);
+      const parsed = await this.validate(row.resource, data);
       const scope = `mcp:custom:${parsed.name}` as const;
-      await this.ensureUniqueName(userId, parsed.name, id);
+      await this.ensureUniqueName(userId, row.resource, parsed.name, id);
       if (row.scope !== scope || !sameTools(row.tools, parsed.tools))
-        await this.revokeLinked(userId, row.scope);
-      await this.scope.model.customScope.update({ id, userId, ...parsed, scope });
+        await this.revokeLinked(userId, row.resource, row.scope);
+      await this.scope.model.customScope.update({
+        id,
+        userId,
+        resource: row.resource,
+        ...parsed,
+        scope,
+      });
       const updated = (await this.scope.model.customScope
         .builderSelect()
-        .where({ id, userId })
+        .where({ id, userId, resource: row.resource })
         .first())!;
       return { ...updated, tools: normalizeToolIdentities(updated.tools) };
     });
   }
 
-  async deleteMine(userId: TableIdentity, id: TableIdentity): Promise<void> {
-    await this.withOwnerLock(userId, async () => {
-      const row = await this.scope.model.customScope.get({ id, userId });
+  async deleteMine(userId: TableIdentity, resource: string, id: TableIdentity): Promise<void> {
+    await this.withOwnerLock(userId, resource, async () => {
+      const row = await this.scope.model.customScope.get({ id, userId, resource });
       if (!row) return;
-      await this.revokeLinked(userId, row.scope);
-      await this.scope.model.customScope.delete({ id, userId });
+      await this.revokeLinked(userId, row.resource, row.scope);
+      await this.scope.model.customScope.delete({ id, userId, resource: row.resource });
     });
   }
 
-  async resolve(userId: TableIdentity, scope: TypeMcpScope): Promise<EntityCustomScope> {
+  async resolve(
+    userId: TableIdentity,
+    resource: string,
+    scope: TypeMcpScope,
+  ): Promise<EntityCustomScope> {
     if (!isMcpCustomScope(scope)) throw new OAuthError('invalid_scope');
-    const rows = await this.scope.model.customScope.builderSelect().where({ scope, userId });
-    const row = rows.find(row => row.scope === scope);
+    const rows = await this.scope.model.customScope
+      .builderSelect()
+      .where({ scope, userId, resource });
+    const row = rows.find(row => row.scope === scope && row.resource === resource);
     if (!row || !isCanonicalMcpCustomScope(row)) throw new OAuthError('invalid_scope');
     return { ...row, tools: normalizeToolIdentities(row.tools) };
   }
@@ -143,18 +162,22 @@ export class ServiceCustomScope extends BeanBase {
   /** Validate custom scope definitions before linking grants. */
   async withDefinitions<T>(
     userId: TableIdentity,
+    resource: string,
     scopes: TypeMcpScope[],
     operation: () => Promise<T>,
   ): Promise<T> {
-    return await this.withOwnerLock(userId, async () => {
+    return await this.withOwnerLock(userId, resource, async () => {
       for (const scope of new Set(scopes.filter(isMcpCustomScope))) {
-        await this.resolve(userId, scope);
+        await this.resolve(userId, resource, scope);
       }
       return await operation();
     });
   }
 
-  private async validate(data: DtoCustomScopeCreate): Promise<DtoCustomScopeCreate> {
+  private async validate(
+    resource: string,
+    data: DtoCustomScopeCreate,
+  ): Promise<DtoCustomScopeCreate> {
     if (
       !data ||
       typeof data.name !== 'string' ||
@@ -167,7 +190,7 @@ export class ServiceCustomScope extends BeanBase {
     }
     if (!Array.isArray(data.tools)) throw new OAuthError('invalid_scope');
     const tools = normalizeToolIdentities(data.tools);
-    const available = new Set((await this.catalog()).map(toolIdentityKey));
+    const available = new Set((await this.catalog(resource)).map(toolIdentityKey));
     if (tools.some(tool => !available.has(toolIdentityKey(tool))))
       throw new OAuthError('invalid_scope');
     return { name: data.name.trim(), description: data.description, tools };
@@ -175,13 +198,14 @@ export class ServiceCustomScope extends BeanBase {
 
   private async ensureUniqueName(
     userId: TableIdentity,
+    resource: string,
     name: string,
     id?: TableIdentity,
   ): Promise<void> {
     const scope = `mcp:custom:${name}` as const;
     const rows = await this.scope.model.customScope
       .builderSelect()
-      .where({ userId })
+      .where({ userId, resource })
       .where(builder => builder.where({ name }).orWhere({ scope }));
     if (
       rows.some(row => String(row.id) !== String(id) && (row.name === name || row.scope === scope))
@@ -190,17 +214,25 @@ export class ServiceCustomScope extends BeanBase {
     }
   }
 
-  private async withOwnerLock<T>(userId: TableIdentity, operation: () => Promise<T>): Promise<T> {
+  private async withOwnerLock<T>(
+    userId: TableIdentity,
+    resource: string,
+    operation: () => Promise<T>,
+  ): Promise<T> {
     return await this.scope.redlock.lock(
-      `customScope.owner.${encodeURIComponent(String(userId))}`,
+      `customScope.owner.${encodeURIComponent(JSON.stringify([String(userId), resource]))}`,
       operation,
     );
   }
 
-  private async revokeLinked(userId: TableIdentity, scope: TypeMcpScope): Promise<void> {
+  private async revokeLinked(
+    userId: TableIdentity,
+    resource: string,
+    scope: TypeMcpScope,
+  ): Promise<void> {
     const rows = await this.scope.model.authorization
       .builderSelect()
-      .where({ userId })
+      .where({ userId, resource })
       .where(builder => builder.where({ scope }).orWhere({ requestedScope: scope }))
       .whereIn('state', ['codeReady', 'tokenActive']);
     const ids = rows
@@ -209,9 +241,10 @@ export class ServiceCustomScope extends BeanBase {
     if (!ids.length) return;
     await this.scope.model.authorization
       .builderSelect()
-      .where({ userId })
+      .where({ userId, resource })
       .whereIn('id', ids)
       .whereIn('state', ['codeReady', 'tokenActive'])
       .update({ state: 'revoked', codeDigest: '', tokenDigest: '', expiresAt: Date.now() });
+    this.$logger.debug('mcp.custom_scope.linked_grants_revoked');
   }
 }

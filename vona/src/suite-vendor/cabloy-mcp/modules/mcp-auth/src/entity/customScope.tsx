@@ -18,6 +18,9 @@ export class EntityCustomScope extends EntityBase {
   @Api.field(v.tableIdentity())
   userId: TableIdentity;
 
+  @Api.field(z.string().url().max(2048))
+  resource: string;
+
   @Api.field(z.string().regex(mcpCustomScopePattern))
   scope: TypeMcpCustomScope;
 

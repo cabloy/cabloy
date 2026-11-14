@@ -144,7 +144,7 @@ import { SymbolKeyEntity, SymbolKeyEntityMeta, SymbolKeyModelOptions } from 'von
 declare module 'vona-module-mcp-auth' {
   export interface IModelOptionsAuthorization {
         relations: {
-          client: IModelRelationBelongsTo<'mcp-auth:authorization', 'mcp-auth:client', false, 'id'|'oauthClientId'|'name'|'resource'>;
+          client: IModelRelationBelongsTo<'mcp-auth:authorization', 'mcp-auth:client', false, 'id'|'oauthClientId'|'name'|'issuer'>;
         };
       }
   export interface ModelAuthorization {
@@ -293,6 +293,7 @@ export * from '../dto/authorizationRedirect.ts';
 export * from '../dto/authorizationSummary.ts';
 export * from '../dto/customScopeCreate.tsx';
 export * from '../dto/customScopeView.tsx';
+export * from '../dto/mcpSiteQuery.ts';
 export * from '../dto/mcpTool.ts';
 import type { IDtoOptionsAccessToken } from '../dto/accessToken.tsx';
 import type { IDtoOptionsAccessTokenCreate } from '../dto/accessTokenCreate.tsx';
@@ -305,6 +306,7 @@ import type { IDtoOptionsAuthorizationGrantMineReq } from '../dto/authorizationG
 import type { IDtoOptionsAuthorizationGrantMineRes } from '../dto/authorizationGrantMineRes.tsx';
 import type { IDtoOptionsAuthorizationRedirect } from '../dto/authorizationRedirect.ts';
 import type { IDtoOptionsAuthorizationSummary } from '../dto/authorizationSummary.ts';
+import type { IDtoOptionsMcpSiteQuery } from '../dto/mcpSiteQuery.ts';
 import { type IDecoratorDtoOptions } from 'vona-module-a-web';
 declare module 'vona-module-a-web' {
 
@@ -322,6 +324,7 @@ declare module 'vona-module-a-web' {
 'mcp-auth:authorizationSummary': IDtoOptionsAuthorizationSummary;
 'mcp-auth:customScopeCreate': IDecoratorDtoOptions;
 'mcp-auth:customScopeView': IDecoratorDtoOptions;
+'mcp-auth:mcpSiteQuery': IDtoOptionsMcpSiteQuery;
 'mcp-auth:mcpTool': IDecoratorDtoOptions;
     }
 
@@ -345,6 +348,7 @@ import type { DtoAuthorizationRedirect } from '../dto/authorizationRedirect.ts';
 import type { DtoAuthorizationSummary } from '../dto/authorizationSummary.ts';
 import type { DtoCustomScopeCreate } from '../dto/customScopeCreate.tsx';
 import type { DtoCustomScopeView } from '../dto/customScopeView.tsx';
+import type { DtoMcpSiteQuery } from '../dto/mcpSiteQuery.ts';
 import type { DtoMcpTool } from '../dto/mcpTool.ts';
 declare module 'vona-module-mcp-auth' {
 
@@ -398,6 +402,10 @@ declare module 'vona-module-mcp-auth' {
 
     export interface IDtoOptionsCustomScopeView {
       fields?: TypeEntityOptionsFields<DtoCustomScopeView, IDtoOptionsCustomScopeView[TypeSymbolKeyFieldsMore]>;
+    }
+
+    export interface IDtoOptionsMcpSiteQuery {
+      fields?: TypeEntityOptionsFields<DtoMcpSiteQuery, IDtoOptionsMcpSiteQuery[TypeSymbolKeyFieldsMore]>;
     }
 
     export interface IDtoOptionsMcpTool {

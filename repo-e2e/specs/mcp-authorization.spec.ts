@@ -25,6 +25,11 @@ const scopeAccessChangeConfirm =
   'Change the name or tools in this scope? Existing authorizations using it will be revoked, including their tokens and authorization codes.';
 
 type McpScope = 'mcp:all' | 'mcp:read';
+type McpSiteId = 'web' | 'admin';
+
+function sitePagePath(ssrSiteId: McpSiteId, path: string) {
+  return ssrSiteId === 'admin' ? `/admin${path}` : path;
+}
 
 type RegisteredClient = {
   clientId: string;
@@ -36,6 +41,7 @@ async function registerClient(
   request: APIRequestContext,
   origin: string,
   scope?: McpScope,
+  ssrSiteId: McpSiteId = 'web',
 ): Promise<RegisteredClient> {
   const response = await request.post('/mcp/register', {
     headers: { 'content-type': 'application/json' },
@@ -63,7 +69,7 @@ async function registerClient(
   return {
     clientId: body.client_id,
     redirectUri: body.redirect_uris[0],
-    resource: `${origin}/mcp`,
+    resource: `${origin}/mcp/${ssrSiteId}`,
   };
 }
 
@@ -82,10 +88,11 @@ function createAuthorization(
   clientId: string,
   redirectUri: string,
   scope?: McpScope,
+  ssrSiteId: McpSiteId = 'web',
 ) {
   const verifier = randomBytes(32).toString('base64url');
   const state = randomBytes(16).toString('hex');
-  const resource = `${origin}/mcp`;
+  const resource = `${origin}/mcp/${ssrSiteId}`;
   const params = new URLSearchParams({
     client_id: clientId,
     response_type: 'code',
@@ -96,7 +103,7 @@ function createAuthorization(
     code_challenge_method: 'S256',
     state,
   });
-  return { origin, verifier, state, redirectUri, resource, path: `/mcp/auth?${params}` };
+  return { origin, verifier, state, redirectUri, resource, ssrSiteId, path: `/mcp/auth?${params}` };
 }
 
 type Authorization = ReturnType<typeof createAuthorization>;
@@ -190,7 +197,7 @@ async function readPersonalMcpScopes(
   request: APIRequestContext,
   headers: Record<string, string>,
 ): Promise<PersonalMcpScope[]> {
-  const response = await request.get(`${customScopeApiPath}/mine`, { headers });
+  const response = await request.get(`${customScopeApiPath}/mine?ssrSiteId=admin`, { headers });
   expect(response.ok()).toBe(true);
   expect(response.headers()['cache-control']).toContain('no-store');
   return (await response.json()).data.list;
@@ -202,7 +209,7 @@ async function createPersonalMcpScope(
   name: string,
   toolNames: string[],
 ): Promise<PersonalMcpScope> {
-  const catalog = await request.get(`${customScopeApiPath}/catalog`, { headers });
+  const catalog = await request.get(`${customScopeApiPath}/catalog?ssrSiteId=admin`, { headers });
   expect(catalog.ok()).toBe(true);
   const tools = (await catalog.json()).data as Array<PersonalMcpScope['tools'][number]>;
   const selected = toolNames.map(name => {
@@ -210,7 +217,7 @@ async function createPersonalMcpScope(
     if (!tool) throw new Error(`Seeded account MCP catalog is missing ${name}`);
     return { name: tool.name, controller: tool.controller, action: tool.action };
   });
-  const created = await request.post(`${customScopeApiPath}/createMine`, {
+  const created = await request.post(`${customScopeApiPath}/createMine?ssrSiteId=admin`, {
     headers,
     data: { name, description: 'Test-owned personal MCP scope', tools: selected },
   });
@@ -229,16 +236,21 @@ async function cleanupPersonalMcpFixtures(
 ) {
   const headers = await loginMcpAccount(request, seededMcpAccount);
   try {
-    const mine = await request.get(`${authorizationGrantApiPath}/mine`, { headers });
+    const mine = await request.get(`${authorizationGrantApiPath}/mine?ssrSiteId=admin`, {
+      headers,
+    });
     expect(mine.ok()).toBe(true);
     const grants = (await mine.json()).data.list as Array<{
       id: string | number;
       clientId: string;
     }>;
     for (const grant of grants.filter(grant => clientIds.has(grant.clientId))) {
-      const deleted = await request.delete(`${authorizationGrantApiPath}/deleteMine/${grant.id}`, {
-        headers,
-      });
+      const deleted = await request.delete(
+        `${authorizationGrantApiPath}/deleteMine/${grant.id}?ssrSiteId=admin`,
+        {
+          headers,
+        },
+      );
       expect(deleted.ok()).toBe(true);
     }
   } finally {
@@ -246,9 +258,12 @@ async function cleanupPersonalMcpFixtures(
     // owned row even when a UI save succeeds but its subsequent assertion fails.
     const scopes = await readPersonalMcpScopes(request, headers);
     for (const scope of scopes.filter(scope => scopeNames.has(scope.name))) {
-      const deleted = await request.delete(`${customScopeApiPath}/deleteMine/${scope.id}`, {
-        headers,
-      });
+      const deleted = await request.delete(
+        `${customScopeApiPath}/deleteMine/${scope.id}?ssrSiteId=admin`,
+        {
+          headers,
+        },
+      );
       expect(deleted.ok()).toBe(true);
     }
   }
@@ -278,6 +293,7 @@ function waitForApiResponse(page: Page, method: string, path: string) {
 }
 
 async function beginAnonymousAuthorization(page: Page, authorization: Authorization) {
+  const ssrSiteId = authorization.ssrSiteId;
   expect((await page.context().cookies()).some(cookie => cookie.name === 'token')).toBe(false);
   const ingress = waitForApiResponse(page, 'GET', '/mcp/auth');
   await page.goto(authorization.path, { waitUntil: 'load' });
@@ -286,17 +302,19 @@ async function beginAnonymousAuthorization(page: Page, authorization: Authorizat
   expect(response.headers()['cache-control']).toBe('no-store');
   const destination = new URL(response.headers().location, authorization.origin);
   expect(destination.origin === authorization.origin).toBe(true);
-  // Basic's root Web Site is the shortest enabled Site. Do not silently fall
-  // back to Admin/Commerce or add a special consent-capability registration.
-  expect(destination.pathname).toBe(consentPath);
+  // The requested resource owns this consent page; other enabled Sites
+  // must never substitute their consent or scope-management authority.
+  expect(destination.pathname).toBe(sitePagePath(ssrSiteId, consentPath));
   expect([...destination.searchParams.keys()]).toEqual(['request']);
   expect(Boolean(destination.searchParams.get('request'))).toBe(true);
   const pendingPath = `${destination.pathname}${destination.search}`;
   await expect(page).toHaveURL(/\/login\?(?:.*&)?returnTo=/);
-  await expect(page.locator('html')).toHaveAttribute('data-zova-hydrated', 'web');
+  await expect(page.locator('html')).toHaveAttribute('data-zova-hydrated', ssrSiteId);
   const loginUrl = new URL(page.url());
-  expect(loginUrl.pathname).toBe('/login');
-  expect(loginUrl.searchParams.get('returnTo') === pendingPath).toBe(true);
+  expect(loginUrl.pathname).toBe(sitePagePath(ssrSiteId, '/login'));
+  // Zova's admission guard passes to.fullPath, relative to the Site's router base.
+  // Keep the browser-facing pendingPath prefixed, but never duplicate /admin in returnTo.
+  expect(loginUrl.searchParams.get('returnTo')).toBe(`${consentPath}${destination.search}`);
   expect(loginUrl.searchParams.get('returnTo')?.includes(MCP_E2E_CALLBACK_PATH)).toBe(false);
   await expect(page.getByRole('heading', { name: 'Login', exact: true })).toBeVisible();
   await expect(page.getByRole('button', { name: 'Approve', exact: true })).toHaveCount(0);
@@ -309,6 +327,7 @@ async function loginAndReadConsent(
   origin: string,
   scope: McpScope = 'mcp:all',
   account = { username: 'admin', password: '123456' },
+  ssrSiteId: McpSiteId = 'web',
 ) {
   // Existing scenarios use the read-only seed; personal management owns an ordinary account.
   const username = page.getByPlaceholder('Your Username');
@@ -326,24 +345,51 @@ async function loginAndReadConsent(
   expect(summaryResponse.ok()).toBe(true);
   expect(new URL(summaryResponse.url()).origin === origin).toBe(true);
   expect(new URL(page.url()).pathname + new URL(page.url()).search === pendingPath).toBe(true);
-  await expect(page.locator('html')).toHaveAttribute('data-zova-hydrated', 'web');
+  await expect(page.locator('html')).toHaveAttribute('data-zova-hydrated', ssrSiteId);
   await expect(
     page.getByRole('heading', { name: 'Authorize MCP access', exact: true }),
   ).toBeVisible();
   await expect(page.getByText(MCP_E2E_CLIENT_NAME, { exact: true })).toBeVisible();
-  await expect(page.getByText('Resource', { exact: true })).toHaveCount(0);
+  const summaryData = (await summaryResponse.json()).data;
+  await expect(page.getByText('MCP resource', { exact: true })).toBeVisible();
+  await expect(page.locator('[data-mcp-resource]')).toHaveText(summaryData.resource);
+  await expect(page.locator('[data-mcp-resource]')).toBeVisible();
   await expect(page.getByText(`${origin}/mcp`, { exact: true })).toHaveCount(0);
   await expect(page.getByText('Request expires', { exact: true })).toHaveCount(0);
   await expect(page.locator('time')).toHaveCount(0);
-  expect((await summaryResponse.json()).data.scope).toBe(scope);
+  expect(summaryData.scope).toBe(scope);
+  expect(summaryData.ssrSiteId).toBe(ssrSiteId);
   await expect(
     page.locator('[data-mcp-requested-scope]').getByText(scope, { exact: true }),
   ).toBeVisible();
   await expect(page.getByText(allScopeHelp, { exact: true })).toHaveCount(0);
   await expect(page.getByText(readScopeHelp, { exact: true })).toHaveCount(0);
+  const scopeOption = summaryData.options.find(
+    (option: { scope: string }) => option.scope === scope,
+  );
+  const toolIndex = scopeOption.tools.findIndex(
+    (tool: { summary?: string; name: string }) =>
+      tool.summary?.trim() && tool.summary.trim() !== tool.name,
+  );
+  expect(toolIndex).toBeGreaterThanOrEqual(0);
+  const tool = scopeOption.tools[toolIndex];
+  const toolDetails = page.locator(`[data-mcp-scope-option="${scope}"] details`);
+  await toolDetails.locator('summary').click();
+  const toolItem = toolDetails.locator('li').nth(toolIndex);
+  await expect(toolItem.locator('span').first()).toHaveText(tool.summary.trim());
+  await expect(toolItem.locator('p').first()).toHaveText(`${tool.controller} / ${tool.action}`);
+  if (tool.description) {
+    await expect(toolItem.locator('p').nth(1)).toHaveText(tool.description);
+  }
+  await toolDetails.locator('summary').click();
   const manageScopes = page.getByRole('link', { name: 'Manage scopes', exact: true });
   await expect(manageScopes).toBeVisible();
-  await expect(manageScopes).toHaveAttribute('href', scopesPath);
+  expect(summaryData.scopesUrl).toBe(`${origin}${sitePagePath(ssrSiteId, scopesPath)}`);
+  await expect(manageScopes).toHaveAttribute(
+    'href',
+    `${origin}${sitePagePath(ssrSiteId, scopesPath)}`,
+  );
+  await expect(manageScopes).toHaveAttribute('href', summaryData.scopesUrl);
   await expect(manageScopes).toHaveAttribute('target', '_blank');
   await expect(manageScopes).toHaveAttribute('rel', 'noopener noreferrer');
   await expect(page.getByRole('button', { name: 'Approve', exact: true })).toBeEnabled();
@@ -374,7 +420,7 @@ async function decideAndCaptureCallback(page: Page, authorization: Authorization
   expect(callback.origin === authorization.origin).toBe(true);
   expect(callback.pathname).toBe(MCP_E2E_CALLBACK_PATH);
   expect(callback.searchParams.get('state') === authorization.state).toBe(true);
-  expect(callback.searchParams.get('iss') === authorization.resource).toBe(true);
+  expect(callback.searchParams.get('iss') === `${authorization.origin}/mcp`).toBe(true);
   expect(callback.searchParams.has('access_token')).toBe(false);
   return callback;
 }
@@ -402,8 +448,9 @@ async function callMcp(
   method: string,
   params: Record<string, unknown> = {},
   token?: string,
+  ssrSiteId: McpSiteId = 'web',
 ) {
-  return await request.post('/mcp', {
+  return await request.post(`/mcp/${ssrSiteId}`, {
     headers: {
       'Accept': 'application/json, text/event-stream',
       'mcp-protocol-version': protocolVersion,
@@ -475,7 +522,7 @@ async function verifyStudentTools(
     studentId = (await created.json()).data;
     expect(['string', 'number']).toContain(typeof studentId);
 
-    const listed = await callMcp(request, 'tools/list', {}, token);
+    const listed = await callMcp(request, 'tools/list', {}, token, 'admin');
     expect(listed.status()).toBe(200);
     // Other modules may register tools in the shared catalog.
     expect(
@@ -501,6 +548,7 @@ async function verifyStudentTools(
       'tools/call',
       { name: 'training-student_student_select', arguments: query },
       token,
+      'admin',
     );
     expect(initialSelect.status()).toBe(200);
     const initial = (await initialSelect.json()).result;
@@ -525,6 +573,7 @@ async function verifyStudentTools(
       'tools/call',
       { name: 'training-student_student_select', arguments: query },
       token,
+      'admin',
     );
     expect(selected.status()).toBe(200);
     const complete = (await selected.json()).result;
@@ -569,6 +618,7 @@ async function verifyStudentTools(
       'tools/call',
       { name: 'training-student_student_view', arguments: { id: selectedId } },
       token,
+      'admin',
     );
     expect(viewed.status()).toBe(200);
     const detail = (await viewed.json()).result;
@@ -617,6 +667,7 @@ async function verifyStudentTools(
       'tools/call',
       { name: 'training-student_student_summary', arguments: { id: selectedId } },
       token,
+      'admin',
     );
     expect(summary.status()).toBe(200);
     const result = (await summary.json()).result;
@@ -651,8 +702,8 @@ for (const scenario of [
   { name: 'explicit mcp:read', scope: 'mcp:read', expectedScope: 'mcp:read' },
 ] as const) {
   test(
-    `MCP browser authorization: ${scenario.name}, anonymous login, explicit approval, PKCE exchange, refresh and bearer tools`,
-    { tag: ['@web', '@ssr', '@mcp', '@flow'] },
+    `MCP browser authorization: ${scenario.name}, Admin Student anonymous login, explicit approval, PKCE exchange, refresh and bearer tools`,
+    { tag: ['@admin', '@ssr', '@mcp', '@flow'] },
     async ({ page, request, baseURL }) => {
       test.setTimeout(60_000);
       if (!baseURL) throw new Error('Managed E2E origin unavailable');
@@ -667,22 +718,30 @@ for (const scenario of [
         token_endpoint: `${issuer}/token`,
         registration_endpoint: `${issuer}/register`,
       });
-      const resourceMetadata = await request.get('/.well-known/oauth-protected-resource/mcp');
+      const resourceMetadata = await request.get('/.well-known/oauth-protected-resource/mcp/admin');
       expect(resourceMetadata.status()).toBe(200);
       expect(await resourceMetadata.json()).toMatchObject({
-        resource: issuer,
+        resource: `${issuer}/admin`,
         authorization_servers: [issuer],
       });
-      const client = await registerClient(request, origin, scenario.scope);
+      const client = await registerClient(request, origin, scenario.scope, 'admin');
       const authorization = createAuthorization(
         origin,
         client.clientId,
         client.redirectUri,
         scenario.scope,
+        'admin',
       );
       const errors = collectBrowserErrors(page);
       const pendingPath = await beginAnonymousAuthorization(page, authorization);
-      await loginAndReadConsent(page, pendingPath, authorization.origin, scenario.expectedScope);
+      await loginAndReadConsent(
+        page,
+        pendingPath,
+        authorization.origin,
+        scenario.expectedScope,
+        seededMcpAccount,
+        'admin',
+      );
 
       // Existing SSR cookies admit a direct document request, while private query
       // data remains absent until hydration (no token/bridge bootstrap of our own).
@@ -695,9 +754,14 @@ for (const scenario of [
       expect(html).not.toContain('data-zova-hydrated');
       const summary = waitForApiResponse(page, 'GET', '/mcp/auth/summary');
       await page.reload({ waitUntil: 'load' });
-      expect((await summary).ok()).toBe(true);
-      await expect(page.locator('html')).toHaveAttribute('data-zova-hydrated', 'web');
+      const summaryResponse = await summary;
+      expect(summaryResponse.ok()).toBe(true);
+      const summaryData = (await summaryResponse.json()).data;
+      await expect(page.locator('html')).toHaveAttribute('data-zova-hydrated', 'admin');
       await expect(page.getByText(MCP_E2E_CLIENT_NAME, { exact: true })).toBeVisible();
+      await expect(page.locator('[data-mcp-resource]')).toHaveText(summaryData.resource);
+      await expect(page.locator('[data-mcp-resource]')).toBeVisible();
+      await expect(page.getByText(`${origin}/mcp`, { exact: true })).toHaveCount(0);
 
       const callback = await decideAndCaptureCallback(page, authorization, true);
       expect(callback.searchParams.has('error')).toBe(false);
@@ -720,10 +784,10 @@ for (const scenario of [
       ).toBe(true);
       expect(token.access_token === code).toBe(false);
 
-      const anonymous = await callMcp(request, 'server/discover');
+      const anonymous = await callMcp(request, 'server/discover', {}, undefined, 'admin');
       expect(anonymous.status()).toBe(401);
       expect(anonymous.headers()['www-authenticate']).toContain('Bearer');
-      const discovery = await callMcp(request, 'server/discover', {}, token.access_token);
+      const discovery = await callMcp(request, 'server/discover', {}, token.access_token, 'admin');
       expect(discovery.status()).toBe(200);
       expect((await discovery.json()).result.supportedVersions).toContain(protocolVersion);
       const callbackUrl = page.url();
@@ -768,7 +832,7 @@ for (const scenario of [
           // Boolean comparisons keep credential values out of assertion diagnostics.
           expect(refreshed.access_token === token.access_token).toBe(false);
           expect(refreshed.refresh_token === token.refresh_token).toBe(false);
-          const oldAccess = await callMcp(request, 'tools/list', {}, token.access_token);
+          const oldAccess = await callMcp(request, 'tools/list', {}, token.access_token, 'admin');
           expect(oldAccess.status()).toBe(401);
           expect(oldAccess.headers()['www-authenticate']).toContain('error="invalid_token"');
           expect(page.url() === callbackUrl).toBe(true);
@@ -789,6 +853,245 @@ for (const scenario of [
     },
   );
 }
+
+test(
+  'MCP browser authorization: Admin Student pending consent refreshes tool metadata on runtime locale change',
+  { tag: ['@admin', '@ssr', '@mcp'] },
+  async ({ page, request, baseURL }) => {
+    test.setTimeout(60_000);
+    if (!baseURL) throw new Error('Managed E2E origin unavailable');
+    const origin = new URL(baseURL).origin;
+    const client = await registerClient(request, origin, 'mcp:all', 'admin');
+    const authorization = createAuthorization(
+      origin,
+      client.clientId,
+      client.redirectUri,
+      'mcp:all',
+      'admin',
+    );
+    const errors = collectBrowserErrors(page);
+    const pendingPath = await beginAnonymousAuthorization(page, authorization);
+    const englishSummary = waitForApiResponse(page, 'GET', '/mcp/auth/summary');
+    await loginAndReadConsent(page, pendingPath, origin, 'mcp:all', seededMcpAccount, 'admin');
+    const englishResponse = await englishSummary;
+
+    type ConsentSummary = {
+      resource: string;
+      scope: string;
+      ssrSiteId: string;
+      options: Array<{
+        scope: string;
+        tools: Array<{
+          name: string;
+          controller: string;
+          action: string;
+          summary?: string;
+          description?: string;
+        }>;
+      }>;
+    };
+    const studentTool = (summary: ConsentSummary) =>
+      summary.options
+        .find(option => option.scope === 'mcp:read')
+        ?.tools.find(
+          tool =>
+            tool.controller === 'training-student.controller.student' && tool.action === 'select',
+        );
+    const englishDescription =
+      /^Select students using your current student-select permission and instance\./;
+    const chineseDescription = /^使用当前学生查询权限，在当前实例中查询学生。/;
+    const englishData = (await englishResponse.json()).data as ConsentSummary;
+    expect(englishResponse.request().headers()['x-vona-locale']).toBe('en-us');
+    expect(englishData).toMatchObject({
+      resource: authorization.resource,
+      scope: 'mcp:all',
+      ssrSiteId: 'admin',
+    });
+    expect(studentTool(englishData)).toMatchObject({
+      name: 'training-student_student_select',
+      summary: 'List Students',
+      description: expect.stringMatching(englishDescription),
+    });
+
+    const option = page.locator('[data-mcp-scope-option="mcp:read"]');
+    const radio = option.getByRole('radio');
+    await expect(page.locator('input[name="mcp-effective-scope"][value="mcp:all"]')).toBeChecked();
+    await radio.check();
+    await expect(radio).toBeChecked();
+    const details = option.locator('details');
+    const studentRow = details.locator('li').filter({
+      has: page.getByText('training-student.controller.student / select', { exact: true }),
+    });
+    const expectStudentMetadata = async (title: string, description: RegExp) => {
+      // A locale's loading branch may recreate the details element in its closed state.
+      await expect(studentRow.locator('span').first()).toHaveText(title);
+      await expect(details).toBeVisible();
+      if ((await details.getAttribute('open')) === null) await details.locator('summary').click();
+      await expect(studentRow.locator('span').first()).toBeVisible();
+      await expect(studentRow.locator('p').nth(1)).toHaveText(description);
+      await expect(studentRow.locator('p').nth(1)).toBeVisible();
+    };
+    await expectStudentMetadata('List Students', englishDescription);
+
+    const setLocale = (locale: string) =>
+      page.evaluate(locale => {
+        type MountedElement = Element & {
+          __vue_app__?: {
+            zova?: {
+              meta: { locale: { current: string } };
+              sys: { env: { APP_LOCALE_HEADER_KEY?: string } };
+            };
+          };
+        };
+        // Reuse the mounted Vue app lookup; change Zova's real reactive locale owner.
+        const root = Array.from(document.querySelectorAll('*')).find(
+          element => (element as MountedElement).__vue_app__?.zova,
+        ) as MountedElement | undefined;
+        const app = root?.__vue_app__?.zova;
+        if (!app) throw new Error('Mounted Zova application not found');
+        app.meta.locale.current = locale;
+        return app.sys.env.APP_LOCALE_HEADER_KEY?.toLowerCase();
+      }, locale);
+    const pendingUrl = page.url();
+    const counts = { document: 0, decision: 0, callback: 0 };
+    const observeSwitchEffects = (outgoing: Request) => {
+      if (outgoing.isNavigationRequest() && outgoing.frame() === page.mainFrame())
+        counts.document++;
+      const path = new URL(outgoing.url()).pathname;
+      if (path === '/mcp/auth/decision') counts.decision++;
+      if (path === MCP_E2E_CALLBACK_PATH) counts.callback++;
+    };
+    page.on('request', observeSwitchEffects);
+    try {
+      const chineseSummary = waitForApiResponse(page, 'GET', '/mcp/auth/summary');
+      const localeHeader = await setLocale('zh-cn');
+      expect(localeHeader).toBe('x-vona-locale');
+      const chineseResponse = await chineseSummary;
+      expect(chineseResponse.ok()).toBe(true);
+      expect(chineseResponse.request().headers()[localeHeader!]).toBe('zh-cn');
+      expect(
+        new URL(chineseResponse.url()).searchParams.get('request') ===
+          new URL(pendingPath, origin).searchParams.get('request'),
+      ).toBe(true);
+      const chineseData = (await chineseResponse.json()).data as ConsentSummary;
+      expect(chineseData).toMatchObject({
+        resource: authorization.resource,
+        scope: 'mcp:all',
+        ssrSiteId: 'admin',
+      });
+      expect(studentTool(chineseData)).toMatchObject({
+        name: 'training-student_student_select',
+        summary: '查询学生列表',
+        description: expect.stringMatching(chineseDescription),
+      });
+      await expectStudentMetadata('查询学生列表', chineseDescription);
+      await expect(page.locator('[data-mcp-resource]')).toHaveText(authorization.resource);
+      await expect(radio).toBeChecked();
+      expect(page.url() === pendingUrl).toBe(true);
+      expect(counts).toEqual({ document: 0, decision: 0, callback: 0 });
+
+      // Returning to English may reuse its cached summary; no network round trip is required.
+      await setLocale('en-us');
+      await expectStudentMetadata('List Students', englishDescription);
+      await expect(page.locator('[data-mcp-resource]')).toHaveText(authorization.resource);
+      await expect(radio).toBeChecked();
+      expect(page.url() === pendingUrl).toBe(true);
+      expect(counts).toEqual({ document: 0, decision: 0, callback: 0 });
+    } finally {
+      page.off('request', observeSwitchEffects);
+    }
+
+    const callback = await decideAndCaptureCallback(page, authorization, false);
+    expect(callback.searchParams.get('error')).toBe('access_denied');
+    expect(callback.searchParams.has('code')).toBe(false);
+    expect(errors).toEqual({ page: 0, console: 0, hydration: 0 });
+    // Only run-owned AS registration/pending rows remain; the shared account is read-only.
+  },
+);
+
+test(
+  'MCP browser authorization: Admin-hosted Web consent opens Web scopes in a native popup',
+  { tag: ['@web', '@ssr', '@mcp', '@account'] },
+  async ({ page, request, baseURL }) => {
+    test.setTimeout(60_000);
+    if (!baseURL) throw new Error('Managed E2E origin unavailable');
+    const origin = new URL(baseURL).origin;
+    let account: McpAccount | undefined;
+    try {
+      account = await registerMcpAccount(request, origin, registered => {
+        account = registered;
+      });
+      const client = await registerClient(request, origin, 'mcp:read');
+      const authorization = createAuthorization(
+        origin,
+        client.clientId,
+        client.redirectUri,
+        'mcp:read',
+      );
+      const errors = collectBrowserErrors(page);
+      const pendingPath = await beginAnonymousAuthorization(page, authorization);
+      await loginAndReadConsent(page, pendingPath, origin, 'mcp:read', account);
+
+      // Keep the real Web request and canonical issuer; only its consent shell changes.
+      const otherSite = 'admin';
+      const otherPendingPath = `/admin${pendingPath}`;
+      const summary = waitForApiResponse(page, 'GET', '/mcp/auth/summary');
+      await page.goto(otherPendingPath, { waitUntil: 'load' });
+      const summaryResponse = await summary;
+      expect(summaryResponse.ok()).toBe(true);
+      expect(new URL(summaryResponse.url()).origin === origin).toBe(true);
+      const summaryData = (await summaryResponse.json()).data;
+      expect(summaryData.ssrSiteId).toBe('web');
+      expect(summaryData.resource).toBe(authorization.resource);
+      expect(summaryData.scopesUrl).toBe(`${origin}${scopesPath}`);
+      await expect(page.locator('html')).toHaveAttribute('data-zova-hydrated', otherSite);
+      await expect(
+        page.getByRole('heading', { name: 'Authorize MCP access', exact: true }),
+      ).toBeVisible();
+      await expect(page.locator('[data-mcp-resource]')).toHaveText(authorization.resource);
+      const manageScopes = page.getByRole('link', { name: 'Manage scopes', exact: true });
+      await expect(manageScopes).toBeVisible();
+      await expect(manageScopes).toHaveAttribute('href', `${origin}${scopesPath}`);
+      await expect(manageScopes).toHaveAttribute('href', summaryData.scopesUrl);
+      await expect(manageScopes).toHaveAttribute('target', '_blank');
+      await expect(manageScopes).toHaveAttribute('rel', 'noopener noreferrer');
+
+      // Click the native anchor, not page.goto or a synthetic window.open.
+      const [popup] = await Promise.all([page.waitForEvent('popup'), manageScopes.click()]);
+      const popupErrors = collectBrowserErrors(popup);
+      try {
+        await expect(popup).toHaveURL(`${origin}${scopesPath}`);
+        await expect(popup.locator('html')).toHaveAttribute('data-zova-hydrated', 'web');
+        await expect(popup.getByRole('heading', { name: 'MCP scopes', exact: true })).toBeVisible();
+        await expect(popup.locator('[data-mcp-resource]')).toHaveText(authorization.resource);
+        await expect(popup.locator('[data-mcp-resource]')).toBeVisible();
+        expect(new URL(page.url()).pathname + new URL(page.url()).search === otherPendingPath).toBe(
+          true,
+        );
+        await expect(page.locator('html')).toHaveAttribute('data-zova-hydrated', otherSite);
+        expect(popupErrors).toEqual({ page: 0, console: 0, hydration: 0 });
+      } finally {
+        await popup.close();
+      }
+
+      // Opening management neither approves nor consumes the pending request.
+      const callback = await decideAndCaptureCallback(page, authorization, false);
+      expect(callback.searchParams.get('error')).toBe('access_denied');
+      expect(callback.searchParams.has('code')).toBe(false);
+      expect(errors).toEqual({ page: 0, console: 0, hydration: 0 });
+    } finally {
+      if (account) {
+        const headers = await loginMcpAccount(request, account);
+        const removed = await request.delete('/api/home/user/passportTest/removeCurrentFixture', {
+          headers,
+        });
+        expect(removed.ok()).toBe(true);
+      }
+      // No grant or scope is created. OAuth registration/pending rows belong only to
+      // the root-managed disposable AS database and are removed with that run.
+    }
+  },
+);
 
 test.describe('MCP consent login recovery', () => {
   let client: RegisteredClient;
@@ -1058,7 +1361,7 @@ test(
         exact: true,
       });
       await expect(authorizationsLink).toHaveAttribute('href', authorizationsPath);
-      const mineResponse = await request.get(`${authorizationGrantApiPath}/mine`, {
+      const mineResponse = await request.get(`${authorizationGrantApiPath}/mine?ssrSiteId=web`, {
         headers: await loginMcpAccount(request, account),
       });
       await authorizationsLink.click();
@@ -1078,6 +1381,8 @@ test(
       await expect(
         page.getByRole('heading', { name: 'MCP authorizations', exact: true }),
       ).toBeVisible();
+      await expect(page.locator('[data-mcp-resource]')).toHaveText(`${origin}/mcp/web`);
+      await expect(page.locator('[data-mcp-resource]')).toBeVisible();
       await expect(
         entry.getByRole('heading', { name: MCP_E2E_CLIENT_NAME, exact: true }),
       ).toBeVisible();
@@ -1090,6 +1395,13 @@ test(
       const html = await document.text();
       expect(html).toContain(`data-authorization-id="${grantId}"`);
       expect(html).toContain(MCP_E2E_CLIENT_NAME);
+      expect(
+        await page.evaluate(html => {
+          return new DOMParser()
+            .parseFromString(html, 'text/html')
+            .querySelector('[data-mcp-resource]')?.textContent;
+        }, html),
+      ).toBe(`${origin}/mcp/web`);
       expect(html).not.toContain('data-zova-hydrated');
       const queryState = html.match(
         /<script[^>]*id="ssr-state-defer-init"[^>]*>([\s\S]*?)<\/script>/,
@@ -1116,6 +1428,8 @@ test(
       page.on('request', observeHydrationFetch);
       await page.reload({ waitUntil: 'load' });
       await expect(page.locator('html')).toHaveAttribute('data-zova-hydrated', 'web');
+      await expect(page.locator('[data-mcp-resource]')).toHaveText(`${origin}/mcp/web`);
+      await expect(page.locator('[data-mcp-resource]')).toBeVisible();
       await expect(
         entry.getByRole('heading', { name: MCP_E2E_CLIENT_NAME, exact: true }),
       ).toBeVisible();
@@ -1144,11 +1458,17 @@ test(
       await expect(
         page.getByRole('heading', { name: 'MCP authorizations', exact: true }),
       ).toBeVisible();
+      await expect(page.locator('[data-mcp-resource]')).toHaveText(`${origin}/mcp/admin`);
+      await expect(page.locator('[data-mcp-resource]')).toBeVisible();
+      await expect(entry).toHaveCount(0);
+      // Admin identifies its own resource and never displays the Web grant.
+      await expect(page.locator('html')).toHaveAttribute('data-zova-hydrated', 'admin');
+      await page.goto(authorizationsPath, { waitUntil: 'load' });
+      await expect(page.locator('html')).toHaveAttribute('data-zova-hydrated', 'web');
+      await expect(page.locator('[data-mcp-resource]')).toHaveText(`${origin}/mcp/web`);
       await expect(
         entry.getByRole('heading', { name: MCP_E2E_CLIENT_NAME, exact: true }),
       ).toBeVisible();
-      // Mine navigation keeps the shared protected page within the Admin site.
-      await expect(page.locator('html')).toHaveAttribute('data-zova-hydrated', 'admin');
 
       const revokePath = `${authorizationGrantApiPath}/revokeMine/${grantId}`;
       const deletePath = `${authorizationGrantApiPath}/deleteMine/${grantId}`;
@@ -1203,7 +1523,9 @@ test(
         try {
           if (client) {
             // This new user owns at most this one grant. Locate it even if UI admission failed.
-            const mine = await request.get(`${authorizationGrantApiPath}/mine`, { headers });
+            const mine = await request.get(`${authorizationGrantApiPath}/mine?ssrSiteId=web`, {
+              headers,
+            });
             expect(mine.ok()).toBe(true);
             const grants = (await mine.json()).data.list as Array<{
               id: string | number;
@@ -1211,7 +1533,7 @@ test(
             }>;
             for (const grant of grants.filter(grant => grant.clientId === client!.clientId)) {
               const deleted = await request.delete(
-                `${authorizationGrantApiPath}/deleteMine/${grant.id}`,
+                `${authorizationGrantApiPath}/deleteMine/${grant.id}?ssrSiteId=web`,
                 {
                   headers,
                 },
@@ -1233,8 +1555,8 @@ test(
 );
 
 test(
-  'MCP personal custom scopes: create, edit and delete persist across reload',
-  { tag: ['@web', '@ssr', '@mcp', '@flow'] },
+  'MCP personal custom scopes: Admin Student create, edit and delete persist across reload',
+  { tag: ['@admin', '@ssr', '@mcp', '@flow'] },
   async ({ page, request, baseURL }) => {
     test.setTimeout(60_000);
     if (!baseURL) throw new Error('Managed E2E origin unavailable');
@@ -1245,25 +1567,28 @@ test(
     const clientIds = new Set<string>();
     const errors = collectBrowserErrors(page);
     try {
-      const client = await registerClient(request, origin, 'mcp:read');
+      const client = await registerClient(request, origin, 'mcp:read', 'admin');
       clientIds.add(client.clientId);
       const authorization = createAuthorization(
         origin,
         client.clientId,
         client.redirectUri,
         'mcp:read',
+        'admin',
       );
       const pendingPath = await beginAnonymousAuthorization(page, authorization);
-      await loginAndReadConsent(page, pendingPath, origin, 'mcp:read');
+      await loginAndReadConsent(page, pendingPath, origin, 'mcp:read', seededMcpAccount, 'admin');
       await decideAndCaptureCallback(page, authorization, false);
 
-      await page.goto('/home/user/account', { waitUntil: 'load' });
-      await expect(page.locator('html')).toHaveAttribute('data-zova-hydrated', 'web');
+      await page.goto('/admin/home/user/account', { waitUntil: 'load' });
+      await expect(page.locator('html')).toHaveAttribute('data-zova-hydrated', 'admin');
       const scopesLink = page.getByRole('link', { name: 'MCP scopes', exact: true });
-      await expect(scopesLink).toHaveAttribute('href', scopesPath);
+      await expect(scopesLink).toHaveAttribute('href', `/admin${scopesPath}`);
       await scopesLink.click();
-      await expect(page.locator('html')).toHaveAttribute('data-zova-hydrated', 'web');
+      await expect(page.locator('html')).toHaveAttribute('data-zova-hydrated', 'admin');
       await expect(page.getByRole('heading', { name: 'MCP scopes', exact: true })).toBeVisible();
+      await expect(page.locator('[data-mcp-resource]')).toHaveText(`${origin}/mcp/admin`);
+      await expect(page.locator('[data-mcp-resource]')).toBeVisible();
       await page.getByRole('button', { name: 'Create scope', exact: true }).click();
       const dialog = page.getByRole('dialog');
       await expect(dialog.getByText('Create scope', { exact: true })).toBeVisible();
@@ -1301,13 +1626,20 @@ test(
       const entry = page.locator(`article[data-mcp-scope="${scope.scope}"]`);
       await expect(entry.getByRole('heading', { name, exact: true })).toBeVisible();
 
-      const document = await page.request.get(scopesPath);
+      const document = await page.request.get(`/admin${scopesPath}`);
       expect(document.ok()).toBe(true);
       expect(document.headers()['cache-control']).toBe('private, no-store');
       const html = await document.text();
       expect(html).toContain(`data-mcp-scope="${scope.scope}"`);
       expect(html).toContain(`<h2 class="card-title break-words">${name}</h2>`);
       expect(html).toContain('<span class="break-words text-sm">List Students</span>');
+      expect(
+        await page.evaluate(html => {
+          return new DOMParser()
+            .parseFromString(html, 'text/html')
+            .querySelector('[data-mcp-resource]')?.textContent;
+        }, html),
+      ).toBe(`${origin}/mcp/admin`);
       expect(html).not.toContain('data-zova-hydrated');
       const queryState = html.match(
         /<script[^>]*id="ssr-state-defer-init"[^>]*>([\s\S]*?)<\/script>/,
@@ -1330,8 +1662,10 @@ test(
       };
       page.on('request', observeHydrationFetch);
       await page.reload({ waitUntil: 'load' });
-      await expect(page.locator('html')).toHaveAttribute('data-zova-hydrated', 'web');
+      await expect(page.locator('html')).toHaveAttribute('data-zova-hydrated', 'admin');
       await expect(entry.getByRole('heading', { name, exact: true })).toBeVisible();
+      await expect(page.locator('[data-mcp-resource]')).toHaveText(`${origin}/mcp/admin`);
+      await expect(page.locator('[data-mcp-resource]')).toBeVisible();
       page.off('request', observeHydrationFetch);
       expect(hydrationFetches).toBe(0);
       await entry.getByRole('button', { name: 'Edit', exact: true }).click();
@@ -1379,7 +1713,7 @@ test(
       expect(toolsScope.tools).toEqual(expect.arrayContaining(expectedTools));
       await expect(dialog).toHaveCount(0);
       await page.reload({ waitUntil: 'load' });
-      await expect(page.locator('html')).toHaveAttribute('data-zova-hydrated', 'web');
+      await expect(page.locator('html')).toHaveAttribute('data-zova-hydrated', 'admin');
       await entry.getByRole('button', { name: 'Edit', exact: true }).click();
       await expect(dialog.getByText('Edit scope', { exact: true })).toBeVisible();
       await expect(selectedStudentTool).toBeChecked();
@@ -1414,7 +1748,7 @@ test(
       const renamedEntry = page.locator(`article[data-mcp-scope="mcp:custom:${renamed}"]`);
       await expect(renamedEntry.getByRole('heading', { name: renamed, exact: true })).toBeVisible();
       await page.reload({ waitUntil: 'load' });
-      await expect(page.locator('html')).toHaveAttribute('data-zova-hydrated', 'web');
+      await expect(page.locator('html')).toHaveAttribute('data-zova-hydrated', 'admin');
       await expect(renamedEntry.getByRole('heading', { name: renamed, exact: true })).toBeVisible();
       await expect(renamedEntry.getByText('Edited and persisted', { exact: true })).toBeVisible();
       const persisted = (
@@ -1499,7 +1833,7 @@ test(
         page.off('request', observePruningUpdate);
       }
       await page.reload({ waitUntil: 'load' });
-      await expect(page.locator('html')).toHaveAttribute('data-zova-hydrated', 'web');
+      await expect(page.locator('html')).toHaveAttribute('data-zova-hydrated', 'admin');
       const prunedScope = (
         await readPersonalMcpScopes(request, await loginMcpAccount(request, seededMcpAccount))
       ).find(item => String(item.id) === String(scope.id));
@@ -1517,7 +1851,7 @@ test(
       await expect(dialog).toHaveCount(0);
       await expect(renamedEntry).toHaveCount(0);
       await page.reload({ waitUntil: 'load' });
-      await expect(page.locator('html')).toHaveAttribute('data-zova-hydrated', 'web');
+      await expect(page.locator('html')).toHaveAttribute('data-zova-hydrated', 'admin');
       await expect(page.getByRole('button', { name: 'Create scope', exact: true })).toBeEnabled();
       await expect(renamedEntry).toHaveCount(0);
       expect(errors).toEqual({ page: 0, console: 0, hydration: 0 });
@@ -1528,8 +1862,8 @@ test(
 );
 
 test(
-  'MCP personal custom scopes: consent narrows all to custom and enforces actual token tools',
-  { tag: ['@web', '@ssr', '@mcp', '@flow'] },
+  'MCP personal custom scopes: Admin Student consent narrows all to custom and enforces actual token tools',
+  { tag: ['@admin', '@ssr', '@mcp', '@flow'] },
   async ({ page, request, baseURL }) => {
     test.setTimeout(60_000);
     if (!baseURL) throw new Error('Managed E2E origin unavailable');
@@ -1544,16 +1878,17 @@ test(
       const scope = await createPersonalMcpScope(request, headers, name, [
         'training-student_student_select',
       ]);
-      const client = await registerClient(request, origin, 'mcp:all');
+      const client = await registerClient(request, origin, 'mcp:all', 'admin');
       clientIds.add(client.clientId);
       const authorization = createAuthorization(
         origin,
         client.clientId,
         client.redirectUri,
         'mcp:all',
+        'admin',
       );
       const pendingPath = await beginAnonymousAuthorization(page, authorization);
-      await loginAndReadConsent(page, pendingPath, origin, 'mcp:all');
+      await loginAndReadConsent(page, pendingPath, origin, 'mcp:all', seededMcpAccount, 'admin');
       const option = page.locator(`[data-mcp-scope-option="${scope.scope}"]`);
       const radio = option.getByRole('radio', { name, exact: true });
       await expect(radio).toBeEnabled();
@@ -1566,11 +1901,11 @@ test(
       expect(exchange.status()).toBe(200);
       const token = await exchange.json();
       expect(token.scope).toBe(scope.scope);
-      const listed = await callMcp(request, 'tools/list', {}, token.access_token);
+      const listed = await callMcp(request, 'tools/list', {}, token.access_token, 'admin');
       expect(listed.status()).toBe(200);
-      // The metadata helper is derived from visible Actions, not an additional business grant.
+      // Contract discovery and credential logout do not grant additional business Actions.
       expect((await listed.json()).result.tools.map((tool: { name: string }) => tool.name)).toEqual(
-        ['training-student_student_select', 'cabloy_tool_contract'],
+        ['training-student_student_select', 'cabloy_tool_contract', 'cabloy_logout'],
       );
       const excludedContract = await callMcp(
         request,
@@ -1580,6 +1915,7 @@ test(
           arguments: { tool: 'training-student_student_group', section: 'overview' },
         },
         token.access_token,
+        'admin',
       );
       expect(excludedContract.status()).toBe(200);
       const excludedContractBody = await excludedContract.json();
@@ -1593,6 +1929,7 @@ test(
           arguments: { name, pageNo: 1, pageSize: 1 },
         },
         token.access_token,
+        'admin',
       );
       expect(selected.status()).toBe(200);
       const selectedResult = (await selected.json()).result;
@@ -1611,6 +1948,7 @@ test(
           arguments: {},
         },
         token.access_token,
+        'admin',
       );
       expect(excluded.status()).toBe(200);
       expect((await excluded.json()).error).toMatchObject({
@@ -1619,18 +1957,20 @@ test(
       });
 
       // Personal grants display what was approved, not the original all ceiling.
-      const mine = await request.get(`${authorizationGrantApiPath}/mine`, { headers });
+      const mine = await request.get(`${authorizationGrantApiPath}/mine?ssrSiteId=admin`, {
+        headers,
+      });
       expect(mine.ok()).toBe(true);
       const grant = (await mine.json()).data.list.find(
         (item: { clientId: string }) => item.clientId === client.clientId,
       );
       expect(grant).toMatchObject({ scope: scope.scope, requestedScope: 'mcp:all' });
-      await page.goto(authorizationsPath, { waitUntil: 'load' });
+      await page.goto(`/admin${authorizationsPath}`, { waitUntil: 'load' });
       const entry = page.locator(`article[data-authorization-id="${grant.id}"]`);
       await expect(entry.getByText(scope.scope, { exact: true })).toBeVisible();
 
-      await page.goto(scopesPath, { waitUntil: 'load' });
-      await expect(page.locator('html')).toHaveAttribute('data-zova-hydrated', 'web');
+      await page.goto(`/admin${scopesPath}`, { waitUntil: 'load' });
+      await expect(page.locator('html')).toHaveAttribute('data-zova-hydrated', 'admin');
       const scopeEntry = page.locator(`article[data-mcp-scope="${scope.scope}"]`);
       const dialog = page.getByRole('dialog');
       const updatePath = `${customScopeApiPath}/updateMine/${scope.id}`;
@@ -1647,11 +1987,17 @@ test(
       await dialog.getByRole('button', { name: 'Save', exact: true }).click();
       expect((await described).ok()).toBe(true);
       await expect(dialog).toHaveCount(0);
-      const stillActive = await callMcp(request, 'tools/list', {}, token.access_token);
+      const stillActive = await callMcp(request, 'tools/list', {}, token.access_token, 'admin');
       expect(stillActive.status()).toBe(200);
 
       // Keep a real pending request to test a stale client selecting the old scope.
-      const staleAuthorization = createAuthorization(origin, client.clientId, client.redirectUri);
+      const staleAuthorization = createAuthorization(
+        origin,
+        client.clientId,
+        client.redirectUri,
+        undefined,
+        'admin',
+      );
       const pending = await page.request.get(staleAuthorization.path, { maxRedirects: 0 });
       expect(pending.status()).toBe(302);
       const staleRequest = new URL(pending.headers().location, origin).searchParams.get('request');
@@ -1677,7 +2023,7 @@ test(
           .locator(`article[data-mcp-scope="mcp:custom:${renamed}"]`)
           .getByRole('heading', { name: renamed, exact: true }),
       ).toBeVisible();
-      const rejectedAccess = await callMcp(request, 'tools/list', {}, token.access_token);
+      const rejectedAccess = await callMcp(request, 'tools/list', {}, token.access_token, 'admin');
       expect(rejectedAccess.status()).toBe(401);
       expect(rejectedAccess.headers()['www-authenticate']).toContain('error="invalid_token"');
       const rejectedScope = await page.request.post('/mcp/auth/decision', {
@@ -1693,8 +2039,8 @@ test(
 );
 
 test(
-  'MCP personal custom scopes: read consent cannot select write scope or escalate tools',
-  { tag: ['@web', '@ssr', '@mcp', '@flow'] },
+  'MCP personal custom scopes: Admin Student read consent cannot select write scope or escalate tools',
+  { tag: ['@admin', '@ssr', '@mcp', '@flow'] },
   async ({ page, request, baseURL }) => {
     test.setTimeout(60_000);
     if (!baseURL) throw new Error('Managed E2E origin unavailable');
@@ -1708,16 +2054,17 @@ test(
       const scope = await createPersonalMcpScope(request, headers, name, [
         'training-student_student_create',
       ]);
-      const client = await registerClient(request, origin, 'mcp:all');
+      const client = await registerClient(request, origin, 'mcp:all', 'admin');
       clientIds.add(client.clientId);
       const authorization = createAuthorization(
         origin,
         client.clientId,
         client.redirectUri,
         'mcp:read',
+        'admin',
       );
       const pendingPath = await beginAnonymousAuthorization(page, authorization);
-      await loginAndReadConsent(page, pendingPath, origin, 'mcp:read');
+      await loginAndReadConsent(page, pendingPath, origin, 'mcp:read', seededMcpAccount, 'admin');
       const writeOption = page.locator(`[data-mcp-scope-option="${scope.scope}"]`);
       await expect(writeOption.getByRole('radio', { name, exact: true })).toBeDisabled();
       await expect(
@@ -1743,7 +2090,7 @@ test(
       expect(exchange.status()).toBe(200);
       const token = await exchange.json();
       expect(token.scope).toBe('mcp:read');
-      const listed = await callMcp(request, 'tools/list', {}, token.access_token);
+      const listed = await callMcp(request, 'tools/list', {}, token.access_token, 'admin');
       expect(listed.status()).toBe(200);
       const names = (await listed.json()).result.tools.map((tool: { name: string }) => tool.name);
       expect(names).toContain('training-student_student_select');
@@ -1762,6 +2109,7 @@ test(
           arguments: {},
         },
         token.access_token,
+        'admin',
       );
       expect(excluded.status()).toBe(200);
       expect((await excluded.json()).error).toMatchObject({

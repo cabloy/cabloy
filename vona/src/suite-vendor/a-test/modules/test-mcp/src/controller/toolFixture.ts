@@ -55,7 +55,7 @@ export class ControllerToolFixture extends BeanBase {
     };
   }
 
-  @Mcp.tool({ name: 'mcp_test_action_scalar' })
+  @Mcp.tool({ name: 'mcp_test_action_scalar', ssrSites: ['basic-siteweb:web'] })
   @Web.get('scalar')
   @Api.exclude()
   @Api.body(z.number().int())

@@ -12,7 +12,13 @@ import { createHash, randomUUID } from 'node:crypto';
 import { before, describe, it } from 'node:test';
 import { setTimeout as delay } from 'node:timers/promises';
 import { acquireTestLock, app } from 'vona-mock';
-import { getMcpIssuer, OAuthError, resolveMcpResource, sha256 } from 'vona-module-mcp-auth';
+import {
+  getMcpIssuer,
+  OAuthError,
+  resolveMcpResource,
+  resolveMcpInstance,
+  sha256,
+} from 'vona-module-mcp-auth';
 
 const trainingDisabled = (process.env.PROJECT_DISABLED_SUITES ?? '')
   .split(',')
@@ -138,6 +144,7 @@ async function withFixture(operation: (fixture: Fixture) => Promise<void>) {
   const release = await acquireTestLock('test-mcp');
   const users: UserFixture[] = [];
   const clients: string[] = [];
+  let roleId: TableIdentity | undefined;
   const off = app.scope('a-rbac').event.resolvePolicy.on((request, next) => {
     if (
       !users.some(user => String(user.id) === String(app.bean.passport.currentUser?.id)) ||
@@ -165,12 +172,25 @@ async function withFixture(operation: (fixture: Fixture) => Promise<void>) {
     // Complete shared-instance startup before writing default-instance fixtures.
     await context(async () => {}, 'shareTest');
     await context(async () => {
+      const role = await app.scope('home-user').model.role.insert({
+        name: `mcp-custom-admin-${randomUUID()}`,
+        title: 'Owned Student custom scope Admin admission',
+        siteIds: ['admin'],
+        builtin: false,
+        mcpAccess: true,
+      });
+      roleId = role.id;
       for (const label of ['owner', 'other']) {
         const name = `mcp-custom-${label}-${randomUUID()}`;
         const user = await app.bean.user.register({ name }, true);
         // Track the user before creating dependent authentication fixtures.
         const fixture = { id: user.id, name } as UserFixture;
         users.push(fixture);
+        const roles = await app.bean.role.findAllByUserId(user.id);
+        await app.bean.role.replaceUserRoleIds(user.id, [
+          ...(roles ?? []).map(role => role.id),
+          role.id,
+        ]);
         const profile = await app
           .scope('auth-simple')
           .service.authSimple.createForUser(user.id, password);
@@ -190,12 +210,12 @@ async function withFixture(operation: (fixture: Fixture) => Promise<void>) {
             response_types: ['code'],
             scope,
           },
-          resource,
+          resolveMcpInstance(app, new URL(getMcpIssuer(app)).host),
         );
         clients.push(client.client_id);
       }
     });
-    const catalog = await asUser(users[0], () => scopes().catalog());
+    const catalog = await asUser(users[0], () => scopes().catalog(resource.resource));
     const binding = (name: string): IMcpToolIdentity => {
       const tool = catalog.find(tool => tool.name === name);
       assert.ok(tool, `${name} must be available from the real authorized compiler catalog`);
@@ -235,6 +255,7 @@ async function withFixture(operation: (fixture: Fixture) => Promise<void>) {
           await app.scope('home-user').model.roleUser.delete({ userId: user.id });
           await app.bean.user.removeById(user.id);
         }
+        if (roleId !== undefined) await app.scope('home-user').model.role.deleteById(roleId);
       });
     } finally {
       release();
@@ -244,43 +265,52 @@ async function withFixture(operation: (fixture: Fixture) => Promise<void>) {
 
 describe('customScope.test.ts', { concurrency: false }, () => {
   before(() => {
-    resource = resolveMcpResource(app, new URL(getMcpIssuer(app)).host);
+    resource = resolveMcpResource(app, new URL(getMcpIssuer(app)).host, 'admin');
   });
 
   it('keeps personal exact identities owner/instance scoped and resolves remembered custom scopes only after login', async () => {
     if (trainingDisabled) return;
     await withFixture(async fixture => {
       const body = definition('Personal_reads', [fixture.select, fixture.select]);
-      const owned = await asUser(fixture.owner, () => scopes().createMine(fixture.owner.id, body));
+      const owned = await asUser(fixture.owner, () =>
+        scopes().createMine(fixture.owner.id, resource.resource, body),
+      );
       assert.equal(owned.scope, 'mcp:custom:Personal_reads');
       assert.deepEqual(owned.tools, [fixture.select], 'deduplicate exact Action identities');
       await asUser(fixture.owner, async () => {
         assert.deepEqual(
-          (await scopes().mine(fixture.owner.id)).list.map(row => row.scope),
+          (await scopes().mine(fixture.owner.id, resource.resource)).list.map(row => row.scope),
           [owned.scope],
         );
         await expectOAuth(
           () =>
             scopes().createMine(
               fixture.owner.id,
+              resource.resource,
               definition('Wrong-Action-binding', [{ ...fixture.select, action: 'create' }]),
             ),
           'invalid_scope',
         );
       });
       await asUser(fixture.other, async () => {
-        assert.deepEqual((await scopes().mine(fixture.other.id)).list, []);
-        await expectOAuth(() => scopes().resolve(fixture.other.id, owned.scope), 'invalid_scope');
+        assert.deepEqual((await scopes().mine(fixture.other.id, resource.resource)).list, []);
+        await expectOAuth(
+          () => scopes().resolve(fixture.other.id, resource.resource, owned.scope),
+          'invalid_scope',
+        );
         await assert.rejects(
-          () => scopes().updateMine(fixture.other.id, owned.id, body),
+          () => scopes().updateMine(fixture.other.id, resource.resource, owned.id, body),
           error => error instanceof Error && error.code === 404,
         );
-        await scopes().deleteMine(fixture.other.id, owned.id);
+        await scopes().deleteMine(fixture.other.id, resource.resource, owned.id);
       });
       await context(async () => {
-        assert.deepEqual((await scopes().mine(fixture.owner.id)).list, []);
-        await expectOAuth(() => scopes().resolve(fixture.owner.id, owned.scope), 'invalid_scope');
-        await scopes().deleteMine(fixture.owner.id, owned.id);
+        assert.deepEqual((await scopes().mine(fixture.owner.id, resource.resource)).list, []);
+        await expectOAuth(
+          () => scopes().resolve(fixture.owner.id, resource.resource, owned.scope),
+          'invalid_scope',
+        );
+        await scopes().deleteMine(fixture.owner.id, resource.resource, owned.id);
       }, 'shareTest');
       // Anonymous intake accepts only format; owner resolution happens at authenticated summary/decision.
       const remembered = await request(fixture.clientId, owned.scope);
@@ -290,20 +320,23 @@ describe('customScope.test.ts', { concurrency: false }, () => {
       });
       await context(async () => {
         assert.equal((await grants().get({ requestDigest: sha256(remembered) }))?.state, 'pending');
-        assert.deepEqual((await scopes().resolve(fixture.owner.id, owned.scope)).tools, [
-          fixture.select,
-        ]);
+        assert.deepEqual(
+          (await scopes().resolve(fixture.owner.id, resource.resource, owned.scope)).tools,
+          [fixture.select],
+        );
       });
       await asUser(fixture.other, async () => {
         const other = await scopes().createMine(
           fixture.other.id,
+          resource.resource,
           definition(body.name, [fixture.view]),
         );
         assert.notEqual(String(other.id), String(owned.id));
         assert.equal(other.scope, owned.scope, 'different owners can use the same public name');
-        assert.deepEqual((await scopes().resolve(fixture.other.id, other.scope)).tools, [
-          fixture.view,
-        ]);
+        assert.deepEqual(
+          (await scopes().resolve(fixture.other.id, resource.resource, other.scope)).tools,
+          [fixture.view],
+        );
         const summary = await auth().summary(remembered);
         assert.deepEqual(
           summary.options
@@ -333,12 +366,14 @@ describe('customScope.test.ts', { concurrency: false }, () => {
       await asUser(fixture.owner, async () => {
         const owned = await scopes().createMine(
           fixture.owner.id,
+          resource.resource,
           definition('  Personal_Reads-1  ', [fixture.select]),
         );
         assert.equal(owned.name, 'Personal_Reads-1');
         assert.equal(owned.scope, 'mcp:custom:Personal_Reads-1');
         const other = await scopes().createMine(
           fixture.owner.id,
+          resource.resource,
           definition('Another', [fixture.view]),
         );
         for (const name of [
@@ -351,26 +386,47 @@ describe('customScope.test.ts', { concurrency: false }, () => {
           'a'.repeat(101),
         ]) {
           await expectOAuth(
-            () => scopes().createMine(fixture.owner.id, definition(name, [fixture.select])),
+            () =>
+              scopes().createMine(
+                fixture.owner.id,
+                resource.resource,
+                definition(name, [fixture.select]),
+              ),
             'invalid_request',
           );
           await expectOAuth(
-            () => scopes().updateMine(fixture.owner.id, other.id, definition(name, [fixture.view])),
+            () =>
+              scopes().updateMine(
+                fixture.owner.id,
+                resource.resource,
+                other.id,
+                definition(name, [fixture.view]),
+              ),
             'invalid_request',
           );
         }
         await expectOAuth(
           () =>
-            scopes().createMine(fixture.owner.id, definition(' Personal_Reads-1 ', [fixture.view])),
+            scopes().createMine(
+              fixture.owner.id,
+              resource.resource,
+              definition(' Personal_Reads-1 ', [fixture.view]),
+            ),
           'invalid_request',
         );
         await expectOAuth(
           () =>
-            scopes().updateMine(fixture.owner.id, other.id, definition(owned.name, [fixture.view])),
+            scopes().updateMine(
+              fixture.owner.id,
+              resource.resource,
+              other.id,
+              definition(owned.name, [fixture.view]),
+            ),
           'invalid_request',
         );
         const unchanged = await scopes().updateMine(
           fixture.owner.id,
+          resource.resource,
           owned.id,
           definition(` ${owned.name} `, [fixture.select]),
         );
@@ -380,7 +436,9 @@ describe('customScope.test.ts', { concurrency: false }, () => {
           'an unchanged name does not conflict with itself',
         );
         assert.deepEqual(
-          (await scopes().mine(fixture.owner.id)).list.map(row => [row.name, row.scope]).toSorted(),
+          (await scopes().mine(fixture.owner.id, resource.resource)).list
+            .map(row => [row.name, row.scope])
+            .toSorted(),
           [
             ['Another', 'mcp:custom:Another'],
             [owned.name, owned.scope],
@@ -390,14 +448,19 @@ describe('customScope.test.ts', { concurrency: false }, () => {
         for (const name of ['a', 'A'.repeat(100), 'personal_reads-1']) {
           const valid = await scopes().createMine(
             fixture.owner.id,
+            resource.resource,
             definition(name, [fixture.select]),
           );
           assert.equal(valid.name, name);
           assert.equal(valid.scope, `mcp:custom:${name}`);
-          assert.equal((await scopes().resolve(fixture.owner.id, valid.scope)).name, name);
+          assert.equal(
+            (await scopes().resolve(fixture.owner.id, resource.resource, valid.scope)).name,
+            name,
+          );
         }
         await expectOAuth(
-          () => scopes().resolve(fixture.owner.id, 'mcp:custom:PERSONAL_READS-1'),
+          () =>
+            scopes().resolve(fixture.owner.id, resource.resource, 'mcp:custom:PERSONAL_READS-1'),
           'invalid_scope',
         );
       });
@@ -416,6 +479,7 @@ describe('customScope.test.ts', { concurrency: false }, () => {
           await ready.promise;
           return await scopes().createMine(
             fixture.owner.id,
+            resource.resource,
             definition('Concurrent', [fixture.select]),
           );
         });
@@ -446,14 +510,17 @@ describe('customScope.test.ts', { concurrency: false }, () => {
       const [read, write, mixed] = await asUser(fixture.owner, async () => [
         await scopes().createMine(
           fixture.owner.id,
+          resource.resource,
           definition('Read-exact-subset', [fixture.select]),
         ),
         await scopes().createMine(
           fixture.owner.id,
+          resource.resource,
           definition('Write-exact-subset', [fixture.create]),
         ),
         await scopes().createMine(
           fixture.owner.id,
+          resource.resource,
           definition('Mixed-request-ceiling', [fixture.select, fixture.create]),
         ),
       ]);
@@ -495,7 +562,11 @@ describe('customScope.test.ts', { concurrency: false }, () => {
           const row = await grants().get({ requestDigest: sha256(pending) });
           assert.equal(Boolean(row?.scopeReadOnly), true);
           await auth().lookupContext(token.access_token, resource.resource);
-          const access = await auth().resolveToolAccess(read.scope, fixture.owner.id);
+          const access = await auth().resolveToolAccess(
+            fixture.owner.id,
+            resource.resource,
+            read.scope,
+          );
           assert.deepEqual(access.tools, [fixture.select]);
           assert.equal(
             access.readOnly,
@@ -513,6 +584,7 @@ describe('customScope.test.ts', { concurrency: false }, () => {
       const owned = await asUser(fixture.owner, () =>
         scopes().createMine(
           fixture.owner.id,
+          resource.resource,
           definition('Original-personal-subset', [fixture.select]),
         ),
       );
@@ -520,7 +592,7 @@ describe('customScope.test.ts', { concurrency: false }, () => {
       const codeRequest = await request(fixture.clientId, 'mcp:all');
       const unredeemed = await approve(fixture, codeRequest, owned.scope);
       await asUser(fixture.owner, async () => {
-        const described = await scopes().updateMine(fixture.owner.id, owned.id, {
+        const described = await scopes().updateMine(fixture.owner.id, resource.resource, owned.id, {
           name: owned.name,
           description: 'Metadata edit only',
           tools: [fixture.select],
@@ -557,13 +629,15 @@ describe('customScope.test.ts', { concurrency: false }, () => {
       assert.ok(inherited.refresh_token);
       await context(async () => {
         await auth().lookupContext(inherited.access_token, resource.resource);
-        assert.deepEqual((await auth().resolveToolAccess(owned.scope, fixture.owner.id)).tools, [
-          fixture.select,
-        ]);
+        assert.deepEqual(
+          (await auth().resolveToolAccess(fixture.owner.id, resource.resource, owned.scope)).tools,
+          [fixture.select],
+        );
       });
       await asUser(fixture.owner, () =>
         scopes().updateMine(
           fixture.owner.id,
+          resource.resource,
           owned.id,
           definition(owned.name, [fixture.select, fixture.view]),
         ),
@@ -586,7 +660,9 @@ describe('customScope.test.ts', { concurrency: false }, () => {
       assert.ok(replacement.token.refresh_token);
       const deletionRequest = await request(fixture.clientId, 'mcp:all');
       const deletionCode = await approve(fixture, deletionRequest, owned.scope);
-      await asUser(fixture.owner, () => scopes().deleteMine(fixture.owner.id, owned.id));
+      await asUser(fixture.owner, () =>
+        scopes().deleteMine(fixture.owner.id, resource.resource, owned.id),
+      );
       await context(async () => {
         assert.equal(
           (await grants().get({ requestDigest: sha256(replacement.requestId) }))?.state,
@@ -596,7 +672,10 @@ describe('customScope.test.ts', { concurrency: false }, () => {
           () => auth().lookupContext(replacement.token.access_token, resource.resource),
           'invalid_token',
         );
-        await expectOAuth(() => scopes().resolve(fixture.owner.id, owned.scope), 'invalid_scope');
+        await expectOAuth(
+          () => scopes().resolve(fixture.owner.id, resource.resource, owned.scope),
+          'invalid_scope',
+        );
       });
       await expectOAuth(
         () => refresh(fixture.clientId, replacement.token.refresh_token!),
@@ -605,6 +684,7 @@ describe('customScope.test.ts', { concurrency: false }, () => {
       const recreated = await asUser(fixture.owner, () =>
         scopes().createMine(
           fixture.owner.id,
+          resource.resource,
           definition(owned.name, [fixture.select, fixture.view]),
         ),
       );
@@ -635,10 +715,19 @@ describe('customScope.test.ts', { concurrency: false }, () => {
       const [broad, narrow, caseSibling] = await asUser(fixture.owner, async () => [
         await scopes().createMine(
           fixture.owner.id,
+          resource.resource,
           definition('Before-Rename', [fixture.select, fixture.view]),
         ),
-        await scopes().createMine(fixture.owner.id, definition('Narrow', [fixture.select])),
-        await scopes().createMine(fixture.owner.id, definition('before-rename', [fixture.select])),
+        await scopes().createMine(
+          fixture.owner.id,
+          resource.resource,
+          definition('Narrow', [fixture.select]),
+        ),
+        await scopes().createMine(
+          fixture.owner.id,
+          resource.resource,
+          definition('before-rename', [fixture.select]),
+        ),
       ]);
       const unaffected = await issue(fixture, 'mcp:all', caseSibling.scope);
       const effective = await issue(fixture, 'mcp:all', broad.scope);
@@ -651,6 +740,7 @@ describe('customScope.test.ts', { concurrency: false }, () => {
       const renamed = await asUser(fixture.owner, () =>
         scopes().updateMine(
           fixture.owner.id,
+          resource.resource,
           broad.id,
           definition(' After_Rename ', [fixture.select, fixture.view]),
         ),
@@ -660,9 +750,12 @@ describe('customScope.test.ts', { concurrency: false }, () => {
       assert.equal(renamed.scope, 'mcp:custom:After_Rename');
       assert.notEqual(renamed.scope, broad.scope);
       await context(async () => {
-        await expectOAuth(() => scopes().resolve(fixture.owner.id, broad.scope), 'invalid_scope');
+        await expectOAuth(
+          () => scopes().resolve(fixture.owner.id, resource.resource, broad.scope),
+          'invalid_scope',
+        );
         assert.deepEqual(
-          (await scopes().resolve(fixture.owner.id, renamed.scope)).tools,
+          (await scopes().resolve(fixture.owner.id, resource.resource, renamed.scope)).tools,
           broad.tools,
         );
         for (const requestId of [
@@ -723,6 +816,7 @@ describe('customScope.test.ts', { concurrency: false }, () => {
       const owned = await asUser(fixture.owner, () =>
         scopes().createMine(
           fixture.owner.id,
+          resource.resource,
           definition('Legacy-personal-subset', [fixture.select]),
         ),
       );
@@ -754,7 +848,7 @@ describe('customScope.test.ts', { concurrency: false }, () => {
       });
       const all = await request(fixture.clientId, 'mcp:all');
       await asUser(fixture.owner, async () => {
-        const mine = (await scopes().mine(fixture.owner.id)).list;
+        const mine = (await scopes().mine(fixture.owner.id, resource.resource)).list;
         assert.equal(mine.length, 1);
         assert.equal(String(mine[0].id), String(owned.id));
         assert.equal(mine[0].scope, legacyScope);
@@ -765,12 +859,20 @@ describe('customScope.test.ts', { concurrency: false }, () => {
         );
         await expectOAuth(() => auth().summary(pending), 'invalid_scope');
         await expectOAuth(() => auth().decide(pending, true), 'invalid_scope');
-        await expectOAuth(() => scopes().resolve(fixture.owner.id, legacyScope), 'invalid_scope');
+        await expectOAuth(
+          () => scopes().resolve(fixture.owner.id, resource.resource, legacyScope),
+          'invalid_scope',
+        );
         await expectOAuth(
           () =>
-            scopes().withDefinitions(fixture.owner.id, [legacyScope], async () => {
-              assert.fail('noncanonical definitions must not reach the linking callback');
-            }),
+            scopes().withDefinitions(
+              fixture.owner.id,
+              resource.resource,
+              [legacyScope],
+              async () => {
+                assert.fail('noncanonical definitions must not reach the linking callback');
+              },
+            ),
           'invalid_scope',
         );
       });
@@ -780,7 +882,7 @@ describe('customScope.test.ts', { concurrency: false }, () => {
           'invalid_token',
         );
         await expectOAuth(
-          () => auth().resolveToolAccess(legacyScope, fixture.owner.id),
+          () => auth().resolveToolAccess(fixture.owner.id, resource.resource, legacyScope),
           'invalid_scope',
         );
       });
@@ -789,6 +891,7 @@ describe('customScope.test.ts', { concurrency: false }, () => {
       await asUser(fixture.owner, async () => {
         const repaired = await scopes().updateMine(
           fixture.owner.id,
+          resource.resource,
           owned.id,
           definition(owned.name, [fixture.select]),
         );
@@ -797,8 +900,8 @@ describe('customScope.test.ts', { concurrency: false }, () => {
           owned.scope,
           'the owner can explicitly repair a legacy definition',
         );
-        await scopes().deleteMine(fixture.owner.id, owned.id);
-        assert.deepEqual((await scopes().mine(fixture.owner.id)).list, []);
+        await scopes().deleteMine(fixture.owner.id, resource.resource, owned.id);
+        assert.deepEqual((await scopes().mine(fixture.owner.id, resource.resource)).list, []);
       });
     });
   });
@@ -809,6 +912,7 @@ describe('customScope.test.ts', { concurrency: false }, () => {
       const owned = await asUser(fixture.owner, () =>
         scopes().createMine(
           fixture.owner.id,
+          resource.resource,
           definition('Link-delete-contention', [fixture.select]),
         ),
       );
@@ -820,7 +924,7 @@ describe('customScope.test.ts', { concurrency: false }, () => {
       let deleteContext: unknown;
       let deleted = false;
       const linking = context(() =>
-        scopes().withDefinitions(fixture.owner.id, [owned.scope], async () => {
+        scopes().withDefinitions(fixture.owner.id, resource.resource, [owned.scope], async () => {
           linkContext = app.ctx;
           entered.resolve();
           await releaseLink.promise;
@@ -846,7 +950,7 @@ describe('customScope.test.ts', { concurrency: false }, () => {
         deletion = context(async () => {
           deleteContext = app.ctx;
           deleteStarted.resolve();
-          await scopes().deleteMine(fixture.owner.id, owned.id);
+          await scopes().deleteMine(fixture.owner.id, resource.resource, owned.id);
           deleted = true;
         });
         await deleteStarted.promise;
@@ -862,9 +966,14 @@ describe('customScope.test.ts', { concurrency: false }, () => {
           assert.equal(row?.codeDigest, '');
           await expectOAuth(
             () =>
-              scopes().withDefinitions(fixture.owner.id, [owned.scope], async () => {
-                assert.fail('a deleted definition cannot link another grant');
-              }),
+              scopes().withDefinitions(
+                fixture.owner.id,
+                resource.resource,
+                [owned.scope],
+                async () => {
+                  assert.fail('a deleted definition cannot link another grant');
+                },
+              ),
             'invalid_scope',
           );
         });
@@ -881,17 +990,24 @@ describe('customScope.test.ts', { concurrency: false }, () => {
       const [broad, narrow] = await asUser(fixture.owner, async () => [
         await scopes().createMine(
           fixture.owner.id,
+          resource.resource,
           definition('Requested-broad-subset', [fixture.select, fixture.view]),
         ),
         await scopes().createMine(
           fixture.owner.id,
+          resource.resource,
           definition('Approved-narrow-subset', [fixture.select]),
         ),
       ]);
       const linked = await issue(fixture, broad.scope, narrow.scope);
       assert.equal(linked.token.scope, narrow.scope);
       await asUser(fixture.owner, () =>
-        scopes().updateMine(fixture.owner.id, broad.id, definition(broad.name, [fixture.view])),
+        scopes().updateMine(
+          fixture.owner.id,
+          resource.resource,
+          broad.id,
+          definition(broad.name, [fixture.view]),
+        ),
       );
       await context(async () => {
         const row = await grants().get({ requestDigest: sha256(linked.requestId) });

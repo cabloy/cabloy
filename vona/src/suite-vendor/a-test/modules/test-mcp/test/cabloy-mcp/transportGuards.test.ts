@@ -143,7 +143,7 @@ describe('MCP transport guards', { concurrency: false }, () => {
     ];
     const input = {
       rawHeaders,
-      target: '/mcp',
+      target: '/mcp/web',
       method: 'POST',
       instanceHeader: 'x-vona-instance-name',
     };
@@ -172,7 +172,12 @@ describe('MCP transport guards', { concurrency: false }, () => {
       'Accept',
       'application/json, text/event-stream',
     ];
-    const input = { target: '/mcp', method: 'POST', rawHeaders, authentication: 'bearer' as const };
+    const input = {
+      target: '/mcp/web',
+      method: 'POST',
+      rawHeaders,
+      authentication: 'bearer' as const,
+    };
     assert.equal(checkProtocolIngress(input)?.status, 401);
     const bearer = [...rawHeaders, 'Authorization', 'Bearer opaque-token_1'];
     assert.equal(checkProtocolIngress({ ...input, rawHeaders: bearer }), undefined);

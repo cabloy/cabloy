@@ -6,7 +6,7 @@ export default {
   AuthorizationConsentHelp:
     'Review the application and the access it is requesting before continuing.',
   Application: 'Application',
-  Resource: 'Resource',
+  Resource: 'MCP resource',
   RequestedScopes: 'Requested scopes',
   RequestExpires: 'Request expires',
   AuthorizationReadScopeHelp:

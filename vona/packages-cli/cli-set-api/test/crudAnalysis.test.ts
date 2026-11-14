@@ -449,7 +449,7 @@ describe('default CRUD analysis generation', { concurrency: false }, () => {
         }
       }));
 
-    it(`${edition}: generates eight MCP Actions and locale-backed description follow-up by default`, async () =>
+    it(`${edition}: generates eight admin-scoped MCP Actions and locale-backed description follow-up by default`, async () =>
       fixture(async root => {
         const { cli, moduleRoot, messages } = await makeCli(root, Class);
         await cli.execute();
@@ -472,7 +472,7 @@ describe('default CRUD analysis generation', { concurrency: false }, () => {
             action === 'Select' ? "    discovery: { output: [['list', 'items']] },\n" : '';
           assert.ok(
             controller.includes(
-              `@Mcp.tool({\n    description: $locale('Record${action}Description'),\n    readOnly: ${readOnly},\n${discovery}  })\n  @Web.`,
+              `@Mcp.tool({\n    ssrSites: ['${edition === 'basic' ? 'basic' : 'start'}-siteadmin:admin'],\n    description: $locale('Record${action}Description'),\n    readOnly: ${readOnly},\n${discovery}  })\n  @Web.`,
             ),
             action,
           );

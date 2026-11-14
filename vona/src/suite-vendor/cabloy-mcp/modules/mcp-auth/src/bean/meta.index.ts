@@ -6,17 +6,18 @@ import { $tableColumns } from 'vona-module-a-ormutils';
 
 @Meta<IMetaOptionsIndex>({
   indexes: {
-    ...$tableColumns('mcpAuthCustomScope', ['userId', 'scope+userId']),
-    ...$tableColumns('mcpAuthAuthorization', [
+    // Direct metadata supports wider composites than the typed helper's two-column keys.
+    mcpAuthCustomScope: ['userId+resource', 'scope+userId+resource'],
+    mcpAuthAuthorization: [
       'clientId',
-      'userId+scope',
-      'requestedScope+userId',
+      'userId+resource+scope',
+      'requestedScope+userId+resource',
       'requestDigest',
       'codeDigest',
       'tokenDigest',
       'expiresAt',
-    ]),
-    ...$tableColumns('mcpAuthClient', ['oauthClientId', 'resource+state']),
+    ],
+    ...$tableColumns('mcpAuthClient', ['oauthClientId', 'issuer+state']),
   },
 })
 export class MetaIndex extends BeanBase {}

@@ -139,7 +139,7 @@ async function loginBrowser(page: Page, account: McpAccount) {
 }
 
 async function readMine(request: APIRequestContext, headers: Headers): Promise<SafeAccessToken[]> {
-  const response = await request.get(`${accessTokenApiPath}/mine`, { headers });
+  const response = await request.get(`${accessTokenApiPath}/mine?ssrSiteId=web`, { headers });
   expect(response.ok()).toBe(true);
   expect(response.headers()['cache-control']).toContain('no-store');
   const list = (await response.json()).data.list as SafeAccessToken[];
@@ -158,7 +158,7 @@ async function callMcp(
 ) {
   // initialize negotiates the supported compatibility transport; ordinary calls use current MCP.
   const initialize = method === 'initialize';
-  return await request.post('/mcp', {
+  return await request.post('/mcp/web', {
     headers: {
       Accept: 'application/json, text/event-stream',
       Authorization: `Bearer ${token}`,
@@ -203,7 +203,7 @@ async function verifyReadTool(request: APIRequestContext, token: string, custom 
   );
   if (custom) {
     expect(tools.map(tool => tool.name).sort()).toEqual(
-      [readToolName, 'cabloy_tool_contract'].sort(),
+      [readToolName, 'cabloy_tool_contract', 'cabloy_logout'].sort(),
     );
   }
   const called = await callMcp(request, token, 'tools/call', {
@@ -250,7 +250,7 @@ async function createBrowserToken(
   const token = (await response.json()).data as AccessToken;
   expect(typeof token.accessToken === 'string' && token.accessToken.length > 0).toBe(true);
   expect(token.scope).toBe(scope);
-  expect(token.resource).toBe(`${origin}/mcp`);
+  expect(token.resource).toBe(`${origin}/mcp/web`);
   const deadline = token.tokenExpiresAt;
   expect(deadline >= before + expiresIn * 1000 - 1000).toBe(true);
   expect(deadline <= after + expiresIn * 1000 + 1000).toBe(true);
@@ -315,9 +315,12 @@ async function cleanupFixtures(
   try {
     const tokens = await readMine(request, account.headers);
     for (const token of tokens.filter(token => tokenNames.has(token.name))) {
-      const response = await request.delete(`${accessTokenApiPath}/deleteMine/${token.id}`, {
-        headers: account.headers,
-      });
+      const response = await request.delete(
+        `${accessTokenApiPath}/deleteMine/${token.id}?ssrSiteId=web`,
+        {
+          headers: account.headers,
+        },
+      );
       expect(response.ok()).toBe(true);
     }
   } catch {
@@ -325,15 +328,18 @@ async function cleanupFixtures(
   }
   try {
     if (scopeNames.size) {
-      const response = await request.get(`${customScopeApiPath}/mine`, {
+      const response = await request.get(`${customScopeApiPath}/mine?ssrSiteId=web`, {
         headers: account.headers,
       });
       expect(response.ok()).toBe(true);
       const scopes = (await response.json()).data.list as PersonalScope[];
       for (const scope of scopes.filter(scope => scopeNames.has(scope.name))) {
-        const deleted = await request.delete(`${customScopeApiPath}/deleteMine/${scope.id}`, {
-          headers: account.headers,
-        });
+        const deleted = await request.delete(
+          `${customScopeApiPath}/deleteMine/${scope.id}?ssrSiteId=web`,
+          {
+            headers: account.headers,
+          },
+        );
         expect(deleted.ok()).toBe(true);
       }
     }
@@ -383,6 +389,9 @@ test(
     try {
       account = await registerMcpAccount(request, origin, registered => (account = registered));
       await loginBrowser(page, account);
+      await expect(page.locator('[data-mcp-resource]')).toHaveText(`${origin}/mcp/web`);
+      await expect(page.locator('[data-mcp-resource]')).toBeVisible();
+      await expect(page.locator('article[data-mcp-access-token-id]')).toHaveCount(0);
       await page.context().grantPermissions(['clipboard-read', 'clipboard-write'], { origin });
       const token = await createBrowserToken(page, origin, name);
       // Read the actual browser clipboard, never put a credential into matcher arguments.
@@ -425,8 +434,19 @@ test(
       expect(saved).toMatchObject({ name, scope: 'mcp:read', status: 'active' });
       expect(saved?.tokenExpiresAt).toBe(token.tokenExpiresAt);
       await verifySecretAbsent(page, token);
-      await page.reload({ waitUntil: 'load' });
+      const document = await page.reload({ waitUntil: 'load' });
+      expect(document?.ok()).toBe(true);
+      const html = await document!.text();
+      expect(
+        await page.evaluate(html => {
+          return new DOMParser()
+            .parseFromString(html, 'text/html')
+            .querySelector('[data-mcp-resource]')?.textContent;
+        }, html),
+      ).toBe(`${origin}/mcp/web`);
       await expect(page.locator('html')).toHaveAttribute('data-zova-hydrated', 'web');
+      await expect(page.locator('[data-mcp-resource]')).toHaveText(`${origin}/mcp/web`);
+      await expect(page.locator('[data-mcp-resource]')).toBeVisible();
       await expect(entry).toBeVisible();
       await verifySecretAbsent(page, token);
       await page.goto(accountPath, { waitUntil: 'load' });
@@ -492,7 +512,7 @@ test(
     let completed = false;
     try {
       account = await registerMcpAccount(request, origin, registered => (account = registered));
-      const catalog = await request.get(`${customScopeApiPath}/catalog`, {
+      const catalog = await request.get(`${customScopeApiPath}/catalog?ssrSiteId=web`, {
         headers: account.headers,
       });
       expect(catalog.ok()).toBe(true);
@@ -503,7 +523,7 @@ test(
       }>;
       const tool = tools.find(tool => tool.name === readToolName);
       if (!tool) throw new Error('Read-only MCP test fixture is unavailable');
-      const createdScope = await request.post(`${customScopeApiPath}/createMine`, {
+      const createdScope = await request.post(`${customScopeApiPath}/createMine?ssrSiteId=web`, {
         headers: account.headers,
         data: {
           name: scopeName,
@@ -524,9 +544,12 @@ test(
       expect(saved).toMatchObject({ name, scope: scope.scope, status: 'active' });
       expect(saved?.tokenExpiresAt).toBe(token.tokenExpiresAt);
       // The test owns this scope. Removing it exercises actual linked-token invalidation.
-      const removedScope = await request.delete(`${customScopeApiPath}/deleteMine/${scope.id}`, {
-        headers: account.headers,
-      });
+      const removedScope = await request.delete(
+        `${customScopeApiPath}/deleteMine/${scope.id}?ssrSiteId=web`,
+        {
+          headers: account.headers,
+        },
+      );
       expect(removedScope.ok()).toBe(true);
       const rejected = await callMcp(request, token.accessToken, 'tools/list');
       expect(rejected.status()).toBe(401);

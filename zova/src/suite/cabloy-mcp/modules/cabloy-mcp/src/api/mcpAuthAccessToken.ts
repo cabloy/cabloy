@@ -19,6 +19,8 @@ export type ApiApiMcpAuthAccessTokenmineResponseBody =
 export const ApiApiMcpAuthAccessTokencreateMinePath = '/api/mcp/auth/accessToken/createMine';
 export type ApiApiMcpAuthAccessTokencreateMinePath = '/api/mcp/auth/accessToken/createMine';
 export type ApiApiMcpAuthAccessTokencreateMineMethod = 'post';
+export type ApiApiMcpAuthAccessTokencreateMineRequestQuery =
+  paths[ApiApiMcpAuthAccessTokencreateMinePath][ApiApiMcpAuthAccessTokencreateMineMethod]['parameters']['query'];
 export type ApiApiMcpAuthAccessTokencreateMineRequestBody =
   components['schemas']['mcp-auth.dto.accessTokenCreate'];
 export type ApiApiMcpAuthAccessTokencreateMineResponseBody =
@@ -30,14 +32,16 @@ export type ApiApiMcpAuthAccessTokendeleteMinePath = '/api/mcp/auth/accessToken/
 export type ApiApiMcpAuthAccessTokendeleteMineMethod = 'delete';
 export type ApiApiMcpAuthAccessTokendeleteMineRequestParams =
   paths[ApiApiMcpAuthAccessTokendeleteMinePath][ApiApiMcpAuthAccessTokendeleteMineMethod]['parameters']['path'];
+export type ApiApiMcpAuthAccessTokendeleteMineRequestQuery =
+  paths[ApiApiMcpAuthAccessTokendeleteMinePath][ApiApiMcpAuthAccessTokendeleteMineMethod]['parameters']['query'];
 export type ApiApiMcpAuthAccessTokendeleteMineResponseBody =
   paths[ApiApiMcpAuthAccessTokendeleteMinePath][ApiApiMcpAuthAccessTokendeleteMineMethod]['responses']['200']['content']['application/json']['data'];
 
 @Api()
 export class ApiMcpAuthAccessToken extends BeanApiBase {
   mine(
-    options?: {
-      query?: ApiApiMcpAuthAccessTokenmineRequestQuery;
+    options: {
+      query: ApiApiMcpAuthAccessTokenmineRequestQuery;
     } & IApiActionOptions,
   ) {
     return this.$fetch.get<any, ApiApiMcpAuthAccessTokenmineResponseBody>(
@@ -46,7 +50,12 @@ export class ApiMcpAuthAccessToken extends BeanApiBase {
     );
   }
 
-  createMine(body: ApiApiMcpAuthAccessTokencreateMineRequestBody, options?: IApiActionOptions) {
+  createMine(
+    body: ApiApiMcpAuthAccessTokencreateMineRequestBody,
+    options: {
+      query: ApiApiMcpAuthAccessTokencreateMineRequestQuery;
+    } & IApiActionOptions,
+  ) {
     return this.$fetch.post<any, ApiApiMcpAuthAccessTokencreateMineResponseBody>(
       ApiApiMcpAuthAccessTokencreateMinePath,
       body,
@@ -57,6 +66,7 @@ export class ApiMcpAuthAccessToken extends BeanApiBase {
   deleteMine(
     options: {
       params: ApiApiMcpAuthAccessTokendeleteMineRequestParams;
+      query: ApiApiMcpAuthAccessTokendeleteMineRequestQuery;
     } & IApiActionOptions,
   ) {
     return this.$fetch.delete<any, ApiApiMcpAuthAccessTokendeleteMineResponseBody>(

@@ -30,6 +30,7 @@ export interface IControllerOptions<%=argv.resourceNameCapitalize%> extends IDec
 @Resource()
 export class Controller<%=argv.resourceNameCapitalize%> extends BeanBase {
   @Mcp.tool({
+    ssrSites: ['<%=argv.ssrSiteOnionName%>'],
     description: $locale('<%=argv.resourceNameCapitalize%>CreateDescription'),
     readOnly: false,
   })
@@ -41,6 +42,7 @@ export class Controller<%=argv.resourceNameCapitalize%> extends BeanBase {
   }
 
   @Mcp.tool({
+    ssrSites: ['<%=argv.ssrSiteOnionName%>'],
     description: $locale('<%=argv.resourceNameCapitalize%>SelectDescription'),
     readOnly: true,
     discovery: { output: [['list', 'items']] },
@@ -54,6 +56,7 @@ export class Controller<%=argv.resourceNameCapitalize%> extends BeanBase {
   }
 
   @Mcp.tool({
+    ssrSites: ['<%=argv.ssrSiteOnionName%>'],
     description: $locale('<%=argv.resourceNameCapitalize%>GroupDescription'),
     readOnly: true,
   })
@@ -66,6 +69,7 @@ export class Controller<%=argv.resourceNameCapitalize%> extends BeanBase {
   }
 
   @Mcp.tool({
+    ssrSites: ['<%=argv.ssrSiteOnionName%>'],
     description: $locale('<%=argv.resourceNameCapitalize%>AggregateDescription'),
     readOnly: true,
   })
@@ -78,6 +82,7 @@ export class Controller<%=argv.resourceNameCapitalize%> extends BeanBase {
   }
 
   @Mcp.tool({
+    ssrSites: ['<%=argv.ssrSiteOnionName%>'],
     description: $locale('<%=argv.resourceNameCapitalize%>ViewDescription'),
     readOnly: true,
   })
@@ -89,6 +94,7 @@ export class Controller<%=argv.resourceNameCapitalize%> extends BeanBase {
   }
 
   @Mcp.tool({
+    ssrSites: ['<%=argv.ssrSiteOnionName%>'],
     description: $locale('<%=argv.resourceNameCapitalize%>UpdateDescription'),
     readOnly: false,
   })
@@ -100,6 +106,7 @@ export class Controller<%=argv.resourceNameCapitalize%> extends BeanBase {
   }
 
   @Mcp.tool({
+    ssrSites: ['<%=argv.ssrSiteOnionName%>'],
     description: $locale('<%=argv.resourceNameCapitalize%>DeleteDescription'),
     readOnly: false,
   })
@@ -111,6 +118,7 @@ export class Controller<%=argv.resourceNameCapitalize%> extends BeanBase {
   }
 
   @Mcp.tool({
+    ssrSites: ['<%=argv.ssrSiteOnionName%>'],
     description: $locale('<%=argv.resourceNameCapitalize%>DeleteBulkDescription'),
     readOnly: false,
   })

@@ -4,7 +4,7 @@ export default {
   AuthorizationRequestUnavailable: '此授权请求无效、已过期或已不可用。请从应用重新发起授权。',
   AuthorizationConsentHelp: '请在继续之前确认应用及其请求的访问权限。',
   Application: '应用',
-  Resource: '资源',
+  Resource: 'MCP 资源',
   RequestedScopes: '请求的权限范围',
   RequestExpires: '请求有效期至',
   AuthorizationReadScopeHelp: 'mcp:read 仅允许使用只读 MCP 工具，仍受您现有的账户权限约束。',

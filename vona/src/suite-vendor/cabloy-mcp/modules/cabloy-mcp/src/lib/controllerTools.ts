@@ -2,6 +2,7 @@ import type { CallToolResult, Tool } from '@modelcontextprotocol/server';
 import type { Constructable, VonaApplication } from 'vona';
 import type { IMcpToolOptions } from 'vona-module-a-openapiutils';
 import type { IAnalysisPolicy, IQueryPolicy, TypeAnalysisMode } from 'vona-module-a-orm';
+import type { IDecoratorSsrSiteOptions } from 'vona-module-a-ssr';
 import type { TypeMcpScope } from 'vona-module-mcp-auth';
 
 import { fromJsonSchema, ProtocolError, Server } from '@modelcontextprotocol/server';
@@ -56,6 +57,8 @@ export interface IControllerToolCatalogEntry extends IControllerToolIdentity {
 }
 
 export interface IControllerToolServerOptions {
+  /** Explicit enabled Site boundary; absence is never an all-Sites registry. */
+  ssrSiteId?: string;
   includeTool?(identity: IControllerToolIdentity): boolean;
   isToolVisible?(identity: IControllerToolIdentity, controller: Constructable): Promise<boolean>;
   /** Exact consented bindings, not names alone or a dynamic include expression. */
@@ -118,12 +121,46 @@ export async function createControllerToolServer(
   if (!isMcpScope(scope) || (scope.startsWith('mcp:custom:') && !serverOptions.toolAccess)) {
     throw new Error('MCP authorization scope required');
   }
+  const ssrSiteId = serverOptions.ssrSiteId;
+  const ssrSite = ssrSiteId
+    ? app
+        .scope('a-ssr')
+        .service.ssr.getSitesEnabled()
+        .find(site => (site.beanOptions.options as IDecoratorSsrSiteOptions).siteId === ssrSiteId)
+    : undefined;
+  if (!ssrSite) {
+    throw new Error('Enabled MCP SSR Site required');
+  }
+  const registeredSites = new Set<string>(
+    Object.values(app.bean.onion.ssrSite.onionsNormal).map(site => site.name),
+  );
   return runWithZodQueryCoercion(true, async () => {
     const tools = new Map<string, IControllerTool>();
     const diagnostics: IControllerToolDiagnostic[] = [];
     const routes = getCacheControllerRoutes(app);
     for (const controller of app.bean.onion.controller.getOnionsEnabledCached()) {
       for (const route of routes[controller.beanOptions.beanFullName] ?? []) {
+        const options = appMetadata.getOwnMetadata<IMcpToolOptions>(
+          SymbolMcpOptions,
+          route.controller.prototype,
+          route.action,
+        );
+        if (!options) continue;
+        // Validate declarations even when another Site is selected. Site exclusion must
+        // happen before public-name collisions or schema compilation can cross boundaries.
+        const sites = options.ssrSites as unknown;
+        if (
+          sites !== undefined &&
+          (!Array.isArray(sites) ||
+            !sites.length ||
+            sites.some(site => typeof site !== 'string' || !registeredSites.has(site)) ||
+            new Set(sites).size !== sites.length)
+        ) {
+          throw new Error(
+            `Invalid MCP tool ssrSites: ${controller.beanOptions.beanFullName}#${route.action}`,
+          );
+        }
+        if (Array.isArray(sites) && !sites.includes(ssrSite.name)) continue;
         if (
           serverOptions.includeTool &&
           !serverOptions.includeTool({
@@ -133,12 +170,6 @@ export async function createControllerToolServer(
         ) {
           continue;
         }
-        const options = appMetadata.getOwnMetadata<IMcpToolOptions>(
-          SymbolMcpOptions,
-          route.controller.prototype,
-          route.action,
-        );
-        if (!options) continue;
         const name =
           options.name ??
           `${controller.beanOptions.beanFullName.replace('.controller.', '_').replace(/[^\w-]/g, '_')}_${route.action}`;

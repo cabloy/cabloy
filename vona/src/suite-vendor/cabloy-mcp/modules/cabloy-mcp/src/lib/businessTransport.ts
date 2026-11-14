@@ -188,7 +188,11 @@ async function boundedResponse(response: Response, requestId: unknown): Promise<
 export function createBusinessTransport(
   app: VonaApplication,
   initializeInstance: boolean,
-  createServer: (app: VonaApplication, scope?: TypeMcpScope) => Promise<BusinessToolServer>,
+  createServer: (
+    app: VonaApplication,
+    resource: string | undefined,
+    scope?: TypeMcpScope,
+  ) => Promise<BusinessToolServer>,
 ) {
   let closing = false;
   let contexts = 0;
@@ -297,7 +301,11 @@ export function createBusinessTransport(
             let legacy: WebStandardStreamableHTTPServerTransport | undefined;
             const handler = createMcpHandler(
               async () => {
-                business = await createServer(app, authorizationScope);
+                business = await createServer(
+                  app,
+                  authentication?.resource.resource,
+                  authorizationScope,
+                );
                 return business;
               },
               {
@@ -324,7 +332,11 @@ export function createBusinessTransport(
                         keepAliveMs: 0,
                         maxRequestBodySize: 16 * 1024,
                       });
-                      business = await createServer(app, authorizationScope);
+                      business = await createServer(
+                        app,
+                        authentication?.resource.resource,
+                        authorizationScope,
+                      );
                       await business.connect(legacy);
                       signal.throwIfAborted();
                       let cancel!: () => void;
@@ -391,6 +403,9 @@ export function createBusinessTransport(
         },
         {
           initializeContext(ctx) {
+            ctx.state.mcpResource = authentication
+              ? Object.freeze({ ...authentication.resource })
+              : undefined;
             ctx.respond = false;
             ctx.onerror = () => {
               failed = true;

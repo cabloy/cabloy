@@ -6,7 +6,7 @@ import type {
   IMcpAuthConfig,
   IMcpAuthRegistrationRequest,
   IMcpAuthRegistrationResponse,
-  IMcpAuthResource,
+  IMcpAuthIssuer,
   IMcpAuthResolvedClient,
   TypeMcpClientAuthentication,
 } from '../types/index.ts';
@@ -16,7 +16,8 @@ import {
   getMcpIssuer,
   isMcpBuiltinScope,
   parseMcpScope,
-  resolveMcpResource,
+  resolveMcpInstance,
+  resolveMcpResourceUrl,
   resolveMcpGrantTypes,
   OAuthError,
   sha256,
@@ -29,13 +30,13 @@ const clientNamePattern = /^\S(?:[\s\S]{0,254}\S)?$/;
 export class ServiceRegistration extends BeanBase {
   async register(
     request: IMcpAuthRegistrationRequest,
-    resource: IMcpAuthResource,
+    target: IMcpAuthIssuer,
   ): Promise<IMcpAuthRegistrationResponse> {
     const config = getMcpAuthConfig(this.app);
-    const binding = resolveMcpResource(this.app, new URL(getMcpIssuer(this.app)).host);
+    const binding = resolveMcpInstance(this.app, new URL(getMcpIssuer(this.app)).host);
     if (
-      resource.resource !== binding.resource ||
-      resource.instanceName !== binding.instanceName ||
+      target.issuer !== binding.issuer ||
+      target.instanceName !== binding.instanceName ||
       this.ctx.instanceName !== binding.instanceName ||
       !this.ctx.instance
     ) {
@@ -54,7 +55,7 @@ export class ServiceRegistration extends BeanBase {
           redirectUris: parsed.redirectUris,
           grantTypes: parsed.grantTypes,
           authentication: parsed.authentication,
-          resource: resource.resource,
+          issuer: binding.issuer,
           scope: parsed.scope,
           state: 'active',
           clientIdIssuedAt: issuedAt,
@@ -82,12 +83,13 @@ export class ServiceRegistration extends BeanBase {
   }
 
   async resolve(clientId: string, resource: string): Promise<IMcpAuthResolvedClient | undefined> {
-    getMcpAuthConfig(this.app);
+    const target = resolveMcpResourceUrl(this.app, resource);
+    if (this.ctx.instanceName !== target.instanceName) return undefined;
     const client = await this.scope.model.client.get({ oauthClientId: clientId });
     if (
       !client ||
       client.state !== 'active' ||
-      client.resource !== resource ||
+      client.issuer !== getMcpIssuer(this.app) ||
       !isMcpBuiltinScope(client.scope)
     ) {
       return undefined;
@@ -102,7 +104,7 @@ export class ServiceRegistration extends BeanBase {
       grantTypes,
       authentication: client.authentication,
       ...(client.secretSha256 ? { secretSha256: client.secretSha256 } : {}),
-      resources: [client.resource],
+      resources: [target.resource],
       scope: client.scope,
       state: client.state,
       clientIdIssuedAt: Number(client.clientIdIssuedAt),

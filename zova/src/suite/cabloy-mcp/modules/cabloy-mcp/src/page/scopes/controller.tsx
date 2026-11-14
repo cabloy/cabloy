@@ -14,6 +14,7 @@ import type {
   ToolIdentity,
 } from '../../model/personalScopes.ts';
 
+import { getMcpResource } from '../../lib/mcpResource.ts';
 import { ModelPersonalScopes, toolIdentityKey } from '../../model/personalScopes.ts';
 
 @Controller()
@@ -340,6 +341,12 @@ export class ControllerPageScopes extends BeanControllerPageBase {
               {this.scope.locale.McpScopeCreate()}
             </ZButton>
           </div>
+          <dl class="space-y-1 text-sm">
+            <dt class="text-base-content/70">{this.scope.locale.Resource()}</dt>
+            <dd data-mcp-resource class="select-text break-all font-mono">
+              {getMcpResource(this.sys.env)}
+            </dd>
+          </dl>
           {(!query || query.isPending) && (
             <p role="status">{this.scope.locale.McpScopesLoading()}</p>
           )}

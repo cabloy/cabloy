@@ -17,6 +17,12 @@ export class DtoAuthorizationSummary {
   resource: string;
 
   @Api.field(z.string())
+  ssrSiteId: string;
+
+  @Api.field(z.string())
+  scopesUrl: string;
+
+  @Api.field(z.string())
   scope: string;
 
   @Api.field(v.array(v.object(DtoMcpScopeOption)))

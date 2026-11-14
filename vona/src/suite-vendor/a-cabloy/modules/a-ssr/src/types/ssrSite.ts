@@ -84,6 +84,10 @@ export interface IDecoratorSsrSiteOptions<
   icons: Icons;
 }
 
+declare module 'vona-module-a-openapiutils' {
+  export interface IMcpSsrSiteRecord extends ISsrSiteRecord {}
+}
+
 declare module 'vona-module-a-onion' {
   export interface BeanOnion {
     ssrSite: ServiceOnion<ISsrSiteRecord>;

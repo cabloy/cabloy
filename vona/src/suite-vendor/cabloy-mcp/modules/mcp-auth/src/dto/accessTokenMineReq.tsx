@@ -6,6 +6,7 @@ import { Dto } from 'vona-module-a-web';
 import { z } from 'zod';
 
 import { ModelAuthorization } from '../model/authorization.ts';
+import { DtoMcpSiteQuery } from './mcpSiteQuery.ts';
 
 export const accessTokenMineQuery = $defineQuery(() => ModelAuthorization, {
   name: 'McpAccessTokenMine',
@@ -18,7 +19,7 @@ export const accessTokenMineQuery = $defineQuery(() => ModelAuthorization, {
 export interface IDtoOptionsAccessTokenMineReq extends IDecoratorDtoOptions {}
 
 @Dto<IDtoOptionsAccessTokenMineReq>()
-export class DtoAccessTokenMineReq {
+export class DtoAccessTokenMineReq extends DtoMcpSiteQuery {
   @Api.field(z.number().int().min(1).max(1000000).default(1))
   pageNo: number;
 

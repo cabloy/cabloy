@@ -10,7 +10,7 @@ export interface IDtoOptionsCustomScopeView extends IDecoratorDtoOptions {}
 
 @Dto()
 export class DtoCustomScopeView extends $Dto.get(() => ModelCustomScope, {
-  columns: ['id', 'scope', 'name', 'description', 'tools', 'createdAt', 'updatedAt'],
+  columns: ['id', 'resource', 'scope', 'name', 'description', 'tools', 'createdAt', 'updatedAt'],
 }) {}
 
 @Dto()

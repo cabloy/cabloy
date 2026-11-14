@@ -1,15 +1,13 @@
 import type { TableIdentity } from 'table-identity';
-import type { ISsrSiteRecord } from 'vona-module-a-ssr';
-
-declare module 'vona' {
-  export interface VonaConfigEnv {
-    MCP_AUTH_SSR_SITE: string | undefined;
-  }
+export interface IMcpAuthIssuer {
+  issuer: string;
+  instanceName: string;
 }
 
 export interface IMcpAuthResource {
   resource: string;
   instanceName: string;
+  ssrSiteId: string;
 }
 
 export type TypeMcpBuiltinScope = 'mcp:all' | 'mcp:read';
@@ -96,7 +94,6 @@ export interface IMcpAuthResolvedClient {
 }
 
 export interface IMcpAuthConfig {
-  ssrSite?: keyof ISsrSiteRecord | '';
   registration?: IMcpAuthRegistrationConfig;
   pendingTtl: number;
   codeTtl: number;

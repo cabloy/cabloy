@@ -24,9 +24,10 @@ export interface IModelOptionsPersonalScopes extends IDecoratorModelOptions {}
 export class ModelPersonalScopes extends BeanModelBase {
   mine() {
     if (!this.$passport.isAuthenticated) return;
+    const ssrSiteId = this.sys.env.SITE_ID;
     return this.$useStateData({
-      queryKey: ['mine', this.$passport.user?.id],
-      queryFn: () => this.scope.api.mcpAuthCustomScope.mine(),
+      queryKey: ['mine', ssrSiteId, this.$passport.user?.id],
+      queryFn: () => this.scope.api.mcpAuthCustomScope.mine({ query: { ssrSiteId } }),
       meta: {
         persister: false,
       },
@@ -35,9 +36,10 @@ export class ModelPersonalScopes extends BeanModelBase {
 
   catalog() {
     if (!this.$passport.isAuthenticated) return;
+    const ssrSiteId = this.sys.env.SITE_ID;
     return this.$useStateData({
-      queryKey: ['catalog', this.$passport.user?.id, this.app.meta.locale.current],
-      queryFn: () => this.scope.api.mcpAuthCustomScope.catalog(),
+      queryKey: ['catalog', ssrSiteId, this.$passport.user?.id, this.app.meta.locale.current],
+      queryFn: () => this.scope.api.mcpAuthCustomScope.catalog({ query: { ssrSiteId } }),
       meta: {
         persister: false,
       },
@@ -45,24 +47,30 @@ export class ModelPersonalScopes extends BeanModelBase {
   }
 
   save(id?: TableIdentity) {
+    const ssrSiteId = this.sys.env.SITE_ID;
     return this.$useMutationData({
-      mutationKey: ['save', id],
+      mutationKey: ['save', ssrSiteId, id],
       mutationFn: (body: PersonalScopeDraft) =>
         id === undefined
-          ? this.scope.api.mcpAuthCustomScope.createMine(body)
-          : this.scope.api.mcpAuthCustomScope.updateMine(body, { params: { id } }),
+          ? this.scope.api.mcpAuthCustomScope.createMine(body, { query: { ssrSiteId } })
+          : this.scope.api.mcpAuthCustomScope.updateMine(body, {
+              params: { id },
+              query: { ssrSiteId },
+            }),
       onSuccess: async () => {
-        await this.$invalidateQueries({ queryKey: ['mine'] });
+        await this.$invalidateQueries({ queryKey: ['mine', ssrSiteId] });
       },
     });
   }
 
   deleteMine(id: TableIdentity) {
+    const ssrSiteId = this.sys.env.SITE_ID;
     return this.$useMutationData({
-      mutationKey: ['deleteMine', id],
-      mutationFn: () => this.scope.api.mcpAuthCustomScope.deleteMine({ params: { id } }),
+      mutationKey: ['deleteMine', ssrSiteId, id],
+      mutationFn: () =>
+        this.scope.api.mcpAuthCustomScope.deleteMine({ params: { id }, query: { ssrSiteId } }),
       onSuccess: async () => {
-        await this.$invalidateQueries({ queryKey: ['mine'] });
+        await this.$invalidateQueries({ queryKey: ['mine', ssrSiteId] });
       },
     });
   }

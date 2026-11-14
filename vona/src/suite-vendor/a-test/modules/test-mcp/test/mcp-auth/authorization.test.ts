@@ -1,6 +1,6 @@
 import type { TableIdentity } from 'table-identity';
 import type { VonaApplication } from 'vona';
-import type { BeanSsrSiteBase, IDecoratorSsrSiteOptions } from 'vona-module-a-ssr';
+import type { BeanSsrSiteBase } from 'vona-module-a-ssr';
 import type {
   IMcpTokenPayload,
   IMcpAuthConfig,
@@ -22,6 +22,7 @@ import {
   getMcpIssuer,
   OAuthError,
   resolveMcpResource,
+  resolveMcpInstance,
   sha256,
   validateMcpAuthConfig,
   ServiceAuthorization,
@@ -123,8 +124,7 @@ async function withFixture(
   let profileId: TableIdentity | undefined;
   const roleIds: TableIdentity[] = [];
   const config: IMcpAuthConfig = {
-    ssrSite: undefined,
-    registration: { ...defaultConfig(app).registration! },
+    registration: { ...defaultConfig().registration! },
     pendingTtl: 600,
     codeTtl: 60,
     tokenTtl: 2 * 60 * 60,
@@ -144,7 +144,7 @@ async function withFixture(
           response_types: ['code'],
           ...(registrationScope === undefined ? {} : { scope: registrationScope }),
         },
-        resource,
+        resolveMcpInstance(app, new URL(getMcpIssuer(app)).host),
       );
       clientId = registered.client_id;
       clientSecret = registered.client_secret;
@@ -187,7 +187,7 @@ async function ownRole(fixture: Fixture, mcpAccess = false) {
     const role = await app.scope('home-user').model.role.insert({
       name: `mcp-admission-${randomUUID()}`,
       title: 'MCP admission regression',
-      siteIds: ['admin'],
+      siteIds: ['web'],
       builtin: false,
       mcpAccess,
     });
@@ -217,13 +217,12 @@ async function refresh(fixture: Fixture, token: string, scope?: string) {
 describe('authorization.test.ts', { concurrency: false }, () => {
   before(() => {
     const issuer = getMcpIssuer(app);
-    resource = resolveMcpResource(app, new URL(issuer).host);
+    resource = resolveMcpResource(app, new URL(issuer).host, 'web');
   });
 
   it('validates policy defaults and derives issuer and exact host authority from the backend', async () => {
-    const config = defaultConfig(app);
+    const config = defaultConfig();
     assert.deepEqual(validateMcpAuthConfig(config), {
-      ssrSite: app.meta.env.MCP_AUTH_SSR_SITE,
       registration: {
         maxBodyBytes: 16384,
         maxRedirectUris: 16,
@@ -259,7 +258,7 @@ describe('authorization.test.ts', { concurrency: false }, () => {
 
     const origin = app.util.getAbsoluteUrl();
     assert.equal(getMcpIssuer(app), `${origin}/mcp`);
-    assert.equal(resource.resource, getMcpIssuer(app));
+    assert.equal(resource.resource, `${getMcpIssuer(app)}/web`);
     const url = new URL(resource.resource);
     const automatic = app.createAnonymousContext({
       headers: { host: url.host },
@@ -268,7 +267,7 @@ describe('authorization.test.ts', { concurrency: false }, () => {
       socket: { encrypted: url.protocol === 'https:' },
     });
     assert.equal(resource.instanceName, automatic.instanceName);
-    assert.deepEqual(resolveMcpResource(app, url.host), resource);
+    assert.deepEqual(resolveMcpResource(app, url.host, 'web'), resource);
     for (const wrongHost of [
       'attacker.example.test',
       `${url.host}.attacker.example.test`,
@@ -277,7 +276,7 @@ describe('authorization.test.ts', { concurrency: false }, () => {
       url.port ? url.hostname : `${url.hostname}:12345`,
     ]) {
       assert.throws(
-        () => resolveMcpResource(app, wrongHost),
+        () => resolveMcpResource(app, wrongHost, 'web'),
         error => error instanceof OAuthError && error.oauthError === 'invalid_target',
       );
     }
@@ -285,7 +284,7 @@ describe('authorization.test.ts', { concurrency: false }, () => {
       async () => {
         assert.ok(app.currentContext);
         assert.notEqual(app.currentContext.instanceName, resource.instanceName);
-        assert.deepEqual(resolveMcpResource(app, url.host), resource);
+        assert.deepEqual(resolveMcpResource(app, url.host, 'web'), resource);
       },
       { instanceName: 'shareTest' as any },
     );
@@ -314,7 +313,7 @@ describe('authorization.test.ts', { concurrency: false }, () => {
         meta: { isProd: true },
         config: {
           server: { serve: { protocol, host } },
-          modules: { 'mcp-auth': { ...defaultConfig(app), allowLoopbackHttp: false } },
+          modules: { 'mcp-auth': { ...defaultConfig(), allowLoopbackHttp: false } },
         },
       } as unknown as VonaApplication;
       const util = new AppUtil();
@@ -324,35 +323,17 @@ describe('authorization.test.ts', { concurrency: false }, () => {
     }
   });
 
-  it('maps the SSR site environment value into module config', () => {
-    for (const value of [undefined, '', 'basic-siteweb:web']) {
-      const application = { meta: { env: { MCP_AUTH_SSR_SITE: value } } } as VonaApplication;
-      assert.equal(defaultConfig(application).ssrSite, value);
-    }
-  });
-
-  it('prioritizes the configured enabled SSR site and otherwise selects the shortest publicPath', async () => {
+  it('routes consent to the exact requested enabled site, without shortest-path fallback', async () => {
     await withFixture(async fixture => {
       const sites = await app.bean.executor.mockCtx(async () =>
         app.scope('a-ssr').service.ssr.getSitesEnabled(),
       );
-      const sorted = sites.toSorted((left, right) => {
-        const a = left.beanOptions.options as IDecoratorSsrSiteOptions;
-        const b = right.beanOptions.options as IDecoratorSsrSiteOptions;
-        return a.publicPath.length - b.publicPath.length;
-      });
-      assert.ok(sorted.length > 1);
-      const fallback = sorted[0];
-      const configured = sorted.at(-1)!;
-      assert.notEqual(configured.name, fallback.name);
-      for (const [selector, expected] of [
-        [configured.name, configured],
-        [undefined, fallback],
-        ['', fallback],
-        ['test-mcp:missing', undefined],
-      ] as const) {
-        app.config.modules['mcp-auth'].ssrSite = selector as IMcpAuthConfig['ssrSite'];
+      assert.ok(sites.length > 1);
+      for (const ssrSiteId of ['web', 'admin', 'commerce', 'commerceAdmin', 'missing', '']) {
+        const expected = sites.find(site => site.beanOptions.options?.siteId === ssrSiteId);
         const url = new URL(resource.resource);
+        const params = authorizationParams(fixture.clientId);
+        params.set('resource', `${getMcpIssuer(app)}/${ssrSiteId}`);
         await app.bean.executor.mockCtx(
           async () => {
             const ctx = app.currentContext!;
@@ -363,8 +344,8 @@ describe('authorization.test.ts', { concurrency: false }, () => {
               });
             if (!expected) {
               await execute();
-              assert.equal(ctx.status, 503);
-              assert.deepEqual(ctx.body, { error: 'temporarily_unavailable' });
+              assert.equal(ctx.status, 400);
+              assert.deepEqual(ctx.body, { error: 'invalid_target' });
               return;
             }
             const site = app.bean._getBean<BeanSsrSiteBase>(
@@ -374,8 +355,7 @@ describe('authorization.test.ts', { concurrency: false }, () => {
               assert.ok(error instanceof Error);
               assert.equal(error.code, 302);
               const redirect = new URL(error.message, url.origin);
-              const pagePath = site.getPagePath('/cabloy/mcp/consent' as any);
-              assert.equal(redirect.pathname, pagePath);
+              assert.equal(redirect.pathname, site.getPagePath('/cabloy/mcp/consent' as any));
               assert.ok(redirect.searchParams.get('request'));
               return true;
             });
@@ -386,11 +366,40 @@ describe('authorization.test.ts', { concurrency: false }, () => {
               headers: { host: url.host },
               rawHeaders: ['Host', url.host],
               method: 'GET',
-              url: `/mcp/auth?${authorizationParams(fixture.clientId)}`,
+              url: `/mcp/auth?${params}`,
               socket: { encrypted: url.protocol === 'https:' },
             },
           },
         );
+      }
+    });
+  });
+
+  it('returns the resource-owned absolute scopes URL for each enabled Site', async () => {
+    await withFixture(async fixture => {
+      for (const [ssrSiteId, publicPath] of [
+        ['web', ''],
+        ['admin', '/admin'],
+        ['commerce', '/commerce'],
+        ['commerceAdmin', '/commerce-admin'],
+      ]) {
+        const target = await app.bean.executor.mockCtx(async () =>
+          resolveMcpResource(app, new URL(resource.resource).host, ssrSiteId),
+        );
+        const request = await app.bean.executor.mockCtx(async () => {
+          const params = authorizationParams(fixture.clientId);
+          params.set('resource', target.resource);
+          return await service().authorize(params, target);
+        });
+        await asUser(fixture, async () => {
+          const summary = await service().summary(request);
+          assert.equal(summary.resource, target.resource);
+          assert.equal(summary.ssrSiteId, ssrSiteId);
+          assert.equal(
+            summary.scopesUrl,
+            `${new URL(target.resource).origin}${publicPath}/cabloy/mcp/scopes`,
+          );
+        });
       }
     });
   });
@@ -620,7 +629,7 @@ describe('authorization.test.ts', { concurrency: false }, () => {
             .scope('mcp-auth')
             .service.registration.register(
               { client_name: 'Other internal client', redirect_uris: [callback] },
-              resource,
+              resolveMcpInstance(app, new URL(getMcpIssuer(app)).host),
             ),
         );
         try {
@@ -828,7 +837,7 @@ describe('authorization.test.ts', { concurrency: false }, () => {
               redirect_uris: [callback],
               grant_types: ['authorization_code', 'refresh_token'],
             },
-            resource,
+            resolveMcpInstance(app, new URL(getMcpIssuer(app)).host),
           ),
         );
         try {

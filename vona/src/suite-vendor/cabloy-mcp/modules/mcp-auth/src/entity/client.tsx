@@ -40,7 +40,7 @@ export class EntityClient extends EntityBase {
   secretSha256?: string;
 
   @Api.field()
-  resource: string;
+  issuer: string;
 
   @Api.field()
   scope: string;

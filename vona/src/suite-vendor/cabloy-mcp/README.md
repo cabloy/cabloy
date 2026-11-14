@@ -1,6 +1,6 @@
 # Cabloy MCP
 
-This suite maps explicitly opted-in Vona Controller Actions to MCP tools while reusing their DTO contracts, validation, serialization and ordinary business authorization. The normal shared `/mcp` endpoint is authenticated; the dev/test-only standalone synthetic catalog is a separate entrypoint.
+This suite maps explicitly opted-in Vona Controller Actions to MCP tools while reusing their DTO contracts, validation, serialization and ordinary business authorization. The normal authenticated resources are site-specific `/mcp/:ssrSiteId` endpoints, for example `/mcp/commerce` and `/mcp/web`; the issuer and authorization endpoints remain shared under `${origin}/mcp`. Bare `/mcp` is not a backward-compatible business endpoint. The dev/test-only standalone synthetic catalog is a separate entrypoint.
 
 ## Guides
 

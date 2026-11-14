@@ -34,7 +34,12 @@ export interface IOpenapiSchemaObject {
 
 export type TypeSecuritySchemes = Record<string, ((this: VonaApplication) => object) | object>;
 
+/** Populated by the upper SSR layer without introducing a runtime dependency. */
+export interface IMcpSsrSiteRecord {}
+
 export interface IMcpToolOptions {
+  /** SSR site onion-name membership; omitted means every enabled Site. */
+  ssrSites?: (keyof IMcpSsrSiteRecord)[];
   /** A public tool name override for this action. */
   name?: string;
   /** A tool description for this action. */

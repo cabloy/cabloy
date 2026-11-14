@@ -38,6 +38,7 @@ export class ServiceAuthTokenAdapter extends BeanBase implements IAuthTokenAdapt
     const payload = this.payload(data);
     return await this.scope.service.authorization.loadMcpPassport(
       payload.userId,
+      payload.mcp.resource,
       payload.authId,
       'invalid_grant',
       400,
@@ -66,6 +67,13 @@ export class ServiceAuthTokenAdapter extends BeanBase implements IAuthTokenAdapt
     const binding = this.input(payload, input, true);
     if (payload.mcp.generation > 0) return await this.rotate(payload, binding);
     const row = await this.row(payload);
+    await this.scope.service.authorization.loadMcpPassport(
+      row.userId,
+      row.resource,
+      row.authId,
+      'invalid_grant',
+      400,
+    );
     const now = Date.now();
     if (
       row.state !== 'codeReady' ||
@@ -102,10 +110,15 @@ export class ServiceAuthTokenAdapter extends BeanBase implements IAuthTokenAdapt
           expiresAt: Math.max(tokenExpiresAt, refreshExpiresAt),
         });
     const count = isMcpCustomScope(row.scope)
-      ? await this.scope.service.customScope.withDefinitions(row.userId!, [row.scope], async () => {
-          await this.scope.service.authorization.validateBindings(row, config);
-          return await activate();
-        })
+      ? await this.scope.service.customScope.withDefinitions(
+          row.userId!,
+          row.resource,
+          [row.scope],
+          async () => {
+            await this.scope.service.authorization.validateBindings(row, config);
+            return await activate();
+          },
+        )
       : await activate();
     if (count !== 1) throw new OAuthError('invalid_grant');
     return next;
@@ -138,6 +151,13 @@ export class ServiceAuthTokenAdapter extends BeanBase implements IAuthTokenAdapt
     ) {
       return false;
     }
+    await this.scope.service.authorization.loadMcpPassport(
+      row.userId,
+      row.resource,
+      row.authId,
+      'invalid_grant',
+      400,
+    );
     if (refresh) {
       return (
         Boolean(row.refreshEnabled) &&
@@ -179,6 +199,13 @@ export class ServiceAuthTokenAdapter extends BeanBase implements IAuthTokenAdapt
     ) {
       throw new OAuthError('invalid_grant');
     }
+    const passport = await this.scope.service.authorization.loadMcpPassport(
+      row.userId,
+      row.resource,
+      row.authId,
+      'invalid_grant',
+      400,
+    );
     const nextScope = input.scope ?? row.scope;
     if (!isMcpScope(nextScope) || !isMcpScope(row.scope)) throw new OAuthError('invalid_scope');
     let scopeTools: IMcpToolIdentity[] = isMcpCustomScope(row.scope)
@@ -189,19 +216,14 @@ export class ServiceAuthTokenAdapter extends BeanBase implements IAuthTokenAdapt
       await this.scope.service.authorization.validateBindings(row, getMcpAuthConfig(this.app));
       // Existing custom inheritance needs no visibility re-consent; new selections do.
       if (nextScope !== row.scope) {
-        const passport = await this.scope.service.authorization.loadMcpPassport(
-          row.userId,
-          row.authId,
-          'invalid_grant',
-          400,
-        );
         await this.bean.passport.setCurrent(passport);
-        const catalog = await this.scope.service.customScope.catalog();
+        const catalog = await this.scope.service.customScope.catalog(row.resource);
         if (
           !(await this.scope.service.authorization.scopeContains(
+            row.userId!,
+            row.resource,
             row.scope as TypeMcpScope,
             nextScope,
-            row.userId!,
             catalog,
           ))
         ) {
@@ -213,9 +235,10 @@ export class ServiceAuthTokenAdapter extends BeanBase implements IAuthTokenAdapt
         );
         if (
           !(await this.scope.service.authorization.scopeContains(
+            row.userId!,
+            row.resource,
             client.scope,
             nextScope,
-            row.userId!,
             catalog,
           ))
         ) {
@@ -223,7 +246,8 @@ export class ServiceAuthTokenAdapter extends BeanBase implements IAuthTokenAdapt
         }
         scopeTools = isMcpCustomScope(nextScope)
           ? normalizeToolIdentities(
-              (await this.scope.service.customScope.resolve(row.userId!, nextScope)).tools,
+              (await this.scope.service.customScope.resolve(row.userId!, row.resource, nextScope))
+                .tools,
             )
           : [];
         scopeReadOnly ||= client.scope === 'mcp:read';
@@ -282,6 +306,7 @@ export class ServiceAuthTokenAdapter extends BeanBase implements IAuthTokenAdapt
       isMcpCustomScope(nextScope) || isMcpCustomScope(row.scope)
         ? await this.scope.service.customScope.withDefinitions(
             row.userId!,
+            row.resource,
             [nextScope, row.scope as TypeMcpScope],
             () => link(update),
           )

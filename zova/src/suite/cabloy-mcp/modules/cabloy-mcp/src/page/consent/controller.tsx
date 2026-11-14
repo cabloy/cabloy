@@ -145,7 +145,7 @@ export class ControllerPageConsent extends BeanControllerPageBase {
             {option.tools.map(tool => (
               <li key={toolIdentityKey(tool)} class="space-y-1">
                 <div class="flex flex-wrap items-center gap-2">
-                  <span class="break-all font-mono">{tool.name}</span>
+                  <span class="break-words text-sm">{tool.summary?.trim() || tool.name}</span>
                   <span
                     class={`badge badge-sm ${tool.available ? 'badge-outline' : 'badge-warning'}`}
                   >
@@ -160,7 +160,7 @@ export class ControllerPageConsent extends BeanControllerPageBase {
                   {tool.controller} / {tool.action}
                 </p>
                 {tool.description && (
-                  <p class="whitespace-pre-wrap text-base-content/70">{tool.description}</p>
+                  <p class="whitespace-pre-wrap text-sm text-base-content/70">{tool.description}</p>
                 )}
               </li>
             ))}
@@ -179,7 +179,6 @@ export class ControllerPageConsent extends BeanControllerPageBase {
     const summary = query?.data;
     const scopes = summary?.scope.split(' ').filter(Boolean) ?? [];
     const selected = summary && this._effectiveOption(summary);
-    const scopesPath = this.$router.getPagePath('/cabloy/mcp/scopes');
     return (
       <ZPage>
         <main class="flex min-h-screen items-center justify-center bg-base-200 px-4 py-10">
@@ -207,6 +206,12 @@ export class ControllerPageConsent extends BeanControllerPageBase {
                       <dd class="break-words font-medium">{summary.clientName}</dd>
                     </div>
                     <div>
+                      <dt class="text-sm text-base-content/70">{this.scope.locale.Resource()}</dt>
+                      <dd data-mcp-resource class="select-text break-all font-mono text-sm">
+                        {summary.resource}
+                      </dd>
+                    </div>
+                    <div>
                       <dt class="text-sm text-base-content/70">
                         {this.scope.locale.RequestedScopes()}
                       </dt>
@@ -229,16 +234,14 @@ export class ControllerPageConsent extends BeanControllerPageBase {
                       <p class="text-sm text-base-content/70">
                         {this.scope.locale.McpEffectiveScopeHelp()}
                       </p>
-                      {scopesPath && (
-                        <a
-                          class="link link-primary text-sm"
-                          href={scopesPath}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                        >
-                          {this.scope.locale.McpManageScopes()}
-                        </a>
-                      )}
+                      <a
+                        class="link link-primary text-sm"
+                        href={summary.scopesUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        {this.scope.locale.McpManageScopes()}
+                      </a>
                     </div>
                     {summary.options.map(option => this._renderOption(option, selected?.scope))}
                     {!selected && (

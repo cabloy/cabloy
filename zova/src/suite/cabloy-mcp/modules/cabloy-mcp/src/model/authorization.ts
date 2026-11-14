@@ -9,7 +9,7 @@ export class ModelAuthorization extends BeanModelBase {
   summary(request: string) {
     if (!process.env.CLIENT || !this.$passport.isAuthenticated || !request) return;
     return this.$useStateData({
-      queryKey: ['summary', request],
+      queryKey: ['summary', this.sys.env.SITE_ID, request, this.app.meta.locale.current],
       queryFn: () => this.scope.api.authorization.summary({ query: { request } }),
       retry: false,
       meta: {

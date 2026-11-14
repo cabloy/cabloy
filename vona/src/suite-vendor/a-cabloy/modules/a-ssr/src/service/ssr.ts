@@ -11,14 +11,15 @@ import { resolveSsrMenuCatalog, resolveSsrMenuEligibility } from '../lib/ssrMenu
 
 @Service()
 export class ServiceSsr extends BeanBase {
-  public getSitesEnabled(): IOnionSlice<ISsrSiteRecord, keyof ISsrSiteRecord, unknown>[] {
-    const instanceName = this.ctx.instanceName;
-    const host = this.ctx.host;
+  public getSitesEnabled(
+    instanceName = this.ctx.instanceName,
+    host = this.ctx.host,
+  ): IOnionSlice<ISsrSiteRecord, keyof ISsrSiteRecord, unknown>[] {
     const cacheKey = `${instanceName}:${host}`;
     if (!this.app.meta[SymbolCacheSites]) this.app.meta[SymbolCacheSites] = {};
     if (!this.app.meta[SymbolCacheSites][cacheKey]) {
       // check sites
-      const sites = this.bean.onion.ssrSite.getOnionsEnabled(this.ctx.instanceName!).toReversed();
+      const sites = this.bean.onion.ssrSite.getOnionsEnabled(instanceName!).toReversed();
       const siteIds = new Map<string, string>();
       const publicPaths = new Map<string, string>();
       for (const site of sites) {

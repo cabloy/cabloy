@@ -9,9 +9,11 @@ export interface IModelOptionsAuthorizationRecords extends IDecoratorModelOption
 export class ModelAuthorizationRecords extends BeanModelBase {
   mine(query: { pageNo: number; pageSize: number }) {
     if (!this.$passport.isAuthenticated) return;
+    const ssrSiteId = this.sys.env.SITE_ID;
     return this.$useStateData({
-      queryKey: ['mine', this.$passport.user?.id, query],
-      queryFn: () => this.scope.api.mcpAuthAuthorizationGrant.mine({ query }),
+      queryKey: ['mine', ssrSiteId, this.$passport.user?.id, query],
+      queryFn: () =>
+        this.scope.api.mcpAuthAuthorizationGrant.mine({ query: { ...query, ssrSiteId } }),
       meta: {
         disableSuspenseOnInit: true,
         persister: false,
@@ -20,13 +22,17 @@ export class ModelAuthorizationRecords extends BeanModelBase {
   }
 
   revokeMine(id: TableIdentity) {
+    const ssrSiteId = this.sys.env.SITE_ID;
     return this.$useMutationData({
-      mutationKey: ['revokeMine', id],
+      mutationKey: ['revokeMine', ssrSiteId, id],
       mutationFn: async () => {
-        await this.scope.api.mcpAuthAuthorizationGrant.revokeMine(undefined, { params: { id } });
+        await this.scope.api.mcpAuthAuthorizationGrant.revokeMine(undefined, {
+          params: { id },
+          query: { ssrSiteId },
+        });
       },
       onSuccess: async () => {
-        await this.$invalidateQueries({ queryKey: ['mine'] });
+        await this.$invalidateQueries({ queryKey: ['mine', ssrSiteId] });
       },
     });
   }

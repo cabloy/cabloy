@@ -12,10 +12,11 @@ import type { IMcpAuthRegistrationRequest } from '../types/index.ts';
 
 import {
   getMcpAuthConfig,
-  getMcpIssuer,
   mcpSupportedScopes,
   OAuthError,
-  resolveMcpResource,
+  resolveMcpInstance,
+  resolveMcpResourceUrl,
+  requiredOAuthParameter,
 } from '../lib/authorization.ts';
 
 export interface IMiddlewareSystemOptionsAuthorization extends IDecoratorMiddlewareSystemOptions {}
@@ -73,9 +74,9 @@ export class MiddlewareSystemAuthorization extends BeanBase implements IMiddlewa
       ) {
         throw new OAuthError('invalid_request');
       }
-      const resource = resolveMcpResource(this.app, host);
-      const issuer = getMcpIssuer(this.app);
-      this.ctx.instanceName = resource.instanceName as typeof this.ctx.instanceName;
+      const binding = resolveMcpInstance(this.app, host);
+      const issuer = binding.issuer;
+      this.ctx.instanceName = binding.instanceName as typeof this.ctx.instanceName;
       const config = getMcpAuthConfig(this.app);
       if (this.ctx.path === '/.well-known/oauth-authorization-server/mcp') {
         this.requireMethod('GET');
@@ -106,7 +107,7 @@ export class MiddlewareSystemAuthorization extends BeanBase implements IMiddlewa
           config.registration!.maxBodyBytes,
         )) as unknown as IMcpAuthRegistrationRequest;
         this.ctx.status = 201;
-        this.ctx.body = await this.scope.service.registration.register(request, resource);
+        this.ctx.body = await this.scope.service.registration.register(request, binding);
         return;
       }
       if (this.ctx.path === '/mcp/auth/summary' || this.ctx.path === '/mcp/auth/decision') {
@@ -125,19 +126,22 @@ export class MiddlewareSystemAuthorization extends BeanBase implements IMiddlewa
         return;
       }
       this.requireMethod('GET');
+      const resource = resolveMcpResourceUrl(
+        this.app,
+        requiredOAuthParameter(url.searchParams, 'resource'),
+      );
+      if (resource.instanceName !== binding.instanceName) throw new OAuthError('invalid_target');
       const sites = this.app.scope('a-ssr').service.ssr.getSitesEnabled();
-      const site = config.ssrSite
-        ? sites.find(site => site.name === config.ssrSite)
-        : sites.toSorted((left, right) => {
-            const a = left.beanOptions.options as IDecoratorSsrSiteOptions;
-            const b = right.beanOptions.options as IDecoratorSsrSiteOptions;
-            return a.publicPath.length - b.publicPath.length;
-          })[0];
-      if (!site) throw new OAuthError('temporarily_unavailable', 503);
-      const request = await this.scope.service.authorization.authorize(url.searchParams, resource);
+      const site = sites.find(
+        site =>
+          (site.beanOptions.options as IDecoratorSsrSiteOptions).siteId === resource.ssrSiteId,
+      );
+      if (!site) throw new OAuthError('invalid_target');
       const siteInstance = this.bean._getBean<BeanSsrSiteBase>(
         site.beanOptions.beanFullName as any,
       );
+      const request = await this.scope.service.authorization.authorize(url.searchParams, resource);
+      this.$logger.debug('mcp.authorization.redirect site resolved');
       await siteInstance.redirect('/cabloy/mcp/consent' as any, { query: { request } } as any);
     } catch (error) {
       if (error instanceof Error && (error.code === 301 || error.code === 302)) throw error;

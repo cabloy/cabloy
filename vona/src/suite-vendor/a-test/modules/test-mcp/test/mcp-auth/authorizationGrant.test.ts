@@ -10,6 +10,7 @@ import {
   getMcpIssuer,
   OAuthError,
   resolveMcpResource,
+  resolveMcpInstance,
   sha256,
 } from 'vona-module-mcp-auth';
 
@@ -34,6 +35,7 @@ interface Fixture {
 }
 
 const scope = () => app.scope('mcp-auth');
+const siteResource = () => `${getMcpIssuer(app)}/web`;
 
 async function asUser<T>(user: UserFixture, operation: () => Promise<T>): Promise<T> {
   return await app.bean.executor.mockCtx(async () => {
@@ -50,7 +52,9 @@ async function api(method: string, path: string, user?: UserFixture) {
   assert.ok(app.server?.listening);
   const address = app.server.address();
   assert.ok(address && typeof address === 'object');
-  const response = await fetch(`http://127.0.0.1:${address.port}${basePath}${path}`, {
+  const target = new URL(`${basePath}${path}`, new URL(getMcpIssuer(app)).origin);
+  if (!target.searchParams.has('ssrSiteId')) target.searchParams.set('ssrSiteId', 'web');
+  const response = await fetch(target, {
     method,
     headers: {
       accept: 'application/json',
@@ -77,7 +81,6 @@ async function withFixture(operation: (fixture: Fixture) => Promise<void>) {
   const profileIds: TableIdentity[] = [];
   try {
     await app.bean.executor.mockCtx(async () => {
-      const resource = resolveMcpResource(app, new URL(getMcpIssuer(app)).host);
       const client = await scope().service.registration.register(
         {
           client_name: 'Own authorization client',
@@ -87,7 +90,7 @@ async function withFixture(operation: (fixture: Fixture) => Promise<void>) {
           response_types: ['code'],
           scope: 'mcp:read',
         },
-        resource,
+        resolveMcpInstance(app, new URL(getMcpIssuer(app)).host),
       );
       fixture.clientId = client.client_id;
       fixture.clientIds.push(client.client_id);
@@ -173,7 +176,7 @@ async function insertGrant(
       clientId: client.id,
       oauthClientId: fixture.clientId,
       issuer: getMcpIssuer(app),
-      resource: getMcpIssuer(app),
+      resource: `${getMcpIssuer(app)}/web`,
       redirectUri: callback,
       scope: 'mcp:read',
       requestedScope: 'mcp:read',
@@ -202,7 +205,7 @@ async function insertGrant(
 }
 
 async function issueCode(fixture: Fixture, user: UserFixture) {
-  const resource = resolveMcpResource(app, new URL(getMcpIssuer(app)).host);
+  const resource = resolveMcpResource(app, new URL(getMcpIssuer(app)).host, 'web');
   const request = await app.bean.executor.mockCtx(async () => {
     const request = await scope().service.authorization.authorize(
       new URLSearchParams({
@@ -236,7 +239,7 @@ async function redeem(fixture: Fixture, code: string) {
         client_id: fixture.clientId,
         code,
         redirect_uri: callback,
-        resource: getMcpIssuer(app),
+        resource: `${getMcpIssuer(app)}/web`,
         code_verifier: verifier,
       }),
       undefined,
@@ -251,7 +254,7 @@ async function refresh(fixture: Fixture, token: string) {
         grant_type: 'refresh_token',
         client_id: fixture.clientId,
         refresh_token: token,
-        resource: getMcpIssuer(app),
+        resource: `${getMcpIssuer(app)}/web`,
       }),
       undefined,
     ),
@@ -274,18 +277,18 @@ describe('authorizationGrant.test.ts', { concurrency: false }, () => {
         assert.equal(app.bean.passport.isAuthenticated, false);
         const service = scope().service.authorizationGrant;
         const query = { pageNo: 1, pageSize: 20 };
-        const page = await service.mine(owner.id, query);
+        const page = await service.mine(owner.id, siteResource(), query);
         assert.deepEqual(
           page.list.map(row => String(row.id)),
           [String(grant.id)],
         );
-        assert.equal((await service.mine(other.id, query)).total, '0');
-        await service.revokeMine(other.id, grant.id);
-        await service.deleteMine(other.id, grant.id);
+        assert.equal((await service.mine(other.id, siteResource(), query)).total, '0');
+        await service.revokeMine(other.id, siteResource(), grant.id);
+        await service.deleteMine(other.id, siteResource(), grant.id);
         assert.equal((await scope().model.authorization.getById(grant.id))?.state, 'tokenActive');
-        await service.revokeMine(owner.id, grant.id);
+        await service.revokeMine(owner.id, siteResource(), grant.id);
         assert.equal((await scope().model.authorization.getById(grant.id))?.state, 'revoked');
-        await service.deleteMine(owner.id, grant.id);
+        await service.deleteMine(owner.id, siteResource(), grant.id);
         assert.equal(await scope().model.authorization.getById(grant.id), undefined);
       });
     });
@@ -341,7 +344,7 @@ describe('authorizationGrant.test.ts', { concurrency: false }, () => {
         const client = await scope().model.client.insert({
           oauthClientId: secondOAuthClientId,
           name: 'Wrong resource client',
-          resource: wrongResource,
+          issuer: wrongResource,
           redirectUris: [callback],
           grantTypes: ['authorization_code'],
           authentication: 'none',
@@ -421,12 +424,7 @@ describe('authorizationGrant.test.ts', { concurrency: false }, () => {
         assert.ok(row?.client);
         assert.equal(String(row.client.id), String(first.clientId));
         assert.equal(row.client.oauthClientId, fixture.clientId);
-        assert.deepEqual(Object.keys(row.client).sort(), [
-          'id',
-          'name',
-          'oauthClientId',
-          'resource',
-        ]);
+        assert.deepEqual(Object.keys(row.client).sort(), ['id', 'issuer', 'name', 'oauthClientId']);
       });
       for (const clientId of [wrongResourceClient.id, first.clientId]) {
         // A matching external snapshot cannot authorize a wrong-resource relation;
@@ -528,7 +526,7 @@ describe('authorizationGrant.test.ts', { concurrency: false }, () => {
         const token = await redeem(fixture, tokenGrant.code);
         assert.ok(token.refresh_token);
         await app.bean.executor.mockCtx(() =>
-          scope().service.authorization.lookup(token.access_token, getMcpIssuer(app)),
+          scope().service.authorization.lookup(token.access_token, `${getMcpIssuer(app)}/web`),
         );
         assert.equal(
           (await api(method, `/${action}/${tokenGrant.id}`, owner)).response.status,
@@ -537,7 +535,7 @@ describe('authorizationGrant.test.ts', { concurrency: false }, () => {
         await expectOAuth(
           () =>
             app.bean.executor.mockCtx(() =>
-              scope().service.authorization.lookup(token.access_token, getMcpIssuer(app)),
+              scope().service.authorization.lookup(token.access_token, `${getMcpIssuer(app)}/web`),
             ),
           'invalid_token',
         );
@@ -556,7 +554,7 @@ describe('authorizationGrant.test.ts', { concurrency: false }, () => {
         const results = await Promise.allSettled([
           exchangeCode ? redeem(fixture, grant.code) : refresh(fixture, token!.refresh_token!),
           app.bean.executor.mockCtx(() =>
-            scope().service.authorizationGrant.revokeMine(owner.id, grant.id),
+            scope().service.authorizationGrant.revokeMine(owner.id, siteResource(), grant.id),
           ),
         ]);
         assert.equal(results[1].status, 'fulfilled');
@@ -571,7 +569,10 @@ describe('authorizationGrant.test.ts', { concurrency: false }, () => {
           await expectOAuth(
             () =>
               app.bean.executor.mockCtx(() =>
-                scope().service.authorization.lookup(issued.access_token, getMcpIssuer(app)),
+                scope().service.authorization.lookup(
+                  issued.access_token,
+                  `${getMcpIssuer(app)}/web`,
+                ),
               ),
             'invalid_token',
           );

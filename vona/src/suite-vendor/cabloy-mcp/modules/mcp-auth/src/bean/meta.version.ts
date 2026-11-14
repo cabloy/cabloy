@@ -48,7 +48,7 @@ export class MetaVersion extends BeanBase implements IMetaVersionUpdate {
       table.json(client.grantTypes).notNullable();
       table.string(client.authentication, 32).notNullable();
       table.string(client.secretSha256, 64).nullable();
-      table.string(client.resource, 2048).notNullable();
+      table.string(client.issuer, 2048).notNullable();
       table.string(client.scope, 255).notNullable();
       table.string(client.state, 32).notNullable();
       table.bigInteger(client.clientIdIssuedAt).notNullable();
@@ -58,6 +58,7 @@ export class MetaVersion extends BeanBase implements IMetaVersionUpdate {
     await this.bean.model.createTable(customScope.$table, table => {
       table.basicFields();
       table.tableIdentity(customScope.userId).notNullable();
+      table.string(customScope.resource, 2048).notNullable();
       table.string(customScope.scope, 255).notNullable();
       table.string(customScope.name, 100).notNullable();
       table.string(customScope.description, 1000).notNullable();

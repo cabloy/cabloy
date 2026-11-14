@@ -5,6 +5,7 @@ import { createHash, timingSafeEqual } from 'node:crypto';
 import type {
   IMcpAuthConfig,
   IMcpAuthResource,
+  IMcpAuthIssuer,
   IMcpAuthRegistrationConfig,
   TypeMcpGrantTypes,
   TypeMcpBuiltinScope,
@@ -186,20 +187,53 @@ export function getMcpIssuer(app: VonaApplication): string {
   return `${origin}/mcp`;
 }
 
-/** Resolve normal server routing without caller selectors or ambient tenant state. */
-export function resolveMcpResource(app: VonaApplication, host: string): IMcpAuthResource {
-  const resource = getMcpIssuer(app);
-  const url = new URL(resource);
+/** Resolve normal AS routing without caller selectors or ambient tenant state. */
+export function resolveMcpInstance(app: VonaApplication, host: string): IMcpAuthIssuer {
+  const issuer = getMcpIssuer(app);
+  const url = new URL(issuer);
   if (url.host !== host) throw new OAuthError('invalid_target');
   const ctx = app.createAnonymousContext({
     headers: { host },
     method: 'POST',
-    url: '/mcp',
+    url: '/mcp/auth',
     socket: { encrypted: url.protocol === 'https:' },
   });
   const instanceName = ctx.instanceName;
   if (typeof instanceName !== 'string') throw new OAuthError('invalid_target');
-  return { resource, instanceName };
+  return { issuer, instanceName };
+}
+
+/** Resolve a registered, enabled SSR Site independently of browser input and ambient selectors. */
+export function resolveMcpResource(
+  app: VonaApplication,
+  host: string,
+  ssrSiteId: string,
+): IMcpAuthResource {
+  const { issuer, instanceName } = resolveMcpInstance(app, host);
+  if (
+    typeof ssrSiteId !== 'string' ||
+    !/^[\w-]+$/.test(ssrSiteId) ||
+    ['auth', 'token', 'register'].includes(ssrSiteId)
+  ) {
+    throw new OAuthError('invalid_target');
+  }
+  const sites = app.scope('a-ssr').service.ssr.getSitesEnabled(instanceName as never, host);
+  if (!sites.some(site => site.beanOptions.options?.siteId === ssrSiteId)) {
+    throw new OAuthError('invalid_target');
+  }
+  return { resource: `${issuer}/${ssrSiteId}`, instanceName, ssrSiteId };
+}
+
+/** Resource identity is an exact trusted URL: no aliases, query, fragment or encoded path. */
+export function resolveMcpResourceUrl(app: VonaApplication, resource: string): IMcpAuthResource {
+  if (typeof resource !== 'string') throw new OAuthError('invalid_target');
+  const issuer = getMcpIssuer(app);
+  const prefix = `${issuer}/`;
+  if (!resource.startsWith(prefix)) throw new OAuthError('invalid_target');
+  const ssrSiteId = resource.slice(prefix.length);
+  const resolved = resolveMcpResource(app, new URL(issuer).host, ssrSiteId);
+  if (resolved.resource !== resource) throw new OAuthError('invalid_target');
+  return resolved;
 }
 
 export function validateOAuthParameters(params: URLSearchParams, allowed: string[]): void {

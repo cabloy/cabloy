@@ -17,9 +17,10 @@ export interface IModelOptionsAccessTokens extends IDecoratorModelOptions {}
 export class ModelAccessTokens extends BeanModelBase {
   mine(query: { pageNo: number; pageSize: number }) {
     if (!this.$passport.isAuthenticated) return;
+    const ssrSiteId = this.sys.env.SITE_ID;
     return this.$useStateData({
-      queryKey: ['mine', this.$passport.user?.id, query],
-      queryFn: () => this.scope.api.mcpAuthAccessToken.mine({ query }),
+      queryKey: ['mine', ssrSiteId, this.$passport.user?.id, query],
+      queryFn: () => this.scope.api.mcpAuthAccessToken.mine({ query: { ...query, ssrSiteId } }),
       meta: {
         persister: false,
       },
@@ -29,25 +30,31 @@ export class ModelAccessTokens extends BeanModelBase {
   // A one-time credential must never enter query data or mutation-cache results.
   async createMine(body: AccessTokenDraft) {
     this.$logger.debug('mcp.accessToken.create started');
-    const result = await this.scope.api.mcpAuthAccessToken.createMine(body);
+    const result = await this.scope.api.mcpAuthAccessToken.createMine(body, {
+      query: { ssrSiteId: this.sys.env.SITE_ID },
+    });
     this.$logger.debug('mcp.accessToken.create completed');
     return result;
   }
 
   invalidateMine() {
-    return this.$invalidateQueries({ queryKey: ['mine'] });
+    return this.$invalidateQueries({ queryKey: ['mine', this.sys.env.SITE_ID] });
   }
 
   deleteMine(id: TableIdentity) {
+    const ssrSiteId = this.sys.env.SITE_ID;
     return this.$useMutationData({
-      mutationKey: ['deleteMine', id],
+      mutationKey: ['deleteMine', ssrSiteId, id],
       mutationFn: async () => {
         this.$logger.debug('mcp.accessToken.delete started');
-        await this.scope.api.mcpAuthAccessToken.deleteMine({ params: { id } });
+        await this.scope.api.mcpAuthAccessToken.deleteMine({
+          params: { id },
+          query: { ssrSiteId },
+        });
         this.$logger.debug('mcp.accessToken.delete completed');
       },
       onSuccess: async () => {
-        await this.invalidateMine();
+        await this.$invalidateQueries({ queryKey: ['mine', ssrSiteId] });
       },
     });
   }

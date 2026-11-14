@@ -16,7 +16,12 @@ export interface IMiddlewareSystemOptionsResourceMetadata extends IDecoratorMidd
 })
 export class MiddlewareSystemResourceMetadata extends BeanBase implements IMiddlewareSystemExecute {
   async execute(_options: IMiddlewareSystemOptionsResourceMetadata, next: Next) {
-    if (this.ctx.path !== mcpResourceMetadataPath) return next();
+    if (
+      this.ctx.path !== mcpResourceMetadataPath &&
+      !this.ctx.path.startsWith(`${mcpResourceMetadataPath}/`)
+    ) {
+      return next();
+    }
     this.ctx.respond = false;
     handleMcpResourceMetadata(this.app, this.ctx.req, this.ctx.res);
   }

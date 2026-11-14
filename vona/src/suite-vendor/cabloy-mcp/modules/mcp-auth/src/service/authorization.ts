@@ -1,9 +1,11 @@
 import type { TableIdentity } from 'table-identity';
+import type { BeanSsrSiteBase, IDecoratorSsrSiteOptions } from 'vona-module-a-ssr';
 import type { IPassport } from 'vona-module-a-user';
 
 import { createHash, randomBytes } from 'node:crypto';
 import { BeanBase } from 'vona';
 import { Service } from 'vona-module-a-bean';
+import { roleSiteIdAll } from 'vona-module-a-openapiutils';
 
 import type { DtoAuthorizationSummary } from '../dto/authorizationSummary.ts';
 import type { DtoMcpScopeOption } from '../dto/mcpTool.ts';
@@ -32,7 +34,7 @@ import {
   isCanonicalMcpCustomScope,
   mcpScopeIncludes,
   parseMcpRequestedScope,
-  resolveMcpResource,
+  resolveMcpResourceUrl,
   OAuthError,
   requiredOAuthParameter,
   sha256,
@@ -109,14 +111,29 @@ export class ServiceAuthorization extends BeanBase {
 
   async summary(request: string): Promise<DtoAuthorizationSummary> {
     const passport = await this.currentPassport();
-    this.checkMcpAccess(passport, 'access_denied', 403);
     const row = await this.pending(request);
+    this.checkMcpAccess(passport, row.resource, 'access_denied', 403);
     const config = this.configForResource(row.resource);
     const client = await this.validateBindings(row, config);
     const options = await this.scopeOptions(row, client, passport.user!.id);
+    const resource = resolveMcpResourceUrl(this.app, row.resource);
+    const sites = this.app
+      .scope('a-ssr')
+      .service.ssr.getSitesEnabled(resource.instanceName as never, new URL(resource.resource).host);
+    const site = sites.find(
+      site => (site.beanOptions.options as IDecoratorSsrSiteOptions).siteId === resource.ssrSiteId,
+    );
+    if (!site) throw new OAuthError('invalid_target');
+    const siteInstance = this.bean._getBean<BeanSsrSiteBase>(site.beanOptions.beanFullName as any);
+    const scopesUrl = new URL(
+      siteInstance.getPagePath('/cabloy/mcp/scopes' as any),
+      resource.resource,
+    ).href;
     return {
       clientName: client.name,
       resource: row.resource,
+      ssrSiteId: resource.ssrSiteId,
+      scopesUrl,
       scope: row.requestedScope || row.scope,
       options,
       expiresAt: Number(row.pendingExpiresAt),
@@ -131,8 +148,8 @@ export class ServiceAuthorization extends BeanBase {
     this.ensureAutocommit();
     if (typeof allow !== 'boolean') throw new OAuthError('invalid_request');
     const passport = await this.currentPassport();
-    if (allow) this.checkMcpAccess(passport, 'access_denied', 403);
     const row = await this.pending(request);
+    if (allow) this.checkMcpAccess(passport, row.resource, 'access_denied', 403);
     const config = this.configForResource(row.resource);
     const client = await this.validateBindings(row, config);
     const requested = row.requestedScope || row.scope;
@@ -179,6 +196,7 @@ export class ServiceAuthorization extends BeanBase {
     if (allow && (isMcpCustomScope(selected) || isMcpCustomScope(requested))) {
       await this.scope.service.customScope.withDefinitions(
         passport.user!.id,
+        row.resource,
         [selected as TypeMcpScope, requested as TypeMcpScope],
         link,
       );
@@ -283,7 +301,13 @@ export class ServiceAuthorization extends BeanBase {
       .first();
     if (!row) throw new OAuthError('invalid_grant');
     await this.validateBindings(row, config);
-    const passport = await this.loadMcpPassport(row.userId, row.authId, 'invalid_grant', 400);
+    const passport = await this.loadMcpPassport(
+      row.userId,
+      row.resource,
+      row.authId,
+      'invalid_grant',
+      400,
+    );
     const payload: IMcpTokenPayload = {
       userId: row.userId!,
       authId: row.authId!,
@@ -350,7 +374,13 @@ export class ServiceAuthorization extends BeanBase {
     if (!row) throw new OAuthError('invalid_token', 401);
     if (!isMcpScope(row.scope)) throw new OAuthError('insufficient_scope', 403);
     await this.validateBindings(row, config, 'invalid_token', 401);
-    const passport = await this.loadMcpPassport(row.userId, row.authId, 'invalid_token', 401);
+    const passport = await this.loadMcpPassport(
+      row.userId,
+      row.resource,
+      row.authId,
+      'invalid_token',
+      401,
+    );
     const payload: IMcpLegacyTokenPayload = {
       userId: row.userId!,
       authId: row.authId!,
@@ -445,8 +475,7 @@ export class ServiceAuthorization extends BeanBase {
 
   configForResource(resource: string): IMcpAuthConfig {
     const config = getMcpAuthConfig(this.app);
-    const issuer = getMcpIssuer(this.app);
-    const binding = resolveMcpResource(this.app, new URL(issuer).host);
+    const binding = resolveMcpResourceUrl(this.app, resource);
     if (
       resource !== binding.resource ||
       this.ctx.instanceName !== binding.instanceName ||
@@ -487,7 +516,8 @@ export class ServiceAuthorization extends BeanBase {
         if (
           row.userId === undefined ||
           !sameTools(
-            (await this.scope.service.customScope.resolve(row.userId, row.scope)).tools,
+            (await this.scope.service.customScope.resolve(row.userId, row.resource, row.scope))
+              .tools,
             row.scopeTools,
           ) ||
           (client.scope === 'mcp:read' && !row.scopeReadOnly)
@@ -529,7 +559,11 @@ export class ServiceAuthorization extends BeanBase {
     }
     if (isMcpCustomScope(row.scope)) {
       try {
-        const definition = await this.scope.service.customScope.resolve(row.userId, row.scope);
+        const definition = await this.scope.service.customScope.resolve(
+          row.userId,
+          row.resource,
+          row.scope,
+        );
         if (!sameTools(definition.tools, row.scopeTools)) throw new OAuthError(error, status);
       } catch {
         throw new OAuthError(error, status);
@@ -540,13 +574,15 @@ export class ServiceAuthorization extends BeanBase {
 
   /** Runtime custom authority is a live owned definition AND the admitted grant's exact snapshot. */
   async resolveToolAccess(
-    scope: TypeMcpScope,
     userId: TableIdentity,
+    resource: string,
+    scope: TypeMcpScope,
   ): Promise<IMcpResolvedToolAccess> {
+    this.configForResource(resource);
     if (!isMcpScope(scope)) throw new OAuthError('invalid_scope');
     if (isMcpBuiltinScope(scope))
       return { scope, tools: undefined, readOnly: scope === 'mcp:read' };
-    const definition = await this.scope.service.customScope.resolve(userId, scope);
+    const definition = await this.scope.service.customScope.resolve(userId, resource, scope);
     let tools = normalizeToolIdentities(definition.tools);
     let readOnly = false;
     if (this.ctx.state.passportAuthTokenClient === 'mcpAccess') {
@@ -554,7 +590,12 @@ export class ServiceAuthorization extends BeanBase {
         | IMcpTokenPayload
         | IMcpLegacyTokenPayload
         | undefined;
-      if (!payload || payload.mcp.scope !== scope || String(payload.userId) !== String(userId)) {
+      if (
+        !payload ||
+        payload.mcp.resource !== resource ||
+        payload.mcp.scope !== scope ||
+        String(payload.userId) !== String(userId)
+      ) {
         throw new OAuthError('invalid_scope');
       }
       const row = await this.scope.model.authorization
@@ -593,15 +634,16 @@ export class ServiceAuthorization extends BeanBase {
   }
 
   async scopeContains(
+    userId: TableIdentity,
+    resource: string,
     ceiling: TypeMcpScope,
     selected: TypeMcpScope,
-    userId: TableIdentity,
     catalog: IMcpToolCatalogItem[],
   ): Promise<boolean> {
     if (ceiling === 'mcp:all') return true;
     if (isMcpBuiltinScope(selected)) return ceiling === selected;
     const tools = normalizeToolIdentities(
-      (await this.scope.service.customScope.resolve(userId, selected)).tools,
+      (await this.scope.service.customScope.resolve(userId, resource, selected)).tools,
     );
     if (ceiling === 'mcp:read') {
       const byIdentity = new Map(catalog.map(tool => [toolIdentityKey(tool), tool]));
@@ -609,7 +651,7 @@ export class ServiceAuthorization extends BeanBase {
     }
     const allowed = new Set(
       normalizeToolIdentities(
-        (await this.scope.service.customScope.resolve(userId, ceiling)).tools,
+        (await this.scope.service.customScope.resolve(userId, resource, ceiling)).tools,
       ).map(toolIdentityKey),
     );
     return tools.every(tool => allowed.has(toolIdentityKey(tool)));
@@ -623,10 +665,10 @@ export class ServiceAuthorization extends BeanBase {
     const requested = row.requestedScope || row.scope;
     if (!isMcpScope(requested)) throw new OAuthError('invalid_scope');
     if (isMcpCustomScope(requested))
-      await this.scope.service.customScope.resolve(userId, requested);
-    const catalog = await this.scope.service.customScope.catalog();
+      await this.scope.service.customScope.resolve(userId, row.resource, requested);
+    const catalog = await this.scope.service.customScope.catalog(row.resource);
     const byIdentity = new Map(catalog.map(tool => [toolIdentityKey(tool), tool]));
-    const mine = await this.scope.service.customScope.mine(userId);
+    const mine = await this.scope.service.customScope.mine(userId, row.resource);
     const candidates = [
       { scope: 'mcp:all' as TypeMcpScope, name: 'mcp:all', description: '', tools: catalog },
       {
@@ -653,15 +695,29 @@ export class ServiceAuthorization extends BeanBase {
         };
       });
       let reason: DtoMcpScopeOption['reason'];
-      if (tools.some(tool => !tool.available)) reason = 'tools_unavailable';
-      else if (
-        !(await this.scopeContains(requested, candidate.scope as TypeMcpScope, userId, catalog))
-      )
+      if (tools.some(tool => !tool.available)) {
+        reason = 'tools_unavailable';
+      } else if (
+        !(await this.scopeContains(
+          userId,
+          row.resource,
+          requested as TypeMcpScope,
+          candidate.scope as TypeMcpScope,
+          catalog,
+        ))
+      ) {
         reason = 'outside_requested_scope';
-      else if (
-        !(await this.scopeContains(client.scope, candidate.scope as TypeMcpScope, userId, catalog))
-      )
+      } else if (
+        !(await this.scopeContains(
+          userId,
+          row.resource,
+          client.scope,
+          candidate.scope as TypeMcpScope,
+          catalog,
+        ))
+      ) {
         reason = 'outside_client_scope';
+      }
       options.push({
         scope: candidate.scope,
         name: candidate.name,
@@ -719,17 +775,33 @@ export class ServiceAuthorization extends BeanBase {
 
   async loadMcpPassport(
     userId: TableIdentity | undefined,
+    resource: string,
     authId: TableIdentity | undefined,
     error: string,
     status: number,
   ): Promise<IPassport> {
     const passport = await this.loadPassport(userId, authId, error, status);
-    this.checkMcpAccess(passport, error, status);
+    this.checkMcpAccess(passport, resource, error, status);
     return passport;
   }
 
-  private checkMcpAccess(passport: IPassport, error: string, status: number): void {
-    if (!passport.roles?.some(role => role.mcpAccess === true)) {
+  private checkMcpAccess(
+    passport: IPassport,
+    resource: string,
+    error: string,
+    status: number,
+  ): void {
+    this.configForResource(resource);
+    const { ssrSiteId } = resolveMcpResourceUrl(this.app, resource);
+    // Direct memberships form independent unions for MCP access and target-site admission.
+    if (
+      !passport.roles?.some(role => role.mcpAccess === true) ||
+      !passport.roles.some(
+        role =>
+          Array.isArray(role.siteIds) &&
+          (role.siteIds.includes(ssrSiteId) || role.siteIds.includes(roleSiteIdAll)),
+      )
+    ) {
       this.$logger.debug('mcp.access.denied');
       throw new OAuthError(error, status);
     }

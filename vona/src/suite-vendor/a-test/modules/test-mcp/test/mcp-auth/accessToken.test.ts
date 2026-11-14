@@ -12,7 +12,13 @@ import assert from 'node:assert/strict';
 import { createHash, randomUUID } from 'node:crypto';
 import { describe, it } from 'node:test';
 import { acquireTestLock, app } from 'vona-mock';
-import { getMcpIssuer, OAuthError, resolveMcpResource, sha256 } from 'vona-module-mcp-auth';
+import {
+  getMcpIssuer,
+  OAuthError,
+  resolveMcpResource,
+  resolveMcpInstance,
+  sha256,
+} from 'vona-module-mcp-auth';
 
 const basePath = '/api/mcp/auth/accessToken';
 const callback = 'https://personal-token.example.test/callback';
@@ -21,6 +27,7 @@ const challenge = createHash('sha256').update(verifier).digest('base64url');
 const day = 86400;
 const safeColumns = ['id', 'name', 'scope', 'createdAt', 'tokenExpiresAt', 'status'];
 const scope = () => app.scope('mcp-auth');
+const siteResource = () => `${getMcpIssuer(app)}/web`;
 const context = <T>(operation: () => Promise<T>) => app.bean.executor.mockCtx(operation);
 
 interface UserFixture {
@@ -60,7 +67,9 @@ async function api(
   assert.ok(app.server?.listening);
   const address = app.server.address();
   assert.ok(address && typeof address === 'object');
-  const response = await fetch(`http://127.0.0.1:${address.port}${path}`, {
+  const target = new URL(path, new URL(getMcpIssuer(app)).origin);
+  if (!target.searchParams.has('ssrSiteId')) target.searchParams.set('ssrSiteId', 'web');
+  const response = await fetch(target, {
     method,
     headers: {
       accept: 'application/json',
@@ -153,10 +162,16 @@ async function create(
   fixture: Fixture,
   user: UserFixture,
   data: DtoAccessTokenCreate = { name: 'Personal token' },
+  resource = siteResource(),
 ): Promise<DtoAccessTokenCreateRes> {
   return await context(async () => {
     assert.ok(user.authId !== undefined);
-    const token = await scope().service.accessToken.createMine(user.id, user.authId, data);
+    const token = await scope().service.accessToken.createMine(
+      user.id,
+      resource,
+      user.authId,
+      data,
+    );
     fixture.tokenIds.push(token.id);
     return token;
   });
@@ -183,7 +198,7 @@ async function client(fixture: Fixture) {
         response_types: ['code'],
         scope: 'mcp:read',
       },
-      resolveMcpResource(app, new URL(getMcpIssuer(app)).host),
+      resolveMcpInstance(app, new URL(getMcpIssuer(app)).host),
     );
     fixture.clientIds.push(registered.client_id);
     return registered.client_id;
@@ -198,12 +213,12 @@ async function oauth(fixture: Fixture, user: UserFixture) {
         response_type: 'code',
         client_id: clientId,
         redirect_uri: callback,
-        resource: getMcpIssuer(app),
+        resource: `${getMcpIssuer(app)}/web`,
         scope: 'mcp:read',
         code_challenge: challenge,
         code_challenge_method: 'S256',
       }),
-      resolveMcpResource(app, new URL(getMcpIssuer(app)).host),
+      resolveMcpResource(app, new URL(getMcpIssuer(app)).host, 'web'),
     );
     const row = await scope().model.authorization.get({ requestDigest: sha256(request) });
     assert.ok(row);
@@ -222,7 +237,7 @@ async function oauth(fixture: Fixture, user: UserFixture) {
         client_id: clientId,
         code,
         redirect_uri: callback,
-        resource: getMcpIssuer(app),
+        resource: `${getMcpIssuer(app)}/web`,
         code_verifier: verifier,
       }),
       undefined,
@@ -269,15 +284,20 @@ describe('accessToken.test.ts', { concurrency: false }, () => {
         for (const expiresIn of [undefined, 365 * day]) {
           const before = Date.now();
           assert.ok(owner.authId !== undefined);
-          const token = await scope().service.accessToken.createMine(owner.id, owner.authId, {
-            name: expiresIn === undefined ? 'Default lifetime' : 'Long finite lifetime',
-            ...(expiresIn === undefined ? {} : { expiresIn }),
-          });
+          const token = await scope().service.accessToken.createMine(
+            owner.id,
+            siteResource(),
+            owner.authId,
+            {
+              name: expiresIn === undefined ? 'Default lifetime' : 'Long finite lifetime',
+              ...(expiresIn === undefined ? {} : { expiresIn }),
+            },
+          );
           fixture.tokenIds.push(token.id);
           const after = Date.now();
           const ttl = expiresIn ?? 7 * day;
           assert.equal(token.scope, 'mcp:read');
-          assert.equal(token.resource, getMcpIssuer(app));
+          assert.equal(token.resource, `${getMcpIssuer(app)}/web`);
           assert.ok(token.tokenExpiresAt >= Math.floor(before / 1000) * 1000 + ttl * 1000);
           assert.ok(token.tokenExpiresAt <= after + ttl * 1000);
           assert.deepEqual(
@@ -445,7 +465,7 @@ describe('accessToken.test.ts', { concurrency: false }, () => {
         const role = await app.scope('home-user').model.role.insert({
           name: `mcp-personal-admission-${randomUUID()}`,
           title: 'Personal MCP admission regression',
-          siteIds: ['admin'],
+          siteIds: ['web'],
           builtin: false,
         });
         fixture.roleIds.push(role.id);
@@ -465,7 +485,12 @@ describe('accessToken.test.ts', { concurrency: false }, () => {
       );
       await context(async () => {
         assert.equal(
-          (await scope().service.accessToken.mine(owner.id, { pageNo: 1, pageSize: 20 })).total,
+          (
+            await scope().service.accessToken.mine(owner.id, siteResource(), {
+              pageNo: 1,
+              pageSize: 20,
+            })
+          ).total,
           '0',
         );
         await app.scope('home-user').model.role.updateById(roleId, { mcpAccess: true });
@@ -526,24 +551,26 @@ describe('accessToken.test.ts', { concurrency: false }, () => {
       await context(async () => {
         const query = { pageNo: 1, pageSize: 20 };
         assert.deepEqual(
-          (await scope().service.accessToken.mine(owner.id, query)).list.map(row => String(row.id)),
+          (await scope().service.accessToken.mine(owner.id, siteResource(), query)).list.map(row =>
+            String(row.id),
+          ),
           [String(personal.id)],
         );
         assert.deepEqual(
-          (await scope().service.authorizationGrant.mine(owner.id, query)).list.map(row =>
-            String(row.id),
+          (await scope().service.authorizationGrant.mine(owner.id, siteResource(), query)).list.map(
+            row => String(row.id),
           ),
           [String(grant.id)],
         );
-        await scope().service.authorizationGrant.revokeMine(owner.id, personal.id);
-        await scope().service.authorizationGrant.deleteMine(owner.id, personal.id);
-        await scope().service.accessToken.deleteMine(owner.id, grant.id);
+        await scope().service.authorizationGrant.revokeMine(owner.id, siteResource(), personal.id);
+        await scope().service.authorizationGrant.deleteMine(owner.id, siteResource(), personal.id);
+        await scope().service.accessToken.deleteMine(owner.id, siteResource(), grant.id);
         assert.equal(
           (await scope().model.authorization.getById(personal.id))?.state,
           'tokenActive',
         );
         assert.equal((await scope().model.authorization.getById(grant.id))?.state, 'tokenActive');
-        await scope().service.authorization.lookupContext(personal.accessToken, getMcpIssuer(app));
+        await scope().service.authorization.lookupContext(personal.accessToken, siteResource());
         const verified = await app.bean.jwt.get('mcpAccess').verify(grant.token.access_token);
         assert.ok(verified);
         const payload = scope().service.authTokenAdapter.payload(verified) as IMcpTokenPayload;
@@ -553,7 +580,7 @@ describe('accessToken.test.ts', { concurrency: false }, () => {
         const legacy = await app.bean.jwt.get('mcpAccess').sign(payload);
         const admitted = await scope().service.authorization.lookupContext(
           legacy,
-          getMcpIssuer(app),
+          `${getMcpIssuer(app)}/web`,
         );
         assert.equal(String(admitted.passport.user?.id), String(owner.id));
         const legacyRefresh = await app.bean.jwt.get('mcpRefresh').sign(payload);
@@ -562,7 +589,7 @@ describe('accessToken.test.ts', { concurrency: false }, () => {
             grant_type: 'refresh_token',
             client_id: grant.clientId,
             refresh_token: legacyRefresh,
-            resource: getMcpIssuer(app),
+            resource: `${getMcpIssuer(app)}/web`,
           }),
           undefined,
         );
@@ -571,7 +598,7 @@ describe('accessToken.test.ts', { concurrency: false }, () => {
           (
             await scope().service.authorization.lookupContext(
               rotated.access_token,
-              getMcpIssuer(app),
+              `${getMcpIssuer(app)}/web`,
             )
           ).scope,
           'mcp:read',
@@ -606,18 +633,23 @@ describe('accessToken.test.ts', { concurrency: false }, () => {
             () => scope().service.authorization.lookupContext(token.accessToken, token.resource),
             'invalid_target',
           );
-          await scope().service.accessToken.deleteMine(owner.id, token.id);
+          await scope().service.accessToken.deleteMine(owner.id, siteResource(), token.id);
           assert.deepEqual(
-            (await scope().service.accessToken.mine(owner.id, { pageNo: 1, pageSize: 20 })).list,
+            (
+              await scope().service.accessToken.mine(owner.id, siteResource(), {
+                pageNo: 1,
+                pageSize: 20,
+              })
+            ).list,
             [],
           );
         },
         { instanceName: 'shareTest' as any },
       );
       await context(async () => {
-        await scope().service.accessToken.deleteMine(other.id, token.id);
+        await scope().service.accessToken.deleteMine(other.id, siteResource(), token.id);
         await scope().service.authorization.lookupContext(token.accessToken, token.resource);
-        await scope().service.accessToken.deleteMine(owner.id, token.id);
+        await scope().service.accessToken.deleteMine(owner.id, siteResource(), token.id);
         await expectOAuth(
           () => scope().service.authorization.lookupContext(token.accessToken, token.resource),
           'invalid_token',
@@ -647,7 +679,10 @@ describe('accessToken.test.ts', { concurrency: false }, () => {
             'invalid_token',
           );
         }
-        const page = await scope().service.accessToken.mine(owner.id, { pageNo: 1, pageSize: 20 });
+        const page = await scope().service.accessToken.mine(owner.id, siteResource(), {
+          pageNo: 1,
+          pageSize: 20,
+        });
         assert.equal(page.total, '2');
         assert.deepEqual(
           page.list.map(row => [String(row.id), row.status]),
@@ -717,6 +752,22 @@ describe('accessToken.test.ts', { concurrency: false }, () => {
     if (!app.meta.modules['training-student']) return;
     await withFixture(async fixture => {
       const [owner] = fixture.users;
+      const resource = `${getMcpIssuer(app)}/admin`;
+      await context(async () => {
+        const role = await app.scope('home-user').model.role.insert({
+          name: `mcp-personal-admin-${randomUUID()}`,
+          title: 'Owned Student personal token Admin admission',
+          siteIds: ['admin'],
+          builtin: false,
+          mcpAccess: true,
+        });
+        fixture.roleIds.push(role.id);
+        const roles = await app.bean.role.findAllByUserId(owner.id);
+        await app.bean.role.replaceUserRoleIds(owner.id, [
+          ...(roles ?? []).map(role => role.id),
+          role.id,
+        ]);
+      });
       const off = app.scope('a-rbac').event.resolvePolicy.on((request, next) => {
         if (
           String(app.bean.passport.currentUser?.id) !== String(owner.id) ||
@@ -737,13 +788,13 @@ describe('accessToken.test.ts', { concurrency: false }, () => {
       });
       try {
         const owned = await asUser(owner, async () => {
-          const catalog = await scope().service.customScope.catalog();
+          const catalog = await scope().service.customScope.catalog(resource);
           const selected = catalog.find(tool => tool.name === 'training-student_student_select');
           assert.ok(selected);
           const tools = [
             { name: selected.name, controller: selected.controller, action: selected.action },
           ];
-          const definition = await scope().service.customScope.createMine(owner.id, {
+          const definition = await scope().service.customScope.createMine(owner.id, resource, {
             name: 'Personal_exact',
             description: '',
             tools,
@@ -751,18 +802,24 @@ describe('accessToken.test.ts', { concurrency: false }, () => {
           fixture.scopeIds.push(definition.id);
           return definition;
         });
-        const token = await create(fixture, owner, { name: 'Exact tools', scope: owned.scope });
+        const token = await create(
+          fixture,
+          owner,
+          { name: 'Exact tools', scope: owned.scope },
+          resource,
+        );
         await context(async () => {
           const row = await scope().model.authorization.getById(token.id);
           assert.deepEqual(row?.scopeTools, owned.tools);
           await scope().service.authorization.lookupContext(token.accessToken, token.resource);
           assert.deepEqual(
-            (await scope().service.authorization.resolveToolAccess(owned.scope, owner.id)).tools,
+            (await scope().service.authorization.resolveToolAccess(owner.id, resource, owned.scope))
+              .tools,
             owned.tools,
           );
           const server = await app
             .scope('cabloy-mcp')
-            .service.sharedBusinessTools.createServer(owned.scope);
+            .service.sharedBusinessTools.createServer(resource, owned.scope);
           try {
             assert.deepEqual(
               (await server.catalog()).map(tool => tool.name),
@@ -785,7 +842,7 @@ describe('accessToken.test.ts', { concurrency: false }, () => {
           }
         });
         const renamed = await asUser(owner, () =>
-          scope().service.customScope.updateMine(owner.id, owned.id, {
+          scope().service.customScope.updateMine(owner.id, resource, owned.id, {
             name: 'Personal_renamed',
             description: '',
             tools: owned.tools,
@@ -798,11 +855,18 @@ describe('accessToken.test.ts', { concurrency: false }, () => {
             'invalid_token',
           );
         });
-        const replacement = await create(fixture, owner, {
-          name: 'Renamed scope',
-          scope: renamed.scope,
-        });
-        await asUser(owner, () => scope().service.customScope.deleteMine(owner.id, owned.id));
+        const replacement = await create(
+          fixture,
+          owner,
+          {
+            name: 'Renamed scope',
+            scope: renamed.scope,
+          },
+          resource,
+        );
+        await asUser(owner, () =>
+          scope().service.customScope.deleteMine(owner.id, resource, owned.id),
+        );
         await context(async () => {
           assert.equal(
             (await scope().model.authorization.getById(replacement.id))?.state,

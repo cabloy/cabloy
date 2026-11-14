@@ -13,6 +13,7 @@ import {
   getMcpIssuer,
   OAuthError,
   resolveMcpResource,
+  resolveMcpInstance,
   sha256,
   validateConfiguredRedirectUri,
 } from 'vona-module-mcp-auth';
@@ -45,7 +46,7 @@ describe('registration.test.ts', { concurrency: false }, () => {
     release = await acquireTestLock('test-mcp');
     original = structuredClone(app.config.modules['mcp-auth']);
     Object.assign(app.config.modules['mcp-auth'], {
-      ...defaultConfig(app),
+      ...defaultConfig(),
       registration: {
         maxBodyBytes: 16384,
         maxRedirectUris: 4,
@@ -57,7 +58,7 @@ describe('registration.test.ts', { concurrency: false }, () => {
       tokenTtl: 900,
       refreshTokenTtl: 604800,
     } satisfies IMcpAuthConfig);
-    resource = resolveMcpResource(app, new URL(getMcpIssuer(app)).host);
+    resource = resolveMcpResource(app, new URL(getMcpIssuer(app)).host, 'web');
   });
 
   after(async () => {
@@ -75,7 +76,10 @@ describe('registration.test.ts', { concurrency: false }, () => {
 
   it('persists default grants for a public registration and resolves it across contexts', async () => {
     const response = await app.bean.executor.mockCtx(() =>
-      service().register({ ...publicRequest, grant_types: undefined }, resource),
+      service().register(
+        { ...publicRequest, grant_types: undefined },
+        resolveMcpInstance(app, new URL(getMcpIssuer(app)).host),
+      ),
     );
     clientIds.push(response.client_id);
     assert.match(response.client_id, /^[\w-]{43}$/);
@@ -91,7 +95,7 @@ describe('registration.test.ts', { concurrency: false }, () => {
       const row = await model().get({ oauthClientId: response.client_id });
       assert.ok(row);
       assert.equal(row.name, publicRequest.client_name);
-      assert.equal(row.resource, resource.resource);
+      assert.equal(row.issuer, getMcpIssuer(app));
       assert.equal(row.scope, 'mcp:all');
       assert.equal(row.state, 'active');
       assert.deepEqual(row.grantTypes, ['authorization_code']);
@@ -104,9 +108,14 @@ describe('registration.test.ts', { concurrency: false }, () => {
       assert.equal(resolved?.scope, 'mcp:all');
       assert.deepEqual(resolved?.redirectUris, [redirectUri]);
       assert.equal(await service().resolve('unregistered-client', resource.resource), undefined);
-      assert.equal(
-        await service().resolve(response.client_id, 'https://other.example.test/mcp'),
-        undefined,
+      await assert.rejects(
+        () => service().resolve(response.client_id, 'https://other.example.test/mcp'),
+        error => error instanceof OAuthError && error.oauthError === 'invalid_target',
+      );
+      assert.deepEqual(
+        (await service().resolve(response.client_id, `${getMcpIssuer(app)}/admin`))?.resources,
+        [`${getMcpIssuer(app)}/admin`],
+        'issuer registration resolves independently for another enabled site',
       );
     });
 
@@ -125,7 +134,10 @@ describe('registration.test.ts', { concurrency: false }, () => {
       ['mcp:read mcp:all', 'mcp:all'],
     ]) {
       const response = await app.bean.executor.mockCtx(() =>
-        service().register({ ...publicRequest, application_type: 'native', scope }, resource),
+        service().register(
+          { ...publicRequest, application_type: 'native', scope },
+          resolveMcpInstance(app, new URL(getMcpIssuer(app)).host),
+        ),
       );
       clientIds.push(response.client_id);
       assert.equal(response.scope, expected);
@@ -142,7 +154,10 @@ describe('registration.test.ts', { concurrency: false }, () => {
 
   it('does not normalize invalid persisted registration scopes into authority', async () => {
     const response = await app.bean.executor.mockCtx(() =>
-      service().register({ ...publicRequest, scope: 'mcp:read' }, resource),
+      service().register(
+        { ...publicRequest, scope: 'mcp:read' },
+        resolveMcpInstance(app, new URL(getMcpIssuer(app)).host),
+      ),
     );
     clientIds.push(response.client_id);
     await app.bean.executor.mockCtx(async () => {
@@ -171,7 +186,7 @@ describe('registration.test.ts', { concurrency: false }, () => {
             grant_types: [...grant_types],
             scope: 'mcp:read',
           },
-          resource,
+          resolveMcpInstance(app, new URL(getMcpIssuer(app)).host),
         ),
       );
       clientIds.push(response.client_id);
@@ -194,13 +209,16 @@ describe('registration.test.ts', { concurrency: false }, () => {
 
   it('rejects resource and tenant selectors instead of accepting caller-authored authority', async () => {
     const client = await app.bean.executor.mockCtx(() =>
-      service().register(publicRequest, resource),
+      service().register(publicRequest, resolveMcpInstance(app, new URL(getMcpIssuer(app)).host)),
     );
     clientIds.push(client.client_id);
     await app.bean.executor.mockCtx(async () => {
       for (const binding of [
-        { ...resource, resource: 'https://other.example.test/mcp' },
-        { ...resource, instanceName: 'foreign' },
+        {
+          ...resolveMcpInstance(app, new URL(getMcpIssuer(app)).host),
+          issuer: 'https://other.example.test/mcp',
+        },
+        { ...resolveMcpInstance(app, new URL(getMcpIssuer(app)).host), instanceName: 'foreign' },
       ]) {
         await assert.rejects(
           () => service().register(publicRequest, binding),
@@ -211,7 +229,11 @@ describe('registration.test.ts', { concurrency: false }, () => {
     await app.bean.executor.mockCtx(
       async () => {
         await assert.rejects(
-          () => service().register(publicRequest, resource),
+          () =>
+            service().register(
+              publicRequest,
+              resolveMcpInstance(app, new URL(getMcpIssuer(app)).host),
+            ),
           error => error instanceof OAuthError && error.oauthError === 'invalid_target',
         );
         assert.equal(await service().resolve(client.client_id, resource.resource), undefined);
@@ -242,7 +264,7 @@ describe('registration.test.ts', { concurrency: false }, () => {
           client_id: 'caller-authored-id',
           client_secret: 'caller-authored-secret',
         },
-        resource,
+        resolveMcpInstance(app, new URL(getMcpIssuer(app)).host),
       ),
     );
     try {
@@ -265,7 +287,7 @@ describe('registration.test.ts', { concurrency: false }, () => {
         for (const key of Object.keys(extensions)) {
           assert.equal(Object.hasOwn(row, key), false, key);
         }
-        assert.equal(row.resource, resource.resource);
+        assert.equal(row.issuer, getMcpIssuer(app));
         assert.equal(row.state, 'active');
         assert.equal(row.scope, 'mcp:read');
         assert.equal(row.secretSha256, null);
@@ -367,24 +389,30 @@ describe('registration.test.ts', { concurrency: false }, () => {
     for (const [, request, code] of invalidRequests) {
       await app.bean.executor.mockCtx(async () => {
         await assert.rejects(
-          () => service().register(request as IMcpAuthRegistrationRequest, resource),
+          () =>
+            service().register(
+              request as IMcpAuthRegistrationRequest,
+              resolveMcpInstance(app, new URL(getMcpIssuer(app)).host),
+            ),
           error => error instanceof OAuthError && error.oauthError === code,
         );
       });
     }
     const rows = await app.bean.executor.mockCtx(() =>
-      model().builderSelect().where({ resource: resource.resource }),
+      model()
+        .builderSelect()
+        .where({ issuer: getMcpIssuer(app) }),
     );
     assert.deepEqual(rows.map(row => row.oauthClientId).sort(), clientIds.toSorted());
   });
 
   it('allows loopback redirects by default and persists confidential secret digests', async () => {
-    assert.equal(defaultConfig(app).allowLoopbackHttp, true);
+    assert.equal(defaultConfig().allowLoopbackHttp, true);
     assert.equal(app.config.modules['mcp-auth'].allowLoopbackHttp, true);
     const loopback = await app.bean.executor.mockCtx(() =>
       service().register(
         { ...publicRequest, redirect_uris: ['http://127.0.0.1:43123/callback'] },
-        resource,
+        resolveMcpInstance(app, new URL(getMcpIssuer(app)).host),
       ),
     );
     clientIds.push(loopback.client_id);
@@ -397,7 +425,7 @@ describe('registration.test.ts', { concurrency: false }, () => {
           client_name: `Confidential ${randomUUID()}`,
           token_endpoint_auth_method: 'client_secret_basic',
         },
-        resource,
+        resolveMcpInstance(app, new URL(getMcpIssuer(app)).host),
       ),
     );
     clientIds.push(confidential.client_id);
@@ -412,6 +440,7 @@ describe('registration.test.ts', { concurrency: false }, () => {
 
     const config = app.config.modules['mcp-auth'] as IMcpAuthConfig;
     const allowLoopbackHttp = config.allowLoopbackHttp;
+    const issuerBinding = resolveMcpInstance(app, new URL(getMcpIssuer(app)).host);
     try {
       config.allowLoopbackHttp = false;
       for (const redirect of [
@@ -433,7 +462,7 @@ describe('registration.test.ts', { concurrency: false }, () => {
           () =>
             service().register(
               { ...publicRequest, redirect_uris: ['http://127.0.0.1:43124/callback'] },
-              resource,
+              issuerBinding,
             ),
           error => error instanceof OAuthError && error.oauthError === expectedError,
         );

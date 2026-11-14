@@ -155,6 +155,18 @@ When the active edition and installed modules provide `@Passport.rbac(...)` and 
 
 For the authoring example and metadata boundary, read [Controller Guide](../../../repo-docs/backend/controller-guide.md#rbac-presentation-metadata) and [Controller AOP Guide](../../../repo-docs/backend/controller-aop-guide.md#rbac-presentation-metadata).
 
+### Generated CRUD menu and MCP site adaptation
+
+CRUD generation provides an ordinary Admin baseline: generated MCP Actions use `ssrSites: ['basic-siteadmin:admin']` in Basic or `ssrSites: ['start-siteadmin:admin']` in Start, and the full CRUD command generates an ordinary Admin menu. Keep this a generation-time default: omitted runtime `ssrSites` admits every Site, while `[]` is invalid.
+
+After generation and before declaring the backend thread complete:
+
+- Resolve the intended audience and target SSR Site from the business requirements. If the target is unclear, ask rather than infer it from the module, suite, frontend flavor, or URL.
+- Read the target SSR Site definition and its menu groups. For a non-default Site, adapt the generated menu's public package import, Site options type, `site` selector, and `group`, together with every relevant MCP Action's `ssrSites`.
+- Menu `site` selectors are unchanged; both menu `site` and MCP `ssrSites` use SSR Site bean onion names. Keep these selectors distinct from external simple Site IDs: `/mcp/:ssrSiteId`, OAuth resource bindings, and frontend `SITE_ID` still use actual `siteId` values. Do not put those IDs in `ssrSites` or derive them from a selector suffix, public path, or flavor name; there is no dual-format compatibility.
+- Check menu and MCP exposure together against the business requirements; use different or multiple MCP Sites only when explicitly required. Site membership does not replace RBAC, active-instance scope, or business authorization.
+- Verify the resulting menu placement and MCP Site membership through the narrowest applicable existing checks. Treat CLI output as a baseline, not evidence that business-specific site adaptation is complete.
+
 ### Conditional generated MCP description completion
 
 When generation adds locale-backed `@Mcp.tool()` descriptions or `TODO(mcp-description)` comments, complete this step **after implementing the business behavior and before declaring the backend thread complete**. The CLI reminder calls for AI or manual follow-up; it does not complete the descriptions for you.

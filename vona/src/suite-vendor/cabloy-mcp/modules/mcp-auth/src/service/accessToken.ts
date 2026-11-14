@@ -27,11 +27,12 @@ import { normalizeToolIdentities, toolIdentityKey } from './customScope.ts';
 export class ServiceAccessToken extends BeanBase {
   async mine(
     userId: TableIdentity,
+    resource: string,
     query: TypeQueryInput<typeof accessTokenMineQuery>,
   ): Promise<DtoAccessTokenMineRes> {
     const result = await this.scope.model.authorization.selectAndCount({
       ...$compileQuery(this.scope.model.authorization, accessTokenMineQuery, query, {
-        scopeWhere: { userId, issuanceKind: 'personal' },
+        scopeWhere: { userId, resource, issuanceKind: 'personal' },
       }),
       columns: [...accessTokenColumns, 'state'],
     });
@@ -56,6 +57,7 @@ export class ServiceAccessToken extends BeanBase {
 
   async createMine(
     userId: TableIdentity,
+    resource: string,
     authId: TableIdentity | undefined,
     data: DtoAccessTokenCreate,
   ): Promise<DtoAccessTokenCreateRes> {
@@ -71,7 +73,6 @@ export class ServiceAccessToken extends BeanBase {
     }
     const scope = data.scope === undefined ? 'mcp:read' : data.scope;
     if (!isMcpScope(scope)) throw new OAuthError('invalid_scope');
-    const resource = getMcpIssuer(this.app);
     const config = this.scope.service.authorization.configForResource(resource);
     const expiresIn = data.expiresIn === undefined ? config.personalTokenTtl : data.expiresIn;
     if (
@@ -83,107 +84,114 @@ export class ServiceAccessToken extends BeanBase {
     }
     const passport = await this.scope.service.authorization.loadMcpPassport(
       userId,
+      resource,
       authId,
       'access_denied',
       403,
     );
-    return await this.scope.service.customScope.withDefinitions(userId, [scope], async () => {
-      let scopeTools: IMcpToolIdentity[] = [];
-      if (isMcpCustomScope(scope)) {
-        scopeTools = normalizeToolIdentities(
-          (await this.scope.service.customScope.resolve(userId, scope)).tools,
-        );
-        // A separate ordinary context uses fresh authority without changing browser Passport provenance.
-        const app = this.app;
-        const catalog = await this.bean.executor.newCtxIsolate(
-          async () => {
-            await app.bean.passport.setCurrent(passport);
-            return await app.scope('mcp-auth').service.customScope.catalog();
-          },
-          { instanceName: this.ctx.instanceName, innerAccess: false },
-        );
-        const available = new Set(catalog.map(toolIdentityKey));
-        if (scopeTools.some(tool => !available.has(toolIdentityKey(tool))))
-          throw new OAuthError('invalid_scope');
-      }
-      const tokenExpiresAt = (Math.floor(Date.now() / 1000) + expiresIn) * 1000;
-      if (
-        !Number.isSafeInteger(tokenExpiresAt) ||
-        !Number.isFinite(new Date(tokenExpiresAt).getTime())
-      ) {
-        throw new OAuthError('invalid_request');
-      }
-      const nonce = randomBytes(32).toString('base64url');
-      const row = await this.scope.model.authorization.insert({
-        issuanceKind: 'personal',
-        name: data.name.trim(),
-        clientId: null,
-        oauthClientId: null,
-        issuer: getMcpIssuer(this.app),
-        resource,
-        userId,
-        authId: passport.auth!.id,
-        scope,
-        requestedScope: scope,
-        scopeTools,
-        scopeReadOnly: scope === 'mcp:read',
-        state: 'tokenActive',
-        tokenDigest: sha256(nonce),
-        tokenVersion: 1,
-        tokenExpiresAt,
-        expiresAt: tokenExpiresAt,
-        refreshEnabled: false,
-        refreshGeneration: 1,
-        refreshExpiresAt: 0,
-        requestDigest: '',
-        redirectUri: '',
-        oauthState: '',
-        codeChallenge: '',
-        pendingExpiresAt: 0,
-        codeDigest: '',
-        codeExpiresAt: 0,
-      });
-      const payload: IMcpPersonalTokenPayload = {
-        userId,
-        authId: passport.auth!.id,
-        token: nonce,
-        mcp: {
-          version: 1,
-          kind: 'personal',
-          grantId: String(row.id),
-          issuer: row.issuer,
-          resource,
-          instanceName: this.ctx.instanceName!,
-          scope,
-          generation: 1,
-          refreshEnabled: false,
-          refreshExpiresAt: 0,
-          tokenExpiresAt,
-        },
-      };
-      let accessToken: string;
-      try {
-        // Preserve the same second-aligned deadline even if persistence took time.
-        const remainingSeconds = tokenExpiresAt / 1000 - Math.floor(Date.now() / 1000);
-        if (remainingSeconds <= 0) throw new OAuthError('invalid_request');
-        accessToken = await this.bean.jwt
-          .get('mcpAccess')
-          .sign(payload, { expiresIn: remainingSeconds });
-      } catch (error) {
-        await this.scope.model.authorization.delete({
-          id: row.id,
-          userId,
+    return await this.scope.service.customScope.withDefinitions(
+      userId,
+      resource,
+      [scope],
+      async () => {
+        let scopeTools: IMcpToolIdentity[] = [];
+        if (isMcpCustomScope(scope)) {
+          scopeTools = normalizeToolIdentities(
+            (await this.scope.service.customScope.resolve(userId, resource, scope)).tools,
+          );
+          // A separate ordinary context uses fresh authority without changing browser Passport provenance.
+          const app = this.app;
+          const catalog = await this.bean.executor.newCtxIsolate(
+            async () => {
+              await app.bean.passport.setCurrent(passport);
+              return await app.scope('mcp-auth').service.customScope.catalog(resource);
+            },
+            { instanceName: this.ctx.instanceName, innerAccess: false },
+          );
+          const available = new Set(catalog.map(toolIdentityKey));
+          if (scopeTools.some(tool => !available.has(toolIdentityKey(tool))))
+            throw new OAuthError('invalid_scope');
+        }
+        const tokenExpiresAt = (Math.floor(Date.now() / 1000) + expiresIn) * 1000;
+        if (
+          !Number.isSafeInteger(tokenExpiresAt) ||
+          !Number.isFinite(new Date(tokenExpiresAt).getTime())
+        ) {
+          throw new OAuthError('invalid_request');
+        }
+        const nonce = randomBytes(32).toString('base64url');
+        const row = await this.scope.model.authorization.insert({
           issuanceKind: 'personal',
+          name: data.name.trim(),
+          clientId: null,
+          oauthClientId: null,
+          issuer: getMcpIssuer(this.app),
+          resource,
+          userId,
+          authId: passport.auth!.id,
+          scope,
+          requestedScope: scope,
+          scopeTools,
+          scopeReadOnly: scope === 'mcp:read',
+          state: 'tokenActive',
+          tokenDigest: sha256(nonce),
+          tokenVersion: 1,
+          tokenExpiresAt,
+          expiresAt: tokenExpiresAt,
+          refreshEnabled: false,
+          refreshGeneration: 1,
+          refreshExpiresAt: 0,
+          requestDigest: '',
+          redirectUri: '',
+          oauthState: '',
+          codeChallenge: '',
+          pendingExpiresAt: 0,
+          codeDigest: '',
+          codeExpiresAt: 0,
         });
-        throw error;
-      }
-      this.$logger.debug('mcp.personal_token.created');
-      return { id: row.id, accessToken, resource, scope, tokenExpiresAt };
-    });
+        const payload: IMcpPersonalTokenPayload = {
+          userId,
+          authId: passport.auth!.id,
+          token: nonce,
+          mcp: {
+            version: 1,
+            kind: 'personal',
+            grantId: String(row.id),
+            issuer: row.issuer,
+            resource,
+            instanceName: this.ctx.instanceName!,
+            scope,
+            generation: 1,
+            refreshEnabled: false,
+            refreshExpiresAt: 0,
+            tokenExpiresAt,
+          },
+        };
+        let accessToken: string;
+        try {
+          // Preserve the same second-aligned deadline even if persistence took time.
+          const remainingSeconds = tokenExpiresAt / 1000 - Math.floor(Date.now() / 1000);
+          if (remainingSeconds <= 0) throw new OAuthError('invalid_request');
+          accessToken = await this.bean.jwt
+            .get('mcpAccess')
+            .sign(payload, { expiresIn: remainingSeconds });
+        } catch (error) {
+          await this.scope.model.authorization.delete({
+            id: row.id,
+            userId,
+            resource,
+            issuanceKind: 'personal',
+          });
+          throw error;
+        }
+        this.$logger.debug('mcp.personal_token.created');
+        return { id: row.id, accessToken, resource, scope, tokenExpiresAt };
+      },
+    );
   }
 
-  async deleteMine(userId: TableIdentity, id: TableIdentity): Promise<void> {
-    await this.scope.model.authorization.delete({ id, userId, issuanceKind: 'personal' });
+  async deleteMine(userId: TableIdentity, resource: string, id: TableIdentity): Promise<void> {
+    await this.scope.model.authorization.delete({ id, userId, resource, issuanceKind: 'personal' });
     this.$logger.debug('mcp.personal_token.deleted');
   }
 }

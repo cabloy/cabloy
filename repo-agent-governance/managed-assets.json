@@ -25,7 +25,7 @@
     {
       "adapter": "codex",
       "category": "skill",
-      "sha256": "548a1ff106c04efafbecd6485af0bd90ddd073809f3dea477ae6beac98e97371",
+      "sha256": "700b22a9376398a919f11a9a21b3602fc516d2f308190edc251df9c2614e250e",
       "source": "skills/cabloy-backend-scaffold/SKILL.md",
       "target": ".agents/skills/cabloy-backend-scaffold/SKILL.md"
     },
@@ -361,7 +361,7 @@
     {
       "adapter": "claude",
       "category": "skill",
-      "sha256": "548a1ff106c04efafbecd6485af0bd90ddd073809f3dea477ae6beac98e97371",
+      "sha256": "700b22a9376398a919f11a9a21b3602fc516d2f308190edc251df9c2614e250e",
       "source": "skills/cabloy-backend-scaffold/SKILL.md",
       "target": ".claude/skills/cabloy-backend-scaffold/SKILL.md"
     },
@@ -711,7 +711,7 @@
     {
       "adapter": "cursor",
       "category": "skill",
-      "sha256": "548a1ff106c04efafbecd6485af0bd90ddd073809f3dea477ae6beac98e97371",
+      "sha256": "700b22a9376398a919f11a9a21b3602fc516d2f308190edc251df9c2614e250e",
       "source": "skills/cabloy-backend-scaffold/SKILL.md",
       "target": ".cursor/skills/cabloy-backend-scaffold/SKILL.md"
     },

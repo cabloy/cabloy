@@ -38,6 +38,7 @@ import {
   summarizeToolQueries,
   toolSchema,
 } from 'vona-module-cabloy-mcp';
+import { getMcpIssuer } from 'vona-module-mcp-auth';
 import z from 'zod';
 
 import { ControllerCatalog } from '../src/controller/catalog.ts';
@@ -266,6 +267,7 @@ describe('businessTools.test.ts', { concurrency: false, timeout: 60000 }, () => 
         Object.defineProperty(application, 'meta', { value: meta });
         const client = await connect(
           await createControllerToolServer(application, 'mcp:read', {
+            ssrSiteId: 'web',
             includeTool: () => false,
           }),
         );
@@ -1043,9 +1045,13 @@ describe('businessTools.test.ts', { concurrency: false, timeout: 60000 }, () => 
       const clients: Awaited<ReturnType<typeof connect>>[] = [];
       try {
         await app.bean.passport.setCurrent(passport);
-        const all = await connect(await createSharedBusinessToolServer(app, 'mcp:all'));
+        const all = await connect(
+          await createSharedBusinessToolServer(app, `${getMcpIssuer(app)}/web`, 'mcp:all'),
+        );
         clients.push(all);
-        const read = await connect(await createSharedBusinessToolServer(app, 'mcp:read'));
+        const read = await connect(
+          await createSharedBusinessToolServer(app, `${getMcpIssuer(app)}/web`, 'mcp:read'),
+        );
         clients.push(read);
         const names = async (client: typeof all) => {
           const listed = await client.request('tools/list');
@@ -1114,7 +1120,9 @@ describe('businessTools.test.ts', { concurrency: false, timeout: 60000 }, () => 
   it('keeps all eight student tools out of default/anonymous discovery and validates their authorized shared contracts', async t => {
     await app.bean.executor.mockCtx(async () => {
       assert.equal(app.bean.passport.isAuthenticated, false);
-      const anonymous = await connect(await createSharedBusinessToolServer(app, 'mcp:all'));
+      const anonymous = await connect(
+        await createSharedBusinessToolServer(app, `${getMcpIssuer(app)}/admin`, 'mcp:all'),
+      );
       try {
         const listed = await anonymous.request('tools/list');
         assert.equal(listed.error, undefined);
@@ -1153,7 +1161,11 @@ describe('businessTools.test.ts', { concurrency: false, timeout: 60000 }, () => 
       } finally {
         await standalone.close();
       }
-      const server = await createSharedBusinessToolServer(app, 'mcp:all');
+      const server = await createSharedBusinessToolServer(
+        app,
+        `${getMcpIssuer(app)}/admin`,
+        'mcp:all',
+      );
       const shared = await connect(server);
       const action = mockOwnedPerformAction(t, async () => {
         assert.fail('discovery and invalid arguments must not dispatch business Actions');
@@ -1914,7 +1926,9 @@ describe('businessTools.test.ts', { concurrency: false, timeout: 60000 }, () => 
       try {
         for (const locale of ['en-us', 'zh-cn', 'en-us'] as const) {
           app.meta.locale.current = locale;
-          const client = await connect(await createSharedBusinessToolServer(app, 'mcp:all'));
+          const client = await connect(
+            await createSharedBusinessToolServer(app, `${getMcpIssuer(app)}/admin`, 'mcp:all'),
+          );
           try {
             const listed = JSON.parse(JSON.stringify(await client.request('tools/list')));
             assert.equal(listed.error, undefined);
@@ -1972,7 +1986,9 @@ describe('businessTools.test.ts', { concurrency: false, timeout: 60000 }, () => 
   it('normalizes declared JSON dates before native request binding without broad coercion', async t => {
     if (!app.meta.modules['training-student']) return;
     await withStudentToolPermissions(async () => {
-      const server = await connect(await createSharedBusinessToolServer(app, 'mcp:all'));
+      const server = await connect(
+        await createSharedBusinessToolServer(app, `${getMcpIssuer(app)}/admin`, 'mcp:all'),
+      );
       const action = mockOwnedPerformAction(
         t,
         async (...args: Parameters<typeof app.bean.executor.performAction>) => {
@@ -2021,8 +2037,12 @@ describe('businessTools.test.ts', { concurrency: false, timeout: 60000 }, () => 
   it('binds create to the fixed POST body, wraps only its identity and blocks read scope before dispatch', async t => {
     if (!app.meta.modules['training-student']) return;
     await withStudentToolPermissions(async () => {
-      const read = await connect(await createSharedBusinessToolServer(app, 'mcp:read'));
-      const all = await connect(await createSharedBusinessToolServer(app, 'mcp:all'));
+      const read = await connect(
+        await createSharedBusinessToolServer(app, `${getMcpIssuer(app)}/admin`, 'mcp:read'),
+      );
+      const all = await connect(
+        await createSharedBusinessToolServer(app, `${getMcpIssuer(app)}/admin`, 'mcp:all'),
+      );
       const body = {
         name: '__MCP aggregate create__',
         _trainingRecords: [],
@@ -2123,8 +2143,12 @@ describe('businessTools.test.ts', { concurrency: false, timeout: 60000 }, () => 
   it('binds update to fixed PATCH params/body, acknowledges null and never replays output failures', async t => {
     if (!app.meta.modules['training-student']) return;
     await withStudentToolPermissions(async () => {
-      const read = await connect(await createSharedBusinessToolServer(app, 'mcp:read'));
-      const all = await connect(await createSharedBusinessToolServer(app, 'mcp:all'));
+      const read = await connect(
+        await createSharedBusinessToolServer(app, `${getMcpIssuer(app)}/admin`, 'mcp:read'),
+      );
+      const all = await connect(
+        await createSharedBusinessToolServer(app, `${getMcpIssuer(app)}/admin`, 'mcp:all'),
+      );
       const params = { id: '123' };
       const body = {
         name: '__MCP aggregate update__',
@@ -2323,8 +2347,12 @@ describe('businessTools.test.ts', { concurrency: false, timeout: 60000 }, () => 
   it('binds delete to fixed DELETE params, acknowledges null and never replays output failures', async t => {
     if (!app.meta.modules['training-student']) return;
     await withStudentToolPermissions(async () => {
-      const read = await connect(await createSharedBusinessToolServer(app, 'mcp:read'));
-      const all = await connect(await createSharedBusinessToolServer(app, 'mcp:all'));
+      const read = await connect(
+        await createSharedBusinessToolServer(app, `${getMcpIssuer(app)}/admin`, 'mcp:read'),
+      );
+      const all = await connect(
+        await createSharedBusinessToolServer(app, `${getMcpIssuer(app)}/admin`, 'mcp:all'),
+      );
       const params = { id: '123' };
       // Binding/output only; businessHttp owns persisted aggregate deletion and executor null proof.
       const action = mockOwnedPerformAction(
@@ -2465,7 +2493,11 @@ describe('businessTools.test.ts', { concurrency: false, timeout: 60000 }, () => 
   it('scopes tool contract sections to exact currently authorized Actions without catalog entries or dispatch', async t => {
     if (!app.meta.modules['training-student'] || !(await nativeStudentQuery())) return;
     await withStudentToolPermissions(async () => {
-      const sharedServer = await createSharedBusinessToolServer(app, 'mcp:read');
+      const sharedServer = await createSharedBusinessToolServer(
+        app,
+        `${getMcpIssuer(app)}/admin`,
+        'mcp:read',
+      );
       const clients: Awaited<ReturnType<typeof connect>>[] = [];
       const action = mockOwnedPerformAction(t, async () => {
         assert.fail('query capability discovery must never dispatch an Action');
@@ -2505,16 +2537,19 @@ describe('businessTools.test.ts', { concurrency: false, timeout: 60000 }, () => 
         const scope = 'mcp:custom:Query_capabilities_fixture' as const;
         const exact = await connect(
           await createControllerToolServer(app, scope, {
+            ssrSiteId: 'admin',
             toolAccess: [select],
           }),
         );
         const rebound = await connect(
           await createControllerToolServer(app, scope, {
+            ssrSiteId: 'admin',
             toolAccess: [{ ...select, action: 'summary' }],
           }),
         );
         const noQuery = await connect(
           await createControllerToolServer(app, scope, {
+            ssrSiteId: 'admin',
             toolAccess: catalog.filter(item => item.name === statusToolName),
           }),
         );
@@ -2647,7 +2682,9 @@ describe('businessTools.test.ts', { concurrency: false, timeout: 60000 }, () => 
     const { PublicQueryError } = orm as Record<string, any>;
     assert.equal(typeof PublicQueryError, 'function');
     await withStudentToolPermissions(async () => {
-      const client = await connect(await createSharedBusinessToolServer(app, 'mcp:read'));
+      const client = await connect(
+        await createSharedBusinessToolServer(app, `${getMcpIssuer(app)}/admin`, 'mcp:read'),
+      );
       const action = mockOwnedPerformAction(t, async () => {
         assert.fail('invalid public query must not dispatch an Action');
       });
@@ -2733,7 +2770,9 @@ describe('businessTools.test.ts', { concurrency: false, timeout: 60000 }, () => 
     const query = await nativeStudentQuery();
     if (!query) return;
     await withStudentToolPermissions(async () => {
-      const client = await connect(await createSharedBusinessToolServer(app, 'mcp:all'));
+      const client = await connect(
+        await createSharedBusinessToolServer(app, `${getMcpIssuer(app)}/admin`, 'mcp:all'),
+      );
       const context = app.ctx;
       const logger = app.bean.logger.default;
       const originalDebug = logger.debug;
@@ -2903,7 +2942,9 @@ describe('businessTools.test.ts', { concurrency: false, timeout: 60000 }, () => 
     if (!app.meta.modules['training-student']) return;
     const query = await nativeStudentQuery();
     await withStudentToolPermissions(async () => {
-      const client = await connect(await createSharedBusinessToolServer(app, 'mcp:read'));
+      const client = await connect(
+        await createSharedBusinessToolServer(app, `${getMcpIssuer(app)}/admin`, 'mcp:read'),
+      );
       const ormQuery = app.util.getModuleConfigRaw('a-orm')?.rest?.query;
       const defaults = query
         ? {}
@@ -2996,7 +3037,11 @@ describe('businessTools.test.ts', { concurrency: false, timeout: 60000 }, () => 
     if (!app.meta.modules['training-student']) return;
     await withStudentToolPermissions(async () => {
       const query = await nativeStudentQuery();
-      const server = await createSharedBusinessToolServer(app, 'mcp:read');
+      const server = await createSharedBusinessToolServer(
+        app,
+        `${getMcpIssuer(app)}/admin`,
+        'mcp:read',
+      );
       const client = await connect(server);
       const ormQuery = app.util.getModuleConfigRaw('a-orm')?.rest?.query;
       const defaults = query
@@ -3151,7 +3196,9 @@ describe('businessTools.test.ts', { concurrency: false, timeout: 60000 }, () => 
   it('binds complete view details and preserves nested content and image metadata with safe output failure', async t => {
     if (!app.meta.modules['training-student']) return;
     await withStudentToolPermissions(async () => {
-      const client = await connect(await createSharedBusinessToolServer(app, 'mcp:read'));
+      const client = await connect(
+        await createSharedBusinessToolServer(app, `${getMcpIssuer(app)}/admin`, 'mcp:read'),
+      );
       const raw = {
         id: '123',
         createdAt: new Date('2026-03-10T08:00:00.000Z'),
@@ -3252,7 +3299,11 @@ describe('businessTools.test.ts', { concurrency: false, timeout: 60000 }, () => 
       try {
         clients.push(await connect(await createBusinessToolServer(app)));
         for (const scope of ['mcp:read', 'mcp:all'] as const) {
-          clients.push(await connect(await createSharedBusinessToolServer(app, scope)));
+          clients.push(
+            await connect(
+              await createSharedBusinessToolServer(app, `${getMcpIssuer(app)}/admin`, scope),
+            ),
+          );
         }
         for (const client of clients) {
           const listed = await client.request('tools/list');
@@ -3299,10 +3350,13 @@ describe('businessTools.test.ts', { concurrency: false, timeout: 60000 }, () => 
       });
       const includeTool = (identity: { controller: string; action: string }) =>
         identity.controller === 'test-mcp.controller.toolFixture' && identity.action === 'effect';
-      const server = await createControllerToolServer(app, 'mcp:all', { includeTool });
+      const server = await createControllerToolServer(app, 'mcp:all', {
+        ssrSiteId: 'web',
+        includeTool,
+      });
       const all = await connect(server);
       const read = await connect(
-        await createControllerToolServer(app, 'mcp:read', { includeTool }),
+        await createControllerToolServer(app, 'mcp:read', { ssrSiteId: 'web', includeTool }),
       );
       const lookup = (section?: string, tool = effectToolName) =>
         all.request('tools/call', {
@@ -3481,12 +3535,16 @@ describe('businessTools.test.ts', { concurrency: false, timeout: 60000 }, () => 
   it('requires an explicit authorization scope and blocks write tools before ordinary Action dispatch', async () => {
     await app.bean.executor.mockCtx(async () => {
       await assert.rejects(
-        () => createControllerToolServer(app),
+        () => createControllerToolServer(app, undefined, { ssrSiteId: 'web' }),
         /MCP authorization scope required/,
       );
       const initial = toolFixtureState.count;
-      const read = await connect(await createControllerToolServer(app, 'mcp:read'));
-      const all = await connect(await createControllerToolServer(app, 'mcp:all'));
+      const read = await connect(
+        await createControllerToolServer(app, 'mcp:read', { ssrSiteId: 'web' }),
+      );
+      const all = await connect(
+        await createControllerToolServer(app, 'mcp:all', { ssrSiteId: 'web' }),
+      );
       try {
         const readTools = (await read.request('tools/list')).result.tools;
         const allTools = (await all.request('tools/list')).result.tools;
@@ -3612,10 +3670,10 @@ describe('businessTools.test.ts', { concurrency: false, timeout: 60000 }, () => 
     await app.bean.executor.mockCtx(async () => {
       const scope = 'mcp:custom:Exact_action-status' as const;
       await assert.rejects(
-        () => createControllerToolServer(app, scope),
+        () => createControllerToolServer(app, scope, { ssrSiteId: 'web' }),
         /MCP authorization scope required/,
       );
-      const catalogServer = await createControllerToolServer(app, 'mcp:all');
+      const catalogServer = await createControllerToolServer(app, 'mcp:all', { ssrSiteId: 'web' });
       let catalog;
       try {
         catalog = await catalogServer.catalog();
@@ -3627,12 +3685,11 @@ describe('businessTools.test.ts', { concurrency: false, timeout: 60000 }, () => 
       assert.equal(status.readOnly, true);
       assert.ok(status.description);
       const exact = await connect(
-        await createControllerToolServer(app, scope, {
-          toolAccess: [status],
-        }),
+        await createControllerToolServer(app, scope, { ssrSiteId: 'web', toolAccess: [status] }),
       );
       const rebound = await connect(
         await createControllerToolServer(app, scope, {
+          ssrSiteId: 'web',
           toolAccess: [{ ...status, action: `${status.action}Other` }],
         }),
       );
@@ -3641,6 +3698,7 @@ describe('businessTools.test.ts', { concurrency: false, timeout: 60000 }, () => 
       assert.equal(effect.readOnly, false);
       const readBound = await connect(
         await createControllerToolServer(app, scope, {
+          ssrSiteId: 'web',
           toolAccess: [status, effect],
           toolAccessReadOnly: true,
         }),
@@ -3691,7 +3749,7 @@ describe('businessTools.test.ts', { concurrency: false, timeout: 60000 }, () => 
       });
       try {
         assert.equal(appMetadata.getOwnMetadata(SymbolMcpOptions, ControllerCatalog), undefined);
-        const server = await createControllerToolServer(app, 'mcp:all');
+        const server = await createControllerToolServer(app, 'mcp:all', { ssrSiteId: 'web' });
         assert.equal(
           server.diagnostics.some(item => ['closed', 'excluded'].includes(item.action)),
           false,
@@ -3754,6 +3812,147 @@ describe('businessTools.test.ts', { concurrency: false, timeout: 60000 }, () => 
     }
   });
 
+  it('validates MCP Site onion-name declarations without accepting legacy Site IDs', async t => {
+    const invalid = [
+      [],
+      ['web'],
+      [''],
+      ['basic-siteweb:'],
+      ['basic-siteweb:web', 'basic-siteweb:web'],
+      [7],
+      'basic-siteweb:web',
+    ];
+    for (const ssrSites of invalid) {
+      assert.throws(() => Mcp.tool({ ssrSites } as any), /Invalid MCP tool ssrSites/);
+    }
+    assert.doesNotThrow(() => Mcp.tool({ ssrSites: ['basic-siteweb:web'] }));
+    await app.bean.executor.mockCtx(async () => {
+      const original = appMetadata.getOwnMetadata;
+      for (const ssrSites of [...invalid, ['missing-site:missing']]) {
+        const metadata = t.mock.method(
+          appMetadata,
+          'getOwnMetadata',
+          function (...args: Parameters<typeof original>) {
+            const value = original.apply(appMetadata, args) as IMcpToolOptions | undefined;
+            return args[0] === SymbolMcpOptions &&
+              args[1] === ControllerToolFixture.prototype &&
+              args[2] === 'status'
+              ? { ...value, ssrSites }
+              : value;
+          },
+        );
+        try {
+          await assert.rejects(
+            () =>
+              createControllerToolServer(app, 'mcp:all', {
+                ssrSiteId: 'web',
+                includeTool: () => false,
+              }),
+            /Invalid MCP tool ssrSites/,
+          );
+        } finally {
+          metadata.mock.restore();
+        }
+      }
+    });
+  });
+
+  it('maps external Site IDs to onion names before tool names, contracts and calls', async t => {
+    await app.bean.executor.mockCtx(async () => {
+      const ssr = app.scope('a-ssr').service.ssr;
+      const web = ssr.getSitesEnabled().find(site => site.name === 'basic-siteweb:web')!;
+      assert.ok(web);
+      const sites = t.mock.method(ssr, 'getSitesEnabled', () => [
+        {
+          ...web,
+          beanOptions: {
+            ...web.beanOptions,
+            options: { ...web.beanOptions.options, siteId: 'renamed-web' },
+          },
+        },
+      ]);
+      const original = appMetadata.getOwnMetadata;
+      const metadata = t.mock.method(
+        appMetadata,
+        'getOwnMetadata',
+        function (...args: Parameters<typeof original>) {
+          const value = original.apply(appMetadata, args) as IMcpToolOptions | undefined;
+          if (
+            args[0] === SymbolMcpOptions &&
+            args[1] === ControllerToolFixture.prototype &&
+            ['status', 'unsupported'].includes(args[2] as string)
+          ) {
+            return {
+              ...value,
+              ssrSites: ['basic-siteadmin:admin'],
+              name: 'invalid name for another Site',
+            };
+          }
+          return value;
+        },
+      );
+      const openapi = app.scope('a-openapi').service.openapi;
+      const originalContract = openapi.getControllerActionContract;
+      const contracts = t.mock.method(
+        openapi,
+        'getControllerActionContract',
+        function (...args: Parameters<typeof originalContract>) {
+          assert.ok(
+            args[0] !== ControllerToolFixture || !['status', 'unsupported'].includes(args[1]),
+          );
+          return originalContract.apply(openapi, args);
+        },
+      );
+      try {
+        for (const ssrSiteId of [undefined, 'web', 'admin', 'missing']) {
+          await assert.rejects(
+            () => createControllerToolServer(app, 'mcp:all', { ssrSiteId }),
+            /Enabled MCP SSR Site required/,
+          );
+        }
+        const server = await createControllerToolServer(app, 'mcp:all', {
+          ssrSiteId: 'renamed-web',
+          includeTool: identity => identity.controller === 'test-mcp.controller.toolFixture',
+        });
+        const client = await connect(server);
+        try {
+          const names = (await client.request('tools/list')).result.tools.map(
+            (tool: any) => tool.name,
+          );
+          assert.ok(
+            names.includes(scalarToolName),
+            'onion membership survives a changed external Site ID',
+          );
+          assert.ok(names.includes(arrayToolName), 'omitted membership remains unrestricted');
+          assert.ok(!names.includes(statusToolName));
+          assert.deepEqual(server.diagnostics, [], 'excluded contracts produce no diagnostics');
+          for (const name of [statusToolName, 'invalid name for another Site']) {
+            assert.equal((await client.request('tools/call', { name })).error?.code, -32602);
+            assert.equal(
+              (
+                await client.request('tools/call', {
+                  name: toolContractToolName,
+                  arguments: { tool: name },
+                })
+              ).error?.code,
+              -32602,
+            );
+          }
+          assert.deepEqual(
+            (await client.request('tools/call', { name: scalarToolName })).result.structuredContent,
+            { result: 7 },
+          );
+        } finally {
+          await client.close();
+        }
+      } finally {
+        contracts.mock.restore();
+        metadata.mock.restore();
+        sites.mock.restore();
+      }
+    });
+  });
+
   it('validates Action-local options after includeTool filtering', async t => {
     await app.bean.executor.mockCtx(async () => {
       const original = appMetadata.getOwnMetadata;
@@ -3796,7 +3995,9 @@ describe('businessTools.test.ts', { concurrency: false, timeout: 60000 }, () => 
         },
       );
       try {
-        const client = await connect(await createControllerToolServer(app, 'mcp:all'));
+        const client = await connect(
+          await createControllerToolServer(app, 'mcp:all', { ssrSiteId: 'web' }),
+        );
         try {
           const tools = (await client.request('tools/list')).result.tools;
           const status = tools.find((tool: any) => tool.name === 'mcp_test_local_status');
@@ -3816,6 +4017,7 @@ describe('businessTools.test.ts', { concurrency: false, timeout: 60000 }, () => 
         configuration = 'retired-name';
         const reused = await connect(
           await createControllerToolServer(app, 'mcp:read', {
+            ssrSiteId: 'web',
             includeTool: identity =>
               identity.controller === 'test-mcp.controller.toolFixture' &&
               identity.action === 'status',
@@ -3846,8 +4048,12 @@ describe('businessTools.test.ts', { concurrency: false, timeout: 60000 }, () => 
           ['invalid-pick', /Invalid MCP output.pick/],
         ] as const) {
           configuration = mode;
-          await assert.rejects(() => createControllerToolServer(app, 'mcp:all'), expected);
+          await assert.rejects(
+            () => createControllerToolServer(app, 'mcp:all', { ssrSiteId: 'web' }),
+            expected,
+          );
           const filtered = await createControllerToolServer(app, 'mcp:all', {
+            ssrSiteId: 'web',
             includeTool: identity =>
               identity.controller === 'test-mcp.controller.catalog' &&
               identity.action === 'categories',
@@ -3961,7 +4167,7 @@ describe('businessTools.test.ts', { concurrency: false, timeout: 60000 }, () => 
         { includeExcluded: true },
       );
       assert.equal(Object.keys(contract.paths ?? {}).length, 1);
-      const server = await createControllerToolServer(app, 'mcp:read');
+      const server = await createControllerToolServer(app, 'mcp:read', { ssrSiteId: 'web' });
       const client = await connect(server);
       try {
         assert.ok(
@@ -4041,7 +4247,9 @@ describe('businessTools.test.ts', { concurrency: false, timeout: 60000 }, () => 
   it('projects authorized student output and fails closed on invalid retained fields', async t => {
     if (!app.meta.modules['training-student']) return;
     await withStudentToolPermissions(async () => {
-      const client = await connect(await createSharedBusinessToolServer(app, 'mcp:all'));
+      const client = await connect(
+        await createSharedBusinessToolServer(app, `${getMcpIssuer(app)}/admin`, 'mcp:all'),
+      );
       const raw = {
         id: '123',
         name: '__MCP projection__',

@@ -10,6 +10,7 @@ import { ZPage } from 'zova-module-home-base';
 
 import type { AccessTokenDraft, AccessTokenItem } from '../../model/accessTokens.ts';
 
+import { getMcpResource } from '../../lib/mcpResource.ts';
 import { ModelAccessTokens } from '../../model/accessTokens.ts';
 import { ModelPersonalScopes } from '../../model/personalScopes.ts';
 
@@ -440,6 +441,12 @@ export class ControllerPageAccessTokens extends BeanControllerPageBase {
               {this.scope.locale.McpAccessTokenCreate()}
             </ZButton>
           </div>
+          <dl class="space-y-1 text-sm">
+            <dt class="text-base-content/70">{this.scope.locale.Resource()}</dt>
+            <dd data-mcp-resource class="select-text break-all font-mono">
+              {getMcpResource(this.sys.env)}
+            </dd>
+          </dl>
           <p class="text-sm text-base-content/70">{this.scope.locale.McpAccessTokenRetention()}</p>
           {loading && <p role="status">{this.scope.locale.McpAccessTokensLoading()}</p>}
           {(query?.error || this.listRefreshFailed) && (

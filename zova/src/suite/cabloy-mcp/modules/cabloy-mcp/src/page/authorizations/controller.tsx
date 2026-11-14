@@ -6,6 +6,7 @@ import { ZPage } from 'zova-module-home-base';
 
 import type { ApiApiMcpAuthAuthorizationGrantmineResponseBody } from '../../api/mcpAuthAuthorizationGrant.ts';
 
+import { getMcpResource } from '../../lib/mcpResource.ts';
 import { ModelAuthorizationRecords } from '../../model/authorizationRecords.ts';
 
 type AuthorizationItem = ApiApiMcpAuthAuthorizationGrantmineResponseBody['list'][number];
@@ -147,6 +148,12 @@ export class ControllerPageAuthorizations extends BeanControllerPageBase {
               {this.scope.locale.Refresh()}
             </ZButton>
           </div>
+          <dl class="space-y-1 text-sm">
+            <dt class="text-base-content/70">{this.scope.locale.Resource()}</dt>
+            <dd data-mcp-resource class="select-text break-all font-mono">
+              {getMcpResource(this.sys.env)}
+            </dd>
+          </dl>
           <p class="text-sm text-base-content/70">
             {this.scope.locale.McpAuthorizationsRetention()}
           </p>

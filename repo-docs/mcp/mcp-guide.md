@@ -17,28 +17,33 @@ The reusable [`@Mcp.tool()` metadata](/backend/openapi-guide#mcp-tool-metadata) 
 
 ## Runtime ownership
 
-| Component                 | Responsibility                                                                      |
-| ------------------------- | ----------------------------------------------------------------------------------- |
-| `a-openapiutils`          | Reusable MCP decorators and Action contract metadata                                |
-| Backend `cabloy-mcp`      | Shared `/mcp`, Controller-to-tool mapping, guarded dispatch and transport lifecycle |
-| Backend `mcp-auth`        | OAuth registration, authorization state, personal scopes, codes and tokens          |
-| Frontend `cabloy-mcp`     | Consent page and personal scope management within existing SSR Sites                |
-| Backend `a-test/test-mcp` | Dev/test-only diagnostics, synthetic catalog and standalone launcher support        |
+| Component                 | Responsibility                                                                                         |
+| ------------------------- | ------------------------------------------------------------------------------------------------------ |
+| `a-openapiutils`          | Reusable MCP decorators and Action contract metadata                                                   |
+| Backend `cabloy-mcp`      | Site resources `/mcp/:ssrSiteId`, Controller-to-tool mapping, guarded dispatch and transport lifecycle |
+| Backend `mcp-auth`        | OAuth registration, authorization state, personal scopes, codes and tokens                             |
+| Frontend `cabloy-mcp`     | Consent page and personal scope management within existing SSR Sites                                   |
+| Backend `a-test/test-mcp` | Dev/test-only diagnostics, synthetic catalog and standalone launcher support                           |
 
 The backend `cabloy-mcp` suite contains only `cabloy-mcp` and `mcp-auth`. Fixtures live separately at `vona/src/suite-vendor/a-test/modules/test-mcp`; the runtime/auth suite does not depend on them.
 
-## Shared endpoint and tool admission
+<a id="shared-endpoint-and-tool-admission"></a>
 
-The normal endpoint is **authenticated shared `/mcp`**, served on Vona's existing listener. Recognized dev/test/prod modes use the same OAuth, business-authorization and instance boundary. Production requires an explicit trusted public `server.serve.protocol`/`host` pair. Unknown modes, not-ready, closing, disabled state and invalid required authority configuration fail closed. The integration is enabled by default; only literal `CABLOY_MCP_ENABLED=false` disables its environment-derived default. Ordinary application configuration overrides remain supported.
+## Site resources and tool admission
+
+The normal endpoints are **authenticated `/mcp/:ssrSiteId` resources**, served on Vona's existing listener. For example, `/mcp/commerce` addresses the `commerce` SSR Site, while `/mcp/web` addresses the `web` SSR Site. Use the Site's simple ID, not its public-path prefix, flavor name or bean selector. Each resource has its own catalog and authorization bindings even when Sites share a backend and instance. The shared authorization-server issuer remains `${origin}/mcp`; `/mcp/auth`, `/mcp/token` and `/mcp/register` remain shared authorization endpoints. Bare `/mcp` is no longer a business endpoint and has no compatibility redirect or default-Site fallback. Existing clients must reconnect to an explicit Site resource and obtain new authorization.
+
+Recognized dev/test/prod modes use the same OAuth, business-authorization and instance boundary. Production requires an explicit trusted public `server.serve.protocol`/`host` pair. Unknown modes, not-ready, closing, disabled state and invalid required authority configuration fail closed. The integration is enabled by default; only literal `CABLOY_MCP_ENABLED=false` disables its environment-derived default. Ordinary application configuration overrides remain supported.
 
 A tool must satisfy every construction requirement:
 
 1. Its Controller is enabled and its Action has a registered route.
 2. It passes the server-owned `includeTool` predicate, when supplied.
 3. It has its own Action-level `@Mcp.tool(options)` metadata; empty options still opt in.
-4. Its request/response contract is supported by the mapper.
+4. Its optional `ssrSites` selection admits the requested Site by its SSR Site bean onion name, for example `commerce-siteweb:commerce`, not its simple ID. Omitted `ssrSites` means every Site, while an explicit empty list is invalid; simple IDs have no compatibility fallback.
+5. Its request/response contract is supported by the mapper.
 
-A Resource declaration is not required. Module capability and Controller `meta.mode` filtering already occur during startup; MCP does not repeat them. Loaded test or synthetic Controllers can contribute tools if they satisfy the same predicate. The standalone launcher composes exactly three `commerce_*` fixtures. Shared construction is independent: those Actions can also appear when `test-mcp` is active and they satisfy the same admission requirements. Their presence does not make shared `/mcp` anonymous.
+A Resource declaration is not required. Module capability and Controller `meta.mode` filtering already occur during startup; MCP does not repeat them. Loaded test or synthetic Controllers can contribute tools if they satisfy the same predicate. The standalone launcher composes exactly three `commerce_*` fixtures. Shared construction is independent: those Actions can also appear when `test-mcp` is active and they satisfy the same admission requirements. Their presence does not make a site resource anonymous.
 
 Undecorated Actions, including future additions, are closed before names, collisions, contract/schema extraction and diagnostics. Only Action-level decoration is supported; Controller-level decoration is rejected, and Controller defaults are not inherited. `Mcp.exclude` and `SymbolMcpExclude` are removed without backwards compatibility: omit the tool decorator to keep an Action closed. Unsupported opted-in Actions are omitted with server-side diagnostics, not approximated by dropping their HTTP semantics. This admission change does not change MCP wire transport or OAuth.
 
@@ -48,7 +53,9 @@ OAuth scopes are ceilings, not business-permission grants:
 
 - `mcp:read` permits only tools classified as read-only; other tools are hidden and known-name calls are rejected before dispatch.
 - `mcp:all` permits both classifications within the admitted catalog, subject to independent business authority.
-- A personal `mcp:custom:<name>` scope restricts access to exact selected tools within the original request and registered client ceiling. It never grants business permissions.
+- A personal `mcp:custom:<name>` scope restricts access to exact selected tools within the original request and registered client ceiling. It belongs to one Site resource; the same name on another Site is a different definition. It never grants business permissions.
+
+OAuth grants and personal access tokens are also bound to the exact Site resource. A credential for `/mcp/commerce` cannot be used at `/mcp/web`, and a known tool name or contract helper cannot cross that boundary. External `/mcp/:ssrSiteId` URLs, OAuth resource bindings and frontend `SITE_ID` keep simple Site IDs, not the bean onion names used by `ssrSites`. Account Security management uses the current frontend `SITE_ID` for its Site-scoped scopes, authorizations and access tokens; switching Sites does not copy those records.
 
 Discovery checks the current Action guards afresh and sequentially for each scope-eligible tool, without performing business reads or writes. Calls independently dispatch through the ordinary Action executor with **`innerAccess: false`**. Discovery is not a reusable grant: guards, RBAC, serialization and current-instance scope still apply, including after permission revocation.
 
@@ -56,7 +63,7 @@ Discovery checks the current Action guards afresh and sequentially for each scop
 
 ## Rate-limit boundary
 
-Both limiters remain opt-in. Shared `/mcp` and the managed dedicated local HTTP listener use the common transport's configured aggregate gate once per accepted exchange, after transport/body checks and the executor's initial lookup; earlier rejects are not counted. Controller tools separately retain identity policies on their real target Actions. See [Rate Limit Guide — MCP admission and error mapping](/backend/rate-limit-guide#mcp-admission-and-error-mapping) for the exact boundary, subject/IP caveat, shared budget, and safe error contracts.
+Both limiters remain opt-in. Site resources `/mcp/:ssrSiteId` and the managed dedicated local HTTP listener use the common transport's configured aggregate gate once per accepted exchange, after transport/body checks and the executor's initial lookup; earlier rejects are not counted. Controller tools separately retain identity policies on their real target Actions. See [Rate Limit Guide — MCP admission and error mapping](/backend/rate-limit-guide#mcp-admission-and-error-mapping) for the exact boundary, subject/IP caveat, shared budget, and safe error contracts.
 
 ## Mapping Action contracts
 
@@ -75,7 +82,7 @@ Object responses become structured content directly. Scalar and array responses 
 
 An undefined result or a missing object resource represented by null produces safe `Resource not found`; authorization, Action and output-validation failures produce safe `Action failed`. Invalid arguments are protocol errors.
 
-`output.pick` applies a top-level field allowlist to both the runtime result and advertised schema without changing the HTTP DTO. Projection minimizes fields; it is not anonymization or authorization. `name`, `description`, `readOnly`, `output.pick` and `discovery` are Action-local; see [MCP Controller Tools](/mcp/mcp-controller-tools#options-and-defaults) for defaults.
+`output.pick` applies a top-level field allowlist to both the runtime result and advertised schema without changing the HTTP DTO. Projection minimizes fields; it is not anonymization or authorization. `name`, `description`, `readOnly`, `ssrSites`, `output.pick` and `discovery` are Action-local; see [MCP Controller Tools](/mcp/mcp-controller-tools#options-and-defaults) for defaults.
 
 ## Retrieve a contract in a connected client
 

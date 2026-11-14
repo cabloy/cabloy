@@ -199,6 +199,7 @@ export class BeanSsrSiteBase<
       this._siteOptions = deepExtend(
         {
           envServer: {
+            API_BASE_URL: baseUrl,
             SSR_API_BASE_URL: baseUrl,
             SSR_PROD_PROTOCOL: this.app.util.protocol,
             SSR_PROD_HOST: this.app.util.host,

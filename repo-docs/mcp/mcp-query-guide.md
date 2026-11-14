@@ -6,7 +6,7 @@ Use this workflow after the client is connected and authorized. It needs no sour
 
 ## Discover, retrieve capabilities, then query
 
-1. Discover an eligible read-only business query tool and identify its **exact server name**. Clients may prepend a connection prefix or normalize a displayed name; that displayed identifier is not the lookup argument.
+1. Select the intended site's authorized connection (`/mcp/commerce` and `/mcp/web` are different resources), then discover an eligible read-only business query tool and identify its **exact server name**. Clients may prepend a connection prefix or normalize a displayed name; that displayed identifier is not the lookup argument.
 2. Call the built-in `cabloy_tool_contract` on the same server with exactly `{ "tool": "<exact server tool name>", "section": "query" }` and no extra properties. Omitting `section` returns an overview, not query bindings.
 3. Read `grammarVersion: 1`, the matching `tool`, and every applicable binding's `argumentPath`, `mode`, `capabilities`, `querySchema` and `predicates`.
 4. Build native JSON at the returned path, then call the business tool. `argumentPath: []` means flat arguments; do not add a query wrapper. Preserve other required argument locations.

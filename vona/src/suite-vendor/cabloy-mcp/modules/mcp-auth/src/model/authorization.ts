@@ -10,7 +10,7 @@ export interface IModelOptionsAuthorization extends IDecoratorModelOptions<Entit
   entity: EntityAuthorization,
   relations: {
     client: $relation.belongsTo('mcp-auth:authorization', 'mcp-auth:client', 'clientId', {
-      columns: ['id', 'oauthClientId', 'name', 'resource'],
+      columns: ['id', 'oauthClientId', 'name', 'issuer'],
     }),
   },
   cache: { entity: false, query: false },

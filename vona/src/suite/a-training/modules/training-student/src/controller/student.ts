@@ -34,6 +34,7 @@ export interface IControllerOptionsStudent extends IDecoratorControllerOptions {
 @Resource()
 export class ControllerStudent extends BeanBase {
   @Mcp.tool({
+    ssrSites: ['basic-siteadmin:admin'],
     description: $locale('StudentCreateDescription'),
     readOnly: false,
   })
@@ -45,6 +46,7 @@ export class ControllerStudent extends BeanBase {
   }
 
   @Mcp.tool({
+    ssrSites: ['basic-siteadmin:admin'],
     description: $locale('StudentSelectDescription'),
     readOnly: true,
     discovery: { output: [['list', 'items']] },
@@ -62,6 +64,7 @@ export class ControllerStudent extends BeanBase {
   }
 
   @Mcp.tool({
+    ssrSites: ['basic-siteadmin:admin'],
     description: $locale('StudentGroupDescription'),
     readOnly: true,
   })
@@ -81,6 +84,7 @@ export class ControllerStudent extends BeanBase {
   }
 
   @Mcp.tool({
+    ssrSites: ['basic-siteadmin:admin'],
     description: $locale('StudentAggregateDescription'),
     readOnly: true,
   })
@@ -100,6 +104,7 @@ export class ControllerStudent extends BeanBase {
   }
 
   @Mcp.tool({
+    ssrSites: ['basic-siteadmin:admin'],
     description: $locale('StudentViewDescription'),
     readOnly: true,
   })
@@ -114,6 +119,7 @@ export class ControllerStudent extends BeanBase {
   }
 
   @Mcp.tool({
+    ssrSites: ['basic-siteadmin:admin'],
     description: $locale('StudentUpdateDescription'),
     readOnly: false,
   })
@@ -128,6 +134,7 @@ export class ControllerStudent extends BeanBase {
   }
 
   @Mcp.tool({
+    ssrSites: ['basic-siteadmin:admin'],
     description: $locale('StudentSummaryDescription'),
     output: {
       pick: ['id', 'name', 'level', 'levelTitle', 'descriptionLength', 'summaryText'],
@@ -151,6 +158,7 @@ export class ControllerStudent extends BeanBase {
   }
 
   @Mcp.tool({
+    ssrSites: ['basic-siteadmin:admin'],
     description: $locale('StudentDeleteDescription'),
     readOnly: false,
   })

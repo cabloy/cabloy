@@ -14,13 +14,14 @@ import { authorizationGrantMineQuery } from '../dto/authorizationGrantMineReq.ts
 export class ServiceAuthorizationGrant extends BeanBase {
   async mine(
     userId: TableIdentity,
+    resource: string,
     query: TypeQueryInput<typeof authorizationGrantMineQuery>,
   ): Promise<DtoAuthorizationGrantMineRes> {
     const result = await this.scope.model.authorization.selectAndCount({
       ...$compileQuery(this.scope.model.authorization, authorizationGrantMineQuery, query, {
-        scopeWhere: { userId, issuanceKind: 'oauth' },
+        scopeWhere: { userId, resource, issuanceKind: 'oauth' },
       }),
-      columns: [...authorizationGrantColumns, 'clientId', 'oauthClientId'],
+      columns: [...authorizationGrantColumns, 'clientId', 'oauthClientId', 'issuer'],
       include: { client: true },
     });
     return {
@@ -38,7 +39,7 @@ export class ServiceAuthorizationGrant extends BeanBase {
         refreshExpiresAt: row.refreshExpiresAt,
         expiresAt: row.expiresAt,
         clientName:
-          (row.client?.oauthClientId === row.oauthClientId && row.client.resource === row.resource
+          (row.client?.oauthClientId === row.oauthClientId && row.client.issuer === row.issuer
             ? row.client.name
             : undefined) ||
           row.oauthClientId ||
@@ -47,15 +48,15 @@ export class ServiceAuthorizationGrant extends BeanBase {
     };
   }
 
-  async revokeMine(userId: TableIdentity, id: TableIdentity): Promise<void> {
+  async revokeMine(userId: TableIdentity, resource: string, id: TableIdentity): Promise<void> {
     await this.scope.model.authorization
       .builderSelect()
-      .where({ id, userId, issuanceKind: 'oauth' })
+      .where({ id, userId, resource, issuanceKind: 'oauth' })
       .whereIn('state', ['codeReady', 'tokenActive'])
       .update({ state: 'revoked', codeDigest: '', tokenDigest: '', expiresAt: Date.now() });
   }
 
-  async deleteMine(userId: TableIdentity, id: TableIdentity): Promise<void> {
-    await this.scope.model.authorization.delete({ id, userId, issuanceKind: 'oauth' });
+  async deleteMine(userId: TableIdentity, resource: string, id: TableIdentity): Promise<void> {
+    await this.scope.model.authorization.delete({ id, userId, resource, issuanceKind: 'oauth' });
   }
 }
