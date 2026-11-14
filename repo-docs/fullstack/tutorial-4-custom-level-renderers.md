@@ -126,11 +126,13 @@ npm run build:zova:web
 npm run deps:vona
 ```
 
-If backend-side type consumers still cannot see the new shared renderer types even though the generated `.zova-rest` artifacts are already correct after the normal sync flow, treat it as local dependency drift and rebuild `vona/node_modules` and reinstall dependencies:
+If backend-side type consumers still cannot see the new shared renderer types after the paired build and normal `npm run deps:vona` synchronization, restart an affected running TypeScript/Vona process if one is present. If the relevant generated `.zova-rest` output is not already known to be correct, make a quick confirmation; if it is wrong, return to the build chain. Only when the output is correct and stale behavior remains should you treat it as local dependency drift and recover the local installation:
 
 ```bash
 cd vona && rm -rf node_modules && pnpm install
 ```
+
+This is an exceptional recovery step, not a routine prerequisite; do not hand-edit generated manifests, links, lockfiles, or `.zova-rest` packages.
 
 2. make sure the local dev workflow is running:
 

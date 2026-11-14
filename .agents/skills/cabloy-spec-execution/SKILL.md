@@ -133,8 +133,8 @@ Reuse applicable, already-verified system assurance rather than requalifying unc
 For contract-sensitive work:
 
 - forward chain: establish backend contract truth, inspect OpenAPI, regenerate Zova consumers, then perform thin frontend follow-up;
-- reverse chain: build the affected Zova flavor with both SSR and REST outputs, then run `npm run deps:vona`; build Web and Admin pairs when both are affected;
-- if generated artifacts are correct but installed Vona consumers remain stale, diagnose local dependency drift through `cabloy-contract-loop` rather than hand-patching generated files or reinstalling automatically.
+- reverse chain: resolve every affected Zova flavor/site, identity, and output path from the active edition/version manifests; use the affected ordinary `build:zova*` wrapper when convenient or the universal paired command `npm run build:zova:isolated -- <affected-flavor> [<affected-flavor> ...]`, complete every paired SSR and REST output, then run `npm run deps:vona`; do not infer Admin/Web values for an independent site;
+- if generated artifacts are correct but installed Vona consumers remain stale, diagnose local dependency drift through `cabloy-contract-loop` rather than hand-patching generated files or reinstalling automatically; `deps:vona` is the normal synchronization step and reinstall is only conditional recovery.
 
 For SSR-sensitive work, verify server output and hydration-time initial render equivalence, privacy/admission behavior, and the exact active flavor/site contract. For backend tests, preserve separate `mockCtx(...)` boundaries for competing operations, explicit contention assertions, precise `finally` cleanup, and read-only managed seed behavior.
 

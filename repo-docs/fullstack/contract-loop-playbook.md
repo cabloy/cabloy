@@ -176,9 +176,10 @@ Examples:
 Then suspect **local dependency drift**:
 
 1. stop editing source files
-2. prove the generated handoff is already correct
-3. rerun the normal sync flow
-4. only then repair the local install state if consumers still look stale
+2. if the relevant generated handoff is not already known to be correct, make a quick confirmation; do not repeat evidence already available
+3. rerun the normal sync flow if it has not already run
+4. if an affected Vona/TypeScript process is running, restart it when consumers still look stale
+5. if generated output is wrong, return to the build chain; only repair the local install state when the output and sync are correct and stale behavior remains
 
 ## Forward chain playbook
 
@@ -292,23 +293,26 @@ and then the relevant build path for the active edition and flavor.
 
 ### Stage 3: Vona sync handoff
 
-After the frontend-generated handoff is ready, run the relevant Zova build first and then re-sync Vona’s local dependency state with `npm run deps:vona`.
+After the frontend-generated handoff is ready, detect the active edition and version, resolve every affected Zova flavor/site, identity, and output path from the active manifests, then use the affected ordinary `build:zova*` wrapper when convenient or the universal paired command `npm run build:zova:isolated -- <affected-flavor> [<affected-flavor> ...]`. Complete all affected paired SSR/REST outputs before running `npm run deps:vona` as the default Vona dependency synchronization step. `deps:vona` consumes the existing `.zova-rest` output; it does not generate that output. Resolve ordinary wrapper mappings and independently named site values from source rather than inferring Admin/Web identities. With healthy local dependency state, this normal flow is usually sufficient, and deleting `vona/node_modules` is not a routine prerequisite.
 
-For the current **Cabloy Basic Admin** branch, the representative sequence is:
+For this Cabloy Basic checkout, the representative Admin sequence is:
 
 ```bash
 npm run build:zova:admin
 npm run deps:vona
 ```
 
-If the same resource path must also be available to Web, also run:
+If the same resource path must also be available to Web, complete both affected pairs before the final dependency synchronization:
 
 ```bash
+npm run build:zova:admin
 npm run build:zova:web
 npm run deps:vona
 ```
 
-Do not treat `build:rest:*` alone as sufficient. The SSR bundle and the generated rest output should move together.
+In a multi-flavor change, complete all affected paired builds before the final dependency synchronization. Do not treat `build:rest:*` alone as sufficient. The SSR bundle and the generated REST output should move together.
+
+`deps:vona` is the normal synchronization step, not an absolute guarantee against local dependency drift. If consumers still look stale, restart an affected running Vona/TypeScript process if one is present. Make a quick confirmation of the relevant generated artifacts only when they are not already known to be correct; if they are wrong, return to the build chain rather than reinstalling. Never hand-edit generated manifests, lockfiles, dependency links, `.zova-rest` packages, or copied build artifacts.
 
 For **Cabloy Start**, use the same reverse-chain logic, but resolve the Start-specific flavor names and output paths from the active Start repo before recommending commands.
 
@@ -324,14 +328,9 @@ Typical checks:
 
 ## Recovery path for local dependency drift
 
-Use this branch only when all of these are already true:
+Use this branch only when the paired builds and `npm run deps:vona` completed, the relevant generated output is known to be correct, and consumers still behave stale after restarting an affected running Vona/TypeScript process if one is present. If the output is not already known to be correct, make a quick confirmation; if it is wrong, return to the build chain rather than reinstalling.
 
-- source truth was edited in the right place
-- the generated `.zova-rest` artifacts or other build output already contain the intended change
-- the normal sync flow already ran
-- consumers still behave stale
-
-Then treat the problem as **local dependency drift**.
+Then treat the problem as **local dependency drift**, not as a reason to hand-patch source or generated output.
 
 Representative recovery path:
 
@@ -339,7 +338,7 @@ Representative recovery path:
 cd vona && rm -rf node_modules && pnpm install
 ```
 
-This is a recovery step, not the first response.
+This is an exceptional recovery step, not the first response or a routine prerequisite for `npm run deps:vona`. Re-run the relevant consumer verification after reinstalling.
 
 ## Verification by branch
 

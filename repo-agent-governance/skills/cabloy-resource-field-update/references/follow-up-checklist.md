@@ -73,16 +73,17 @@ Apply when the user explicitly wants to demonstrate custom renderer development:
 ### If custom frontend renderers were introduced
 
 - `npm run zova :tools:metadata <module-name>`
-- run the relevant Zova build first:
-  - `npm run build:zova:admin` for Admin-facing render/action/metadata changes
-  - also `npm run build:zova:web` when the Web flavor is affected
-- `npm run deps:vona`
+- resolve every affected flavor/site, identity, and output path from the active edition/version manifests; use the affected ordinary `build:zova*` wrapper when convenient or the universal paired command `npm run build:zova:isolated -- <affected-flavor> [<affected-flavor> ...]`
+- `npm run deps:vona` once all affected paired builds are complete
 - `cd vona && npm run tsc`
 - `cd vona && npm test -- <resource-test>.test.ts`
 
 ## Common recovery rule
 
-If the generated `.zova-rest` artifacts already contain the new renderer keys but Vona still sees stale types after the normal sync flow:
+If the generated `.zova-rest` artifacts already contain the new renderer keys but Vona still sees stale types after every affected paired SSR/REST build and the normal `deps:vona` sync flow:
 
-- treat it as local dependency drift
-- rebuild `vona/node_modules` and reinstall dependencies if normal `deps:vona` sync did not recover the local file-package installation state
+- if Vona still looks stale, restart an affected TypeScript/Vona process if one is present
+- if the relevant generated output is not already known to be correct, make a quick confirmation; if it is wrong, return to the build chain rather than reinstalling
+- only when the output is known correct and stale behavior remains after any needed restart, treat it as local dependency drift and recover with `cd vona && rm -rf node_modules && pnpm install`
+
+This is exceptional recovery, not a routine prerequisite; do not hand-edit generated manifests, links, lockfiles, or `.zova-rest` packages.

@@ -119,15 +119,20 @@ Use these when the real question is how to author the frontend resources themsel
 - [Tutorial 3: Frontend Metadata Sharing](/fullstack/tutorial-3-frontend-metadata-sharing)
 - [Tutorial 4: Custom Form/Table Renderers for Level](/fullstack/tutorial-4-custom-level-renderers)
 
-## Cabloy Basic workflow
+## Edition/version-neutral workflow
 
-For Cabloy Basic, the representative reverse-chain path is:
+The reverse-chain path is shared across editions and versions:
 
 1. change the frontend-owned truth
 2. regenerate frontend metadata when applicable
-3. run the relevant Zova build so the shared handoff is refreshed
-4. run `npm run deps:vona`
-5. verify backend-side consumers can now see the refreshed handoff
+3. detect the active edition and version, then resolve every affected flavor and its source-confirmed paired SSR/REST wrapper from the active manifests
+4. complete every affected paired build before the final synchronization
+5. run `npm run deps:vona`
+6. verify backend-side consumers can now see the refreshed handoff
+
+Resolve every affected flavor/site, identity, and output path from the active manifests. Use the affected ordinary `build:zova*` wrapper when convenient or the universal paired command `npm run build:zova:isolated -- <affected-flavor> [<affected-flavor> ...]`; complete every paired SSR/REST build before `npm run deps:vona`. A REST-only build is not sufficient because the SSR and REST outputs must move together.
+
+### Cabloy Basic example (this repository)
 
 Representative commands for the current Basic admin path are:
 
@@ -137,18 +142,21 @@ npm run build:zova:admin
 npm run deps:vona
 ```
 
-If the same resource path must also be available for Web, also run:
+If the same resource path must also be available for Web, complete both affected pairs before the final dependency synchronization:
 
 ```bash
+npm run build:zova:admin
 npm run build:zova:web
 npm run deps:vona
 ```
 
 A practical rule is:
 
-- treat metadata generation, the relevant flavor build, and `deps:vona` as one reverse-chain handoff
-- do not treat `build:rest:*` alone as sufficient, because the SSR bundle and rest output should move together
+- treat metadata generation, every affected paired flavor build, and the default `deps:vona` synchronization as one reverse-chain handoff
+- with healthy local dependency state, `deps:vona` is normally sufficient; deleting `vona/node_modules` is not a routine prerequisite
+- do not treat `build:rest:*` alone as sufficient, because the SSR bundle and REST output should move together
 - do not stop after the frontend source edit alone
+- if generated artifacts are correct but Vona remains stale after synchronization, follow the conditional local-dependency-drift recovery below rather than hand-editing generated output
 
 ## `training-student` as a compact reverse-chain specimen
 
@@ -195,8 +203,10 @@ This is the problem when:
 Typical fix:
 
 1. stop editing source files
-2. run the normal sync flow with the relevant Zova build first and then `npm run deps:vona`
-3. if the generated `.zova-rest` artifacts already contain the expected changes but Vona still sees stale types, rebuild `vona/node_modules` and reinstall dependencies
+2. confirm every affected paired SSR/REST build completed, then run the normal sync flow with `npm run deps:vona`
+3. if Vona still looks stale, restart an affected running TypeScript/Vona process if one is present
+4. if the relevant generated output is not already known to be correct, make a quick confirmation; if it is wrong, return to the build chain
+5. only if the output is correct, synchronization completed, and stale behavior remains, recover the local dependency state
 
 Representative recovery path:
 
@@ -204,7 +214,7 @@ Representative recovery path:
 cd vona && rm -rf node_modules && pnpm install
 ```
 
-This distinction is one of the most important practical diagnostics in the reverse chain.
+This is an exceptional recovery step, not a routine prerequisite. Never hand-edit generated manifests, dependency links, lockfiles, or `.zova-rest` packages. This distinction is one of the most important practical diagnostics in the reverse chain.
 
 ## Edition awareness
 
@@ -219,7 +229,7 @@ So when AI or contributors reason about frontend-generated metadata, they should
 - which generated output belongs to that edition
 - which concrete build and sync commands belong to that edition
 
-For this public repo, use Cabloy Basic examples as the default operational path.
+The Basic commands above are scoped to this checkout; do not treat them as portable templates for Start or another edition/version. Resolve the corresponding commands from the active repository instead.
 
 ## Where to read next
 

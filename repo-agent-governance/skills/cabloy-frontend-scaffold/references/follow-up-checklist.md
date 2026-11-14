@@ -24,9 +24,10 @@ After generating or extending a frontend thread, check which follow-up layers ap
 - distinguish a skipped query or unloaded `query.data` from an executed `queryFn` result: successful results cannot be `undefined`; use typed `null` only for domain-defined absence and check initialization error-boundary ownership; see [Query absence and readiness errors](../../../../repo-docs/frontend/use-state-data-best-practices.md#distinguish-skipped-queries-unloaded-data-and-expected-absence)
 - OpenAPI SDK or schema-driven layer impact
 - backend contract reminder if frontend depends on generated backend contract output
-- if backend metadata will consume newly added frontend render resources, run the relevant Zova build first and then `npm run deps:vona`
-- do not treat `build:rest:*` alone as sufficient, because the SSR bundle and rest output must move together
-- if the generated `.zova-rest` artifacts are updated but backend still sees stale shared types after `npm run deps:vona`, treat it as local dependency drift and rebuild `vona/node_modules` and reinstall
+- if backend metadata will consume newly added frontend render resources, run every affected paired Zova SSR/REST build first and then `npm run deps:vona` as the default synchronization step
+- with healthy local dependency state, `deps:vona` is normally sufficient; do not delete `vona/node_modules` as a routine prerequisite
+- do not treat `build:rest:*` alone as sufficient, because the SSR bundle and REST output must move together
+- if backend still sees stale shared types after `npm run deps:vona`, restart an affected Vona/TypeScript process if one is present; if the generated `.zova-rest` output is not already known to be correct, make a quick confirmation, then use the conditional local-dependency-drift recovery only when the output is correct and stale behavior remains; do not hand-edit generated output
 
 ## Interaction and UI follow-up
 

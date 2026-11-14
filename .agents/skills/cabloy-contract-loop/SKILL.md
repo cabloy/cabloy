@@ -11,21 +11,21 @@ Read the public [Contract Loop Playbook](../../../repo-docs/fullstack/contract-l
 
 ## Important recovery note for stale local file consumers
 
-When the generated `.zova-rest` artifacts or other generated consumer artifacts already contain the expected new keys or types but Vona still sees stale consumer types, treat that first as a local dependency drift problem rather than a source-editing problem.
+`npm run deps:vona` is the default Vona synchronization step after the affected Zova SSR/REST pairs have been built. It consumes the existing `.zova-rest` output; it does not build or regenerate that output. With healthy local dependency state, this normal flow is usually sufficient, so deleting `vona/node_modules` is not a routine prerequisite.
 
 This includes the reverse fullstack direction where newly added frontend resources such as custom renderers are later consumed by backend metadata.
 
 In that situation:
 
-1. run the normal sync or regeneration flow first
-2. identify every affected flavor from the active repository’s root wrappers and lower-level Zova scripts, then run each matching paired SSR/REST build before `npm run deps:vona`
-   - in Cabloy Basic and Cabloy Start, use the affected ordinary `build:zova*` wrapper or `npm run build:zova:isolated -- <affected-flavor> [<affected-flavor> ...]`; both use the shared isolated coordinator. Resolve the concrete flavor selection from the active edition's manifest
+1. identify every affected flavor/site from the active repository’s manifests and lower-level Zova scripts, then run each matching paired SSR/REST build before synchronization
+   - use the affected ordinary `build:zova*` wrapper when convenient, or the universal paired command `npm run build:zova:isolated -- <affected-flavor> [<affected-flavor> ...]`; resolve flavor selection, site identity, and output paths from the active manifests rather than inferring Admin/Web values
    - an independently named site must use its own source-confirmed flavor and paired build; do not relabel or assume a default Admin/Web build refreshed it
-3. do not treat `build:rest:*` alone as sufficient, because the SSR bundle and rest output must move together
-4. run `npm run deps:vona` after the required flavor builds
-5. if the generated `.zova-rest` artifacts already contain the expected changes but Vona still sees stale types, delete `vona/node_modules` and reinstall dependencies
+2. do not treat `build:rest:*` alone as sufficient, because the SSR bundle and REST output must move together
+3. run `npm run deps:vona` after all required flavor builds
+4. if Vona still looks stale, restart an affected running Vona/TypeScript process if one is present; if the relevant generated `.zova-rest` output is not already known to be correct, make a quick confirmation and do not repeat existing evidence
+5. if generated output is wrong, return to the build chain rather than reinstalling; only when the paired-build plus `npm run deps:vona` flow completed, the output is known correct, and stale behavior remains after any needed restart, treat the issue as local dependency drift and recover with `cd vona && rm -rf node_modules && pnpm install`
 
-Do not keep debugging source-level contract or renderer changes until the local file-package installation state is known to be healthy.
+`deps:vona` is not an absolute guarantee for an unhealthy local installation or an already-running consumer. Do not hand-edit generated workspace manifests, lockfiles, dependency links, `.zova-rest` packages, or copied build artifacts. Do not keep debugging source-level contract or renderer changes until the local file-package installation state is known to be healthy.
 
 ## Current safeguard behavior in this repo
 
@@ -38,7 +38,7 @@ Do not keep debugging source-level contract or renderer changes until the local 
 - Cursor payloads are not Claude hook payloads. When Cursor imports `.claude/settings.json`, the Claude bridge recognizes Cursor and returns without work, leaving the native Cursor adapter as the single Agent gate
 - `postToolUse` injects `additional_context` into the agent turn; `afterTabFileEdit` is side-effect only and still runs the shared reverse auto-sync when the edited file matches
 - Codex handles every matching entry in one `apply_patch` call and runs at most one high-confidence reverse auto-sync for that patch. Explicit Delete entries use path-only evidence; an unreadable Add or Update target is reported as an inspection failure, never reinterpreted as a delete
-- for high-confidence reverse-chain source edits on the Zova side, the hook auto-runs `npm run build:zova:isolated -- cabloyBasicAdmin` in Basic, or the existing `npm run build:zova:admin` in Start, then `npm run deps:vona`; affected Web or independent-site flavors still require deliberate builds
+- for high-confidence reverse-chain source edits on the Zova side, the current edition-specific hook adapter may auto-run its source-confirmed Admin paired build and then `npm run deps:vona`; affected Web or independent-site flavors still require deliberate builds. Treat this as convenience behavior, not as a portable command or proof that every affected flavor was built
 - forward-chain detections remain reminder-only, so backend contract changes still require deliberate regeneration and verification
 - consumer-side reverse signals remain reminder-only, so do not assume every reverse-chain case auto-syncs itself
 
@@ -228,7 +228,7 @@ For AI development, **default to managed isolated generation**, even when a deve
    npm run contract:generate:isolated -- <module-name>
    ```
 
-   Detect the active edition for edition-specific paths and follow-up builds, not to choose a different SDK generation default. For older project versions, verify the root entrypoint and source resolver are up to date.
+   Detect the active edition and version for edition-specific paths and follow-up builds, not to choose a different SDK generation default. If the active repository lacks the documented entrypoint, inspect its manifest and source resolver and use only a source-confirmed alternative.
 
 2. Initialize module configuration with `npm run zova :openapi:config <module-name>` when needed. Keep module ownership constrained with `operations.match` unless the module intentionally owns a broad API surface; the isolated command reuses the existing generator and ownership checks.
 3. Confirm the effective source uses the isolated service. The command supplies a child-scoped `OPENAPI_SOURCE_URL` to the project default source resolver; explicit module sources or project `modules` overrides retain their precedence. Inspect the project resolver and align conflicting sources deliberately before claiming isolated generation. Do not edit `.env` files or SDK runtime API targets to inject the temporary port.
@@ -247,13 +247,13 @@ Typical examples in Cabloy Basic include:
 - `cd zova && npm run build:rest:cabloyBasicAdmin`
 - `cd zova && npm run build:rest:cabloyBasicWeb`
 
-Important reverse-sync rule for Cabloy Basic and Cabloy Start:
+Source-confirmed reverse-sync rule:
 
-- if Vona consumes newly added or changed Zova Admin render/action/metadata, do **not** stop at a REST-only `build:rest:*` command
-- in both editions, use the affected root `build:zova*` paired wrapper or `npm run build:zova:isolated -- <affected-flavor> [<affected-flavor> ...]`, then run `npm run deps:vona`. The default Admin/Web flavors are `cabloyBasicAdmin` / `cabloyBasicWeb` in Basic and `cabloyStartAdmin` / `cabloyStartWeb` in Start; include every affected source-confirmed flavor. All ordinary root and workspace application builds use the shared isolated coordinator; the explicit entry remains for compatibility and flavor selection, without caller detection or opt-in isolation
-- the coordinator consumes live prepared `zova/` source/dependencies with private generated roots, not a source/dependency snapshot. Application builds do not run `prerun`, install dependencies or generate shared metadata: run `npm run deps:zova` explicitly when needed, then keep source, dependencies and metadata stable throughout compilation
-- support only one application-build invocation per checkout and coordinate shared preparation/publication. Isolation is neither an arbitrary-hook sandbox nor live Vona integrated SSR hot deployment; see [Frontend build isolation](../../../repo-docs/reference/repo-scripts.md#frontend-build-isolation) for owned roots, process ownership and Windows requirements
-- keep individual nested SSR-only and REST-only scripts within those boundaries, SPA scripts SPA-only and paired batches paired in one coordinator invocation. Resolve CLI/coordinator mappings from the active manifest. Dev/typecheck preparation and module/library builds are unchanged
+- if Vona consumes newly added or changed Zova render/action/metadata, do **not** stop at a REST-only `build:rest:*` command
+- use the affected ordinary `build:zova*` wrapper when convenient or the universal paired command `npm run build:zova:isolated -- <affected-flavor> [<affected-flavor> ...]`, then run `npm run deps:vona`. Include every affected flavor and resolve site identity and output paths from the active manifests; do not infer default Admin/Web names for an independent site
+- when the active repository uses the shared isolated coordinator, it consumes live prepared `zova/` source/dependencies with private generated roots, not a source/dependency snapshot. Application builds do not run `prerun`, install dependencies, or generate shared metadata: run `npm run deps:zova` explicitly when needed, then keep source, dependencies, and metadata stable throughout compilation
+- support only one application-build invocation per checkout and coordinate shared preparation/publication. Isolation is neither an arbitrary-hook sandbox nor live Vona integrated SSR hot deployment; see [Frontend build isolation](../../../repo-docs/reference/repo-scripts.md#frontend-build-isolation) for owned roots, process ownership, and Windows requirements
+- keep individual nested SSR-only and REST-only scripts within those boundaries, SPA scripts SPA-only, and paired batches paired in one coordinator invocation when that coordinator exists. Resolve CLI/coordinator mappings from the active manifest. Dev/typecheck preparation and module/library builds are unchanged
 - treat this as a JS-bundle-plus-rest-output handoff, not a rest-types-only refresh
 - the current repo safeguard may auto-run those two commands for high-confidence Zova reverse-source edits, but only as a convenience layer on top of the contract-loop model
 - if the change was consumer-side, low-confidence, cross-edition, happened outside a supported platform hook path, or used an untrusted/discovery-disabled hook, run the reverse sync flow deliberately yourself

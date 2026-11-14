@@ -13,10 +13,12 @@ When the generated `.zova-rest` artifacts already contain the expected new keys 
 
 In that situation:
 
-1. run the normal sync flow, including the relevant Zova build first and then `npm run deps:vona`
-2. if the generated `.zova-rest` artifacts already contain the expected changes but the stale behavior remains, rebuild `vona/node_modules` and reinstall dependencies
+1. resolve every affected Zova flavor/site from the active edition/version manifests, build each with its source-confirmed paired SSR/REST output, then run `npm run deps:vona` as the default synchronization step
+2. use the affected ordinary `build:zova*` wrapper when convenient or the universal paired command `npm run build:zova:isolated -- <affected-flavor> [<affected-flavor> ...]`; resolve flavor/site identity and output paths from the active manifests. With healthy local dependency state, `deps:vona` is normally sufficient and deleting `vona/node_modules` is not a routine prerequisite
+3. if Vona still looks stale, restart an affected running TypeScript/Vona process if one is present; if the relevant generated output is not already known to be correct, make a quick confirmation rather than repeating existing checks
+4. if generated output is wrong, return to the build chain; only if the output is known correct, synchronization completed, and stale behavior remains after any needed restart, recover with `cd vona && rm -rf node_modules && pnpm install`
 
-Keep this recovery rule visible during renderer-aware or contract-loop follow-up work. Do not keep debugging source-level renderer registrations until the local file-package installation state is known to be healthy.
+Keep this recovery rule visible during renderer-aware or contract-loop follow-up work. Do not hand-edit generated manifests, links, lockfiles, or `.zova-rest` packages, and do not keep debugging source-level renderer registrations until the local file-package installation state is known to be healthy.
 
 ## Goals
 

@@ -54,7 +54,9 @@ The tracked pre-commit hook runs `lint-staged`. It may format staged Markdown an
 
 Use Vona backend contracts, DTOs, OpenAPI metadata, and schema metadata as contract truth. Regenerate consumers rather than hand-editing generated frontend artifacts.
 
-For frontend metadata or dependency changes that Vona consumes, build every affected Basic flavor before synchronizing dependencies:
+For frontend metadata or dependency changes that Vona consumes, detect the active edition and version, resolve every affected flavor/site, identity, and output path from the active manifests, then use the affected ordinary `build:zova*` wrapper when convenient or the universal paired command `npm run build:zova:isolated -- <affected-flavor> [<affected-flavor> ...]`. Complete all affected pairs before the default `npm run deps:vona` synchronization step. Keep SSR and REST outputs aligned; a REST-only build is not sufficient.
+
+For this Cabloy Basic checkout, the representative Admin/Web sequence is:
 
 ```bash
 npm run build:zova:admin
@@ -62,7 +64,7 @@ npm run build:zova:admin
 npm run deps:vona
 ```
 
-Keep SSR and REST outputs aligned; a REST-only build is not sufficient. See the canonical [Contract Loop Playbook](https://cabloy.com/fullstack/contract-loop-playbook), [Vona + Zova Integration](https://cabloy.com/fullstack/vona-zova-integration), and [repository scripts reference](https://cabloy.com/reference/repo-scripts).
+With healthy local dependency state, `npm run deps:vona` is normally sufficient; deleting `vona/node_modules` is not a routine prerequisite. If Vona remains stale, restart an affected running Vona/TypeScript process if one is present. Make a quick confirmation of the relevant generated output only when it is not already known to be correct; if it is wrong, return to the build chain. Reinstall only when the output and synchronization are correct and stale behavior remains. See the canonical [Contract Loop Playbook](https://cabloy.com/fullstack/contract-loop-playbook#recovery-path-for-local-dependency-drift) and [Vona + Zova Integration](https://cabloy.com/fullstack/vona-zova-integration) rather than hand-editing generated output, plus the [repository scripts reference](https://cabloy.com/reference/repo-scripts).
 
 ## Pull requests
 

@@ -74,7 +74,8 @@ Important handoff note for this phase:
 - once a frontend resource created in these tutorials is later consumed by backend metadata, do not stop at frontend source edits alone
 - refresh the generated frontend output, run the relevant flavor build, then run `npm run deps:vona`
 - do not treat `build:rest:*` alone as sufficient, because the SSR bundle and rest output must move together
-- if the generated `.zova-rest` artifacts already contain the expected changes but backend-side shared types still look stale after that normal sync flow, treat it as local dependency drift and rebuild `vona/node_modules` and reinstall dependencies
+- with healthy local dependency state, `npm run deps:vona` is normally sufficient and deleting `vona/node_modules` is not a routine prerequisite
+- if backend-side shared types still look stale after the paired build and normal sync flow, restart an affected Vona/TypeScript process if one is present; if the relevant generated output is not already known to be correct, make a quick confirmation, then use the conditional local-dependency-drift recovery only when the output is correct and stale behavior remains in [Frontend Metadata Back to Backend](/fullstack/frontend-metadata-to-backend#generated-output-drift-vs-local-dependency-drift)
 
 See [Contract Loop Playbook](/fullstack/contract-loop-playbook) and [Frontend Metadata Back to Backend](/fullstack/frontend-metadata-to-backend) for the full reverse-chain explanation.
 

@@ -136,10 +136,11 @@ The Web model is valid only for the separate self-service state domain. It must 
    - module metadata
 2. generated handoff
    - metadata output
-   - the relevant flavor build output
+   - every affected flavor’s source-confirmed paired SSR/REST build output
 3. sync surface
-   - run the relevant Zova build first
-   - `deps:vona`
+   - complete every affected paired Zova build first
+   - run `npm run deps:vona` as the default synchronization step
+   - with healthy local dependency state, this is normally sufficient; do not delete `vona/node_modules` routinely
 4. consumer layers
    - backend `ZovaRender.*(...)` references
    - backend tooling and type hints
@@ -194,9 +195,11 @@ Default Admin/Web wrappers are specimens only. Discover the independently named 
 ### Install stale
 
 - generated output is correct
-- normal sync already ran
+- every affected paired SSR/REST build completed
+- normal `npm run deps:vona` synchronization already ran
+- an affected running process or type cache has been checked/restarted when needed
 - local file dependencies still behave stale
-- repair install state only after proving the earlier stages are healthy
+- repair install state only after proving the earlier stages are healthy; use `cd vona && rm -rf node_modules && pnpm install` only as exceptional recovery
 
 ## Anti-pattern
 

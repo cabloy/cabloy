@@ -39,8 +39,8 @@ For validation-only refinements, locale updates, or renderer metadata changes on
 Run the synchronization chain in order:
 
 1. regenerate frontend metadata
-2. build the relevant frontend SSR/rest target
-3. run `deps:vona`
+2. resolve and build every affected frontend flavor/site with its paired SSR/REST output
+3. run `deps:vona` once all affected paired builds are complete
 4. run Vona typecheck
 5. run the narrow backend resource test
 
@@ -83,13 +83,7 @@ Confirm:
 
 ## 5. Common recovery rule for stale local file dependencies
 
-If all of these are true:
-
-- the generated `.zova-rest` artifacts already contain the new renderer keys
-- `npm run deps:vona` was run after the relevant Zova build
-- Vona still sees stale renderer types
-
-Then treat it as local dependency drift and suspect a stale or unhealthy local installation state in `vona/node_modules`.
+When every affected paired SSR/REST build completed and `npm run deps:vona` was run, restart an affected TypeScript/Vona process if one is present and Vona still sees stale renderer types. If the relevant generated output is not already known to be correct, make a quick confirmation; if it is wrong, return to the build chain instead of reinstalling. Treat it as local dependency drift only when the output is correct and stale behavior remains.
 
 Recovery action:
 
@@ -97,4 +91,4 @@ Recovery action:
 cd vona && rm -rf node_modules && pnpm install
 ```
 
-Use this as a recovery path when the normal sync steps did not restore the local file-package installation state cleanly.
+Use this only as an exceptional recovery path when the generated artifacts and normal sync steps are proven correct. It is not a routine prerequisite; never hand-edit generated manifests, links, lockfiles, or `.zova-rest` packages.

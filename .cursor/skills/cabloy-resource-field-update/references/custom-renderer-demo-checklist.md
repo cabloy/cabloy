@@ -78,7 +78,7 @@ Recommended order:
 1. create or update renderer source files
 2. regenerate frontend metadata
 3. run the relevant frontend build so both bundle output and type surface update
-4. run `deps:vona`
+4. after every affected paired SSR/REST build, run `deps:vona` as the default synchronization step
 5. run Vona typecheck
 6. run the narrow backend resource test
 
@@ -97,6 +97,6 @@ cd vona && npm test -- <resource-test>.test.ts
 If the generated `.zova-rest` artifacts already contain the new renderer keys but Vona still sees stale types after the normal sync flow:
 
 - treat it as local dependency drift
-- after the relevant Zova build and `npm run deps:vona`, rebuild `vona/node_modules` and reinstall dependencies if needed
+- after the paired builds and `npm run deps:vona`, restart an affected Vona/TypeScript process if one is present; if generated output is not already known to be correct, make a quick confirmation rather than repeating existing evidence; only if the output is correct and Vona remains stale, recover with `cd vona && rm -rf node_modules && pnpm install`
 
 This is an installation-state recovery step, not the normal first move.

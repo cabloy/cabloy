@@ -22,7 +22,7 @@ After a contract-loop change, verify the branch that actually applies.
 - generated SDK or schema outputs are updated
 - thin model facades and downstream consumers still align with the regenerated contract
 - `npm run tsc`
-- relevant builds: in both Basic and Start, use the affected ordinary `build:zova*` wrapper or `npm run build:zova:isolated -- <affected-flavor> [...]`, then `npm run build:vona` when needed; all application-build entries use the shared isolated coordinator without automatic `prerun`, installation or shared metadata generation. Resolve concrete wrappers, flavor selections, default aggregate membership and output paths from the active edition's scripts. Prepare inputs explicitly with `npm run deps:zova` when needed, then keep source, dependencies and metadata stable throughout compilation
+- relevant builds: resolve the affected flavor/site names, wrapper mappings, and paired SSR/REST outputs from the active edition/version manifests; use the ordinary `build:zova*` wrapper when convenient or the universal paired command `npm run build:zova:isolated -- <affected-flavor> [<affected-flavor> ...]`, then run `npm run build:vona` when needed. All application-build entries use the source-confirmed coordinator and should keep source, dependencies, and metadata stable throughout compilation. Prepare inputs explicitly with `npm run deps:zova` when needed
 
 ### Dual-audience resource verification
 
@@ -47,7 +47,7 @@ When one persisted domain has both Admin Resource and Web self-service consumers
 - backend consumers can resolve the refreshed frontend-generated handoff
 - prefer visible proof under `zova/src/**/.metadata/**` when it is available
 - this repo does not rely on a contract-loop pre-commit gate; Claude Code, Codex, and Cursor each use a provider-specific adapter over the same classifier
-- if the change was a high-confidence Zova reverse-source edit through a supported hook path, confirm whether the hook already auto-ran the edition-specific Admin build (`npm run build:zova:isolated -- cabloyBasicAdmin` in Basic, existing `npm run build:zova:admin` in Start) and `npm run deps:vona`; explicitly build other affected flavors before the final dependency sync
+- if the change was a high-confidence Zova reverse-source edit through a supported hook path, confirm whether the current edition-specific adapter already ran its source-confirmed paired build and `npm run deps:vona`; explicitly build every other affected flavor before the final dependency sync. Do not treat hook convenience behavior as proof that all affected outputs were built
 - Codex evaluates an `apply_patch` batch as operation-aware entries: an explicit Delete is classified from reliable path evidence only; an unreadable Add or Update target is an inspection failure rather than a synthetic delete
 - Cursor Agent writes use native `postToolUse` context and Cursor Tab writes use native `afterTabFileEdit` side effects; the imported Claude bridge is intentionally inactive in Cursor to avoid duplicate work
 - if the change was consumer-side, low-confidence, outside a supported hook path, affected an untrusted/discovery-disabled hook, or was in another edition branch, run the reverse sync flow manually instead of assuming it already happened
@@ -88,7 +88,7 @@ If all of these are true:
 - `npm run deps:vona` already ran
 - Vona still sees stale types
 
-Then treat it as local dependency drift and suspect a stale or unhealthy local installation state in `vona/node_modules`.
+Then treat it as local dependency drift only after restarting an affected running Vona/TypeScript process, if one is present. If the generated output was not already known to be correct, make a quick confirmation of the relevant `.zova-rest` output; do not repeat existing evidence. If that output is wrong, return to the build chain instead of reinstalling.
 
 Recovery action:
 
@@ -96,7 +96,7 @@ Recovery action:
 cd vona && rm -rf node_modules && pnpm install
 ```
 
-Use this as a recovery path when normal sync steps did not restore the local file-package installation state cleanly.
+Use this only as an exceptional recovery path after the generated artifacts and normal sync steps are proven correct; it is not a routine prerequisite. Restart an affected running process when needed, and never hand-edit generated manifests, links, lockfiles, or `.zova-rest` packages.
 
 ## Done rule
 
