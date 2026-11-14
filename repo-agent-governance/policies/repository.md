@@ -39,7 +39,7 @@ Before inventing a custom implementation path:
 ## Documentation boundary
 
 - Put general framework user-facing and agent-facing guidance in `repo-docs/`; keep supplier-specific details out of generic framework guides.
-- Keep suite-specific usage and configuration guidance in the owning suite's `README.md` and `docs/`, with one discoverable README entry point covering its backend and frontend. Maintain one canonical copy and link to it from specs/runbooks. Respect the suite's own license scope; shared workflows must not require an absent suite's documentation.
+- Put public usage and configuration guidance for system suites in `repo-docs/`; use the suite's README as an entry point linking to the formal documentation. Keep concrete business-suite-specific usage and configuration guidance in the owning suite's `README.md` and `docs/`, with one discoverable README entry point covering its backend and frontend. Maintain one canonical copy per topic and link to it from specs/runbooks. Respect each suite's license scope; shared workflows must not require an absent suite's documentation.
 - Put maintainer rationale, architecture notes, and engineering ADRs in `repo-docs-internal/`. Treat relevant records as supporting material: shared workflows remain complete without any particular internal record, which may vary by edition.
 - Put product and business specifications, delivery plans, acceptance records, and suite-local ADRs in `repo-specs/` when that repository surface exists.
 - Do not mix internal rationale into public how-to pages unless a trimmed user-facing explanation is genuinely needed.

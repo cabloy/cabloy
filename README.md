@@ -150,7 +150,7 @@ For more details, see:
 Contribution guidelines:
 
 - prefer CLI-backed workflows with `npm run vona` and `npm run zova`
-- put shared user-facing and agent-facing guidance in [cabloy.com](https://cabloy.com); keep independently delivered suite guidance in its owning suite README and `docs/`
+- put shared framework and public system-suite guidance in `repo-docs/`, published at [cabloy.com](https://cabloy.com); keep concrete business-suite-specific guidance in its owning suite README and `docs/`, with one canonical copy per topic
 - put maintainer rationale, architecture notes, and engineering ADRs in [repo-docs-internal/](https://github.com/cabloy/cabloy/tree/main/repo-docs-internal)
 - put product and business specifications, delivery plans, and suite-local ADRs in [repo-specs/](https://github.com/cabloy/cabloy/tree/main/repo-specs)
 - verify framework changes with the narrowest meaningful checks first, then shared root scripts when broader confidence is needed

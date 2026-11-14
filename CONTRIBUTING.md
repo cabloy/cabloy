@@ -80,7 +80,7 @@ Do not include unrelated generated output, build artifacts, environment files, c
 
 Canonical shared Cabloy documentation is maintained in this repository's `repo-docs/` tree and published at [cabloy.com](https://cabloy.com). Discuss and submit proposed shared-documentation changes in an issue or pull request; do not treat copies outside this repository as independent canonical sources.
 
-Independently delivered suite guidance belongs in the owning suite's README and `docs/`, under its own documented license scope. Keep shared framework workflows independent of optional suite documentation.
+Public system-suite usage and configuration guidance belongs in `repo-docs/`, with an entry point in the suite's README. Concrete business-suite-specific guidance belongs in the owning suite's README and `docs/`, under its documented license scope. Keep one canonical copy per topic and keep shared framework workflows independent of optional suite documentation.
 
 ## License and contribution rights
 
