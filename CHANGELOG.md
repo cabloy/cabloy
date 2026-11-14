@@ -1,5 +1,25 @@
 # Changelog
 
+## 5.1.283
+
+### Features
+
+- Add support for deleting MCP authentication.
+- Add MCP logout support.
+- Add MCP rate limiting.
+- Add update functionality.
+
+### Bug Fixes
+
+- Protect newer dependency version ranges.
+
+### Improvements
+
+- Consolidate MCP SSR site resource changes.
+- Enhance SSR site titles.
+- Refine rules.
+- Update dependencies and synchronize the release lockfile.
+
 ## 5.1.282
 
 ### Features
