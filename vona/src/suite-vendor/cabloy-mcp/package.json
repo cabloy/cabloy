@@ -1,13 +1,13 @@
 {
   "name": "vona-suite-cabloy-mcp",
-  "version": "5.0.11",
+  "version": "5.0.12",
   "description": "",
   "author": "",
   "files": [],
   "type": "module",
   "dependencies": {
     "vona-module-cabloy-mcp": "workspace:^",
-    "vona-module-mcp-auth": "^5.0.7"
+    "vona-module-mcp-auth": "^5.0.8"
   },
   "title": "cabloy-mcp"
 }
