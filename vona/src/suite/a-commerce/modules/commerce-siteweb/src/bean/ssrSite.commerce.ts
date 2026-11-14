@@ -3,6 +3,8 @@ import type { IIconRecord, IPagePathRecord } from 'zova-rest-cabloy-commerce';
 
 import { BeanSsrSiteBase, SsrSite } from 'vona-module-a-ssr';
 
+import { $locale } from '../.metadata/locales.ts';
+
 declare module 'vona-module-a-ssr' {
   export interface ISsrSiteIdRecord {
     commerce: never;
@@ -25,6 +27,7 @@ export interface ISsrSiteOptionsCommerce extends IDecoratorSsrSiteOptions<
 
 @SsrSite<ISsrSiteOptionsCommerce>({
   siteId: 'commerce',
+  title: $locale('SiteTitle'),
   publicPath: 'commerce',
   bundlePath: 'ssr-cabloyCommerce-5.0.0',
   diagnostics: {
