@@ -295,6 +295,8 @@ export default defineConfig({
             { text: 'MCP Integration Guide', link: '/mcp/mcp-guide' },
             { text: 'MCP Controller Tools', link: '/mcp/mcp-controller-tools' },
             { text: 'MCP Browser Authorization', link: '/mcp/mcp-browser-authorization' },
+            { text: 'Personal MCP Access Tokens', link: '/mcp/mcp-access-tokens' },
+            { text: 'Connected-client Query Guide', link: '/mcp/mcp-query-guide' },
             { text: 'Local MCP Test Catalog', link: '/mcp/mcp-commerce-local' },
           ],
         },

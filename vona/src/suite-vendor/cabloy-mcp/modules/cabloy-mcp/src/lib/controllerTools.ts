@@ -61,6 +61,7 @@ export interface IControllerToolServerOptions {
   /** Exact consented bindings, not names alone or a dynamic include expression. */
   toolAccess?: ReadonlyArray<IControllerToolIdentity & { name: string }>;
   toolAccessReadOnly?: boolean;
+  logout?(): Promise<void>;
 }
 
 interface IControllerTool {
@@ -88,6 +89,21 @@ function objectValidator(schema: z.ZodType): z.ZodObject | undefined {
   }
   return undefined;
 }
+
+const logoutName = 'cabloy_logout';
+const logoutTool: Tool = {
+  name: logoutName,
+  description:
+    'Call only when the user explicitly asks to log out of this MCP server or revoke its current authorization. Revokes the credential used for this request, including OAuth refresh capability. All connections sharing that authorization or personal access token lose access; independent authorizations remain unchanged. Does not close the conversation, clear client credentials or history, or log out of the website. Reconnect requires a new authorization or personal access token.',
+  inputSchema: { type: 'object', properties: {}, additionalProperties: false },
+  outputSchema: {
+    type: 'object',
+    properties: { loggedOut: { type: 'boolean', const: true }, message: { type: 'string' } },
+    required: ['loggedOut', 'message'],
+    additionalProperties: false,
+  },
+  annotations: { readOnlyHint: false, destructiveHint: true, openWorldHint: false },
+};
 
 function failure(message: string): CallToolResult {
   return { isError: true, content: [{ type: 'text', text: message }] };
@@ -126,7 +142,12 @@ export async function createControllerToolServer(
         const name =
           options.name ??
           `${controller.beanOptions.beanFullName.replace('.controller.', '_').replace(/[^\w-]/g, '_')}_${route.action}`;
-        if (!/^[\w-]{1,128}$/.test(name) || tools.has(name) || name === toolContractName) {
+        if (
+          !/^[\w-]{1,128}$/.test(name) ||
+          tools.has(name) ||
+          name === toolContractName ||
+          name === logoutName
+        ) {
           throw new Error(`Invalid or duplicate MCP tool name: ${name}`);
         }
         try {
@@ -549,6 +570,9 @@ export async function createControllerToolServer(
         throw new ProtocolError(-32603, 'Tool discovery failed');
       }
     }
+    const logoutInputCheck = fromJsonSchema(
+      logoutTool.inputSchema as Parameters<typeof fromJsonSchema>[0],
+    )['~standard'];
     const contractInputCheck = fromJsonSchema(
       toolContract.inputSchema as Parameters<typeof fromJsonSchema>[0],
     )['~standard'];
@@ -564,7 +588,11 @@ export async function createControllerToolServer(
       track(async () => {
         const visible = await visibleTools();
         return {
-          tools: [...visible.map(item => item.tool), ...(visible.length ? [toolContract] : [])],
+          tools: [
+            ...visible.map(item => item.tool),
+            ...(visible.length ? [toolContract] : []),
+            ...(serverOptions.logout ? [logoutTool] : []),
+          ],
         };
       }),
     );
@@ -572,13 +600,42 @@ export async function createControllerToolServer(
       track(async () => {
         if (!app.ctx) throw new ProtocolError(-32603, 'Request context required');
         const contractCall = request.params.name === toolContractName;
+        const logoutCall = request.params.name === logoutName && serverOptions.logout;
         const tool = tools.get(request.params.name);
         const admitted = tool && allowed(tool);
         const diagnostic = beginToolCall(
-          contractCall ? toolContractName : admitted ? tool.tool.name : 'unavailable',
+          logoutCall
+            ? logoutName
+            : contractCall
+              ? toolContractName
+              : admitted
+                ? tool.tool.name
+                : 'unavailable',
         );
         recordToolCall(app, diagnostic, 'received');
         try {
+          if (logoutCall) {
+            if ((await logoutInputCheck.validate(request.params.arguments ?? {})).issues) {
+              diagnostic.outcome = 'invalid_arguments';
+              throw new ProtocolError(-32602, 'Invalid tool arguments');
+            }
+            recordToolCall(app, diagnostic, 'dispatch');
+            try {
+              await logoutCall();
+            } catch {
+              return failure('Logout could not be confirmed. Reconnect if access is required.');
+            }
+            const structuredContent = {
+              loggedOut: true,
+              message:
+                'Current MCP authorization revoked. All connections sharing it lose access. Reconnect with a new authorization or personal access token.',
+            };
+            diagnostic.outcome = 'success';
+            return {
+              content: [{ type: 'text' as const, text: JSON.stringify(structuredContent) }],
+              structuredContent,
+            };
+          }
           if (contractCall) {
             const args = request.params.arguments ?? {};
             if ((await contractInputCheck.validate(args)).issues) {

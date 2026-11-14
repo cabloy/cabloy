@@ -3490,6 +3490,18 @@ describe('businessTools.test.ts', { concurrency: false, timeout: 60000 }, () => 
       try {
         const readTools = (await read.request('tools/list')).result.tools;
         const allTools = (await all.request('tools/list')).result.tools;
+        for (const [client, tools] of [
+          [read, readTools],
+          [all, allTools],
+        ] as const) {
+          assert.equal(
+            tools.some((tool: any) => tool.name === 'cabloy_logout'),
+            false,
+            'a scope alone does not supply authenticated logout',
+          );
+          const logout = await client.request('tools/call', { name: 'cabloy_logout' });
+          assert.deepEqual(logout.error, { code: -32602, message: 'Tool unavailable' });
+        }
         assert.equal(
           readTools.some((tool: any) => tool.name === effectToolName),
           false,
@@ -3750,6 +3762,7 @@ describe('businessTools.test.ts', { concurrency: false, timeout: 60000 }, () => 
         | 'invalid-name'
         | 'duplicate'
         | 'reserved-name'
+        | 'logout-name'
         | 'retired-name'
         | 'invalid-pick' = 'local-options';
       const metadata = t.mock.method(
@@ -3774,6 +3787,7 @@ describe('businessTools.test.ts', { concurrency: false, timeout: 60000 }, () => 
             if (configuration === 'invalid-name') return { ...value, name: 'invalid tool name' };
             if (configuration === 'duplicate') return { ...value, name: categoryToolName };
             if (configuration === 'reserved-name') return { ...value, name: toolContractToolName };
+            if (configuration === 'logout-name') return { ...value, name: 'cabloy_logout' };
             if (configuration === 'retired-name')
               return { ...value, name: retiredQueryCapabilitiesToolName };
             return { ...value, output: { pick: ['missing'] } };
@@ -3828,6 +3842,7 @@ describe('businessTools.test.ts', { concurrency: false, timeout: 60000 }, () => 
           ['invalid-name', /Invalid or duplicate MCP tool name/],
           ['duplicate', /Invalid or duplicate MCP tool name/],
           ['reserved-name', /Invalid or duplicate MCP tool name/],
+          ['logout-name', /Invalid or duplicate MCP tool name/],
           ['invalid-pick', /Invalid MCP output.pick/],
         ] as const) {
           configuration = mode;

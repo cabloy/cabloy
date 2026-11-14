@@ -2,7 +2,7 @@
 
 <Badge type="info" text="Basic" />
 
-This guide explains how an MCP client connects to Cabloy Basic's authenticated shared `/mcp` endpoint. The authorization server uses RFC 7591 Dynamic Client Registration (DCR), existing Cabloy login, explicit consent and authorization code exchange with PKCE. Static OAuth client registrations are not supported. Clients that cannot perform OAuth but can send a Bearer header may instead use [personal MCP access tokens](https://github.com/cabloy/cabloy/blob/main/vona/src/suite-vendor/cabloy-mcp/docs/access-tokens.md), managed separately under Account → Security.
+This guide explains how an MCP client connects to Cabloy Basic's authenticated shared `/mcp` endpoint. The authorization server uses RFC 7591 Dynamic Client Registration (DCR), existing Cabloy login, explicit consent and authorization code exchange with PKCE. Static OAuth client registrations are not supported. Clients that cannot perform OAuth but can send a Bearer header may instead use [personal MCP access tokens](/mcp/mcp-access-tokens), managed separately under Account → Security.
 
 Read [MCP Integration Guide](/mcp/mcp-guide) for endpoint ownership and admission, and [MCP Controller Tools](/mcp/mcp-controller-tools) for Action mapping and business examples. The [independent local test launcher](/mcp/mcp-commerce-local) is anonymous and rejects credentials; do not send OAuth tokens to it.
 
@@ -250,6 +250,24 @@ Example application-authored fields:
 The correlator hashes a domain-separated grant-binding tuple, not a token or nonce. These fields exclude raw user/client/grant IDs, credentials, codes, headers, cookies and tool arguments/results. The normal logger may add timestamp, level, bean, method/path and telemetry metadata. This is pseudonymous operational correlation, not anonymization or protected audit.
 
 To observe refresh without changing lifetimes, make a read-only interaction, wait beyond access expiry (2 hours by default), then interact without manually reauthorizing. Matching family and generation across both events establishes server-side refresh followed by use, not client persistence or tool success. Continued usability alone is insufficient. Missing logs are inconclusive when filtered/suppressed; do not bypass logging policy, collect credentials, reset databases or replay refresh tokens to obtain evidence.
+
+## Log out from an MCP client
+
+Explicitly ask the connected assistant to log out of Cabloy MCP or revoke its current authorization. For example: “Log out of Cabloy MCP.” The authenticated server provides the built-in `cabloy_logout` tool for this request, including for `mcp:read` and custom scopes. It remains available even when no business Action is visible. It is an authorization self-service operation, not a selectable business Action, and does not grant access to other tools.
+
+The tool takes no arguments. A direct MCP call can omit `arguments` or send an empty object:
+
+```json
+{ "name": "cabloy_logout", "arguments": {} }
+```
+
+Do not paste a token or specify a user, client or authorization ID. The server identifies the credential from the authenticated request. Only call the tool when the user explicitly requests logout or revocation; finishing a task alone is not a logout request. With multiple connections, select the intended server before calling it.
+
+- **OAuth:** revokes the current authorization, including its refresh capability. A refresh token cannot restore that authorization.
+- **Personal access token:** revokes the current token. [Create a replacement](/mcp/mcp-access-tokens#create-and-connect) to reconnect; personal tokens have no refresh credential.
+- **Shared credentials:** every connection or conversation using the same authorization or token loses access. Independently issued authorizations and tokens remain usable.
+
+A successful result includes `loggedOut: true`. Subsequent requests using the revoked credential fail authentication; the operation does not cancel work already admitted. Reconnect with a new OAuth authorization or a new personal access token. The tool cannot close a conversation, erase history or previously returned data, clear credentials stored by the MCP client, or sign out of the website/browser. Whether the client offers or starts a new authorization flow is client-specific.
 
 ## Business reads
 

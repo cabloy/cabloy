@@ -25,7 +25,17 @@ export class ServiceSharedBusinessTools extends BeanBase {
       if (userId === undefined) throw new Error('MCP authorization user required');
       access = await this.$scope.mcpAuth.service.authorization.resolveToolAccess(scope, userId);
     }
+    const canLogout = () =>
+      this.ctx.state.passportAuthTokenClient === 'mcpAccess' &&
+      Boolean(this.ctx.state.passportPayloadData) &&
+      Boolean(this.bean.passport.current);
     return createControllerToolServer(this.app, scope, {
+      logout: canLogout()
+        ? async () => {
+            if (!canLogout()) throw new Error('MCP authorization required');
+            await this.bean.passport.signout();
+          }
+        : undefined,
       toolAccess: access?.tools,
       toolAccessReadOnly: access?.readOnly,
       isToolVisible: async ({ action }, controller) =>

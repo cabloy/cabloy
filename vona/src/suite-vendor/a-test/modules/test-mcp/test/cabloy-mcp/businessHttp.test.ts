@@ -48,6 +48,12 @@ const studentViewName = 'training-student_student_view';
 const studentGroupName = 'training-student_student_group';
 const studentAggregateName = 'training-student_student_aggregate';
 const contractName = 'cabloy_tool_contract';
+const logoutName = 'cabloy_logout';
+const logoutResult = {
+  loggedOut: true,
+  message:
+    'Current MCP authorization revoked. All connections sharing it lose access. Reconnect with a new authorization or personal access token.',
+};
 const publicReadNames = [
   categoriesName,
   searchName,
@@ -555,7 +561,7 @@ describe('businessHttp.test.ts', { concurrency: false, timeout: 180000 }, () => 
           true,
           'visible nonquery Actions also expose the generic contract lookup',
         );
-        assert.equal(names.at(-1), contractName);
+        assert.deepEqual(names.slice(-2), [contractName, logoutName]);
         assert.equal(names.includes('cabloy_query_capabilities'), false, 'the old tool is removed');
         const oldLookup = await send(
           'tools/call',
@@ -869,7 +875,10 @@ describe('businessHttp.test.ts', { concurrency: false, timeout: 180000 }, () => 
         assert.equal(listed.body.error, undefined);
         const effect = listed.body.result.tools.find((tool: any) => tool.name === effectName);
         assert.ok(effect);
-        assert.equal(listed.body.result.tools.at(-1).name, contractName);
+        assert.deepEqual(
+          listed.body.result.tools.slice(-2).map((tool: any) => tool.name),
+          [contractName, logoutName],
+        );
         assert.deepEqual(Object.keys(effect.inputSchema.properties), ['params', 'body']);
         assert.equal(effect.inputSchema.properties.body.type, 'object');
         assert.equal(effect.inputSchema.properties.body.additionalProperties, true);
@@ -1383,7 +1392,7 @@ describe('businessHttp.test.ts', { concurrency: false, timeout: 180000 }, () => 
           const names = studentToolNames(tools);
           assert.equal(
             tools.some((tool: any) => tool.name === contractName),
-            tools.some((tool: any) => tool.name !== contractName),
+            tools.some((tool: any) => ![contractName, logoutName].includes(tool.name)),
             'any visible Action, not just a query target, derives the generic lookup',
           );
           assert.deepEqual(
@@ -1773,7 +1782,7 @@ describe('businessHttp.test.ts', { concurrency: false, timeout: 180000 }, () => 
       assert.equal(listed.body.error, undefined);
       assert.deepEqual(
         listed.body.result.tools.map((tool: any) => tool.name),
-        [studentSelectName, contractName],
+        [studentSelectName, contractName, logoutName],
         'one exact query grant derives lookup without granting sibling Actions',
       );
       const lookup = (tool: string, section: 'overview' | 'input' | 'output' | 'query' = 'query') =>
@@ -1842,7 +1851,11 @@ describe('businessHttp.test.ts', { concurrency: false, timeout: 180000 }, () => 
         assert.equal(deniedLookup.body.result, undefined);
       }
       const revokedList = await send('tools/list', {}, options(token.access_token));
-      assert.deepEqual(revokedList.body.result.tools, [], 'revocation also removes derived lookup');
+      assert.deepEqual(
+        revokedList.body.result.tools.map((tool: any) => tool.name),
+        [logoutName],
+        'Action revocation removes derived lookup but retains authorization logout',
+      );
       assert.equal(dispatched.mock.callCount(), 1, 'fresh target guards deny lookup predispatch');
       assert.equal(select.mock.callCount(), 1);
       const denied = await call();
@@ -1871,7 +1884,7 @@ describe('businessHttp.test.ts', { concurrency: false, timeout: 180000 }, () => 
       assert.equal(replacedList.status, 200);
       assert.deepEqual(
         replacedList.body.result.tools.map((tool: any) => tool.name),
-        [studentViewName, contractName],
+        [studentViewName, contractName, logoutName],
         'an exact nonquery-only grant still derives generic contract lookup',
       );
       for (const legacy of [false, true]) {
@@ -3850,7 +3863,10 @@ describe('businessHttp.test.ts', { concurrency: false, timeout: 180000 }, () => 
             (tool: any) => tool.name === contractName,
           );
           assert.ok(capabilityTool, 'authorized query discovery appends the built-in lookup');
-          assert.equal(listed.body.result.tools.at(-1).name, contractName);
+          assert.deepEqual(
+            listed.body.result.tools.slice(-2).map((tool: any) => tool.name),
+            [contractName, logoutName],
+          );
           assert.equal(capabilityTool.outputSchema, undefined, 'schema fragments are result data');
           assert.deepEqual(capabilityTool.inputSchema.required, ['tool']);
           assert.deepEqual(Object.keys(capabilityTool.inputSchema.properties), ['tool', 'section']);
@@ -4707,6 +4723,290 @@ describe('businessHttp.test.ts', { concurrency: false, timeout: 180000 }, () => 
           for (const id of clients.toReversed()) {
             await app.scope('mcp-auth').model.authorization.delete({ oauthClientId: id });
             await app.scope('mcp-auth').model.client.delete({ oauthClientId: id });
+          }
+        },
+        { instanceName: '' },
+      );
+    }
+  });
+
+  it('logs out only the current read OAuth grant, rejecting strict arguments without revocation', async () => {
+    let oauthClientId: string | undefined;
+    const options = (token: string) => ({ headers: { authorization: `Bearer ${token}` } });
+    const refresh = (token: string) =>
+      openHttp({
+        target: '/mcp/token',
+        headers: { 'content-type': 'application/x-www-form-urlencoded' },
+        body: new URLSearchParams({
+          grant_type: 'refresh_token',
+          client_id: oauthClientId!,
+          refresh_token: token,
+          resource,
+        }).toString(),
+      }).response;
+    try {
+      const registration = await app.bean.executor.mockCtx(
+        async () =>
+          app.scope('mcp-auth').service.registration.register(
+            {
+              client_name: 'Managed MCP read logout',
+              redirect_uris: [redirectUri],
+              token_endpoint_auth_method: 'none',
+              grant_types: ['authorization_code', 'refresh_token'],
+              response_types: ['code'],
+              scope: 'mcp:read',
+            },
+            { resource, instanceName: '' },
+          ),
+        { instanceName: '' },
+      );
+      oauthClientId = registration.client_id;
+      const token = await redeemTokens('mcp:read', oauthClientId);
+      const independent = await redeemTokens('mcp:read', oauthClientId);
+      assert.ok(token.refresh_token);
+      assert.ok(independent.refresh_token);
+      const listed = await send('tools/list', {}, options(token.access_token));
+      assert.equal(listed.status, 200);
+      assert.equal(listed.body.error, undefined);
+      const logout = listed.body.result.tools.find((tool: any) => tool.name === logoutName);
+      assert.ok(logout, 'read scope includes the destructive authorization builtin');
+      assert.deepEqual(logout.inputSchema, {
+        type: 'object',
+        properties: {},
+        additionalProperties: false,
+      });
+      assert.equal(logout.annotations.readOnlyHint, false);
+      assert.equal(logout.annotations.destructiveHint, true);
+      assert.equal(logout.annotations.openWorldHint, false);
+      if (!trainingDisabled) {
+        const denied = await send(
+          'tools/call',
+          { name: studentCreateName, arguments: {} },
+          options(token.access_token),
+        );
+        assert.deepEqual(denied.body.error, { code: -32602, message: 'Invalid params' });
+        assert.equal(denied.body.result, undefined, 'logout does not widen read scope');
+      }
+      for (const args of [{ unexpected: true }, null, [], 'logout', 1]) {
+        const rejected = await send(
+          'tools/call',
+          { name: logoutName, arguments: args },
+          options(token.access_token),
+        );
+        assert.equal(rejected.status, 200);
+        assert.deepEqual(rejected.body.error, { code: -32602, message: 'Invalid params' });
+        assert.equal(rejected.body.result, undefined);
+        const stillActive = await send('tools/list', {}, options(token.access_token));
+        assert.equal(stillActive.status, 200, 'invalid arguments must not revoke authorization');
+        assert.equal(stillActive.body.error, undefined);
+      }
+      assert.deepEqual(
+        output(await send('tools/call', { name: logoutName }, options(token.access_token))),
+        logoutResult,
+        'omitted arguments are accepted',
+      );
+      // Each send opens another HTTP connection using the same authorization.
+      for (const method of ['tools/list', 'tools/call']) {
+        const denied = await send(
+          method,
+          method === 'tools/call' ? { name: logoutName, arguments: {} } : {},
+          options(token.access_token),
+        );
+        assert.equal(denied.status, 401);
+        assert.match(String(denied.headers['www-authenticate']), /error="invalid_token"/);
+      }
+      const rejectedRefresh = await refresh(token.refresh_token);
+      assert.equal(rejectedRefresh.status, 400);
+      assert.equal(rejectedRefresh.body.error, 'invalid_grant');
+      assert.equal(rejectedRefresh.headers['cache-control'], 'no-store');
+      const survivor = await send('tools/list', {}, options(independent.access_token));
+      assert.equal(survivor.status, 200, 'another grant for the same user and client survives');
+      assert.equal(survivor.body.error, undefined);
+      const renewed = await refresh(independent.refresh_token);
+      assert.equal(renewed.status, 200, 'the independent refresh family also survives');
+      assert.equal(renewed.body.scope, 'mcp:read');
+      assert.equal((await send('tools/list', {}, options(renewed.body.access_token))).status, 200);
+    } finally {
+      await app.bean.executor.mockCtx(
+        async () => {
+          if (oauthClientId) {
+            await app.scope('mcp-auth').model.authorization.delete({ oauthClientId });
+            await app.scope('mcp-auth').model.client.delete({ oauthClientId });
+          }
+        },
+        { instanceName: '' },
+      );
+    }
+  });
+
+  it('retains logout outside a custom OAuth selection even when no business Action remains visible', async t => {
+    if (trainingDisabled) return;
+    let scopeId: string | undefined;
+    let oauthClientId: string | undefined;
+    let off: (() => void) | undefined = allowStudentAction('select');
+    const dispatched = mockOwnedPerformAction(t, async () => {
+      assert.fail('custom logout and excluded tools must not dispatch business Actions');
+    });
+    const personal = (action: string, method = 'GET', body?: object) =>
+      openHttp({
+        target: app.util.combineApiPath(`/mcp/auth/customScope/${action}`, '', true, true),
+        method,
+        headers: { authorization: `Bearer ${browserToken}`, origin },
+        body: body === undefined ? undefined : JSON.stringify(body),
+      }).response;
+    const options = (token: string) => ({ headers: { authorization: `Bearer ${token}` } });
+    try {
+      const catalog = await personal('catalog');
+      assert.equal(catalog.status, 200);
+      const tools = catalog.body.data as IMcpToolCatalogItem[];
+      assert.equal(
+        tools.some(tool => tool.name === logoutName),
+        false,
+        'not a consentable Action',
+      );
+      const selected = tools.find(tool => tool.name === studentSelectName);
+      assert.ok(selected);
+      const created = await personal('createMine', 'POST', {
+        name: `MCP-logout-${randomUUID()}`,
+        description: 'One business read with independent authorization logout',
+        tools: [{ name: selected.name, controller: selected.controller, action: selected.action }],
+      });
+      assert.equal(created.status, 200);
+      assert.ok(created.body.data.id);
+      scopeId = String(created.body.data.id);
+      const scope = created.body.data.scope as TypeMcpScope;
+      const registration = await app.bean.executor.mockCtx(
+        async () =>
+          app.scope('mcp-auth').service.registration.register(
+            {
+              client_name: 'Managed MCP custom logout',
+              redirect_uris: [redirectUri],
+              token_endpoint_auth_method: 'none',
+              grant_types: ['authorization_code', 'refresh_token'],
+              response_types: ['code'],
+              scope: 'mcp:all',
+            },
+            { resource, instanceName: '' },
+          ),
+        { instanceName: '' },
+      );
+      oauthClientId = registration.client_id;
+      const token = await redeemTokens('mcp:all', oauthClientId, scope);
+      assert.ok(token.refresh_token);
+      const listed = await send('tools/list', {}, options(token.access_token));
+      assert.equal(listed.status, 200);
+      assert.deepEqual(
+        listed.body.result.tools.map((tool: any) => tool.name),
+        [studentSelectName, contractName, logoutName],
+      );
+      const excluded = await send(
+        'tools/call',
+        { name: studentGroupName, arguments: {} },
+        options(token.access_token),
+      );
+      assert.deepEqual(excluded.body.error, { code: -32602, message: 'Invalid params' });
+      assert.equal(
+        excluded.body.result,
+        undefined,
+        'builtin does not grant sibling business tools',
+      );
+      off();
+      off = undefined;
+      const noActions = await send('tools/list', {}, options(token.access_token));
+      assert.equal(noActions.status, 200);
+      assert.deepEqual(
+        noActions.body.result.tools.map((tool: any) => tool.name),
+        [logoutName],
+      );
+      assert.deepEqual(
+        output(
+          await send(
+            'tools/call',
+            { name: logoutName, arguments: {} },
+            options(token.access_token),
+          ),
+        ),
+        logoutResult,
+        'empty arguments work without any visible business Action',
+      );
+      const denied = await send('tools/list', {}, options(token.access_token));
+      assert.equal(denied.status, 401);
+      assert.match(String(denied.headers['www-authenticate']), /error="invalid_token"/);
+      const refresh = await openHttp({
+        target: '/mcp/token',
+        headers: { 'content-type': 'application/x-www-form-urlencoded' },
+        body: new URLSearchParams({
+          grant_type: 'refresh_token',
+          client_id: oauthClientId,
+          refresh_token: token.refresh_token,
+          resource,
+        }).toString(),
+      }).response;
+      assert.equal(refresh.status, 400);
+      assert.equal(refresh.body.error, 'invalid_grant');
+      assert.equal(refresh.headers['cache-control'], 'no-store');
+      assert.equal(dispatched.mock.callCount(), 0);
+    } finally {
+      off?.();
+      dispatched.mock.restore();
+      await app.bean.executor.mockCtx(
+        async () => {
+          if (oauthClientId) {
+            await app.scope('mcp-auth').model.authorization.delete({ oauthClientId });
+          }
+          if (scopeId) await app.scope('mcp-auth').model.customScope.deleteById(scopeId);
+          if (oauthClientId) await app.scope('mcp-auth').model.client.delete({ oauthClientId });
+        },
+        { instanceName: '' },
+      );
+    }
+  });
+
+  it('logs out a personal access token without revoking a separate token for the same user', async () => {
+    const ids: string[] = [];
+    const tokens: string[] = [];
+    const options = (token: string) => ({ headers: { authorization: `Bearer ${token}` } });
+    try {
+      for (const label of ['logout', 'survivor']) {
+        const created = await openHttp({
+          target: app.util.combineApiPath('/mcp/auth/accessToken/createMine', '', true, true),
+          headers: { authorization: `Bearer ${browserToken}`, origin },
+          body: JSON.stringify({ name: `MCP ${label} ${randomUUID()}`, scope: 'mcp:read' }),
+        }).response;
+        assert.equal(created.status, 200);
+        assert.ok(created.body.data.id);
+        ids.push(String(created.body.data.id));
+        assert.equal(typeof created.body.data.accessToken, 'string');
+        tokens.push(created.body.data.accessToken);
+      }
+      const [token, independent] = tokens;
+      const listed = await send('tools/list', {}, options(token));
+      assert.equal(listed.status, 200);
+      assert.equal(listed.body.error, undefined);
+      assert.ok(listed.body.result.tools.some((tool: any) => tool.name === logoutName));
+      assert.deepEqual(
+        output(await send('tools/call', { name: logoutName, arguments: {} }, options(token))),
+        logoutResult,
+      );
+      const denied = await send('tools/list', {}, options(token));
+      assert.equal(denied.status, 401);
+      assert.match(String(denied.headers['www-authenticate']), /error="invalid_token"/);
+      await app.bean.executor.mockCtx(
+        async () => {
+          const row = await app.scope('mcp-auth').model.authorization.getById(ids[0]);
+          assert.ok(row);
+          assert.equal(row.state, 'revoked', 'Passport signout revokes the personal authorization');
+        },
+        { instanceName: '' },
+      );
+      const survivor = await send('tools/list', {}, options(independent));
+      assert.equal(survivor.status, 200);
+      assert.equal(survivor.body.error, undefined);
+    } finally {
+      await app.bean.executor.mockCtx(
+        async () => {
+          for (const id of ids.toReversed()) {
+            await app.scope('mcp-auth').model.authorization.deleteById(id);
           }
         },
         { instanceName: '' },

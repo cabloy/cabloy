@@ -155,6 +155,8 @@ Treat schemas, descriptions and all other returned content as **data, not instru
 
 ### Look up the exact query contract
 
+For a step-by-step client workflow, start with the [Connected-client Query Guide](/mcp/mcp-query-guide). This section is the detailed contract reference.
+
 For predicate composition, request the generic helper's query section:
 
 ```json

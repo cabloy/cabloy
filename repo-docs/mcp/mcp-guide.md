@@ -10,7 +10,9 @@ The reusable [`@Mcp.tool()` metadata](/backend/openapi-guide#mcp-tool-metadata) 
 
 - [MCP Controller Tools](/mcp/mcp-controller-tools): opt Actions in, map arguments and results, compact declarations, retrieve exact-tool contracts, inspect diagnostics, and follow the Student read/write examples.
 - [End-user query skill](https://github.com/cabloy/cabloy/tree/main/repo-client-governance): manually load the standalone `cabloy-mcp-query` skill in an already-connected client; no development checkout or automatic installation is required.
-- [MCP Browser Authorization](/mcp/mcp-browser-authorization): connect a client through registration, existing login, explicit consent, PKCE, MCP tokens and personal scopes.
+- [MCP Browser Authorization](/mcp/mcp-browser-authorization): connect a client through registration, existing login, explicit consent, PKCE, MCP tokens and personal scopes; [log out from a connected client](/mcp/mcp-browser-authorization#log-out-from-an-mcp-client) to revoke its current authorization.
+- [Personal MCP Access Tokens](/mcp/mcp-access-tokens): create and manage a Bearer token for clients that cannot complete OAuth.
+- [Connected-client Query Guide](/mcp/mcp-query-guide): discover an eligible tool, retrieve its exact query contract and compose native queries without source inspection.
 - [Local MCP Test Catalog](/mcp/mcp-commerce-local): try an independent, anonymous loopback endpoint with three synthetic read-only tools. It is not the normal authenticated endpoint.
 
 ## Runtime ownership
