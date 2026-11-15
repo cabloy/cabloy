@@ -1,11 +1,14 @@
+import type { VonaApplication } from 'vona';
+
 import type { IMcpAuthConfig } from '../types/index.ts';
 
-export function config(): IMcpAuthConfig {
+export function config(app?: VonaApplication): IMcpAuthConfig {
   return {
     registration: {
       maxBodyBytes: 16384,
       maxRedirectUris: 16,
-      rateLimit: 10,
+      // Keep a bounded test budget for managed browser scenarios and worker retries.
+      rateLimit: app?.meta.isTest ? 100 : 10,
       rateLimitWindow: 600,
     },
     pendingTtl: 600,

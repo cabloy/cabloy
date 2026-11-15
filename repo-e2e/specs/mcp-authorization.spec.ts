@@ -368,11 +368,16 @@ async function loginAndReadConsent(
     (option: { scope: string }) => option.scope === scope,
   );
   const toolIndex = scopeOption.tools.findIndex(
-    (tool: { summary?: string; name: string }) =>
-      tool.summary?.trim() && tool.summary.trim() !== tool.name,
+    (tool: { name: string }) => tool.name === 'mcp_e2e_access_token_read',
   );
   expect(toolIndex).toBeGreaterThanOrEqual(0);
   const tool = scopeOption.tools[toolIndex];
+  expect(tool).toMatchObject({
+    controller: 'cabloy-mcp.controller.accessTokenTest',
+    action: 'read',
+    summary: 'Read MCP test values',
+    description: 'Returns fixed array values for managed MCP browser tests.',
+  });
   const toolDetails = page.locator(`[data-mcp-scope-option="${scope}"] details`);
   await toolDetails.locator('summary').click();
   const toolItem = toolDetails.locator('li').nth(toolIndex);

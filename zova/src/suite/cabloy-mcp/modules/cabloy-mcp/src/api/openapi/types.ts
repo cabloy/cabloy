@@ -1862,6 +1862,10 @@ export interface paths {
       path?: never;
       cookie?: never;
     };
+    /**
+     * Read MCP test values
+     * @description Returns fixed array values for managed MCP browser tests.
+     */
     get: operations['CabloyMcpAccessTokenTest_read'];
     put?: never;
     post?: never;

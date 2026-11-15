@@ -12,7 +12,10 @@ export interface IControllerOptionsAccessTokenTest extends IDecoratorControllerO
 @Controller<IControllerOptionsAccessTokenTest>({ path: 'accessTokenTest', meta: { mode: 'test' } })
 export class ControllerAccessTokenTest extends BeanBase {
   @Mcp.tool({ name: 'mcp_e2e_access_token_read' })
-  @Web.get('read')
+  @Web.get('read', {
+    summary: 'Read MCP test values',
+    description: 'Returns fixed array values for managed MCP browser tests.',
+  })
   @Api.body(z.array(z.string()))
   @Passport.public()
   read(): string[] {

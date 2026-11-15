@@ -237,6 +237,16 @@ describe('authorization.test.ts', { concurrency: false }, () => {
       allowLoopbackHttp: true,
     });
     assert.equal(validateMcpAuthConfig(config), config);
+    const testConfig = validateMcpAuthConfig(defaultConfig(app));
+    assert.equal(testConfig.registration!.rateLimit, 100);
+    assert.equal(testConfig.registration!.rateLimitWindow, 600);
+    assert.equal(
+      validateMcpAuthConfig({
+        ...testConfig,
+        registration: { ...testConfig.registration!, rateLimit: 10 },
+      }).registration!.rateLimit,
+      10,
+    );
     for (const patch of [
       { tokenTtl: 0 },
       { refreshTokenTtl: 0 },
