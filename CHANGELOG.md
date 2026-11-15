@@ -1,5 +1,11 @@
 # Changelog
 
+## 5.1.284
+
+### Bug Fixes
+
+- Fix the MCP test.
+
 ## 5.1.283
 
 ### Features
