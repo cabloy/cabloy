@@ -129,12 +129,16 @@ test('a getter-owned injection retains the selector proxy through a deep reactiv
   assert.equal(toRaw(owner.nested.resource), toRaw(resource));
 });
 
-test('ordinary deep reactive assignment currently unwraps the AOP proxy', async () => {
+test('ordinary deep reactive assignment preserves the AOP proxy', async () => {
   const resource: any = await selector();
   const owner = reactive({ nested: {} as { resource?: unknown } });
   owner.nested.resource = resource;
 
-  assert.notEqual(owner.nested.resource, resource);
-  assert.equal((owner.nested.resource as any).compute(2), 3);
-  assert.equal((owner.nested.resource as any).value, 1);
+  assert.equal(owner.nested.resource, resource);
+  assert.equal(isReactive(owner.nested.resource), true);
+  assert.equal((owner.nested.resource as any).compute(2), 103);
+  assert.equal((owner.nested.resource as any).value, 11);
+  owner.nested.resource.value = 4;
+  assert.equal((owner.nested.resource as any).value, 15);
+  assert.equal(toRaw(owner.nested.resource), toRaw(resource));
 });

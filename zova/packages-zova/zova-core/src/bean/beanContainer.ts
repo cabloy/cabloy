@@ -598,7 +598,7 @@ export class BeanContainer {
 
   private async _prepareBeanInstance(beanFullName, beanClass, args, markReactive, aop) {
     // prepare
-    let beanInstance = this._prepareBeanInstanceCommon(beanFullName, beanClass, args, markReactive);
+    let beanInstance = this._prepareBeanInstanceCommon(beanFullName, beanClass, args);
     // aop: proxy
     const beanInstanceProxy = await this._patchBeanInstance(
       beanFullName || beanClass,
@@ -606,12 +606,13 @@ export class BeanContainer {
       aop,
     );
     if (beanInstanceProxy) {
-      // reactive
-      if (markReactive) {
-        beanInstance = reactive(beanInstanceProxy);
-      } else {
-        beanInstance = markRaw(beanInstanceProxy);
-      }
+      beanInstance = beanInstanceProxy;
+    }
+    // reactive
+    if (markReactive) {
+      beanInstance = reactive(beanInstance);
+    } else {
+      beanInstance = markRaw(beanInstance);
     }
     // ok
     return beanInstance;
@@ -619,27 +620,28 @@ export class BeanContainer {
 
   private _prepareBeanInstanceSimple(beanFullName, beanClass, args, markReactive) {
     // prepare
-    let beanInstance = this._prepareBeanInstanceCommon(beanFullName, beanClass, args, markReactive);
+    let beanInstance = this._prepareBeanInstanceCommon(beanFullName, beanClass, args);
     // aop: proxy
     const beanInstanceProxy = this._patchBeanInstanceSimple(
       beanFullName || beanClass,
       beanInstance,
     );
     if (beanInstanceProxy) {
-      // reactive
-      if (markReactive) {
-        beanInstance = reactive(beanInstanceProxy);
-      } else {
-        beanInstance = markRaw(beanInstanceProxy);
-      }
+      beanInstance = beanInstanceProxy;
+    }
+    // reactive
+    if (markReactive) {
+      beanInstance = reactive(beanInstance);
+    } else {
+      beanInstance = markRaw(beanInstance);
     }
     // ok
     return beanInstance;
   }
 
-  private _prepareBeanInstanceCommon(beanFullName, BeanClass, args, markReactive) {
+  private _prepareBeanInstanceCommon(beanFullName, BeanClass, args) {
     // create: always passed in args
-    let beanInstance = new BeanClass(...args);
+    const beanInstance = new BeanClass(...args);
     // if (BeanClass.prototype.__init__) {
     //   beanInstance = new BeanClass();
     // } else {
@@ -664,12 +666,6 @@ export class BeanContainer {
     // beanFullName
     if (typeof beanFullName === 'string') {
       __setPropertyValue(beanInstance, SymbolBeanFullName, beanFullName, false);
-    }
-    // reactive
-    if (markReactive) {
-      beanInstance = reactive(beanInstance);
-    } else {
-      beanInstance = markRaw(beanInstance);
     }
     // ok
     return beanInstance;
