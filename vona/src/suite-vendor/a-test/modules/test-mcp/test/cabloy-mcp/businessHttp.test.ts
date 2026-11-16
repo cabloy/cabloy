@@ -2691,7 +2691,7 @@ describe('businessHttp.test.ts', { concurrency: false, timeout: 180000 }, () => 
   it('uploads a synthetic image through a Site PAT and preserves the student aggregate on full update', async () => {
     if (trainingDisabled) return;
     const uploadName = 'a-image_image_uploadBase64';
-    const filename = `photo-${randomUUID()}.jpg`;
+    const filename = `photo-${randomUUID().slice(0, 8)}.jpg`;
     const studentData = {
       name: `Photo ${filename}`,
       mobile: '13812345678',
