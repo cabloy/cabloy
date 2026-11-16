@@ -14,7 +14,7 @@ import { celEnvBase, isNil } from '@cabloy/utils';
 import { SchemaObject } from 'openapi3-ts/oas31';
 import { TableIdentity } from 'table-identity';
 import { VNode } from 'vue';
-import { BeanControllerBase, deepEqual, deepExtend } from 'zova';
+import { BeanControllerBase, deepEqual, deepExtend, Use, usePrepareArg } from 'zova';
 import { ZovaJsx } from 'zova-jsx';
 import { Controller } from 'zova-module-a-bean';
 import {
@@ -91,14 +91,12 @@ export class ControllerBlockPageEntry<TData extends {} = {}> extends BeanControl
   jsxCelScope: IPageEntryScope;
   jsxRenderContext: IJsxRenderContextPageEntry<TData>;
 
-  $$modelResource: ModelResource<TData>;
+  @Use({ beanFullName: 'rest-resource.model.resource' })
+  get $$modelResource(): ModelResource<TData> {
+    return usePrepareArg(this.resource, true);
+  }
 
   protected async __init__() {
-    this.$$modelResource = await this.bean._getBeanSelector(
-      'rest-resource.model.resource',
-      true,
-      this.resource,
-    );
     this.formMeta = this.$computed(() => {
       const formScene = this.formScene;
       return { ...formMetaFromFormScene(formScene), formScene };

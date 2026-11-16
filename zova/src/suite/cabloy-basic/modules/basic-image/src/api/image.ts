@@ -6,6 +6,15 @@ import type { components, paths } from './openapi/index.ts';
 
 import { OpenApiBaseURL } from './openapi/index.ts';
 
+/** Image_uploadBase64 */
+export const ApiApiImageuploadBase64Path = '/api/image/upload-base64';
+export type ApiApiImageuploadBase64Path = '/api/image/upload-base64';
+export type ApiApiImageuploadBase64Method = 'post';
+export type ApiApiImageuploadBase64RequestBody =
+  components['schemas']['a-image.dto.imageUploadBase64Request'];
+export type ApiApiImageuploadBase64ResponseBody =
+  paths[ApiApiImageuploadBase64Path][ApiApiImageuploadBase64Method]['responses']['200']['content']['application/json']['data'];
+
 /** Image_getUploadPolicy */
 export const ApiApiImagegetUploadPolicyPath = '/api/image/upload-policy';
 export type ApiApiImagegetUploadPolicyPath = '/api/image/upload-policy';
@@ -65,6 +74,15 @@ export type ApiApiImagedeliveryResponseBody =
 
 @Api()
 export class ApiImage extends BeanApiBase {
+  /** Upload image content */
+  uploadBase64(body: ApiApiImageuploadBase64RequestBody, options?: IApiActionOptions) {
+    return this.$fetch.post<any, ApiApiImageuploadBase64ResponseBody>(
+      ApiApiImageuploadBase64Path,
+      body,
+      this.$configPrepare(OpenApiBaseURL(this.sys), options, true),
+    );
+  }
+
   getUploadPolicy(body: ApiApiImagegetUploadPolicyRequestBody, options?: IApiActionOptions) {
     return this.$fetch.post<any, ApiApiImagegetUploadPolicyResponseBody>(
       ApiApiImagegetUploadPolicyPath,

@@ -6,6 +6,14 @@ export type ApiSchemaTestVonaDtoUserCreate = components['schemas']['test-vona.dt
 export type ApiSchemaTestVonaDtoUserCreatePartial = Partial<ApiSchemaTestVonaDtoUserCreate>;
 export type ApiSchemaTestVonaEntityProduct = components['schemas']['test-vona.entity.product'];
 export type ApiSchemaTestVonaEntityProductPartial = Partial<ApiSchemaTestVonaEntityProduct>;
+export type ApiSchemaAImageDtoImageUploadResponse =
+  components['schemas']['a-image.dto.imageUploadResponse'];
+export type ApiSchemaAImageDtoImageUploadResponsePartial =
+  Partial<ApiSchemaAImageDtoImageUploadResponse>;
+export type ApiSchemaAImageDtoImageUploadBase64Request =
+  components['schemas']['a-image.dto.imageUploadBase64Request'];
+export type ApiSchemaAImageDtoImageUploadBase64RequestPartial =
+  Partial<ApiSchemaAImageDtoImageUploadBase64Request>;
 export type ApiSchemaAImageDtoImageUploadPolicyResponse =
   components['schemas']['a-image.dto.imageUploadPolicyResponse'];
 export type ApiSchemaAImageDtoImageUploadPolicyResponsePartial =
@@ -14,10 +22,6 @@ export type ApiSchemaAImageDtoImageUploadPolicyRequest =
   components['schemas']['a-image.dto.imageUploadPolicyRequest'];
 export type ApiSchemaAImageDtoImageUploadPolicyRequestPartial =
   Partial<ApiSchemaAImageDtoImageUploadPolicyRequest>;
-export type ApiSchemaAImageDtoImageUploadResponse =
-  components['schemas']['a-image.dto.imageUploadResponse'];
-export type ApiSchemaAImageDtoImageUploadResponsePartial =
-  Partial<ApiSchemaAImageDtoImageUploadResponse>;
 export type ApiSchemaAImageDtoImageDirectUploadResponse =
   components['schemas']['a-image.dto.imageDirectUploadResponse'];
 export type ApiSchemaAImageDtoImageDirectUploadResponsePartial =

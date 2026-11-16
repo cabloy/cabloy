@@ -1,4 +1,21 @@
 export interface paths {
+  '/api/image/upload-base64': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** Upload image content */
+    post: operations['Image_uploadBase64'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   '/api/image/upload-policy': {
     parameters: {
       query?: never;
@@ -1862,6 +1879,10 @@ export interface paths {
       path?: never;
       cookie?: never;
     };
+    /**
+     * Read MCP test values
+     * @description Returns fixed array values for managed MCP browser tests.
+     */
     get: operations['CabloyMcpAccessTokenTest_read'];
     put?: never;
     post?: never;
@@ -2752,6 +2773,24 @@ export interface components {
       amount: number;
       orderId: number | string;
     };
+    'a-image.dto.imageUploadResponse': {
+      id: number | string;
+      filename?: string | undefined;
+      contentType?: string | undefined;
+      size?: number | undefined;
+      width?: number | undefined;
+      height?: number | undefined;
+      public?: boolean | undefined;
+      url?: string | undefined;
+      signed?: boolean | undefined;
+    };
+    'a-image.dto.imageUploadBase64Request': {
+      imageScene: string;
+      filename: string;
+      /** @enum {string} */
+      mimeType: 'image/png' | 'image/jpeg' | 'image/webp';
+      base64: string;
+    };
     'a-image.dto.imageUploadPolicyResponse': {
       imageScene: string;
       maxSize?: number | undefined;
@@ -2763,17 +2802,6 @@ export interface components {
     };
     'a-image.dto.imageUploadPolicyRequest': {
       imageScene: string;
-    };
-    'a-image.dto.imageUploadResponse': {
-      id: number | string;
-      filename?: string | undefined;
-      contentType?: string | undefined;
-      size?: number | undefined;
-      width?: number | undefined;
-      height?: number | undefined;
-      public?: boolean | undefined;
-      url?: string | undefined;
-      signed?: boolean | undefined;
     };
     'a-image.dto.imageDirectUploadResponse': {
       id: number | string;
@@ -6132,6 +6160,8 @@ export interface components {
     'mcp-auth.dto.authorizationSummary': {
       clientName: string;
       resource: string;
+      ssrSiteId: string;
+      scopesUrl: string;
       scope: string;
       options: components['schemas']['mcp-auth.dto.mcpScopeOption'][];
       expiresAt: number;
@@ -6214,6 +6244,8 @@ export interface components {
       updatedAt: Date;
       /** @description ID */
       id: number | string;
+      /** Format: uri */
+      resource: string;
       scope: string;
       /**
        * Name
@@ -7107,6 +7139,34 @@ export interface components {
 }
 export type $defs = Record<string, never>;
 export interface operations {
+  Image_uploadBase64: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['a-image.dto.imageUploadBase64Request'];
+      };
+    };
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data: components['schemas']['a-image.dto.imageUploadResponse'];
+          };
+        };
+      };
+    };
+    authToken: true;
+  };
   Image_getUploadPolicy: {
     parameters: {
       query?: never;
@@ -10596,7 +10656,8 @@ export interface operations {
   };
   McpAuthAccessToken_mine: {
     parameters: {
-      query?: {
+      query: {
+        ssrSiteId: string;
         pageNo?: number;
         pageSize?: number;
       };
@@ -10623,7 +10684,9 @@ export interface operations {
   };
   McpAuthAccessToken_createMine: {
     parameters: {
-      query?: never;
+      query: {
+        ssrSiteId: string;
+      };
       header?: never;
       path?: never;
       cookie?: never;
@@ -10651,7 +10714,9 @@ export interface operations {
   };
   McpAuthAccessToken_deleteMine: {
     parameters: {
-      query?: never;
+      query: {
+        ssrSiteId: string;
+      };
       header?: never;
       path: {
         id: number | string;
@@ -10731,7 +10796,8 @@ export interface operations {
   };
   McpAuthAuthorizationGrant_mine: {
     parameters: {
-      query?: {
+      query: {
+        ssrSiteId: string;
         pageNo?: number;
         pageSize?: number;
       };
@@ -10758,7 +10824,9 @@ export interface operations {
   };
   McpAuthAuthorizationGrant_revokeMine: {
     parameters: {
-      query?: never;
+      query: {
+        ssrSiteId: string;
+      };
       header?: never;
       path: {
         id: number | string;
@@ -10784,7 +10852,9 @@ export interface operations {
   };
   McpAuthAuthorizationGrant_deleteMine: {
     parameters: {
-      query?: never;
+      query: {
+        ssrSiteId: string;
+      };
       header?: never;
       path: {
         id: number | string;
@@ -10810,7 +10880,9 @@ export interface operations {
   };
   McpAuthCustomScope_mine: {
     parameters: {
-      query?: never;
+      query: {
+        ssrSiteId: string;
+      };
       header?: never;
       path?: never;
       cookie?: never;
@@ -10834,7 +10906,9 @@ export interface operations {
   };
   McpAuthCustomScope_catalog: {
     parameters: {
-      query?: never;
+      query: {
+        ssrSiteId: string;
+      };
       header?: never;
       path?: never;
       cookie?: never;
@@ -10858,7 +10932,9 @@ export interface operations {
   };
   McpAuthCustomScope_createMine: {
     parameters: {
-      query?: never;
+      query: {
+        ssrSiteId: string;
+      };
       header?: never;
       path?: never;
       cookie?: never;
@@ -10886,7 +10962,9 @@ export interface operations {
   };
   McpAuthCustomScope_updateMine: {
     parameters: {
-      query?: never;
+      query: {
+        ssrSiteId: string;
+      };
       header?: never;
       path: {
         id: number | string;
@@ -10916,7 +10994,9 @@ export interface operations {
   };
   McpAuthCustomScope_deleteMine: {
     parameters: {
-      query?: never;
+      query: {
+        ssrSiteId: string;
+      };
       header?: never;
       path: {
         id: number | string;
