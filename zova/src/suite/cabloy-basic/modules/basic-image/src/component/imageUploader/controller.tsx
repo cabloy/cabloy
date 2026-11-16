@@ -10,6 +10,7 @@ import { prepareImageFile } from 'zova-module-basic-image';
 
 import type { IImageCropDialogLabels, IImageResizeOptions } from '../../lib/imageTransform.tsx';
 
+import { resolveImageProcessing } from '../../lib/imageProcessing.ts';
 import { ModelImage } from '../../model/image.ts';
 
 export interface IImageUploaderResult {
@@ -54,11 +55,13 @@ export interface ControllerImageUploaderProps {
   previewShape?: 'rect' | 'round';
   chooseText?: string;
   clearText?: string;
-  crop?: {
-    labels: IImageCropDialogLabels;
-    aspectRatio?: number;
-    shape?: 'rect' | 'round';
-  };
+  crop?:
+    | false
+    | {
+        labels: IImageCropDialogLabels;
+        aspectRatio?: number;
+        shape?: 'rect' | 'round';
+      };
   resize?: IImageResizeOptions;
   slotDefault?: (state: IImageUploaderRenderState) => VNode;
   onUploaded?: (result: IImageUploaderResult) => void;
@@ -217,7 +220,15 @@ export class ControllerImageUploader extends BeanControllerBase {
     try {
       await this._waitForUploadPolicy(props);
       if (generation !== this._generation) return;
-      const multiple = this._getEffectiveMultiple(props);
+      const policy = this._getCachedUploadPolicy(props);
+      if (!policy) throw new Error(this.scope.locale.ImageUploadFailed());
+      const processing = resolveImageProcessing(policy.processing, props, {
+        title: this.scope.locale.CropImage(),
+        adjust: this.scope.locale.AdjustImage(),
+        cancel: this.scope.locale.CancelCrop(),
+        apply: this.scope.locale.ApplyCrop(),
+      });
+      const multiple = this._getEffectiveMultiple(props, policy);
       const policyState = this._getUploadPolicyState(props);
       const beforeUploadError = props.onBeforeUpload?.(files.length, policyState);
       if (beforeUploadError) throw new Error(beforeUploadError);
@@ -228,8 +239,7 @@ export class ControllerImageUploader extends BeanControllerBase {
         if (validationError) throw new Error(validationError);
         const preparedFile = await prepareImageFile(file, {
           appModal: this.$appModal,
-          crop: props.crop,
-          resize: props.resize,
+          ...processing,
         });
         if (generation !== this._generation) return;
         if (!preparedFile) continue;
@@ -239,7 +249,7 @@ export class ControllerImageUploader extends BeanControllerBase {
           preparedFile,
           file,
           props,
-          !!this._getCachedUploadPolicy(props)?.directUpload,
+          !!policy.directUpload,
         );
         if (generation !== this._generation) return;
         results.push(result);

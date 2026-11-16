@@ -125,6 +125,7 @@ A scene is registered with `@ImageScene(...)` and can define:
 - provider selection
 - client selection
 - upload rules
+- client processing guidance in `processing`
 - optional per-scene metadata
 
 Representative scene shape:
@@ -135,11 +136,25 @@ Representative scene shape:
     maxSize: 2 * 1024 * 1024,
     mimeTypes: ['image/png', 'image/jpeg', 'image/webp'],
   },
+  processing: {
+    enableCrop: true,
+    cropAspectRatio: 1,
+    cropShape: 'rect',
+    resize: {
+      width: 512,
+      height: 512,
+      fit: 'cover',
+      format: 'jpeg',
+      quality: 90,
+    },
+  },
 })
 export class ImageSceneStudentImage extends BeanBase {}
 ```
 
-This keeps business upload rules in one named backend capability instead of scattering them across controllers and services.
+This keeps business upload rules and shared client processing guidance in one named backend capability instead of scattering them across controllers, services and resource fields. `processing` supports `enableCrop`, `cropAspectRatio`, `cropShape`, and `resize` options `width`, `height`, `fit`, `background`, `format` and `quality`.
+
+**`processing` is client behavior guidance, not server normalization or a storage guarantee.** It tells a browser or Agent how to prepare bytes before upload. It does not itself crop/resize stored originals, enforce output dimensions, strip EXIF metadata or change provider delivery transforms. Upload size, MIME and extension validation remain a separate server-side boundary.
 
 ### Image variant
 
@@ -231,6 +246,14 @@ If a provider-client record does not exist yet, `BeanImageProvider` can lazily r
 
 ## Operational flows
 
+## Read the current upload policy {#upload-policy}
+
+After resolving an existing registered `imageScene`, call `POST /image/upload-policy` with `{ imageScene }`. It returns the effective scene policy: `imageScene`, upload limits such as `maxSize`, `mimeTypes`, `extensions` and `multiple`, visibility/direct-upload capability, and the scene's optional `processing` guidance. Resource `rest.form.options.imageScene` selects the scene; `relationName` stays on the resource field to pair its stored ID with a resolved relation, not in `ImageScene.processing`.
+
+The Action is exposed through MCP as **`a-image_image_getUploadPolicy`**, explicitly classified **`readOnly: true`** despite using HTTP POST. A connected Agent discovers it on the selected connection, retrieves its exact current input/output contracts with `cabloy_tool_contract`, resolves the scene, then reads its current policy before preparing a copy. Do not infer a scene or processing defaults from field names or old examples. Browser resource image fields consume the same scene upload limits and processing guidance without field-level type, size or processing overrides.
+
+Policy lookup is not an upload, a storage guarantee or authority to bind an image. MCP scope, Action guards/RBAC, Site admission and active instance/data scope remain independent for policy, upload and business-resource Actions. See [MCP image upload](/mcp/mcp-controller-tools#json-image-upload) for the connected-client sequence.
+
 ## Authenticated multipart upload
 
 Ordinary image upload is one authenticated multipart request:
@@ -268,6 +291,40 @@ async upload(
 ```
 
 The normal passport guard remains the authorization boundary. Temporary tokens are still used for signed delivery where needed, but ordinary image upload does not issue or accept an upload token.
+
+## Authenticated JSON/base64 upload {#authenticated-json-base64-upload}
+
+`POST /image/upload-base64` accepts a bounded JSON body when the caller already has local image bytes. It is an alternative to multipart transport, not remote URL ingestion or a new image-storage lifecycle. The Action is also exposed as the write tool **`a-image_image_uploadBase64`** through the ordinary authenticated MCP mapping.
+
+The HTTP JSON body and MCP tool arguments have the same **flat** shape:
+
+```ts
+{
+  imageScene: string;
+  filename: string;
+  mimeType: 'image/png' | 'image/jpeg' | 'image/webp';
+  base64: string;
+}
+```
+
+- `imageScene` names an existing server-registered scene; the caller cannot select a provider, client, public/private flag, metadata, user or instance through extra fields.
+- `filename` is a nonempty filename with the matching `.png`, `.jpg`/`.jpeg`, or `.webp` extension. The server reduces path-like input to a basename and rejects invalid filenames.
+- `mimeType` must match the detected byte content, not merely the filename or caller declaration.
+- `base64` is canonical padded standard base64 only: no data-URL prefix, whitespace or URL-safe alphabet. Decoded bytes must be nonempty and **at most 2 MiB (2 × 1024 × 1024 bytes)**. The JSON envelope is larger because of base64 encoding; its separate transport bounds still apply.
+
+The JSON entrypoint admits PNG, JPEG and WebP only, even if a scene permits another format. Existing scene/provider availability and upload size, MIME and extension policy still apply and can narrow that ceiling. The server decodes into a private temporary runtime directory, validates the scene policy, uploads through the selected provider and removes its temporary input in `finally`. This entrypoint does not crop, resize, strip EXIF metadata or perform face detection. Read the [current upload policy](#upload-policy), prepare a separate copy using its `processing` guidance, then validate the resulting bytes against both scene upload limits and this entrypoint's fixed format/size limits before uploading once. Processing guidance is not a promise of server normalization.
+
+The response is the ordinary `DtoImageUploadResponse`: canonical **`id`**, with optional `filename`, `contentType`, `size`, `width`, `height`, `public`, `url` and `signed`. Through MCP this object is `result.structuredContent` directly, not `{ result: ... }`. Use its `id` when assigning a business resource's `imageId`; neither a provider ID nor `url` is that identity. A returned URL does not guarantee client reachability or inline rendering.
+
+### Authorization and recovery
+
+This Action uses normal Passport authentication, like the other image upload Actions, without an additional upload-specific RBAC permission. A public image scene controls image visibility; it does **not** permit anonymous upload or authorize a later business-resource update.
+
+For an operator calling through MCP, use a personal access token issued for the exact enabled SSR Site resource, with `mcp:all` or an eligible exact custom scope, and current Site/MCP admission. A token for another Site, `mcp:read`, or knowledge of the tool name is insufficient. Any subsequent resource-update permission remains independent. See [MCP image upload](/mcp/mcp-controller-tools#json-image-upload) and [Personal access tokens](/mcp/mcp-browser-authorization#site-scoped-account-security-management).
+
+Upload is a persisted, non-idempotent write. An error, timeout or lost response can happen after storage or image-record creation; automatic retry can create another image. The upload and a later business binding are separate writes, not one transaction. If binding fails after an acknowledged upload, retain the returned `id`, inspect the target resource with separately authorized reads, and explicitly complete the binding or arrange authorized cleanup of an unused image. Do not blindly re-upload, replay an uncertain update or delete an image that might already be referenced.
+
+For connected Agent clients, the optional [Cabloy MCP image skill](https://github.com/cabloy/cabloy/tree/main/repo-client-governance/skills/cabloy-mcp-image) packages contract discovery, scene-policy lookup, local preparation, upload and resource binding without a resource-specific command.
 
 ## Direct upload
 
@@ -386,18 +443,7 @@ The training-student module stores one image field:
   v.optional(),
   ZovaRender.field('basic-image:formFieldImage', {
     imageScene: 'training-student:studentImage',
-    accept: ['image/png', 'image/jpeg', 'image/webp'],
-    maxSize: 2 * 1024 * 1024,
-    enableCrop: true,
-    cropAspectRatio: 1,
     relationName: 'image',
-    resize: {
-      width: 512,
-      height: 512,
-      fit: 'cover',
-      format: 'jpeg',
-      quality: 90,
-    },
   }),
   ZovaRender.cell('basic-image:image', { relationName: 'image' }),
   v.tableIdentity(),
@@ -411,7 +457,7 @@ The important point is that the backend contract names a scene:
 
 - `training-student:studentImage`
 
-That scene centralizes the upload policy while the entity field keeps the persisted value as `imageId`.
+That scene centralizes upload limits and the `processing` guidance shown above while the entity field keeps the persisted value as `imageId` and the resource-specific `relationName`. Do not duplicate Student crop/resize settings in resource render options; the browser reads them from the current scene policy.
 
 If you want the frontend-side meaning of that same field contract — how `imageId` pairs with `image`, how form previews refresh, and how the table thumbnail works — continue with [Frontend Image Guide](/frontend/image-guide).
 
@@ -448,7 +494,30 @@ The entity stores `sceneImageIds?: TableIdentity[]` and points to the scene:
 
 - `training-record:sceneImage`
 
-That scene allows multiple uploads.
+That scene allows multiple uploads and owns the Record processing guidance rather than duplicating it on the entity field:
+
+```typescript
+@ImageScene({
+  upload: {
+    multiple: true,
+    maxSize: 2 * 1024 * 1024,
+    mimeTypes: ['image/png', 'image/jpeg', 'image/webp'],
+  },
+  processing: {
+    enableCrop: false,
+    resize: {
+      width: 1280,
+      height: 1280,
+      fit: 'contain',
+      format: 'jpeg',
+      quality: 90,
+    },
+  },
+})
+export class ImageSceneSceneImage extends BeanBase {}
+```
+
+Field multiplicity/count and `relationName: 'sceneImages'` remain resource options. The scene's processing guidance does not guarantee that the stored file has those dimensions or format.
 
 The DTO then resolves the stored array with:
 
@@ -476,6 +545,7 @@ When the business needs a new image use case, add a new `@ImageScene(...)` bean.
 A scene is the right place for:
 
 - upload limits
+- shared client `processing` guidance (not server normalization)
 - provider routing
 - provider client selection
 - scene-specific metadata
@@ -488,9 +558,9 @@ The core module already provides a boilerplate path for image scenes:
 A practical sequence is:
 
 1. create the scene bean
-2. define `upload` rules and optional provider/meta resolvers
-3. point entity or DTO metadata at the new scene name
-4. verify authenticated multipart upload and serializer behavior end to end
+2. define `upload` rules, shared `processing` guidance and optional provider/meta resolvers
+3. point entity or DTO metadata at the new scene name; keep relation pairing in resource metadata
+4. verify upload-policy output, client preparation, authenticated upload and serializer behavior end to end
 
 ## Add a new image provider
 

@@ -71,12 +71,18 @@ export class ServiceStudent extends BeanBase {
   }
 
   async update(id: TableIdentity, student: DtoStudentUpdate) {
-    const content = Object.hasOwn(student, 'content')
-      ? this._prepareContent(student.content)
-      : undefined;
+    const { mobile, ...changes } = student;
+    const maskedMobile = /^\d{3}\*{4}\d+$/.test(mobile);
+    if (maskedMobile) this.$logger.debug('student.update masked mobile preserved');
     return await this.scope.model.student.updateById(
       id,
-      content === undefined ? student : { ...student, content },
+      {
+        ...changes,
+        ...(maskedMobile ? {} : { mobile }),
+        ...(Object.hasOwn(student, 'content')
+          ? { content: this._prepareContent(student.content) }
+          : {}),
+      },
       { include: getStudentRelationsInclude() },
     );
   }

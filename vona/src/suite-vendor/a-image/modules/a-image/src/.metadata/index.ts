@@ -198,100 +198,6 @@ declare module 'vona-module-a-orm' {
   }
 }
 /** model: end */
-/** bean: begin */
-export * from '../bean/bean.image.ts';
-export * from '../bean/bean.imageProvider.ts';
-export * from '../bean/bean.imageUploadPolicy.ts';
-
-import 'vona';
-declare module 'vona' {
-
-
-}
-declare module 'vona-module-a-image' {
-
-        export interface BeanImage {
-          /** @internal */
-          get scope(): ScopeModuleAImage;
-        }
-
-        export interface BeanImageProvider {
-          /** @internal */
-          get scope(): ScopeModuleAImage;
-        }
-
-        export interface BeanImageUploadPolicy {
-          /** @internal */
-          get scope(): ScopeModuleAImage;
-        }
-}
-/** bean: end */
-/** bean: begin */
-import type { BeanImage } from '../bean/bean.image.ts';
-import type { BeanImageProvider } from '../bean/bean.imageProvider.ts';
-import type { BeanImageUploadPolicy } from '../bean/bean.imageUploadPolicy.ts';
-import 'vona';
-declare module 'vona' {
-  export interface IBeanRecordGlobal {
-    'image': BeanImage;
-    'imageProvider': BeanImageProvider;
-    'imageUploadPolicy': BeanImageUploadPolicy;
-  }
-}
-/** bean: end */
-/** meta: begin */
-export * from '../bean/meta.index.ts';
-export * from '../bean/meta.redlock.ts';
-export * from '../bean/meta.version.ts';
-import type { IMetaOptionsIndex } from 'vona-module-a-index';
-import 'vona-module-a-meta';
-declare module 'vona-module-a-meta' {
-
-    export interface IMetaRecord {
-      'a-image:index': IMetaOptionsIndex;
-'a-image:redlock': never;
-'a-image:version': never;
-    }
-
-
-}
-declare module 'vona-module-a-image' {
-
-        export interface MetaIndex {
-          /** @internal */
-          get scope(): ScopeModuleAImage;
-        }
-
-          export interface MetaIndex {
-            get $beanFullName(): 'a-image.meta.index';
-            get $onionName(): 'a-image:index';
-            get $onionOptions(): IMetaOptionsIndex;
-          }
-
-        export interface MetaRedlock {
-          /** @internal */
-          get scope(): ScopeModuleAImage;
-        }
-
-          export interface MetaRedlock {
-            get $beanFullName(): 'a-image.meta.redlock';
-            get $onionName(): 'a-image:redlock';
-          }
-
-        export interface MetaVersion {
-          /** @internal */
-          get scope(): ScopeModuleAImage;
-        }
-
-          export interface MetaVersion {
-            get $beanFullName(): 'a-image.meta.version';
-            get $onionName(): 'a-image:version';
-          }
-}
-/** meta: end */
-/** meta redlock: begin */
-import type { MetaRedlock } from '../bean/meta.redlock.ts';
-/** meta redlock: end */
 /** schedule: begin */
 export * from '../bean/schedule.imageDraftPrune.ts';
 
@@ -318,53 +224,16 @@ declare module 'vona-module-a-image' {
           }
 }
 /** schedule: end */
-/** serializerTransform: begin */
-export * from '../bean/serializerTransform.resolveView.ts';
-export * from '../bean/serializerTransform.resolveViews.ts';
-import type { ISerializerTransformOptionsResolveView } from '../bean/serializerTransform.resolveView.ts';
-import type { ISerializerTransformOptionsResolveViews } from '../bean/serializerTransform.resolveViews.ts';
-import 'vona-module-a-serialization';
-declare module 'vona-module-a-serialization' {
-
-    export interface ISerializerTransformRecord {
-      'a-image:resolveView': ISerializerTransformOptionsResolveView;
-'a-image:resolveViews': ISerializerTransformOptionsResolveViews;
-    }
-
-
-}
-declare module 'vona-module-a-image' {
-
-        export interface SerializerTransformResolveView {
-          /** @internal */
-          get scope(): ScopeModuleAImage;
-        }
-
-          export interface SerializerTransformResolveView {
-            get $beanFullName(): 'a-image.serializerTransform.resolveView';
-            get $onionName(): 'a-image:resolveView';
-            get $onionOptions(): ISerializerTransformOptionsResolveView;
-          }
-
-        export interface SerializerTransformResolveViews {
-          /** @internal */
-          get scope(): ScopeModuleAImage;
-        }
-
-          export interface SerializerTransformResolveViews {
-            get $beanFullName(): 'a-image.serializerTransform.resolveViews';
-            get $onionName(): 'a-image:resolveViews';
-            get $onionOptions(): ISerializerTransformOptionsResolveViews;
-          }
-}
-/** serializerTransform: end */
 /** dto: begin */
 export * from '../dto/imageDeliveryRequest.ts';
 export * from '../dto/imageDirectUploadFinalizeRequest.ts';
 export * from '../dto/imageDirectUploadFinalizeResponse.ts';
 export * from '../dto/imageDirectUploadRequest.ts';
 export * from '../dto/imageDirectUploadResponse.ts';
+export * from '../dto/imageProcessingOptions.tsx';
+export * from '../dto/imageResizeOptions.tsx';
 export * from '../dto/imageTransformOptions.tsx';
+export * from '../dto/imageUploadBase64Request.tsx';
 export * from '../dto/imageUploadPolicyRequest.ts';
 export * from '../dto/imageUploadPolicyResponse.ts';
 export * from '../dto/imageUploadResponse.ts';
@@ -375,7 +244,10 @@ import type { IDtoOptionsImageDirectUploadFinalizeRequest } from '../dto/imageDi
 import type { IDtoOptionsImageDirectUploadFinalizeResponse } from '../dto/imageDirectUploadFinalizeResponse.ts';
 import type { IDtoOptionsImageDirectUploadRequest } from '../dto/imageDirectUploadRequest.ts';
 import type { IDtoOptionsImageDirectUploadResponse } from '../dto/imageDirectUploadResponse.ts';
+import type { IDtoOptionsImageProcessingOptions } from '../dto/imageProcessingOptions.tsx';
+import type { IDtoOptionsImageResizeOptions } from '../dto/imageResizeOptions.tsx';
 import type { IDtoOptionsImageTransformOptions } from '../dto/imageTransformOptions.tsx';
+import type { IDtoOptionsImageUploadBase64Request } from '../dto/imageUploadBase64Request.tsx';
 import type { IDtoOptionsImageUploadPolicyRequest } from '../dto/imageUploadPolicyRequest.ts';
 import type { IDtoOptionsImageUploadPolicyResponse } from '../dto/imageUploadPolicyResponse.ts';
 import type { IDtoOptionsImageUploadResponse } from '../dto/imageUploadResponse.ts';
@@ -390,7 +262,10 @@ declare module 'vona-module-a-web' {
 'a-image:imageDirectUploadFinalizeResponse': IDtoOptionsImageDirectUploadFinalizeResponse;
 'a-image:imageDirectUploadRequest': IDtoOptionsImageDirectUploadRequest;
 'a-image:imageDirectUploadResponse': IDtoOptionsImageDirectUploadResponse;
+'a-image:imageProcessingOptions': IDtoOptionsImageProcessingOptions;
+'a-image:imageResizeOptions': IDtoOptionsImageResizeOptions;
 'a-image:imageTransformOptions': IDtoOptionsImageTransformOptions;
+'a-image:imageUploadBase64Request': IDtoOptionsImageUploadBase64Request;
 'a-image:imageUploadPolicyRequest': IDtoOptionsImageUploadPolicyRequest;
 'a-image:imageUploadPolicyResponse': IDtoOptionsImageUploadPolicyResponse;
 'a-image:imageUploadResponse': IDtoOptionsImageUploadResponse;
@@ -410,7 +285,10 @@ import type { DtoImageDirectUploadFinalizeRequest } from '../dto/imageDirectUplo
 import type { DtoImageDirectUploadFinalizeResponse } from '../dto/imageDirectUploadFinalizeResponse.ts';
 import type { DtoImageDirectUploadRequest } from '../dto/imageDirectUploadRequest.ts';
 import type { DtoImageDirectUploadResponse } from '../dto/imageDirectUploadResponse.ts';
+import type { DtoImageProcessingOptions } from '../dto/imageProcessingOptions.tsx';
+import type { DtoImageResizeOptions } from '../dto/imageResizeOptions.tsx';
 import type { DtoImageTransformOptions } from '../dto/imageTransformOptions.tsx';
+import type { DtoImageUploadBase64Request } from '../dto/imageUploadBase64Request.tsx';
 import type { DtoImageUploadPolicyRequest } from '../dto/imageUploadPolicyRequest.ts';
 import type { DtoImageUploadPolicyResponse } from '../dto/imageUploadPolicyResponse.ts';
 import type { DtoImageUploadResponse } from '../dto/imageUploadResponse.ts';
@@ -438,8 +316,20 @@ declare module 'vona-module-a-image' {
       fields?: TypeEntityOptionsFields<DtoImageDirectUploadResponse, IDtoOptionsImageDirectUploadResponse[TypeSymbolKeyFieldsMore]>;
     }
 
+    export interface IDtoOptionsImageProcessingOptions {
+      fields?: TypeEntityOptionsFields<DtoImageProcessingOptions, IDtoOptionsImageProcessingOptions[TypeSymbolKeyFieldsMore]>;
+    }
+
+    export interface IDtoOptionsImageResizeOptions {
+      fields?: TypeEntityOptionsFields<DtoImageResizeOptions, IDtoOptionsImageResizeOptions[TypeSymbolKeyFieldsMore]>;
+    }
+
     export interface IDtoOptionsImageTransformOptions {
       fields?: TypeEntityOptionsFields<DtoImageTransformOptions, IDtoOptionsImageTransformOptions[TypeSymbolKeyFieldsMore]>;
+    }
+
+    export interface IDtoOptionsImageUploadBase64Request {
+      fields?: TypeEntityOptionsFields<DtoImageUploadBase64Request, IDtoOptionsImageUploadBase64Request[TypeSymbolKeyFieldsMore]>;
     }
 
     export interface IDtoOptionsImageUploadPolicyRequest {
@@ -500,7 +390,8 @@ declare module 'vona-module-a-image' {
 }
 declare module 'vona-module-a-web' {
   export interface IApiPathPostRecord{
-        '/image/upload-policy': undefined;
+        '/image/upload-base64': undefined;
+'/image/upload-policy': undefined;
 '/image/upload': undefined;
 '/image/direct-upload': undefined;
 '/image/direct-upload/finalize': undefined;
@@ -513,6 +404,180 @@ export interface IApiPathGetRecord{
 }
 
 /** controller: end */
+/** bean: begin */
+export * from '../bean/bean.image.ts';
+export * from '../bean/bean.imageProvider.ts';
+export * from '../bean/bean.imageUploadPolicy.ts';
+
+import 'vona';
+declare module 'vona' {
+
+
+}
+declare module 'vona-module-a-image' {
+
+        export interface BeanImage {
+          /** @internal */
+          get scope(): ScopeModuleAImage;
+        }
+
+        export interface BeanImageProvider {
+          /** @internal */
+          get scope(): ScopeModuleAImage;
+        }
+
+        export interface BeanImageUploadPolicy {
+          /** @internal */
+          get scope(): ScopeModuleAImage;
+        }
+}
+/** bean: end */
+/** bean: begin */
+import type { BeanImage } from '../bean/bean.image.ts';
+import type { BeanImageProvider } from '../bean/bean.imageProvider.ts';
+import type { BeanImageUploadPolicy } from '../bean/bean.imageUploadPolicy.ts';
+import 'vona';
+declare module 'vona' {
+  export interface IBeanRecordGlobal {
+    'image': BeanImage;
+    'imageProvider': BeanImageProvider;
+    'imageUploadPolicy': BeanImageUploadPolicy;
+  }
+}
+/** bean: end */
+/** service: begin */
+export * from '../service/imageUpload.ts';
+
+import 'vona-module-a-bean';
+declare module 'vona-module-a-bean' {
+
+    export interface IServiceRecord {
+      'a-image:imageUpload': never;
+    }
+
+
+}
+declare module 'vona-module-a-image' {
+
+        export interface ServiceImageUpload {
+          /** @internal */
+          get scope(): ScopeModuleAImage;
+        }
+
+          export interface ServiceImageUpload {
+            get $beanFullName(): 'a-image.service.imageUpload';
+            get $onionName(): 'a-image:imageUpload';
+          }
+}
+/** service: end */
+/** service: begin */
+import type { ServiceImageUpload } from '../service/imageUpload.ts';
+export interface IModuleService {
+  'imageUpload': ServiceImageUpload;
+}
+/** service: end */
+/** service: begin */
+
+import 'vona';
+declare module 'vona' {
+  export interface IBeanRecordGeneral {
+    'a-image.service.imageUpload': ServiceImageUpload;
+  }
+}
+/** service: end */
+/** meta: begin */
+export * from '../bean/meta.index.ts';
+export * from '../bean/meta.redlock.ts';
+export * from '../bean/meta.version.ts';
+import type { IMetaOptionsIndex } from 'vona-module-a-index';
+import 'vona-module-a-meta';
+declare module 'vona-module-a-meta' {
+
+    export interface IMetaRecord {
+      'a-image:index': IMetaOptionsIndex;
+'a-image:redlock': never;
+'a-image:version': never;
+    }
+
+
+}
+declare module 'vona-module-a-image' {
+
+        export interface MetaIndex {
+          /** @internal */
+          get scope(): ScopeModuleAImage;
+        }
+
+          export interface MetaIndex {
+            get $beanFullName(): 'a-image.meta.index';
+            get $onionName(): 'a-image:index';
+            get $onionOptions(): IMetaOptionsIndex;
+          }
+
+        export interface MetaRedlock {
+          /** @internal */
+          get scope(): ScopeModuleAImage;
+        }
+
+          export interface MetaRedlock {
+            get $beanFullName(): 'a-image.meta.redlock';
+            get $onionName(): 'a-image:redlock';
+          }
+
+        export interface MetaVersion {
+          /** @internal */
+          get scope(): ScopeModuleAImage;
+        }
+
+          export interface MetaVersion {
+            get $beanFullName(): 'a-image.meta.version';
+            get $onionName(): 'a-image:version';
+          }
+}
+/** meta: end */
+/** meta redlock: begin */
+import type { MetaRedlock } from '../bean/meta.redlock.ts';
+/** meta redlock: end */
+/** serializerTransform: begin */
+export * from '../bean/serializerTransform.resolveView.ts';
+export * from '../bean/serializerTransform.resolveViews.ts';
+import type { ISerializerTransformOptionsResolveView } from '../bean/serializerTransform.resolveView.ts';
+import type { ISerializerTransformOptionsResolveViews } from '../bean/serializerTransform.resolveViews.ts';
+import 'vona-module-a-serialization';
+declare module 'vona-module-a-serialization' {
+
+    export interface ISerializerTransformRecord {
+      'a-image:resolveView': ISerializerTransformOptionsResolveView;
+'a-image:resolveViews': ISerializerTransformOptionsResolveViews;
+    }
+
+
+}
+declare module 'vona-module-a-image' {
+
+        export interface SerializerTransformResolveView {
+          /** @internal */
+          get scope(): ScopeModuleAImage;
+        }
+
+          export interface SerializerTransformResolveView {
+            get $beanFullName(): 'a-image.serializerTransform.resolveView';
+            get $onionName(): 'a-image:resolveView';
+            get $onionOptions(): ISerializerTransformOptionsResolveView;
+          }
+
+        export interface SerializerTransformResolveViews {
+          /** @internal */
+          get scope(): ScopeModuleAImage;
+        }
+
+          export interface SerializerTransformResolveViews {
+            get $beanFullName(): 'a-image.serializerTransform.resolveViews';
+            get $onionName(): 'a-image:resolveViews';
+            get $onionOptions(): ISerializerTransformOptionsResolveViews;
+          }
+}
+/** serializerTransform: end */
 /** config: begin */
 export * from '../config/config.ts';
 import type { config } from '../config/config.ts';
@@ -533,6 +598,7 @@ config: TypeModuleConfig<typeof config>;
 locale: TypeModuleLocales<(typeof locales)[TypeLocaleBase]>;
 entity: IModuleEntity;
 model: IModuleModel;
+service: IModuleService;
 redlock: MetaRedlock;
 }
 

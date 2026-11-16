@@ -25,6 +25,7 @@ export interface paths {
     };
     get?: never;
     put?: never;
+    /** Get image upload policy */
     post: operations['Image_getUploadPolicy'];
     delete?: never;
     options?: never;
@@ -2799,7 +2800,29 @@ export interface components {
       multiple?: boolean | undefined;
       public?: boolean | undefined;
       directUpload?: boolean | undefined;
+      processing?: components['schemas']['a-image.dto.imageProcessingOptions_2d063d28bc7243bed02ebd8bddf1212a93c6305b'];
     };
+    'a-image.dto.imageProcessingOptions_2d063d28bc7243bed02ebd8bddf1212a93c6305b':
+      | {
+          enableCrop?: boolean | undefined;
+          cropAspectRatio?: number | undefined;
+          /** @enum {string|null} */
+          cropShape?: 'rect' | 'round' | null | undefined;
+          resize?: components['schemas']['a-image.dto.imageResizeOptions_2d063d28bc7243bed02ebd8bddf1212a93c6305b'];
+        }
+      | undefined;
+    'a-image.dto.imageResizeOptions_2d063d28bc7243bed02ebd8bddf1212a93c6305b':
+      | {
+          width?: number | undefined;
+          height?: number | undefined;
+          /** @enum {string|null} */
+          fit?: 'scale-down' | 'contain' | 'cover' | 'crop' | 'pad' | null | undefined;
+          background?: string | undefined;
+          /** @enum {string|null} */
+          format?: 'auto' | 'avif' | 'webp' | 'jpeg' | 'png' | null | undefined;
+          quality?: number | undefined;
+        }
+      | undefined;
     'a-image.dto.imageUploadPolicyRequest': {
       imageScene: string;
     };
@@ -10146,11 +10169,7 @@ export interface operations {
     };
     requestBody: {
       content: {
-        'application/json':
-          | components['schemas']['training-student.dto.studentUpdate']
-          | {
-              imageId: number | string;
-            };
+        'application/json': components['schemas']['training-student.dto.studentUpdate'];
       };
     };
     responses: {

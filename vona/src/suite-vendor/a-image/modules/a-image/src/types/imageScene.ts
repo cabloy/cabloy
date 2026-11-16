@@ -1,6 +1,7 @@
 import type { OmitNever, VonaContext } from 'vona';
 import type { ServiceOnion } from 'vona-module-a-onion';
 
+import type { IImageTransformOptions } from './image.ts';
 import type { IImageProviderRecord } from './imageProvider.ts';
 
 export interface IImageSceneRecord {}
@@ -10,6 +11,18 @@ export interface IImageSceneOptionsUpload {
   mimeTypes?: string[];
   extensions?: string[];
   multiple?: boolean;
+}
+
+export interface IImageSceneOptionsResize extends Pick<
+  IImageTransformOptions,
+  'width' | 'height' | 'fit' | 'background' | 'format' | 'quality'
+> {}
+
+export interface IImageSceneOptionsProcessing {
+  enableCrop?: boolean;
+  cropAspectRatio?: number;
+  cropShape?: 'rect' | 'round';
+  resize?: IImageSceneOptionsResize;
 }
 
 export interface IDecoratorImageSceneOptionsProvider {
@@ -32,6 +45,8 @@ export type TypeImageSceneOptionsMetaResolver = (
 export interface IDecoratorImageSceneOptions {
   provider?: TypeDecoratorImageSceneOptionsProvider;
   upload?: IImageSceneOptionsUpload;
+  // Advisory client-side preparation defaults; uploads are not normalized by the backend.
+  processing?: IImageSceneOptionsProcessing;
   public?: boolean;
   meta?: Record<string, any> | TypeImageSceneOptionsMetaResolver;
 }

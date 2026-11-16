@@ -18,6 +18,14 @@ export type ApiSchemaAImageDtoImageUploadPolicyResponse =
   components['schemas']['a-image.dto.imageUploadPolicyResponse'];
 export type ApiSchemaAImageDtoImageUploadPolicyResponsePartial =
   Partial<ApiSchemaAImageDtoImageUploadPolicyResponse>;
+export type ApiSchemaAImageDtoImageProcessingOptions_2d063d28bc7243bed02ebd8bddf1212a93c6305b =
+  components['schemas']['a-image.dto.imageProcessingOptions_2d063d28bc7243bed02ebd8bddf1212a93c6305b'];
+export type ApiSchemaAImageDtoImageProcessingOptions_2d063d28bc7243bed02ebd8bddf1212a93c6305bPartial =
+  Partial<ApiSchemaAImageDtoImageProcessingOptions_2d063d28bc7243bed02ebd8bddf1212a93c6305b>;
+export type ApiSchemaAImageDtoImageResizeOptions_2d063d28bc7243bed02ebd8bddf1212a93c6305b =
+  components['schemas']['a-image.dto.imageResizeOptions_2d063d28bc7243bed02ebd8bddf1212a93c6305b'];
+export type ApiSchemaAImageDtoImageResizeOptions_2d063d28bc7243bed02ebd8bddf1212a93c6305bPartial =
+  Partial<ApiSchemaAImageDtoImageResizeOptions_2d063d28bc7243bed02ebd8bddf1212a93c6305b>;
 export type ApiSchemaAImageDtoImageUploadPolicyRequest =
   components['schemas']['a-image.dto.imageUploadPolicyRequest'];
 export type ApiSchemaAImageDtoImageUploadPolicyRequestPartial =

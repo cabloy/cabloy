@@ -104,6 +104,7 @@ export class BeanImageUploadPolicy extends BeanBase {
       multiple: uploadOptions.multiple,
       public: this._resolvePublic(_clientOptions, sceneOptions),
       directUpload,
+      processing: sceneOptions.processing,
     };
   }
 

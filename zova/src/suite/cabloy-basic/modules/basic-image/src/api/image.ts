@@ -83,6 +83,7 @@ export class ApiImage extends BeanApiBase {
     );
   }
 
+  /** Get image upload policy */
   getUploadPolicy(body: ApiApiImagegetUploadPolicyRequestBody, options?: IApiActionOptions) {
     return this.$fetch.post<any, ApiApiImagegetUploadPolicyResponseBody>(
       ApiApiImagegetUploadPolicyPath,

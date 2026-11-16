@@ -14,6 +14,7 @@ import fse from 'fs-extra';
 import assert from 'node:assert/strict';
 import { createHash, randomBytes, randomUUID } from 'node:crypto';
 import { request } from 'node:http';
+import { createRequire } from 'node:module';
 import os from 'node:os';
 import path from 'node:path';
 import { after, before, describe, it } from 'node:test';
@@ -1063,7 +1064,9 @@ describe('businessHttp.test.ts', { concurrency: false, timeout: 180000 }, () => 
       { instanceName: '' },
     );
     const original = app.bean.executor.performAction;
+    let actionError: Error | undefined;
     const dispatched = mockOwnedPerformAction(t, async function (this: BeanExecutor, ...args) {
+      if (actionError) throw actionError;
       return await original.apply(this, args);
     });
     try {
@@ -1153,8 +1156,48 @@ describe('businessHttp.test.ts', { concurrency: false, timeout: 180000 }, () => 
           { name: effectName, arguments: invalidArgs },
           options,
         );
-        assert.equal(invalid.body.error?.code, -32602);
+        assert.deepEqual(invalid.body.error, {
+          code: -32602,
+          message: 'Invalid tool arguments',
+          data: {
+            issues: [{ message: 'Too big: expected number to be <=3', path: ['body', 'amount'] }],
+          },
+        });
         assert.equal(invalid.body.result, undefined);
+        for (const [body, message] of [
+          [
+            { ...args.body, amount: 'private-input-value' },
+            'Invalid input: expected number, received string',
+          ],
+          [{ priority: 0 }, 'Invalid input: expected number, received undefined'],
+          [
+            { ...args.body, 'private-unknown-field': 'private-input-value' },
+            'Arguments do not match the input contract',
+          ],
+        ] as const) {
+          const rejected = await send(
+            'tools/call',
+            {
+              name: effectName,
+              arguments: { ...args, body },
+            },
+            options,
+          );
+          assert.deepEqual(rejected.body.error, {
+            code: -32602,
+            message: 'Invalid tool arguments',
+            data: {
+              issues: [
+                { message, path: message.startsWith('Arguments') ? [] : ['body', 'amount'] },
+              ],
+            },
+          });
+          assert.doesNotMatch(
+            JSON.stringify(rejected.body.error),
+            /private-input-value|private-unknown-field|stack/,
+          );
+          assert.equal(rejected.body.result, undefined);
+        }
         for (const tool of [effectName, 'unknown_contract_target', contractName]) {
           const unavailable = await lookup(tool, 'query');
           assert.deepEqual(unavailable.body.error, { code: -32602, message: 'Invalid params' });
@@ -1196,6 +1239,20 @@ describe('businessHttp.test.ts', { concurrency: false, timeout: 180000 }, () => 
           before + 1,
           'only the real Action call causes its effect',
         );
+        actionError = Object.assign(new Error('private Action validation message'), {
+          status: 422,
+          code: 422,
+          errors: [{ message: 'private Action field', path: ['privateField'] }],
+          data: { issues: [{ message: 'private Action field', path: ['privateField'] }] },
+        });
+        const failed = await send('tools/call', { name: effectName, arguments: args }, options);
+        assert.equal(failed.body.error, undefined);
+        assert.equal(failed.body.result.isError, true);
+        assert.deepEqual(failed.body.result.content, [{ type: 'text', text: 'Action failed' }]);
+        assert.doesNotMatch(JSON.stringify(failed.body), /private Action|privateField/);
+        assert.equal(dispatched.mock.callCount(), before + 2, 'failed Action is not replayed');
+        assert.equal(toolFixtureState.count, count + 1);
+        actionError = undefined;
         for (const [tool, expected] of [
           ['mcp_test_action_scalar', { result: 7 }],
           ['mcp_test_action_array', { result: ['safe', 'array'] }],
@@ -1478,13 +1535,17 @@ describe('businessHttp.test.ts', { concurrency: false, timeout: 180000 }, () => 
       },
       { instanceName: '' },
     );
-    const assertLevelMetadata = (name: string, level: any) => {
+    const assertLevelMetadata = (name: string, level: any, preserveRest = false) => {
       assert.deepEqual(
         { title: level.title, description: level.description },
         nativeLevelMetadata.get(name),
         `${name} retains native DTO level semantics`,
       );
-      assert.equal(Object.hasOwn(level, 'rest'), false, `${name} omits UI metadata`);
+      assert.equal(
+        Object.hasOwn(level, 'rest'),
+        preserveRest,
+        `${name} ${preserveRest ? 'retains' : 'omits'} UI metadata`,
+      );
       assert.equal(Object.hasOwn(level, 'errorMessage'), false, `${name} omits error templates`);
     };
     const business = [
@@ -1639,6 +1700,10 @@ describe('businessHttp.test.ts', { concurrency: false, timeout: 180000 }, () => 
                 tool.name === studentCreateName ? schema : schema.properties.body,
                 schema.$defs ?? {},
               );
+              assert.equal(body.type, 'object');
+              assert.equal(body.anyOf, undefined);
+              assert.equal(body.oneOf, undefined);
+              assert.deepEqual(body.required.toSorted(), ['level', 'mobile', 'name']);
               assertLevelMetadata(tool.name, body.properties.level);
             }
             if ([studentViewName, studentSummaryName].includes(tool.name)) {
@@ -1734,7 +1799,7 @@ describe('businessHttp.test.ts', { concurrency: false, timeout: 180000 }, () => 
           selectOutput.schema.properties.list.items,
           selectOutput.schema.$defs ?? {},
         );
-        assertLevelMetadata(studentSelectName, selectItem.properties.level);
+        assertLevelMetadata(studentSelectName, selectItem.properties.level, true);
         for (const section of ['overview', 'input', 'output'] as const) {
           const summaryContract = output(await lookup(studentSummaryName, section));
           assert.equal(summaryContract.contractVersion, 1);
@@ -2554,6 +2619,388 @@ describe('businessHttp.test.ts', { concurrency: false, timeout: 180000 }, () => 
     }
   });
 
+  it('reads scene-owned image processing policies under read scope without granting upload mutation', async () => {
+    if (trainingDisabled) return;
+    const name = 'a-image_image_getUploadPolicy';
+    const policies = [
+      {
+        imageScene: 'training-student:studentImage',
+        public: true,
+        processing: {
+          enableCrop: true,
+          cropAspectRatio: 1,
+          resize: { width: 512, height: 512, fit: 'cover', format: 'jpeg', quality: 90 },
+        },
+      },
+      {
+        imageScene: 'training-record:sceneImage',
+        public: false,
+        processing: {
+          enableCrop: false,
+          resize: { width: 1280, height: 1280, fit: 'contain', format: 'jpeg', quality: 90 },
+        },
+      },
+    ];
+    for (const legacy of [false, true]) {
+      // studentBearer has only mcp:read, which excludes upload mutations.
+      const listed = await sendStudent('tools/list', {}, { legacy });
+      assert.equal(listed.status, 200);
+      assert.equal(listed.body.error, undefined);
+      const tool = listed.body.result.tools.find((tool: any) => tool.name === name);
+      assert.ok(tool);
+      assert.equal(tool.annotations.readOnlyHint, true);
+      assert.equal(tool.annotations.destructiveHint, false);
+      assert.deepEqual(Object.keys(tool.inputSchema.properties), ['imageScene']);
+      assert.deepEqual(tool.inputSchema.required, ['imageScene']);
+      assert.equal(
+        listed.body.result.tools.some((tool: any) => tool.name === 'a-image_image_uploadBase64'),
+        false,
+        'read scope does not expose the upload mutation',
+      );
+      const contract = output(
+        await sendStudent(
+          'tools/call',
+          { name: contractName, arguments: { tool: name, section: 'output' } },
+          { legacy },
+        ),
+      );
+      assert.ok(contract.schema.properties.processing);
+      assert.equal(contract.schema.required?.includes('processing') ?? false, false);
+      const check = fromJsonSchema(contract.schema)['~standard'];
+      for (const expected of policies) {
+        const policy = output(
+          await sendStudent(
+            'tools/call',
+            { name, arguments: { imageScene: expected.imageScene } },
+            { legacy },
+          ),
+        );
+        assert.equal(policy.imageScene, expected.imageScene);
+        assert.equal(policy.maxSize, 2 * 1024 * 1024);
+        assert.deepEqual(policy.mimeTypes, ['image/png', 'image/jpeg', 'image/webp']);
+        assert.equal(policy.public, expected.public);
+        assert.equal(typeof policy.directUpload, 'boolean');
+        assert.deepEqual(policy.processing, expected.processing);
+        if (expected.imageScene === 'training-record:sceneImage')
+          assert.equal(policy.multiple, true);
+        assert.equal((await check.validate(policy)).issues, undefined);
+      }
+    }
+  });
+
+  it('uploads a synthetic image through a Site PAT and preserves the student aggregate on full update', async () => {
+    if (trainingDisabled) return;
+    const uploadName = 'a-image_image_uploadBase64';
+    const filename = `photo-${randomUUID()}.jpg`;
+    const studentData = {
+      name: `Photo ${filename}`,
+      mobile: '13812345678',
+      level: 2,
+      content: { descriptionMarkdown: `# Existing student content\n\n${filename}` },
+      trainingRecords: [
+        {
+          name: `Photo record ${filename}`,
+          subjectCount: 1,
+          totalScore: 91,
+          averageScore: 91,
+          trainingTime: new Date('2026-06-15T09:30:00.000Z'),
+          description: 'Existing training record',
+          trainingRecordSubjects: [
+            { name: `Photo subject ${filename}`, score: 91, description: 'Existing subject' },
+          ],
+        },
+      ],
+    } as DtoStudentCreate;
+    const images = new Set<string>();
+    let studentId: string | undefined;
+    let authorizationId: string | undefined;
+    let storedPath: string | undefined;
+    const off = app.scope('a-rbac').event.resolvePolicy.on((request, next) => {
+      if (
+        String(app.bean.passport.currentUser?.id) !== fixtureUserId ||
+        app.ctx.instanceName !== '' ||
+        request.action.controllerBeanFullName !== 'training-student.controller.student'
+      ) {
+        return next();
+      }
+      return {
+        allowed: ['update', 'view'].includes(request.action.action),
+        actionKey: request.action.actionKey,
+        action: request.action,
+      };
+    });
+    try {
+      const sharp = createRequire(new URL('../../../../../../../package.json', import.meta.url))(
+        'sharp',
+      );
+      const jpeg = await sharp(randomBytes(512 * 512 * 3), {
+        raw: { width: 512, height: 512, channels: 3 },
+      })
+        .jpeg({ quality: 90 })
+        .toBuffer();
+      assert.ok(jpeg.length > 16 * 1024, 'the real wire must exceed the old request budget');
+      assert.ok(jpeg.length < 2 * 1024 * 1024);
+      const created = await openHttp({
+        target: `${app.util.combineApiPath('/mcp/auth/accessToken/createMine', '', true, true)}?ssrSiteId=admin`,
+        method: 'POST',
+        headers: { authorization: `Bearer ${browserToken}`, origin },
+        body: JSON.stringify({ name: `photo-${randomUUID()}`, scope: 'mcp:all' }),
+      }).response;
+      authorizationId = created.body?.data?.id && String(created.body.data.id);
+      assert.equal(created.status, 200);
+      const token = created.body.data.accessToken as string;
+      const options = { headers: { authorization: `Bearer ${token}` } };
+      const args = {
+        imageScene: 'training-student:studentImage',
+        filename,
+        mimeType: 'image/jpeg',
+        base64: jpeg.toString('base64'),
+      };
+      const callUpload = (arguments_: Record<string, unknown>, legacy = false) =>
+        sendStudent(
+          'tools/call',
+          { name: uploadName, arguments: arguments_ },
+          { ...options, legacy },
+        );
+      const readonly = await sendStudent('tools/call', { name: uploadName, arguments: args });
+      assert.ok(readonly.body.error || readonly.body.result?.isError, 'read scope cannot upload');
+      const listed = await sendStudent('tools/list', {}, options);
+      const tool = listed.body.result.tools.find((item: any) => item.name === uploadName);
+      assert.ok(tool);
+      assert.equal(tool.annotations.readOnlyHint, false);
+      const contract = output(
+        await sendStudent(
+          'tools/call',
+          {
+            name: contractName,
+            arguments: { tool: uploadName, section: 'input' },
+          },
+          options,
+        ),
+      );
+      assert.deepEqual(contract.schema.required.toSorted(), [
+        'base64',
+        'filename',
+        'imageScene',
+        'mimeType',
+      ]);
+      assert.equal(contract.schema.properties.base64.maxLength, 2796204);
+      for (const invalid of [
+        { ...args, base64: 'not base64' },
+        { ...args, base64: 'eA==' },
+        { ...args, mimeType: 'image/png' },
+        { ...args, filename: 'photo.png' },
+        { ...args, imageScene: 'missing:scene' },
+        { ...args, base64: Buffer.alloc(2 * 1024 * 1024 + 1).toString('base64') },
+      ]) {
+        const response = await callUpload(invalid);
+        assert.ok(
+          response.body.error || response.body.result?.isError,
+          'invalid upload must not succeed',
+        );
+      }
+      const initial = await app.bean.executor.mockCtx(
+        async () => {
+          const training = app.scope('training-student');
+          const student = await training.service.student.create(studentData);
+          studentId = String(student.id);
+          return await training.model.student.getById(studentId, {
+            include: {
+              content: true,
+              contentHtml: true,
+              trainingRecords: { include: { trainingRecordSubjects: true } },
+            },
+          });
+        },
+        { instanceName: '' },
+      );
+      assert.ok(initial);
+      assert.equal(initial.mobile, studentData.mobile);
+      assert.ok(initial.content?.id);
+      assert.equal(initial.content.descriptionMarkdown, studentData.content!.descriptionMarkdown);
+      assert.ok(initial.trainingRecords);
+      assert.equal(initial.trainingRecords.length, 1);
+      assert.ok(initial.trainingRecords[0].id);
+      assert.ok(initial.trainingRecords[0].trainingRecordSubjects);
+      assert.equal(initial.trainingRecords[0].trainingRecordSubjects.length, 1);
+      assert.ok(initial.trainingRecords[0].trainingRecordSubjects[0].id);
+      const detail = output(
+        await sendStudent(
+          'tools/call',
+          { name: studentViewName, arguments: { id: studentId } },
+          options,
+        ),
+      );
+      assert.equal(detail.id, studentId);
+      const response = await callUpload(args);
+      const acknowledgedId = response.body?.result?.structuredContent?.id;
+      if (acknowledgedId) images.add(String(acknowledgedId));
+      const uploaded = output(response);
+      assert.ok(uploaded.id);
+      const imageId = String(uploaded.id);
+      const updateBody = {
+        name: detail.name,
+        mobile: detail.mobile,
+        level: detail.level,
+        imageId,
+        content: { descriptionMarkdown: detail.content.descriptionMarkdown },
+        trainingRecords: detail.trainingRecords.map(record => ({
+          id: record.id,
+          name: record.name,
+          subjectCount: record.subjectCount,
+          totalScore: record.totalScore,
+          averageScore: record.averageScore,
+          trainingTime: record.trainingTime,
+          sceneImageIds: record.sceneImageIds,
+          dossierFileIds: record.dossierFileIds,
+          description: record.description,
+          trainingRecordSubjects: record.trainingRecordSubjects.map(subject => ({
+            id: subject.id,
+            name: subject.name,
+            score: subject.score,
+            description: subject.description,
+          })),
+        })),
+      } as DtoStudentUpdate;
+      output(
+        await sendStudent(
+          'tools/call',
+          {
+            name: studentUpdateName,
+            arguments: { params: { id: studentId }, body: updateBody },
+          },
+          options,
+        ),
+      );
+      assert.equal(updateBody.name, studentData.name);
+      assert.equal(updateBody.mobile, '138****5678', 'full update uses the masked view value');
+      assert.equal(updateBody.level, studentData.level);
+      assert.equal(updateBody.imageId, imageId);
+      assert.deepEqual(updateBody.content, {
+        descriptionMarkdown: studentData.content!.descriptionMarkdown,
+      });
+      assert.equal(updateBody.trainingRecords?.length, 1);
+      assert.equal(
+        String(updateBody.trainingRecords![0].id),
+        String(initial.trainingRecords[0].id),
+      );
+      assert.deepEqual(updateBody.trainingRecords![0].trainingRecordSubjects, [
+        {
+          id: String(initial.trainingRecords[0].trainingRecordSubjects[0].id),
+          ...studentData.trainingRecords![0].trainingRecordSubjects![0],
+        },
+      ]);
+      const student = output(
+        await sendStudent('tools/call', {
+          name: studentViewName,
+          arguments: { id: studentId },
+        }),
+      );
+      assert.equal(student.id, studentId);
+      assert.equal(student.name, studentData.name);
+      assert.equal(student.mobile, '138****5678');
+      assert.equal(student.level, studentData.level);
+      assert.equal(student.content.descriptionMarkdown, studentData.content!.descriptionMarkdown);
+      assert.equal(student.trainingRecords.length, 1);
+      assert.equal(String(student.trainingRecords[0].id), String(initial.trainingRecords[0].id));
+      assert.equal(student.trainingRecords[0].trainingRecordSubjects.length, 1);
+      assert.equal(
+        String(student.trainingRecords[0].trainingRecordSubjects[0].id),
+        String(initial.trainingRecords[0].trainingRecordSubjects[0].id),
+      );
+      assert.equal(String(student.image.id), imageId);
+      assert.equal(student.image.public, true);
+      await app.bean.executor.mockCtx(
+        async () => {
+          const storedStudent = await app
+            .scope('training-student')
+            .model.student.getById(studentId!, {
+              include: {
+                content: true,
+                contentHtml: true,
+                trainingRecords: { include: { trainingRecordSubjects: true } },
+              },
+            });
+          assert.ok(storedStudent);
+          assert.equal(String(storedStudent.id), studentId);
+          assert.equal(storedStudent.name, initial.name);
+          assert.equal(storedStudent.level, initial.level);
+          assert.equal(
+            storedStudent.mobile,
+            studentData.mobile,
+            'masked mobile never replaces the raw value',
+          );
+          assert.equal(String(storedStudent.imageId), imageId);
+          assert.deepEqual(storedStudent.content, initial.content);
+          assert.deepEqual(storedStudent.contentHtml, initial.contentHtml);
+          assert.deepEqual(storedStudent.trainingRecords, initial.trainingRecords);
+          const image = await app.scope('a-image').model.image.getById(imageId);
+          assert.ok(image);
+          assert.equal(image.imageScene, args.imageScene);
+          assert.equal(image.status, 'ready');
+          assert.equal(image.width, 512);
+          assert.equal(image.height, 512);
+          storedPath = image.storagePath;
+          assert.ok(storedPath && (await fse.pathExists(storedPath)));
+        },
+        { instanceName: '' },
+      );
+      const legacy = await callUpload(args, true);
+      const legacyId = legacy.body?.result?.structuredContent?.id;
+      if (legacyId) images.add(String(legacyId));
+      assert.ok(output(legacy).id, 'legacy SDK also accepts the bounded large upload');
+      for (const body of [{ imageId: imageId }, { imageId: imageId, level: 3 }]) {
+        const partial = await sendStudent(
+          'tools/call',
+          { name: studentUpdateName, arguments: { params: { id: studentId }, body } },
+          options,
+        );
+        assert.equal(partial.status, 200);
+        assert.equal(partial.body.error?.code, -32602);
+        assert.equal(partial.body.error.message, 'Invalid tool arguments');
+        assert.deepEqual(
+          partial.body.error.data.issues.map((issue: any) => issue.path),
+          Object.hasOwn(body, 'level')
+            ? [
+                ['body', 'name'],
+                ['body', 'mobile'],
+              ]
+            : [
+                ['body', 'name'],
+                ['body', 'mobile'],
+                ['body', 'level'],
+              ],
+        );
+        assert.equal(partial.body.result, undefined, 'image binding requires a full update body');
+      }
+    } finally {
+      off();
+      await app.bean.executor.mockCtx(
+        async () => {
+          const training = app.scope('training-student');
+          const studentIds = new Set(studentId ? [studentId] : []);
+          if (!studentId) {
+            // Recover only this owned aggregate if creation committed before returning its ID.
+            const owned = await training.model.student.select(
+              { where: { name: studentData.name } },
+              { disableDeleted: true },
+            );
+            for (const student of owned) studentIds.add(String(student.id));
+          }
+          for (const id of studentIds) await training.service.student.deleteForce(id);
+          // Exact filename recovery covers an upload committing before response validation.
+          const owned = await app.scope('a-image').model.image.select({ where: { filename } });
+          for (const image of owned) images.add(String(image.id));
+          for (const id of images) await app.bean.image.delete(id);
+          if (authorizationId)
+            await app.scope('mcp-auth').model.authorization.deleteById(authorizationId);
+        },
+        { instanceName: '' },
+      );
+      if (storedPath) assert.equal(await fse.pathExists(storedPath), false);
+    }
+  });
+
   it('updates an owned aggregate through guarded PATCH and authorized view without crossing root or child ownership', async t => {
     if (trainingDisabled) return;
     const { ModelStudent, ModelStudentContent, ServiceStudent } =
@@ -2938,7 +3385,8 @@ describe('businessHttp.test.ts', { concurrency: false, timeout: 180000 }, () => 
       });
       assert.ok(dispatched.options.body.trainingRecords[0].trainingTime instanceof Date);
       assert.ok(
-        update.mock.calls.at(-1)!.arguments[1].trainingRecords![0].trainingTime instanceof Date,
+        (update.mock.calls.at(-1)!.arguments[1] as DtoStudentUpdate).trainingRecords![0]
+          .trainingTime instanceof Date,
       );
       // Legacy uses the same guarded PATCH, without replaying the id-less nested inserts.
       const rootBody = { name: body.name, mobile: body.mobile, level: body.level };

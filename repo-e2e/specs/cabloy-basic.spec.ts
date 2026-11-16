@@ -1759,6 +1759,57 @@ test(
 );
 
 test(
+  'image field consumes scene processing policy before upload',
+  { tag: ['@admin', '@flow'] },
+  async ({ page }) => {
+    await loginAsAdmin(page);
+    const uploads: string[] = [];
+    page.on('request', request => {
+      if (new URL(request.url()).pathname === '/api/image/upload') uploads.push(request.method());
+    });
+    const policyResponse = page.waitForResponse(response => {
+      return (
+        new URL(response.url()).pathname === '/api/image/upload-policy' &&
+        response.request().postDataJSON()?.imageScene === 'training-student:studentImage'
+      );
+    });
+    await openStudentDraftCreate(page);
+    const response = await policyResponse;
+    expect(response.ok()).toBeTruthy();
+    expect((await response.json()).data.processing).toEqual({
+      enableCrop: true,
+      cropAspectRatio: 1,
+      resize: { width: 512, height: 512, fit: 'cover', format: 'jpeg', quality: 90 },
+    });
+    const png = await page.evaluate(() => {
+      const canvas = document.createElement('canvas');
+      canvas.width = 640;
+      canvas.height = 480;
+      const context = canvas.getContext('2d')!;
+      context.fillStyle = '#4263eb';
+      context.fillRect(0, 0, canvas.width, canvas.height);
+      return canvas.toDataURL('image/png').split(',')[1]!;
+    });
+    const input = page
+      .getByRole('group', { name: 'Student Image', exact: true })
+      .locator('input[type="file"]');
+    await expect(input).toHaveCount(1);
+    await expect(input).toBeEnabled();
+    await input.setInputFiles({
+      name: 'scene-processing.png',
+      mimeType: 'image/png',
+      buffer: Buffer.from(png, 'base64'),
+    });
+    const cropDialog = page.getByRole('dialog').filter({ hasText: 'Crop Image' });
+    await expect(cropDialog).toBeVisible();
+    await cropDialog.getByRole('button', { name: 'Cancel', exact: true }).click();
+    await expect(cropDialog).toBeHidden();
+    await expect(input).toBeEnabled();
+    expect(uploads).toEqual([]);
+  },
+);
+
+test(
   'ATP-BASIC-FLOW-01: cold Admin navigation initializes dynamic resource selectors',
   { tag: ['@admin', '@flow'] },
   async ({ browser }) => {

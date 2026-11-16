@@ -40,24 +40,31 @@ function ingress(overrides: Partial<Parameters<typeof checkFixtureIngress>[0]> =
   });
 }
 
-async function parseBody(bytes: Buffer) {
+async function parseBody(
+  bytes: Buffer,
+  profile?: Parameters<typeof readFixtureBody>[2],
+  chunked = false,
+) {
   // Reader-only tests never create a Vona request context or listener.
-  const req = Readable.from([bytes]);
-  Object.assign(req, { headers: { 'content-length': String(bytes.length) } });
+  const chunks = chunked
+    ? Array.from({ length: Math.ceil(bytes.length / 4096) }, (_, index) =>
+        bytes.subarray(index * 4096, (index + 1) * 4096),
+      )
+    : [bytes];
+  const req = Readable.from(chunks);
+  Object.assign(req, { headers: chunked ? {} : { 'content-length': String(bytes.length) } });
   return await readFixtureBody(
     req as Parameters<typeof readFixtureBody>[0],
     new AbortController().signal,
+    profile,
   );
 }
 
-async function rejectsBody(value: unknown) {
-  let rejected = false;
-  try {
-    await parseBody(Buffer.from(JSON.stringify(value)));
-  } catch {
-    rejected = true;
-  }
-  assert.equal(rejected, true, 'bounded_body_rejected');
+async function rejectsBody(value: unknown, profile?: Parameters<typeof readFixtureBody>[2]) {
+  await assert.rejects(
+    () => parseBody(Buffer.from(JSON.stringify(value)), profile),
+    'bounded_body_rejected',
+  );
 }
 
 // A response-instance double exercises the writer's exact bounds and native
@@ -371,6 +378,105 @@ describe('MCP transport guards', { concurrency: false }, () => {
       Buffer.concat([atBytes, Buffer.from(' ')]),
     ]) {
       await assert.rejects(() => parseBody(bytes), 'body_boundary_rejected');
+    }
+  });
+
+  it('admits only the business image base64 field above the fixture byte and string budgets', async () => {
+    const base64 = 'A'.repeat(2796204);
+    const body = rpc('tools/call', {
+      name: 'a-image_image_uploadBase64',
+      arguments: { base64, filename: 'image.png', mime: 'image/png' },
+    });
+    const bytes = Buffer.from(JSON.stringify(body));
+    assert.equal(bytes.length > 16 * 1024, true);
+    assert.deepEqual(await parseBody(bytes, 'business'), body);
+    assert.deepEqual(await parseBody(bytes, 'business', true), body);
+    await assert.rejects(() => parseBody(bytes), { status: 413 });
+    await rejectsBody(
+      rpc('tools/call', {
+        name: 'a-image_image_uploadBase64',
+        arguments: { base64: 'A'.repeat(2049) },
+      }),
+    );
+    await rejectsBody(
+      rpc('tools/call', {
+        name: 'a-image_image_uploadBase64',
+        arguments: { base64: `${base64}A` },
+      }),
+      'business',
+    );
+    // The exception counts UTF-8 bytes, not JavaScript string length.
+    await rejectsBody(
+      rpc('tools/call', {
+        name: 'a-image_image_uploadBase64',
+        arguments: { base64: `${'é'.repeat(2796204 / 2)}A` },
+      }),
+      'business',
+    );
+  });
+
+  it('keeps the business long-string exception at the exact tool, method and argument path', async () => {
+    const base64 = 'A'.repeat(2049);
+    for (const body of [
+      rpc('tools/call', { name: 'a-image_image_uploadBase64_other', arguments: { base64 } }),
+      rpc('tools/list', { name: 'a-image_image_uploadBase64', arguments: { base64 } }),
+      rpc('tools/call', { name: 'a-image_image_uploadBase64', base64 }),
+      rpc('tools/call', { name: 'a-image_image_uploadBase64', arguments: { nested: { base64 } } }),
+      rpc('tools/call', { name: 'a-image_image_uploadBase64', arguments: { base64: [base64] } }),
+      rpc('tools/call', {
+        name: 'a-image_image_uploadBase64',
+        arguments: { base64: 'AA==', filename: base64 },
+      }),
+      {
+        ...rpc('tools/call', { name: 'a-image_image_uploadBase64', arguments: { base64: 'AA==' } }),
+        id: base64,
+      },
+    ]) {
+      await rejectsBody(body, 'business');
+    }
+    // Ordinary requests still have their full raw 16 KiB ceiling after parsing,
+    // even when no individual value exceeds 2048 bytes.
+    const ordinary = JSON.stringify(rpc('tools/call', { name: 'other', arguments: {} }));
+    assert.notEqual(
+      await parseBody(Buffer.from(ordinary.padEnd(16 * 1024, ' ')), 'business'),
+      undefined,
+    );
+    await assert.rejects(
+      () => parseBody(Buffer.from(ordinary.padEnd(16 * 1024 + 1, ' ')), 'business'),
+      { status: 413 },
+    );
+  });
+
+  it('bounds the business raw envelope and retains duplicate and structural guards', async () => {
+    const body = rpc('tools/call', {
+      name: 'a-image_image_uploadBase64',
+      arguments: { base64: 'AA==' },
+    });
+    const text = JSON.stringify(body);
+    const atBytes = Buffer.from(text.padEnd(3 * 1024 * 1024, ' '));
+    assert.deepEqual(await parseBody(atBytes, 'business'), body);
+    const tooLarge = Buffer.concat([atBytes, Buffer.from(' ')]);
+    await assert.rejects(() => parseBody(tooLarge, 'business'), { status: 413 });
+    await assert.rejects(() => parseBody(tooLarge, 'business', true), { status: 413 });
+    const duplicate = text.replace('"base64":"AA=="', '"base64":"AA==","base64":"AA=="');
+    await assert.rejects(() => parseBody(Buffer.from(duplicate), 'business'), { status: 400 });
+    let deep: unknown = 0;
+    for (let index = 0; index < 9; index++) deep = { nested: deep };
+    for (const extra of [
+      { deep },
+      { items: Array.from({ length: 33 }).fill(0) },
+      { keys: Object.fromEntries(Array.from({ length: 33 }, (_, index) => [`k${index}`, 0])) },
+      { items: Array.from({ length: 9 }).fill(Array.from({ length: 32 }).fill(0)) },
+      { ['k'.repeat(2049)]: 0 },
+      { _method: 'GET' },
+    ]) {
+      await rejectsBody(
+        rpc('tools/call', {
+          name: 'a-image_image_uploadBase64',
+          arguments: { base64: 'AA==', ...extra },
+        }),
+        'business',
+      );
     }
   });
 

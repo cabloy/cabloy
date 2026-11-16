@@ -16,8 +16,9 @@ import { RateLimitError, RateLimitUnavailableError } from 'vona-module-a-ratelim
 import { OAuthError } from 'vona-module-mcp-auth';
 
 import { queryRepairHint } from './controllerToolContract.ts';
+import { readToolValidationData } from './controllerToolValidation.ts';
 import { authenticateMcpResource, mcpResourceChallenge } from './resourceServer.ts';
-import { FixtureTransportError, readFixtureBody } from './transport.ts';
+import { BUSINESS_BODY_BYTES, FixtureTransportError, readFixtureBody } from './transport.ts';
 
 type BusinessToolServer = Server & { settleWork(): Promise<void> };
 
@@ -174,6 +175,16 @@ async function boundedResponse(response: Response, requestId: unknown): Promise<
       },
     };
   }
+  const validation =
+    body.error?.code === -32602 && body.error.message === 'Invalid tool arguments'
+      ? readToolValidationData(data)
+      : undefined;
+  if (validation) {
+    output = {
+      ...output,
+      error: { code: -32602, message: 'Invalid tool arguments', data: validation },
+    };
+  }
   // Do not forward SDK diagnostic headers or other caller-controlled error data.
   return new Response(JSON.stringify(output), {
     status: response.status,
@@ -212,7 +223,7 @@ export function createBusinessTransport(
     res.once('close', disconnected);
     let timer: ReturnType<typeof setTimeout> | undefined;
     try {
-      const body = await readFixtureBody(req, abort.signal);
+      const body = await readFixtureBody(req, abort.signal, 'business');
       if (abort.signal.aborted) return;
       // Only initialization acknowledgement; no business notification producers.
       const initialized = runWithZodQueryCoercion(
@@ -313,67 +324,70 @@ export function createBusinessTransport(
                 // Current tools emit no mid-call notifications, so auto retains JSON.
                 responseMode: 'auto',
                 keepAliveMs: 0,
-                maxRequestBodySize: 16 * 1024,
+                maxRequestBodySize: BUSINESS_BODY_BYTES,
                 onerror: () => {},
               },
             );
             try {
-              const adapter = toNodeHandler({
-                async fetch(request, options) {
-                  const signal = AbortSignal.any([request.signal, abort.signal]);
-                  try {
-                    const incoming = new Request(request, { signal });
-                    signal.throwIfAborted();
-                    let response: Response;
-                    if (await isLegacyRequest(incoming, options?.parsedBody)) {
-                      legacy = new WebStandardStreamableHTTPServerTransport({
-                        sessionIdGenerator: undefined,
-                        enableJsonResponse: true,
-                        keepAliveMs: 0,
-                        maxRequestBodySize: 16 * 1024,
-                      });
-                      business = await createServer(
-                        app,
-                        authentication?.resource.resource,
-                        authorizationScope,
-                      );
-                      await business.connect(legacy);
+              const adapter = toNodeHandler(
+                {
+                  async fetch(request, options) {
+                    const signal = AbortSignal.any([request.signal, abort.signal]);
+                    try {
+                      const incoming = new Request(request, { signal });
                       signal.throwIfAborted();
-                      let cancel!: () => void;
-                      const cancelled = new Promise<never>((_resolve, reject) => {
-                        cancel = () => reject(new Error('MCP_LOCAL_CANCELLED'));
-                        signal.addEventListener('abort', cancel, {
-                          once: true,
+                      let response: Response;
+                      if (await isLegacyRequest(incoming, options?.parsedBody)) {
+                        legacy = new WebStandardStreamableHTTPServerTransport({
+                          sessionIdGenerator: undefined,
+                          enableJsonResponse: true,
+                          keepAliveMs: 0,
+                          maxRequestBodySize: BUSINESS_BODY_BYTES,
                         });
-                      });
-                      try {
-                        // Native JSON close does not resolve its pending response wait.
-                        // Actual business settlement is still owned by the outer finally.
-                        response = await Promise.race([
-                          legacy.handleRequest(incoming, options),
-                          cancelled,
-                        ]);
-                      } finally {
-                        signal.removeEventListener('abort', cancel);
+                        business = await createServer(
+                          app,
+                          authentication?.resource.resource,
+                          authorizationScope,
+                        );
+                        await business.connect(legacy);
+                        signal.throwIfAborted();
+                        let cancel!: () => void;
+                        const cancelled = new Promise<never>((_resolve, reject) => {
+                          cancel = () => reject(new Error('MCP_LOCAL_CANCELLED'));
+                          signal.addEventListener('abort', cancel, {
+                            once: true,
+                          });
+                        });
+                        try {
+                          // Native JSON close does not resolve its pending response wait.
+                          // Actual business settlement is still owned by the outer finally.
+                          response = await Promise.race([
+                            legacy.handleRequest(incoming, options),
+                            cancelled,
+                          ]);
+                        } finally {
+                          signal.removeEventListener('abort', cancel);
+                        }
+                      } else {
+                        response = await handler.fetch(incoming, options);
                       }
-                    } else {
-                      response = await handler.fetch(incoming, options);
+                      const bounded = await boundedResponse(response, requestId);
+                      if (abort.signal.aborted) throw new Error('MCP_LOCAL_CANCELLED');
+                      return bounded;
+                    } catch (error) {
+                      if (abort.signal.aborted) throw error;
+                      // The Node adapter otherwise converts this failure to its own
+                      // response and resolves, hiding failure from the drain owner.
+                      failed = true;
+                      return Response.json(errorBody(-32603), {
+                        status: 500,
+                        headers: { 'cache-control': 'no-store' },
+                      });
                     }
-                    const bounded = await boundedResponse(response, requestId);
-                    if (abort.signal.aborted) throw new Error('MCP_LOCAL_CANCELLED');
-                    return bounded;
-                  } catch (error) {
-                    if (abort.signal.aborted) throw error;
-                    // The Node adapter otherwise converts this failure to its own
-                    // response and resolves, hiding failure from the drain owner.
-                    failed = true;
-                    return Response.json(errorBody(-32603), {
-                      status: 500,
-                      headers: { 'cache-control': 'no-store' },
-                    });
-                  }
+                  },
                 },
-              });
+                { maxRequestBodySize: BUSINESS_BODY_BYTES },
+              );
               try {
                 await adapter(req, res, body);
               } catch (error) {

@@ -94,7 +94,7 @@ A practical minimum is:
 1. the backend field stores image ID data such as `imageId` or `sceneImageIds`
 2. the backend field metadata points to the built-in render resources
 3. the backend DTO exposes resolved relation fields such as `image?: DtoImageView` or `sceneImages?: DtoImageView[]`
-4. the backend image scene defines the authoritative upload policy
+4. the backend image scene defines upload limits and shared client `processing` guidance, returned by the upload-policy endpoint
 
 Representative contract pattern:
 
@@ -118,10 +118,13 @@ v.serializerTransform('a-image:resolveView', {
 });
 ```
 
+In the resource schema, `rest.form.options.imageScene` selects the registered scene; `rest.form.options.relationName` remains resource metadata pairing the stored identity with its preview relation. The browser reads upload limits and `processing` from the scene's current policy instead of duplicating type, size or crop/resize settings on each resource field.
+
 A practical rule is:
 
 - frontend validation, crop, and resize improve UX
-- backend image scenes and authenticated multipart validation remain the true policy boundary
+- `processing` is client behavior guidance, not server normalization, dimension enforcement or a storage guarantee
+- backend image scenes and authenticated upload validation remain the true policy boundary
 
 For the backend side of that contract, read [Backend Image Guide](/backend/image-guide), especially the sections on image scenes, authenticated multipart upload, and DTO-side image view resolution.
 
@@ -137,18 +140,7 @@ The Student entity stores one image field:
   v.optional(),
   ZovaRender.field('basic-image:formFieldImage', {
     imageScene: 'training-student:studentImage',
-    accept: ['image/png', 'image/jpeg', 'image/webp'],
-    maxSize: 2 * 1024 * 1024,
-    enableCrop: true,
-    cropAspectRatio: 1,
     relationName: 'image',
-    resize: {
-      width: 512,
-      height: 512,
-      fit: 'cover',
-      format: 'jpeg',
-      quality: 90,
-    },
   }),
   ZovaRender.cell('basic-image:image', { relationName: 'image' }),
   v.tableIdentity(),
@@ -175,6 +167,9 @@ This gives the frontend a clean split:
 
 - `imageId` is the submitted field value
 - `image` is the resolved relation field
+- `training-student:studentImage` owns upload limits and `processing`: crop enabled, aspect ratio `1`, rectangular crop, and resize to `512 × 512` with `fit: 'cover'`, JPEG and quality `90`
+
+The scene definition is shown in the [backend image-scene example](/backend/image-guide#image-scene). Those values are client preparation guidance read through the current policy, not hardcoded field defaults or a promise about stored originals.
 
 The backend explanation for that pairing lives in [Backend Image Guide](/backend/image-guide), where the same example is described from the scene and serializer-transform perspective.
 
@@ -246,16 +241,9 @@ Even when inference would work, setting `relationName` explicitly is often a goo
 
 ### Default behavior
 
-The current defaults include:
+The field reads file-type and size limits from the selected scene's current upload policy. Its `processing.enableCrop`, `processing.cropAspectRatio`, `processing.cropShape` and `processing.resize` supply the browser's crop/resize guidance. No processing policy means no automatic crop or resize; do not assume the Student `512 × 512` recipe applies to every scene.
 
-- `accept: ['image/png', 'image/jpeg', 'image/webp']`
-- `maxCount: 1`
-- `enableCrop: true`
-- `cropAspectRatio: 1`
-- `cropShape: 'rect'`
-- `resize: { width: 512, height: 512, fit: 'cover', format: 'jpeg', quality: 90 }`
-
-These defaults are helpful, but they are not a replacement for explicit business intent.
+Upload limits belong in `@ImageScene({ upload: ... })`, and shared client processing belongs in `@ImageScene({ processing: ... })`. The form field does not expose type, size, crop or resize overrides, so Browser and Agent clients use the same scene policy.
 
 ### Important options
 
@@ -263,66 +251,40 @@ These defaults are helpful, but they are not a replacement for explicit business
 
 - `imageScene`
 
-Although the option shape is optional at the type level, upload currently throws if no image scene is provided.
+Although optional at the type level, this is required for editing. Without it, the field displays a scene-required message instead of an uploader.
 
-#### Value-shape options
+#### Value-shape and count options
 
-- `multiple`
-- `maxCount`
+- `multiple` — setting `false` restricts the field to a single image. Multi-image mode requires the scene policy to allow `multiple` as well; the field cannot enable it against scene policy.
+- `maxCount` — limits the accumulated number of images bound to this field, not just one selection. It defaults to `1`; single-image mode always allows at most one image.
 
-These control whether the field behaves like one image ID or an array of image IDs.
+#### Display option
 
-#### File-selection and validation options
-
-- `accept`
-- `mimeTypes`
-- `extensions`
-- `maxSize`
-- `minSize`
-- `placeholder`
-
-These affect frontend input behavior and frontend validation messaging.
-
-#### Crop options
-
-- `enableCrop`
-- `cropAspectRatio`
-- `cropShape`
-
-These control the optional crop dialog.
-
-#### Resize options
-
-- `resize.width`
-- `resize.height`
-- `resize.fit`
-- `resize.background`
-- `resize.quality`
-- `resize.format`
-
-These control browser-side preprocessing before upload.
+- `placeholder` — custom empty-state text in the editable field.
 
 #### Relation option
 
-- `relationName`
+- `relationName` — pairs the stored field with its resolved preview relation explicitly.
 
-Use this to pair the stored field with its resolved relation field explicitly.
+### Standalone uploader boundary
+
+These are the options of `basic-image:formFieldImage`, not the complete props of `ZImageUploader`. Direct uploader consumers can still supply type/size filters and crop/resize props for their own interactions, such as the account avatar editor. Those props are not exposed as resource form-field overrides.
 
 ## Step 4: Understand the upload lifecycle
 
 The built-in form field follows a consistent frontend flow.
 
-1. the user selects a file or files
-2. the frontend validates the file type and size
-3. if enabled, the crop dialog opens
-4. if configured, the browser resizes and re-encodes the image
-5. the frontend reads the server-provided upload-policy capability
+1. for the selected file or files, the field resolves its `imageScene` and reads `scope.api.image.getUploadPolicy(...)` before processing
+2. the frontend validates image type and size against the scene's current upload limits
+3. if enabled by the scene's processing guidance, the crop dialog opens
+4. if configured, the browser resizes and re-encodes a copy using the scene's processing guidance
+5. the prepared bytes must still satisfy the scene's upload limits; processing is not a server normalization guarantee
 6. ordinary scenes call `scope.api.image.upload(...)` with multipart `imageScene` and `image`
 7. direct-capable scenes call `scope.api.image.createDirectUpload(...)`, upload multipart data to the returned provider URL without Cabloy credentials, then call `scope.api.image.finalizeDirectUpload(...)`
 8. the stored field value is updated from the ordinary upload response or the finalized direct-upload response
 9. the resolved relation field is synchronized so the form can preview the completed image immediately
 
-The frontend does not select a provider by name. Vona resolves the scene and publishes only whether direct upload is available. A direct-upload draft ID is not written to the form until finalization succeeds.
+The frontend does not select a provider by name. Vona resolves the scene and publishes upload limits, client processing guidance and whether direct upload is available. A direct-upload draft ID is not written to the form until finalization succeeds.
 
 That finalization boundary is easy to miss, but it is one of the most important behaviors in the current implementation.
 
@@ -369,7 +331,7 @@ When an image preview is available, the field opens a shared preview dialog that
 
 ## Step 6: Use the multi-image pattern when the business field is plural
 
-The Record example shows the multi-image case.
+The Record example shows the multi-image case. Its `training-record:sceneImage` scene owns `processing.enableCrop: false` and resize guidance `1280 × 1280`, `fit: 'contain'`, JPEG, quality `90`; see the [backend Record scene](/backend/image-guide#multi-image-pattern-training-record). The resource retains multiplicity, count and relation pairing rather than duplicating processing settings.
 
 Entity pattern:
 
@@ -382,16 +344,6 @@ Entity pattern:
     multiple: true,
     maxCount: 9,
     relationName: 'sceneImages',
-    accept: ['image/png', 'image/jpeg', 'image/webp'],
-    maxSize: 2 * 1024 * 1024,
-    enableCrop: false,
-    resize: {
-      width: 1280,
-      height: 1280,
-      fit: 'contain',
-      format: 'jpeg',
-      quality: 90,
-    },
   }),
   ZovaRender.cell('basic-image:image', { relationName: 'sceneImages' }),
   v.array(v.tableIdentity()),
@@ -492,8 +444,8 @@ When image fields misbehave, these are the first mistakes to check.
    - previews, cards, and table thumbnails become weaker
 4. **Relying on inferred relation names when the field name is nonstandard**
    - set `relationName` explicitly instead
-5. **Forgetting `multiple: true` for array-backed fields**
-   - the UI and data shape will drift apart
+5. **Using an array-backed field without multi-image scene support**
+   - the scene must allow `multiple`, and the field must not restrict it with `multiple: false`; configure `maxCount` for its intended capacity
 6. **Describing crop or resize as backend processing**
    - current crop and resize are frontend preprocessing steps before upload
 7. **Ignoring details/nested-form relation behavior**

@@ -36,6 +36,7 @@ import {
   toolSchema,
   UnsupportedActionContract,
 } from './controllerToolSchema.ts';
+import { toolValidationData } from './controllerToolValidation.ts';
 
 export interface IControllerToolDiagnostic {
   controller: string;
@@ -337,6 +338,8 @@ export async function createControllerToolServer(
           const readOnly = options.readOnly ?? route.routeMethod === 'get';
           const runtimeInputSchema = toolSchema(input, schemas);
           if (!readOnly) closeMutationInputSchema(runtimeInputSchema);
+          const inputContract = toolSchema(input, schemas, { preserveRest: true });
+          if (!readOnly) closeMutationInputSchema(inputContract);
           let discoveryInput = input;
           let queryCapabilities: IControllerQueryCapability[] = [];
           if (queryBindings.length) {
@@ -361,7 +364,7 @@ export async function createControllerToolServer(
                 required: ['result'],
                 additionalProperties: false,
               };
-          const outputContract = toolSchema(fullOutput, schemas);
+          const outputContract = toolSchema(fullOutput, schemas, { preserveRest: true });
           const inputPaths = options.discovery?.input ?? [];
           const outputPaths = options.discovery?.output ?? [];
           const inputSchema = toolSchema(
@@ -421,7 +424,7 @@ export async function createControllerToolServer(
             tool,
             readOnly,
             queryCapabilities,
-            inputContract: runtimeInputSchema,
+            inputContract,
             outputContract,
             compactPaths,
             async call(args, diagnostic) {
@@ -452,15 +455,34 @@ export async function createControllerToolServer(
                 const checked = await inputCheck.validate(
                   serializeDateTransport(args, runtimeInputSchema, runtimeInputSchema.$defs ?? {}),
                 );
-                if (checked.issues) throw new ProtocolError(-32602, 'Invalid tool arguments');
+                // Native validation already supplies Vona's field messages and paths.
+                // Parse once even when the JSON contract rejects, but retain that
+                // rejection: native object parsing may otherwise strip unknown fields.
                 for (const key of keys) {
                   const schema = contract.request[key as keyof typeof contract.request];
                   const transported = normalizeDateTransport(values[key], locations[key], schemas);
                   const parsed = await runWithZodQueryCoercion(false, () =>
-                    schema!.safeParseAsync(transported),
+                    schema!.safeParseAsync(transported, { reportInput: true }),
                   );
-                  if (!parsed.success) throw new ProtocolError(-32602, 'Invalid tool arguments');
+                  if (!parsed.success) {
+                    throw new ProtocolError(
+                      -32602,
+                      'Invalid tool arguments',
+                      toolValidationData(
+                        parsed.error.issues,
+                        flat ? [] : [key],
+                        runtimeInputSchema,
+                      ),
+                    );
+                  }
                   bound[key] = parsed.data;
+                }
+                if (checked.issues) {
+                  // The SDK JSON Schema adapter provides no structured field path.
+                  // Do not expose its raw text (which can contain unknown field names).
+                  throw new ProtocolError(-32602, 'Invalid tool arguments', {
+                    issues: [{ message: 'Arguments do not match the input contract', path: [] }],
+                  });
                 }
               } catch (error) {
                 if (error instanceof PublicQueryError) {

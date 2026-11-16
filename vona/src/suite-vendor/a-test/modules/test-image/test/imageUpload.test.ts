@@ -84,7 +84,7 @@ async function createCloudflareServer() {
 }
 
 describe('imageUpload.test.ts', { concurrency: false }, () => {
-  it('action:image:upload api requires auth', async () => {
+  it('action:image:upload and uploadBase64 APIs require auth', async () => {
     await app.bean.executor.mockCtx(async () => {
       const [res, err] = await catchError(async () => {
         const formData = new FormData();
@@ -104,6 +104,17 @@ describe('imageUpload.test.ts', { concurrency: false }, () => {
       });
       assert.equal(res, undefined);
       assert.equal(err?.code, 401);
+      const base64Response = await fetch(app.util.getAbsoluteUrlByApiPath('/image/upload-base64'), {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          imageScene: 'training-student:studentImage',
+          filename: 'image.png',
+          mimeType: 'image/png',
+          base64: tinyPng.toString('base64'),
+        }),
+      });
+      assert.equal(base64Response.status, 401);
     });
   });
 
@@ -124,9 +135,23 @@ describe('imageUpload.test.ts', { concurrency: false }, () => {
         });
         assert.equal(uploadPolicyRes.ok, true);
         const uploadPolicyData = await uploadPolicyRes.json();
+        assert.equal(uploadPolicyData.data.imageScene, 'training-student:studentImage');
+        assert.equal(uploadPolicyData.data.public, true);
         assert.equal(uploadPolicyData.data.directUpload, false);
-        assert.equal('provider' in uploadPolicyData.data, false);
-        assert.equal('clientName' in uploadPolicyData.data, false);
+        assert.deepEqual(uploadPolicyData.data.processing, {
+          enableCrop: true,
+          cropAspectRatio: 1,
+          resize: {
+            width: 512,
+            height: 512,
+            fit: 'cover',
+            format: 'jpeg',
+            quality: 90,
+          },
+        });
+        for (const key of ['provider', 'providerName', 'clientName', 'clientOptions', 'meta']) {
+          assert.equal(key in uploadPolicyData.data, false);
+        }
 
         const uploadImage = async (filename: string) => {
           const formData = new FormData();
@@ -293,8 +318,20 @@ describe('imageUpload.test.ts', { concurrency: false }, () => {
           assert.equal(uploadPolicyData.data.imageScene, 'training-record:sceneImage');
           assert.equal(uploadPolicyData.data.public, false);
           assert.equal(uploadPolicyData.data.directUpload, true);
-          assert.equal('provider' in uploadPolicyData.data, false);
-          assert.equal('clientName' in uploadPolicyData.data, false);
+          assert.equal(uploadPolicyData.data.multiple, true);
+          assert.deepEqual(uploadPolicyData.data.processing, {
+            enableCrop: false,
+            resize: {
+              width: 1280,
+              height: 1280,
+              fit: 'contain',
+              format: 'jpeg',
+              quality: 90,
+            },
+          });
+          for (const key of ['provider', 'providerName', 'clientName', 'clientOptions', 'meta']) {
+            assert.equal(key in uploadPolicyData.data, false);
+          }
         } finally {
           (app.bean.imageUploadPolicy as any)._resolveProvider = resolveProviderRaw;
         }

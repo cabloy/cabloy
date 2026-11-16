@@ -4,7 +4,7 @@ import type { IDecoratorControllerOptions } from 'vona-module-a-web';
 import fse from 'fs-extra';
 import { BeanBase } from 'vona';
 import { Core } from 'vona-module-a-core';
-import { Api, v } from 'vona-module-a-openapiutils';
+import { Api, Mcp, v } from 'vona-module-a-openapiutils';
 import { Passport } from 'vona-module-a-user';
 import { Arg, Controller, Web } from 'vona-module-a-web';
 import z from 'zod';
@@ -12,11 +12,13 @@ import z from 'zod';
 import type { TypeImageVariantInput } from '../types/image.ts';
 import type { IImageSceneRecord } from '../types/imageScene.ts';
 
+import { $locale } from '../.metadata/locales.ts';
 import { DtoImageDeliveryRequest } from '../dto/imageDeliveryRequest.ts';
 import { DtoImageDirectUploadFinalizeRequest } from '../dto/imageDirectUploadFinalizeRequest.ts';
 import { DtoImageDirectUploadFinalizeResponse } from '../dto/imageDirectUploadFinalizeResponse.ts';
 import { DtoImageDirectUploadRequest } from '../dto/imageDirectUploadRequest.ts';
 import { DtoImageDirectUploadResponse } from '../dto/imageDirectUploadResponse.ts';
+import { DtoImageUploadBase64Request } from '../dto/imageUploadBase64Request.tsx';
 import { DtoImageUploadPolicyRequest } from '../dto/imageUploadPolicyRequest.ts';
 import { DtoImageUploadPolicyResponse } from '../dto/imageUploadPolicyResponse.ts';
 import { DtoImageUploadResponse } from '../dto/imageUploadResponse.ts';
@@ -24,9 +26,23 @@ import { DtoImageUploadUrlRequest } from '../dto/imageUploadUrlRequest.ts';
 
 export interface IControllerOptionsImage extends IDecoratorControllerOptions {}
 
-@Controller<IControllerOptionsImage>({ path: 'image' })
+@Controller<IControllerOptionsImage>({ path: 'image', summary: $locale('ImageController') })
 export class ControllerImage extends BeanBase {
-  @Web.post('upload-policy')
+  @Mcp.tool({
+    description: $locale('ImageUploadBase64Description'),
+    readOnly: false,
+  })
+  @Web.post('upload-base64', { summary: $locale('ImageUploadBase64') })
+  @Api.body(DtoImageUploadResponse)
+  async uploadBase64(@Arg.body() data: DtoImageUploadBase64Request) {
+    return await this.scope.service.imageUpload.uploadBase64(data);
+  }
+
+  @Mcp.tool({
+    description: $locale('ImageUploadPolicyDescription'),
+    readOnly: true,
+  })
+  @Web.post('upload-policy', { summary: $locale('ImageUploadPolicy') })
   @Api.body(DtoImageUploadPolicyResponse)
   async getUploadPolicy(@Arg.body() data: DtoImageUploadPolicyRequest) {
     return await this.bean.imageUploadPolicy.resolveSceneUploadPolicy(data);

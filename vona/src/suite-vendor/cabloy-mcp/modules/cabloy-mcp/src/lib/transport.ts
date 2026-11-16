@@ -14,6 +14,10 @@ import { STATUS_CODES } from 'node:http';
 // Synthetic native core; the bounded body reader is also used by the explicitly
 // approved local commerce verification entry. No route or listener is registered here.
 const BODY_BYTES = 16 * 1024;
+export const BUSINESS_BODY_BYTES = 3 * 1024 * 1024;
+type BodyProfile = 'fixture' | 'business';
+const IMAGE_UPLOAD_TOOL = 'a-image_image_uploadBase64';
+const IMAGE_BASE64_BYTES = 2796204;
 const FRAME_BYTES = 2 * 1024;
 const RESPONSE_BYTES = 16 * 1024;
 const MODERN_VERSION = '2026-07-28';
@@ -83,7 +87,7 @@ function rejectDuplicateKeys(text: string): void {
   }
 }
 
-function validateBody(body: unknown): void {
+function validateBody(body: unknown, profile: BodyProfile = 'fixture', byteLength = 0): void {
   if (
     !record(body) ||
     Object.hasOwn(body, 'result') ||
@@ -93,13 +97,21 @@ function validateBody(body: unknown): void {
   ) {
     throw new FixtureTransportError(400);
   }
-  const pending: Array<{ value: unknown; depth: number }> = [{ value: body, depth: 1 }];
+  const params = record(body.params) ? body.params : undefined;
+  const imageUpload =
+    profile === 'business' && body.method === 'tools/call' && params?.name === IMAGE_UPLOAD_TOOL;
+  if (!imageUpload && byteLength > BODY_BYTES) throw new FixtureTransportError(413, -32000);
+  const uploadArguments = imageUpload && record(params?.arguments) ? params.arguments : undefined;
+  const pending: Array<{ value: unknown; depth: number; imageBase64?: boolean }> = [
+    { value: body, depth: 1 },
+  ];
   let nodes = 0;
   while (pending.length) {
-    const { value, depth } = pending.pop()!;
+    const { value, depth, imageBase64 } = pending.pop()!;
     if (++nodes > 256 || depth > 9) throw new FixtureTransportError(400);
     if (typeof value === 'string') {
-      if (Buffer.byteLength(value) > 2048) throw new FixtureTransportError(400);
+      if (Buffer.byteLength(value) > (imageBase64 ? IMAGE_BASE64_BYTES : 2048))
+        throw new FixtureTransportError(400);
     } else if (Array.isArray(value)) {
       if (value.length > 32) throw new FixtureTransportError(400);
       for (const child of value) pending.push({ value: child, depth: depth + 1 });
@@ -109,7 +121,11 @@ function validateBody(body: unknown): void {
       for (const key of keys) {
         if (key === '_method' || Buffer.byteLength(key) > 2048)
           throw new FixtureTransportError(400);
-        pending.push({ value: value[key], depth: depth + 1 });
+        pending.push({
+          value: value[key],
+          depth: depth + 1,
+          imageBase64: value === uploadArguments && key === 'base64',
+        });
       }
     } else if (typeof value === 'number' && !Number.isFinite(value)) {
       throw new FixtureTransportError(400);
@@ -120,7 +136,12 @@ function validateBody(body: unknown): void {
 }
 
 /** One raw reader, stopped (not drained) on failure; the caller closes the connection. */
-export async function readFixtureBody(req: IncomingMessage, signal: AbortSignal): Promise<unknown> {
+export async function readFixtureBody(
+  req: IncomingMessage,
+  signal: AbortSignal,
+  profile: BodyProfile = 'fixture',
+): Promise<unknown> {
+  const bodyBytes = profile === 'business' ? BUSINESS_BODY_BYTES : BODY_BYTES;
   const encoding = req.headers['content-encoding'];
   if (encoding !== undefined && encoding !== 'identity') {
     req.pause();
@@ -132,13 +153,14 @@ export async function readFixtureBody(req: IncomingMessage, signal: AbortSignal)
     throw new FixtureTransportError(400);
   }
   const declared = length === undefined ? undefined : Number(length);
-  if (declared !== undefined && (!Number.isSafeInteger(declared) || declared > BODY_BYTES)) {
+  if (declared !== undefined && (!Number.isSafeInteger(declared) || declared > bodyBytes)) {
     req.pause();
     throw new FixtureTransportError(413, -32000);
   }
   const bytes = await new Promise<Buffer>((resolve, reject) => {
-    // Preallocate the complete accepted budget, not an attacker-sized chunk list.
-    const buffer = Buffer.allocUnsafe(BODY_BYTES);
+    // Grow one bounded buffer on demand, never retain an attacker-sized chunk list
+    // or allocate the full business budget for every small request.
+    let buffer = Buffer.allocUnsafe(BODY_BYTES);
     let size = 0;
     let settled = false;
     const timer = setTimeout(() => finish(new FixtureTransportError(408, -32000)), 2000);
@@ -170,8 +192,15 @@ export async function readFixtureBody(req: IncomingMessage, signal: AbortSignal)
     }
     function onData(chunk: unknown) {
       if (!(chunk instanceof Uint8Array)) return finish(new FixtureTransportError(400, -32700));
-      if (size + chunk.byteLength > BODY_BYTES)
-        return finish(new FixtureTransportError(413, -32000));
+      const required = size + chunk.byteLength;
+      if (required > bodyBytes) return finish(new FixtureTransportError(413, -32000));
+      if (required > buffer.byteLength) {
+        const grown = Buffer.allocUnsafe(
+          Math.min(bodyBytes, Math.max(required, buffer.byteLength * 2)),
+        );
+        grown.set(buffer.subarray(0, size));
+        buffer = grown;
+      }
       buffer.set(chunk, size);
       size += chunk.byteLength;
     }
@@ -191,7 +220,7 @@ export async function readFixtureBody(req: IncomingMessage, signal: AbortSignal)
   const body = parseJson(bytes);
   // Fatal decoding already succeeded; the second decode cannot substitute U+FFFD.
   rejectDuplicateKeys(new TextDecoder('utf-8', { fatal: true }).decode(bytes));
-  validateBody(body);
+  validateBody(body, profile, bytes.byteLength);
   return body;
 }
 

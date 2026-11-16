@@ -31,12 +31,13 @@ export function resolveSchema(schema: ToolSchema, schemas: Record<string, ToolSc
 export function toolSchema(
   schema: ToolSchema,
   schemas: Record<string, ToolSchema>,
+  options: { preserveRest?: boolean } = {},
 ): Tool['inputSchema'] & { $defs?: Record<string, ToolSchema> } {
   const root = JSON.parse(JSON.stringify(schema));
   const definitions: Record<string, ToolSchema> = {};
   function visit(value: any): void {
     if (!value || typeof value !== 'object') return;
-    delete value.rest;
+    if (!options.preserveRest) delete value.rest;
     delete value.errorMessage;
     if (typeof value.$ref === 'string') {
       const ref = value.$ref as string;
@@ -233,11 +234,11 @@ export function serializeDateTransport(
       const iso = currentValue.toISOString();
       return resolved.format === 'date' ? iso.slice(0, 10) : iso;
     }
-    if (Array.isArray(currentValue) && resolved.items) {
-      return currentValue.map(item => visit(item, resolved.items, new Set(refs)));
-    }
-    if (typeof currentValue === 'object' && !Array.isArray(currentValue)) {
-      const source = currentValue as Record<string, unknown>;
+    let result: unknown = currentValue;
+    if (Array.isArray(result) && resolved.items) {
+      result = result.map(item => visit(item, resolved.items, new Set(refs)));
+    } else if (typeof result === 'object' && result !== null && !Array.isArray(result)) {
+      const source = result as Record<string, unknown>;
       const copy = { ...source };
       for (const [key, propertySchema] of Object.entries(resolved.properties ?? {})) {
         if (Object.hasOwn(source, key)) {
@@ -251,9 +252,14 @@ export function serializeDateTransport(
           }
         }
       }
-      return copy;
+      result = copy;
     }
-    return currentValue;
+    for (const key of ['anyOf', 'oneOf', 'allOf']) {
+      for (const branch of resolved[key] ?? []) {
+        result = visit(result, branch as ToolSchema, new Set(refs));
+      }
+    }
+    return result;
   }
   return visit(value, schema);
 }

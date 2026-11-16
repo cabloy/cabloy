@@ -6,6 +6,8 @@ import z from 'zod';
 
 import type { IImageSceneRecord } from '../types/imageScene.ts';
 
+import { DtoImageProcessingOptions } from './imageProcessingOptions.tsx';
+
 export interface IDtoOptionsImageUploadPolicyResponse extends IDecoratorDtoOptions {}
 
 @Dto<IDtoOptionsImageUploadPolicyResponse>()
@@ -30,4 +32,7 @@ export class DtoImageUploadPolicyResponse {
 
   @Api.field(v.optional(), z.boolean())
   directUpload?: boolean;
+
+  @Api.field(v.optional(), v.object(DtoImageProcessingOptions))
+  processing?: DtoImageProcessingOptions;
 }

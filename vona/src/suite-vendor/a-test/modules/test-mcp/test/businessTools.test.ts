@@ -103,6 +103,34 @@ function studentTools(tools: any[]) {
   return tools.filter(tool => tool.name.startsWith('training-student_student_'));
 }
 
+function assertToolArgumentIssues(error: any) {
+  assert.deepEqual(error, {
+    code: -32602,
+    message: 'Invalid tool arguments',
+    data: error?.data,
+  });
+  assert.ok(error.data);
+  assert.deepEqual(Object.keys(error.data), ['issues']);
+  const { issues } = error.data;
+  assert.ok(Array.isArray(issues));
+  assert.ok(issues.length > 0 && issues.length <= 10);
+  for (const issue of issues) {
+    assert.deepEqual(Object.keys(issue).sort(), ['message', 'path']);
+    assert.equal(typeof issue.message, 'string');
+    assert.ok(issue.message.length > 0 && issue.message.length <= 256);
+    assert.ok(Array.isArray(issue.path));
+    assert.ok(issue.path.length <= 16);
+    for (const segment of issue.path) {
+      if (typeof segment === 'string') {
+        assert.ok(segment.length <= 128);
+      } else {
+        assert.ok(Number.isSafeInteger(segment) && segment >= 0);
+      }
+    }
+  }
+  return issues as { message: string; path: (string | number)[] }[];
+}
+
 async function nativeStudentQuery() {
   // The native module, not the MCP schema under test, selects the query contract.
   // Legacy Student modules do not export studentQuery.
@@ -110,7 +138,10 @@ async function nativeStudentQuery() {
   return student.studentQuery;
 }
 
-async function nativeStudentInput(action = 'select'): Promise<Record<string, any>> {
+async function nativeStudentInput(
+  action = 'select',
+  options: { preserveRest?: boolean } = {},
+): Promise<Record<string, any>> {
   const controller = recordResourceNameToRoutePath['training-student:student'].controller;
   const document = await app.bean.openapi.generateJsonOfControllerAction(
     controller,
@@ -137,6 +168,7 @@ async function nativeStudentInput(action = 'select'): Promise<Record<string, any
       additionalProperties: false,
     },
     document.components?.schemas ?? {},
+    options,
   );
 }
 
@@ -703,7 +735,11 @@ describe('businessTools.test.ts', { concurrency: false, timeout: 60000 }, () => 
       title: 'Business field',
       description: 'At least two characters',
       minLength: 2,
-      rest: { render: 'UI component', $ref: '#/components/schemas/UnusedUI' },
+      rest: {
+        render: 'UI component',
+        $ref: '#/components/schemas/UnusedUI',
+        form: { options: { choices: ['a', 'b'] } },
+      },
       errorMessage: { minLength: 'UI validation message' },
     };
     const source: ToolSchema = {
@@ -733,8 +769,14 @@ describe('businessTools.test.ts', { concurrency: false, timeout: 60000 }, () => 
     };
     const snapshot = JSON.stringify({ source, schemas });
     const published = toolSchema(source, schemas);
+    const contract = toolSchema(source, schemas, { preserveRest: true });
     const { rest: _rest, errorMessage: _errorMessage, ...semanticField } = field;
     assert.equal(Object.hasOwn(published, 'rest'), false);
+    assert.equal(Object.hasOwn((published as any).properties!.rest, 'rest'), false);
+    assert.deepEqual((contract as any).rest?.form, source.rest.form);
+    assert.deepEqual((contract as any).properties!.rest.rest?.form?.options, {
+      choices: ['a', 'b'],
+    });
     assert.equal(Object.hasOwn(published, 'errorMessage'), false);
     assert.deepEqual(published.properties!.rest, semanticField);
     assert.deepEqual(published.properties!.errorMessage, semanticField);
@@ -952,6 +994,50 @@ describe('businessTools.test.ts', { concurrency: false, timeout: 60000 }, () => 
       (await dateCheck.validate({ trainingRecords: [{ trainingTime: 'not-a-date' }] })).issues,
     );
     assert.equal(JSON.stringify(transport), transportSnapshot);
+    // Composed schemas must serialize nested native Dates without changing other branches.
+    for (const composition of ['anyOf', 'oneOf']) {
+      const composed = toolSchema(
+        {
+          type: 'object',
+          properties: {
+            body: {
+              [composition]: [
+                { allOf: [{ ...dateSchema, required: ['trainingRecords'] }] },
+                {
+                  type: 'object',
+                  properties: { label: { type: 'string' } },
+                  required: ['label'],
+                  additionalProperties: false,
+                },
+              ],
+            },
+          },
+          required: ['body'],
+          additionalProperties: false,
+        },
+        dateSchemas,
+      );
+      const composedSnapshot = JSON.stringify(composed);
+      const composedCheck = fromJsonSchema(composed as Parameters<typeof fromJsonSchema>[0])[
+        '~standard'
+      ];
+      const composedArgs = { body: nativeArgs };
+      const composedSerialized = serializeDateTransport(
+        composedArgs,
+        composed,
+        composed.$defs ?? {},
+      );
+      assert.deepEqual(composedSerialized, { body: serialized });
+      assert.equal((await composedCheck.validate(composedSerialized)).issues, undefined);
+      assert.equal(nativeArgs.trainingRecords[0].trainingTime, native);
+      assert.equal(JSON.stringify(composed), composedSnapshot);
+      const alternative = { body: { label: 'unchanged' } };
+      assert.deepEqual(
+        serializeDateTransport(alternative, composed, composed.$defs ?? {}),
+        alternative,
+      );
+      assert.equal((await composedCheck.validate(alternative)).issues, undefined);
+    }
   });
   let release: (() => void) | undefined;
   before(async () => {
@@ -1117,6 +1203,131 @@ describe('businessTools.test.ts', { concurrency: false, timeout: 60000 }, () => 
     });
   });
 
+  it('discovers the read-only image policy with flat input and optional scene processing contracts', async t => {
+    await withStudentToolPermissions(async () => {
+      const name = 'a-image_image_getUploadPolicy';
+      const { ControllerImage } = await import('vona-module-a-image');
+      const metadata = appMetadata.getOwnMetadata<IMcpToolOptions>(
+        SymbolMcpOptions,
+        ControllerImage.prototype,
+        'getUploadPolicy',
+      );
+      assert.equal(metadata?.readOnly, true, 'POST policy lookup explicitly opts in as a read');
+      const client = await connect(
+        await createSharedBusinessToolServer(app, `${getMcpIssuer(app)}/admin`, 'mcp:read'),
+      );
+      const policies = [
+        {
+          imageScene: 'training-student:studentImage',
+          maxSize: 2 * 1024 * 1024,
+          mimeTypes: ['image/png', 'image/jpeg', 'image/webp'],
+          public: true,
+          directUpload: false,
+          processing: {
+            enableCrop: true,
+            cropAspectRatio: 1,
+            resize: { width: 512, height: 512, fit: 'cover', format: 'jpeg', quality: 90 },
+          },
+        },
+        {
+          imageScene: 'training-record:sceneImage',
+          maxSize: 2 * 1024 * 1024,
+          mimeTypes: ['image/png', 'image/jpeg', 'image/webp'],
+          multiple: true,
+          public: false,
+          directUpload: false,
+          processing: {
+            enableCrop: false,
+            resize: { width: 1280, height: 1280, fit: 'contain', format: 'jpeg', quality: 90 },
+          },
+        },
+      ];
+      const action = mockOwnedPerformAction(t, async function (method, path, options) {
+        assert.equal(method, 'post');
+        assert.equal(path, '/image/upload-policy');
+        const policy = policies.find(policy => policy.imageScene === options?.body?.imageScene);
+        assert.ok(policy);
+        assert.deepEqual(options, { body: { imageScene: policy.imageScene }, innerAccess: false });
+        return policy;
+      });
+      try {
+        const listed = await client.request('tools/list');
+        assert.equal(listed.error, undefined);
+        const tool = listed.result.tools.find((tool: any) => tool.name === name);
+        assert.ok(tool, 'read scope discovers policy lookup');
+        assert.equal(tool.annotations.readOnlyHint, true);
+        assert.equal(tool.annotations.destructiveHint, false);
+        assert.deepEqual(Object.keys(tool.inputSchema.properties), ['imageScene']);
+        assert.deepEqual(tool.inputSchema.required, ['imageScene']);
+        assert.equal(tool.inputSchema.additionalProperties, false);
+        const lookup = async (section: 'overview' | 'input' | 'output') => {
+          const response = await client.request('tools/call', {
+            name: toolContractToolName,
+            arguments: { tool: name, section },
+          });
+          assert.equal(response.error, undefined);
+          return response.result.structuredContent;
+        };
+        const overview = await lookup('overview');
+        assert.equal(overview.readOnly, true);
+        assert.deepEqual(overview.sections, ['overview', 'input', 'output']);
+        const input = await lookup('input');
+        assert.deepEqual(Object.keys(input.schema.properties), ['imageScene']);
+        assert.deepEqual(input.schema.required, ['imageScene']);
+        const output = await lookup('output');
+        for (const field of [
+          'imageScene',
+          'maxSize',
+          'mimeTypes',
+          'extensions',
+          'multiple',
+          'public',
+          'directUpload',
+          'processing',
+        ]) {
+          assert.ok(output.schema.properties[field], `policy output retains ${field}`);
+        }
+        assert.equal(output.schema.required?.includes('processing') ?? false, false);
+        const processing = resolveSchema(
+          output.schema.properties.processing,
+          output.schema.$defs ?? {},
+        );
+        assert.ok(processing.properties.enableCrop);
+        assert.ok(processing.properties.cropAspectRatio);
+        assert.ok(processing.properties.resize);
+        assert.equal(action.mock.callCount(), 0, 'discovery and contracts do not resolve policy');
+        for (const arguments_ of [
+          {},
+          { imageScene: null },
+          { body: { imageScene: policies[0].imageScene } },
+          { imageScene: policies[0].imageScene, innerAccess: true },
+        ]) {
+          const invalid = await client.request('tools/call', { name, arguments: arguments_ });
+          assert.equal(invalid.error?.code, -32602);
+        }
+        assert.equal(action.mock.callCount(), 0, 'invalid policy input never dispatches');
+        const check = fromJsonSchema(output.schema)['~standard'];
+        for (const policy of policies) {
+          const response = await client.request('tools/call', {
+            name,
+            arguments: { imageScene: policy.imageScene },
+          });
+          assert.equal(response.error, undefined);
+          assert.notEqual(response.result.isError, true);
+          assert.deepEqual(response.result.structuredContent, policy);
+          assert.deepEqual(JSON.parse(response.result.content[0].text), policy);
+          assert.equal((await check.validate(policy)).issues, undefined);
+          const { processing: _processing, ...withoutProcessing } = policy;
+          assert.equal((await check.validate(withoutProcessing)).issues, undefined);
+        }
+        assert.equal(action.mock.callCount(), policies.length);
+      } finally {
+        action.mock.restore();
+        await client.close();
+      }
+    });
+  });
+
   it('keeps all eight student tools out of default/anonymous discovery and validates their authorized shared contracts', async t => {
     await app.bean.executor.mockCtx(async () => {
       assert.equal(app.bean.passport.isAuthenticated, false);
@@ -1273,7 +1484,7 @@ describe('businessTools.test.ts', { concurrency: false, timeout: 60000 }, () => 
             assert.equal(binding.mode, actionName);
             assert.deepEqual(binding.capabilities.query.fields.level.operators, ['eq', 'gte']);
             assert.equal(binding.querySchema.properties.where, undefined);
-            const nativeInput = await nativeStudentInput(actionName);
+            const nativeInput = await nativeStudentInput(actionName, { preserveRest: true });
             const fullInput = await shared.request('tools/call', {
               name: toolContractToolName,
               arguments: { tool: tool.name, section: 'input' },
@@ -1579,7 +1790,9 @@ describe('businessTools.test.ts', { concurrency: false, timeout: 60000 }, () => 
         assert.ok(selectItem.properties.level.title);
         assert.deepEqual(
           selectItem.properties.level,
-          toolSchema(nativeSelectItem.properties.level, nativeDocument.components.schemas),
+          toolSchema(nativeSelectItem.properties.level, nativeDocument.components.schemas, {
+            preserveRest: true,
+          }),
         );
         assert.deepEqual(
           select.inputSchema.properties.level,
@@ -1593,7 +1806,12 @@ describe('businessTools.test.ts', { concurrency: false, timeout: 60000 }, () => 
         assert.equal(select.inputSchema.properties.level.title, selectItem.properties.level.title);
         assert.ok(nativeSelect.properties.level.rest.form.render);
         assert.equal(Object.hasOwn(select.inputSchema.properties.level, 'rest'), false);
-        assert.equal(Object.hasOwn(selectItem.properties.level, 'rest'), false);
+        assert.equal(Object.hasOwn(selectItem.properties.level, 'rest'), true);
+        assert.equal(
+          selectItem.properties.imageId.rest.form.options.imageScene,
+          'training-student:studentImage',
+        );
+        assert.equal(selectItem.properties.imageId.rest.form.options.relationName, 'image');
         assert.ok(!selectItem.required.includes('imageId'));
         for (const args of [
           ...(query ? [null, '1', 1.5, 0, 4] : [null, '1']).map(level => ({ level })),
@@ -1656,7 +1874,7 @@ describe('businessTools.test.ts', { concurrency: false, timeout: 60000 }, () => 
             name: view.name,
             arguments: args,
           });
-          assert.deepEqual(rejected.error, { code: -32602, message: 'Invalid tool arguments' });
+          assertToolArgumentIssues(rejected.error);
         }
         assert.ok(student);
         assert.deepEqual(Object.keys(student.inputSchema.properties), ['id']);
@@ -1834,12 +2052,44 @@ describe('businessTools.test.ts', { concurrency: false, timeout: 60000 }, () => 
             name: create.name,
             arguments: args,
           });
-          assert.deepEqual(
-            rejected.error,
-            { code: -32602, message: 'Invalid tool arguments' },
-            JSON.stringify(args),
-          );
+          const issues = assertToolArgumentIssues(rejected.error);
+          const input = args as Record<string, any>;
+          if (input.name === 'x') {
+            assert.deepEqual(
+              issues.map(issue => issue.path),
+              [['name']],
+            );
+          }
+          if (Array.isArray(input.trainingRecords)) {
+            const record = input.trainingRecords[0];
+            if (record.name === 'x') {
+              assert.deepEqual(
+                issues.map(issue => issue.path),
+                [['trainingRecords', 0, 'name']],
+              );
+            }
+            const subject = record.trainingRecordSubjects?.[0];
+            if (subject?.score === '95') {
+              assert.deepEqual(
+                issues.map(issue => issue.path),
+                [['trainingRecords', 0, 'trainingRecordSubjects', 0, 'score']],
+              );
+            }
+          }
         }
+        const bounded = await shared.request('tools/call', {
+          name: create.name,
+          arguments: {
+            ...validCreate,
+            trainingRecords: Array.from({ length: 12 }).fill({ name: 'x' }),
+          },
+        });
+        const boundedIssues = assertToolArgumentIssues(bounded.error);
+        assert.equal(boundedIssues.length, 10, 'native errors are capped without dispatch');
+        assert.deepEqual(
+          boundedIssues.map(issue => issue.path),
+          Array.from({ length: 10 }, (_, index) => ['trainingRecords', index, 'name']),
+        );
         assert.ok(update);
         assert.equal(update.annotations.readOnlyHint, false);
         assert.deepEqual(
@@ -1858,6 +2108,9 @@ describe('businessTools.test.ts', { concurrency: false, timeout: 60000 }, () => 
           resolveSchema(schema, update.inputSchema.$defs ?? {});
         const updateParams = resolveUpdateSchema(update.inputSchema.properties.params);
         const updateBody = resolveUpdateSchema(update.inputSchema.properties.body);
+        assert.equal(updateBody.type, 'object');
+        assert.equal(updateBody.anyOf, undefined);
+        assert.equal(updateBody.oneOf, undefined);
         assert.deepEqual(Object.keys(updateParams.properties), ['id']);
         assert.deepEqual(updateParams.required, ['id']);
         assert.equal(updateParams.additionalProperties, false);
@@ -1872,6 +2125,19 @@ describe('businessTools.test.ts', { concurrency: false, timeout: 60000 }, () => 
         ]);
         assert.deepEqual(updateBody.required.toSorted(), ['level', 'mobile', 'name']);
         assert.equal(updateBody.additionalProperties, false);
+        const imageOnly = await shared.request('tools/call', {
+          name: update.name,
+          arguments: { params: { id: '123' }, body: { imageId: '456' } },
+        });
+        const imageOnlyIssues = assertToolArgumentIssues(imageOnly.error);
+        assert.deepEqual(
+          imageOnlyIssues.map(issue => issue.path),
+          [
+            ['body', 'name'],
+            ['body', 'mobile'],
+            ['body', 'level'],
+          ],
+        );
         const updateContent = resolveUpdateSchema(updateBody.properties.content);
         const updateRecord = resolveUpdateSchema(updateBody.properties.trainingRecords.items);
         const updateSubject = resolveUpdateSchema(
@@ -2025,7 +2291,11 @@ describe('businessTools.test.ts', { concurrency: false, timeout: 60000 }, () => 
             trainingRecords: [{ ...body.trainingRecords[0], trainingTime: 'not-a-date' }],
           },
         });
-        assert.deepEqual(invalid.error, { code: -32602, message: 'Invalid tool arguments' });
+        const issues = assertToolArgumentIssues(invalid.error);
+        assert.deepEqual(
+          issues.map(issue => issue.path),
+          [['trainingRecords', 0, 'trainingTime']],
+        );
         assert.equal(action.mock.callCount(), 1, 'invalid date never reaches dispatch');
       } finally {
         action.mock.restore();
@@ -2279,11 +2549,15 @@ describe('businessTools.test.ts', { concurrency: false, timeout: 60000 }, () => 
             name: 'training-student_student_update',
             arguments: invalidArgs,
           });
-          assert.deepEqual(
-            rejected.error,
-            { code: -32602, message: 'Invalid tool arguments' },
-            JSON.stringify(invalidArgs),
-          );
+          const issues = assertToolArgumentIssues(rejected.error);
+          const subject = (invalidArgs as any)?.body?.trainingRecords?.[0]
+            ?.trainingRecordSubjects?.[0];
+          if (subject?.score === '90') {
+            assert.deepEqual(
+              issues.map(issue => issue.path),
+              [['body', 'trainingRecords', 0, 'trainingRecordSubjects', 0, 'score']],
+            );
+          }
         }
         assert.equal(action.mock.callCount(), 0, 'unknown and invalid input never dispatch');
         const call = () =>
@@ -2435,11 +2709,7 @@ describe('businessTools.test.ts', { concurrency: false, timeout: 60000 }, () => 
             name: tool.name,
             arguments: invalidArgs,
           });
-          assert.deepEqual(
-            rejected.error,
-            { code: -32602, message: 'Invalid tool arguments' },
-            JSON.stringify(invalidArgs),
-          );
+          assertToolArgumentIssues(rejected.error);
         }
         assert.equal(action.mock.callCount(), 0, 'unknown and invalid input never dispatch');
         const call = () => all.request('tools/call', { name: tool.name, arguments: params });
@@ -3429,11 +3699,15 @@ describe('businessTools.test.ts', { concurrency: false, timeout: 60000 }, () => 
         const fullCheck = fromJsonSchema(schema)['~standard'];
         const compactCheck = fromJsonSchema(effect.inputSchema)['~standard'];
         assert.equal((await fullCheck.validate(args)).issues, undefined);
-        for (const body of [
-          { amount: 4 },
-          { amount: 2, priority: null },
-          { amount: 2, private: true },
-        ]) {
+        for (const [body, path, message] of [
+          [{ amount: 4 }, ['body', 'amount'], 'Too big: expected number to be <=3'],
+          [
+            { amount: 2, priority: null },
+            ['body', 'priority'],
+            'Invalid input: expected number, received null',
+          ],
+          [{ amount: 2, private: true }, [], 'Arguments do not match the input contract'],
+        ] as const) {
           const invalid = { ...args, body };
           assert.equal(
             (await compactCheck.validate(invalid)).issues,
@@ -3448,7 +3722,9 @@ describe('businessTools.test.ts', { concurrency: false, timeout: 60000 }, () => 
             name: effectToolName,
             arguments: invalid,
           });
-          assert.deepEqual(rejected.error, { code: -32602, message: 'Invalid tool arguments' });
+          const issues = assertToolArgumentIssues(rejected.error);
+          assert.deepEqual(issues, [{ message, path }]);
+          assert.equal(action.mock.callCount(), 0, 'invalid grouped input never dispatches');
         }
         const output = await lookup('output');
         assert.equal(output.error, undefined);
@@ -4274,18 +4550,25 @@ describe('businessTools.test.ts', { concurrency: false, timeout: 60000 }, () => 
           arguments: { tool: summary.name, section: 'output' },
         });
         assert.equal(fullOutput.error, undefined);
+        const fullOutputSchema = fullOutput.result.structuredContent.schema;
         assert.deepEqual(fullOutput.result.structuredContent, {
           contractVersion: 1,
           tool: summary.name,
           section: 'output',
-          schema: summary.outputSchema,
+          schema: fullOutputSchema,
         });
-        assert.deepEqual(
-          Object.keys(fullOutput.result.structuredContent.schema.properties).sort(),
-          ['descriptionLength', 'id', 'level', 'levelTitle', 'name', 'summaryText'],
-        );
+        assert.equal(summary.outputSchema.properties.name.rest, undefined);
+        assert.ok(fullOutputSchema.properties.name.rest);
+        assert.deepEqual(Object.keys(fullOutputSchema.properties).sort(), [
+          'descriptionLength',
+          'id',
+          'level',
+          'levelTitle',
+          'name',
+          'summaryText',
+        ]);
         assert.doesNotMatch(
-          JSON.stringify(fullOutput.result.structuredContent.schema),
+          JSON.stringify(fullOutputSchema),
           /"(?:mobile|descriptionMarkdown|descriptionHtml)":|#\/components\/schemas\//,
         );
         assert.equal(
