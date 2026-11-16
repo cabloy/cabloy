@@ -744,11 +744,19 @@ describe('localHttp.test.ts', { concurrency: false, timeout: 60000 }, () => {
           : []),
         { target: '/mcp?instanceName=shareTest', status: 404 },
         { target: '/%6dcp', status: 404 },
-        { headers: { 'content-length': 16 * 1024 + 1 }, body: '', status: 413 },
+        // Business receipt permits image uploads up to the 3 MiB raw envelope.
+        { headers: { 'content-length': 3 * 1024 * 1024 + 1 }, body: '', status: 413 },
         // Chunked receipt, not just the declared Content-Length fast rejection.
         {
           headers: { 'content-length': undefined, 'transfer-encoding': 'chunked' },
-          body: ' '.repeat(16 * 1024 + 1),
+          body: ' '.repeat(3 * 1024 * 1024 + 1),
+          status: 413,
+        },
+        // Complete ordinary requests still have a 16 KiB ceiling after parsing.
+        { body: valid.body.padEnd(16 * 1024 + 1, ' '), status: 413 },
+        {
+          headers: { 'content-length': undefined, 'transfer-encoding': 'chunked' },
+          body: valid.body.padEnd(16 * 1024 + 1, ' '),
           status: 413,
         },
         { body: '{', status: 400, code: -32700 },
