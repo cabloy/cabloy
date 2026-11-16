@@ -1,5 +1,18 @@
 # Changelog
 
+## 5.1.285
+
+### Features
+
+- Add MCP image tools.
+- Add MCP image skills.
+- Add update functionality.
+
+### Improvements
+
+- Generate metadata through the CLI.
+- Refactor the reactive bean container.
+
 ## 5.1.284
 
 ### Bug Fixes
