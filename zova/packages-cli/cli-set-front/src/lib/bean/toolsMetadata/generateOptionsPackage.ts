@@ -52,7 +52,14 @@ export async function generateOptionsPackage(
       }
     }
   }
+  for (const sceneName of Object.keys(nodeOnionsConfig)) {
+    if (onionScenesMeta[sceneName]?.optionsPackage && !cacheNodeMap[sceneName]) {
+      delete nodeOnionsConfig[sceneName];
+      changed = true;
+    }
+  }
   if (changed) {
+    if (Object.keys(nodeOnionsConfig).length === 0) delete pkg.zovaModule.onionsConfig;
     await cli.helper.saveJSONFile(pkgFile, pkg);
   }
   // ok
