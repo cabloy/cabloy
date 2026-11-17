@@ -30,8 +30,14 @@ export class BehaviorFormFieldLayoutLogin extends BeanBehaviorBase<
     const layout = renderContext.propsBucket.layout;
     // needHandleBorder
     // renderContext.propsBucket.needHandleBorder = layout?.disable || !layout?.inline;
-    renderContext.propsBucket.needHandleBorder = false;
-    const vnode = next(renderContext);
+    const renderContextNext = {
+      ...renderContext,
+      propsBucket: {
+        ...renderContext.propsBucket,
+        needHandleBorder: false,
+      },
+    };
+    const vnode = next(renderContextNext);
     if (layout?.disable) return vnode;
     const iconPrefix = layout?.iconPrefix;
     const error = field.state.meta.errors[0] as z.ZodError | undefined;
