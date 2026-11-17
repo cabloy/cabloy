@@ -4,10 +4,11 @@ Standalone, end-user skills for clients already connected to a Cabloy MCP server
 
 ## Available skill
 
-| Skill                                                | Purpose                                                                                                                                                           |
-| ---------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| [cabloy-mcp-query](skills/cabloy-mcp-query/SKILL.md) | Discover an authorized query tool, retrieve its current compact query capabilities, build a native JSON predicate and report the actual result.                   |
-| [cabloy-mcp-image](skills/cabloy-mcp-image/SKILL.md) | Resolve the scene and current upload policy, prepare an image copy, upload once and optionally bind its acknowledged identity through a complete resource update. |
+| Skill                                                                  | Purpose                                                                                                                                                           |
+| ---------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| [cabloy-mcp-query](skills/cabloy-mcp-query/SKILL.md)                   | Discover an authorized query tool, retrieve its current compact query capabilities, build a native JSON predicate and report the actual result.                   |
+| [cabloy-mcp-image](skills/cabloy-mcp-image/SKILL.md)                   | Resolve the scene and current upload policy, prepare an image copy, upload once and optionally bind its acknowledged identity through a complete resource update. |
+| [cabloy-mcp-resource-pages](skills/cabloy-mcp-resource-pages/SKILL.md) | Choose trusted Resource page links for explicit list, create, view, edit and browser-handoff intents on the same MCP connection.                                  |
 
 Each skill is self-contained in its `SKILL.md`. It requires no monorepo checkout, source inspection, development commands, environment files or credential access. A user can obtain just the selected skill directory and use it with the client's existing connection and authorization.
 
@@ -15,7 +16,7 @@ Each skill is self-contained in its `SKILL.md`. It requires no monorepo checkout
 
 **Connecting an MCP server does not install or load a skill.** MCP tool discovery and client skill loading are separate mechanisms.
 
-1. Obtain the selected skill directory, such as `skills/cabloy-mcp-query/` or `skills/cabloy-mcp-image/`, including `SKILL.md`.
+1. Obtain the selected skill directory, such as `skills/cabloy-mcp-query/`, `skills/cabloy-mcp-image/` or `skills/cabloy-mcp-resource-pages/`, including `SKILL.md`.
 2. Follow your client's documented manual skill installation or loading mechanism. Use its supported directory import, skill upload or equivalent; names, locations, activation and session refresh vary by client.
 3. Confirm that the client has loaded the selected skill and can discover tools on the intended, already-connected server.
 4. Submit a request matching that skill's stated scope. The skill first resolves the current contract and authorization boundaries, then uses only the admitted workflow.
