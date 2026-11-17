@@ -102,14 +102,16 @@ describe('dev database preparation', { concurrency: false }, () => {
     assert.deepEqual(service.createdInstanceNames, []);
   });
 
-  it('rejects a missing isolate before reloading or changing the existing shared database', async () => {
+  it('rejects a missing isolate before reloading or changing the existing shared database', async t => {
+    t.mock.method(console, 'error', () => {});
     const { service, calls } = fixture([databaseName], []);
     await assert.rejects(service.prepareDevDatabases(false), /isolateTest.*npm run db:reset/);
     assert.deepEqual(calls, []);
     assert.deepEqual(service.createdInstanceNames, []);
   });
 
-  it('rejects a missing shared database without any preparation side effects', async () => {
+  it('rejects a missing shared database without any preparation side effects', async t => {
+    t.mock.method(console, 'error', () => {});
     const { service, calls } = fixture();
     await assert.rejects(service.prepareDevDatabases(false), /default.*npm run db:reset/);
     assert.deepEqual(calls, []);
@@ -130,7 +132,8 @@ describe('dev database preparation', { concurrency: false }, () => {
     assert.deepEqual(calls, []);
   });
 
-  it('rejects missing targets through legacy startup entrypoints before migration', async () => {
+  it('rejects missing targets through legacy startup entrypoints before migration', async t => {
+    t.mock.method(console, 'error', () => {});
     for (const versionStart of [false, true]) {
       const { service, calls } = fixture();
       await assert.rejects(
@@ -186,7 +189,8 @@ describe('dev database preparation', { concurrency: false }, () => {
     assert.deepEqual(calls, []);
   });
 
-  it('checks actual existence even if the configured name belongs to the managed namespace', async () => {
+  it('checks actual existence even if the configured name belongs to the managed namespace', async t => {
+    t.mock.method(console, 'error', () => {});
     const { service, clients, calls } = fixture();
     clients.main.getDatabaseName = () => databaseName;
     await assert.rejects(service.prepareDevDatabases(false), /npm run db:reset/);
