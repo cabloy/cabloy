@@ -20,7 +20,7 @@ class Model {
   connection: ReturnType<typeof knex>;
   db = { dialect: { capabilities: { ilike: true, like: true } } };
   constructor(client = 'pg') {
-    this.connection = knex({ client });
+    this.connection = knex({ client, useNullAsDefault: client === 'sqlite3' });
   }
 
   getTable() {
