@@ -99,6 +99,25 @@ Retrieve only the needed direction; there is no arbitrary schema-fragment API an
 
 `discovery?: { input?: string[][]; output?: string[][] }` explicitly compacts selected object/array schemas in declarations only. Paths use final MCP object properties and optional terminal `items` for an array item schema; root/scalar/union/missing/overlapping selections are invalid. Student select uses `discovery.output: [['list', 'items']]`. This does **not** redact schema data, shrink business results or change full validators. Automatic compact `where` remains limited to policy-bound query bindings; unbound schemas are not automatically compacted. See [declaration compaction](/mcp/mcp-controller-tools#compact-selected-declaration-schemas).
 
+## Resource page links
+
+A connected client may also discover the read-only built-in tool **`cabloy_resource_page_links`** when the current Site has at least one visible, admitted MCP tool backed by a standard Vona Resource. It is a navigation helper, not a second CRUD API or a permission grant.
+
+Call it with the exact server-published source tool name and one or more standard page requests:
+
+```json
+{
+  "sourceTool": "training-student_student_view",
+  "links": [{ "page": "list" }, { "page": "view", "id": "3" }, { "page": "edit", "id": "3" }]
+}
+```
+
+The supported pages are `list`, `create`, `view` and `edit`. Record pages require an `id`; list and create pages must not receive one. The server limits each request to eight links. The helper derives the business Resource from the exact source-tool metadata, uses the current authenticated MCP Site and trusted Site configuration, and returns standard MCP `resource_link` content together with structured link data. Clients should preserve the link URI as returned rather than constructing a URL from a tool name.
+
+Source-tool admission and each requested target page Action are checked independently using the current scope and business permission guards. A visible read tool therefore does not imply create or edit authority. Requests can return only the authorized subset; an empty link array is a successful bounded result when none of the requested target pages is currently available. Unknown, non-Resource or unavailable source tools fail closed without revealing another Site's catalog.
+
+The links are navigation only. They do not contain Bearer tokens, OAuth codes, cookies or permission data; opening one still requires ordinary browser authentication, Site admission and Resource authorization. A link does not prove that a record exists, that a business operation succeeded, or that the client can perform the target page's action. The helper does not execute the source or target business Action, and the current MCP resource supplies the Site boundary; callers cannot choose `ssrSiteId`, `businessResource`, an origin, an arbitrary path or a query string.
+
 ### Query without requiring a skill
 
 Policy-bound query tools advertise a compact `where` object with its original optionality and a short description, not the full recursive predicate graph. A connected client can follow that description and successfully execute a business query **without an installed skill**:

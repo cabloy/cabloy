@@ -10,13 +10,14 @@ import { appMetadata, runWithZodQueryCoercion } from 'vona';
 import { SymbolMcpOptions } from 'vona-module-a-openapiutils';
 import { checkQueryBudget, PublicQueryError, validateQuery } from 'vona-module-a-orm';
 import { RateLimitError, RateLimitUnavailableError } from 'vona-module-a-ratelimit';
-import { getCacheControllerRoutes } from 'vona-module-a-web';
+import { getCacheControllerRoutes, recordResourceNameToRoutePath } from 'vona-module-a-web';
 import { isMcpScope } from 'vona-module-mcp-auth';
 import z from 'zod';
 
 import type { IToolCallDiagnostic } from './controllerToolDiagnostics.ts';
 import type { IControllerQueryCapability } from './controllerToolQuery.ts';
 import type { ToolSchema } from './controllerToolSchema.ts';
+import type { IResourcePageLink, IResourcePageLinkRequest } from './resourcePageLinks.ts';
 
 import {
   compactToolSchema,
@@ -37,6 +38,12 @@ import {
   UnsupportedActionContract,
 } from './controllerToolSchema.ts';
 import { toolValidationData } from './controllerToolValidation.ts';
+import {
+  resourcePageLinksResult,
+  resourcePageLinksTool,
+  resourcePageLinksToolName,
+  resolveResourcePageLinks,
+} from './resourcePageLinks.ts';
 
 export interface IControllerToolDiagnostic {
   controller: string;
@@ -79,6 +86,7 @@ interface IControllerTool {
   inputContract: ToolSchema;
   outputContract: ToolSchema;
   compactPaths: { input: string[][]; output: string[][] };
+  resource?: string;
   call(args: Record<string, unknown>, diagnostic: IToolCallDiagnostic): Promise<CallToolResult>;
 }
 
@@ -135,6 +143,7 @@ export async function createControllerToolServer(
   const registeredSites = new Set<string>(
     Object.values(app.bean.onion.ssrSite.onionsNormal).map(site => site.name),
   );
+  const ssrSiteOptions = ssrSite.beanOptions.options as IDecoratorSsrSiteOptions;
   return runWithZodQueryCoercion(true, async () => {
     const tools = new Map<string, IControllerTool>();
     const diagnostics: IControllerToolDiagnostic[] = [];
@@ -178,6 +187,7 @@ export async function createControllerToolServer(
           !/^[\w-]{1,128}$/.test(name) ||
           tools.has(name) ||
           name === toolContractName ||
+          name === resourcePageLinksToolName ||
           name === logoutName
         ) {
           throw new Error(`Invalid or duplicate MCP tool name: ${name}`);
@@ -414,9 +424,13 @@ export async function createControllerToolServer(
               ...(readOnly ? { destructiveHint: false } : {}),
             },
           };
+          const resource = Object.entries(recordResourceNameToRoutePath).find(
+            ([, routePathInfo]) => routePathInfo.controller === route.controller,
+          )?.[0];
           tools.set(name, {
             identity: { controller: controller.beanOptions.beanFullName, action: route.action },
             controller: route.controller,
+            resource,
             controllerSummary: controller.beanOptions.options?.summary
               ? app.meta.text(controller.beanOptions.options.summary)
               : '',
@@ -629,6 +643,9 @@ export async function createControllerToolServer(
     const contractInputCheck = fromJsonSchema(
       toolContract.inputSchema as Parameters<typeof fromJsonSchema>[0],
     )['~standard'];
+    const resourcePageLinksInputCheck = fromJsonSchema(
+      resourcePageLinksTool.inputSchema as Parameters<typeof fromJsonSchema>[0],
+    )['~standard'];
     const env = app.meta.env;
     const server = new Server(
       {
@@ -640,10 +657,12 @@ export async function createControllerToolServer(
     server.setRequestHandler('tools/list', () =>
       track(async () => {
         const visible = await visibleTools();
+        const resourceTools = visible.filter(item => item.resource);
         return {
           tools: [
             ...visible.map(item => item.tool),
             ...(visible.length ? [toolContract] : []),
+            ...(resourceTools.length ? [resourcePageLinksTool] : []),
             ...(serverOptions.logout ? [logoutTool] : []),
           ],
         };
@@ -653,6 +672,7 @@ export async function createControllerToolServer(
       track(async () => {
         if (!app.ctx) throw new ProtocolError(-32603, 'Request context required');
         const contractCall = request.params.name === toolContractName;
+        const resourcePageLinksCall = request.params.name === resourcePageLinksToolName;
         const logoutCall = request.params.name === logoutName && serverOptions.logout;
         const tool = tools.get(request.params.name);
         const admitted = tool && allowed(tool);
@@ -661,9 +681,11 @@ export async function createControllerToolServer(
             ? logoutName
             : contractCall
               ? toolContractName
-              : admitted
-                ? tool.tool.name
-                : 'unavailable',
+              : resourcePageLinksCall
+                ? resourcePageLinksToolName
+                : admitted
+                  ? tool.tool.name
+                  : 'unavailable',
         );
         recordToolCall(app, diagnostic, 'received');
         try {
@@ -688,6 +710,72 @@ export async function createControllerToolServer(
               content: [{ type: 'text' as const, text: JSON.stringify(structuredContent) }],
               structuredContent,
             };
+          }
+          if (resourcePageLinksCall) {
+            const args = request.params.arguments ?? {};
+            if ((await resourcePageLinksInputCheck.validate(args)).issues) {
+              diagnostic.outcome = 'invalid_arguments';
+              throw new ProtocolError(-32602, 'Invalid tool arguments');
+            }
+            const source = tools.get(args.sourceTool as string);
+            if (!source || !source.resource || !allowed(source) || !(await targetVisible(source))) {
+              diagnostic.outcome = 'unavailable';
+              throw new ProtocolError(-32602, 'Tool unavailable');
+            }
+            const requests = args.links as IResourcePageLinkRequest[];
+            const routePathInfo = recordResourceNameToRoutePath[source.resource];
+            if (!routePathInfo) {
+              diagnostic.outcome = 'unavailable';
+              throw new ProtocolError(-32602, 'Tool unavailable');
+            }
+            const targetActions: Record<string, string> = {
+              list: 'select',
+              create: 'create',
+              view: 'view',
+              edit: 'update',
+            };
+            const resolved: IResourcePageLink[] = [];
+            for (const requestItem of requests) {
+              const action = targetActions[requestItem.page];
+              const target = action
+                ? tools.get(
+                    [...tools.entries()].find(
+                      ([, candidate]) =>
+                        candidate.resource === source.resource &&
+                        candidate.identity.action === action,
+                    )?.[0] ?? '',
+                  )
+                : undefined;
+              if (!target || !allowed(target) || !(await targetVisible(target))) continue;
+              try {
+                resolved.push(
+                  resolveResourcePageLinks({
+                    protocol: app.util.protocol,
+                    host: app.util.host,
+                    publicPath: String(ssrSiteOptions.publicPath),
+                    businessResource: source.resource,
+                    requests: [requestItem],
+                  })[0],
+                );
+              } catch {
+                diagnostic.outcome = 'invalid_arguments';
+                throw new ProtocolError(-32602, 'Invalid tool arguments');
+              }
+            }
+            if (!resolved.length) {
+              diagnostic.outcome = 'success';
+              return resourcePageLinksResult({
+                sourceTool: source.tool.name,
+                resource: source.resource,
+                links: [],
+              });
+            }
+            diagnostic.outcome = 'success';
+            return resourcePageLinksResult({
+              sourceTool: source.tool.name,
+              resource: source.resource,
+              links: resolved,
+            });
           }
           if (contractCall) {
             const args = request.params.arguments ?? {};

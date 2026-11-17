@@ -33,6 +33,7 @@ import {
   normalizeDateTransport,
   queryRepairHint,
   recordToolCall,
+  resourcePageLinksToolName,
   resolveSchema,
   serializeDateTransport,
   summarizeToolQueries,
@@ -2760,6 +2761,130 @@ describe('businessTools.test.ts', { concurrency: false, timeout: 60000 }, () => 
     });
   });
 
+  it('exposes Resource page links only for exact admitted tools and checks target Actions independently', async () => {
+    if (!app.meta.modules['training-student']) return;
+    await withStudentToolPermissions(async () => {
+      const all = await connect(
+        await createControllerToolServer(app, 'mcp:all', { ssrSiteId: 'admin' }),
+      );
+      try {
+        const listed = await all.request('tools/list');
+        assert.equal(listed.error, undefined);
+        const helper = listed.result.tools.find(
+          (tool: any) => tool.name === resourcePageLinksToolName,
+        );
+        assert.ok(helper);
+        assert.deepEqual(helper.inputSchema.required, ['sourceTool', 'links']);
+        assert.deepEqual(
+          helper.inputSchema.properties.links.items.oneOf.map(
+            (item: any) => item.properties.page.enum[0],
+          ),
+          ['list', 'create', 'view', 'edit'],
+        );
+        assert.equal(helper.annotations.readOnlyHint, true);
+        assert.equal(helper.annotations.destructiveHint, false);
+
+        const response = await all.request('tools/call', {
+          name: resourcePageLinksToolName,
+          arguments: {
+            sourceTool: 'training-student_student_view',
+            links: [
+              { page: 'list' },
+              { page: 'create' },
+              { page: 'view', id: '3' },
+              { page: 'edit', id: '3' },
+            ],
+          },
+        });
+        assert.equal(response.error, undefined);
+        assert.equal(response.result.isError, undefined);
+        assert.equal(response.result.content[0].type, 'text');
+        assert.deepEqual(
+          response.result.content.slice(1).map((item: any) => item.type),
+          ['resource_link', 'resource_link', 'resource_link', 'resource_link'],
+        );
+        assert.deepEqual(
+          response.result.structuredContent.links.map((link: any) => link.uri),
+          [
+            `${app.util.protocol}://${app.util.host}/admin/rest/resource/training-student%3Astudent`,
+            `${app.util.protocol}://${app.util.host}/admin/rest/resource/training-student%3Astudent/create`,
+            `${app.util.protocol}://${app.util.host}/admin/rest/resource/training-student%3Astudent/3`,
+            `${app.util.protocol}://${app.util.host}/admin/rest/resource/training-student%3Astudent/3/edit`,
+          ],
+        );
+        assert.equal(response.result.structuredContent.sourceTool, 'training-student_student_view');
+        assert.equal(response.result.structuredContent.resource, 'training-student:student');
+
+        const invalidSource = await all.request('tools/call', {
+          name: resourcePageLinksToolName,
+          arguments: { sourceTool: 'mcp_test_action_status', links: [{ page: 'list' }] },
+        });
+        assert.deepEqual(invalidSource.error, { code: -32602, message: 'Tool unavailable' });
+        const malformed = await all.request('tools/call', {
+          name: resourcePageLinksToolName,
+          arguments: {
+            sourceTool: 'training-student_student_view',
+            links: [{ page: 'view' }],
+          },
+        });
+        assert.deepEqual(malformed.error, { code: -32602, message: 'Invalid tool arguments' });
+      } finally {
+        await all.close();
+      }
+    });
+  });
+
+  it('keeps page links bounded by exact custom admission when only a Resource mutation is admitted', async () => {
+    if (!app.meta.modules['training-student']) return;
+    await withStudentToolPermissions(async () => {
+      const catalogServer = await createControllerToolServer(app, 'mcp:all', {
+        ssrSiteId: 'admin',
+      });
+      let catalog;
+      try {
+        catalog = await catalogServer.catalog();
+      } finally {
+        await catalogServer.close();
+      }
+      const create = catalog.find(item => item.name === 'training-student_student_create');
+      assert.ok(create);
+      const scope = 'mcp:custom:resource_page_links_fixture' as const;
+      const exact = await connect(
+        await createControllerToolServer(app, scope, {
+          ssrSiteId: 'admin',
+          toolAccess: [create],
+        }),
+      );
+      try {
+        assert.deepEqual(
+          (await exact.request('tools/list')).result.tools.map((tool: any) => tool.name),
+          [create.name, toolContractToolName, resourcePageLinksToolName],
+        );
+        const helperCall = await exact.request('tools/call', {
+          name: resourcePageLinksToolName,
+          arguments: {
+            sourceTool: create.name,
+            links: [
+              { page: 'list' },
+              { page: 'create' },
+              { page: 'view', id: '3' },
+              { page: 'edit', id: '3' },
+            ],
+          },
+        });
+        assert.equal(helperCall.error, undefined);
+        assert.equal(helperCall.result.isError, undefined);
+        assert.deepEqual(
+          helperCall.result.structuredContent.links.map((link: any) => link.page),
+          ['create'],
+        );
+        assert.match(helperCall.result.structuredContent.links[0].uri, /\/create$/);
+      } finally {
+        await exact.close();
+      }
+    });
+  });
+
   it('scopes tool contract sections to exact currently authorized Actions without catalog entries or dispatch', async t => {
     if (!app.meta.modules['training-student'] || !(await nativeStudentQuery())) return;
     await withStudentToolPermissions(async () => {
@@ -2826,7 +2951,7 @@ describe('businessTools.test.ts', { concurrency: false, timeout: 60000 }, () => 
         clients.push(exact, rebound, noQuery);
         assert.deepEqual(
           (await exact.request('tools/list')).result.tools.map((tool: any) => tool.name),
-          [select.name, toolContractToolName],
+          [select.name, toolContractToolName, resourcePageLinksToolName],
         );
         assert.deepEqual((await rebound.request('tools/list')).result.tools, []);
         assert.deepEqual(
