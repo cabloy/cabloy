@@ -49,6 +49,7 @@ const studentViewName = 'training-student_student_view';
 const studentGroupName = 'training-student_student_group';
 const studentAggregateName = 'training-student_student_aggregate';
 const contractName = 'cabloy_tool_contract';
+const pageLinksName = 'cabloy_resource_page_links';
 const logoutName = 'cabloy_logout';
 const logoutResult = {
   loggedOut: true,
@@ -2057,7 +2058,7 @@ describe('businessHttp.test.ts', { concurrency: false, timeout: 180000 }, () => 
       assert.equal(listed.body.error, undefined);
       assert.deepEqual(
         listed.body.result.tools.map((tool: any) => tool.name),
-        [studentSelectName, contractName, logoutName],
+        [studentSelectName, contractName, pageLinksName, logoutName],
         'one exact query grant derives lookup without granting sibling Actions',
       );
       const lookup = (tool: string, section: 'overview' | 'input' | 'output' | 'query' = 'query') =>
@@ -2159,7 +2160,7 @@ describe('businessHttp.test.ts', { concurrency: false, timeout: 180000 }, () => 
       assert.equal(replacedList.status, 200);
       assert.deepEqual(
         replacedList.body.result.tools.map((tool: any) => tool.name),
-        [studentViewName, contractName, logoutName],
+        [studentViewName, contractName, pageLinksName, logoutName],
         'an exact nonquery-only grant still derives generic contract lookup',
       );
       for (const legacy of [false, true]) {
@@ -4529,8 +4530,8 @@ describe('businessHttp.test.ts', { concurrency: false, timeout: 180000 }, () => 
           );
           assert.ok(capabilityTool, 'authorized query discovery appends the built-in lookup');
           assert.deepEqual(
-            listed.body.result.tools.slice(-2).map((tool: any) => tool.name),
-            [contractName, logoutName],
+            listed.body.result.tools.slice(-3).map((tool: any) => tool.name),
+            [contractName, pageLinksName, logoutName],
           );
           assert.equal(capabilityTool.outputSchema, undefined, 'schema fragments are result data');
           assert.deepEqual(capabilityTool.inputSchema.required, ['tool']);
@@ -5562,7 +5563,7 @@ describe('businessHttp.test.ts', { concurrency: false, timeout: 180000 }, () => 
       assert.equal(listed.status, 200);
       assert.deepEqual(
         listed.body.result.tools.map((tool: any) => tool.name),
-        [studentSelectName, contractName, logoutName],
+        [studentSelectName, contractName, pageLinksName, logoutName],
       );
       const excluded = await sendStudent(
         'tools/call',
