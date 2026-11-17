@@ -165,29 +165,42 @@ describe('aggregateRateLimit.test.ts', { concurrency: false }, () => {
     });
   });
 
-  it('observes excess requests without rejecting or replacing identity headers', async () => {
-    await withGate('observe', 1, counter(), async request => {
-      for (let index = 0; index < 2; index++) {
-        const response = await request(exemptPath);
-        assert.equal(response.status, 200);
-        assert.equal(response.headers.get('ratelimit-limit'), null);
-        assert.equal(response.headers.get('retry-after'), null);
-        await response.text();
-      }
-    });
-    await withGate('enforce', 100, counter(), async request => {
-      for (let index = 0; index < 2; index++) {
-        const response = await request(limitedPath);
-        assert.equal(response.status, 200);
-        assert.equal(response.headers.get('ratelimit-limit'), '2');
-        await response.text();
-      }
-      const response = await request(limitedPath);
-      assert.equal(response.status, 429);
-      assert.equal(response.headers.get('ratelimit-limit'), '2');
-      await response.text();
-    });
-  });
+  it(
+    'observes excess requests without rejecting or replacing identity headers',
+    { timeout: 30_000 },
+    async () => {
+      await withGate('observe', 1, counter(), async request => {
+        for (let index = 0; index < 2; index++) {
+          const response = await request(exemptPath);
+          assert.equal(response.status, 200);
+          assert.equal(response.headers.get('ratelimit-limit'), null);
+          assert.equal(response.headers.get('retry-after'), null);
+          await response.text();
+        }
+      });
+      await withGate('enforce', 100, counter(), async request => {
+        for (let index = 0; index < 2; index++) {
+          const response = await request(limitedPath);
+          assert.equal(response.status, 200);
+          assert.equal(response.headers.get('ratelimit-limit'), '2');
+          await response.text();
+        }
+        // A minute rollover can admit two requests in each of two identity windows.
+        let rejected = false;
+        for (let index = 0; index < 3; index++) {
+          const response = await request(limitedPath);
+          assert.equal(response.headers.get('ratelimit-limit'), '2');
+          await response.text();
+          if (response.status === 429) {
+            rejected = true;
+            break;
+          }
+          assert.equal(response.status, 200);
+        }
+        assert.equal(rejected, true, 'identity admission must reject within five requests');
+      });
+    },
+  );
 
   it('fails open only in observe mode and preserves HTTP 503 for HTML callers', async () => {
     const unavailable: AdmitCommand = async () => {

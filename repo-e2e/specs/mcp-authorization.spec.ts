@@ -1908,9 +1908,14 @@ test(
       expect(token.scope).toBe(scope.scope);
       const listed = await callMcp(request, 'tools/list', {}, token.access_token, 'admin');
       expect(listed.status()).toBe(200);
-      // Contract discovery and credential logout do not grant additional business Actions.
+      // Built-in discovery helpers and credential logout do not grant additional business Actions.
       expect((await listed.json()).result.tools.map((tool: { name: string }) => tool.name)).toEqual(
-        ['training-student_student_select', 'cabloy_tool_contract', 'cabloy_logout'],
+        [
+          'training-student_student_select',
+          'cabloy_tool_contract',
+          'cabloy_resource_page_links',
+          'cabloy_logout',
+        ],
       );
       const excludedContract = await callMcp(
         request,
