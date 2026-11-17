@@ -46,7 +46,7 @@ After an acknowledged successful Resource creation returns a stable new-record I
 
 1. Retain the exact original server tool name that performed the creation and the returned new-record ID on the same connection. Do not replace the creation tool with a guessed read/view tool.
 2. Discover `cabloy_resource_page_links` on that connection and, when available, call it with that creation tool as `sourceTool` and `{ "page": "view", "id": "<returned new-record ID>" }`. If the user explicitly wants to continue editing, request `edit` instead.
-3. Include the returned `resource_link` URI alongside the creation result, using a clear label such as “李四的学生详情页”. Do not merely say that a link can be provided, ask whether to generate it, or wait for the user to ask again.
+3. Include the returned `resource_link` URI alongside the creation result, using a clear, user-language label identifying the record and page, such as “View the new student's details”. Do not merely say that a link can be provided, ask whether to generate it, or wait for the user to ask again.
 
 This follow-up is conditional on the current helper, Resource mapping and target-page authorization. If the helper is unavailable, denied, fails or returns no link, report the acknowledged creation and the navigation limitation without fabricating a URL or retrying the creation. If creation failed, its outcome is uncertain, or no stable new-record ID was returned, do not generate a success handoff or guess an ID. An explicit user request for no links or data-only output takes precedence.
 
