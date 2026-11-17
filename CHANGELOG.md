@@ -1,5 +1,22 @@
 # Changelog
 
+## 5.1.286
+
+### Features
+
+- Add MCP resource pages support.
+- Add the `cabloy-mcp-resource-pages` skill.
+- Enhance MCP skills and documentation.
+
+### Bug Fixes
+
+- Fix `needHandleBorder` handling.
+- Resolve type-checking issues.
+
+### Improvements
+
+- Update business and local HTTP tests.
+
 ## 5.1.285
 
 ### Features
