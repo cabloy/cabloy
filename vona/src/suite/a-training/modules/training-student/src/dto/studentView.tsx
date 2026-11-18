@@ -85,6 +85,9 @@ export interface IDtoOptionsStudentView extends IDecoratorDtoOptions<'_descripti
         }),
         ZovaRender.block('basic-pageentry:blockToolbarRow', {
           actions: [
+            ZovaRender.formActionRow('basic-form:actionEdit', {
+              permission: { actionInherit: 'update', formScene: 'view' },
+            }),
             ZovaRender.formActionRow('basic-form:actionBack', { permission: { public: true } }),
           ],
         }),

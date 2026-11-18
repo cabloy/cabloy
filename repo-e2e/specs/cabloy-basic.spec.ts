@@ -3402,6 +3402,96 @@ test(
 );
 
 test(
+  'resource detail Edit opens the same record and returns to refreshed detail after submit',
+  { tag: ['@admin', '@flow'] },
+  async ({ page }) => {
+    await loginAsAdmin(page);
+    await withDraftStudents(page, 1, async ([student], headers) => {
+      const viewPath = `/admin/rest/resource/training-student%3Astudent/${student.id}`;
+      await page.goto(viewPath, { waitUntil: 'load' });
+      await expect(page.locator('html')).toHaveAttribute('data-zova-hydrated', 'admin');
+      const edit = page.getByRole('link', { name: 'Edit', exact: true });
+      await expect(edit).toHaveCount(1);
+      await expect(edit).toHaveAttribute(
+        'href',
+        new RegExp(`/training-student(?:%3A|:)student/${student.id}/edit$`),
+      );
+      await edit.click();
+      await expect(page).toHaveURL(
+        new RegExp(`/training-student(?:%3A|:)student/${student.id}/edit$`),
+      );
+      await expect(edit).toHaveCount(0);
+      await expect(studentDraftNameInput(page)).toHaveValue(student.name);
+      const updatedName = `${student.name} edited from detail`;
+      await studentDraftNameInput(page).fill(updatedName);
+      const update = page.waitForResponse(
+        response =>
+          response.request().method() === 'PATCH' &&
+          new URL(response.url()).pathname === `/api/training/student/${student.id}` &&
+          !response.request().headers()['x-vona-openapi-schema'],
+      );
+      await page.getByRole('button', { name: 'Submit', exact: true }).click();
+      expect((await update).ok()).toBeTruthy();
+      await expect(page).toHaveURL(new RegExp(`/training-student(?:%3A|:)student/${student.id}$`));
+      await expect(studentDraftNameInput(page).and(page.locator('[readonly]'))).toHaveValue(
+        updatedName,
+      );
+      await expect(edit).toHaveCount(1);
+      const saved = await page.request.get(`/api/training/student/${student.id}`, { headers });
+      expect(saved.ok()).toBeTruthy();
+      expect((await saved.json()).name).toBe(updatedName);
+      await page.reload({ waitUntil: 'load' });
+      await expect(studentDraftNameInput(page).and(page.locator('[readonly]'))).toHaveValue(
+        updatedName,
+      );
+    });
+  },
+);
+
+test(
+  'resource detail Edit stays hidden when record update permission is denied',
+  { tag: ['@admin', '@flow'] },
+  async ({ page }) => {
+    await loginAsAdmin(page);
+    await withDraftStudents(page, 1, async ([student]) => {
+      // Exercise the browser's row-aware permission projection without changing server policy.
+      await page.route('**/api/home/base/permission/*', async route => {
+        if (
+          !decodeURIComponent(new URL(route.request().url()).pathname).endsWith(
+            'training-student:student',
+          )
+        ) {
+          await route.continue();
+          return;
+        }
+        const response = await route.fetch();
+        const body = await response.json();
+        body.data = {
+          actions: {
+            select: true,
+            view: true,
+            update: {
+              key: 'training-student:student#update',
+              allowed: true,
+              matcher: { mode: 'any', rules: [{ field: 'id', values: ['not-this-record'] }] },
+            },
+          },
+        };
+        await route.fulfill({ response, json: body });
+      });
+      await page.getByRole('link', { name: 'Student', exact: true }).click();
+      await page.getByLabel('Student Name').fill(student.name);
+      const select = waitForStudentSelect(page);
+      await page.getByRole('button', { name: 'Search', exact: true }).click();
+      await select;
+      await page.getByRole('link', { name: student.name, exact: true }).click();
+      await expect(page.getByRole('button', { name: 'Back', exact: true })).toBeVisible();
+      await expect(page.getByRole('link', { name: 'Edit', exact: true })).toHaveCount(0);
+    });
+  },
+);
+
+test(
   'ATP-BASIC-DRAFT-03: successful create and edit submission remove their exact draft identities',
   { tag: ['@admin', '@flow'] },
   async ({ page }) => {

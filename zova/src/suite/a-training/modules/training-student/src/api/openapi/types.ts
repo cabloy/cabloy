@@ -5727,7 +5727,7 @@ export interface components {
       count_imageId?: string | undefined;
     };
     /** @description View Student */
-    'training-student.dto.studentView_2d063d28bc7243bed02ebd8bddf1212a93c6305b_4826fc678e47603ec467782ddb0d02463792cd60':
+    'training-student.dto.studentView_2d063d28bc7243bed02ebd8bddf1212a93c6305b_18135e445ee0fe9e801ee837a48ad6ba42a657bd':
       | {
           /**
            * Format: date-time
@@ -10125,7 +10125,7 @@ export interface operations {
           'application/json': {
             code: string;
             message: string;
-            data?: components['schemas']['training-student.dto.studentView_2d063d28bc7243bed02ebd8bddf1212a93c6305b_4826fc678e47603ec467782ddb0d02463792cd60'];
+            data?: components['schemas']['training-student.dto.studentView_2d063d28bc7243bed02ebd8bddf1212a93c6305b_18135e445ee0fe9e801ee837a48ad6ba42a657bd'];
           };
         };
       };
