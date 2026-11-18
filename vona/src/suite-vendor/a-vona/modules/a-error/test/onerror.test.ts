@@ -1,10 +1,41 @@
-import type { VonaApplication } from 'vona';
+import type { VonaApplication, VonaContext } from 'vona';
 
 import assert from 'node:assert';
+import { IncomingMessage, ServerResponse } from 'node:http';
+import { createRequire } from 'node:module';
+import { Socket } from 'node:net';
 import { PassThrough } from 'node:stream';
 import { describe, it } from 'node:test';
 
+import type { OnerrorOptions } from '../src/lib/onerror.ts';
+
 import { onerror } from '../src/lib/onerror.ts';
+
+const require = createRequire(import.meta.url);
+// Exercise the Koa dependency owned by core without adding a test dependency.
+const Koa = createRequire(require.resolve('vona-core/package.json'))('koa');
+
+function createHeaderFixture(options: OnerrorOptions) {
+  const app = new Koa();
+  const errorOptions = { log() {}, ...options };
+  onerror(app, errorOptions);
+  const socket = new Socket();
+  const req = new IncomingMessage(socket);
+  req.method = 'GET';
+  req.url = '/';
+  req.push(null);
+  const res = new ServerResponse(req);
+  const ctx = app.createContext(req, res) as VonaContext;
+  return {
+    ctx,
+    res,
+    close() {
+      res.destroy();
+      req.destroy();
+      socket.destroy();
+    },
+  };
+}
 
 function createFixture(aborted: boolean, writable: boolean) {
   const logged: Error[] = [];
@@ -43,6 +74,77 @@ function createBodyError(type: string, status: number) {
 }
 
 describe('onerror.test.ts', () => {
+  for (const type of ['text', 'json'] as const) {
+    it(`regenerates ${type} entity headers and preserves other error headers`, async () => {
+      const body = type === 'json' ? { error: '错误响应' } : '错误响应';
+      const { ctx, res, close } = createHeaderFixture({
+        accepts: () => type,
+        [type](_err: Error, ctx: VonaContext) {
+          ctx.body = body;
+        },
+      });
+      const headers = {
+        'cOnTeNt-TyPe': type === 'text' ? ['text/html', 'application/json'] : [],
+        'CONTENT-LENGTH': type === 'text' ? [] : ['1', '2'],
+        'WWW-Authenticate': 'Bearer',
+        'Retry-After': '30',
+        'Set-Cookie': ['first=1', 'second=2'],
+      };
+      const error = Object.assign(new Error('failure'), { status: 401, headers });
+      try {
+        ctx.set('X-Existing', 'preserved');
+        await assert.doesNotReject(async () => {
+          await ctx.onerror(error);
+        });
+        assert.equal(res.finished, true);
+        assert.equal(res.statusCode, 401);
+        assert.equal(ctx.body, type === 'json' ? JSON.stringify(body) : body);
+        assert.equal(
+          res.getHeader('Content-Type'),
+          type === 'json' ? 'application/json; charset=utf-8' : 'text/plain; charset=utf-8',
+        );
+        assert.equal(res.getHeader('Content-Length'), Buffer.byteLength(ctx.body as string));
+        assert.equal(res.getHeader('WWW-Authenticate'), 'Bearer');
+        assert.equal(res.getHeader('Retry-After'), '30');
+        assert.deepEqual(res.getHeader('Set-Cookie'), ['first=1', 'second=2']);
+        assert.equal(res.getHeader('X-Existing'), 'preserved');
+        assert.equal(error.headers, headers);
+        assert.deepEqual(
+          headers['cOnTeNt-TyPe'],
+          type === 'text' ? ['text/html', 'application/json'] : [],
+        );
+        assert.deepEqual(headers['CONTENT-LENGTH'], type === 'text' ? [] : ['1', '2']);
+      } finally {
+        close();
+      }
+    });
+  }
+
+  it('leaves entity headers to the custom all handler even when error headers are scalar', async () => {
+    const { ctx, res, close } = createHeaderFixture({
+      accepts: () => 'text',
+      all(_err: Error, ctx: VonaContext) {
+        assert.equal(ctx.res.hasHeader('Content-Type'), false);
+        assert.equal(ctx.res.hasHeader('Content-Length'), false);
+        ctx.type = 'application/problem+json';
+        ctx.body = '{"title":"failure"}';
+      },
+    });
+    const error = Object.assign(new Error('failure'), {
+      status: 422,
+      headers: { 'Content-Type': 'text/html', 'Content-Length': '999' },
+    });
+    try {
+      await ctx.onerror(error);
+      assert.equal(res.finished, true);
+      assert.equal(res.statusCode, 422);
+      assert.equal(res.getHeader('Content-Type'), 'application/problem+json');
+      assert.equal(res.getHeader('Content-Length'), Buffer.byteLength(ctx.body as string));
+    } finally {
+      close();
+    }
+  });
+
   for (const [type, status] of [
     ['stream.not.readable', 500],
     ['request.aborted', 400],

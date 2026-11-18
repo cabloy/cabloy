@@ -1853,7 +1853,7 @@ importers:
         specifier: ^10.1.0
         version: 10.1.0
       koa:
-        specifier: ^3.2.0
+        specifier: ^3.3.0
         version: 3.3.0
       react:
         specifier: ^19.2.5
@@ -1987,7 +1987,7 @@ importers:
         specifier: ^5.0.5
         version: link:modules/a-markdown
       vona-module-a-rbac:
-        specifier: ^5.0.31
+        specifier: ^5.0.32
         version: link:modules/a-rbac
       vona-module-a-socket:
         specifier: workspace:^

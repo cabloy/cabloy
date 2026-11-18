@@ -129,7 +129,14 @@ export function onerror(app: VonaApplication, options?: OnerrorOptions) {
     }
     this.status = err.status;
 
-    this.set(err.headers);
+    const headers = err.headers || {};
+    for (const name of Object.keys(headers)) {
+      const lowerName = name.toLowerCase();
+      if (lowerName === 'content-type' || lowerName === 'content-length') {
+        continue;
+      }
+      this.set(name, headers[name]);
+    }
     let type = 'text';
     if (options.accepts) {
       type = options.accepts.call(this, 'html', 'text', 'json');
