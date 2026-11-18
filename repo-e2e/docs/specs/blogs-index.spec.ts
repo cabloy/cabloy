@@ -25,6 +25,7 @@ interface IArticleGeometry {
 }
 
 const blogArticlePaths = [
+  '/blogs/nestjs-dynamic-module-vs-vona-module-model/',
   '/blogs/ai-coding-one-prompt-crud-ssr-multitasking/',
   '/blogs/ai-spec-driven-development/',
   '/blogs/ai-react-nextjs-enterprise-architecture-cabloy/',
@@ -127,14 +128,14 @@ test(
     }
     await expect(
       cards.nth(0).getByRole('link', {
-        name: 'AI Coding in Action: One Prompt for CRUD, SSR & Multitasking',
+        name: 'Why Cabloy/Vona Has No NestJS Dynamic Module',
         exact: true,
       }),
     ).toBeVisible();
-    await expect(cards.nth(0).locator('.cabloy-blog-card__date')).toHaveText('October 9, 2026');
+    await expect(cards.nth(0).locator('.cabloy-blog-card__date')).toHaveText('November 14, 2026');
     await expect(cards.nth(0).locator('.cabloy-blog-card__cover')).toHaveAttribute(
       'href',
-      '/blogs/ai-coding-one-prompt-crud-ssr-multitasking/',
+      '/blogs/nestjs-dynamic-module-vs-vona-module-model/',
     );
 
     const geometry = await getBlogsGeometry(page);

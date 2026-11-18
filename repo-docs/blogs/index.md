@@ -10,6 +10,21 @@ Selected articles on Cabloy, Vona, Zova, and the architectural questions that sh
 
 <div class="cabloy-blog-grid">
   <article class="cabloy-blog-card">
+    <a class="cabloy-blog-card__cover" href="/blogs/nestjs-dynamic-module-vs-vona-module-model/" aria-label="Read Why Cabloy/Vona Has No NestJS Dynamic Module">
+      <img src="/blogs/nestjs-dynamic-module-vs-vona-module-model/cover-en-v1.png" alt="Why Cabloy/Vona Has No NestJS Dynamic Module" />
+    </a>
+    <div class="cabloy-blog-card__content">
+      <p class="cabloy-blog-card__date">November 14, 2026</p>
+      <h2><a href="/blogs/nestjs-dynamic-module-vs-vona-module-model/">Why Cabloy/Vona Has No NestJS Dynamic Module</a></h2>
+      <p>Compare the four needs behind NestJS dynamic modules with Vona’s config pipeline, startup phases, bean registry, and resolution-time binding.</p>
+      <div class="cabloy-blog-card__tags" aria-label="Article topics">
+        <span>NestJS</span><span>Cabloy</span><span>Vona</span><span>Dependency Injection</span>
+      </div>
+      <a class="cabloy-blog-card__read" href="/blogs/nestjs-dynamic-module-vs-vona-module-model/">Read article <span aria-hidden="true">→</span></a>
+    </div>
+  </article>
+
+  <article class="cabloy-blog-card">
     <a class="cabloy-blog-card__cover" href="/blogs/ai-coding-one-prompt-crud-ssr-multitasking/" aria-label="Read AI Coding in Action: One Prompt for CRUD, SSR &amp; Multitasking">
       <img src="/blogs/ai-coding-one-prompt-crud-ssr-multitasking/cover-en-v1.png" alt="AI Coding in Action: One Prompt for CRUD, SSR &amp; Multitasking" />
     </a>
