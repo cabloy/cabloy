@@ -12,7 +12,8 @@ export default {
   ChatAssistant: 'Assistant',
   ChatYouPending: 'You · pending confirmation',
   ChatAssistantLive: 'Assistant · live response',
-  CreateConversationHint: 'Create a conversation to send your first message.',
+  CreateConversationHint:
+    'Type a message to start a conversation. It will be created when you send.',
   ReceivingResponse: 'Receiving response…',
   WaitingForSavedRequestState: 'Waiting for saved request state.',
   ChatReady: 'Ready',

@@ -11,7 +11,7 @@ export default {
   ChatAssistant: '助手',
   ChatYouPending: '您 · 等待确认',
   ChatAssistantLive: '助手 · 实时回复',
-  CreateConversationHint: '创建对话后即可发送第一条消息。',
+  CreateConversationHint: '输入消息开始对话，发送时将自动创建对话。',
   ReceivingResponse: '正在接收回复…',
   WaitingForSavedRequestState: '正在等待请求的保存状态。',
   ChatReady: '就绪',

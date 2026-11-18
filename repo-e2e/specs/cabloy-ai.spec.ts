@@ -318,7 +318,7 @@ async function finishTest(page: Page, completed: boolean, cleanup: () => Promise
 }
 
 test(
-  'AI chat: real incremental text persists and session SSR reload hydrates saved history',
+  'AI chat: first send creates a conversation, incremental text persists and session SSR reload hydrates saved history',
   { tag: ['@web', '@ssr', '@ai', '@flow'] },
   async ({ page, request, baseURL }) => {
     test.setTimeout(120_000);
@@ -335,9 +335,61 @@ test(
         registered => (account = registered),
       );
       await loginBrowser(page, account);
-      const conversation = await newConversation(page);
-      const send = await sendMessage(page, prompt);
+      const input = page.getByTestId('ai-chat-input');
+      await expect(input).toBeEnabled();
+      await expect(page.getByTestId('ai-chat-conversation')).toHaveCount(0);
+      await expect(page.getByTestId('ai-chat-send')).toBeDisabled();
+      await input.fill(prompt);
+
+      // A failed creation must leave the draft available for another attempt.
+      await page.route(
+        `**${chatApiPath}/create`,
+        route =>
+          route.fulfill({ status: 503, json: { code: 503, message: 'Service unavailable' } }),
+        { times: 1 },
+      );
+      await page.getByTestId('ai-chat-send').click();
+      const creationError = page.getByRole('dialog');
+      await expect(creationError).toContainText('Service unavailable');
+      await creationError.getByRole('button', { name: 'Close', exact: true }).click();
+      await expect(creationError).toHaveCount(0);
+      await expect(input).toBeEnabled();
+      await expect(input).toHaveValue(prompt);
+      expect(await postChat<Conversation[]>(request, account, 'list', {})).toEqual([]);
+      expect(sends).toHaveLength(0);
+
+      let releaseCreation!: () => void;
+      const creationGate = new Promise<void>(resolve => {
+        releaseCreation = resolve;
+      });
+      await page.route(
+        `**${chatApiPath}/create`,
+        async route => {
+          await creationGate;
+          await route.continue();
+        },
+        { times: 1 },
+      );
+      const created = waitForApiResponse(page, `${chatApiPath}/create`);
+      const sent = waitForApiResponse(page, `${chatApiPath}/send`);
+      try {
+        await page.getByTestId('ai-chat-send').click();
+        await expect(input).toBeDisabled();
+        await expect(page.getByTestId('ai-chat-send')).toBeDisabled();
+        await expect(page.getByTestId('ai-chat-new')).toBeDisabled();
+      } finally {
+        releaseCreation();
+      }
+      const createdResponse = await created;
+      expect(createdResponse.ok()).toBe(true);
+      const conversation = (await createdResponse.json()).data as Conversation;
+      const sentResponse = await sent;
+      expect(sentResponse.status()).toBe(200);
+      const send = sentResponse.request().postDataJSON() as Send;
+      expect(send.text).toBe(prompt);
       expect(String(send.conversationId)).toBe(String(conversation.id));
+      await expect(input).toHaveValue('');
+      expect(await postChat<Conversation[]>(request, account, 'list', {})).toHaveLength(1);
       const streamBubble = page.getByTestId('ai-chat-stream').locator('.chat-bubble');
       await expect(streamBubble).toHaveText(responsePrefix, {
         timeout: streamTimeout,

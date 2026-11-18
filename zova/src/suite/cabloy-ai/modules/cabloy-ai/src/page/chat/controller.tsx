@@ -43,10 +43,11 @@ export class ControllerPageChat extends BeanControllerPageBase {
   async send() {
     const text = this.draft.trim();
     if (!text) return;
+    const needsConversation = this.$$modelChat.selectedId === undefined;
     const task = this.$$modelChat.send(text);
     if (!task) return;
     this._resetMessagesFollow();
-    this.draft = '';
+    if (!needsConversation) this.draft = '';
     await task;
   }
 
@@ -145,7 +146,8 @@ export class ControllerPageChat extends BeanControllerPageBase {
       .filter(part => part.type === 'text')
       .map(part => part.text)
       .join('');
-    const busy = model.streaming || model.unsettled || !!conversation?.activeRunId;
+    const busy =
+      model.creating || model.streaming || model.unsettled || !!conversation?.activeRunId;
     return (
       <ZPage>
         <section class="mx-auto w-full max-w-6xl p-4 md:p-6" data-testid="ai-chat">
@@ -160,7 +162,10 @@ export class ControllerPageChat extends BeanControllerPageBase {
               <ZButton
                 class="btn btn-outline w-full"
                 data-testid="ai-chat-new"
-                onPerform={() => model.create()}
+                disabled={model.creating}
+                onPerform={async () => {
+                  await model.create();
+                }}
               >
                 {this.scope.locale.NewConversation()}
               </ZButton>
@@ -287,7 +292,7 @@ export class ControllerPageChat extends BeanControllerPageBase {
                   data-testid="ai-chat-input"
                   placeholder={this.scope.locale.TypeMessage()}
                   maxlength={32000}
-                  disabled={model.selectedId === undefined || busy}
+                  disabled={busy}
                   v-model={this.draft}
                 />
               </label>
@@ -309,7 +314,7 @@ export class ControllerPageChat extends BeanControllerPageBase {
                 <ZButton
                   class="btn btn-primary"
                   data-testid="ai-chat-send"
-                  disabled={model.selectedId === undefined || busy || !this.draft.trim()}
+                  disabled={busy || !this.draft.trim()}
                   onPerform={() => this.send()}
                 >
                   {this.scope.locale.ChatSend()}

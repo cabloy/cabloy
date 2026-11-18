@@ -15,6 +15,7 @@ type ConversationId = number | string;
 @Model<IModelOptionsChat>()
 export class ModelChat extends BeanModelBase {
   selectedId?: ConversationId;
+  creating = false;
   streaming = false;
   unsettled = false;
   streamMessage?: ChatStreamMessage;
@@ -96,15 +97,25 @@ export class ModelChat extends BeanModelBase {
   }
 
   async create() {
-    await this.select(undefined);
+    if (this.creating) return;
+    this.creating = true;
+    const selection = this.select(undefined);
     const revision = this._revision;
-    const conversation = await this.scope.api.cabloyAiChat.create({});
-    if (!this._current(revision)) return;
-    await this.conversations().refetch({ throwOnError: true });
-    if (!this._current(revision)) return;
-    this.selectedId = conversation.id;
-    await $QueryEnsureLoaded(() => this.history());
-    this.$logger.debug('ai.chat.conversation created');
+    try {
+      await selection;
+      if (!this._current(revision)) return;
+      const conversation = await this.scope.api.cabloyAiChat.create({});
+      if (!this._current(revision)) return;
+      this.selectedId = conversation.id;
+      await this.conversations().refetch({ throwOnError: true });
+      if (!this._current(revision)) return;
+      await $QueryEnsureLoaded(() => this.history());
+      if (!this._current(revision)) return;
+      this.$logger.debug('ai.chat.conversation created');
+      return conversation.id;
+    } finally {
+      this.creating = false;
+    }
   }
 
   async select(conversationId: ConversationId | undefined) {
@@ -121,15 +132,24 @@ export class ModelChat extends BeanModelBase {
     await $QueryEnsureLoaded(() => this.history());
   }
 
-  send(text: string) {
+  send(text: string): Promise<void> | undefined {
     text = text.trim();
-    if (!text || this.selectedId === undefined || this.streaming || this.unsettled) return;
+    if (!text || this.creating || this.streaming || this.unsettled) return;
+    if (this.selectedId === undefined) return this._createAndSend(text);
     const command: ChatSendCommand = {
       conversationId: this.selectedId,
       requestKey: globalThis.crypto.randomUUID(),
       text,
     };
     return this._start(command);
+  }
+
+  private async _createAndSend(text: string): Promise<void> {
+    const creation = this.create();
+    const revision = this._revision;
+    const conversationId = await creation;
+    if (!this._current(revision) || conversationId === undefined) return;
+    await this.send(text);
   }
 
   /** A network-ambiguous attempt keeps the same durable request key on retry. */
