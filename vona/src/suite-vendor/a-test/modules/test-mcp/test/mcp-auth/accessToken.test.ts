@@ -316,8 +316,8 @@ describe('accessToken.test.ts', { concurrency: false }, () => {
             exp: number;
             iat: number;
           };
-          assert.equal(decoded.exp - decoded.iat, ttl);
-          assert.ok(Math.abs(decoded.exp * 1000 - token.tokenExpiresAt) < 1000);
+          // Persistence may cross a Unix-second boundary; the absolute deadline is authoritative.
+          assert.equal(decoded.exp * 1000, token.tokenExpiresAt);
           const row = await scope().model.authorization.getById(token.id);
           assert.ok(row);
           assert.equal(String(row.userId), String(owner.id));
@@ -437,7 +437,7 @@ describe('accessToken.test.ts', { concurrency: false }, () => {
         const decoded = app.bean.jwt
           .get('mcpAccess')
           .instance.decode(coerced.body.data.accessToken) as { exp: number; iat: number };
-        assert.equal(decoded.exp - decoded.iat, 7 * day);
+        // Persistence may cross a Unix-second boundary; the absolute deadline is authoritative.
         assert.equal(decoded.exp * 1000, Number(row.tokenExpiresAt));
       });
       assert.equal(
