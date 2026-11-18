@@ -205,9 +205,17 @@ Verification: the three managed configuration/domain/native HTTP files passed **
 | Focused managed backend tests                 | Passed  | Final combined run: 17 pass, 0 fail; AI configuration/domain/native HTTP plus shared query-adapter regressions                                   |
 | Generated contract and typecheck              | Passed  | Isolated module-local generation and final `npm run tsc` exit 0                                                                                  |
 | Affected SSR/REST paired builds and Vona sync | Passed  | Four affected SSR/REST pairs and subsequent `npm run deps:vona` exit 0                                                                           |
-| Managed chat browser scenarios                | Passed  | Final unchanged suite: 3 pass, 0 fail, no retries; incremental text, private SSR reload, Stop and lifecycle                                      |
+| Managed chat browser scenarios                | Passed  | Final scrolling-qualified suite: 3 pass, 0 fail, no retries; incremental text, viewport follow, private SSR reload, Stop and lifecycle           |
 | Documentation build and links                 | Passed  | `npm run docs:build` exit 0; local guide/README/spec link targets checked                                                                        |
 | Lightweight specification audit               | Passed  | `npm run spec:check -- cabloy-ai --lightweight` exit 0; three delivery definitions; structural evidence only                                     |
 | Live-provider interoperability                | Partial | `openai` Responses source-only generate/stream and full browser chat passed; real compatible endpoint and broader capabilities remain unverified |
 
 No development database reset, environment change or commit is part of this increment.
+
+## Chat message viewport follow-bottom behavior
+
+On 2026-11-18, the chat page added controller-local follow-bottom behavior for the existing `ai-chat-messages` viewport. A natural-height inner content wrapper is observed alongside the viewport so streamed text growth and history reconciliation remain visible while the reader is following the latest content. Manual upward scrolling pauses following; returning within the 64-pixel near-bottom tolerance resumes it. Hydration-safe Zova lifecycle registration, stale-element guards, programmatic-scroll event handling, observer replacement and disposal cleanup keep the behavior page-local without changing model, transport, layout or provider configuration.
+
+The existing mock-backed browser acceptance now uses a bounded long prompt to verify actual overflow geometry, live bottom following, manual scroll-up preservation through the next partial response, follow resumption, terminal history transfer and SSR reload positioning. The existing Stop and conversation-switch/disposal scenarios remain unchanged. No real-provider request, environment change, reset or new dependency was used.
+
+Verification completed: `npm run tsc:zova` exit 0; all four affected SSR/REST flavor pairs via `npm run build:zova:all` exit 0; subsequent `npm run deps:vona` exit 0; managed `npm run test:e2e -- cabloy-ai` passed **3 tests, 0 failures**; scoped formatting, lint and `git diff --check` passed. The first browser attempt exposed only a test-fixture trailing-space mismatch in the long prompt, which was corrected before the passing rerun. No commit was created.

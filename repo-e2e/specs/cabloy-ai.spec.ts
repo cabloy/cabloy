@@ -220,6 +220,15 @@ async function expectIncrementalText(page: Page, prompt: string, repeatedGrowth 
   await expect(page.getByTestId('ai-chat-stop')).toBeEnabled();
 }
 
+async function readMessageScroll(page: Page) {
+  return await page.getByTestId('ai-chat-messages').evaluate(element => ({
+    scrollTop: element.scrollTop,
+    scrollHeight: element.scrollHeight,
+    clientHeight: element.clientHeight,
+    bottomDistance: element.scrollHeight - element.clientHeight - element.scrollTop,
+  }));
+}
+
 async function waitForTerminal(request: APIRequestContext, account: Account, send: Send) {
   let run: Run | null = null;
   await expect
@@ -318,7 +327,7 @@ test(
     let completed = false;
     const sends: Send[] = [];
     const errors = observeBrowser(page, sends);
-    const prompt = `[slow] Saved chat ${randomBytes(8).toString('hex')}`;
+    const prompt = `[slow] Saved chat ${randomBytes(8).toString('hex')}\n${'Scrollable response line. '.repeat(80).trimEnd()}`;
     try {
       account = await registerAccount(
         request,
@@ -329,7 +338,50 @@ test(
       const conversation = await newConversation(page);
       const send = await sendMessage(page, prompt);
       expect(String(send.conversationId)).toBe(String(conversation.id));
-      await expectIncrementalText(page, prompt, true);
+      const streamBubble = page.getByTestId('ai-chat-stream').locator('.chat-bubble');
+      await expect(streamBubble).toHaveText(responsePrefix, {
+        timeout: streamTimeout,
+        useInnerText: false,
+      });
+      await expect
+        .poll(async () => (await readMessageScroll(page)).bottomDistance, {
+          timeout: streamTimeout,
+        })
+        .toBeLessThanOrEqual(2);
+      const prefixScroll = await readMessageScroll(page);
+      expect(prefixScroll.scrollHeight).toBeGreaterThan(prefixScroll.clientHeight);
+      expect(prefixScroll.bottomDistance).toBeLessThanOrEqual(2);
+
+      await page.getByTestId('ai-chat-messages').evaluate(element => {
+        element.scrollTop = 0;
+      });
+      await expect
+        .poll(async () => (await readMessageScroll(page)).bottomDistance, {
+          timeout: streamTimeout,
+        })
+        .toBeGreaterThan(64);
+      const pausedScroll = await readMessageScroll(page);
+      await expect(streamBubble).toHaveText(
+        `${responsePrefix}${prompt.slice(0, Math.ceil(prompt.length / 2))}`,
+        { timeout: streamTimeout, useInnerText: false },
+      );
+      await expect(page.getByTestId('ai-chat-status')).toHaveText('Receiving response…');
+      const pausedGrowth = await readMessageScroll(page);
+      expect(pausedGrowth.scrollHeight).toBeGreaterThan(pausedScroll.scrollHeight);
+      expect(pausedGrowth.bottomDistance).toBeGreaterThan(64);
+
+      await page.getByTestId('ai-chat-messages').evaluate(element => {
+        element.scrollTop = element.scrollHeight;
+      });
+      await expect
+        .poll(async () => (await readMessageScroll(page)).bottomDistance, {
+          timeout: streamTimeout,
+        })
+        .toBeLessThanOrEqual(64);
+      await expect(streamBubble).toHaveText(`${responsePrefix}${prompt}`, {
+        timeout: streamTimeout,
+        useInnerText: false,
+      });
       expect((await waitForTerminal(request, account, send)).status).toBe('completed');
       await expect(page.getByTestId('ai-chat-messages')).toContainText(
         `${responsePrefix}${prompt}`,
