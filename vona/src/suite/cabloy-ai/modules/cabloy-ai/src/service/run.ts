@@ -74,10 +74,11 @@ export class ServiceRun extends BeanBase {
     );
     if (existing) {
       if (existing.fingerprint !== fingerprint)
-        this.app.throw(409, 'Request key already used with different text');
+        this.app.throw(409, this.scope.locale.RequestKeyTextConflict());
       return { run: existing as EntityRun, replay: true };
     }
-    if (conversation.activeRunId != null) this.app.throw(409, 'Conversation has an active run');
+    if (conversation.activeRunId != null)
+      this.app.throw(409, this.scope.locale.ConversationHasActiveRun());
     const run = await this.scope.model.run.insert({
       conversationId: conversation.id,
       userId,
@@ -172,7 +173,7 @@ export class ServiceRun extends BeanBase {
   ): Promise<DtoChatRun> {
     const conversation = await this.scope.service.conversation.lockOwned(userId, conversationId);
     const run = await this.scope.model.run.getForUpdate({ id: runId, conversationId, userId });
-    if (!run) this.app.throw(404, 'Run not found');
+    if (!run) this.app.throw(404, this.scope.locale.RunNotFound());
     // Both fences are required: an expired owner may finish after another turn was admitted.
     if (run.status !== 'running' || String(conversation.activeRunId) !== String(runId))
       return this.toDto(run);
@@ -210,7 +211,7 @@ export class ServiceRun extends BeanBase {
     );
     if (existing) {
       if (existing.fingerprint !== createHash('sha256').update(text).digest('hex'))
-        this.app.throw(409, 'Request key already used with different text');
+        this.app.throw(409, this.scope.locale.RequestKeyTextConflict());
       await this.replay(existing as EntityRun);
       return;
     }
@@ -218,7 +219,7 @@ export class ServiceRun extends BeanBase {
     const bound = await this.bean.ai.create('cabloy-ai:default');
     this.validateCommand(command, bound.limits.maxInputCharacters);
     if (JSON.stringify([{ role: 'user', content: text }]).length > bound.limits.maxInputCharacters)
-      this.app.throw(422, 'Invalid chat text');
+      this.app.throw(422, this.scope.locale.InvalidChatText());
     const { run, replay } = await this.prepare(userId, command, bound.identity, bound.limits);
     if (replay) {
       await this.replay(run);
@@ -450,7 +451,7 @@ export class ServiceRun extends BeanBase {
         this.$logger.debug('ai.chat.run.finalization_failed');
       }
       if (!this.ctx.respond && !response.destroyed && !response.writableEnded) response.end();
-      if (this.ctx.respond) this.app.throw(503, 'Chat could not start');
+      if (this.ctx.respond) this.app.throw(503, this.scope.locale.ChatCouldNotStart());
     } finally {
       // Join each owner even if another rejected. Never leak persistence/provider diagnostics
       // to the framework error filter after native response ownership has transferred.
@@ -471,9 +472,10 @@ export class ServiceRun extends BeanBase {
 
   private validateCommand(command: DtoChatSend, maxInput: number): string {
     if (typeof command.requestKey !== 'string' || !/^[\w-]{1,100}$/.test(command.requestKey))
-      this.app.throw(422, 'Invalid request key');
+      this.app.throw(422, this.scope.locale.InvalidRequestKey());
     const text = typeof command.text === 'string' ? command.text.trim() : '';
-    if (!text || text.length > Math.min(32000, maxInput)) this.app.throw(422, 'Invalid chat text');
+    if (!text || text.length > Math.min(32000, maxInput))
+      this.app.throw(422, this.scope.locale.InvalidChatText());
     return text;
   }
 

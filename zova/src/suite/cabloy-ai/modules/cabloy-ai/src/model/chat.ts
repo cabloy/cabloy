@@ -19,7 +19,14 @@ export class ModelChat extends BeanModelBase {
   unsettled = false;
   streamMessage?: ChatStreamMessage;
   pendingText?: string;
-  error?: string;
+  private _error?:
+    | 'ResponseInterrupted'
+    | 'SavedStateUnconfirmed'
+    | 'RequestFailed'
+    | 'RequestAborted'
+    | 'RequestInterrupted'
+    | 'RequestPending';
+
   private _command?: ChatSendCommand;
   private _abort?: AbortController;
   private _task?: Promise<void>;
@@ -27,6 +34,10 @@ export class ModelChat extends BeanModelBase {
   private _composer?: ServiceComposer;
   private _revision = 0;
   private _disposed = false;
+
+  get error(): string | undefined {
+    return this._error ? this.scope.locale[this._error]() : undefined;
+  }
 
   protected async __init__() {
     this.$watch(
@@ -105,7 +116,7 @@ export class ModelChat extends BeanModelBase {
     this._command = undefined;
     this.streamMessage = undefined;
     this.pendingText = undefined;
-    this.error = undefined;
+    this._error = undefined;
     this.selectedId = conversationId;
     await $QueryEnsureLoaded(() => this.history());
   }
@@ -130,7 +141,7 @@ export class ModelChat extends BeanModelBase {
   private _start(command: ChatSendCommand) {
     const revision = ++this._revision;
     this._command = command;
-    this.error = undefined;
+    this._error = undefined;
     this.streamMessage = undefined;
     this.pendingText = command.text;
     this.streaming = true;
@@ -163,7 +174,7 @@ export class ModelChat extends BeanModelBase {
         ];
         const name = error instanceof Error && names.includes(error.name) ? error.name : 'unknown';
         this.$logger.debug(`ai.chat.stream.failed ${name}`);
-        this.error = 'The response was interrupted. Checking saved state.';
+        this._error = 'ResponseInterrupted';
       }
     } finally {
       if (this._current(revision)) {
@@ -172,7 +183,7 @@ export class ModelChat extends BeanModelBase {
           await this.refresh(revision);
         } catch {
           if (this._current(revision)) {
-            this.error = 'Saved state could not be confirmed. Refresh or retry the same request.';
+            this._error = 'SavedStateUnconfirmed';
           }
         }
         if (this._current(revision)) {
@@ -199,10 +210,14 @@ export class ModelChat extends BeanModelBase {
         if (!this._current(revision)) return;
         if (result.data && result.data.status !== 'running') {
           this.unsettled = false;
-          this.error =
+          this._error =
             result.data.status === 'completed'
               ? undefined
-              : `The request ${result.data.status}. You can send a new message.`;
+              : result.data.status === 'failed'
+                ? 'RequestFailed'
+                : result.data.status === 'aborted'
+                  ? 'RequestAborted'
+                  : 'RequestInterrupted';
           break;
         }
         if (attempt < 11) await new Promise(resolve => setTimeout(resolve, 150));
@@ -216,8 +231,7 @@ export class ModelChat extends BeanModelBase {
       this.streamMessage = undefined;
       this.pendingText = undefined;
     } else if (!this.streaming) {
-      this.error =
-        'The request is not yet confirmed. Refresh saved state or retry the same request.';
+      this._error = 'RequestPending';
     }
   }
 
@@ -249,7 +263,7 @@ export class ModelChat extends BeanModelBase {
     this.unsettled = false;
     this.streamMessage = undefined;
     this.pendingText = undefined;
-    this.error = undefined;
+    this._error = undefined;
     this._command = undefined;
     // These private queries intentionally have no browser persister. The normal
     // DB-persister identity reset therefore needs its memory-only counterpart.

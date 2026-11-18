@@ -48,7 +48,7 @@ export class ServiceConversation extends BeanBase {
 
   async create(userId: TableIdentity, command: DtoChatCreate): Promise<DtoChatConversation> {
     const title = command.title?.trim() || '';
-    if (title.length > 120) this.app.throw(422, 'Invalid conversation title');
+    if (title.length > 120) this.app.throw(422, this.scope.locale.InvalidConversationTitle());
     const conversation = await this.scope.model.conversation.insert({
       userId,
       title,
@@ -162,7 +162,7 @@ export class ServiceConversation extends BeanBase {
         disableCacheQuery: true,
       },
     );
-    if (!conversation) this.app.throw(404, 'Conversation not found');
+    if (!conversation) this.app.throw(404, this.scope.locale.ConversationNotFound());
     return conversation as EntityConversation;
   }
 
@@ -181,7 +181,7 @@ export class ServiceConversation extends BeanBase {
       .where({ id: conversationId, iid: this.ctx.instance.id, userId, deleted: false })
       .update({ id: model.raw('??', ['id']) as any });
     const conversation = await model.getForUpdate({ id: conversationId, userId });
-    if (!conversation) this.app.throw(404, 'Conversation not found');
+    if (!conversation) this.app.throw(404, this.scope.locale.ConversationNotFound());
     return conversation;
   }
 
@@ -197,7 +197,8 @@ export class ServiceConversation extends BeanBase {
   ): Promise<void> {
     const conversation = await this.lockOwned(userId, conversationId);
     await this.scope.service.run.reconcileLocked(userId, conversation);
-    if (conversation.activeRunId != null) this.app.throw(409, 'Conversation has an active run');
+    if (conversation.activeRunId != null)
+      this.app.throw(409, this.scope.locale.ConversationHasActiveRun());
     await this.scope.model.usage.delete({ conversationId, userId });
     await this.scope.model.message.delete({ conversationId, userId });
     await this.scope.model.run.delete({ conversationId, userId });

@@ -150,9 +150,9 @@ export class ControllerPageChat extends BeanControllerPageBase {
       <ZPage>
         <section class="mx-auto w-full max-w-6xl p-4 md:p-6" data-testid="ai-chat">
           <header class="mb-5">
-            <h1 class="text-2xl font-semibold">Private AI chat</h1>
+            <h1 class="text-2xl font-semibold">{this.scope.locale.PrivateAiChat()}</h1>
             <p class="mt-1 text-sm text-base-content/70">
-              Your saved conversations are private to your account. AI responses may be inaccurate.
+              {this.scope.locale.PrivateAiChatNotice()}
             </p>
           </header>
           <div class="grid gap-4 md:grid-cols-[15rem_minmax(0,1fr)]">
@@ -164,7 +164,10 @@ export class ControllerPageChat extends BeanControllerPageBase {
               >
                 {this.scope.locale.NewConversation()}
               </ZButton>
-              <nav aria-label="Conversations" class="mt-3 max-h-96 space-y-2 overflow-y-auto">
+              <nav
+                aria-label={this.scope.locale.Conversations()}
+                class="mt-3 max-h-96 space-y-2 overflow-y-auto"
+              >
                 {conversations.data?.map(item => (
                   <ZButton
                     key={item.id}
@@ -185,7 +188,9 @@ export class ControllerPageChat extends BeanControllerPageBase {
                   </ZButton>
                 ))}
                 {conversations.data?.length === 0 && (
-                  <p class="p-2 text-sm text-base-content/60">No saved conversations yet.</p>
+                  <p class="p-2 text-sm text-base-content/60">
+                    {this.scope.locale.NoSavedConversations()}
+                  </p>
                 )}
               </nav>
             </aside>
@@ -202,13 +207,13 @@ export class ControllerPageChat extends BeanControllerPageBase {
                     disabled={model.streaming}
                     onPerform={() => model.refresh()}
                   >
-                    Refresh history
+                    {this.scope.locale.RefreshHistory()}
                   </ZButton>
                 )}
               </div>
               <div
                 class="min-h-64 max-h-[55vh] flex-1 overflow-y-auto"
-                aria-label="Messages"
+                aria-label={this.scope.locale.Messages()}
                 data-testid="ai-chat-messages"
                 onScroll={() => this._handleMessagesScroll()}
                 ref={(element: Element | ComponentPublicInstance | null) => {
@@ -229,7 +234,9 @@ export class ControllerPageChat extends BeanControllerPageBase {
                       class={['chat', message.role === 'user' ? 'chat-end' : 'chat-start']}
                     >
                       <div class="chat-header text-xs">
-                        {message.role === 'user' ? 'You' : 'Assistant'}
+                        {message.role === 'user'
+                          ? this.scope.locale.ChatYou()
+                          : this.scope.locale.ChatAssistant()}
                       </div>
                       <div class="chat-bubble max-w-full whitespace-pre-wrap break-words">
                         {message.text}
@@ -238,7 +245,7 @@ export class ControllerPageChat extends BeanControllerPageBase {
                   ))}
                   {model.pendingText && (
                     <article class="chat chat-end">
-                      <div class="chat-header text-xs">You · pending confirmation</div>
+                      <div class="chat-header text-xs">{this.scope.locale.ChatYouPending()}</div>
                       <div class="chat-bubble max-w-full whitespace-pre-wrap break-words">
                         {model.pendingText}
                       </div>
@@ -246,16 +253,14 @@ export class ControllerPageChat extends BeanControllerPageBase {
                   )}
                   {streamingText && (
                     <article class="chat chat-start" data-testid="ai-chat-stream">
-                      <div class="chat-header text-xs">Assistant · live response</div>
+                      <div class="chat-header text-xs">{this.scope.locale.ChatAssistantLive()}</div>
                       <div class="chat-bubble max-w-full whitespace-pre-wrap break-words">
                         {streamingText}
                       </div>
                     </article>
                   )}
                   {model.selectedId === undefined && (
-                    <p class="text-base-content/60">
-                      Create a conversation to send your first message.
-                    </p>
+                    <p class="text-base-content/60">{this.scope.locale.CreateConversationHint()}</p>
                   )}
                 </div>
               </div>
@@ -265,24 +270,22 @@ export class ControllerPageChat extends BeanControllerPageBase {
                 data-testid="ai-chat-status"
               >
                 {model.streaming
-                  ? 'Receiving response…'
+                  ? this.scope.locale.ReceivingResponse()
                   : model.unsettled || conversation?.activeRunId
-                    ? 'Waiting for saved request state.'
-                    : 'Ready'}
+                    ? this.scope.locale.WaitingForSavedRequestState()
+                    : this.scope.locale.ChatReady()}
               </p>
               {(model.error || conversations.error || history?.error) && (
                 <div role="alert" class="alert alert-warning my-3" data-testid="ai-chat-error">
-                  <span>
-                    {model.error || 'Conversation history could not be loaded. Please try again.'}
-                  </span>
+                  <span>{model.error || this.scope.locale.ConversationHistoryLoadFailed()}</span>
                 </div>
               )}
               <label class="mt-3 flex flex-col gap-2">
-                <span class="text-sm font-medium">Message</span>
+                <span class="text-sm font-medium">{this.scope.locale.ChatMessage()}</span>
                 <textarea
                   class="textarea textarea-bordered min-h-24 w-full resize-y"
                   data-testid="ai-chat-input"
-                  placeholder="Type a message"
+                  placeholder={this.scope.locale.TypeMessage()}
                   maxlength={32000}
                   disabled={model.selectedId === undefined || busy}
                   v-model={this.draft}
@@ -291,7 +294,7 @@ export class ControllerPageChat extends BeanControllerPageBase {
               <div class="mt-3 flex flex-wrap justify-end gap-2">
                 {model.unsettled && !model.streaming && (
                   <ZButton class="btn btn-outline" onPerform={() => this.retry()}>
-                    Retry same request
+                    {this.scope.locale.RetrySameRequest()}
                   </ZButton>
                 )}
                 {model.streaming && (
@@ -300,7 +303,7 @@ export class ControllerPageChat extends BeanControllerPageBase {
                     data-testid="ai-chat-stop"
                     onPerform={() => model.stop()}
                   >
-                    Stop
+                    {this.scope.locale.ChatStop()}
                   </ZButton>
                 )}
                 <ZButton
@@ -309,7 +312,7 @@ export class ControllerPageChat extends BeanControllerPageBase {
                   disabled={model.selectedId === undefined || busy || !this.draft.trim()}
                   onPerform={() => this.send()}
                 >
-                  Send
+                  {this.scope.locale.ChatSend()}
                 </ZButton>
               </div>
             </main>

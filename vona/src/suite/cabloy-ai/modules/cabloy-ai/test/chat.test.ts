@@ -281,6 +281,58 @@ describe('cabloy-ai private chat domain', { concurrency: false }, () => {
     }
   });
 
+  it('localizes chat errors while preserving their status codes', async () => {
+    let conversationId: TableIdentity | undefined;
+    try {
+      conversationId = await context(
+        async () => (await scope().service.conversation.create(userId, {})).id,
+      );
+      const input = command(conversationId);
+      await context(async () => scope().service.run.prepare(userId, input, identity, limits));
+      for (const locale of ['en-us', 'zh-cn'] as const) {
+        await app.bean.executor.mockCtx(
+          async () => {
+            const conversation = scope().service.conversation;
+            const run = scope().service.run;
+            const chinese = locale === 'zh-cn';
+            await assert.rejects(() => conversation.create(userId, { title: 'x'.repeat(121) }), {
+              code: 422,
+              message: chinese ? '对话标题无效' : 'Invalid conversation title',
+            });
+            await assert.rejects(() => conversation.requireOwned(userId - 1, conversationId!), {
+              code: 404,
+              message: chinese ? '对话不存在' : 'Conversation not found',
+            });
+            await assert.rejects(() => conversation.remove(userId, conversationId!), {
+              code: 409,
+              message: chinese ? '对话中有正在进行的请求' : 'Conversation has an active run',
+            });
+            await assert.rejects(
+              () => run.prepare(userId, { ...input, text: 'Changed' }, identity, limits),
+              {
+                code: 409,
+                message: chinese
+                  ? '请求标识已用于其他消息内容'
+                  : 'Request key already used with different text',
+              },
+            );
+            await assert.rejects(
+              () => run.prepare(userId, { ...input, text: '' }, identity, limits),
+              { code: 422, message: chinese ? '消息内容无效' : 'Invalid chat text' },
+            );
+            await assert.rejects(
+              () => run.prepare(userId, { ...input, requestKey: '' }, identity, limits),
+              { code: 422, message: chinese ? '请求标识无效' : 'Invalid request key' },
+            );
+          },
+          { locale },
+        );
+      }
+    } finally {
+      await cleanup(conversationId);
+    }
+  });
+
   it('returns raw unnamed and generated titles independently of the request locale', async () => {
     let conversationId: TableIdentity | undefined;
     try {
