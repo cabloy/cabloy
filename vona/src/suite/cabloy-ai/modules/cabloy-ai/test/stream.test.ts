@@ -279,7 +279,7 @@ describe('cabloy-ai native HTTP stream', { concurrency: false }, () => {
         'completed',
       );
       const history = await json(fixture, 'history', { conversationId: created.id });
-      assert.equal(history.conversation.title, 'New conversation');
+      assert.equal(history.conversation.title, '');
       assert.deepEqual(
         history.messages.map((message: any) => message.text),
         [input.text, `AI test response: ${input.text}`],

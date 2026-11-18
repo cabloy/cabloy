@@ -160,8 +160,11 @@ declare module 'zova-module-cabloy-ai' {
 }
 /** pages: end */
 
+/** locale: begin */
+import { locales } from './locales.ts';
+/** locale: end */
 /** scope: begin */
-import { BeanScopeBase, type BeanScopeUtil } from 'zova';
+import { BeanScopeBase, type BeanScopeUtil, TypeModuleLocales, TypeLocaleBase } from 'zova';
 import { Scope } from 'zova-module-a-bean';
 
 @Scope()
@@ -169,6 +172,7 @@ export class ScopeModuleCabloyAi extends BeanScopeBase {}
 
 export interface ScopeModuleCabloyAi {
   util: BeanScopeUtil;
+locale: TypeModuleLocales<(typeof locales)[TypeLocaleBase]>;
 api: IModuleApi;
 apiSchema: IModuleApiSchema;
 }
@@ -181,9 +185,14 @@ declare module 'zova' {
 
 
 
-
+  export interface IBeanScopeLocale {
+    'cabloy-ai': (typeof locales)[TypeLocaleBase];
+  }
 
 
 }
 
+export function locale<K extends keyof (typeof locales)[TypeLocaleBase]>(key: K): `cabloy-ai::${K}` {
+  return `cabloy-ai::${key}`;
+}
 /** scope: end */

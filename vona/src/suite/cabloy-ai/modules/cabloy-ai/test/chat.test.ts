@@ -281,6 +281,69 @@ describe('cabloy-ai private chat domain', { concurrency: false }, () => {
     }
   });
 
+  it('returns raw unnamed and generated titles independently of the request locale', async () => {
+    let conversationId: TableIdentity | undefined;
+    try {
+      await app.bean.executor.mockCtx(
+        async () => {
+          const conversation = scope().service.conversation;
+          const created = await conversation.create(userId, {});
+          conversationId = created.id;
+          assert.equal(created.title, '');
+          assert.equal((await conversation.requireOwned(userId, created.id)).title, '');
+        },
+        { locale: 'zh-cn' },
+      );
+      for (const locale of ['en-us', 'zh-cn'] as const) {
+        await app.bean.executor.mockCtx(
+          async () => {
+            const conversation = scope().service.conversation;
+            assert.equal(
+              (await conversation.history(userId, conversationId!)).conversation.title,
+              '',
+            );
+            assert.equal((await conversation.list(userId))[0]?.title, '');
+          },
+          { locale },
+        );
+      }
+      await app.bean.executor.mockCtx(
+        async () => {
+          const conversation = scope().service.conversation;
+          const input = command(conversationId!, randomUUID(), '订单系统设计');
+          const { run } = await scope().service.run.prepare(userId, input, identity, limits);
+          await scope().service.run.finalize(userId, run.id, conversationId!, {
+            status: 'completed',
+            text: 'Reply',
+          });
+          const bound = await app.bean.ai.create();
+          await conversation.generateTitle(userId, conversationId!, run.id, input.text, bound);
+        },
+        { locale: 'zh-cn' },
+      );
+      for (const locale of ['en-us', 'zh-cn'] as const) {
+        await app.bean.executor.mockCtx(
+          async () => {
+            const conversation = scope().service.conversation;
+            assert.equal(
+              (await conversation.history(userId, conversationId!)).conversation.title,
+              'AI test response: 订单系统设计',
+            );
+            await scope().model.conversation.update({ id: conversationId, title: '我的标题' });
+            assert.equal((await conversation.list(userId))[0]?.title, '我的标题');
+            await scope().model.conversation.update({
+              id: conversationId,
+              title: 'AI test response: 订单系统设计',
+            });
+          },
+          { locale },
+        );
+      }
+    } finally {
+      await cleanup(conversationId);
+    }
+  });
+
   it('names only the first successful turn and does not regenerate on replay or later turns', async t => {
     let conversationId: TableIdentity | undefined;
     try {
@@ -363,7 +426,7 @@ describe('cabloy-ai private chat domain', { concurrency: false }, () => {
           assert.equal((await conversation.requireOwned(userId, conversationId)).title, 'My title');
           await scope().model.conversation.update({
             id: conversationId,
-            title: 'New conversation',
+            title: '',
           });
           await conversation.generateTitle(userId, conversationId, run.id, input.text, bound);
           assert.equal(generate.mock.callCount(), 1);
@@ -402,7 +465,8 @@ describe('cabloy-ai private chat domain', { concurrency: false }, () => {
           generate.mock.mockImplementation(async () => ({ text: ' \n ' }) as any);
           await conversation.generateTitle(userId, conversationId, run.id, input.text, bound);
           const history = await conversation.history(userId, conversationId);
-          assert.equal(history.conversation.title, 'New conversation');
+          assert.equal(history.conversation.title, '');
+          assert.equal((await conversation.requireOwned(userId, conversationId)).title, '');
           assert.deepEqual(
             history.messages.map(message => message.text),
             ['Hello', 'Reply'],

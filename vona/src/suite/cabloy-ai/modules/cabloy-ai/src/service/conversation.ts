@@ -10,8 +10,6 @@ import type { DtoChatHistory } from '../dto/chatHistory.tsx';
 import type { EntityConversation } from '../entity/conversation.tsx';
 import type { AiInvocation } from '../lib/invocation.ts';
 
-const defaultTitle = 'New conversation';
-
 // Only the short database-only suffix is replayed. Never wrap provider I/O in this boundary.
 export const chatTransactionRetry = {
   retries: 2,
@@ -49,7 +47,7 @@ export class ServiceConversation extends BeanBase {
   }
 
   async create(userId: TableIdentity, command: DtoChatCreate): Promise<DtoChatConversation> {
-    const title = command.title?.trim() || defaultTitle;
+    const title = command.title?.trim() || '';
     if (title.length > 120) this.app.throw(422, 'Invalid conversation title');
     const conversation = await this.scope.model.conversation.insert({
       userId,
@@ -70,7 +68,7 @@ export class ServiceConversation extends BeanBase {
     try {
       if (signal?.aborted) return;
       const conversation = await this.requireOwned(userId, conversationId);
-      if (conversation.title !== defaultTitle) return;
+      if (conversation.title) return;
       const [first] = await this.scope.model.run.select({
         where: { conversationId, userId, status: 'completed' },
         orders: [['id', 'asc']],
@@ -100,7 +98,7 @@ export class ServiceConversation extends BeanBase {
       // Recheck atomically after provider I/O; never overwrite a title changed in the meantime.
       await this.scope.model.conversation.update(
         { id: conversationId, title },
-        { where: { userId, title: defaultTitle } },
+        { where: { userId, title: '' } },
       );
       this.$logger.debug('ai.chat.title.generated');
     } catch {

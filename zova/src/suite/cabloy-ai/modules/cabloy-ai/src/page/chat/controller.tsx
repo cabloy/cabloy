@@ -162,7 +162,7 @@ export class ControllerPageChat extends BeanControllerPageBase {
                 data-testid="ai-chat-new"
                 onPerform={() => model.create()}
               >
-                New conversation
+                {this.scope.locale.NewConversation()}
               </ZButton>
               <nav aria-label="Conversations" class="mt-3 max-h-96 space-y-2 overflow-y-auto">
                 {conversations.data?.map(item => (
@@ -179,7 +179,9 @@ export class ControllerPageChat extends BeanControllerPageBase {
                     aria-pressed={item.id === model.selectedId}
                     onPerform={() => model.select(item.id)}
                   >
-                    <span class="min-w-0 truncate">{item.title || 'New conversation'}</span>
+                    <span class="min-w-0 truncate">
+                      {item.title || this.scope.locale.NewConversation()}
+                    </span>
                   </ZButton>
                 ))}
                 {conversations.data?.length === 0 && (
@@ -190,7 +192,9 @@ export class ControllerPageChat extends BeanControllerPageBase {
             <main class="flex min-w-0 flex-col rounded-box border border-base-300 bg-base-100 p-4">
               <div class="mb-4 flex flex-wrap items-center justify-between gap-2">
                 <h2 class="min-w-0 truncate font-semibold">
-                  {conversation?.title || 'Start a conversation'}
+                  {conversation
+                    ? conversation.title || this.scope.locale.NewConversation()
+                    : 'Start a conversation'}
                 </h2>
                 {model.selectedId !== undefined && (
                   <ZButton
