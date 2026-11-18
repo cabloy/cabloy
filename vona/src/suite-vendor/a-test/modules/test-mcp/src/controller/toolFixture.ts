@@ -81,6 +81,30 @@ export class ControllerToolFixture extends BeanBase {
     return 'not a JSON Action';
   }
 
+  @Web.patch('update')
+  @Api.exclude()
+  @Api.body(z.null())
+  @Passport.public()
+  update(): void {
+    throw new Error('Discovery-only update fixture');
+  }
+
+  @Web.patch('updatePatch')
+  @Api.exclude()
+  @Api.body(z.null())
+  @Passport.public()
+  updatePatch(): void {
+    throw new Error('Discovery-only partial-update fixture');
+  }
+
+  @Web.post('publish')
+  @Api.exclude()
+  @Api.body(z.null())
+  @Passport.public()
+  publish(): void {
+    throw new Error('Discovery-only command fixture');
+  }
+
   @Web.get('excluded')
   @Api.contentType('text/plain')
   @Api.body(z.string())

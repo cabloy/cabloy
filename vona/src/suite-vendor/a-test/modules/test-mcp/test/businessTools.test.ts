@@ -80,6 +80,8 @@ async function connect(server: Server) {
   return { request, serverInfo: initialized.result.serverInfo, close: () => server.close() };
 }
 
+const fullUpdateReminder =
+  'Full CRUD update, not patch: use cabloy-mcp-mutations and read the current resource first.';
 const toolContractToolName = 'cabloy_tool_contract';
 const retiredQueryCapabilitiesToolName = 'cabloy_query_capabilities';
 const toolName = 'commerce_products_search';
@@ -1458,9 +1460,12 @@ describe('businessTools.test.ts', { concurrency: false, timeout: 60000 }, () => 
           assert.ok(metadata.description, `${actionName} declares its MCP description`);
           const businessDescription = app.meta.text(metadata.description);
           if (query && ['select', 'group', 'aggregate'].includes(actionName)) {
-            assert.ok(tool.description.startsWith(`${businessDescription}\n\n`), tool.name);
-            assert.match(tool.description, /prefer a single call using where\.or/);
-            assert.match(tool.description, /named filters are additional AND constraints/);
+            assert.ok(
+              tool.description.startsWith(
+                `${businessDescription}\n\nUse the cabloy-mcp-query Skill for this query.`,
+              ),
+              tool.name,
+            );
             const where = resolveSchema(
               tool.inputSchema.properties.where,
               tool.inputSchema.$defs ?? {},
@@ -1544,6 +1549,13 @@ describe('businessTools.test.ts', { concurrency: false, timeout: 60000 }, () => 
                 'invalid query semantics still precede dispatch',
               );
             }
+          } else if (actionName === 'update') {
+            assert.equal(
+              metadata.standardCrudUpdate,
+              undefined,
+              'Resource default needs no marker',
+            );
+            assert.equal(tool.description, `${businessDescription}\n\n${fullUpdateReminder}`);
           } else {
             assert.equal(tool.description, businessDescription, tool.name);
           }
@@ -2222,8 +2234,17 @@ describe('businessTools.test.ts', { concurrency: false, timeout: 60000 }, () => 
                 .map(path => (path as any)[method])
                 .find(Boolean);
               if (query && ['select', 'group', 'aggregate'].includes(actionName)) {
-                assert.ok(tool.description.startsWith(`${dictionaries[locale][key]}\n\n`));
-                assert.match(tool.description, /prefer a single call using where\.or/);
+                assert.ok(
+                  tool.description.startsWith(
+                    `${dictionaries[locale][key]}\n\nUse the cabloy-mcp-query Skill for this query.`,
+                  ),
+                );
+              } else if (actionName === 'update') {
+                assert.equal(
+                  tool.description,
+                  `${dictionaries[locale][key]}\n\n${fullUpdateReminder}`,
+                  `${locale}: ${name}`,
+                );
               } else {
                 assert.equal(tool.description, dictionaries[locale][key], `${locale}: ${name}`);
               }
@@ -4179,6 +4200,110 @@ describe('businessTools.test.ts', { concurrency: false, timeout: 60000 }, () => 
         );
       } finally {
         contracts.mock.restore();
+      }
+    });
+  });
+
+  it('defaults full-update reminders from Resource Action identity with explicit overrides', async t => {
+    await app.bean.executor.mockCtx(async () => {
+      const registry = recordResourceNameToRoutePath as Record<
+        string,
+        (typeof recordResourceNameToRoutePath)[keyof typeof recordResourceNameToRoutePath]
+      >;
+      const resourceName = 'test-mcp:crudDiscovery';
+      assert.equal(registry[resourceName], undefined);
+      const cases: {
+        action: string;
+        resource: boolean;
+        options: IMcpToolOptions;
+        reminder: boolean;
+      }[] = [
+        { action: 'update', resource: true, options: { readOnly: false }, reminder: true },
+        { action: 'update', resource: true, options: {}, reminder: true },
+        { action: 'update', resource: false, options: { readOnly: false }, reminder: false },
+        { action: 'update', resource: true, options: { readOnly: true }, reminder: false },
+        {
+          action: 'update',
+          resource: true,
+          options: { readOnly: false, standardCrudUpdate: false },
+          reminder: false,
+        },
+        {
+          action: 'update',
+          resource: false,
+          options: { readOnly: false, standardCrudUpdate: true },
+          reminder: true,
+        },
+        { action: 'updatePatch', resource: true, options: { readOnly: false }, reminder: false },
+        { action: 'publish', resource: true, options: { readOnly: false }, reminder: false },
+        { action: 'status', resource: true, options: {}, reminder: false },
+      ];
+      const original = appMetadata.getOwnMetadata;
+      const action = mockOwnedPerformAction(t, async () => {
+        assert.fail('description discovery must not execute an Action');
+      });
+      try {
+        for (const testCase of cases) {
+          if (testCase.resource) {
+            registry[resourceName] = {
+              controller: ControllerToolFixture,
+              apiPath: '/mcp/test/actions',
+              routePathRaw: '/mcp/test/actions',
+            };
+          } else {
+            delete registry[resourceName];
+          }
+          const name = testCase.action === 'update' ? 'crud_test_publish' : 'crud_test_update';
+          const metadata = t.mock.method(
+            appMetadata,
+            'getOwnMetadata',
+            function (...args: Parameters<typeof original>) {
+              if (
+                args[0] === SymbolMcpOptions &&
+                args[1] === ControllerToolFixture.prototype &&
+                args[2] === testCase.action
+              ) {
+                return { ...testCase.options, name, description: 'Business description' };
+              }
+              return original.apply(appMetadata, args);
+            },
+          );
+          let client: Awaited<ReturnType<typeof connect>> | undefined;
+          try {
+            const server = await createControllerToolServer(app, 'mcp:all', {
+              ssrSiteId: 'web',
+              includeTool: identity =>
+                identity.controller === 'test-mcp.controller.toolFixture' &&
+                identity.action === testCase.action,
+            });
+            client = await connect(server);
+            assert.deepEqual(server.diagnostics, []);
+            const tools = (await client.request('tools/list')).result.tools;
+            const tool = tools.find((item: any) => item.name === name);
+            assert.ok(tool, JSON.stringify(testCase));
+            assert.equal(
+              tool.description,
+              testCase.reminder
+                ? `Business description\n\n${fullUpdateReminder}`
+                : 'Business description',
+              JSON.stringify(testCase),
+            );
+            assert.equal(
+              tool.annotations.readOnlyHint,
+              testCase.options.readOnly ?? testCase.action === 'status',
+            );
+            const [catalog] = await server.catalog();
+            assert.equal(catalog.description, tool.description);
+            assert.equal(catalog.action, testCase.action, 'public names do not classify Actions');
+          } finally {
+            await client?.close();
+            metadata.mock.restore();
+          }
+        }
+        assert.equal(action.mock.callCount(), 0);
+      } finally {
+        delete registry[resourceName];
+        action.mock.restore();
       }
     });
   });

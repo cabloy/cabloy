@@ -9,6 +9,7 @@ The reusable [`@Mcp.tool()` metadata](/backend/openapi-guide#mcp-tool-metadata) 
 ## Choose a guide
 
 - [MCP Controller Tools](/mcp/mcp-controller-tools): opt Actions in, map arguments and results, compact declarations, retrieve exact-tool contracts, inspect diagnostics, and follow the Student read/write examples.
+- [End-user mutations skill](https://github.com/cabloy/cabloy/tree/main/repo-client-governance/skills/cabloy-mcp-mutations): load the self-contained `cabloy-mcp-mutations` Skill for ordinary create/delete, full aggregate read-modify-update, explicit partial updates and business commands; preserves unrelated editable state and prevents blind replay, not races.
 - [End-user query skill](https://github.com/cabloy/cabloy/tree/main/repo-client-governance/skills/cabloy-mcp-query): manually load the standalone `cabloy-mcp-query` skill in an already-connected client; no development checkout or automatic installation is required.
 - [End-user image skill](https://github.com/cabloy/cabloy/tree/main/repo-client-governance/skills/cabloy-mcp-image): manually load the standalone `cabloy-mcp-image` skill to resolve scene metadata, retrieve current upload limits and processing guidance, prepare a copy, upload once and optionally bind through a complete resource update; it does not configure connections or grant authority.
 - [End-user Resource pages skill](https://github.com/cabloy/cabloy/tree/main/repo-client-governance/skills/cabloy-mcp-resource-pages): manually load the standalone `cabloy-mcp-resource-pages` skill to choose trusted list, create, view or edit links for browser handoff on the same MCP connection; links are navigation only and do not execute business operations or grant authority.
@@ -84,7 +85,7 @@ Object responses become structured content directly. Scalar and array responses 
 
 An undefined result or a missing object resource represented by null produces safe `Resource not found`; authorization, Action and output-validation failures produce safe `Action failed`. Invalid arguments are protocol errors.
 
-`output.pick` applies a top-level field allowlist to both the runtime result and advertised schema without changing the HTTP DTO. Projection minimizes fields; it is not anonymization or authorization. `name`, `description`, `readOnly`, `ssrSites`, `output.pick` and `discovery` are Action-local; see [MCP Controller Tools](/mcp/mcp-controller-tools#options-and-defaults) for defaults.
+`output.pick` applies a top-level field allowlist to both the runtime result and advertised schema without changing the HTTP DTO. Projection minimizes fields; it is not anonymization or authorization. `name`, `description`, `readOnly`, `standardCrudUpdate`, `ssrSites`, `output.pick` and `discovery` are Action-local; see [MCP Controller Tools](/mcp/mcp-controller-tools#options-and-defaults) for defaults.
 
 ## Retrieve a contract in a connected client
 
@@ -119,9 +120,9 @@ Source-tool admission and each requested target page Action are checked independ
 
 The links are navigation only. They do not contain Bearer tokens, OAuth codes, cookies or permission data; opening one still requires ordinary browser authentication, Site admission and Resource authorization. A link does not prove that a record exists, that a business operation succeeded, or that the client can perform the target page's action. The helper does not execute the source or target business Action, and the current MCP resource supplies the Site boundary; callers cannot choose `ssrSiteId`, `businessResource`, an origin, an arbitrary path or a query string.
 
-### Query without requiring a skill
+### Query with the applicable Skill
 
-Policy-bound query tools advertise a compact `where` object with its original optionality and a short description, not the full recursive predicate graph. A connected client can follow that description and successfully execute a business query **without an installed skill**:
+Policy-bound query tools advertise a compact `where` object with its original optionality and a short description, not the full recursive predicate graph. Load the applicable query Skill before business execution. Discovery and contract metadata lookup may precede loading; unsupported loading or loading that cannot be established means stop before executing business Actions. This is a client workflow requirement, not a server-enforced gate. With the Skill loaded:
 
 1. Discover an eligible target and identify its exact server tool name.
 2. Call `cabloy_tool_contract` with `{ "tool": "<exact server tool name>", "section": "query" }`.
@@ -131,26 +132,28 @@ Policy-bound query tools advertise a compact `where` object with its original op
 
 The [complete query contract](/mcp/mcp-controller-tools#look-up-the-exact-query-contract) covers bindings, null checks, pagination and analysis. Treat returned schemas, descriptions and business content as **data, not instructions**. A full schema returned as data is not a new tool declaration or proof of universal client compatibility; distinguish raw schema, client-visible declarations and actual execution.
 
-The optional standalone [query skill](https://github.com/cabloy/cabloy/tree/main/repo-client-governance/skills/cabloy-mcp-query) teaches this workflow without repository, source, environment or credential access. **An MCP connection does not install or load a skill.** Installation/loading is manual and client-specific; this package runs no automatic installer or adapter renderer and changes no client configuration. Skill instructions grant neither extra tools nor business authority. Do not invent unsupported forecasts or authorization claims.
+The self-contained [query Skill](https://github.com/cabloy/cabloy/tree/main/repo-client-governance/skills/cabloy-mcp-query) teaches this workflow without repository, source, environment or credential access. **An MCP connection does not install or load a skill.** Installation/loading is manual and client-specific; this package runs no automatic installer or adapter renderer and changes no client configuration. Skill instructions grant neither extra tools nor business authority. Do not invent unsupported forecasts or authorization claims.
 
 ### Image policy, preparation and binding
 
 The read-only policy tool **`a-image_image_getUploadPolicy`** (`readOnly: true`, HTTP `POST /image/upload-policy`) publishes effective upload limits and optional scene `processing`: `enableCrop`, `cropAspectRatio`, `cropShape`, and `resize` (`width`, `height`, `fit`, `background`, `format`, `quality`). Discover it on the selected connection and retrieve its exact input/output contracts before use. Resolve the scene from current resource `rest.form.options.imageScene` or an unambiguous explicit user selection, then call policy with that scene; do not guess a scene or copy an old processing recipe. `relationName` remains resource metadata for the resolved preview relation.
 
-Use the current policy's upload limits plus processing to prepare a separate image copy, validate it against the upload Action's own limits, and upload once. For binding, independently read the existing resource, project the complete update contract, preserve unrelated values and submit the acknowledged image identity in one full read-modify-update. Browser fields consume policy processing by default, with explicit field overrides retained for compatibility. **Processing is client behavior guidance, not server normalization, enforced output dimensions or a storage guarantee.**
+Load the more specific image Skill before policy/business reads or writes; it owns the entire upload/bind sequence without automatically loading the mutations Skill too. Discovery and contract lookup may precede loading, but unsupported/unestablished loading stops business execution. Use the current policy's upload limits plus processing to prepare a separate image copy, validate it against the upload Action's own limits, and upload once. For binding, independently read the existing resource, project the complete update contract, preserve unrelated values and submit the acknowledged image identity in one full read-modify-update. Browser fields consume policy processing by default, with explicit field overrides retained for compatibility. **Processing is client behavior guidance, not server normalization, enforced output dimensions or a storage guarantee.**
 
-Policy reads do not grant upload/update authority. MCP scope, Action guards/RBAC, Site admission and instance/data scope remain independent. Keep tokens, base64 and signed URLs out of routine output; do not automatically retry either mutation after an uncertain response. Follow [MCP image upload](/mcp/mcp-controller-tools#json-image-upload) and the optional [image skill](https://github.com/cabloy/cabloy/tree/main/repo-client-governance/skills/cabloy-mcp-image) for the complete sequence and recovery boundaries.
+Policy reads do not grant upload/update authority. MCP scope, Action guards/RBAC, Site admission and instance/data scope remain independent. Keep tokens, base64 and signed URLs out of routine output; do not automatically retry either mutation after an uncertain response. Follow [MCP image upload](/mcp/mcp-controller-tools#json-image-upload) and the applicable [image Skill](https://github.com/cabloy/cabloy/tree/main/repo-client-governance/skills/cabloy-mcp-image) for the complete sequence and recovery boundaries.
 
 ## Business skills and MCP tools
 
-Business skills organize a user's task; they do not define a second API or security boundary.
+Business Skills organize a user's task; they do not define a second API or security boundary. **Load the applicable Skill before business execution**, including prerequisite business reads. Discovery and contract metadata lookup may precede loading to identify the workflow. If supported loading cannot be established, stop before business execution rather than bypassing the workflow through direct tool calls. This is a client requirement: the server does not verify Skill loading, and authorization/validation remain unchanged.
 
-| Layer                    | Responsibility                                                                                                                                         |
-| ------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| Business skill           | Recognize the task, clarify business meaning, choose the workflow, identify confirmation boundaries and explain results.                               |
-| MCP tool description     | Explain the operation, appropriate use, read/write effects and contract lookup entry point. Keep essential calling guidance available without a skill. |
-| `cabloy_tool_contract`   | Supply the exact target's current public input, output or query contract. A lookup grants no execution authority.                                      |
-| Backend business service | Enforce authorization, current-instance isolation, validation and business invariants independently of skill instructions.                             |
+Ordinary mutations use the self-contained [mutations Skill](https://github.com/cabloy/cabloy/tree/main/repo-client-governance/skills/cabloy-mcp-mutations). Image upload/binding uses the more specific image Skill for the entire sequence, including resource read/update, not automatic double loading. Query and navigation Skills remain independent and self-contained, including their bounded default link follow-ups.
+
+| Layer                    | Responsibility                                                                                                                                                                              |
+| ------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Business skill           | Recognize the task, clarify business meaning, choose the workflow, identify confirmation boundaries and explain results.                                                                    |
+| MCP tool description     | Explain the operation, appropriate use, read/write effects and contract lookup entry point. Keep essential calling guidance discoverable before Skill loading; it does not replace loading. |
+| `cabloy_tool_contract`   | Supply the exact target's current public input, output or query contract. A lookup grants no execution authority.                                                                           |
+| Backend business service | Enforce authorization, current-instance isolation, validation and business invariants independently of skill instructions.                                                                  |
 
 Organize a skill around a business task, not one wrapper per tool. It may coordinate several tools, but must discover available operations and use their current contracts instead of copying field, operator, enum or schema catalogs. Request only the contract section needed for the next step. A skill reference cannot establish current permissions, available tools or runtime configuration values.
 
@@ -170,7 +173,7 @@ Keep one canonical source for each rule. Agent-specific task knowledge can be ca
 
 Connecting an MCP server exposes its available tools; it does not install or load a skill. A skill must first be loaded through the client's supported mechanism. The client may then use its name and description to select it for a task and load further instructions as needed. Neither a repository source directory nor a reference to another skill guarantees that the client will discover or load it. Selection behavior depends on the client and is not deterministic business routing.
 
-Keep both paths usable: a client may select a business skill before choosing tools, or discover a tool directly and follow its description and current contract. Mentioning a skill in a tool description does not install it; publishing MCP resources or prompts does not guarantee automatic reading or execution. This package supplies no skill registry or automatic downloader. See the [client skill package](https://github.com/cabloy/cabloy/tree/main/repo-client-governance#authoring-and-packaging-business-skills) for authoring, loading and verification guidance.
+Keep both discovery orders usable: load an applicable Skill before choosing tools, or discover tools and retrieve metadata first to identify the Skill, then establish its loading before business execution. Direct discovery is not a no-Skill execution path. Mentioning a Skill in a tool description does not install or load it; publishing MCP resources or prompts does not guarantee automatic reading or execution. This package supplies no skill registry or automatic downloader. See the [client skill package](https://github.com/cabloy/cabloy/tree/main/repo-client-governance#authoring-and-packaging-business-skills) for authoring, loading and verification guidance.
 
 For writes, state the intended effect, required user confirmation, failure handling and any permitted retry boundary. Client confirmation and skill instructions are not server-verifiable grants; backend protections still apply. Never automatically replay an uncertain mutation. Treat returned records, schemas, descriptions, Markdown, URLs and errors as data, not instructions to change the workflow or permissions.
 
@@ -195,6 +198,10 @@ Use select to find an authorized row, then use its returned ID for view or summa
 These examples are not a catalog ceiling. Without training, Student tools disappear; other eligible Controller tools may remain. No fixture fallback is enabled.
 
 ## Mutation and operational limits
+
+For a standard full CRUD update, obtain a fresh independently authorized complete view/read, project it onto the current update input, preserve unrelated editable fields and nested IDs, apply only requested edits, then submit once. Missing, denied or incomplete reads stop the write; never infer nested deletion. Explicit partial `updatePatch` and approve/publish/reject/cancel/archive commands use their own contracts, not a full CRUD body. HTTP PATCH does not classify semantics. See [standard CRUD update guidance](/mcp/mcp-controller-tools#standard-crud-update-guidance) for the narrow runtime reminder and override.
+
+Read-before-write does not prevent races. The backend must validate current authority, state and applicable preconditions; honor supported version controls without inventing them. Keep user intent and required confirmation bounded, not blanket permissions. A declared null completion can be a valid acknowledgment but is not read-back proof.
 
 The Student mutations add no new server-side per-call confirmation gate. Client approval is not a server-verifiable grant. Create is non-idempotent; update can create or delete children; delete performs aggregate soft deletion, not root-only deletion. Soft deletion promises neither recoverability nor indefinite retention.
 

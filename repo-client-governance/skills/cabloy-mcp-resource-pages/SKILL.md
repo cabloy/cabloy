@@ -8,6 +8,8 @@ compatibility: Requires an already-connected Cabloy MCP server, a client that ca
 
 Use only the client's already-connected MCP tools and current authorization. This is an end-user navigation and browser-handoff workflow, not a second CRUD API. Do not inspect a repository, source tree or environment files; do not start a server, obtain credentials, configure a connection or construct an arbitrary URL.
 
+Load this applicable Skill before executing the navigation helper. Discovery and contract metadata lookup may precede loading; if supported loading cannot be established, stop before execution. This is a client workflow requirement, not a server-enforced gate or authorization grant. This Skill is self-contained for navigation and does not automatically load query or mutation Skills.
+
 A page link is navigation only. It does not prove browser authentication, Site admission, Resource permission, record existence, business-operation success or permission to perform a later write. Keep business queries and mutations in their MCP business Tools; use this Skill only to select and return an authorized standard Resource page link.
 
 ## 1. Keep one connection and exact tool identity
@@ -18,7 +20,7 @@ Keep the selected MCP connection fixed through discovery, any business operation
 
 Pass the **exact server-published source tool name** in `sourceTool`. Preserve the original name through client prefixes, display aliases or normalization. Never infer a Resource by splitting a tool name, substitute a guessed `_view` or other CRUD tool, or invent a source tool. The source must be a currently visible Resource-backed tool on the selected connection; the helper and its server-side checks determine which requested target pages are available.
 
-The existing [query Skill's entity-result guidance](../cabloy-mcp-query/SKILL.md#default-browser-view-handoff-for-entity-results) owns the required default `view` handoff after a successful entity-oriented query. Use this Skill for the broader intent-routing cases below; do not use it to replace that query workflow or to add links to generic query results.
+For an entity-oriented successful query, request default `view` links only for one or a small number of explicitly selected, identifiable records with stable returned IDs—not broad/generic lists, analysis or pure field/data answers. Respect an explicit no-links/data-only request. Keep any successful query result if navigation is unavailable; a link is not query or record-existence proof. These conditions are included here for navigation intent routing; this Skill does not execute or replace the independent query workflow.
 
 ## 2. Choose the page from the user's intent
 
@@ -26,7 +28,7 @@ Choose the smallest page handoff that satisfies the request. When a positive sce
 
 | User intent or workflow result                                                                                 | Page request                          | Default behavior                                                                                                                                                                               |
 | -------------------------------------------------------------------------------------------------------------- | ------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Inspect one clearly identified entity, or a small set of explicitly selected entities with stable returned IDs | `view` for each returned ID           | Must request and present `view` links for successful, explicitly selected entities; follow the query Skill's entity-result conditions for queries.                                             |
+| Inspect one clearly identified entity, or a small set of explicitly selected entities with stable returned IDs | `view` for each returned ID           | Must request and present `view` links for successful, explicitly selected entities; use the entity-result conditions above for queries.                                                        |
 | Browse a broad collection or ordinary paginated results                                                        | none                                  | Do not add a link automatically. Use `list` only when the user explicitly asks to open the management/list page.                                                                               |
 | Open a management list or Resource collection                                                                  | `list`                                | Must request and present `list` when explicitly asked to open, browse or manage the collection in the browser; do not ask again.                                                               |
 | Fill in a new business record in the browser                                                                   | `create`                              | Must request and present `create` for an explicit browser form request; do not create a record through MCP merely to supply the page.                                                          |
@@ -89,7 +91,7 @@ For canonical server semantics, read [Resource page links](../../../repo-docs/mc
 
 ## 5. Separate navigation from mutations and recovery
 
-A `create`, `view` or `edit` page link never executes a business operation. If the user asks to create, update or delete data through MCP, use the appropriate currently authorized MCP business Tool and its current contract. After successful creation with a stable returned ID, complete the required post-create handoff above; for other outcomes, follow the intent matrix. If the user only asks to open a browser form, return the requested page link without performing a mutation.
+A `create`, `view` or `edit` page link never executes a business operation. If the user asks to create, update or delete data through MCP, establish loading of the applicable mutation Skill before business execution, then use the currently authorized business Tool and its current contract; image upload/binding belongs entirely to the more specific image Skill. A reference here does not load another Skill. After successful creation with a stable returned ID, complete the required post-create handoff above; for other outcomes, follow the intent matrix. If the user only asks to open a browser form, return the requested page link without performing a mutation.
 
 A successful mutation response may be `null` or an empty completion acknowledgment. Do not treat a generated page link, a navigable URI or an empty completion as read-back proof, a row-count guarantee or proof that the intended state persisted. When the user needs confirmation, perform a fresh authorized read on the same connection and report only what that read establishes.
 

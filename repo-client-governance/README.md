@@ -2,10 +2,11 @@
 
 Standalone, end-user skills for clients already connected to a Cabloy MCP server. These instructions help a client use the tools it can currently discover; they do not configure a server, implement business APIs or grant permissions.
 
-## Available skill
+## Available skills
 
 | Skill                                                                  | Purpose                                                                                                                                                           |
 | ---------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| [cabloy-mcp-mutations](skills/cabloy-mcp-mutations/SKILL.md)           | Create/delete, preserve a complete aggregate through fresh read-modify-update, or execute an explicitly partial/command contract once without blind replay.       |
 | [cabloy-mcp-query](skills/cabloy-mcp-query/SKILL.md)                   | Discover an authorized query tool, retrieve its current compact query capabilities, build a native JSON predicate and report the actual result.                   |
 | [cabloy-mcp-image](skills/cabloy-mcp-image/SKILL.md)                   | Resolve the scene and current upload policy, prepare an image copy, upload once and optionally bind its acknowledged identity through a complete resource update. |
 | [cabloy-mcp-resource-pages](skills/cabloy-mcp-resource-pages/SKILL.md) | Choose trusted Resource page links for explicit list, create, view, edit and browser-handoff intents on the same MCP connection.                                  |
@@ -16,12 +17,14 @@ Each skill is self-contained in its `SKILL.md`. It requires no monorepo checkout
 
 **Connecting an MCP server does not install or load a skill.** MCP tool discovery and client skill loading are separate mechanisms.
 
-1. Obtain the selected skill directory, such as `skills/cabloy-mcp-query/`, `skills/cabloy-mcp-image/` or `skills/cabloy-mcp-resource-pages/`, including `SKILL.md`.
+1. Obtain the selected skill directory, such as `skills/cabloy-mcp-mutations/`, `skills/cabloy-mcp-query/`, `skills/cabloy-mcp-image/` or `skills/cabloy-mcp-resource-pages/`, including `SKILL.md`.
 2. Follow your client's documented manual skill installation or loading mechanism. Use its supported directory import, skill upload or equivalent; names, locations, activation and session refresh vary by client.
 3. Confirm that the client has loaded the selected skill and can discover tools on the intended, already-connected server.
 4. Submit a request matching that skill's stated scope. The skill first resolves the current contract and authorization boundaries, then uses only the admitted workflow.
 
-Do not run repository setup commands or read credentials to load this skill. If the client does not support skills, follow the query tool's description: call `cabloy_tool_contract` with `{ "tool": "<exact server tool name>", "section": "query" }`, compose admitted native arguments and execute the business query. **Real query success does not require this skill.** The same server contract and authorization apply with or without it.
+**Load the applicable Skill before business execution**, including prerequisite business reads. Discovery and contract metadata lookup may precede loading to identify the right workflow. If the client does not support loading or loading cannot be established, stop before business execution and report that limitation; do not use direct tool execution as a fallback. This is a client workflow requirement, not a server-enforced Skill gate. Server authorization and validation remain independent and unchanged. Do not run repository setup commands or read credentials to load a Skill.
+
+Choose the smallest applicable workflow: ordinary mutations use `cabloy-mcp-mutations`; the more specific `cabloy-mcp-image` owns the entire upload/bind sequence, including resource reads and update, without automatic double loading. Query and navigation Skills remain independent and self-contained. Their bounded default link follow-ups do not require automatically loading the navigation Skill. A separate task outside a loaded Skill's scope requires its own applicable loaded Skill, not blanket permission from the earlier task.
 
 This directory supplies no automatic installation, client registration, platform adapters, registry, hooks or renderer integration. It is separate from repository-development skills in `repo-agent-governance/skills`; do not render it into development adapters or assume it is installed because repository instructions are loaded.
 
@@ -59,7 +62,7 @@ Verify these stages separately:
 | Implicit selection | Submit representative business requests without naming the skill; include neighboring or excluded tasks to check unintended selection. Use client-visible loading/invocation evidence where available, not a successful tool call as a proxy.          |
 | Execution          | Explicitly invoke the skill where supported to test its workflow independently, then verify tool selection, current contract use, retained user intent, authorization boundaries and actual results. Check required reference loading when applicable. |
 
-Implicit selection is a client/model decision, not a guarantee that every matching request will use the skill. Explicit invocation can help test or request a workflow, but does not grant business authority or replace backend enforcement. Keep server regressions and live client observations distinct; if loading evidence is unavailable, report that limit rather than inferring skill use.
+Implicit selection is a client/model decision, not a guarantee that every matching request will use the skill. Explicit invocation can help test or request a workflow, but does not grant business authority or replace backend enforcement. Keep server regressions and live client observations distinct; if loading cannot be established, report that limit and stop before business execution rather than inferring Skill use.
 
 ## Connection naming and multiple servers
 
@@ -71,6 +74,8 @@ For a multi-server client check, use two already-authorized connections with ove
 
 ## Contract and safety boundary
 
+- The mutations Skill uses current whole `input`/`output` contracts, requires a fresh complete detail read before full CRUD update, projects to accepted input, preserves unrelated editable values and nested IDs, applies requested edits, then submits once. Missing/denied/incomplete reads stop the write; never infer nested deletion. Explicit partial updates and business commands use their own contracts, not a CRUD body. HTTP PATCH and public names do not classify semantics.
+- Read-before-write does not prevent races. The backend must validate current authority, state and applicable preconditions; honor supported version controls without inventing them. User intent/confirmation remains bounded. Errors or partial writes do not imply rollback or permit blind replay; valid null completion is acknowledgment, not read-back proof.
 - Contract lookup is metadata retrieval, not execution of the target Action, a row query or a trial write. The helper is visible with any visible Action and checks the exact target's current scope and guards afresh for all target types.
 - The query skill sends exactly `{ "tool": "<exact server tool name>", "section": "query" }`, without a client-added prefix or display-name normalization. Personal selection/consent catalogs contain Controller Actions only; the helper neither widens a selected set nor grants execution permission.
 - The generic helper defaults to a schema-free `overview`; `input` / `output` return one whole public MCP schema as data before declaration compaction, and output reflects projection/wrapping. The query skill uses only `query`, not both schema directions or arbitrary fragments. An unavailable helper/section is a limitation, not a reason to call a legacy helper or attempt an old-server fallback.

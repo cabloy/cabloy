@@ -8,6 +8,8 @@ compatibility: Requires an already-connected Cabloy MCP server, a client that ca
 
 Use only the client's already-connected MCP tools and current authorization. This is an end-user workflow for an image upload and an optional binding to an existing business resource. Do not inspect a repository, source tree or environment files; do not start a server, obtain credentials, configure a connection or invent an image scene.
 
+Load this applicable Skill before executing business Actions, including scene-policy and resource reads. Discovery and contract metadata lookup may precede loading; if the client cannot load it or its loading cannot be established, stop before business execution. This is a client workflow requirement, not a server-enforced gate or authorization grant. This more specific Skill owns the entire upload/bind workflow, including the complete resource update; do not automatically load the generic mutations Skill as well.
+
 Image creation and business-resource binding are separate persisted writes. Treat the upload as non-idempotent and the update as an independent mutation. A timeout or error does not prove that the server rolled back either operation.
 
 ## 1. Resolve the target and the requested operation
@@ -20,7 +22,7 @@ Determine which of these the user requested:
 - **Upload and bind:** upload the image, then assign its canonical image identity to a field on one existing business resource.
 - **Bind an existing image:** do not upload; use only when the user supplies an already acknowledged image identity and explicitly requests the binding.
 
-Do not silently turn upload-only into a resource update. A request to replace an image must identify the target resource and the intended image field clearly enough to select one authorized read and update path.
+Honor required client confirmation and the user's approval only within its stated target, fields and effects; no connection, Skill or earlier approval grants blanket write permission. Clarify changed scope or destructive effects before writing, without repeatedly reconfirming unchanged approved scope. Do not silently turn upload-only into a resource update. A request to replace an image must identify the target resource and the intended image field clearly enough to select one authorized read and update path.
 
 Discover current tools on the selected connection and read their descriptions and argument declarations. Find an eligible write Action that accepts the image bytes or an explicitly supported image-upload representation. Prefer the server's current JSON/base64 image Action when the client has local bytes and its declared contract supports them. Do not assume a tool name, controller name, scene name, provider, storage backend or business module. Multipart, direct-upload, URL-ingest and provider-specific operations are different workflows; do not send a JSON/base64 payload to one of them.
 
@@ -79,7 +81,7 @@ When binding, call the selected read Action once before creating an image. Use i
 
 Project the read result onto the update input contract rather than copying the response blindly:
 
-- retain required editable scalar values and existing nested records that the update contract requires;
+- preserve all unrelated editable scalar values, objects and nested collections the full update can overwrite, not just required fields; never infer nested deletion from omitted data or an incomplete read;
 - retain declared nested identities when preserving existing children;
 - omit root identity, instance/deletion/system metadata, derived fields, delivery URLs, resolved image view objects and UI-only fields unless the update schema explicitly accepts them;
 - do not copy masked or transformed read values into a write unless the current update contract explicitly documents that representation as accepted;
@@ -108,7 +110,7 @@ If the user requested upload only, return the safe acknowledged image fields per
 
 ## 6. Bind with a complete, current update call
 
-For upload-and-bind, replace only the resolved stored image identity in the previously validated update projection. Call the selected update Action once using its exact current flat or grouped argument contract. Keep path parameters, body wrappers and nested locations exactly as declared; do not add an artificial `image` or `body` wrapper.
+For upload-and-bind, obtain a fresh authorized complete resource read after upload and re-project it onto the current update input before binding, since preparation/upload may take time. Stop with the acknowledged image identity if this read is missing, denied or incomplete; do not re-upload. Replace only the resolved stored image identity. A fresh read does not prevent races: the backend must validate current authority, state and applicable preconditions. Honor supported version controls exactly; never invent them or promise concurrency protection. Call the selected update Action once using its exact current flat or grouped argument contract. Keep path parameters, body wrappers and nested locations exactly as declared; do not add an artificial `image` or `body` wrapper.
 
 A successful update response may be an empty or null completion acknowledgment. Treat it as an acknowledged dispatch result, not proof of read-back, affected-row count, resource existence after the call or deletion of the previous image. If the user needs verification, perform a new authorized read using the same selected resource and confirm only the declared image identity/relation fields. A verification read is separate from the mutation and does not grant additional permission.
 

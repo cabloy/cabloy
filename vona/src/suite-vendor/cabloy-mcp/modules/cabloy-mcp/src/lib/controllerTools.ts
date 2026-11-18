@@ -403,13 +403,22 @@ export async function createControllerToolServer(
           const outputCheck = isPrimitiveSchema(rawOutput, schemas)
             ? fromJsonSchema(outputContract as Parameters<typeof fromJsonSchema>[0])['~standard']
             : undefined;
-          const description = options.description
+          const resource = Object.entries(recordResourceNameToRoutePath).find(
+            ([, routePathInfo]) => routePathInfo.controller === route.controller,
+          )?.[0];
+          const standardCrudUpdate =
+            options.standardCrudUpdate ??
+            (resource !== undefined && route.action === 'update' && readOnly === false);
+          const businessDescription = options.description
             ? app.meta.text(options.description)
             : operation.description ||
               operation.summary ||
               `${controller.beanOptions.beanFullName}#${route.action}`;
+          const description = standardCrudUpdate
+            ? `${businessDescription}\n\nFull CRUD update, not patch: use cabloy-mcp-mutations and read the current resource first.`
+            : businessDescription;
           const queryDescription = queryBindings.length
-            ? `${description}\n\nFor alternatives within one query, prefer a single call using where.or rather than separate calls and client-side merging. Use where.and for combined constraints; named filters are additional AND constraints. ${queryCapabilities.length ? `Before constructing where, call ${toolContractName} with {"tool":"${name}","section":"query"} for current argument paths, admitted fields, operators, exact operands and limits. The compact object declaration is not the full validation contract.` : 'Follow the full inputSchema for argument locations, admitted fields, operators and value types.'}`
+            ? `${description}\n\nUse the cabloy-mcp-query Skill for this query.`
             : description;
           const tool: Tool = {
             name,
@@ -424,9 +433,6 @@ export async function createControllerToolServer(
               ...(readOnly ? { destructiveHint: false } : {}),
             },
           };
-          const resource = Object.entries(recordResourceNameToRoutePath).find(
-            ([, routePathInfo]) => routePathInfo.controller === route.controller,
-          )?.[0];
           tools.set(name, {
             identity: { controller: controller.beanOptions.beanFullName, action: route.action },
             controller: route.controller,

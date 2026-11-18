@@ -46,6 +46,8 @@ export interface IMcpToolOptions {
   description?: string | ILocaleMagic;
   /** The intended read classification for this action. */
   readOnly?: boolean;
+  /** Full CRUD update; defaults to true for a Resource update Action with readOnly false. */
+  standardCrudUpdate?: boolean;
   /** The top-level response fields exposed by this action. */
   output?: { pick: string[] };
   /** Declaration-only compaction paths from the final MCP argument/result root. */

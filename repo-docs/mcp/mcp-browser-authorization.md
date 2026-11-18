@@ -283,7 +283,7 @@ Tool discovery applies the OAuth ceiling, personal selection if any, and fresh c
 
 With optional training active, Student select/group/aggregate require select permission, and view/summary require view permission. Neither implies the other. Create/update/delete additionally require a write-capable scope and their independent permissions. Student examples are not a shared catalog ceiling; without training, other eligible tools may remain, never fixture fallback.
 
-For a read-only check:
+For a read-only check, load the applicable self-contained query Skill before business execution. Discovery and contract metadata lookup may precede loading; if the client cannot load it or loading cannot be established, stop rather than call business tools directly. This is a client workflow requirement, not a server-enforced gate; browser consent, scopes and independent business authorization are unchanged. Ordinary mutations use the mutations Skill; the more specific image Skill owns the complete upload/bind workflow without automatic double loading.
 
 1. Authorize a fresh connection, list tools, and inspect schemas. Use an existing Student the account may already view, not a disposable test identity or new seed data.
 2. If separately select-authorized, call `training-student_student_select` with `{ "name": "Student", "pageNo": 1, "pageSize": 10 }` and choose a matching row's returned ID. LIKE wildcards `%` and `_` retain their usual meaning.

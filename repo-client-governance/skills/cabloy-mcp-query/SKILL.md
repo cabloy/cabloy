@@ -8,6 +8,8 @@ compatibility: Requires an already-connected Cabloy MCP server exposing eligible
 
 Use only the client's already-connected MCP tools and current authorization. This is an end-user query workflow: do not inspect source code, require a repository checkout, run development commands, read environment files or obtain credentials. If the connection or required tool is unavailable, report the limitation rather than configuring an alternative.
 
+Load this applicable Skill before executing business queries. Discovery and contract metadata lookup may precede loading; if the client cannot load it or its loading cannot be established, stop before business execution. This is a client workflow requirement, not a server-enforced gate or authorization grant. This Skill is self-contained, including its bounded entity-view handoff below; do not automatically load mutation or navigation Skills for this workflow.
+
 ## 1. Select an eligible tool
 
 First resolve the intended business/site and environment from the user's request and the client's available connection information. Connection names are labels, not proof of identity, capabilities or permissions; do not require a name containing `cabloy`. If multiple connections fit and the target remains unclear, ask before sending business arguments or reading rows. Do not query every server to guess the target.
@@ -58,7 +60,7 @@ Capability retrieval executes no target Action, reads no rows and performs no tr
 
 ## 3. Build one native JSON query
 
-The formal query tool advertises a compact object for `where`, retaining its original optionality. Explicit `discovery` paths may also compact selected declaration schemas. This changes declarations only: full validators remain, retrievable public schema data is not redacted, and compact output schemas do not shrink business results. A connected client can retrieve the contract and successfully execute the query without this optional skill. The server still validates the complete native predicate language, typed operands and budgets. Compose only admitted leaves using these strict node shapes:
+The formal query tool may advertise a compact object for `where`, retaining its original optionality, and may compact selected declaration schemas through explicit `discovery` paths. This changes declarations only: full validators remain, retrievable public schema data is not redacted, and compact output schemas do not shrink business results. Contract retrieval does not replace the required client Skill loading before business execution. The server still validates the complete native predicate language, typed operands and budgets. Compose only admitted leaves using these strict node shapes:
 
 ```text
 { "field": admittedField, "op": admittedOperator, "value": exactTypedOperand }
