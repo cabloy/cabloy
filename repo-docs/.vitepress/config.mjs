@@ -368,6 +368,7 @@ export default defineConfig({
             { text: 'File Guide', link: '/backend/file-guide' },
             { text: 'Markdown Guide', link: '/backend/markdown-guide' },
             { text: 'Mail Guide', link: '/backend/mail-guide' },
+            { text: 'AI Guide', link: '/backend/ai-guide' },
             { text: 'Serialization Guide', link: '/backend/serialization-guide' },
           ],
         },

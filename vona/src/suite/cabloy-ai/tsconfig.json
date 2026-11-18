@@ -1,0 +1,10 @@
+{
+  "extends": "./tsconfig.base",
+  "compilerOptions": {},
+  "references": [
+    {
+      "path": "modules/cabloy-ai/tsconfig.build.json"
+    }
+  ],
+  "exclude": ["modules"]
+}

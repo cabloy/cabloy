@@ -1,0 +1,76 @@
+{
+  "name": "vona-module-cabloy-ai",
+  "version": "5.0.0",
+  "description": "",
+  "keywords": [
+    "Vona Module"
+  ],
+  "author": "",
+  "files": [
+    "assets",
+    "cli",
+    "dist",
+    "src"
+  ],
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": [
+        "./src/index.ts",
+        "./dist/index.d.ts"
+      ],
+      "import": "./src/index.ts",
+      "default": "./dist/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "scripts": {
+    "clean": "rimraf dist tsconfig.build.tsbuildinfo",
+    "tsc:publish": "npm run clean && node ../../../../../packages-cli/cli/src/bin/vona.ts :bin:buildModule --sourcemap && tsc -p tsconfig.build.json",
+    "prepublishOnly": "npm run tsc:publish",
+    "prepack": "clean-package",
+    "postpack": "clean-package restore"
+  },
+  "dependencies": {
+    "@ai-sdk/anthropic": "4.0.105",
+    "@ai-sdk/openai": "4.0.118",
+    "@ai-sdk/openai-compatible": "3.0.92",
+    "ai": "7.0.173"
+  },
+  "devDependencies": {
+    "clean-package": "^2.2.0",
+    "rimraf": "^6.1.3"
+  },
+  "clean-package": {
+    "indent": 2,
+    "remove": [
+      "clean-package",
+      "devDependencies",
+      "exports.\\..import"
+    ]
+  },
+  "title": "cabloy-ai",
+  "vonaModule": {
+    "fileVersion": 1,
+    "dependencies": {
+      "a-vona": "5.0.0",
+      "a-onion": "5.0.0",
+      "a-orm": "5.0.0",
+      "a-openapiutils": "5.0.0",
+      "a-index": "5.0.0",
+      "a-ormutils": "5.0.0",
+      "a-version": "5.0.0",
+      "a-core": "5.0.0",
+      "a-web": "5.0.0",
+      "a-user": "5.0.0",
+      "a-redlock": "5.0.0"
+    },
+    "onions": {
+      "aiScene": {
+        "optionsGlobalInterfaceName": "IDecoratorAiSceneOptions",
+        "optionsGlobalInterfaceFrom": "vona-module-cabloy-ai",
+        "boilerplate": "aiScene/boilerplate"
+      }
+    }
+  }
+}

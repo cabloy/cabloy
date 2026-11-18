@@ -1,0 +1,5 @@
+{
+  "extends": "../../tsconfig.base",
+  "compilerOptions": {},
+  "include": ["src", "src/.metadata/**/*"]
+}

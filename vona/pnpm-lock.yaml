@@ -507,6 +507,9 @@ importers:
       vona-module-basic-siteweb:
         specifier: workspace:^
         version: link:src/suite/cabloy-basic/modules/basic-siteweb
+      vona-module-cabloy-ai:
+        specifier: workspace:^
+        version: link:src/suite/cabloy-ai/modules/cabloy-ai
       vona-module-cabloy-mcp:
         specifier: workspace:^
         version: link:src/suite-vendor/cabloy-mcp/modules/cabloy-mcp
@@ -721,6 +724,12 @@ importers:
       '@zhennann/currency':
         specifier: ^2.0.4
         version: 2.0.4
+      axios:
+        specifier: ^1.20.0
+        version: 1.21.0(debug@4.4.3(supports-color@7.2.0))(supports-color@7.2.0)
+      json-schema:
+        specifier: ^0.4.0
+        version: 0.4.0
       openapi3-ts:
         specifier: ^4.6.1
         version: 4.6.2
@@ -850,6 +859,12 @@ importers:
       '@zhennann/currency':
         specifier: ^2.0.4
         version: 2.0.4
+      axios:
+        specifier: ^1.20.0
+        version: 1.21.0(debug@4.4.3(supports-color@7.2.0))(supports-color@7.2.0)
+      json-schema:
+        specifier: ^0.4.0
+        version: 0.4.0
       openapi3-ts:
         specifier: ^4.6.1
         version: 4.6.2
@@ -979,6 +994,12 @@ importers:
       '@zhennann/currency':
         specifier: ^2.0.4
         version: 2.0.4
+      axios:
+        specifier: ^1.20.0
+        version: 1.21.0(debug@4.4.3(supports-color@7.2.0))(supports-color@7.2.0)
+      json-schema:
+        specifier: ^0.4.0
+        version: 0.4.0
       openapi3-ts:
         specifier: ^4.6.1
         version: 4.6.2
@@ -1108,6 +1129,12 @@ importers:
       '@zhennann/currency':
         specifier: ^2.0.4
         version: 2.0.4
+      axios:
+        specifier: ^1.20.0
+        version: 1.21.0(debug@4.4.3(supports-color@7.2.0))(supports-color@7.2.0)
+      json-schema:
+        specifier: ^0.4.0
+        version: 0.4.0
       openapi3-ts:
         specifier: ^4.6.1
         version: 4.6.2
@@ -3785,6 +3812,34 @@ importers:
         specifier: ^6.1.3
         version: 6.1.4
 
+  src/suite/cabloy-ai:
+    dependencies:
+      vona-module-cabloy-ai:
+        specifier: ^5.0.0
+        version: link:modules/cabloy-ai
+
+  src/suite/cabloy-ai/modules/cabloy-ai:
+    dependencies:
+      '@ai-sdk/anthropic':
+        specifier: 4.0.105
+        version: 4.0.105(@cabloy/zod@4.3.8)
+      '@ai-sdk/openai':
+        specifier: 4.0.118
+        version: 4.0.118(@cabloy/zod@4.3.8)
+      '@ai-sdk/openai-compatible':
+        specifier: 3.0.92
+        version: 3.0.92(@cabloy/zod@4.3.8)
+      ai:
+        specifier: 7.0.173
+        version: 7.0.173(@cabloy/zod@4.3.8)
+    devDependencies:
+      clean-package:
+        specifier: ^2.2.0
+        version: 2.2.0
+      rimraf:
+        specifier: ^6.1.3
+        version: 6.1.4
+
   src/suite/cabloy-basic:
     dependencies:
       vona-module-basic-metrics:
@@ -3828,6 +3883,40 @@ importers:
         version: 6.1.4
 
 packages:
+
+  '@ai-sdk/anthropic@4.0.105':
+    resolution: {integrity: sha512-i6kmv6y+FGTBxOPtLRrb5I+92WcFFGubhd33CD0JeaSyFOnLJ8my4a9olkAgyR9fACHMzxFBmoEHd0uO4i72bA==}
+    engines: {node: '>=22'}
+    peerDependencies:
+      zod: ^3.25.76 || ^4.1.8
+
+  '@ai-sdk/gateway@4.0.146':
+    resolution: {integrity: sha512-rJ5NQSyjnpo6HSBEYc9Ff6k1EROUuB7KeAfHYVbVDsk68ynY0Eb8JeWflZKXlT6NhYgqyCiBDxE5blXWACXMKQ==}
+    engines: {node: '>=22'}
+    peerDependencies:
+      zod: ^3.25.76 || ^4.1.8
+
+  '@ai-sdk/openai-compatible@3.0.92':
+    resolution: {integrity: sha512-2gV7HHV4qpx+8GotOZMmGqY270ExkftwFG5+DM6nChLmRaP6WP9JKj4e9WjLhih/GsPL9dSGnZHzwCsofHwiAQ==}
+    engines: {node: '>=22'}
+    peerDependencies:
+      zod: ^3.25.76 || ^4.1.8
+
+  '@ai-sdk/openai@4.0.118':
+    resolution: {integrity: sha512-pBsFeB+IudrX96P0ic9AO/1NPnfB6IyoS2B2pnhBJ/Ovt4bsvAmBOPeUxwEfYbQyfetJdVFep9sfYX42uVX3SQ==}
+    engines: {node: '>=22'}
+    peerDependencies:
+      zod: ^3.25.76 || ^4.1.8
+
+  '@ai-sdk/provider-utils@5.0.81':
+    resolution: {integrity: sha512-pfvvdQ3d1WxdBuug/mnGEP6E48cPokwD8dMBnsFeeAUp0/rb/H2aj0f3mwOiY62gu/Cu5GO44e+SE5nDHyBWMA==}
+    engines: {node: '>=22'}
+    peerDependencies:
+      zod: ^3.25.76 || ^4.1.8
+
+  '@ai-sdk/provider@4.0.38':
+    resolution: {integrity: sha512-GElz70UUCuDFFyD6m6aQJFgRY0HEABQzB5otzgkrisYaF5mnss7o0upAmbBTSD6KWiM9h7lZm1ls2c7xzHR8CA==}
+    engines: {node: '>=22'}
 
   '@apimatic/authentication-adapters@0.5.14':
     resolution: {integrity: sha512-V7nhHShPrU8LfjKKHoVJNS50SveSL77CexVuS4aeQyXx99HwdQVJwl2MK0KAYM6/b2ufQbJ7Eee2fzQT0TVXSQ==}
@@ -5415,6 +5504,9 @@ packages:
   '@so-ric/colorspace@1.1.6':
     resolution: {integrity: sha512-/KiKkpHNOBgkFJwu9sh48LkHSMYGyuTcSFK/qMBdnOAlrRJzRSXAOFB5qwzaVQuDl8wAvHVMkaASQDReTahxuw==}
 
+  '@standard-schema/spec@1.1.0':
+    resolution: {integrity: sha512-l2aFy5jALhniG5HgqrD6jXLi/rUWrKvqN/qJx6yoJsgKhblVd+iqqU4RCXavm/jPityDo5TCvKMnpjKnOriy0w==}
+
   '@stylistic/eslint-plugin@5.10.0':
     resolution: {integrity: sha512-nPK52ZHvot8Ju/0A4ucSX1dcPV2/1clx0kLcH5wDmrE4naKso7TUC/voUyU1O9OTKTrR6MYip6LP0ogEMQ9jPQ==}
     engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
@@ -5948,6 +6040,10 @@ packages:
     resolution: {integrity: sha512-SB8xqipSzZHUePCCLNeYxqnxq83X61/qzNhjQGbTfjxGZIeOEP7tBgWYX05Tcd6CgE02WdTJnh5b8kMZJ/+bnQ==}
     engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
 
+  '@vercel/oidc@3.2.0':
+    resolution: {integrity: sha512-UycprH3T6n3jH0k44NHMa7pnFHGu/N05MjojYr+Mc6I7obkoLIJujSWwin1pCvdy/eOxrI/l3uDLQsmcrOb4ug==}
+    engines: {node: '>= 20'}
+
   '@vue/compiler-core@3.0.11':
     resolution: {integrity: sha512-6sFj6TBac1y2cWCvYCA8YzHJEbsVkX7zdRs/3yK/n1ilvRqcn983XvpBbnN3v4mZ1UiQycTvOiajJmOgN9EVgw==}
 
@@ -5985,6 +6081,9 @@ packages:
 
   '@vue/shared@3.5.36':
     resolution: {integrity: sha512-wFfwq7gnEASrItkuD0PPp+T57jRilooFso3mv9ngMVz4RnLRUaeYern7T+19vgNv7bdQ+qzdjNt//EaJ1kcf6w==}
+
+  '@workflow/serde@4.1.0':
+    resolution: {integrity: sha512-pav4F2BoirECWR7Nf1TKt+2eETcBj7jj4cBefQ8VXQCA6NPkaKeLfj/zMgi+3zYV5ZIBT4GuUiphsj0/b9hPQQ==}
 
   '@zhennann/common-bin@4.0.1':
     resolution: {integrity: sha512-76gun6uGtvHyJcUotV37VWCI9K8oDeOVG+xdjuL6+K4njwtSZ9AWSK8Dfuaao4PkeJKAWpQm222Q5bQLpx1NfQ==}
@@ -6026,6 +6125,12 @@ packages:
   agent-base@7.1.4:
     resolution: {integrity: sha512-MnA+YT8fwfJPgBx3m60MNqakm30XOkyIoH1y6huTQvC0PwZG7ki8NacLBcrPbNoo8vEZy7Jpuk7+jMO+CUovTQ==}
     engines: {node: '>= 14'}
+
+  ai@7.0.173:
+    resolution: {integrity: sha512-dLea37zT1h7cjkUsBprU4Rq35HJqhtHHaq1jTAXjHQoyfpeswpgCrhjZJWdWc10gjEAxmz114py7iLGQ3xIMxw==}
+    engines: {node: '>=22'}
+    peerDependencies:
+      zod: ^3.25.76 || ^4.1.8
 
   ajv@6.15.0:
     resolution: {integrity: sha512-fgFx7Hfoq60ytK2c7DhnF8jIvzYgOMxfugjLOSMHjLIPgenqa7S7oaagATUq99mV6IYvN2tRmC0wnTYX6iPbMw==}
@@ -6853,6 +6958,10 @@ packages:
   eventemitter3@4.0.7:
     resolution: {integrity: sha512-8guHBZCwKnFhYdHr2ysuRWErTwhoN2X8XELRlrRwpmfeY2jjuUN4taQMsULKUVo1K4DvZl+0pgfyoysHxvmvEw==}
 
+  eventsource-parser@3.1.1:
+    resolution: {integrity: sha512-EKN1vKAMcZ8MlYMpaNuxN6R9yakzH6uajHcHVTqWJzvu5pWw9DyhbP35HH8MVBQ+dZjAfDxk+A8NiR9KWaXiyQ==}
+    engines: {node: '>=18.0.0'}
+
   expand-template@2.0.3:
     resolution: {integrity: sha512-XYfuKMvj4O35f/pOXLObndIRvyQ+/+6AhODh+OKWj9S9498pHHn/IMszH+gt0fBCRWMNfk1ZSp5x3AifmnI2vg==}
     engines: {node: '>=6'}
@@ -7423,6 +7532,9 @@ packages:
 
   json-schema-traverse@0.4.1:
     resolution: {integrity: sha512-xbbCH5dCYU5T8LcEhhuh7HJ88HXuW3qsI3Y0zOZFKfZEHcpWiHU/Jxzk629Brsab/mMiHQti9wMP+845RPe3Vg==}
+
+  json-schema@0.4.0:
+    resolution: {integrity: sha512-es94M3nTIfsEPisRafak+HDLfHXnKBhV3vU5eqPcS3flIWqcxJWgXHXiey3YrpaNsanY5ei1VoYEbOzijuq9BA==}
 
   json-stable-stringify-without-jsonify@1.0.1:
     resolution: {integrity: sha512-Bdboy+l7tA3OGW6FjyFHWkP5LuByj1Tk33Ljyq0axyzdk9//JSi2u3fP1QSmd1KNwq6VOKYGlAu87CisVir6Pw==}
@@ -9261,6 +9373,43 @@ packages:
 
 snapshots:
 
+  '@ai-sdk/anthropic@4.0.105(@cabloy/zod@4.3.8)':
+    dependencies:
+      '@ai-sdk/provider': 4.0.38
+      '@ai-sdk/provider-utils': 5.0.81(@cabloy/zod@4.3.8)
+      zod: '@cabloy/zod@4.3.8'
+
+  '@ai-sdk/gateway@4.0.146(@cabloy/zod@4.3.8)':
+    dependencies:
+      '@ai-sdk/provider': 4.0.38
+      '@ai-sdk/provider-utils': 5.0.81(@cabloy/zod@4.3.8)
+      '@vercel/oidc': 3.2.0
+      zod: '@cabloy/zod@4.3.8'
+
+  '@ai-sdk/openai-compatible@3.0.92(@cabloy/zod@4.3.8)':
+    dependencies:
+      '@ai-sdk/provider': 4.0.38
+      '@ai-sdk/provider-utils': 5.0.81(@cabloy/zod@4.3.8)
+      zod: '@cabloy/zod@4.3.8'
+
+  '@ai-sdk/openai@4.0.118(@cabloy/zod@4.3.8)':
+    dependencies:
+      '@ai-sdk/provider': 4.0.38
+      '@ai-sdk/provider-utils': 5.0.81(@cabloy/zod@4.3.8)
+      zod: '@cabloy/zod@4.3.8'
+
+  '@ai-sdk/provider-utils@5.0.81(@cabloy/zod@4.3.8)':
+    dependencies:
+      '@ai-sdk/provider': 4.0.38
+      '@standard-schema/spec': 1.1.0
+      '@workflow/serde': 4.1.0
+      eventsource-parser: 3.1.1
+      zod: '@cabloy/zod@4.3.8'
+
+  '@ai-sdk/provider@4.0.38':
+    dependencies:
+      json-schema: 0.4.0
+
   '@apimatic/authentication-adapters@0.5.14':
     dependencies:
       '@apimatic/core-interfaces': 0.2.14
@@ -10812,6 +10961,8 @@ snapshots:
       color: 5.0.3
       text-hex: 1.0.0
 
+  '@standard-schema/spec@1.1.0': {}
+
   '@stylistic/eslint-plugin@5.10.0(eslint@10.14.0(supports-color@7.2.0))':
     dependencies:
       '@eslint-community/eslint-utils': 4.10.1(eslint@10.14.0(supports-color@7.2.0))
@@ -11418,6 +11569,8 @@ snapshots:
       '@typescript-eslint/types': 8.72.1
       eslint-visitor-keys: 5.0.1
 
+  '@vercel/oidc@3.2.0': {}
+
   '@vue/compiler-core@3.0.11':
     dependencies:
       '@babel/parser': 7.29.13
@@ -11490,6 +11643,8 @@ snapshots:
 
   '@vue/shared@3.5.36': {}
 
+  '@workflow/serde@4.1.0': {}
+
   '@zhennann/common-bin@4.0.1(supports-color@7.2.0)':
     dependencies:
       chalk: 4.1.2
@@ -11531,6 +11686,13 @@ snapshots:
       - supports-color
 
   agent-base@7.1.4: {}
+
+  ai@7.0.173(@cabloy/zod@4.3.8):
+    dependencies:
+      '@ai-sdk/gateway': 4.0.146(@cabloy/zod@4.3.8)
+      '@ai-sdk/provider': 4.0.38
+      '@ai-sdk/provider-utils': 5.0.81(@cabloy/zod@4.3.8)
+      zod: '@cabloy/zod@4.3.8'
 
   ajv@6.15.0:
     dependencies:
@@ -12389,6 +12551,8 @@ snapshots:
 
   eventemitter3@4.0.7: {}
 
+  eventsource-parser@3.1.1: {}
+
   expand-template@2.0.3: {}
 
   fast-decode-uri-component@1.0.1: {}
@@ -12954,6 +13118,8 @@ snapshots:
   json-parse-even-better-errors@5.0.0: {}
 
   json-schema-traverse@0.4.1: {}
+
+  json-schema@0.4.0: {}
 
   json-stable-stringify-without-jsonify@1.0.1: {}
 

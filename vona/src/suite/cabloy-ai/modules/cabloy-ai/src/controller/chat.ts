@@ -1,0 +1,68 @@
+import type { IUser } from 'vona-module-a-user';
+import type { IDecoratorControllerOptions } from 'vona-module-a-web';
+
+import { BeanBase } from 'vona';
+import { Api, v } from 'vona-module-a-openapiutils';
+import { Arg, Controller, Web } from 'vona-module-a-web';
+import { z } from 'zod';
+
+import { DtoChatConversation } from '../dto/chatConversation.tsx';
+import { DtoChatCreate } from '../dto/chatCreate.tsx';
+import { DtoChatHistory } from '../dto/chatHistory.tsx';
+import { DtoChatHistoryRequest } from '../dto/chatHistoryRequest.tsx';
+import { DtoChatRun } from '../dto/chatRun.tsx';
+import { DtoChatSend } from '../dto/chatSend.tsx';
+import { DtoChatStatusRequest } from '../dto/chatStatusRequest.tsx';
+
+export interface IControllerOptionsChat extends IDecoratorControllerOptions {}
+
+// Ordinary Passport authentication remains enabled. Owner identity never comes from the body.
+@Controller<IControllerOptionsChat>('chat')
+export class ControllerChat extends BeanBase {
+  @Web.post('create')
+  @Api.body(DtoChatConversation)
+  async create(
+    @Arg.user() user: IUser,
+    @Arg.body() command: DtoChatCreate,
+  ): Promise<DtoChatConversation> {
+    return await this.scope.service.conversation.create(user.id, command);
+  }
+
+  @Web.post('list')
+  @Api.body(v.array(DtoChatConversation))
+  async list(@Arg.user() user: IUser): Promise<DtoChatConversation[]> {
+    return await this.scope.service.conversation.list(user.id);
+  }
+
+  @Web.post('history')
+  @Api.body(DtoChatHistory)
+  async history(
+    @Arg.user() user: IUser,
+    @Arg.body() command: DtoChatHistoryRequest,
+  ): Promise<DtoChatHistory> {
+    return await this.scope.service.conversation.history(user.id, command.conversationId);
+  }
+
+  @Web.post('status')
+  @Api.body(v.object(DtoChatRun), v.nullable())
+  async status(
+    @Arg.user() user: IUser,
+    @Arg.body() command: DtoChatStatusRequest,
+  ): Promise<DtoChatRun | null> {
+    return await this.scope.service.run.status(user.id, command);
+  }
+
+  @Web.post('remove')
+  @Api.body(z.null())
+  async remove(@Arg.user() user: IUser, @Arg.body() command: DtoChatHistoryRequest): Promise<void> {
+    await this.scope.service.conversation.remove(user.id, command.conversationId);
+  }
+
+  /** Native AI SDK UI Message Stream (text/event-stream), not a wrapped JSON result. */
+  @Web.post('send')
+  @Api.contentType('text/event-stream')
+  @Api.bodyCustom(false, z.string())
+  async send(@Arg.user() user: IUser, @Arg.body() command: DtoChatSend): Promise<void> {
+    await this.scope.service.run.send(user.id, command);
+  }
+}
