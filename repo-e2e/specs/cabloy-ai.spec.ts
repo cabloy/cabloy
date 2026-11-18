@@ -339,6 +339,18 @@ test(
       await expect(input).toBeEnabled();
       await expect(page.getByTestId('ai-chat-conversation')).toHaveCount(0);
       await expect(page.getByTestId('ai-chat-send')).toBeDisabled();
+      await input.press('Enter');
+      await expect(input).toHaveValue('');
+      await input.fill('First line');
+      await input.press('End');
+      await input.press('Shift+Enter');
+      await input.press('a');
+      await expect(input).toHaveValue('First line\na');
+      await input.dispatchEvent('keydown', { key: 'Enter', isComposing: true });
+      await input.dispatchEvent('keydown', { key: 'Enter', keyCode: 229 });
+      await input.dispatchEvent('keydown', { key: 'Enter', repeat: true });
+      expect(await postChat<Conversation[]>(request, account, 'list', {})).toEqual([]);
+      expect(sends).toHaveLength(0);
       await input.fill(prompt);
 
       // A failed creation must leave the draft available for another attempt.
@@ -373,7 +385,7 @@ test(
       const created = waitForApiResponse(page, `${chatApiPath}/create`);
       const sent = waitForApiResponse(page, `${chatApiPath}/send`);
       try {
-        await page.getByTestId('ai-chat-send').click();
+        await input.press('Enter');
         await expect(input).toBeDisabled();
         await expect(page.getByTestId('ai-chat-send')).toBeDisabled();
         await expect(page.getByTestId('ai-chat-new')).toBeDisabled();

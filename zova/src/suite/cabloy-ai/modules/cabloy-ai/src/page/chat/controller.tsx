@@ -14,6 +14,7 @@ export class ControllerPageChat extends BeanControllerPageBase {
   $$modelChat: ModelChat;
 
   draft = '';
+  private _sendButton?: HTMLButtonElement;
   private _messagesElement?: HTMLDivElement;
   private _messagesContent?: HTMLDivElement;
   private _messagesObserver?: ResizeObserver;
@@ -49,6 +50,14 @@ export class ControllerPageChat extends BeanControllerPageBase {
     this._resetMessagesFollow();
     if (!needsConversation) this.draft = '';
     await task;
+  }
+
+  private _handleInputKeydown(event: KeyboardEvent) {
+    if (event.key !== 'Enter' || event.shiftKey || event.isComposing || event.keyCode === 229)
+      return;
+    event.preventDefault();
+    if (event.repeat) return;
+    this._sendButton?.click();
   }
 
   retry() {
@@ -131,6 +140,7 @@ export class ControllerPageChat extends BeanControllerPageBase {
 
   protected __dispose__() {
     this._messagesDisposed = true;
+    this._sendButton = undefined;
     this._messagesMounted = false;
     this._disconnectMessages();
     this._messagesElement = undefined;
@@ -293,6 +303,7 @@ export class ControllerPageChat extends BeanControllerPageBase {
                   placeholder={this.scope.locale.TypeMessage()}
                   maxlength={32000}
                   disabled={busy}
+                  onKeydown={event => this._handleInputKeydown(event)}
                   v-model={this.draft}
                 />
               </label>
@@ -314,6 +325,9 @@ export class ControllerPageChat extends BeanControllerPageBase {
                 <ZButton
                   class="btn btn-primary"
                   data-testid="ai-chat-send"
+                  ref={(element: Element | ComponentPublicInstance | null) => {
+                    this._sendButton = (element as HTMLButtonElement | null) ?? undefined;
+                  }}
                   disabled={busy || !this.draft.trim()}
                   onPerform={() => this.send()}
                 >
