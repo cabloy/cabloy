@@ -383,8 +383,20 @@ export class ServiceRun extends BeanBase {
                     ? abortOutcome()
                     : { status: 'failed', errorCode: 'chat_failed' },
                 ));
-              if (final.status !== 'completed')
+              // The committed chat outcome is independent of this bounded naming request.
+              clearTimeout(timeout);
+              if (final.status === 'completed') {
+                await this.scope.service.conversation.generateTitle(
+                  userId,
+                  run.conversationId,
+                  run.id,
+                  command.text.trim(),
+                  bound,
+                  abort.signal,
+                );
+              } else {
                 emit({ type: 'error', errorText: final.errorCode ?? 'chat_failed' });
+              }
               emit({
                 type: 'finish',
                 finishReason: final.status === 'completed' ? 'stop' : 'error',

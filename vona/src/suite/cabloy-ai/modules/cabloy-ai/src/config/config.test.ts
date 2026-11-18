@@ -28,7 +28,8 @@ export function testConfig(): Partial<IAiConfig> {
                   .filter(item => item.type === 'text')
                   .map(item => item.text)
                   .join('') ?? '';
-              if (text.includes('[error]')) throw new Error('Test provider failure');
+              if (text.includes('[error]') || text.includes('[title-error]'))
+                throw new Error('Test provider failure');
               return {
                 content: [{ type: 'text', text: `AI test response: ${text}` }],
                 usage,

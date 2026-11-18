@@ -179,6 +179,7 @@ describe('cabloy-ai native HTTP stream', { concurrency: false }, () => {
       assert.equal(status.status, 'completed');
       assert.equal(String(status.id), finish.messageMetadata.runId);
       const history = await json(fixture, 'history', { conversationId });
+      assert.equal(history.conversation.title, 'HTTP stream test');
       assert.deepEqual(
         history.messages.map((message: any) => [message.role, message.text]),
         [
@@ -222,6 +223,69 @@ describe('cabloy-ai native HTTP stream', { concurrency: false }, () => {
       fixture.conversationIds = [];
     } finally {
       await removeFixture(other);
+      await removeFixture(fixture);
+    }
+  });
+
+  it('saves a first-turn title before closing the stream and keeps it on replay and later turns', async () => {
+    let fixture: IFixture | undefined;
+    try {
+      fixture = await createFixture();
+      const created = await json(fixture, 'create', {});
+      fixture.conversationIds.push(created.id);
+      const input = { conversationId: created.id, requestKey: randomUUID(), text: 'Order design' };
+      const first = await readStream(await request(fixture, 'send', input));
+      assert.equal(
+        first.events.find(event => event.type === 'finish').messageMetadata.status,
+        'completed',
+      );
+      const history = await json(fixture, 'history', { conversationId: created.id });
+      const title = 'AI test response: Order design';
+      assert.equal(history.conversation.title, title);
+      const list = await json(fixture, 'list', {});
+      assert.equal(list.find((item: any) => String(item.id) === String(created.id)).title, title);
+      const replay = await readStream(await request(fixture, 'send', input));
+      assert.equal(replay.events.filter(event => event.type === 'text-delta').length, 0);
+      await readStream(
+        await request(fixture, 'send', {
+          ...input,
+          requestKey: randomUUID(),
+          text: 'A different topic',
+        }),
+      );
+      assert.equal(
+        (await json(fixture, 'history', { conversationId: created.id })).conversation.title,
+        title,
+      );
+    } finally {
+      await removeFixture(fixture);
+    }
+  });
+
+  it('finishes a successful chat even when the separate title request fails', async () => {
+    let fixture: IFixture | undefined;
+    try {
+      fixture = await createFixture();
+      const created = await json(fixture, 'create', {});
+      fixture.conversationIds.push(created.id);
+      const input = { conversationId: created.id, requestKey: randomUUID(), text: '[title-error]' };
+      const stream = await readStream(await request(fixture, 'send', input));
+      assert.equal(
+        stream.events.some(event => event.type === 'error'),
+        false,
+      );
+      assert.equal(
+        stream.events.find(event => event.type === 'finish').messageMetadata.status,
+        'completed',
+      );
+      const history = await json(fixture, 'history', { conversationId: created.id });
+      assert.equal(history.conversation.title, 'New conversation');
+      assert.deepEqual(
+        history.messages.map((message: any) => message.text),
+        [input.text, `AI test response: ${input.text}`],
+      );
+      assert.equal((await json(fixture, 'status', input)).status, 'completed');
+    } finally {
       await removeFixture(fixture);
     }
   });

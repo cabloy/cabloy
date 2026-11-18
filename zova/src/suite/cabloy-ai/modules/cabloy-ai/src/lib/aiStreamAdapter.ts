@@ -30,7 +30,7 @@ export function createAiStreamAdapter(prepareRequest: () => Promise<AxiosRequest
       const transport = new DefaultChatTransport<ChatStreamMessage>({
         api: `${(prepared.baseURL ?? '').replace(/\/$/, '')}${prepared.url}`,
         headers,
-        credentials: 'include',
+        credentials: prepared.withCredentials ? 'include' : 'same-origin',
         // The server alone owns history, scene and model selection.
         prepareSendMessagesRequest: () => ({ body: command }),
       });

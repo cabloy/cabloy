@@ -281,6 +281,157 @@ describe('cabloy-ai private chat domain', { concurrency: false }, () => {
     }
   });
 
+  it('names only the first successful turn and does not regenerate on replay or later turns', async t => {
+    let conversationId: TableIdentity | undefined;
+    try {
+      await context(async () => {
+        const conversation = scope().service.conversation;
+        const service = scope().service.run;
+        conversationId = (await conversation.create(userId, {})).id;
+        const bound = await app.bean.ai.create();
+        const generate = t.mock.method(bound, 'generateText');
+        try {
+          const failed = await service.prepare(userId, command(conversationId), identity, limits);
+          await service.finalize(userId, failed.run.id, conversationId, { status: 'failed' });
+          const input = command(conversationId, randomUUID(), 'Design an order system');
+          const first = await service.prepare(userId, input, identity, limits);
+          await service.finalize(userId, first.run.id, conversationId, {
+            status: 'completed',
+            text: 'Saved answer',
+          });
+          await conversation.generateTitle(userId, conversationId, first.run.id, input.text, bound);
+          assert.equal(generate.mock.callCount(), 1);
+          const options = generate.mock.calls[0]!.arguments[0];
+          assert.equal(options.prompt, input.text);
+          assert.match(String(options.instructions), /Do not answer/);
+          assert.equal(options.maxRetries, 0);
+          assert.equal(options.timeout, 5000);
+          assert.equal(options.maxOutputTokens, 96);
+          const title = 'AI test response: Design an order system';
+          assert.equal(
+            (await conversation.history(userId, conversationId)).conversation.title,
+            title,
+          );
+          assert.equal((await conversation.list(userId))[0]?.title, title);
+          assert.equal((await service.prepare(userId, input, identity, limits)).replay, true);
+          await conversation.generateTitle(userId, conversationId, first.run.id, input.text, bound);
+          const nextInput = command(conversationId, randomUUID(), 'A different topic');
+          const next = await service.prepare(userId, nextInput, identity, limits);
+          await service.finalize(userId, next.run.id, conversationId, {
+            status: 'completed',
+            text: 'Another answer',
+          });
+          await conversation.generateTitle(
+            userId,
+            conversationId,
+            next.run.id,
+            nextInput.text,
+            bound,
+          );
+          assert.equal(generate.mock.callCount(), 1);
+          assert.equal((await conversation.requireOwned(userId, conversationId)).title, title);
+        } finally {
+          generate.mock.restore();
+        }
+      });
+    } finally {
+      await cleanup(conversationId);
+    }
+  });
+
+  it('preserves custom titles, including a title changed while generation is in flight', async t => {
+    let conversationId: TableIdentity | undefined;
+    try {
+      await context(async () => {
+        const conversation = scope().service.conversation;
+        const service = scope().service.run;
+        conversationId = (await conversation.create(userId, { title: 'My title' })).id;
+        const input = command(conversationId);
+        const { run } = await service.prepare(userId, input, identity, limits);
+        await service.finalize(userId, run.id, conversationId, {
+          status: 'completed',
+          text: 'Reply',
+        });
+        const bound = await app.bean.ai.create();
+        const generate = t.mock.method(bound, 'generateText', async () => {
+          await scope().model.conversation.update({ id: conversationId, title: 'Edited title' });
+          return { text: 'Generated title' } as any;
+        });
+        try {
+          await conversation.generateTitle(userId, conversationId, run.id, input.text, bound);
+          assert.equal(generate.mock.callCount(), 0);
+          assert.equal((await conversation.requireOwned(userId, conversationId)).title, 'My title');
+          await scope().model.conversation.update({
+            id: conversationId,
+            title: 'New conversation',
+          });
+          await conversation.generateTitle(userId, conversationId, run.id, input.text, bound);
+          assert.equal(generate.mock.callCount(), 1);
+          assert.equal(
+            (await conversation.requireOwned(userId, conversationId)).title,
+            'Edited title',
+          );
+        } finally {
+          generate.mock.restore();
+        }
+      });
+    } finally {
+      await cleanup(conversationId);
+    }
+  });
+
+  it('keeps completed answers when title generation fails or is empty and skips later turns', async t => {
+    let conversationId: TableIdentity | undefined;
+    try {
+      await context(async () => {
+        const conversation = scope().service.conversation;
+        const service = scope().service.run;
+        conversationId = (await conversation.create(userId, {})).id;
+        const input = command(conversationId);
+        const { run } = await service.prepare(userId, input, identity, limits);
+        await service.finalize(userId, run.id, conversationId, {
+          status: 'completed',
+          text: 'Reply',
+        });
+        const bound = await app.bean.ai.create();
+        const generate = t.mock.method(bound, 'generateText', async () => {
+          throw new Error('Title provider failed');
+        });
+        try {
+          await conversation.generateTitle(userId, conversationId, run.id, input.text, bound);
+          generate.mock.mockImplementation(async () => ({ text: ' \n ' }) as any);
+          await conversation.generateTitle(userId, conversationId, run.id, input.text, bound);
+          const history = await conversation.history(userId, conversationId);
+          assert.equal(history.conversation.title, 'New conversation');
+          assert.deepEqual(
+            history.messages.map(message => message.text),
+            ['Hello', 'Reply'],
+          );
+          assert.equal((await service.status(userId, input))?.status, 'completed');
+          const next = await service.prepare(userId, command(conversationId), identity, limits);
+          await service.finalize(userId, next.run.id, conversationId, {
+            status: 'completed',
+            text: 'Next reply',
+          });
+          await conversation.generateTitle(userId, conversationId, next.run.id, 'Hello', bound);
+          assert.equal(generate.mock.callCount(), 2);
+          generate.mock.mockImplementation(
+            async () => ({ text: `“  Order\n${'design '.repeat(30)} ”` }) as any,
+          );
+          await conversation.generateTitle(userId, conversationId, run.id, input.text, bound);
+          const title = (await conversation.requireOwned(userId, conversationId)).title;
+          assert.equal(title.length, 120);
+          assert.match(title, /^Order design/);
+          assert.doesNotMatch(title, /[\n“”]/);
+        } finally {
+          generate.mock.restore();
+        }
+      });
+    } finally {
+      await cleanup(conversationId);
+    }
+  });
+
   it('rolls back admission if its user message cannot persist', async t => {
     let conversationId: TableIdentity | undefined;
     try {
