@@ -206,7 +206,7 @@ export class ControllerPageChat extends BeanControllerPageBase {
                 class="min-h-64 max-h-[55vh] flex-1 overflow-y-auto"
                 aria-label="Messages"
                 data-testid="ai-chat-messages"
-                onScrollPassive={() => this._handleMessagesScroll()}
+                onScroll={() => this._handleMessagesScroll()}
                 ref={(element: Element | ComponentPublicInstance | null) => {
                   if (!this.ctx.disposed)
                     this.setMessagesElement?.((element as HTMLDivElement | null) ?? undefined);
