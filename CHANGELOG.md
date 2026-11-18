@@ -1,5 +1,16 @@
 # Changelog
 
+## 5.1.288
+
+### Features
+
+- Add form action editing.
+
+### Improvements
+
+- Add a blog post explaining why Cabloy/Vona has no NestJS dynamic module.
+- Update query and development database preparation tests.
+
 ## 5.1.287
 
 ### Features
