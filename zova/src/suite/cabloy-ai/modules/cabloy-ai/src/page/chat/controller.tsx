@@ -21,10 +21,8 @@ export class ControllerPageChat extends BeanControllerPageBase {
   private _messagesDisposed = false;
   private _followMessagesBottom = true;
   private _programmaticScrollTop?: number;
-  private _onMessagesScroll: () => void;
 
   protected async __init__() {
-    this._onMessagesScroll = () => this._handleMessagesScroll();
     this.$controllerMounted(() => {
       this.$ssr.handleDirectOrOnHydrated(() => {
         if (this.ctx.disposed || this._messagesDisposed) return;
@@ -76,7 +74,6 @@ export class ControllerPageChat extends BeanControllerPageBase {
     const content = this._messagesContent;
     if (!this._messagesMounted || this._messagesDisposed || !element || !content) return;
     this._disconnectMessages();
-    element.addEventListener('scroll', this._onMessagesScroll, { passive: true });
     const observer = new ResizeObserver(() => {
       if (
         this._messagesDisposed ||
@@ -97,13 +94,12 @@ export class ControllerPageChat extends BeanControllerPageBase {
   private _disconnectMessages() {
     this._messagesObserver?.disconnect();
     this._messagesObserver = undefined;
-    this._messagesElement?.removeEventListener('scroll', this._onMessagesScroll);
     this._programmaticScrollTop = undefined;
   }
 
   private _handleMessagesScroll() {
     const element = this._messagesElement;
-    if (!element || this._messagesDisposed || this.ctx.disposed) return;
+    if (!this._messagesMounted || !element || this._messagesDisposed || this.ctx.disposed) return;
     if (
       this._programmaticScrollTop !== undefined &&
       element.scrollTop === this._programmaticScrollTop
@@ -210,6 +206,7 @@ export class ControllerPageChat extends BeanControllerPageBase {
                 class="min-h-64 max-h-[55vh] flex-1 overflow-y-auto"
                 aria-label="Messages"
                 data-testid="ai-chat-messages"
+                onScrollPassive={() => this._handleMessagesScroll()}
                 ref={(element: Element | ComponentPublicInstance | null) => {
                   if (!this.ctx.disposed)
                     this.setMessagesElement?.((element as HTMLDivElement | null) ?? undefined);
