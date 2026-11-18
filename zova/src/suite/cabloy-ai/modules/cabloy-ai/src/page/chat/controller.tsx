@@ -194,7 +194,7 @@ export class ControllerPageChat extends BeanControllerPageBase {
                 <h2 class="min-w-0 truncate font-semibold">
                   {conversation
                     ? conversation.title || this.scope.locale.NewConversation()
-                    : 'Start a conversation'}
+                    : this.scope.locale.StartConversation()}
                 </h2>
                 {model.selectedId !== undefined && (
                   <ZButton
