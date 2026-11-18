@@ -65,6 +65,25 @@ export class ControllerPageChat extends BeanControllerPageBase {
     return this.$$modelChat.retry();
   }
 
+  private async _rename(item: { id: number | string; title: string }) {
+    const title = await this.$performCommand('basic-commands:prompt', {
+      title: this.scope.locale.RenameConversationTitle(),
+      text: this.scope.locale.RenameConversationPrompt(),
+      defaultValue: item.title || this.scope.locale.NewConversation(),
+    });
+    if (typeof title !== 'string' || !title.trim()) return;
+    await this.$$modelChat.rename(item.id, title.trim());
+  }
+
+  private async _delete(item: { id: number | string; title: string }) {
+    const confirmed = await this.$performCommand('basic-commands:confirm', {
+      title: this.scope.locale.DeleteConversation(),
+      text: this.scope.locale.DeleteConversationConfirm(),
+    });
+    if (!confirmed) return;
+    await this.$$modelChat.remove(item.id);
+  }
+
   setMessagesElement(element?: HTMLDivElement) {
     if (element === this._messagesElement) return;
     this._disconnectMessages();
@@ -183,25 +202,75 @@ export class ControllerPageChat extends BeanControllerPageBase {
                 aria-label={this.scope.locale.Conversations()}
                 class="mt-3 max-h-96 space-y-2 overflow-y-auto"
               >
-                {conversations.data?.map(item => (
-                  <ZButton
-                    key={item.id}
-                    class={[
-                      'btn btn-ghost h-auto min-h-10 w-full justify-start text-left',
-                      {
-                        'btn-active': item.id === model.selectedId,
-                      },
-                    ]}
-                    data-testid="ai-chat-conversation"
-                    data-conversation-id={item.id}
-                    aria-pressed={item.id === model.selectedId}
-                    onPerform={() => model.select(item.id)}
-                  >
-                    <span class="min-w-0 truncate">
-                      {item.title || this.scope.locale.NewConversation()}
-                    </span>
-                  </ZButton>
-                ))}
+                {conversations.data?.map(item => {
+                  const busy = model.mutating || item.activeRunId !== null;
+                  return (
+                    <div
+                      key={item.id}
+                      class="flex items-center gap-1"
+                      data-testid="ai-chat-conversation"
+                      data-conversation-id={item.id}
+                    >
+                      <ZButton
+                        class={[
+                          'btn btn-ghost min-w-0 flex-1 justify-start text-left',
+                          {
+                            'btn-active': item.id === model.selectedId,
+                          },
+                        ]}
+                        disabled={model.mutating}
+                        aria-pressed={item.id === model.selectedId}
+                        onPerform={() => model.select(item.id)}
+                      >
+                        <span class="min-w-0 truncate">
+                          {item.pinned && <span aria-hidden="true">📌 </span>}
+                          {item.title || this.scope.locale.NewConversation()}
+                        </span>
+                      </ZButton>
+                      <ZButton
+                        class="btn btn-ghost btn-square btn-sm"
+                        data-testid="ai-chat-pin"
+                        data-conversation-id={item.id}
+                        aria-label={
+                          item.pinned
+                            ? this.scope.locale.UnpinConversation()
+                            : this.scope.locale.PinConversation()
+                        }
+                        title={
+                          item.pinned
+                            ? this.scope.locale.UnpinConversation()
+                            : this.scope.locale.PinConversation()
+                        }
+                        disabled={busy}
+                        onPerform={() => model.setPinned(item.id, !item.pinned)}
+                      >
+                        {item.pinned ? '📌' : '☆'}
+                      </ZButton>
+                      <ZButton
+                        class="btn btn-ghost btn-square btn-sm"
+                        data-testid="ai-chat-rename"
+                        data-conversation-id={item.id}
+                        aria-label={this.scope.locale.RenameConversation()}
+                        title={this.scope.locale.RenameConversation()}
+                        disabled={busy}
+                        onPerform={() => this._rename(item)}
+                      >
+                        ✎
+                      </ZButton>
+                      <ZButton
+                        class="btn btn-ghost btn-square btn-sm text-error"
+                        data-testid="ai-chat-delete"
+                        data-conversation-id={item.id}
+                        aria-label={this.scope.locale.DeleteConversation()}
+                        title={this.scope.locale.DeleteConversation()}
+                        disabled={busy}
+                        onPerform={() => this._delete(item)}
+                      >
+                        ×
+                      </ZButton>
+                    </div>
+                  );
+                })}
                 {conversations.data?.length === 0 && (
                   <p class="p-2 text-sm text-base-content/60">
                     {this.scope.locale.NoSavedConversations()}
@@ -290,9 +359,13 @@ export class ControllerPageChat extends BeanControllerPageBase {
                     ? this.scope.locale.WaitingForSavedRequestState()
                     : this.scope.locale.ChatReady()}
               </p>
-              {(model.error || conversations.error || history?.error) && (
+              {(model.error || model.mutationError || conversations.error || history?.error) && (
                 <div role="alert" class="alert alert-warning my-3" data-testid="ai-chat-error">
-                  <span>{model.error || this.scope.locale.ConversationHistoryLoadFailed()}</span>
+                  <span>
+                    {model.error ||
+                      model.mutationError ||
+                      this.scope.locale.ConversationHistoryLoadFailed()}
+                  </span>
                 </div>
               )}
               <label class="mt-3 flex flex-col gap-2">

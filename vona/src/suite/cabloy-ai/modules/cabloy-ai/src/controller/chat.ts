@@ -10,6 +10,8 @@ import { DtoChatConversation } from '../dto/chatConversation.tsx';
 import { DtoChatCreate } from '../dto/chatCreate.tsx';
 import { DtoChatHistory } from '../dto/chatHistory.tsx';
 import { DtoChatHistoryRequest } from '../dto/chatHistoryRequest.tsx';
+import { DtoChatPin } from '../dto/chatPin.tsx';
+import { DtoChatRename } from '../dto/chatRename.tsx';
 import { DtoChatRun } from '../dto/chatRun.tsx';
 import { DtoChatSend } from '../dto/chatSend.tsx';
 import { DtoChatStatusRequest } from '../dto/chatStatusRequest.tsx';
@@ -56,6 +58,24 @@ export class ControllerChat extends BeanBase {
   @Api.body(z.null())
   async remove(@Arg.user() user: IUser, @Arg.body() command: DtoChatHistoryRequest): Promise<void> {
     await this.scope.service.conversation.remove(user.id, command.conversationId);
+  }
+
+  @Web.post('rename')
+  @Api.body(DtoChatConversation)
+  async rename(
+    @Arg.user() user: IUser,
+    @Arg.body() command: DtoChatRename,
+  ): Promise<DtoChatConversation> {
+    return await this.scope.service.conversation.rename(user.id, command);
+  }
+
+  @Web.post('pin')
+  @Api.body(DtoChatConversation)
+  async pin(
+    @Arg.user() user: IUser,
+    @Arg.body() command: DtoChatPin,
+  ): Promise<DtoChatConversation> {
+    return await this.scope.service.conversation.pin(user.id, command);
   }
 
   /** Native AI SDK UI Message Stream (text/event-stream), not a wrapped JSON result. */

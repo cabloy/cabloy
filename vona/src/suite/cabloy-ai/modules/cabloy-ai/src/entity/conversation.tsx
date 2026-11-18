@@ -17,4 +17,7 @@ export class EntityConversation extends EntityBase {
 
   @Api.field(v.tableIdentity(), v.optional(), v.nullable())
   activeRunId: TableIdentity | null;
+
+  @Api.field(v.required(), z.boolean())
+  pinned: boolean;
 }

@@ -1500,6 +1500,38 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  '/api/cabloy/ai/chat/rename': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['CabloyAiChat_rename'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/cabloy/ai/chat/pin': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['CabloyAiChat_pin'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   '/api/cabloy/ai/chat/send': {
     parameters: {
       query?: never;
@@ -6083,6 +6115,7 @@ export interface components {
       id: number | string;
       title: string;
       activeRunId: number | string;
+      pinned: boolean;
     };
     'cabloy-ai.dto.chatCreate': {
       title?: string | undefined;
@@ -6095,6 +6128,7 @@ export interface components {
       id: number | string;
       title: string;
       activeRunId: number | string;
+      pinned: boolean;
     };
     'cabloy-ai.dto.chatMessage': {
       id: number | string;
@@ -6119,6 +6153,14 @@ export interface components {
     'cabloy-ai.dto.chatStatusRequest': {
       conversationId: number | string;
       requestKey: string;
+    };
+    'cabloy-ai.dto.chatRename': {
+      conversationId: number | string;
+      title: string;
+    };
+    'cabloy-ai.dto.chatPin': {
+      conversationId: number | string;
+      pinned: boolean;
     };
     'cabloy-ai.dto.chatSend': {
       conversationId: number | string;
@@ -10540,6 +10582,62 @@ export interface operations {
             code: string;
             message: string;
             data: undefined;
+          };
+        };
+      };
+    };
+    authToken: true;
+  };
+  CabloyAiChat_rename: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['cabloy-ai.dto.chatRename'];
+      };
+    };
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data: components['schemas']['cabloy-ai.dto.chatConversation'];
+          };
+        };
+      };
+    };
+    authToken: true;
+  };
+  CabloyAiChat_pin: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['cabloy-ai.dto.chatPin'];
+      };
+    };
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data: components['schemas']['cabloy-ai.dto.chatConversation'];
           };
         };
       };

@@ -26,6 +26,7 @@ export class MetaVersion extends BeanBase implements IMetaVersionUpdate {
       table.userId(conversation.userId).notNullable();
       table.string(conversation.title, 120).notNullable();
       table.tableIdentity(conversation.activeRunId).nullable();
+      table.boolean(conversation.pinned).defaultTo(false).notNullable();
     });
 
     const message = this.scope.entity.message;

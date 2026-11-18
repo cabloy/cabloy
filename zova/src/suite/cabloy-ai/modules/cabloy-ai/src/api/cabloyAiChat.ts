@@ -48,6 +48,22 @@ export type ApiApiCabloyAiChatremoveRequestBody =
 export type ApiApiCabloyAiChatremoveResponseBody =
   paths[ApiApiCabloyAiChatremovePath][ApiApiCabloyAiChatremoveMethod]['responses']['200']['content']['application/json']['data'];
 
+/** CabloyAiChat_rename */
+export const ApiApiCabloyAiChatrenamePath = '/api/cabloy/ai/chat/rename';
+export type ApiApiCabloyAiChatrenamePath = '/api/cabloy/ai/chat/rename';
+export type ApiApiCabloyAiChatrenameMethod = 'post';
+export type ApiApiCabloyAiChatrenameRequestBody = components['schemas']['cabloy-ai.dto.chatRename'];
+export type ApiApiCabloyAiChatrenameResponseBody =
+  paths[ApiApiCabloyAiChatrenamePath][ApiApiCabloyAiChatrenameMethod]['responses']['200']['content']['application/json']['data'];
+
+/** CabloyAiChat_pin */
+export const ApiApiCabloyAiChatpinPath = '/api/cabloy/ai/chat/pin';
+export type ApiApiCabloyAiChatpinPath = '/api/cabloy/ai/chat/pin';
+export type ApiApiCabloyAiChatpinMethod = 'post';
+export type ApiApiCabloyAiChatpinRequestBody = components['schemas']['cabloy-ai.dto.chatPin'];
+export type ApiApiCabloyAiChatpinResponseBody =
+  paths[ApiApiCabloyAiChatpinPath][ApiApiCabloyAiChatpinMethod]['responses']['200']['content']['application/json']['data'];
+
 @Api()
 export class ApiCabloyAiChat extends BeanApiBase {
   create(body: ApiApiCabloyAiChatcreateRequestBody, options?: IApiActionOptions) {
@@ -85,6 +101,22 @@ export class ApiCabloyAiChat extends BeanApiBase {
   remove(body: ApiApiCabloyAiChatremoveRequestBody, options?: IApiActionOptions) {
     return this.$fetch.post<any, ApiApiCabloyAiChatremoveResponseBody>(
       ApiApiCabloyAiChatremovePath,
+      body,
+      this.$configPrepare(OpenApiBaseURL(this.sys), options, true),
+    );
+  }
+
+  rename(body: ApiApiCabloyAiChatrenameRequestBody, options?: IApiActionOptions) {
+    return this.$fetch.post<any, ApiApiCabloyAiChatrenameResponseBody>(
+      ApiApiCabloyAiChatrenamePath,
+      body,
+      this.$configPrepare(OpenApiBaseURL(this.sys), options, true),
+    );
+  }
+
+  pin(body: ApiApiCabloyAiChatpinRequestBody, options?: IApiActionOptions) {
+    return this.$fetch.post<any, ApiApiCabloyAiChatpinResponseBody>(
+      ApiApiCabloyAiChatpinPath,
       body,
       this.$configPrepare(OpenApiBaseURL(this.sys), options, true),
     );

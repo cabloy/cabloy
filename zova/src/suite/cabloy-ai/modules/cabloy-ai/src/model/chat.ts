@@ -18,6 +18,8 @@ export class ModelChat extends BeanModelBase {
   creating = false;
   streaming = false;
   unsettled = false;
+  mutating = false;
+  mutationError?: string;
   streamMessage?: ChatStreamMessage;
   pendingText?: string;
   private _error?:
@@ -118,6 +120,63 @@ export class ModelChat extends BeanModelBase {
     }
   }
 
+  async rename(conversationId: ConversationId, title: string) {
+    if (this.mutating) return;
+    this.mutating = true;
+    this.mutationError = undefined;
+    try {
+      await this.scope.api.cabloyAiChat.rename({ conversationId, title });
+      await this.conversations().refetch({ throwOnError: true });
+      if (conversationId === this.selectedId)
+        await this.history(conversationId)?.refetch({ throwOnError: true });
+      this.$logger.debug('ai.chat.conversation renamed');
+    } catch (error) {
+      this.mutationError = error instanceof Error ? error.message : String(error);
+      throw error;
+    } finally {
+      this.mutating = false;
+    }
+  }
+
+  async setPinned(conversationId: ConversationId, pinned: boolean) {
+    if (this.mutating) return;
+    this.mutating = true;
+    this.mutationError = undefined;
+    try {
+      await this.scope.api.cabloyAiChat.pin({ conversationId, pinned });
+      await this.conversations().refetch({ throwOnError: true });
+      if (conversationId === this.selectedId)
+        await this.history(conversationId)?.refetch({ throwOnError: true });
+      this.$logger.debug(`ai.chat.conversation ${pinned ? 'pinned' : 'unpinned'}`);
+    } catch (error) {
+      this.mutationError = error instanceof Error ? error.message : String(error);
+      throw error;
+    } finally {
+      this.mutating = false;
+    }
+  }
+
+  async remove(conversationId: ConversationId) {
+    if (this.mutating) return;
+    this.mutating = true;
+    this.mutationError = undefined;
+    const wasSelected = conversationId === this.selectedId;
+    try {
+      await this.scope.api.cabloyAiChat.remove({ conversationId });
+      await this.conversations().refetch({ throwOnError: true });
+      if (wasSelected) {
+        const nextId = this.conversations().data?.[0]?.id;
+        await this.select(nextId);
+      }
+      this.$logger.debug('ai.chat.conversation removed');
+    } catch (error) {
+      this.mutationError = error instanceof Error ? error.message : String(error);
+      throw error;
+    } finally {
+      this.mutating = false;
+    }
+  }
+
   async select(conversationId: ConversationId | undefined) {
     if (conversationId === this.selectedId) return;
     ++this._revision;
@@ -128,6 +187,7 @@ export class ModelChat extends BeanModelBase {
     this.streamMessage = undefined;
     this.pendingText = undefined;
     this._error = undefined;
+    this.mutationError = undefined;
     this.selectedId = conversationId;
     await $QueryEnsureLoaded(() => this.history());
   }
@@ -284,6 +344,7 @@ export class ModelChat extends BeanModelBase {
     this.streamMessage = undefined;
     this.pendingText = undefined;
     this._error = undefined;
+    this.mutationError = undefined;
     this._command = undefined;
     // These private queries intentionally have no browser persister. The normal
     // DB-persister identity reset therefore needs its memory-only counterpart.

@@ -7,6 +7,8 @@ import { Core } from 'vona-module-a-core';
 import type { DtoChatConversation } from '../dto/chatConversation.tsx';
 import type { DtoChatCreate } from '../dto/chatCreate.tsx';
 import type { DtoChatHistory } from '../dto/chatHistory.tsx';
+import type { DtoChatPin } from '../dto/chatPin.tsx';
+import type { DtoChatRename } from '../dto/chatRename.tsx';
 import type { EntityConversation } from '../entity/conversation.tsx';
 import type { AiInvocation } from '../lib/invocation.ts';
 
@@ -53,6 +55,7 @@ export class ServiceConversation extends BeanBase {
       userId,
       title,
       activeRunId: null,
+      pinned: false,
     });
     return this.toDto(conversation);
   }
@@ -110,7 +113,10 @@ export class ServiceConversation extends BeanBase {
   async list(userId: TableIdentity): Promise<DtoChatConversation[]> {
     const conversations = await this.scope.model.conversation.select({
       where: { userId },
-      orders: [['id', 'desc']],
+      orders: [
+        ['pinned', 'desc'],
+        ['id', 'desc'],
+      ],
       limit: 100,
     });
     const result: DtoChatConversation[] = [];
@@ -185,6 +191,51 @@ export class ServiceConversation extends BeanBase {
     return conversation;
   }
 
+  async rename(userId: TableIdentity, command: DtoChatRename): Promise<DtoChatConversation> {
+    const title = command.title.trim();
+    if (!title || title.length > 120)
+      this.app.throw(422, this.scope.locale.InvalidConversationTitle());
+    return await this.serializeWrite(() =>
+      this.renameTransaction(userId, command.conversationId, title),
+    );
+  }
+
+  @Core.transaction()
+  @Core.retryable(chatTransactionRetry)
+  private async renameTransaction(
+    userId: TableIdentity,
+    conversationId: TableIdentity,
+    title: string,
+  ): Promise<DtoChatConversation> {
+    await this.lockOwned(userId, conversationId);
+    await this.scope.model.conversation.update(
+      { id: conversationId, title },
+      { where: { userId } },
+    );
+    return this.toDto(await this.requireOwned(userId, conversationId));
+  }
+
+  async pin(userId: TableIdentity, command: DtoChatPin): Promise<DtoChatConversation> {
+    return await this.serializeWrite(() =>
+      this.pinTransaction(userId, command.conversationId, command.pinned),
+    );
+  }
+
+  @Core.transaction()
+  @Core.retryable(chatTransactionRetry)
+  private async pinTransaction(
+    userId: TableIdentity,
+    conversationId: TableIdentity,
+    pinned: boolean,
+  ): Promise<DtoChatConversation> {
+    await this.lockOwned(userId, conversationId);
+    await this.scope.model.conversation.update(
+      { id: conversationId, pinned },
+      { where: { userId } },
+    );
+    return this.toDto(await this.requireOwned(userId, conversationId));
+  }
+
   async remove(userId: TableIdentity, conversationId: TableIdentity): Promise<void> {
     await this.serializeWrite(() => this.removeTransaction(userId, conversationId));
   }
@@ -210,6 +261,7 @@ export class ServiceConversation extends BeanBase {
       id: conversation.id,
       title: conversation.title,
       activeRunId: conversation.activeRunId ?? null,
+      pinned: conversation.pinned,
     };
   }
 }

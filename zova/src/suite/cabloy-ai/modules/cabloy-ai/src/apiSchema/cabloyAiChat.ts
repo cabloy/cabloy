@@ -9,6 +9,8 @@ import {
   ApiApiCabloyAiChathistoryPath,
   ApiApiCabloyAiChatstatusPath,
   ApiApiCabloyAiChatremovePath,
+  ApiApiCabloyAiChatrenamePath,
+  ApiApiCabloyAiChatpinPath,
 } from '../api/cabloyAiChat.ts';
 
 @ApiSchema()
@@ -31,5 +33,13 @@ export class ApiSchemaCabloyAiChat extends BeanBase {
 
   remove(options?: IApiSchemaOptions) {
     return this.$sdk.createApiSchemas(ApiApiCabloyAiChatremovePath, 'post', options);
+  }
+
+  rename(options?: IApiSchemaOptions) {
+    return this.$sdk.createApiSchemas(ApiApiCabloyAiChatrenamePath, 'post', options);
+  }
+
+  pin(options?: IApiSchemaOptions) {
+    return this.$sdk.createApiSchemas(ApiApiCabloyAiChatpinPath, 'post', options);
   }
 }

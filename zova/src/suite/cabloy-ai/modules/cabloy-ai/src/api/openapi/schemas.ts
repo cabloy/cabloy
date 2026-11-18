@@ -619,6 +619,10 @@ export type ApiSchemaCabloyAiDtoChatStatusRequest =
   components['schemas']['cabloy-ai.dto.chatStatusRequest'];
 export type ApiSchemaCabloyAiDtoChatStatusRequestPartial =
   Partial<ApiSchemaCabloyAiDtoChatStatusRequest>;
+export type ApiSchemaCabloyAiDtoChatRename = components['schemas']['cabloy-ai.dto.chatRename'];
+export type ApiSchemaCabloyAiDtoChatRenamePartial = Partial<ApiSchemaCabloyAiDtoChatRename>;
+export type ApiSchemaCabloyAiDtoChatPin = components['schemas']['cabloy-ai.dto.chatPin'];
+export type ApiSchemaCabloyAiDtoChatPinPartial = Partial<ApiSchemaCabloyAiDtoChatPin>;
 export type ApiSchemaCabloyAiDtoChatSend = components['schemas']['cabloy-ai.dto.chatSend'];
 export type ApiSchemaCabloyAiDtoChatSendPartial = Partial<ApiSchemaCabloyAiDtoChatSend>;
 export type ApiSchemaBasicMetricsDtoMetricsSnapshot =
