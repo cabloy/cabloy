@@ -1,5 +1,7 @@
 import type { ComponentPublicInstance } from 'vue';
 
+import MarkdownRender from 'markstream-vue';
+import 'markstream-vue/index.css';
 import { nextTick } from 'vue';
 import { BeanControllerPageBase, Use } from 'zova';
 import { Controller } from 'zova-module-a-bean';
@@ -338,8 +340,17 @@ export class ControllerPageChat extends BeanControllerPageBase {
                           ? this.scope.locale.ChatYou()
                           : this.scope.locale.ChatAssistant()}
                       </div>
-                      <div class="chat-bubble max-w-full whitespace-pre-wrap break-words">
-                        {message.text}
+                      <div class="chat-bubble max-w-full break-words">
+                        {message.role === 'user' ? (
+                          <span class="whitespace-pre-wrap">{message.text}</span>
+                        ) : (
+                          <MarkdownRender
+                            mode="chat"
+                            content={message.text}
+                            final
+                            htmlPolicy="safe"
+                          />
+                        )}
                       </div>
                     </article>
                   ))}
@@ -354,8 +365,13 @@ export class ControllerPageChat extends BeanControllerPageBase {
                   {streamingText && (
                     <article class="chat chat-start" data-testid="ai-chat-stream">
                       <div class="chat-header text-xs">{this.scope.locale.ChatAssistantLive()}</div>
-                      <div class="chat-bubble max-w-full whitespace-pre-wrap break-words">
-                        {streamingText}
+                      <div class="chat-bubble max-w-full break-words">
+                        <MarkdownRender
+                          mode="chat"
+                          content={streamingText}
+                          final={!model.streaming}
+                          htmlPolicy="safe"
+                        />
                       </div>
                     </article>
                   )}

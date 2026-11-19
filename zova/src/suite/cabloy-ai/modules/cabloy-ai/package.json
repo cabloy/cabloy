@@ -36,6 +36,7 @@
   "dependencies": {
     "ai": "7.0.173",
     "json-schema": "^0.4.0",
+    "markstream-vue": "^2.0.28",
     "zova-module-a-api": "^5.0.0",
     "zova-module-a-bean": "^5.0.0",
     "zova-module-a-fetch": "^5.0.0",
