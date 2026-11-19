@@ -1,13 +1,15 @@
 import type { ComponentPublicInstance } from 'vue';
 
 import MarkdownRender from 'markstream-vue';
-import 'markstream-vue/index.css';
 import { nextTick } from 'vue';
+import 'markstream-vue/index.css';
 import { BeanControllerPageBase, Use } from 'zova';
 import { Controller } from 'zova-module-a-bean';
 import { ZButton } from 'zova-module-basic-button';
 import { ZRowOperations } from 'zova-module-basic-table';
 import { ZPage } from 'zova-module-home-base';
+
+import type { StylePageChat } from './style.ts';
 
 import { ModelChat } from '../../model/chat.ts';
 
@@ -15,6 +17,9 @@ import { ModelChat } from '../../model/chat.ts';
 export class ControllerPageChat extends BeanControllerPageBase {
   @Use()
   $$modelChat: ModelChat;
+
+  @Use()
+  $$stylePageChat: StylePageChat;
 
   draft = '';
   private _sendButton?: HTMLButtonElement;
@@ -344,12 +349,14 @@ export class ControllerPageChat extends BeanControllerPageBase {
                         {message.role === 'user' ? (
                           <span class="whitespace-pre-wrap">{message.text}</span>
                         ) : (
-                          <MarkdownRender
-                            mode="chat"
-                            content={message.text}
-                            final
-                            htmlPolicy="safe"
-                          />
+                          <div class={this.$$stylePageChat.cMarkdown}>
+                            <MarkdownRender
+                              mode="chat"
+                              content={message.text}
+                              final
+                              htmlPolicy="safe"
+                            />
+                          </div>
                         )}
                       </div>
                     </article>
@@ -366,12 +373,14 @@ export class ControllerPageChat extends BeanControllerPageBase {
                     <article class="chat chat-start" data-testid="ai-chat-stream">
                       <div class="chat-header text-xs">{this.scope.locale.ChatAssistantLive()}</div>
                       <div class="chat-bubble max-w-full break-words">
-                        <MarkdownRender
-                          mode="chat"
-                          content={streamingText}
-                          final={!model.streaming}
-                          htmlPolicy="safe"
-                        />
+                        <div class={this.$$stylePageChat.cMarkdown}>
+                          <MarkdownRender
+                            mode="chat"
+                            content={streamingText}
+                            final={!model.streaming}
+                            htmlPolicy="safe"
+                          />
+                        </div>
                       </div>
                     </article>
                   )}

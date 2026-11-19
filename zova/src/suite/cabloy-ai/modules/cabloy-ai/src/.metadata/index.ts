@@ -160,6 +160,31 @@ declare module 'zova-module-cabloy-ai' {
 }
 /** pages: end */
 
+/** style: begin */
+export * from '../page/chat/style.ts';
+
+import 'zova';
+declare module 'zova' {
+
+
+}
+declare module 'zova-module-cabloy-ai' {
+
+        export interface StylePageChat {
+          /** @internal */
+          get scope(): ScopeModuleCabloyAi;
+        }
+}
+/** style: end */
+/** style: begin */
+import type { StylePageChat } from '../page/chat/style.ts';
+import 'zova';
+declare module 'zova' {
+  export interface IBeanRecordLocal {
+    'cabloy-ai.style.pageChat': StylePageChat;
+  }
+}
+/** style: end */
 /** locale: begin */
 import { locales } from './locales.ts';
 /** locale: end */
