@@ -101,6 +101,14 @@ let browserToken: string;
 const ownedRequests: string[] = [];
 const requestOwner = randomUUID();
 
+function assertDispatchOptions(actual: unknown, expected: Record<string, unknown>) {
+  const { validationFailureCapture, ...bound } = actual as Record<string, any>;
+  assert.equal(typeof validationFailureCapture?.capture, 'function');
+  assert.equal(Object.hasOwn(bound, 'queryNative'), Object.hasOwn(bound, 'query'));
+  if (Object.hasOwn(bound, 'query')) assert.equal(bound.queryNative, true);
+  assert.deepEqual(bound, expected);
+}
+
 function mockOwnedPerformAction(
   t: TestContext,
   implementation: (
@@ -1161,21 +1169,15 @@ describe('businessHttp.test.ts', { concurrency: false, timeout: 180000 }, () => 
           code: -32602,
           message: 'Invalid tool arguments',
           data: {
-            issues: [{ message: 'Too big: expected number to be <=3', path: ['body', 'amount'] }],
+            issues: [{ message: 'Arguments do not match the input contract', path: [] }],
           },
         });
         assert.equal(invalid.body.result, undefined);
-        for (const [body, message] of [
-          [
-            { ...args.body, amount: 'private-input-value' },
-            'Invalid input: expected number, received string',
-          ],
-          [{ priority: 0 }, 'Invalid input: expected number, received undefined'],
-          [
-            { ...args.body, 'private-unknown-field': 'private-input-value' },
-            'Arguments do not match the input contract',
-          ],
-        ] as const) {
+        for (const body of [
+          { ...args.body, amount: 'private-input-value' },
+          { priority: 0 },
+          { ...args.body, 'private-unknown-field': 'private-input-value' },
+        ]) {
           const rejected = await send(
             'tools/call',
             {
@@ -1188,9 +1190,7 @@ describe('businessHttp.test.ts', { concurrency: false, timeout: 180000 }, () => 
             code: -32602,
             message: 'Invalid tool arguments',
             data: {
-              issues: [
-                { message, path: message.startsWith('Arguments') ? [] : ['body', 'amount'] },
-              ],
+              issues: [{ message: 'Arguments do not match the input contract', path: [] }],
             },
           });
           assert.doesNotMatch(
@@ -1272,6 +1272,60 @@ describe('businessHttp.test.ts', { concurrency: false, timeout: 180000 }, () => 
     } finally {
       dispatched.mock.restore();
       toolFixtureState.count = initial;
+    }
+  });
+
+  it('keeps native validation provenance, single input effects and trusted readonly output over both protocols', async () => {
+    if (!app.meta.modules['test-mcp']) return;
+    const { toolFixtureState } = await import('vona-module-test-mcp');
+    const initial = { ...toolFixtureState };
+    const token = await redeemBearer('mcp:all');
+    const name = 'mcp_test_action_semantic';
+    try {
+      for (const legacy of [false, true]) {
+        const options = { legacy, headers: { authorization: `Bearer ${token}` } };
+        const call = (arguments_: object) =>
+          send('tools/call', { name, arguments: arguments_ }, options);
+        const before = { ...toolFixtureState };
+        const accepted = output(
+          await call({
+            value: 'http',
+            serverOwned: { malformed: true },
+            strict: { writable: 'child', serverOwned: null },
+          }),
+        );
+        assert.deepEqual(accepted, {
+          value: 'http:native:response',
+          serverOwned: 'trusted output',
+          strict: { writable: 'child' },
+        });
+        assert.equal(toolFixtureState.inputTransforms, before.inputTransforms + 1);
+        assert.equal(toolFixtureState.inputRefinements, before.inputRefinements + 1);
+        assert.equal(toolFixtureState.semanticCalls, before.semanticCalls + 1);
+        assert.equal(toolFixtureState.outputTransforms, before.outputTransforms + 1);
+        assert.equal(toolFixtureState.readonlyEffects, before.readonlyEffects);
+        const invalid = await call({ value: 'reject' });
+        assert.equal(invalid.status, 200);
+        assert.deepEqual(invalid.body.error, {
+          code: -32602,
+          message: 'Invalid tool arguments',
+          data: { issues: [{ message: 'Invalid value', path: ['value'] }] },
+        });
+        assert.equal(invalid.body.result, undefined);
+        assert.equal(toolFixtureState.inputTransforms, before.inputTransforms + 2);
+        assert.equal(toolFixtureState.semanticCalls, before.semanticCalls + 1);
+        for (const failure of ['status422', 'zod']) {
+          const failed = await call({ value: 'business', failure });
+          assert.equal(failed.status, 200);
+          assert.equal(failed.body.error, undefined);
+          assert.equal(failed.body.result.isError, true);
+          assert.deepEqual(failed.body.result.content, [{ type: 'text', text: 'Action failed' }]);
+          assert.equal(failed.body.result.structuredContent, undefined);
+          assert.doesNotMatch(JSON.stringify(failed.body), /private business|ZodError|stack/);
+        }
+      }
+    } finally {
+      Object.assign(toolFixtureState, initial);
     }
   });
 
@@ -2437,7 +2491,12 @@ describe('businessHttp.test.ts', { concurrency: false, timeout: 180000 }, () => 
       const dispatched = observedCalls.at(-1)!;
       assert.equal(dispatched.method, 'post');
       assert.equal(dispatched.path, '/training/student');
-      assert.deepEqual(Object.keys(dispatched.options).sort(), ['body', 'innerAccess']);
+      assert.deepEqual(Object.keys(dispatched.options).sort(), [
+        'body',
+        'innerAccess',
+        'validationFailureCapture',
+      ]);
+      assert.equal(typeof dispatched.options.validationFailureCapture?.capture, 'function');
       assert.equal(dispatched.options.innerAccess, false);
       assert.deepEqual(dispatched.options.body, studentData);
       await assertOwnedCounts(1);
@@ -2959,19 +3018,9 @@ describe('businessHttp.test.ts', { concurrency: false, timeout: 180000 }, () => 
         assert.equal(partial.status, 200);
         assert.equal(partial.body.error?.code, -32602);
         assert.equal(partial.body.error.message, 'Invalid tool arguments');
-        assert.deepEqual(
-          partial.body.error.data.issues.map((issue: any) => issue.path),
-          Object.hasOwn(body, 'level')
-            ? [
-                ['body', 'name'],
-                ['body', 'mobile'],
-              ]
-            : [
-                ['body', 'name'],
-                ['body', 'mobile'],
-                ['body', 'level'],
-              ],
-        );
+        assert.deepEqual(partial.body.error.data.issues, [
+          { message: 'Arguments do not match the input contract', path: [] },
+        ]);
         assert.equal(partial.body.result, undefined, 'image binding requires a full update body');
       }
     } finally {
@@ -3259,7 +3308,13 @@ describe('businessHttp.test.ts', { concurrency: false, timeout: 180000 }, () => 
           null,
           'real Action executor unwraps void completion to null',
         );
-        assert.deepEqual(Object.keys(dispatched.options).sort(), ['body', 'innerAccess', 'params']);
+        assert.deepEqual(Object.keys(dispatched.options).sort(), [
+          'body',
+          'innerAccess',
+          'params',
+          'validationFailureCapture',
+        ]);
+        assert.equal(typeof dispatched.options.validationFailureCapture?.capture, 'function');
         assert.equal(dispatched.options.innerAccess, false);
       };
       assertDenied(await call());
@@ -3366,24 +3421,7 @@ describe('businessHttp.test.ts', { concurrency: false, timeout: 180000 }, () => 
       );
       const dispatched = observedCalls.at(-1)!;
       assert.deepEqual(dispatched.options.params, args.params);
-      assert.deepEqual(dispatched.options.body, {
-        ...body,
-        content: { deleted: false, ...body.content },
-        trainingRecords: body.trainingRecords!.map(record => ({
-          deleted: false,
-          ...record,
-          ...(record.id !== undefined ? { id: String(record.id) } : {}),
-          ...(record.trainingRecordSubjects
-            ? {
-                trainingRecordSubjects: record.trainingRecordSubjects.map(subject => ({
-                  deleted: false,
-                  ...subject,
-                  ...(subject.id !== undefined ? { id: String(subject.id) } : {}),
-                })),
-              }
-            : {}),
-        })),
-      });
+      assert.deepEqual(dispatched.options.body, body);
       assert.ok(dispatched.options.body.trainingRecords[0].trainingTime instanceof Date);
       assert.ok(
         (update.mock.calls.at(-1)!.arguments[1] as DtoStudentUpdate).trainingRecords![0]
@@ -3796,7 +3834,7 @@ describe('businessHttp.test.ts', { concurrency: false, timeout: 180000 }, () => 
         const dispatched = observedCalls.at(-1)!;
         assert.equal(dispatched.method, 'delete');
         assert.equal(dispatched.path, '/training/student/:id');
-        assert.deepEqual(dispatched.options, { params: { id }, innerAccess: false });
+        assertDispatchOptions(dispatched.options, { params: { id }, innerAccess: false });
         assert.equal(dispatched.result, null, 'real void Action completion is normalized to null');
         return {
           structuredContent: response.body.result.structuredContent,
@@ -4175,7 +4213,11 @@ describe('businessHttp.test.ts', { concurrency: false, timeout: 180000 }, () => 
       const selected = output(response);
       const current = observedCalls.at(-1)!;
       assert.equal(current.path, '/training/student');
-      assert.deepEqual(current.options, { query: selectQuery, innerAccess: false });
+      assertDispatchOptions(current.options, {
+        query: selectQuery,
+        queryNative: true,
+        innerAccess: false,
+      });
       assert.ok(current.serialized);
       assert.deepEqual(
         selected,
@@ -4243,7 +4285,7 @@ describe('businessHttp.test.ts', { concurrency: false, timeout: 180000 }, () => 
       const student = output(response);
       const current = observedCalls.at(-1)!;
       assert.equal(current.path, '/training/student/:id');
-      assert.deepEqual(current.options, { params: { id: studentId }, innerAccess: false });
+      assertDispatchOptions(current.options, { params: { id: studentId }, innerAccess: false });
       assert.ok(current.serialized);
       assert.deepEqual(
         student,
@@ -4750,6 +4792,8 @@ describe('businessHttp.test.ts', { concurrency: false, timeout: 180000 }, () => 
             { orders: 'createdAt,desc' },
             { orders: [['createdAt', 'desc']] },
             { columns: ['id'] },
+            { queryNative: true },
+            { queryNative: false },
           ]) {
             assert.ok((await check.validate(query)).issues, JSON.stringify(query));
             const rejected = await select(token, legacy, query);
@@ -4822,8 +4866,9 @@ describe('businessHttp.test.ts', { concurrency: false, timeout: 180000 }, () => 
             beforeInvalid + 1,
             'only the corrected call dispatches',
           );
-          assert.deepEqual(observedCalls.at(-1)!.options, {
+          assertDispatchOptions(observedCalls.at(-1)!.options, {
             query: selectRecoveryQuery,
+            queryNative: true,
             innerAccess: false,
           });
         }
@@ -4895,14 +4940,16 @@ describe('businessHttp.test.ts', { concurrency: false, timeout: 180000 }, () => 
       assert.deepEqual(output(await group(groupQuery)), {
         result: [{ level, count_all: '1', count_imageId: '1' }],
       });
-      assert.deepEqual(observedCalls.at(-1)!.options, {
+      assertDispatchOptions(observedCalls.at(-1)!.options, {
         query: { ...analysisDefaults, ...groupQuery },
+        queryNative: true,
         innerAccess: false,
       });
       const aggregateQuery = { name, level, aggrs: { count: ['imageId'] } };
       assert.deepEqual(output(await aggregate(aggregateQuery)), { count_imageId: '1' });
-      assert.deepEqual(observedCalls.at(-1)!.options, {
+      assertDispatchOptions(observedCalls.at(-1)!.options, {
         query: { ...analysisDefaults, ...aggregateQuery },
+        queryNative: true,
         innerAccess: false,
       });
       // Absent-name predicates yield no rows; the same-name foreign-instance
@@ -4956,14 +5003,18 @@ describe('businessHttp.test.ts', { concurrency: false, timeout: 180000 }, () => 
           current.path === '/training/student/summary/:id'
         ) {
           const options = current.options as { params: { id: string }; innerAccess: boolean };
-          assert.deepEqual(options, { params: { id: options.params.id }, innerAccess: false });
+          assertDispatchOptions(options, { params: { id: options.params.id }, innerAccess: false });
         } else if (current.path === '/training/student') {
+          const { validationFailureCapture, ...bound } = current.options as Record<string, any>;
+          assert.equal(typeof validationFailureCapture?.capture, 'function');
           assert.ok(
             [
               selectQuery,
               selectEmptyPageQuery,
               ...(studentQuery ? [selectRecoveryQuery] : [selectColumnsQuery]),
-            ].some(query => isDeepStrictEqual(current.options, { query, innerAccess: false })),
+            ].some(query =>
+              isDeepStrictEqual(bound, { query, queryNative: true, innerAccess: false }),
+            ),
             'select retains only the explicitly supplied native filter and pagination query',
           );
         } else {

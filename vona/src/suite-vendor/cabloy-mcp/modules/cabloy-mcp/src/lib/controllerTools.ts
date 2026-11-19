@@ -1,5 +1,6 @@
 import type { CallToolResult, Tool } from '@modelcontextprotocol/server';
 import type { Constructable, VonaApplication } from 'vona';
+import type { IValidationFailureCapture } from 'vona-module-a-executor';
 import type { IMcpToolOptions } from 'vona-module-a-openapiutils';
 import type { IAnalysisPolicy, IQueryPolicy, TypeAnalysisMode } from 'vona-module-a-orm';
 import type { IDecoratorSsrSiteOptions } from 'vona-module-a-ssr';
@@ -475,27 +476,8 @@ export async function createControllerToolServer(
                 const checked = await inputCheck.validate(
                   serializeDateTransport(args, runtimeInputSchema, runtimeInputSchema.$defs ?? {}),
                 );
-                // Native validation already supplies Vona's field messages and paths.
-                // Parse once even when the JSON contract rejects, but retain that
-                // rejection: native object parsing may otherwise strip unknown fields.
                 for (const key of keys) {
-                  const schema = contract.request[key as keyof typeof contract.request];
-                  const transported = normalizeDateTransport(values[key], locations[key], schemas);
-                  const parsed = await runWithZodQueryCoercion(false, () =>
-                    schema!.safeParseAsync(transported, { reportInput: true }),
-                  );
-                  if (!parsed.success) {
-                    throw new ProtocolError(
-                      -32602,
-                      'Invalid tool arguments',
-                      toolValidationData(
-                        parsed.error.issues,
-                        flat ? [] : [key],
-                        runtimeInputSchema,
-                      ),
-                    );
-                  }
-                  bound[key] = parsed.data;
+                  bound[key] = normalizeDateTransport(values[key], locations[key], schemas);
                 }
                 if (checked.issues) {
                   // The SDK JSON Schema adapter provides no structured field path.
@@ -535,12 +517,27 @@ export async function createControllerToolServer(
                     };
                   }),
               );
+              let validationFailure: ReturnType<typeof toolValidationData> | undefined;
+              const validationFailureCapture: IValidationFailureCapture = {
+                capture(location, issues) {
+                  if (!keys.includes(location) || validationFailure) return;
+                  validationFailure = toolValidationData(
+                    issues as z.core.$ZodIssue[],
+                    flat ? [] : [location],
+                    runtimeInputSchema,
+                  );
+                },
+              };
               try {
-                const result = await app.bean.executor.performAction(
-                  route.routeMethod as any,
-                  route.routePathRaw,
-                  { ...bound, innerAccess: false },
+                const result = await runWithZodQueryCoercion(false, () =>
+                  app.bean.executor.performAction(route.routeMethod as any, route.routePathRaw, {
+                    ...bound,
+                    ...(bound.query === undefined ? {} : { queryNative: true }),
+                    innerAccess: false,
+                    validationFailureCapture,
+                  }),
                 );
+                validationFailure = undefined;
                 if (result === undefined || (direct && result === null)) {
                   diagnostic.outcome = 'resource_not_found';
                   return failure('Resource not found');
@@ -558,6 +555,9 @@ export async function createControllerToolServer(
                   structuredContent,
                 };
               } catch (error) {
+                if (validationFailure) {
+                  throw new ProtocolError(-32602, 'Invalid tool arguments', validationFailure);
+                }
                 if (error instanceof RateLimitError || error instanceof RateLimitUnavailableError) {
                   return {
                     ...failure(

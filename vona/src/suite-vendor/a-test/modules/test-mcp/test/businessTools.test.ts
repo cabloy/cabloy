@@ -134,6 +134,21 @@ function assertToolArgumentIssues(error: any) {
   return issues as { message: string; path: (string | number)[] }[];
 }
 
+function assertJsonArgumentIssues(error: any) {
+  assert.deepEqual(assertToolArgumentIssues(error), [
+    { message: 'Arguments do not match the input contract', path: [] },
+  ]);
+}
+
+function assertActionDispatch(actual: readonly unknown[], expected: readonly unknown[]) {
+  const [method, path, options] = actual as Parameters<BeanExecutor['performAction']>;
+  assert.equal(typeof options?.validationFailureCapture?.capture, 'function');
+  assert.equal(Object.hasOwn(options!, 'queryNative'), Object.hasOwn(options!, 'query'));
+  if (Object.hasOwn(options!, 'query')) assert.equal(options!.queryNative, true);
+  const { validationFailureCapture: _capture, ...bound } = options!;
+  assert.deepEqual([method, path, bound], expected);
+}
+
 async function nativeStudentQuery() {
   // The native module, not the MCP schema under test, selects the query contract.
   // Legacy Student modules do not export studentQuery.
@@ -1250,7 +1265,10 @@ describe('businessTools.test.ts', { concurrency: false, timeout: 60000 }, () => 
         assert.equal(path, '/image/upload-policy');
         const policy = policies.find(policy => policy.imageScene === options?.body?.imageScene);
         assert.ok(policy);
-        assert.deepEqual(options, { body: { imageScene: policy.imageScene }, innerAccess: false });
+        assertActionDispatch(
+          [method, path, options],
+          [method, path, { body: { imageScene: policy.imageScene }, innerAccess: false }],
+        );
         return policy;
       });
       try {
@@ -1834,6 +1852,8 @@ describe('businessTools.test.ts', { concurrency: false, timeout: 60000 }, () => 
           { iid: 'injected' },
           { instanceName: 'shareTest' },
           { route: '/training/student' },
+          { queryNative: true },
+          { queryNative: false },
           { innerAccess: true },
           { headers: { authorization: 'injected' } },
           { userId: 'injected' },
@@ -2065,30 +2085,7 @@ describe('businessTools.test.ts', { concurrency: false, timeout: 60000 }, () => 
             name: create.name,
             arguments: args,
           });
-          const issues = assertToolArgumentIssues(rejected.error);
-          const input = args as Record<string, any>;
-          if (input.name === 'x') {
-            assert.deepEqual(
-              issues.map(issue => issue.path),
-              [['name']],
-            );
-          }
-          if (Array.isArray(input.trainingRecords)) {
-            const record = input.trainingRecords[0];
-            if (record.name === 'x') {
-              assert.deepEqual(
-                issues.map(issue => issue.path),
-                [['trainingRecords', 0, 'name']],
-              );
-            }
-            const subject = record.trainingRecordSubjects?.[0];
-            if (subject?.score === '95') {
-              assert.deepEqual(
-                issues.map(issue => issue.path),
-                [['trainingRecords', 0, 'trainingRecordSubjects', 0, 'score']],
-              );
-            }
-          }
+          assertJsonArgumentIssues(rejected.error);
         }
         const bounded = await shared.request('tools/call', {
           name: create.name,
@@ -2097,12 +2094,7 @@ describe('businessTools.test.ts', { concurrency: false, timeout: 60000 }, () => 
             trainingRecords: Array.from({ length: 12 }).fill({ name: 'x' }),
           },
         });
-        const boundedIssues = assertToolArgumentIssues(bounded.error);
-        assert.equal(boundedIssues.length, 10, 'native errors are capped without dispatch');
-        assert.deepEqual(
-          boundedIssues.map(issue => issue.path),
-          Array.from({ length: 10 }, (_, index) => ['trainingRecords', index, 'name']),
-        );
+        assertJsonArgumentIssues(bounded.error);
         assert.ok(update);
         assert.equal(update.annotations.readOnlyHint, false);
         assert.deepEqual(
@@ -2142,15 +2134,7 @@ describe('businessTools.test.ts', { concurrency: false, timeout: 60000 }, () => 
           name: update.name,
           arguments: { params: { id: '123' }, body: { imageId: '456' } },
         });
-        const imageOnlyIssues = assertToolArgumentIssues(imageOnly.error);
-        assert.deepEqual(
-          imageOnlyIssues.map(issue => issue.path),
-          [
-            ['body', 'name'],
-            ['body', 'mobile'],
-            ['body', 'level'],
-          ],
-        );
+        assertJsonArgumentIssues(imageOnly.error);
         const updateContent = resolveUpdateSchema(updateBody.properties.content);
         const updateRecord = resolveUpdateSchema(updateBody.properties.trainingRecords.items);
         const updateSubject = resolveUpdateSchema(
@@ -2313,11 +2297,7 @@ describe('businessTools.test.ts', { concurrency: false, timeout: 60000 }, () => 
             trainingRecords: [{ ...body.trainingRecords[0], trainingTime: 'not-a-date' }],
           },
         });
-        const issues = assertToolArgumentIssues(invalid.error);
-        assert.deepEqual(
-          issues.map(issue => issue.path),
-          [['trainingRecords', 0, 'trainingTime']],
-        );
+        assertJsonArgumentIssues(invalid.error);
         assert.equal(action.mock.callCount(), 1, 'invalid date never reaches dispatch');
       } finally {
         action.mock.restore();
@@ -2393,7 +2373,7 @@ describe('businessTools.test.ts', { concurrency: false, timeout: 60000 }, () => 
         const accepted = await call();
         assert.equal(accepted.error, undefined);
         assert.notEqual(accepted.result.isError, true);
-        assert.deepEqual(action.mock.calls[0].arguments, [
+        assertActionDispatch(action.mock.calls[0].arguments, [
           'post',
           '/training/student',
           { body, innerAccess: false },
@@ -2571,15 +2551,7 @@ describe('businessTools.test.ts', { concurrency: false, timeout: 60000 }, () => 
             name: 'training-student_student_update',
             arguments: invalidArgs,
           });
-          const issues = assertToolArgumentIssues(rejected.error);
-          const subject = (invalidArgs as any)?.body?.trainingRecords?.[0]
-            ?.trainingRecordSubjects?.[0];
-          if (subject?.score === '90') {
-            assert.deepEqual(
-              issues.map(issue => issue.path),
-              [['body', 'trainingRecords', 0, 'trainingRecordSubjects', 0, 'score']],
-            );
-          }
+          assertJsonArgumentIssues(rejected.error);
         }
         assert.equal(action.mock.callCount(), 0, 'unknown and invalid input never dispatch');
         const call = () =>
@@ -2587,27 +2559,12 @@ describe('businessTools.test.ts', { concurrency: false, timeout: 60000 }, () => 
         const accepted = await call();
         assert.equal(accepted.error, undefined);
         assert.notEqual(accepted.result.isError, true);
-        assert.deepEqual(action.mock.calls[0].arguments, [
+        assertActionDispatch(action.mock.calls[0].arguments, [
           'patch',
           '/training/student/:id',
           {
             params,
-            body: {
-              ...body,
-              content: { deleted: false, ...body.content },
-              trainingRecords: body.trainingRecords.map(record => ({
-                deleted: false,
-                ...record,
-                ...(record.trainingRecordSubjects
-                  ? {
-                      trainingRecordSubjects: record.trainingRecordSubjects.map(subject => ({
-                        deleted: false,
-                        ...subject,
-                      })),
-                    }
-                  : {}),
-              })),
-            },
+            body,
             innerAccess: false,
           },
         ]);
@@ -2738,7 +2695,7 @@ describe('businessTools.test.ts', { concurrency: false, timeout: 60000 }, () => 
         const accepted = await call();
         assert.equal(accepted.error, undefined);
         assert.notEqual(accepted.result.isError, true);
-        assert.deepEqual(action.mock.calls[0].arguments, [
+        assertActionDispatch(action.mock.calls[0].arguments, [
           'delete',
           '/training/student/:id',
           { params, innerAccess: false },
@@ -2751,10 +2708,10 @@ describe('businessTools.test.ts', { concurrency: false, timeout: 60000 }, () => 
           arguments: { id: 123 },
         });
         assert.deepEqual(numeric.result.structuredContent, { result: null });
-        assert.deepEqual(action.mock.calls[1].arguments, [
+        assertActionDispatch(action.mock.calls[1].arguments, [
           'delete',
           '/training/student/:id',
-          { params, innerAccess: false },
+          { params: { id: 123 }, innerAccess: false },
         ]);
         action.mock.mockImplementation(async () => undefined);
         const missing = await call();
@@ -3245,10 +3202,10 @@ describe('businessTools.test.ts', { concurrency: false, timeout: 60000 }, () => 
         const response = await call(args);
         assert.deepEqual(response.result.structuredContent, raw);
         assert.equal(action.mock.callCount(), 3);
-        assert.deepEqual(action.mock.calls.at(-1)!.arguments, [
+        assertActionDispatch(action.mock.calls.at(-1)!.arguments, [
           'get',
           '/training/student',
-          { query: args, innerAccess: false },
+          { query: args, queryNative: true, innerAccess: false },
         ]);
         const dispatches = events.filter(item => item.event === 'mcp.tool.call dispatch');
         assert.deepEqual(
@@ -3362,13 +3319,8 @@ describe('businessTools.test.ts', { concurrency: false, timeout: 60000 }, () => 
         await createSharedBusinessToolServer(app, `${getMcpIssuer(app)}/admin`, 'mcp:read'),
       );
       const ormQuery = app.util.getModuleConfigRaw('a-orm')?.rest?.query;
-      const defaults = query
-        ? {}
-        : {
-            orders: ormQuery?.orders?.default ?? 'createdAt,desc',
-            pageNo: 1,
-            pageSize: ormQuery?.pageSize?.default ?? 20,
-          };
+      // Native defaults are applied by the API, not by the transport-only mock.
+      const defaults = {};
       const raw = {
         list: [],
         total: '0',
@@ -3390,10 +3342,10 @@ describe('businessTools.test.ts', { concurrency: false, timeout: 60000 }, () => 
         const response = await call();
         assert.equal(response.error, undefined);
         assert.notEqual(response.result.isError, true);
-        assert.deepEqual(action.mock.calls[0].arguments, [
+        assertActionDispatch(action.mock.calls[0].arguments, [
           'get',
           '/training/student',
-          { query: defaults, innerAccess: false },
+          { query: defaults, queryNative: true, innerAccess: false },
         ]);
         assert.deepEqual(response.result.structuredContent, raw);
         assert.deepEqual(JSON.parse(response.result.content[0].text), raw);
@@ -3431,10 +3383,10 @@ describe('businessTools.test.ts', { concurrency: false, timeout: 60000 }, () => 
         const filtered = await call(filters);
         assert.equal(filtered.error, undefined);
         assert.notEqual(filtered.result.isError, true);
-        assert.deepEqual(action.mock.calls.at(-1)!.arguments, [
+        assertActionDispatch(action.mock.calls.at(-1)!.arguments, [
           'get',
           '/training/student',
-          { query: { ...defaults, ...filters }, innerAccess: false },
+          { query: { ...defaults, ...filters }, queryNative: true, innerAccess: false },
         ]);
         action.mock.mockImplementation(async () => ({ ...raw, list: 'invalid' }));
         const invalid = await call();
@@ -3459,14 +3411,8 @@ describe('businessTools.test.ts', { concurrency: false, timeout: 60000 }, () => 
         'mcp:read',
       );
       const client = await connect(server);
-      const ormQuery = app.util.getModuleConfigRaw('a-orm')?.rest?.query;
-      const defaults = query
-        ? {}
-        : {
-            orders: ormQuery?.orders?.default ?? 'createdAt,desc',
-            pageNo: 1,
-            pageSize: ormQuery?.pageSize?.default ?? 20,
-          };
+      // Native defaults are applied by the API, not by the transport-only mock.
+      const defaults = {};
       let raw: unknown;
       const action = mockOwnedPerformAction(
         t,
@@ -3521,15 +3467,12 @@ describe('businessTools.test.ts', { concurrency: false, timeout: 60000 }, () => 
           const response = await call();
           assert.equal(response.error, undefined);
           assert.notEqual(response.result.isError, true);
-          assert.deepEqual(action.mock.calls.at(-1)!.arguments, [
+          assertActionDispatch(action.mock.calls.at(-1)!.arguments, [
             'get',
             `/training/student/${mode}`,
             {
-              query: {
-                ...defaults,
-                ...(mode === 'group' ? { groups: ['level'] } : {}),
-                aggrs: { count: mode === 'group' ? ['*'] : ['*', 'imageId'] },
-              },
+              query: {},
+              queryNative: true,
               innerAccess: false,
             },
           ]);
@@ -3547,10 +3490,10 @@ describe('businessTools.test.ts', { concurrency: false, timeout: 60000 }, () => 
           const filtered = await call(filters);
           assert.equal(filtered.error, undefined);
           assert.notEqual(filtered.result.isError, true);
-          assert.deepEqual(action.mock.calls.at(-1)!.arguments, [
+          assertActionDispatch(action.mock.calls.at(-1)!.arguments, [
             'get',
             `/training/student/${mode}`,
-            { query: { ...defaults, ...filters }, innerAccess: false },
+            { query: { ...defaults, ...filters }, queryNative: true, innerAccess: false },
           ]);
           assert.deepEqual(
             filtered.result.structuredContent,
@@ -3562,10 +3505,14 @@ describe('businessTools.test.ts', { concurrency: false, timeout: 60000 }, () => 
               const numericFilter = await call({ ...filters, level });
               assert.equal(numericFilter.error, undefined);
               assert.notEqual(numericFilter.result.isError, true);
-              assert.deepEqual(action.mock.calls.at(-1)!.arguments, [
+              assertActionDispatch(action.mock.calls.at(-1)!.arguments, [
                 'get',
                 `/training/student/${mode}`,
-                { query: { ...defaults, ...filters, level }, innerAccess: false },
+                {
+                  query: { ...defaults, ...filters, level },
+                  queryNative: true,
+                  innerAccess: false,
+                },
               ]);
             }
           }
@@ -3677,7 +3624,7 @@ describe('businessTools.test.ts', { concurrency: false, timeout: 60000 }, () => 
         const response = await call();
         assert.equal(response.error, undefined);
         assert.notEqual(response.result.isError, true);
-        assert.deepEqual(action.mock.calls[0].arguments, [
+        assertActionDispatch(action.mock.calls[0].arguments, [
           'get',
           '/training/student/:id',
           { params: { id: '123' }, innerAccess: false },
@@ -3845,15 +3792,11 @@ describe('businessTools.test.ts', { concurrency: false, timeout: 60000 }, () => 
         const fullCheck = fromJsonSchema(schema)['~standard'];
         const compactCheck = fromJsonSchema(effect.inputSchema)['~standard'];
         assert.equal((await fullCheck.validate(args)).issues, undefined);
-        for (const [body, path, message] of [
-          [{ amount: 4 }, ['body', 'amount'], 'Too big: expected number to be <=3'],
-          [
-            { amount: 2, priority: null },
-            ['body', 'priority'],
-            'Invalid input: expected number, received null',
-          ],
-          [{ amount: 2, private: true }, [], 'Arguments do not match the input contract'],
-        ] as const) {
+        for (const body of [
+          { amount: 4 },
+          { amount: 2, priority: null },
+          { amount: 2, private: true },
+        ]) {
           const invalid = { ...args, body };
           assert.equal(
             (await compactCheck.validate(invalid)).issues,
@@ -3868,8 +3811,7 @@ describe('businessTools.test.ts', { concurrency: false, timeout: 60000 }, () => 
             name: effectToolName,
             arguments: invalid,
           });
-          const issues = assertToolArgumentIssues(rejected.error);
-          assert.deepEqual(issues, [{ message, path }]);
+          assertJsonArgumentIssues(rejected.error);
           assert.equal(action.mock.callCount(), 0, 'invalid grouped input never dispatches');
         }
         const output = await lookup('output');
@@ -3950,6 +3892,133 @@ describe('businessTools.test.ts', { concurrency: false, timeout: 60000 }, () => 
         guards.mock.restore();
         await read.close();
         await all.close();
+      }
+    });
+  });
+
+  it('runs native input effects once through the real API and keeps readonly transport slots parser-free', async () => {
+    await app.bean.executor.mockCtx(async () => {
+      const initial = { ...toolFixtureState };
+      const server = await createControllerToolServer(app, 'mcp:all', {
+        ssrSiteId: 'web',
+        includeTool: identity =>
+          identity.controller === 'test-mcp.controller.toolFixture' &&
+          identity.action === 'semantic',
+      });
+      const client = await connect(server);
+      const name = 'mcp_test_action_semantic';
+      const call = (args: object) => client.request('tools/call', { name, arguments: args });
+      const delta = (key: keyof typeof toolFixtureState) => toolFixtureState[key] - initial[key];
+      try {
+        assert.deepEqual(server.diagnostics, []);
+        const tools = (await client.request('tools/list')).result.tools;
+        const tool = tools.find((tool: any) => tool.name === name);
+        assert.ok(tool);
+        assert.equal(tool.inputSchema.required.includes('serverOwned'), false);
+        assert.deepEqual(tool.inputSchema.properties.serverOwned, {});
+        const lookup = async (section: 'input' | 'output') => {
+          const response = await client.request('tools/call', {
+            name: toolContractToolName,
+            arguments: { tool: name, section },
+          });
+          assert.equal(response.error, undefined);
+          return response.result.structuredContent.schema;
+        };
+        const input = await lookup('input');
+        const response = await lookup('output');
+        const expectedRest = {
+          'readonly': true,
+          'form': { visible: false },
+          'form-create': { readonly: true },
+        };
+        assert.deepEqual(input.properties.serverOwned, { rest: expectedRest });
+        assert.equal(input.required.includes('serverOwned'), false);
+        assert.equal(response.properties.serverOwned.type, 'string');
+        assert.deepEqual(response.properties.serverOwned.rest, expectedRest);
+        assert.equal(response.required.includes('serverOwned'), true);
+        for (const field of ['strict', 'loose', 'catchall']) {
+          const child = resolveSchema(input.properties[field], input.$defs ?? {});
+          assert.deepEqual(child.properties.serverOwned, { rest: expectedRest });
+          assert.equal(child.required.includes('serverOwned'), false);
+        }
+        assert.equal(delta('inputTransforms'), 0, 'schema inspection never invokes native effects');
+        assert.equal(delta('inputRefinements'), 0);
+        assert.equal(delta('readonlyEffects'), 0);
+        const accepted = await call({ value: 'write' });
+        assert.equal(accepted.error, undefined);
+        assert.notEqual(accepted.result.isError, true);
+        assert.deepEqual(accepted.result.structuredContent, {
+          value: 'write:native:response',
+          serverOwned: 'trusted output',
+        });
+        assert.equal(delta('inputTransforms'), 1, 'no MCP-side duplicate native parse');
+        assert.equal(delta('inputRefinements'), 1);
+        assert.equal(delta('semanticCalls'), 1);
+        assert.equal(delta('outputTransforms'), 1, 'native response transformation remains active');
+        const at = '2026-05-12T08:00:00.000Z';
+        const args = {
+          value: 'nested',
+          serverOwned: { malformed: true },
+          at,
+          strict: { writable: 'strict', serverOwned: null },
+          loose: { writable: 'loose', serverOwned: 1, extra: 'preserved' },
+          catchall: { writable: 'catchall', serverOwned: [], extra: 2 },
+        };
+        assert.equal((await fromJsonSchema(input)['~standard'].validate(args)).issues, undefined);
+        const nested = await call(args);
+        assert.equal(nested.error, undefined);
+        assert.notEqual(nested.result.isError, true);
+        assert.deepEqual(nested.result.structuredContent, {
+          value: 'nested:native:response',
+          serverOwned: 'trusted output',
+          at: new Date(at),
+          strict: { writable: 'strict' },
+          loose: { writable: 'loose', extra: 'preserved' },
+          catchall: { writable: 'catchall', extra: 2 },
+        });
+        assert.equal(delta('inputTransforms'), 2);
+        assert.equal(delta('inputRefinements'), 2);
+        assert.equal(
+          delta('dateTransforms'),
+          1,
+          'schema-bound date reaches native validation once',
+        );
+        assert.equal(delta('readonlyEffects'), 0, 'known readonly validators never execute');
+        assert.equal(delta('semanticCalls'), 2);
+        assert.deepEqual(args.serverOwned, { malformed: true }, 'caller input is not mutated');
+        const rejected = await call({ value: 'reject' });
+        assert.deepEqual(assertToolArgumentIssues(rejected.error), [
+          { message: 'Invalid value', path: ['value'] },
+        ]);
+        assert.equal(delta('inputTransforms'), 3);
+        assert.equal(delta('inputRefinements'), 3);
+        assert.equal(delta('semanticCalls'), 2, 'native parameter failure never enters the Action');
+        assert.equal(delta('outputTransforms'), 2);
+        const beforeBoundary = { ...toolFixtureState };
+        for (const args of [
+          { value: 1 },
+          { value: 'write', at: 'not-a-date' },
+          { value: 'write', extra: true },
+        ]) {
+          assertJsonArgumentIssues((await call(args)).error);
+        }
+        assert.deepEqual(
+          toolFixtureState,
+          beforeBoundary,
+          'JSON rejection precedes all native effects',
+        );
+        for (const failure of ['status422', 'zod']) {
+          const failed = await call({ value: 'business', failure });
+          assert.equal(failed.error, undefined);
+          assert.equal(failed.result.isError, true);
+          assert.deepEqual(failed.result.content, [{ type: 'text', text: 'Action failed' }]);
+          assert.equal(failed.result.structuredContent, undefined);
+          assert.doesNotMatch(JSON.stringify(failed), /private business|ZodError|stack/);
+        }
+        assert.equal(delta('semanticCalls'), 4);
+      } finally {
+        Object.assign(toolFixtureState, initial);
+        await client.close();
       }
     });
   });
@@ -4036,6 +4105,7 @@ describe('businessTools.test.ts', { concurrency: false, timeout: 60000 }, () => 
           { params: { label: 'scope-proof' }, body: { amount: 4 } },
           { params: { label: 'scope-proof' }, body: { amount: 2, priority: null } },
           { ...args, innerAccess: true },
+          { ...args, queryNative: true },
         ]) {
           const rejected = await all.request('tools/call', {
             name: effectToolName,

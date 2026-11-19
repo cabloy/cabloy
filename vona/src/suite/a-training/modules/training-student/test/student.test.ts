@@ -99,6 +99,73 @@ describe('student.test.ts', { concurrency: false }, () => {
     });
   });
 
+  it('action:student:nestedDisplayFieldsReadonly', async () => {
+    await app.bean.executor.mockCtx(async () => {
+      const input = {
+        name: 'Readonly display fields',
+        mobile: '13800138000',
+        level: 1,
+        trainingRecords: [
+          {
+            id: 101,
+            deleted: false,
+            name: 'Record',
+            sceneImageIds: [201],
+            dossierFileIds: [301],
+            sceneImages: [{ id: 201 }],
+            dossierFiles: [{ id: 301 }],
+            trainingRecordSubjects: [{ id: 102, deleted: true, name: 'Math', score: 95 }],
+          },
+        ],
+      };
+      const original = structuredClone(input);
+      for (const DtoClass of [DtoStudentCreate, DtoStudentUpdate]) {
+        const result = await app.bean.validator.validate(DtoClass, input);
+        const record = result.trainingRecords?.[0];
+        assert.ok(record);
+        assert.equal('sceneImages' in record, false);
+        assert.equal('dossierFiles' in record, false);
+        assert.deepEqual(record.sceneImageIds, [201]);
+        assert.deepEqual(record.dossierFileIds, [301]);
+        const update = DtoClass === DtoStudentUpdate;
+        assert.equal((record as any).id, update ? 101 : undefined);
+        assert.equal((record as any).deleted, update ? false : undefined);
+        assert.equal((record.trainingRecordSubjects?.[0] as any).id, update ? 102 : undefined);
+        assert.equal(
+          (record.trainingRecordSubjects?.[0] as any).deleted,
+          update ? true : undefined,
+        );
+        assert.equal(record.trainingRecordSubjects?.[0]?.score, 95);
+      }
+      assert.deepEqual(input, original);
+
+      for (const DtoClass of [DtoStudentCreate, DtoStudentUpdate, DtoStudentView]) {
+        const document = JSON.parse(
+          JSON.stringify(await app.bean.openapi.generateJsonOfClass(DtoClass)),
+        );
+        const resolveSchema = (schema: any): any =>
+          schema?.$ref
+            ? resolveSchema(document.components.schemas[schema.$ref.split('/').pop()])
+            : schema;
+        const root = Object.values(document.components.schemas).find(
+          (schema: any) => schema.properties?.trainingRecords,
+        ) as any;
+        const record = resolveSchema(resolveSchema(root.properties.trainingRecords).items);
+        for (const field of ['sceneImages', 'dossierFiles']) {
+          const property = resolveSchema(record.properties[field]);
+          assert.ok([property.type].flat().includes('array'));
+          assert.equal(property.rest.readonly, true);
+          assert.equal(property.rest.visible, false);
+          assert.equal(record.required?.includes(field), false);
+        }
+        for (const field of ['sceneImageIds', 'dossierFileIds']) {
+          assert.ok(record.properties[field]);
+          assert.notEqual(resolveSchema(record.properties[field]).rest?.readonly, true);
+        }
+      }
+    });
+  });
+
   it('action:student:openapiMetadata', async () => {
     await app.bean.executor.mockCtx(async () => {
       const controller = app.bean.onion.controller

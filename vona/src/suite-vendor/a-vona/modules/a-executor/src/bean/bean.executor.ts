@@ -24,6 +24,7 @@ import type {
 } from '../types/executor.ts';
 
 import { __delegateProperties } from '../lib/utils.ts';
+import { SymbolValidationFailureCapture } from '../types/executor.ts';
 
 @Bean()
 export class BeanExecutor extends BeanBase {
@@ -136,7 +137,7 @@ export class BeanExecutor extends BeanBase {
     ) {
       throw new Error('Existing-ready options unavailable');
     }
-    if (typeof fn !== 'function') throw new Error('Existing-ready unavailable');
+    if (typeof fn !== 'function') throw new TypeError('Existing-ready unavailable');
     let context: VonaContext;
     try {
       context = this.app.createAnonymousContext(selected.req, selected.res);
@@ -262,6 +263,13 @@ export class BeanExecutor extends BeanBase {
             // delegateProperties
             __delegateProperties(context, options.extraData);
           }
+        }
+        if (options.validationFailureCapture || context.state[SymbolValidationFailureCapture]) {
+          // Child dispatches must not observe or mutate a caller's diagnostics.
+          context.state = { ...context.state };
+          (context.state as any)[SymbolValidationFailureCapture] = options.validationFailureCapture
+            ? { context, capture: options.validationFailureCapture }
+            : undefined;
         }
         return await this.bean._getBean(ServiceTransactionAsyncLocalStorage).run(fn, isolate);
       };

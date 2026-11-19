@@ -5,6 +5,7 @@ import Router from 'find-my-way';
 import { appMetadata, appResource, BeanBase, deepExtend } from 'vona';
 import { SymbolCacheComposeMiddlewares } from 'vona-module-a-aspect';
 import { Bean } from 'vona-module-a-bean';
+import { SymbolActionQuery } from 'vona-module-a-executor';
 import { SymbolUseOnionOptions, SymbolUseOnionOptionsRouteReal } from 'vona-module-a-onion';
 import { SymbolRouteHandlersArgumentsValue } from 'vona-module-a-openapiutils';
 
@@ -173,7 +174,17 @@ export class BeanRouter extends BeanBase {
       const ctx = this;
       ctx.route = _route;
       ctx.request.params = params;
-      ctx.request.query = searchParams;
+      const queryNative = ctx[SymbolActionQuery];
+      if (queryNative) {
+        // Koa's query setter URL-encodes values, losing native JSON types.
+        Object.defineProperty(ctx.request, 'query', {
+          value: queryNative,
+          writable: true,
+          configurable: true,
+        });
+      } else {
+        ctx.request.query = searchParams;
+      }
       return _composeMiddlewares(this.app, _route)(ctx);
     };
 
