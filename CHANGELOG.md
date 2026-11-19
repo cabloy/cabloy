@@ -1,5 +1,17 @@
 # Changelog
 
+## 5.1.289
+
+### Features
+
+- Add validation and schema support.
+- Add a skill for Cabloy MCP mutations.
+
+### Improvements
+
+- Update Koa to version 3.3.0.
+- Update access token tests.
+
 ## 5.1.288
 
 ### Features
