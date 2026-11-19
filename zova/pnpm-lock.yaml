@@ -2059,6 +2059,9 @@ importers:
       zova-module-basic-button:
         specifier: ^5.0.0
         version: link:../../../cabloy-basic/modules/basic-button
+      zova-module-basic-table:
+        specifier: ^5.0.6
+        version: link:../../../cabloy-basic/modules/basic-table
       zova-module-home-base:
         specifier: ^5.0.0
         version: link:../../../a-home/modules/home-base

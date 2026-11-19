@@ -43,6 +43,7 @@
     "zova-module-a-model": "^5.0.0",
     "zova-module-a-router": "^5.0.0",
     "zova-module-basic-button": "^5.0.0",
+    "zova-module-basic-table": "^5.0.6",
     "zova-module-home-base": "^5.0.0",
     "zova-module-home-passport": "^5.0.0"
   },
@@ -68,6 +69,7 @@
       "a-fetch": "5.0.0",
       "a-interceptor": "5.0.0",
       "a-model": "5.0.0",
+      "basic-table": "5.0.6",
       "home-passport": "5.0.0"
     }
   }
