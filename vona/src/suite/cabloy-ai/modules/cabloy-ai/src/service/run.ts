@@ -61,6 +61,7 @@ export class ServiceRun extends BeanBase {
     const text = this.validateCommand(command, limits.maxInputCharacters);
     const conversation = await this.scope.service.conversation.lockOwned(
       userId,
+      command.ssrSiteId,
       command.conversationId,
     );
     await this.reconcileLocked(userId, conversation);
@@ -102,9 +103,13 @@ export class ServiceRun extends BeanBase {
     return { run, replay: false };
   }
 
-  async reconcile(userId: TableIdentity, conversationId: TableIdentity): Promise<void> {
+  async reconcile(
+    userId: TableIdentity,
+    ssrSiteId: string,
+    conversationId: TableIdentity,
+  ): Promise<void> {
     await this.scope.service.conversation.serializeWrite(() =>
-      this.reconcileTransaction(userId, conversationId),
+      this.reconcileTransaction(userId, ssrSiteId, conversationId),
     );
   }
 
@@ -112,9 +117,14 @@ export class ServiceRun extends BeanBase {
   @Core.retryable(chatTransactionRetry)
   private async reconcileTransaction(
     userId: TableIdentity,
+    ssrSiteId: string,
     conversationId: TableIdentity,
   ): Promise<void> {
-    const conversation = await this.scope.service.conversation.lockOwned(userId, conversationId);
+    const conversation = await this.scope.service.conversation.lockOwned(
+      userId,
+      ssrSiteId,
+      conversationId,
+    );
     await this.reconcileLocked(userId, conversation);
   }
 
@@ -141,9 +151,13 @@ export class ServiceRun extends BeanBase {
   }
 
   async status(userId: TableIdentity, command: DtoChatStatusRequest): Promise<DtoChatRun | null> {
-    await this.reconcile(userId, command.conversationId);
+    await this.reconcile(userId, command.ssrSiteId, command.conversationId);
     const run = await this.scope.model.run.get(
-      { conversationId: command.conversationId, userId, requestKey: command.requestKey },
+      {
+        conversationId: command.conversationId,
+        userId,
+        requestKey: command.requestKey,
+      },
       {
         disableCacheEntity: true,
         disableCacheQuery: true,
@@ -154,12 +168,13 @@ export class ServiceRun extends BeanBase {
 
   async finalize(
     userId: TableIdentity,
+    ssrSiteId: string,
     runId: TableIdentity,
     conversationId: TableIdentity,
     outcome: IChatOutcome,
   ): Promise<DtoChatRun> {
     return await this.scope.service.conversation.serializeWrite(() =>
-      this.finalizeTransaction(userId, runId, conversationId, outcome),
+      this.finalizeTransaction(userId, ssrSiteId, runId, conversationId, outcome),
     );
   }
 
@@ -167,12 +182,21 @@ export class ServiceRun extends BeanBase {
   @Core.retryable(chatTransactionRetry)
   private async finalizeTransaction(
     userId: TableIdentity,
+    ssrSiteId: string,
     runId: TableIdentity,
     conversationId: TableIdentity,
     outcome: IChatOutcome,
   ): Promise<DtoChatRun> {
-    const conversation = await this.scope.service.conversation.lockOwned(userId, conversationId);
-    const run = await this.scope.model.run.getForUpdate({ id: runId, conversationId, userId });
+    const conversation = await this.scope.service.conversation.lockOwned(
+      userId,
+      ssrSiteId,
+      conversationId,
+    );
+    const run = await this.scope.model.run.getForUpdate({
+      id: runId,
+      conversationId,
+      userId,
+    });
     if (!run) this.app.throw(404, this.scope.locale.RunNotFound());
     // Both fences are required: an expired owner may finish after another turn was admitted.
     if (run.status !== 'running' || String(conversation.activeRunId) !== String(runId))
@@ -202,11 +226,19 @@ export class ServiceRun extends BeanBase {
 
   async send(userId: TableIdentity, command: DtoChatSend): Promise<void> {
     // Authorize before resolving deployment configuration. Browser fields never select a scene/model.
-    await this.scope.service.conversation.requireOwned(userId, command.conversationId);
+    await this.scope.service.conversation.requireOwned(
+      userId,
+      command.ssrSiteId,
+      command.conversationId,
+    );
     const text = this.validateCommand(command, 32000);
-    await this.reconcile(userId, command.conversationId);
+    await this.reconcile(userId, command.ssrSiteId, command.conversationId);
     const existing = await this.scope.model.run.get(
-      { conversationId: command.conversationId, userId, requestKey: command.requestKey },
+      {
+        conversationId: command.conversationId,
+        userId,
+        requestKey: command.requestKey,
+      },
       { disableCacheEntity: true, disableCacheQuery: true },
     );
     if (existing) {
@@ -284,7 +316,7 @@ export class ServiceRun extends BeanBase {
       );
     };
     const settle = (outcome: IChatOutcome) =>
-      (terminal ??= this.finalize(userId, run.id, run.conversationId, outcome));
+      (terminal ??= this.finalize(userId, command.ssrSiteId, run.id, run.conversationId, outcome));
     const abortOutcome = (): IChatOutcome =>
       timedOut
         ? { status: 'interrupted', errorCode: 'chat_timeout' }
@@ -309,7 +341,11 @@ export class ServiceRun extends BeanBase {
     const textWindows: { ms: number; deltas: number; characters: number }[] = [];
     let execution: Promise<void> | undefined;
     try {
-      const history = await this.scope.service.conversation.history(userId, run.conversationId);
+      const history = await this.scope.service.conversation.history(
+        userId,
+        command.ssrSiteId,
+        run.conversationId,
+      );
       const messages: ModelMessage[] = [{ role: 'user', content: command.text.trim() }];
       // Match the invocation's serialized-input limit, preserving complete recent turns.
       for (let index = history.messages.length - 2; index >= 0; index -= 2) {
@@ -389,6 +425,7 @@ export class ServiceRun extends BeanBase {
               if (final.status === 'completed') {
                 await this.scope.service.conversation.generateTitle(
                   userId,
+                  command.ssrSiteId,
                   run.conversationId,
                   run.id,
                   command.text.trim(),

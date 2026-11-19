@@ -9,6 +9,9 @@ export interface IDtoOptionsChatPin extends IDecoratorDtoOptions {}
 
 @Dto<IDtoOptionsChatPin>()
 export class DtoChatPin {
+  @Api.field(v.required(), z.string().trim().min(1).max(255))
+  ssrSiteId: string;
+
   @Api.field(v.required(), v.tableIdentity())
   conversationId: TableIdentity;
 

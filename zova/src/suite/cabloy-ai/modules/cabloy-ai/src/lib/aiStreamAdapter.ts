@@ -12,6 +12,7 @@ export type ChatStreamMessage = UIMessage<{
 }>;
 
 export interface ChatSendCommand {
+  ssrSiteId: string;
   conversationId: number | string;
   requestKey: string;
   text: string;

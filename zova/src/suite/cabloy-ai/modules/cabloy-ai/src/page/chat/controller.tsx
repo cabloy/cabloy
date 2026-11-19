@@ -36,7 +36,7 @@ export class ControllerPageChat extends BeanControllerPageBase {
     });
     await this.$$modelChat.prepare();
     this.$watch(
-      () => [this.$$modelChat.selectedId, this.$passport.user?.id],
+      () => [this.$$modelChat.selectedId, this.$passport.user?.id, this.sys.env.SITE_ID],
       () => {
         this.draft = '';
         this._resetMessagesFollow();

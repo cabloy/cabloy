@@ -6118,7 +6118,11 @@ export interface components {
       pinned: boolean;
     };
     'cabloy-ai.dto.chatCreate': {
+      ssrSiteId: string;
       title?: string | undefined;
+    };
+    'cabloy-ai.dto.chatList': {
+      ssrSiteId: string;
     };
     'cabloy-ai.dto.chatHistory': {
       conversation: components['schemas']['cabloy-ai.dto.chatConversation_626802c24df1498cec99aab0854fedf90c9b6dd3'];
@@ -6138,6 +6142,7 @@ export interface components {
       text: string;
     };
     'cabloy-ai.dto.chatHistoryRequest': {
+      ssrSiteId: string;
       conversationId: number | string;
     };
     'cabloy-ai.dto.chatRun': {
@@ -6151,18 +6156,22 @@ export interface components {
       errorCode: string | undefined;
     };
     'cabloy-ai.dto.chatStatusRequest': {
+      ssrSiteId: string;
       conversationId: number | string;
       requestKey: string;
     };
     'cabloy-ai.dto.chatRename': {
+      ssrSiteId: string;
       conversationId: number | string;
       title: string;
     };
     'cabloy-ai.dto.chatPin': {
+      ssrSiteId: string;
       conversationId: number | string;
       pinned: boolean;
     };
     'cabloy-ai.dto.chatSend': {
+      ssrSiteId: string;
       conversationId: number | string;
       requestKey: string;
       text: string;
@@ -10487,7 +10496,11 @@ export interface operations {
       path?: never;
       cookie?: never;
     };
-    requestBody?: never;
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['cabloy-ai.dto.chatList'];
+      };
+    };
     responses: {
       200: {
         headers: {

@@ -53,6 +53,7 @@ export class ServiceConversation extends BeanBase {
     if (title.length > 120) this.app.throw(422, this.scope.locale.InvalidConversationTitle());
     const conversation = await this.scope.model.conversation.insert({
       userId,
+      ssrSiteId: command.ssrSiteId,
       title,
       activeRunId: null,
       pinned: false,
@@ -62,6 +63,7 @@ export class ServiceConversation extends BeanBase {
 
   async generateTitle(
     userId: TableIdentity,
+    ssrSiteId: string,
     conversationId: TableIdentity,
     runId: TableIdentity,
     text: string,
@@ -70,7 +72,7 @@ export class ServiceConversation extends BeanBase {
   ): Promise<void> {
     try {
       if (signal?.aborted) return;
-      const conversation = await this.requireOwned(userId, conversationId);
+      const conversation = await this.requireOwned(userId, ssrSiteId, conversationId);
       if (conversation.title) return;
       const [first] = await this.scope.model.run.select({
         where: { conversationId, userId, status: 'completed' },
@@ -101,7 +103,7 @@ export class ServiceConversation extends BeanBase {
       // Recheck atomically after provider I/O; never overwrite a title changed in the meantime.
       await this.scope.model.conversation.update(
         { id: conversationId, title },
-        { where: { userId, title: '' } },
+        { where: { userId, ssrSiteId, title: '' } },
       );
       this.$logger.debug('ai.chat.title.generated');
     } catch {
@@ -110,9 +112,9 @@ export class ServiceConversation extends BeanBase {
     }
   }
 
-  async list(userId: TableIdentity): Promise<DtoChatConversation[]> {
+  async list(userId: TableIdentity, ssrSiteId: string): Promise<DtoChatConversation[]> {
     const conversations = await this.scope.model.conversation.select({
-      where: { userId },
+      where: { userId, ssrSiteId },
       orders: [
         ['pinned', 'desc'],
         ['id', 'desc'],
@@ -122,8 +124,8 @@ export class ServiceConversation extends BeanBase {
     const result: DtoChatConversation[] = [];
     for (const conversation of conversations) {
       if (conversation.activeRunId != null) {
-        await this.scope.service.run.reconcile(userId, conversation.id);
-        result.push(this.toDto(await this.requireOwned(userId, conversation.id)));
+        await this.scope.service.run.reconcile(userId, ssrSiteId, conversation.id);
+        result.push(this.toDto(await this.requireOwned(userId, ssrSiteId, conversation.id)));
       } else {
         result.push(this.toDto(conversation));
       }
@@ -131,9 +133,13 @@ export class ServiceConversation extends BeanBase {
     return result;
   }
 
-  async history(userId: TableIdentity, conversationId: TableIdentity): Promise<DtoChatHistory> {
-    await this.scope.service.run.reconcile(userId, conversationId);
-    const conversation = await this.requireOwned(userId, conversationId);
+  async history(
+    userId: TableIdentity,
+    ssrSiteId: string,
+    conversationId: TableIdentity,
+  ): Promise<DtoChatHistory> {
+    await this.scope.service.run.reconcile(userId, ssrSiteId, conversationId);
+    const conversation = await this.requireOwned(userId, ssrSiteId, conversationId);
     // A failed/partial turn contributes neither its user message nor its assistant text.
     const runs = await this.scope.model.run.select({
       where: { conversationId, userId, status: 'completed' },
@@ -159,10 +165,11 @@ export class ServiceConversation extends BeanBase {
 
   async requireOwned(
     userId: TableIdentity,
+    ssrSiteId: string,
     conversationId: TableIdentity,
   ): Promise<EntityConversation> {
     const conversation = await this.scope.model.conversation.get(
-      { id: conversationId, userId },
+      { id: conversationId, userId, ssrSiteId },
       {
         disableCacheEntity: true,
         disableCacheQuery: true,
@@ -175,6 +182,7 @@ export class ServiceConversation extends BeanBase {
   /** Must be the first database operation inside the short transaction. */
   async lockOwned(
     userId: TableIdentity,
+    ssrSiteId: string,
     conversationId: TableIdentity,
   ): Promise<EntityConversation> {
     const model = this.scope.model.conversation;
@@ -184,9 +192,15 @@ export class ServiceConversation extends BeanBase {
     // Never interpret Model.update's returned record as an affected-row count.
     await model
       .builder()
-      .where({ id: conversationId, iid: this.ctx.instance.id, userId, deleted: false })
+      .where({
+        id: conversationId,
+        iid: this.ctx.instance.id,
+        userId,
+        ssrSiteId,
+        deleted: false,
+      })
       .update({ id: model.raw('??', ['id']) as any });
-    const conversation = await model.getForUpdate({ id: conversationId, userId });
+    const conversation = await model.getForUpdate({ id: conversationId, userId, ssrSiteId });
     if (!conversation) this.app.throw(404, this.scope.locale.ConversationNotFound());
     return conversation;
   }
@@ -196,7 +210,7 @@ export class ServiceConversation extends BeanBase {
     if (!title || title.length > 120)
       this.app.throw(422, this.scope.locale.InvalidConversationTitle());
     return await this.serializeWrite(() =>
-      this.renameTransaction(userId, command.conversationId, title),
+      this.renameTransaction(userId, command.ssrSiteId, command.conversationId, title),
     );
   }
 
@@ -204,20 +218,21 @@ export class ServiceConversation extends BeanBase {
   @Core.retryable(chatTransactionRetry)
   private async renameTransaction(
     userId: TableIdentity,
+    ssrSiteId: string,
     conversationId: TableIdentity,
     title: string,
   ): Promise<DtoChatConversation> {
-    await this.lockOwned(userId, conversationId);
+    await this.lockOwned(userId, ssrSiteId, conversationId);
     await this.scope.model.conversation.update(
       { id: conversationId, title },
-      { where: { userId } },
+      { where: { userId, ssrSiteId } },
     );
-    return this.toDto(await this.requireOwned(userId, conversationId));
+    return this.toDto(await this.requireOwned(userId, ssrSiteId, conversationId));
   }
 
   async pin(userId: TableIdentity, command: DtoChatPin): Promise<DtoChatConversation> {
     return await this.serializeWrite(() =>
-      this.pinTransaction(userId, command.conversationId, command.pinned),
+      this.pinTransaction(userId, command.ssrSiteId, command.conversationId, command.pinned),
     );
   }
 
@@ -225,35 +240,41 @@ export class ServiceConversation extends BeanBase {
   @Core.retryable(chatTransactionRetry)
   private async pinTransaction(
     userId: TableIdentity,
+    ssrSiteId: string,
     conversationId: TableIdentity,
     pinned: boolean,
   ): Promise<DtoChatConversation> {
-    await this.lockOwned(userId, conversationId);
+    await this.lockOwned(userId, ssrSiteId, conversationId);
     await this.scope.model.conversation.update(
       { id: conversationId, pinned },
-      { where: { userId } },
+      { where: { userId, ssrSiteId } },
     );
-    return this.toDto(await this.requireOwned(userId, conversationId));
+    return this.toDto(await this.requireOwned(userId, ssrSiteId, conversationId));
   }
 
-  async remove(userId: TableIdentity, conversationId: TableIdentity): Promise<void> {
-    await this.serializeWrite(() => this.removeTransaction(userId, conversationId));
+  async remove(
+    userId: TableIdentity,
+    ssrSiteId: string,
+    conversationId: TableIdentity,
+  ): Promise<void> {
+    await this.serializeWrite(() => this.removeTransaction(userId, ssrSiteId, conversationId));
   }
 
   @Core.transaction()
   @Core.retryable(chatTransactionRetry)
   private async removeTransaction(
     userId: TableIdentity,
+    ssrSiteId: string,
     conversationId: TableIdentity,
   ): Promise<void> {
-    const conversation = await this.lockOwned(userId, conversationId);
+    const conversation = await this.lockOwned(userId, ssrSiteId, conversationId);
     await this.scope.service.run.reconcileLocked(userId, conversation);
     if (conversation.activeRunId != null)
       this.app.throw(409, this.scope.locale.ConversationHasActiveRun());
     await this.scope.model.usage.delete({ conversationId, userId });
     await this.scope.model.message.delete({ conversationId, userId });
     await this.scope.model.run.delete({ conversationId, userId });
-    await this.scope.model.conversation.delete({ id: conversationId, userId });
+    await this.scope.model.conversation.delete({ id: conversationId, userId, ssrSiteId });
   }
 
   toDto(conversation: EntityConversation): DtoChatConversation {

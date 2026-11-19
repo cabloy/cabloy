@@ -13,6 +13,7 @@ const identity = {
 };
 const limits = { timeoutMs: 60000, maxInputCharacters: 32000, maxOutputTokens: 4096 };
 const userId = -818101;
+const ssrSiteId = 'web';
 
 // Every contender owns its own scoped state, including its datasource transaction.
 const context = <T>(fn: () => Promise<T>) => app.bean.executor.mockCtx(fn);
@@ -29,7 +30,7 @@ async function cleanup(conversationId: TableIdentity | undefined) {
 }
 
 function command(conversationId: TableIdentity, requestKey = randomUUID(), text = 'Hello') {
-  return { conversationId, requestKey, text };
+  return { ssrSiteId, conversationId, requestKey, text };
 }
 
 function isCode(code: number) {
@@ -42,7 +43,12 @@ describe('cabloy-ai private chat domain', { concurrency: false }, () => {
     try {
       conversationId = await context(
         async () =>
-          (await scope().service.conversation.create(userId, { title: 'Owned duplicate test' })).id,
+          (
+            await scope().service.conversation.create(userId, {
+              ssrSiteId,
+              title: 'Owned duplicate test',
+            })
+          ).id,
       );
       const input = command(conversationId);
       const results = await Promise.all(
@@ -71,18 +77,22 @@ describe('cabloy-ai private chat domain', { concurrency: false }, () => {
           isCode(409),
         );
         await assert.rejects(
-          () => scope().service.conversation.remove(userId, conversationId!),
+          () => scope().service.conversation.remove(userId, ssrSiteId, conversationId!),
           isCode(409),
         );
         const run = results[0]!.run;
-        await scope().service.run.finalize(userId, run.id, conversationId!, {
+        await scope().service.run.finalize(userId, ssrSiteId, run.id, conversationId!, {
           status: 'completed',
           text: 'Reply',
         });
         const replay = await scope().service.run.prepare(userId, input, identity, limits);
         assert.equal(replay.replay, true);
         assert.equal(replay.run.status, 'completed');
-        const history = await scope().service.conversation.history(userId, conversationId!);
+        const history = await scope().service.conversation.history(
+          userId,
+          ssrSiteId,
+          conversationId!,
+        );
         assert.deepEqual(
           history.messages.map(message => [message.role, message.text]),
           [
@@ -104,7 +114,7 @@ describe('cabloy-ai private chat domain', { concurrency: false }, () => {
     let conversationId: TableIdentity | undefined;
     try {
       conversationId = await context(
-        async () => (await scope().service.conversation.create(userId, {})).id,
+        async () => (await scope().service.conversation.create(userId, { ssrSiteId })).id,
       );
       const outcomes = await Promise.allSettled(
         [0, 1].map(() =>
@@ -136,7 +146,7 @@ describe('cabloy-ai private chat domain', { concurrency: false }, () => {
     let conversationId: TableIdentity | undefined;
     try {
       conversationId = await context(
-        async () => (await scope().service.conversation.create(userId, {})).id,
+        async () => (await scope().service.conversation.create(userId, { ssrSiteId })).id,
       );
       const firstInput = command(conversationId);
       const first = await context(async () =>
@@ -149,22 +159,29 @@ describe('cabloy-ai private chat domain', { concurrency: false }, () => {
         scope().service.run.prepare(userId, command(conversationId!), identity, limits),
       );
       await context(async () => {
-        const late = await scope().service.run.finalize(userId, first.run.id, conversationId!, {
-          status: 'completed',
-          text: 'Must not persist',
-        });
+        const late = await scope().service.run.finalize(
+          userId,
+          ssrSiteId,
+          first.run.id,
+          conversationId!,
+          {
+            status: 'completed',
+            text: 'Must not persist',
+          },
+        );
         assert.equal(late.status, 'interrupted');
         const conversation = await scope().service.conversation.requireOwned(
           userId,
+          ssrSiteId,
           conversationId!,
         );
         assert.equal(String(conversation.activeRunId), String(second.run.id));
-        await scope().service.run.finalize(userId, second.run.id, conversationId!, {
+        await scope().service.run.finalize(userId, ssrSiteId, second.run.id, conversationId!, {
           status: 'failed',
           errorCode: 'chat_failed',
         });
         assert.deepEqual(
-          (await scope().service.conversation.history(userId, conversationId!)).messages,
+          (await scope().service.conversation.history(userId, ssrSiteId, conversationId!)).messages,
           [],
         );
         const status = await scope().service.run.status(userId, firstInput);
@@ -173,7 +190,7 @@ describe('cabloy-ai private chat domain', { concurrency: false }, () => {
           Number(await scope().model.usage.count({ where: { conversationId, userId } })),
           2,
         );
-        await scope().service.conversation.remove(userId, conversationId!);
+        await scope().service.conversation.remove(userId, ssrSiteId, conversationId!);
         assert.equal(await scope().model.conversation.getById(conversationId!), undefined);
       });
     } finally {
@@ -185,13 +202,13 @@ describe('cabloy-ai private chat domain', { concurrency: false }, () => {
     let conversationId: TableIdentity | undefined;
     try {
       conversationId = await context(
-        async () => (await scope().service.conversation.create(userId, {})).id,
+        async () => (await scope().service.conversation.create(userId, { ssrSiteId })).id,
       );
       await context(async () => {
         const otherUser = userId - 1;
-        assert.deepEqual(await scope().service.conversation.list(otherUser), []);
+        assert.deepEqual(await scope().service.conversation.list(otherUser, ssrSiteId), []);
         await assert.rejects(
-          () => scope().service.conversation.history(otherUser, conversationId!),
+          () => scope().service.conversation.history(otherUser, ssrSiteId, conversationId!),
           isCode(404),
         );
         await assert.rejects(
@@ -203,14 +220,14 @@ describe('cabloy-ai private chat domain', { concurrency: false }, () => {
           isCode(404),
         );
         await assert.rejects(
-          () => scope().service.conversation.remove(otherUser, conversationId!),
+          () => scope().service.conversation.remove(otherUser, ssrSiteId, conversationId!),
           isCode(404),
         );
       });
       await app.bean.executor.mockCtx(
         async () => {
           await assert.rejects(
-            () => scope().service.conversation.history(userId, conversationId!),
+            () => scope().service.conversation.history(userId, ssrSiteId, conversationId!),
             isCode(404),
           );
           await assert.rejects(
@@ -218,7 +235,7 @@ describe('cabloy-ai private chat domain', { concurrency: false }, () => {
             isCode(404),
           );
           await assert.rejects(
-            () => scope().service.conversation.remove(userId, conversationId!),
+            () => scope().service.conversation.remove(userId, ssrSiteId, conversationId!),
             isCode(404),
           );
         },
@@ -233,13 +250,13 @@ describe('cabloy-ai private chat domain', { concurrency: false }, () => {
     let conversationId: TableIdentity | undefined;
     try {
       conversationId = await context(
-        async () => (await scope().service.conversation.create(userId, {})).id,
+        async () => (await scope().service.conversation.create(userId, { ssrSiteId })).id,
       );
       const input = command(conversationId);
       await context(async () => {
         const service = scope().service.run;
         const admitted = await service.prepare(userId, input, identity, limits);
-        await service.finalize(userId, admitted.run.id, conversationId!, {
+        await service.finalize(userId, ssrSiteId, admitted.run.id, conversationId!, {
           status: 'completed',
           text: 'Reply',
         });
@@ -285,7 +302,7 @@ describe('cabloy-ai private chat domain', { concurrency: false }, () => {
     let conversationId: TableIdentity | undefined;
     try {
       conversationId = await context(
-        async () => (await scope().service.conversation.create(userId, {})).id,
+        async () => (await scope().service.conversation.create(userId, { ssrSiteId })).id,
       );
       const input = command(conversationId);
       await context(async () => scope().service.run.prepare(userId, input, identity, limits));
@@ -295,15 +312,21 @@ describe('cabloy-ai private chat domain', { concurrency: false }, () => {
             const conversation = scope().service.conversation;
             const run = scope().service.run;
             const chinese = locale === 'zh-cn';
-            await assert.rejects(() => conversation.create(userId, { title: 'x'.repeat(121) }), {
-              code: 422,
-              message: chinese ? '对话标题无效' : 'Invalid conversation title',
-            });
-            await assert.rejects(() => conversation.requireOwned(userId - 1, conversationId!), {
-              code: 404,
-              message: chinese ? '对话不存在' : 'Conversation not found',
-            });
-            await assert.rejects(() => conversation.remove(userId, conversationId!), {
+            await assert.rejects(
+              () => conversation.create(userId, { ssrSiteId, title: 'x'.repeat(121) }),
+              {
+                code: 422,
+                message: chinese ? '对话标题无效' : 'Invalid conversation title',
+              },
+            );
+            await assert.rejects(
+              () => conversation.requireOwned(userId - 1, ssrSiteId, conversationId!),
+              {
+                code: 404,
+                message: chinese ? '对话不存在' : 'Conversation not found',
+              },
+            );
+            await assert.rejects(() => conversation.remove(userId, ssrSiteId, conversationId!), {
               code: 409,
               message: chinese ? '对话中有正在进行的请求' : 'Conversation has an active run',
             });
@@ -339,10 +362,10 @@ describe('cabloy-ai private chat domain', { concurrency: false }, () => {
       await app.bean.executor.mockCtx(
         async () => {
           const conversation = scope().service.conversation;
-          const created = await conversation.create(userId, {});
+          const created = await conversation.create(userId, { ssrSiteId });
           conversationId = created.id;
           assert.equal(created.title, '');
-          assert.equal((await conversation.requireOwned(userId, created.id)).title, '');
+          assert.equal((await conversation.requireOwned(userId, ssrSiteId, created.id)).title, '');
         },
         { locale: 'zh-cn' },
       );
@@ -351,10 +374,10 @@ describe('cabloy-ai private chat domain', { concurrency: false }, () => {
           async () => {
             const conversation = scope().service.conversation;
             assert.equal(
-              (await conversation.history(userId, conversationId!)).conversation.title,
+              (await conversation.history(userId, ssrSiteId, conversationId!)).conversation.title,
               '',
             );
-            assert.equal((await conversation.list(userId))[0]?.title, '');
+            assert.equal((await conversation.list(userId, ssrSiteId))[0]?.title, '');
           },
           { locale },
         );
@@ -364,12 +387,19 @@ describe('cabloy-ai private chat domain', { concurrency: false }, () => {
           const conversation = scope().service.conversation;
           const input = command(conversationId!, randomUUID(), '订单系统设计');
           const { run } = await scope().service.run.prepare(userId, input, identity, limits);
-          await scope().service.run.finalize(userId, run.id, conversationId!, {
+          await scope().service.run.finalize(userId, ssrSiteId, run.id, conversationId!, {
             status: 'completed',
             text: 'Reply',
           });
           const bound = await app.bean.ai.create();
-          await conversation.generateTitle(userId, conversationId!, run.id, input.text, bound);
+          await conversation.generateTitle(
+            userId,
+            ssrSiteId,
+            conversationId!,
+            run.id,
+            input.text,
+            bound,
+          );
         },
         { locale: 'zh-cn' },
       );
@@ -378,11 +408,11 @@ describe('cabloy-ai private chat domain', { concurrency: false }, () => {
           async () => {
             const conversation = scope().service.conversation;
             assert.equal(
-              (await conversation.history(userId, conversationId!)).conversation.title,
+              (await conversation.history(userId, ssrSiteId, conversationId!)).conversation.title,
               'AI test response: 订单系统设计',
             );
             await scope().model.conversation.update({ id: conversationId, title: '我的标题' });
-            assert.equal((await conversation.list(userId))[0]?.title, '我的标题');
+            assert.equal((await conversation.list(userId, ssrSiteId))[0]?.title, '我的标题');
             await scope().model.conversation.update({
               id: conversationId,
               title: 'AI test response: 订单系统设计',
@@ -402,19 +432,28 @@ describe('cabloy-ai private chat domain', { concurrency: false }, () => {
       await context(async () => {
         const conversation = scope().service.conversation;
         const service = scope().service.run;
-        conversationId = (await conversation.create(userId, {})).id;
+        conversationId = (await conversation.create(userId, { ssrSiteId })).id;
         const bound = await app.bean.ai.create();
         const generate = t.mock.method(bound, 'generateText');
         try {
           const failed = await service.prepare(userId, command(conversationId), identity, limits);
-          await service.finalize(userId, failed.run.id, conversationId, { status: 'failed' });
+          await service.finalize(userId, ssrSiteId, failed.run.id, conversationId, {
+            status: 'failed',
+          });
           const input = command(conversationId, randomUUID(), 'Design an order system');
           const first = await service.prepare(userId, input, identity, limits);
-          await service.finalize(userId, first.run.id, conversationId, {
+          await service.finalize(userId, ssrSiteId, first.run.id, conversationId, {
             status: 'completed',
             text: 'Saved answer',
           });
-          await conversation.generateTitle(userId, conversationId, first.run.id, input.text, bound);
+          await conversation.generateTitle(
+            userId,
+            ssrSiteId,
+            conversationId,
+            first.run.id,
+            input.text,
+            bound,
+          );
           assert.equal(generate.mock.callCount(), 1);
           const options = generate.mock.calls[0]!.arguments[0];
           assert.equal(options.prompt, input.text);
@@ -424,27 +463,38 @@ describe('cabloy-ai private chat domain', { concurrency: false }, () => {
           assert.equal(options.maxOutputTokens, 96);
           const title = 'AI test response: Design an order system';
           assert.equal(
-            (await conversation.history(userId, conversationId)).conversation.title,
+            (await conversation.history(userId, ssrSiteId, conversationId)).conversation.title,
             title,
           );
-          assert.equal((await conversation.list(userId))[0]?.title, title);
+          assert.equal((await conversation.list(userId, ssrSiteId))[0]?.title, title);
           assert.equal((await service.prepare(userId, input, identity, limits)).replay, true);
-          await conversation.generateTitle(userId, conversationId, first.run.id, input.text, bound);
+          await conversation.generateTitle(
+            userId,
+            ssrSiteId,
+            conversationId,
+            first.run.id,
+            input.text,
+            bound,
+          );
           const nextInput = command(conversationId, randomUUID(), 'A different topic');
           const next = await service.prepare(userId, nextInput, identity, limits);
-          await service.finalize(userId, next.run.id, conversationId, {
+          await service.finalize(userId, ssrSiteId, next.run.id, conversationId, {
             status: 'completed',
             text: 'Another answer',
           });
           await conversation.generateTitle(
             userId,
+            ssrSiteId,
             conversationId,
             next.run.id,
             nextInput.text,
             bound,
           );
           assert.equal(generate.mock.callCount(), 1);
-          assert.equal((await conversation.requireOwned(userId, conversationId)).title, title);
+          assert.equal(
+            (await conversation.requireOwned(userId, ssrSiteId, conversationId)).title,
+            title,
+          );
         } finally {
           generate.mock.restore();
         }
@@ -460,10 +510,10 @@ describe('cabloy-ai private chat domain', { concurrency: false }, () => {
       await context(async () => {
         const conversation = scope().service.conversation;
         const service = scope().service.run;
-        conversationId = (await conversation.create(userId, { title: 'My title' })).id;
+        conversationId = (await conversation.create(userId, { ssrSiteId, title: 'My title' })).id;
         const input = command(conversationId);
         const { run } = await service.prepare(userId, input, identity, limits);
-        await service.finalize(userId, run.id, conversationId, {
+        await service.finalize(userId, ssrSiteId, run.id, conversationId, {
           status: 'completed',
           text: 'Reply',
         });
@@ -473,17 +523,34 @@ describe('cabloy-ai private chat domain', { concurrency: false }, () => {
           return { text: 'Generated title' } as any;
         });
         try {
-          await conversation.generateTitle(userId, conversationId, run.id, input.text, bound);
+          await conversation.generateTitle(
+            userId,
+            ssrSiteId,
+            conversationId,
+            run.id,
+            input.text,
+            bound,
+          );
           assert.equal(generate.mock.callCount(), 0);
-          assert.equal((await conversation.requireOwned(userId, conversationId)).title, 'My title');
+          assert.equal(
+            (await conversation.requireOwned(userId, ssrSiteId, conversationId)).title,
+            'My title',
+          );
           await scope().model.conversation.update({
             id: conversationId,
             title: '',
           });
-          await conversation.generateTitle(userId, conversationId, run.id, input.text, bound);
+          await conversation.generateTitle(
+            userId,
+            ssrSiteId,
+            conversationId,
+            run.id,
+            input.text,
+            bound,
+          );
           assert.equal(generate.mock.callCount(), 1);
           assert.equal(
-            (await conversation.requireOwned(userId, conversationId)).title,
+            (await conversation.requireOwned(userId, ssrSiteId, conversationId)).title,
             'Edited title',
           );
         } finally {
@@ -501,10 +568,10 @@ describe('cabloy-ai private chat domain', { concurrency: false }, () => {
       await context(async () => {
         const conversation = scope().service.conversation;
         const service = scope().service.run;
-        conversationId = (await conversation.create(userId, {})).id;
+        conversationId = (await conversation.create(userId, { ssrSiteId })).id;
         const input = command(conversationId);
         const { run } = await service.prepare(userId, input, identity, limits);
-        await service.finalize(userId, run.id, conversationId, {
+        await service.finalize(userId, ssrSiteId, run.id, conversationId, {
           status: 'completed',
           text: 'Reply',
         });
@@ -513,29 +580,60 @@ describe('cabloy-ai private chat domain', { concurrency: false }, () => {
           throw new Error('Title provider failed');
         });
         try {
-          await conversation.generateTitle(userId, conversationId, run.id, input.text, bound);
+          await conversation.generateTitle(
+            userId,
+            ssrSiteId,
+            conversationId,
+            run.id,
+            input.text,
+            bound,
+          );
           generate.mock.mockImplementation(async () => ({ text: ' \n ' }) as any);
-          await conversation.generateTitle(userId, conversationId, run.id, input.text, bound);
-          const history = await conversation.history(userId, conversationId);
+          await conversation.generateTitle(
+            userId,
+            ssrSiteId,
+            conversationId,
+            run.id,
+            input.text,
+            bound,
+          );
+          const history = await conversation.history(userId, ssrSiteId, conversationId);
           assert.equal(history.conversation.title, '');
-          assert.equal((await conversation.requireOwned(userId, conversationId)).title, '');
+          assert.equal(
+            (await conversation.requireOwned(userId, ssrSiteId, conversationId)).title,
+            '',
+          );
           assert.deepEqual(
             history.messages.map(message => message.text),
             ['Hello', 'Reply'],
           );
           assert.equal((await service.status(userId, input))?.status, 'completed');
           const next = await service.prepare(userId, command(conversationId), identity, limits);
-          await service.finalize(userId, next.run.id, conversationId, {
+          await service.finalize(userId, ssrSiteId, next.run.id, conversationId, {
             status: 'completed',
             text: 'Next reply',
           });
-          await conversation.generateTitle(userId, conversationId, next.run.id, 'Hello', bound);
+          await conversation.generateTitle(
+            userId,
+            ssrSiteId,
+            conversationId,
+            next.run.id,
+            'Hello',
+            bound,
+          );
           assert.equal(generate.mock.callCount(), 2);
           generate.mock.mockImplementation(
             async () => ({ text: `“  Order\n${'design '.repeat(30)} ”` }) as any,
           );
-          await conversation.generateTitle(userId, conversationId, run.id, input.text, bound);
-          const title = (await conversation.requireOwned(userId, conversationId)).title;
+          await conversation.generateTitle(
+            userId,
+            ssrSiteId,
+            conversationId,
+            run.id,
+            input.text,
+            bound,
+          );
+          const title = (await conversation.requireOwned(userId, ssrSiteId, conversationId)).title;
           assert.equal(title.length, 120);
           assert.match(title, /^Order design/);
           assert.doesNotMatch(title, /[\n“”]/);
@@ -552,7 +650,7 @@ describe('cabloy-ai private chat domain', { concurrency: false }, () => {
     let conversationId: TableIdentity | undefined;
     try {
       conversationId = await context(
-        async () => (await scope().service.conversation.create(userId, {})).id,
+        async () => (await scope().service.conversation.create(userId, { ssrSiteId })).id,
       );
       await context(async () => {
         const message = scope().model.message;
@@ -572,7 +670,8 @@ describe('cabloy-ai private chat domain', { concurrency: false }, () => {
           0,
         );
         assert.equal(
-          (await scope().service.conversation.requireOwned(userId, conversationId!)).activeRunId,
+          (await scope().service.conversation.requireOwned(userId, ssrSiteId, conversationId!))
+            .activeRunId,
           null,
         );
       });

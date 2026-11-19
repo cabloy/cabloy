@@ -44,7 +44,7 @@ export class ModelChat extends BeanModelBase {
 
   protected async __init__() {
     this.$watch(
-      () => [this.$passport.passport?.instanceId, this.$passport.user?.id],
+      () => [this.$passport.passport?.instanceId, this.$passport.user?.id, this.sys.env.SITE_ID],
       () => this._changeAccount(),
       { flush: 'sync' },
     );
@@ -57,9 +57,10 @@ export class ModelChat extends BeanModelBase {
   }
 
   conversations() {
+    const ssrSiteId = this.sys.env.SITE_ID;
     return this.$useStateData({
-      queryKey: ['list'],
-      queryFn: ({ signal }) => this.scope.api.cabloyAiChat.list(undefined, { signal }),
+      queryKey: ['list', ssrSiteId],
+      queryFn: ({ signal }) => this.scope.api.cabloyAiChat.list({ ssrSiteId }, { signal }),
       enabled: () => this.$passport.isAuthenticated && !this._disposed,
       retry: false,
       meta: { persister: false },
@@ -68,9 +69,11 @@ export class ModelChat extends BeanModelBase {
 
   history(conversationId = this.selectedId) {
     if (conversationId === undefined) return;
+    const ssrSiteId = this.sys.env.SITE_ID;
     return this.$useStateData({
-      queryKey: ['history', conversationId],
-      queryFn: ({ signal }) => this.scope.api.cabloyAiChat.history({ conversationId }, { signal }),
+      queryKey: ['history', ssrSiteId, conversationId],
+      queryFn: ({ signal }) =>
+        this.scope.api.cabloyAiChat.history({ ssrSiteId, conversationId }, { signal }),
       enabled: () => this.$passport.isAuthenticated && !this._disposed,
       retry: false,
       meta: { persister: false },
@@ -79,11 +82,11 @@ export class ModelChat extends BeanModelBase {
 
   status(command = this._command) {
     if (!command) return;
-    const { conversationId, requestKey } = command;
+    const { ssrSiteId, conversationId, requestKey } = command;
     return this.$useStateData({
-      queryKey: ['status', conversationId, requestKey],
+      queryKey: ['status', ssrSiteId, conversationId, requestKey],
       queryFn: ({ signal }) =>
-        this.scope.api.cabloyAiChat.status({ conversationId, requestKey }, { signal }),
+        this.scope.api.cabloyAiChat.status({ ssrSiteId, conversationId, requestKey }, { signal }),
       enabled: false,
       retry: false,
       meta: { persister: false, disableSuspenseOnInit: true, ssr: { dehydrate: false } },
@@ -106,7 +109,9 @@ export class ModelChat extends BeanModelBase {
     try {
       await selection;
       if (!this._current(revision)) return;
-      const conversation = await this.scope.api.cabloyAiChat.create({});
+      const conversation = await this.scope.api.cabloyAiChat.create({
+        ssrSiteId: this.sys.env.SITE_ID,
+      });
       if (!this._current(revision)) return;
       this.selectedId = conversation.id;
       await this.conversations().refetch({ throwOnError: true });
@@ -125,7 +130,11 @@ export class ModelChat extends BeanModelBase {
     this.mutating = true;
     this.mutationError = undefined;
     try {
-      await this.scope.api.cabloyAiChat.rename({ conversationId, title });
+      await this.scope.api.cabloyAiChat.rename({
+        ssrSiteId: this.sys.env.SITE_ID,
+        conversationId,
+        title,
+      });
       await this.conversations().refetch({ throwOnError: true });
       if (conversationId === this.selectedId)
         await this.history(conversationId)?.refetch({ throwOnError: true });
@@ -143,7 +152,11 @@ export class ModelChat extends BeanModelBase {
     this.mutating = true;
     this.mutationError = undefined;
     try {
-      await this.scope.api.cabloyAiChat.pin({ conversationId, pinned });
+      await this.scope.api.cabloyAiChat.pin({
+        ssrSiteId: this.sys.env.SITE_ID,
+        conversationId,
+        pinned,
+      });
       await this.conversations().refetch({ throwOnError: true });
       if (conversationId === this.selectedId)
         await this.history(conversationId)?.refetch({ throwOnError: true });
@@ -162,7 +175,10 @@ export class ModelChat extends BeanModelBase {
     this.mutationError = undefined;
     const wasSelected = conversationId === this.selectedId;
     try {
-      await this.scope.api.cabloyAiChat.remove({ conversationId });
+      await this.scope.api.cabloyAiChat.remove({
+        ssrSiteId: this.sys.env.SITE_ID,
+        conversationId,
+      });
       await this.conversations().refetch({ throwOnError: true });
       if (wasSelected) {
         const nextId = this.conversations().data?.[0]?.id;
@@ -197,6 +213,7 @@ export class ModelChat extends BeanModelBase {
     if (!text || this.creating || this.streaming || this.unsettled) return;
     if (this.selectedId === undefined) return this._createAndSend(text);
     const command: ChatSendCommand = {
+      ssrSiteId: this.sys.env.SITE_ID,
       conversationId: this.selectedId,
       requestKey: globalThis.crypto.randomUUID(),
       text,

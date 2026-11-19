@@ -24,6 +24,7 @@ export class MetaVersion extends BeanBase implements IMetaVersionUpdate {
     await this.bean.model.createTable(conversation.$table, table => {
       table.basicFields();
       table.userId(conversation.userId).notNullable();
+      table.string(conversation.ssrSiteId, 255).notNullable();
       table.string(conversation.title, 120).notNullable();
       table.tableIdentity(conversation.activeRunId).nullable();
       table.boolean(conversation.pinned).defaultTo(false).notNullable();

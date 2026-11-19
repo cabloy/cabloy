@@ -18,6 +18,7 @@ export type ApiApiCabloyAiChatcreateResponseBody =
 export const ApiApiCabloyAiChatlistPath = '/api/cabloy/ai/chat/list';
 export type ApiApiCabloyAiChatlistPath = '/api/cabloy/ai/chat/list';
 export type ApiApiCabloyAiChatlistMethod = 'post';
+export type ApiApiCabloyAiChatlistRequestBody = components['schemas']['cabloy-ai.dto.chatList'];
 export type ApiApiCabloyAiChatlistResponseBody =
   paths[ApiApiCabloyAiChatlistPath][ApiApiCabloyAiChatlistMethod]['responses']['200']['content']['application/json']['data'];
 
@@ -74,7 +75,7 @@ export class ApiCabloyAiChat extends BeanApiBase {
     );
   }
 
-  list(body?: undefined, options?: IApiActionOptions) {
+  list(body: ApiApiCabloyAiChatlistRequestBody, options?: IApiActionOptions) {
     return this.$fetch.post<any, ApiApiCabloyAiChatlistResponseBody>(
       ApiApiCabloyAiChatlistPath,
       body,

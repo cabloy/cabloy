@@ -6,7 +6,12 @@ import { createAiStreamAdapter } from '../src/lib/aiStreamAdapter.ts';
 describe('AI stream request credentials', { concurrency: false }, () => {
   for (const withCredentials of [undefined, false, true]) {
     it(`uses prepared withCredentials=${withCredentials} without losing Bearer authentication`, async t => {
-      const command = { conversationId: 1, requestKey: 'request-1', text: 'Hello' };
+      const command = {
+        ssrSiteId: 'web',
+        conversationId: 1,
+        requestKey: 'request-1',
+        text: 'Hello',
+      };
       const fetch = t.mock.method(globalThis, 'fetch', async (_input, init) => {
         assert.equal(String(_input), 'https://api.example.test/api/cabloy/ai/chat/send');
         assert.equal(init?.credentials, withCredentials ? 'include' : 'same-origin');

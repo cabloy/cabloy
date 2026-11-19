@@ -14,6 +14,8 @@ function assertNoCredential(value: unknown): void {
   assert.doesNotMatch(serialized, /apiKey|providerMetadata/);
 }
 
+const ssrSiteId = 'web';
+
 interface IFixture {
   userId: TableIdentity;
   name: string;
@@ -96,7 +98,12 @@ async function json(fixture: IFixture, action: string, body: object) {
 }
 
 async function conversation(fixture: IFixture) {
-  const value = await json(fixture, 'create', { title: 'HTTP stream test', userId: -1, iid: -1 });
+  const value = await json(fixture, 'create', {
+    ssrSiteId,
+    title: 'HTTP stream test',
+    userId: -1,
+    iid: -1,
+  });
   fixture.conversationIds.push(value.id);
   return value.id as TableIdentity;
 }
@@ -144,6 +151,7 @@ describe('cabloy-ai native HTTP stream', { concurrency: false }, () => {
       fixture = await createFixture();
       const conversationId = await conversation(fixture);
       const input = {
+        ssrSiteId,
         conversationId,
         requestKey: randomUUID(),
         text: 'Hello private stream',
@@ -178,7 +186,7 @@ describe('cabloy-ai native HTTP stream', { concurrency: false }, () => {
       const status = await json(fixture, 'status', input);
       assert.equal(status.status, 'completed');
       assert.equal(String(status.id), finish.messageMetadata.runId);
-      const history = await json(fixture, 'history', { conversationId });
+      const history = await json(fixture, 'history', { ssrSiteId, conversationId });
       assert.equal(history.conversation.title, 'HTTP stream test');
       assert.deepEqual(
         history.messages.map((message: any) => [message.role, message.text]),
@@ -202,13 +210,16 @@ describe('cabloy-ai native HTTP stream', { concurrency: false }, () => {
         replay.events.find(event => event.type === 'finish').messageMetadata.runId,
         String(status.id),
       );
-      assert.equal((await json(fixture, 'history', { conversationId })).messages.length, 2);
+      assert.equal(
+        (await json(fixture, 'history', { ssrSiteId, conversationId })).messages.length,
+        2,
+      );
       const conflict = await request(fixture, 'send', { ...input, text: 'Changed text' });
       // SSE admission errors use the framework's non-JSON error response, before native headers.
       assert.equal(conflict.status, 409);
       assert.match(await conflict.text(), /409|Request key already used/);
       other = await createFixture();
-      const forbidden = await request(other, 'history', { conversationId });
+      const forbidden = await request(other, 'history', { ssrSiteId, conversationId });
       assert.equal((await forbidden.json()).code, 404);
       const anonymousUrl = await context(async () =>
         app.util.getAbsoluteUrlByApiPath(`${root}history`),
@@ -216,10 +227,10 @@ describe('cabloy-ai native HTTP stream', { concurrency: false }, () => {
       const anonymous = await fetch(anonymousUrl, {
         method: 'POST',
         headers: { 'content-type': 'application/json' },
-        body: JSON.stringify({ conversationId }),
+        body: JSON.stringify({ ssrSiteId, conversationId }),
       });
       assert.equal((await anonymous.json()).code, 401);
-      await json(fixture, 'remove', { conversationId });
+      await json(fixture, 'remove', { ssrSiteId, conversationId });
       fixture.conversationIds = [];
     } finally {
       await removeFixture(other);
@@ -231,18 +242,23 @@ describe('cabloy-ai native HTTP stream', { concurrency: false }, () => {
     let fixture: IFixture | undefined;
     try {
       fixture = await createFixture();
-      const created = await json(fixture, 'create', {});
+      const created = await json(fixture, 'create', { ssrSiteId });
       fixture.conversationIds.push(created.id);
-      const input = { conversationId: created.id, requestKey: randomUUID(), text: 'Order design' };
+      const input = {
+        ssrSiteId,
+        conversationId: created.id,
+        requestKey: randomUUID(),
+        text: 'Order design',
+      };
       const first = await readStream(await request(fixture, 'send', input));
       assert.equal(
         first.events.find(event => event.type === 'finish').messageMetadata.status,
         'completed',
       );
-      const history = await json(fixture, 'history', { conversationId: created.id });
+      const history = await json(fixture, 'history', { ssrSiteId, conversationId: created.id });
       const title = 'AI test response: Order design';
       assert.equal(history.conversation.title, title);
-      const list = await json(fixture, 'list', {});
+      const list = await json(fixture, 'list', { ssrSiteId });
       assert.equal(list.find((item: any) => String(item.id) === String(created.id)).title, title);
       const replay = await readStream(await request(fixture, 'send', input));
       assert.equal(replay.events.filter(event => event.type === 'text-delta').length, 0);
@@ -254,7 +270,8 @@ describe('cabloy-ai native HTTP stream', { concurrency: false }, () => {
         }),
       );
       assert.equal(
-        (await json(fixture, 'history', { conversationId: created.id })).conversation.title,
+        (await json(fixture, 'history', { ssrSiteId, conversationId: created.id })).conversation
+          .title,
         title,
       );
     } finally {
@@ -266,9 +283,14 @@ describe('cabloy-ai native HTTP stream', { concurrency: false }, () => {
     let fixture: IFixture | undefined;
     try {
       fixture = await createFixture();
-      const created = await json(fixture, 'create', {});
+      const created = await json(fixture, 'create', { ssrSiteId });
       fixture.conversationIds.push(created.id);
-      const input = { conversationId: created.id, requestKey: randomUUID(), text: '[title-error]' };
+      const input = {
+        ssrSiteId,
+        conversationId: created.id,
+        requestKey: randomUUID(),
+        text: '[title-error]',
+      };
       const stream = await readStream(await request(fixture, 'send', input));
       assert.equal(
         stream.events.some(event => event.type === 'error'),
@@ -278,7 +300,7 @@ describe('cabloy-ai native HTTP stream', { concurrency: false }, () => {
         stream.events.find(event => event.type === 'finish').messageMetadata.status,
         'completed',
       );
-      const history = await json(fixture, 'history', { conversationId: created.id });
+      const history = await json(fixture, 'history', { ssrSiteId, conversationId: created.id });
       assert.equal(history.conversation.title, '');
       assert.deepEqual(
         history.messages.map((message: any) => message.text),
@@ -295,13 +317,16 @@ describe('cabloy-ai native HTTP stream', { concurrency: false }, () => {
     try {
       fixture = await createFixture();
       const conversationId = await conversation(fixture);
-      const input = { conversationId, requestKey: randomUUID(), text: '[error]' };
+      const input = { ssrSiteId, conversationId, requestKey: randomUUID(), text: '[error]' };
       const stream = await readStream(await request(fixture, 'send', input));
       assert.equal(stream.events.find(event => event.type === 'error').errorText, 'chat_failed');
       assert.doesNotMatch(stream.text, /Test provider failure|stack|apiKey/);
       const status = await json(fixture, 'status', input);
       assert.equal(status.status, 'failed');
-      assert.equal((await json(fixture, 'history', { conversationId })).messages.length, 0);
+      assert.equal(
+        (await json(fixture, 'history', { ssrSiteId, conversationId })).messages.length,
+        0,
+      );
       await context(async () => {
         const usage = await scope().model.usage.get({ runId: status.id });
         assert.equal(usage?.inputTokens, null);
@@ -328,7 +353,7 @@ describe('cabloy-ai native HTTP stream', { concurrency: false }, () => {
     try {
       fixture = await createFixture();
       const conversationId = await conversation(fixture);
-      const input = { conversationId, requestKey: randomUUID(), text: '[slow] stop me' };
+      const input = { ssrSiteId, conversationId, requestKey: randomUUID(), text: '[slow] stop me' };
       const abort = new AbortController();
       const response = await request(fixture, 'send', input, abort.signal);
       const reader = response.body!.getReader();
@@ -343,7 +368,10 @@ describe('cabloy-ai native HTTP stream', { concurrency: false }, () => {
       } while (status?.status === 'running' && Date.now() < deadline);
       assert.equal(status.status, 'aborted');
       assert.equal(status.errorCode, 'chat_aborted');
-      assert.equal((await json(fixture, 'history', { conversationId })).messages.length, 0);
+      assert.equal(
+        (await json(fixture, 'history', { ssrSiteId, conversationId })).messages.length,
+        0,
+      );
       // The same server remains usable and a fresh turn is admitted after the claim is released.
       const next = await readStream(
         await request(fixture, 'send', { ...input, requestKey: randomUUID(), text: 'After stop' }),

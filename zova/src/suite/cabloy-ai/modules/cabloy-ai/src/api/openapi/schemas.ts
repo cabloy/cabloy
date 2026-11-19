@@ -601,6 +601,8 @@ export type ApiSchemaCabloyAiDtoChatConversationPartial =
   Partial<ApiSchemaCabloyAiDtoChatConversation>;
 export type ApiSchemaCabloyAiDtoChatCreate = components['schemas']['cabloy-ai.dto.chatCreate'];
 export type ApiSchemaCabloyAiDtoChatCreatePartial = Partial<ApiSchemaCabloyAiDtoChatCreate>;
+export type ApiSchemaCabloyAiDtoChatList = components['schemas']['cabloy-ai.dto.chatList'];
+export type ApiSchemaCabloyAiDtoChatListPartial = Partial<ApiSchemaCabloyAiDtoChatList>;
 export type ApiSchemaCabloyAiDtoChatHistory = components['schemas']['cabloy-ai.dto.chatHistory'];
 export type ApiSchemaCabloyAiDtoChatHistoryPartial = Partial<ApiSchemaCabloyAiDtoChatHistory>;
 export type ApiSchemaCabloyAiDtoChatConversation_626802c24df1498cec99aab0854fedf90c9b6dd3 =

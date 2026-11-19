@@ -9,7 +9,7 @@ import { $tableColumns } from 'vona-module-a-ormutils';
     ...$tableColumns('cabloyAiProvider', ['iid+name']),
     ...$tableColumns('cabloyAiModel', ['iid+name']),
     ...$tableColumns('cabloyAiScene', ['iid+name']),
-    ...$tableColumns('cabloyAiConversation', ['iid+userId']),
+    ...$tableColumns('cabloyAiConversation', ['userId+ssrSiteId']),
     ...$tableColumns('cabloyAiMessage', ['conversationId+runId']),
     ...$tableColumns('cabloyAiRun', ['conversationId+requestKey']),
     ...$tableColumns('cabloyAiUsage', ['runId']),

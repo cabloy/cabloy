@@ -9,6 +9,9 @@ export interface IDtoOptionsChatRename extends IDecoratorDtoOptions {}
 
 @Dto<IDtoOptionsChatRename>()
 export class DtoChatRename {
+  @Api.field(v.required(), z.string().trim().min(1).max(255))
+  ssrSiteId: string;
+
   @Api.field(v.required(), v.tableIdentity())
   conversationId: TableIdentity;
 

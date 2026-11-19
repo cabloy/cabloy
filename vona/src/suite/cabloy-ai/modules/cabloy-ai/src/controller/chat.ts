@@ -10,6 +10,7 @@ import { DtoChatConversation } from '../dto/chatConversation.tsx';
 import { DtoChatCreate } from '../dto/chatCreate.tsx';
 import { DtoChatHistory } from '../dto/chatHistory.tsx';
 import { DtoChatHistoryRequest } from '../dto/chatHistoryRequest.tsx';
+import { DtoChatList } from '../dto/chatList.tsx';
 import { DtoChatPin } from '../dto/chatPin.tsx';
 import { DtoChatRename } from '../dto/chatRename.tsx';
 import { DtoChatRun } from '../dto/chatRun.tsx';
@@ -32,8 +33,11 @@ export class ControllerChat extends BeanBase {
 
   @Web.post('list')
   @Api.body(v.array(DtoChatConversation))
-  async list(@Arg.user() user: IUser): Promise<DtoChatConversation[]> {
-    return await this.scope.service.conversation.list(user.id);
+  async list(
+    @Arg.user() user: IUser,
+    @Arg.body() command: DtoChatList,
+  ): Promise<DtoChatConversation[]> {
+    return await this.scope.service.conversation.list(user.id, command.ssrSiteId);
   }
 
   @Web.post('history')
@@ -42,7 +46,11 @@ export class ControllerChat extends BeanBase {
     @Arg.user() user: IUser,
     @Arg.body() command: DtoChatHistoryRequest,
   ): Promise<DtoChatHistory> {
-    return await this.scope.service.conversation.history(user.id, command.conversationId);
+    return await this.scope.service.conversation.history(
+      user.id,
+      command.ssrSiteId,
+      command.conversationId,
+    );
   }
 
   @Web.post('status')
@@ -57,7 +65,11 @@ export class ControllerChat extends BeanBase {
   @Web.post('remove')
   @Api.body(z.null())
   async remove(@Arg.user() user: IUser, @Arg.body() command: DtoChatHistoryRequest): Promise<void> {
-    await this.scope.service.conversation.remove(user.id, command.conversationId);
+    await this.scope.service.conversation.remove(
+      user.id,
+      command.ssrSiteId,
+      command.conversationId,
+    );
   }
 
   @Web.post('rename')
