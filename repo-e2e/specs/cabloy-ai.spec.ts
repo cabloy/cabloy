@@ -6,6 +6,7 @@ import { expect, test } from '../scripts/managedTest.ts';
 
 const chatPath = '/cabloy/ai/chat';
 const chatApiPath = '/api/cabloy/ai/chat';
+const chatSiteId = 'web';
 const responsePrefix = 'AI test response: ';
 const streamTimeout = 30_000;
 
@@ -138,7 +139,7 @@ async function postChat<T>(
 ): Promise<T> {
   const response = await request.post(`${chatApiPath}/${action}`, {
     headers: account.headers,
-    data,
+    data: { ssrSiteId: chatSiteId, ...data },
   });
   expect(response.ok()).toBe(true);
   return (await response.json()).data as T;
@@ -280,7 +281,7 @@ async function cleanupFixtures(request: APIRequestContext, account: Account, sen
             }
             const removed = await request.post(`${chatApiPath}/remove`, {
               headers: account.headers,
-              data: { conversationId: conversation.id },
+              data: { ssrSiteId: chatSiteId, conversationId: conversation.id },
             });
             return removed.status();
           },

@@ -121,9 +121,12 @@ export function chatMarkdownStyle(): NestedCSSProperties {
         height: 'auto',
         maxWidth: '100%',
       },
-      '& .hr-node': {
+      '& .markstream-vue .hr-node, & .markstream-vue hr': {
+        background: 'transparent',
         border: 0,
         borderTop: '1px solid var(--color-base-300)',
+        color: 'transparent',
+        height: 0,
         margin: '1.5rem 0',
       },
       '& .table-node-wrapper': {
@@ -132,16 +135,22 @@ export function chatMarkdownStyle(): NestedCSSProperties {
         'overflowX': 'auto',
         '-webkit-overflow-scrolling': 'touch',
       },
-      '& .table-node': {
+      '& .markstream-vue .table-node': {
         background: 'var(--color-base-100)',
-        borderCollapse: 'collapse',
+        border: '1px solid var(--color-base-300)',
+        borderCollapse: 'separate',
+        borderRadius: 'var(--radius-box)',
+        borderSpacing: 0,
+        boxShadow: 'none',
         color: 'var(--color-base-content)',
+        overflow: 'hidden',
         tableLayout: 'auto',
         width: 'max-content',
         minWidth: '100%',
       },
-      '& .table-node th, & .table-node td': {
-        border: '1px solid var(--color-base-300)',
+      '& .markstream-vue .table-node th, & .markstream-vue .table-node td': {
+        borderBottom: '1px solid var(--color-base-300)',
+        borderRight: '1px solid var(--color-base-300)',
         minWidth: '8rem',
         overflowWrap: 'break-word',
         padding: '0.5rem 0.75rem',
@@ -150,12 +159,27 @@ export function chatMarkdownStyle(): NestedCSSProperties {
         whiteSpace: 'normal',
         wordBreak: 'normal',
       },
-      '& .table-node thead th': {
+      '& .markstream-vue .table-node th:last-child, & .markstream-vue .table-node td:last-child': {
+        borderRight: 0,
+      },
+      '& .markstream-vue .table-node tbody tr:last-child td': {
+        borderBottom: 0,
+      },
+      '& .markstream-vue .table-node thead th': {
         background: 'var(--color-base-200)',
+        borderBottom: '2px solid var(--color-base-300)',
+        color: 'var(--color-base-content)',
         fontWeight: 600,
       },
-      '& .table-node tbody tr:nth-child(even)': {
-        background: 'color-mix(in srgb, var(--color-base-200) 35%, transparent)',
+      '& .markstream-vue .table-node tbody tr': {
+        background: 'var(--color-base-100)',
+        transition: 'background-color 120ms ease',
+      },
+      '& .markstream-vue .table-node tbody tr:nth-child(even)': {
+        background: 'color-mix(in srgb, var(--color-base-content) 4%, var(--color-base-100))',
+      },
+      '& .markstream-vue .table-node tbody tr:hover': {
+        background: 'color-mix(in srgb, var(--color-base-content) 8%, var(--color-base-100))',
       },
     },
   };

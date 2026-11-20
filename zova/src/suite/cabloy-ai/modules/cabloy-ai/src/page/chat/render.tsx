@@ -191,6 +191,7 @@ export class RenderPageChat extends BeanRenderBase {
                               content={message.text}
                               final
                               htmlPolicy="safe"
+                              isDark={this.$theme.dark}
                             />
                           </div>
                         )}
@@ -215,6 +216,7 @@ export class RenderPageChat extends BeanRenderBase {
                             content={streamingText}
                             final={!model.streaming}
                             htmlPolicy="safe"
+                            isDark={this.$theme.dark}
                           />
                         </div>
                       </div>
