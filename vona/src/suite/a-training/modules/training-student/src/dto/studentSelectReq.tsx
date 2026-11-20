@@ -22,6 +22,21 @@ export const studentQuery = $defineQuery(() => ModelStudent, {
     },
     createdAt: { operators: ['gte', 'lt', 'lte'] },
   },
+  relations: {
+    trainingRecords: {
+      type: 'hasMany',
+      modelLike: 'training-record:record',
+      key: 'studentId',
+      fields: {
+        name: { operators: ['eq', 'containsI'] },
+        subjectCount: { operators: ['eq', 'gte', 'lte'] },
+        totalScore: { operators: ['eq', 'gte', 'lte'] },
+        averageScore: { operators: ['eq', 'gte', 'lte'] },
+        trainingTime: { operators: ['gte', 'lt', 'lte'] },
+        createdAt: { operators: ['gte', 'lt', 'lte'] },
+      },
+    },
+  },
   orderable: ['id', 'name', 'level', 'createdAt'],
   defaults: { orders: [{ field: 'createdAt', direction: 'desc' }] },
   projection: { mode: 'fixed' },

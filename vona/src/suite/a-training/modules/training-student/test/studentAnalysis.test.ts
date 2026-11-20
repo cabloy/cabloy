@@ -421,6 +421,113 @@ describe('studentAnalysis.test.ts', { concurrency: false }, () => {
     });
   });
 
+  it('filters students by active, current-instance training-record existence without changing projection', async () => {
+    await app.bean.executor.mockCtx(async () => {
+      await app.bean.passport.signinMock();
+      const marker = `Relation-${randomUUID()}`;
+      const studentModel = app.scope('training-student').model.student;
+      const recordModel = app.scope('training-record').model.record;
+      const studentIds: TableIdentity[] = [];
+      const recordIds: TableIdentity[] = [];
+      try {
+        const withoutRecord = await studentModel.insert({
+          name: `${marker}-without`,
+          mobile: '13812345678',
+          level: 1,
+        });
+        const withRecord = await studentModel.insert({
+          name: `${marker}-with`,
+          mobile: '13812345678',
+          level: 2,
+        });
+        const withOtherRecord = await studentModel.insert({
+          name: `${marker}-other`,
+          mobile: '13812345678',
+          level: 3,
+        });
+        studentIds.push(withoutRecord.id, withRecord.id, withOtherRecord.id);
+        const matching = await recordModel.insert({
+          studentId: withRecord.id,
+          name: `${marker}-matching`,
+          subjectCount: 2,
+          totalScore: 180,
+          averageScore: 90,
+        });
+        const other = await recordModel.insert({
+          studentId: withOtherRecord.id,
+          name: `${marker}-other-record`,
+          subjectCount: 1,
+          totalScore: 70,
+          averageScore: 70,
+        });
+        const deleted = await recordModel.insert({
+          studentId: withoutRecord.id,
+          name: `${marker}-deleted`,
+          subjectCount: 1,
+          totalScore: 60,
+          averageScore: 60,
+        });
+        recordIds.push(matching.id, other.id, deleted.id);
+        await recordModel.deleteById(deleted.id);
+
+        const select = async (where: Record<string, unknown>) =>
+          await app.bean.executor.performAction('get', '/training/student', {
+            query: { where, pageSize: 20 },
+          });
+        const ids = (result: { list: Array<{ id: TableIdentity }> }) =>
+          result.list.map(item => String(item.id)).toSorted();
+        const notExists = await select({ relation: 'trainingRecords', op: 'notExists' });
+        assert.deepEqual(ids(notExists), [String(withoutRecord.id)].sort());
+        assert.equal(Object.hasOwn(notExists.list[0], 'trainingRecords'), false);
+        assert.equal(Object.hasOwn(notExists.list[0], 'mobile'), true);
+
+        const existsMatching = await select({
+          relation: 'trainingRecords',
+          op: 'exists',
+          where: { field: 'name', op: 'eq', value: `${marker}-matching` },
+        });
+        assert.deepEqual(ids(existsMatching), [String(withRecord.id)]);
+
+        const noOtherNamedRecord = await select({
+          relation: 'trainingRecords',
+          op: 'notExists',
+          where: { field: 'name', op: 'eq', value: `${marker}-matching` },
+        });
+        assert.deepEqual(
+          ids(noOtherNamedRecord),
+          [String(withoutRecord.id), String(withOtherRecord.id)].sort(),
+        );
+
+        assert.deepEqual(
+          await readAnalysis({ where: { relation: 'trainingRecords', op: 'notExists' } }),
+          {
+            groups: [{ level: 1, count_all: '1' }],
+            aggregate: { count_all: '1', count_imageId: '0' },
+          },
+        );
+        assert.deepEqual(
+          await readAnalysis({
+            where: {
+              relation: 'trainingRecords',
+              op: 'exists',
+              where: { field: 'name', op: 'eq', value: `${marker}-matching` },
+            },
+          }),
+          {
+            groups: [{ level: 2, count_all: '1' }],
+            aggregate: { count_all: '1', count_imageId: '0' },
+          },
+        );
+        assert.equal(matching.id !== other.id, true);
+      } finally {
+        for (const id of recordIds.toReversed())
+          await recordModel.deleteById(id, { disableDeleted: true });
+        await dropStudents(studentIds);
+        await app.bean.passport.signout();
+      }
+    });
+  });
+
   it('excludes students owned by another instance', async () => {
     // Keep the full UUID within the VARCHAR(50) name column.
     const name = `Analysis-${randomUUID()}`;
