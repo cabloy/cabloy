@@ -8,6 +8,9 @@ export interface IModelOptionsStudent extends IDecoratorModelOptions<EntityStude
 
 @Model<IModelOptionsStudent>({
   entity: EntityStudent,
+  cache: {
+    modelsClearedBy: ['training-record:record'],
+  },
   relations: {
     trainingRecords: $relation.hasMany('training-record:record', 'studentId', {
       columns: [

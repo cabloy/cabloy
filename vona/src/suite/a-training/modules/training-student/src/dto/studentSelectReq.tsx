@@ -27,6 +27,7 @@ export const studentQuery = $defineQuery(() => ModelStudent, {
       type: 'hasMany',
       modelLike: 'training-record:record',
       key: 'studentId',
+      authorizationRequired: true,
       fields: {
         name: { operators: ['eq', 'containsI'] },
         subjectCount: { operators: ['eq', 'gte', 'lte'] },

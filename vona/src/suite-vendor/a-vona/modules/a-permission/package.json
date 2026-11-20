@@ -32,6 +32,7 @@
     "postpack": "clean-package restore"
   },
   "dependencies": {
+    "vona-module-a-orm": "workspace:^",
     "vona-module-a-rbac": "workspace:^"
   },
   "devDependencies": {

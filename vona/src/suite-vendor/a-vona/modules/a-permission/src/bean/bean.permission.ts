@@ -6,12 +6,15 @@ import type {
   IOpenapiPermissions,
   IResourceRecord,
 } from 'vona-module-a-openapi';
+import type { ICompileQueryOptions, TypeModelWhere, TypeQueryPredicate } from 'vona-module-a-orm';
+import type { IRbacActionDescriptor, IRbacPolicyDecision } from 'vona-module-a-rbac';
 import type { IGuardOptionsPassport } from 'vona-module-a-user';
 import type { ContextRoute, IRecordResourceNameToRoutePathItem } from 'vona-module-a-web';
 
 import { appResource, BeanBase, beanFullNameFromOnionName } from 'vona';
 import { Bean } from 'vona-module-a-bean';
 import { Caching } from 'vona-module-a-caching';
+import { getQueryRelationNames } from 'vona-module-a-orm';
 import { clearRbacDecision, getRbacDecision, SymbolRbacDecision } from 'vona-module-a-rbac';
 import {
   composeGuards,
@@ -21,6 +24,7 @@ import {
 
 const BeanFullNameGuardPassport = beanFullNameFromOnionName('a-user:passport', 'guard');
 const BeanFullNameGuardRbac = beanFullNameFromOnionName('a-rbac:rbac', 'guard');
+const BeanFullNameGuardRoleName = beanFullNameFromOnionName('a-user:roleName', 'guard');
 const GuardOptionsPassportDefault: IGuardOptionsPassport = {
   public: false,
   activated: true,
@@ -133,19 +137,79 @@ export class BeanPermission extends BeanBase {
     controller: Constructable | string,
     actionKey: string,
   ): Promise<boolean> {
+    const route = this._getRegisteredControllerActionRoute(controller, actionKey);
+    if (!route?.route?.meta || !this._matchPassportMeta(route.route.meta)) return false;
+    return await this._evaluatePermissionAction(route, true);
+  }
+
+  /** Prepare trusted scopes for referenced relations using explicit server-owned action bindings. */
+  public async authorizeQueryRelations(
+    predicate: TypeQueryPredicate | undefined,
+    bindings: Readonly<
+      Record<string, { readonly controller: Constructable | string; readonly action: string }>
+    >,
+  ): Promise<ICompileQueryOptions['relationScopes']> {
+    const names = getQueryRelationNames(predicate);
+    if (!names.length) return undefined;
+    const targets = names.map(name => {
+      const binding = Object.hasOwn(bindings, name) ? bindings[name] : undefined;
+      if (
+        !binding ||
+        !(
+          typeof binding.controller === 'function' ||
+          (typeof binding.controller === 'string' && binding.controller.trim().length > 0)
+        ) ||
+        typeof binding.action !== 'string' ||
+        !binding.action.trim()
+      ) {
+        throw new TypeError(`Query relation ${name} requires an explicit action binding`);
+      }
+      return { name, binding };
+    });
+    const scopes: [string, TypeModelWhere<any> | undefined][] = [];
+    for (const { name, binding } of targets) {
+      scopes.push([
+        name,
+        await this.authorizeControllerActionQueryScope(binding.controller, binding.action),
+      ]);
+    }
+    this.$logger.debug('permission.query relation scopes authorized');
+    return Object.fromEntries(scopes);
+  }
+
+  /** Authorize a related query without running its controller or retaining its decision. */
+  public async authorizeControllerActionQueryScope(
+    controller: Constructable | string,
+    actionKey: string,
+  ): Promise<TypeModelWhere<any> | undefined> {
+    const route = this._getRegisteredControllerActionRoute(controller, actionKey);
+    if (!route?.route?.meta) this.app.throw(403);
+    return await this.bean.executor.newCtx(
+      async () => {
+        const permission = this.app.bean.permission;
+        if (!permission._matchPassportMeta(route.route.meta)) this.app.throw(403);
+        const result = await permission._evaluatePermissionAction(route, 'queryScope');
+        return result.where;
+      },
+      { innerAccess: false },
+    );
+  }
+
+  private _getRegisteredControllerActionRoute(
+    controller: Constructable | string,
+    actionKey: string,
+  ): ContextRoute | undefined {
     const beanOptions = appResource.getBean(controller as any);
-    if (!beanOptions) return false;
+    if (!beanOptions) return undefined;
     const routesByController = getCacheControllerRoutes(this.app);
-    if (!Object.hasOwn(routesByController, beanOptions.beanFullName)) return false;
+    if (!Object.hasOwn(routesByController, beanOptions.beanFullName)) return undefined;
     const routes = routesByController[beanOptions.beanFullName];
-    if (!Array.isArray(routes)) return false;
-    const route = routes.find(
+    if (!Array.isArray(routes)) return undefined;
+    return routes.find(
       candidate =>
         candidate.controllerBeanFullName === beanOptions.beanFullName &&
         candidate.action === actionKey,
     );
-    if (!route?.route?.meta || !this._matchPassportMeta(route.route.meta)) return false;
-    return await this._evaluatePermissionAction(route, true);
   }
 
   public async retrievePermissionAction(
@@ -242,12 +306,68 @@ export class BeanPermission extends BeanBase {
     return true;
   }
 
+  private _matchesActionDecision(
+    action: IRbacActionDescriptor | undefined,
+    decision: IRbacPolicyDecision | undefined,
+  ): decision is IRbacPolicyDecision {
+    return Boolean(
+      action &&
+      Object.hasOwn(this.ctx, SymbolRbacDecision) &&
+      decision?.allowed === true &&
+      decision.actionKey === action.actionKey &&
+      decision.action?.actionKey === action.actionKey &&
+      decision.action.actionInheritKey === action.actionInheritKey &&
+      decision.action.controllerBeanFullName === action.controllerBeanFullName &&
+      decision.action.action === action.action,
+    );
+  }
+
+  private _assertQueryScopeGuard(route: ContextRoute): 'rbac' | 'systemAdmin' {
+    const meta = route.route.meta!;
+    const rbac = Boolean(meta[BeanFullNameGuardRbac]);
+    const role = Boolean(meta[BeanFullNameGuardRoleName]);
+    // This query-scope handoff supports one explicit authorization boundary.
+    if (rbac === role) this.app.throw(403);
+    const onionName = rbac ? 'a-rbac:rbac' : 'a-user:roleName';
+    const options = this.bean.onion.guard.getOnionOptionsDynamic(onionName);
+    const selector = typeof route.routePathRaw === 'string' ? route.routePathRaw : undefined;
+    if (
+      !this.bean.onion.checkOnionOptionsEnabled(options, selector) ||
+      options.rejectWhenDismatched === false
+    ) {
+      this.app.throw(403);
+    }
+    if (!rbac) {
+      if (!('name' in options) || options.name !== 'systemAdmin') this.app.throw(403);
+      return 'systemAdmin';
+    }
+    const action = this.bean.rbacCatalog.getAction(route);
+    if (!action) this.app.throw(403);
+    const effective = options as IRbacActionDescriptor['options'];
+    // Scope access consumes the catalog descriptor; reject conflicting runtime overrides.
+    if (
+      Boolean(effective.dataScope) !== Boolean(action.options.dataScope) ||
+      (effective.dataScopeField ?? 'departmentId') !==
+        (action.options.dataScopeField ?? 'departmentId') ||
+      (effective.dataScopeMineField ?? 'userIdOwner') !==
+        (action.options.dataScopeMineField ?? 'userIdOwner') ||
+      effective.actionInherit !== action.options.actionInherit
+    ) {
+      this.app.throw(403);
+    }
+    return 'rbac';
+  }
+
+  private async _evaluatePermissionAction(
+    route: ContextRoute,
+    guardsOnly: 'queryScope',
+  ): Promise<{ where: TypeModelWhere<any> | undefined }>;
   private async _evaluatePermissionAction(route: ContextRoute, guardsOnly: true): Promise<boolean>;
   private async _evaluatePermissionAction(route: ContextRoute): Promise<IOpenapiPermissionAction>;
   private async _evaluatePermissionAction(
     route: ContextRoute,
-    guardsOnly = false,
-  ): Promise<IOpenapiPermissionAction> {
+    guardsOnly: boolean | 'queryScope' = false,
+  ): Promise<IOpenapiPermissionAction | { where: TypeModelWhere<any> | undefined }> {
     const ctx = this.ctx as any;
     const routeDescriptorPrevious = Object.getOwnPropertyDescriptor(ctx, 'route');
     const innerAccessDescriptorPrevious = Object.getOwnPropertyDescriptor(ctx, 'innerAccess');
@@ -257,27 +377,40 @@ export class BeanPermission extends BeanBase {
       ctx.route = route;
       ctx.innerAccess = false;
       clearRbacDecision(ctx);
+      const queryScopeGuard =
+        guardsOnly === 'queryScope' ? this._assertQueryScopeGuard(route) : undefined;
       const result = await composeGuards(this.app, route)(this.ctx);
+      if (guardsOnly === 'queryScope') {
+        if (result === false) this.app.throw(403);
+        if (queryScopeGuard === 'systemAdmin') {
+          // An earlier matching guard must not bypass the required role check.
+          if (!this.bean.passport.checkRoleName('systemAdmin')) this.app.throw(403);
+          return { where: undefined };
+        }
+        const action = this.bean.rbacCatalog.getAction(route);
+        const decision = getRbacDecision(this.ctx);
+        if (!this._matchesActionDecision(action, decision)) this.app.throw(403);
+        return {
+          where: action!.options.dataScope
+            ? (await this.bean.rbacScope.current(action!.actionKey)).where()
+            : undefined,
+        };
+      }
       if (result === false) return false;
       if (!route.route.meta?.[BeanFullNameGuardRbac]) return true;
       if (guardsOnly) {
-        const action = this.bean.rbacCatalog.getAction(route);
-        const decision = getRbacDecision(this.ctx);
-        return Boolean(
-          action &&
-          Object.hasOwn(ctx, SymbolRbacDecision) &&
-          decision?.allowed === true &&
-          decision.actionKey === action.actionKey &&
-          decision.action?.actionKey === action.actionKey &&
-          decision.action.actionInheritKey === action.actionInheritKey &&
-          decision.action.controllerBeanFullName === action.controllerBeanFullName &&
-          decision.action.action === action.action,
+        return this._matchesActionDecision(
+          this.bean.rbacCatalog.getAction(route),
+          getRbacDecision(this.ctx),
         );
       }
       const rbacScopeCurrent = await this.bean.rbacScope.current();
       return rbacScopeCurrent.permissionProjection();
     } catch (err: any) {
-      if ([401, 403].includes(err?.code)) return false;
+      if ([401, 403].includes(err?.code)) {
+        if (guardsOnly === 'queryScope') this.app.throw(403);
+        return false;
+      }
       throw err;
     } finally {
       if (rbacDecisionDescriptorPrevious) {

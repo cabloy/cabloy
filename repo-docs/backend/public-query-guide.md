@@ -218,7 +218,7 @@ Never spread client predicates over ownership/state/visibility predicates. Clien
 
 Parent `scopeWhere` is not automatically copied into relation subqueries. The parent and child may have different select permissions, owner fields, or department scopes. Denying child access must reject the relation query, not substitute an empty child set: an empty set would make `notExists` succeed.
 
-In Cabloy Start's data-scoped Student example, `trainingRecords` is declared with `authorizationRequired: true`. Before compiling a request that references it, the action authorizes the registered Record `select` action through `bean.permission.authorizeControllerActionQueryScope('training-record.controller.record', 'select')`. This uncached guard-only check runs in a child execution context, does not invoke the Record controller, and does not replace the parent Action's RBAC decision:
+In the Student example, `trainingRecords` is declared with `authorizationRequired: true`. Before compiling a request that references it, the action authorizes the registered Record `select` action through `bean.permission.authorizeControllerActionQueryScope('training-record.controller.record', 'select')`. This uncached guard-only check runs in a child execution context, does not invoke the Record controller, and does not replace the parent Action's RBAC decision:
 
 - A target protected by `@Passport.systemAdmin()` requires the actual `systemAdmin` role guard.
 - An RBAC target requires its own allowed Action decision. When its `dataScope` is enabled, the target's scope is captured during that authorization; admission-only RBAC does not invent a row restriction.
@@ -255,7 +255,7 @@ AND public child scalar predicate
 
 Consequently, `notExists` means **no matching child visible under the authorized child scope**. It means global absence within the active instance only when child access is unrestricted. Relation filtering still does not load child data or enlarge the parent response projection. Use the same preparation for select, group, aggregate and list totals; ordinary requests that do not use the relation do not require child select permission.
 
-This scoped relation handoff is demonstrated by Cabloy Start; do not assume an older Cabloy Basic checkout has the same helper or that its systemAdmin-only relation policy grants ordinary RBAC callers access. Fixed related-field bindings remain a separate policy surface; this mechanism does not automatically add dataScope to binding joins.
+These helpers are shared by Cabloy Basic and Cabloy Start, but the business Action configuration determines row-scope behavior. Basic's Student and Record example uses admission-only RBAC: callers authorized for both Actions may use relation filters, without an additional child row restriction. Start's data-scoped example also supplies the independently authorized parent and child scopes. For an admission-only parent, omit `scopeWhere` from the example above rather than inventing a row scope. Fixed related-field bindings remain a separate policy surface; this mechanism does not automatically add dataScope to binding joins.
 
 ### Dedicated business-scoped service contracts remain valid
 

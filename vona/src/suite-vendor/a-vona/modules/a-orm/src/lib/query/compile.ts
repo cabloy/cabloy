@@ -27,6 +27,8 @@ import { validateQuery } from './schema.ts';
 export interface ICompileQueryOptions {
   mode?: 'select' | TypeAnalysisMode;
   scopeWhere?: TypeModelWhere<any>;
+  /** Trusted child scopes; an own undefined entry explicitly permits unrestricted access. */
+  relationScopes?: Readonly<Record<string, TypeModelWhere<any> | undefined>>;
   analysis?: IAnalysisPolicy;
 }
 
@@ -151,6 +153,10 @@ export function $compileQuery<P extends IQueryPolicy>(
     if ('relation' in node) {
       const relation = policy.relations?.[node.relation];
       if (!relation) throw new TypeError('Unknown query relation');
+      const hasScope = Object.hasOwn(options.relationScopes ?? {}, node.relation);
+      if (relation.authorizationRequired && !hasScope)
+        throw new TypeError(`Query relation ${node.relation} requires an authorization scope`);
+      const scope = hasScope ? options.relationScopes![node.relation] : undefined;
       const target = owner.newInstanceTarget(relation.modelLike as any) as BeanModelCache<any>;
       const targetTable = target.getTable(undefined);
       const targetAlias = `query_exists_${relationIndex++}`;
@@ -162,8 +168,11 @@ export function $compileQuery<P extends IQueryPolicy>(
           : { [`${targetAlias}.${relation.key}`]: target.ref(`${main}.id`) };
       target.buildWhere(child, {
         [Op.and]: {
-          correlation,
-          ...(node.where ? { query: compileScalar(node.where, relation.fields, targetAlias) } : {}),
+          [`${Op.and}correlation`]: correlation,
+          ...(scope === undefined ? {} : { [`${Op.and}scope`]: qualifyWhere(scope, targetAlias) }),
+          ...(node.where
+            ? { [`${Op.and}query`]: compileScalar(node.where, relation.fields, targetAlias) }
+            : {}),
         },
       } as any);
       return { [node.op === 'exists' ? Op.exists : Op.notExists]: child } as any;

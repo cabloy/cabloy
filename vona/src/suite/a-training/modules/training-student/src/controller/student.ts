@@ -3,7 +3,6 @@ import type {
   TypeQueryInput,
   TypeQueryAggregateInput,
   TypeQueryGroupInput,
-  TypeQueryPredicate,
 } from 'vona-module-a-orm';
 import type { IDecoratorControllerOptions } from 'vona-module-a-web';
 
@@ -29,14 +28,12 @@ import { studentAnalysis } from '../lib/studentAnalysis.ts';
 
 export interface IControllerOptionsStudent extends IDecoratorControllerOptions {}
 
-function queryHasRelation(predicate: TypeQueryPredicate | undefined): boolean {
-  if (!predicate) return false;
-  if ('relation' in predicate) return true;
-  if ('and' in predicate || 'or' in predicate)
-    return ('and' in predicate ? predicate.and : predicate.or).some(queryHasRelation);
-  if ('not' in predicate) return queryHasRelation(predicate.not);
-  return false;
-}
+const studentRelationActions = {
+  trainingRecords: {
+    controller: 'training-record.controller.record',
+    action: 'select',
+  },
+};
 
 @Controller<IControllerOptionsStudent>('student', {
   summary: $locale('StudentController'),
@@ -68,9 +65,13 @@ export class ControllerStudent extends BeanBase {
   async select(
     @Arg.filter(DtoStudentSelectReq) params: TypeQueryInput<typeof studentQuery>,
   ): Promise<DtoStudentSelectRes> {
-    this._assertRelationQueryAuthorized(params.where);
     return await this.scope.service.student.select(
-      $compileQuery(this.scope.model.student, studentQuery, params),
+      $compileQuery(this.scope.model.student, studentQuery, params, {
+        relationScopes: await this.bean.permission.authorizeQueryRelations(
+          params.where,
+          studentRelationActions,
+        ),
+      }),
     );
   }
 
@@ -86,11 +87,14 @@ export class ControllerStudent extends BeanBase {
     @Arg.filter(DtoStudentSelectReq, { mode: 'group' })
     params: TypeQueryGroupInput<typeof studentQuery, typeof studentAnalysis>,
   ): Promise<DtoStudentGroupResItem[]> {
-    this._assertRelationQueryAuthorized(params.where);
     return await this.scope.service.student.group(
       $compileQuery(this.scope.model.student, studentQuery, params, {
         mode: 'group',
         analysis: studentAnalysis,
+        relationScopes: await this.bean.permission.authorizeQueryRelations(
+          params.where,
+          studentRelationActions,
+        ),
       }),
     );
   }
@@ -107,11 +111,14 @@ export class ControllerStudent extends BeanBase {
     @Arg.filter(DtoStudentSelectReq, { mode: 'aggregate' })
     params: TypeQueryAggregateInput<typeof studentQuery, typeof studentAnalysis>,
   ): Promise<DtoStudentAggregateRes> {
-    this._assertRelationQueryAuthorized(params.where);
     return await this.scope.service.student.aggregate(
       $compileQuery(this.scope.model.student, studentQuery, params, {
         mode: 'aggregate',
         analysis: studentAnalysis,
+        relationScopes: await this.bean.permission.authorizeQueryRelations(
+          params.where,
+          studentRelationActions,
+        ),
       }),
     );
   }
@@ -187,11 +194,5 @@ export class ControllerStudent extends BeanBase {
   @Passport.rbac({ actionInherit: 'delete' })
   async deleteForce(@Arg.param('id', v.tableIdentity()) id: TableIdentity): Promise<void> {
     await this.scope.service.student.deleteForce(id);
-  }
-
-  private _assertRelationQueryAuthorized(predicate: TypeQueryPredicate | undefined): void {
-    if (queryHasRelation(predicate) && !this.bean.passport.checkRoleName('systemAdmin')) {
-      this.app.throw(403);
-    }
   }
 }

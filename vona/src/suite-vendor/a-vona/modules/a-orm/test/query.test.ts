@@ -3,18 +3,21 @@ import assert from 'node:assert/strict';
 import { describe, it } from 'node:test';
 import z from 'zod';
 
-import type { IQueryPolicy } from '../src/types/query.ts';
+import type { IQueryPolicy, TypeQueryWhere } from '../src/types/query.ts';
 
 import { buildWhere } from '../src/common/buildWhere.ts';
+import { qualifyWhere } from '../src/common/qualifyWhere.ts';
 import { $executeAnalysisAggregate, $executeAnalysisGroup } from '../src/lib/analysis/execute.ts';
 import { $compileQuery } from '../src/lib/query/compile.ts';
 import { queryDefaultLimits } from '../src/lib/query/policy.ts';
+import { getQueryRelationNames } from '../src/lib/query/relations.ts';
 import {
   checkQueryBudget,
   PublicQueryError,
   queryCapabilities,
   validateQuery,
 } from '../src/lib/query/schema.ts';
+import { Op } from '../src/types/modelWhere.ts';
 
 class Model {
   connection: ReturnType<typeof knex>;
@@ -117,6 +120,32 @@ function policy() {
 const invalid = (fn: () => unknown) => assert.throws(fn, PublicQueryError);
 
 describe('public query contract', () => {
+  it('collects distinct relation names through Boolean predicates without visiting child filters', () => {
+    assert.deepEqual(getQueryRelationNames(undefined), []);
+    assert.deepEqual(getQueryRelationNames({ field: 'level', op: 'eq', value: 1 }), []);
+    assert.deepEqual(
+      getQueryRelationNames({
+        and: [
+          { relation: 'records', op: 'exists', where: { field: 'name', op: 'eq', value: 'A' } },
+          {
+            or: [
+              { not: { relation: 'other', op: 'notExists' } },
+              { relation: 'records', op: 'notExists' },
+            ],
+          },
+        ],
+      }),
+      ['records', 'other'],
+    );
+    const relation = { relation: 'records', op: 'exists' as const };
+    Object.defineProperty(relation, 'where', {
+      get: () => {
+        throw new Error('Child scalar predicates are not relation traversal surfaces');
+      },
+    });
+    assert.deepEqual(getQueryRelationNames(relation), ['records']);
+  });
+
   it('validates typed recursive predicates without coercion', () => {
     const p = policy();
     const value = {
@@ -327,6 +356,125 @@ describe('public query contract', () => {
         await model.connection.destroy();
       }
     }
+  });
+
+  it('requires an own trusted scope decision only for used authorization-required relations', async () => {
+    const base = policy();
+    const p = {
+      ...base,
+      relations: {
+        records: { ...base.relations!.records, authorizationRequired: true },
+      },
+    };
+    const model = new Model();
+    try {
+      assert.deepEqual(queryCapabilities(p), queryCapabilities(base));
+      assert.equal(JSON.stringify(queryCapabilities(p)).includes('authorizationRequired'), false);
+      assert.doesNotThrow(() => $compileQuery(model as any, p, {}));
+      for (const op of ['exists', 'notExists'] as const) {
+        const where: TypeQueryWhere<typeof p> = { relation: 'records', op };
+        for (const relationScopes of [
+          undefined,
+          {},
+          { other: undefined },
+          Object.create({ records: undefined }),
+          Object.create({ records: { userId: 'inherited' } }),
+        ]) {
+          assert.throws(() => $compileQuery(model as any, p, { where }, { relationScopes }), {
+            name: 'TypeError',
+            message: /records.*authorization scope/,
+          });
+        }
+        const unrestricted = $compileQuery(
+          model as any,
+          p,
+          { where },
+          {
+            relationScopes: { records: undefined },
+          },
+        );
+        const optional = model.selectSql($compileQuery(model as any, base, { where }));
+        const raw = model.selectSql(unrestricted);
+        assert.equal(raw.sql, optional.sql);
+        assert.deepEqual(raw.bindings, optional.bindings);
+        assert.deepEqual(raw.bindings, [1, false, 1, false]);
+      }
+    } finally {
+      await model.connection.destroy();
+    }
+  });
+
+  it('ANDs trusted aliased Boolean-array child scopes with correlation and client predicates across dialects', async () => {
+    const base = policy();
+    const p = {
+      ...base,
+      relations: {
+        records: { ...base.relations!.records, authorizationRequired: true },
+      },
+    };
+    const scope = {
+      [Op.or]: [
+        { userId: 'trusted-a', level: 2 },
+        { userId: 'trusted-b', level: 3 },
+      ],
+      [Op.not]: { name: 'hidden' },
+    };
+    const original = structuredClone(scope);
+    assert.deepEqual(qualifyWhere(scope, 'query_exists_0'), {
+      [Op.or]: {
+        [`${Op.and}0`]: { 'query_exists_0.userId': 'trusted-a', 'query_exists_0.level': 2 },
+        [`${Op.and}1`]: { 'query_exists_0.userId': 'trusted-b', 'query_exists_0.level': 3 },
+      },
+      [Op.not]: { 'query_exists_0.name': 'hidden' },
+    });
+    for (const client of ['pg', 'mysql2', 'sqlite3']) {
+      const model = new Model(client);
+      model.db.dialect.capabilities = { like: client !== 'mysql2', ilike: client !== 'sqlite3' };
+      try {
+        for (const op of ['exists', 'notExists'] as const) {
+          const params = $compileQuery(
+            model as any,
+            p,
+            {
+              where: {
+                relation: 'records',
+                op,
+                where: { field: 'name', op: 'containsI', value: 'client%_!' },
+              },
+            },
+            { relationScopes: { records: scope } },
+          );
+          const raw = model.selectSql(params);
+          const sql = raw.sql.replace(/["`]/g, '');
+          assert.match(sql, op === 'exists' ? /where \(+exists \(/ : /where \(+not exists \(/);
+          assert.match(sql, /from related as query_exists_0/);
+          assert.match(sql, /query_exists_0\.iid = \? and query_exists_0\.deleted = \?/);
+          assert.match(sql, /query_exists_0\.mainId = main\.id/);
+          assert.match(
+            sql,
+            /\(+query_exists_0\.userId = \?\)+ and \(+query_exists_0\.level = \?\)+ or \(+query_exists_0\.userId = \?\)+ and \(+query_exists_0\.level = \?\)+/,
+          );
+          assert.match(sql, /not \(query_exists_0\.name = \?\)/);
+          assert.match(sql, /query_exists_0\.name i?like \? escape '!'/);
+          assert.doesNotMatch(sql, /\b(?:correlation|query|scope) =|\bjoin\b|query_exists_0\.[01]/);
+          assert.deepEqual(raw.bindings, [
+            1,
+            false,
+            'trusted-a',
+            2,
+            'trusted-b',
+            3,
+            'hidden',
+            '%client!%!_!!%',
+            1,
+            false,
+          ]);
+        }
+      } finally {
+        await model.connection.destroy();
+      }
+    }
+    assert.deepEqual(scope, original);
   });
 
   it('does not turn an order-only binding into a filtering inner join', async () => {

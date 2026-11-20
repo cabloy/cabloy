@@ -1987,7 +1987,7 @@ importers:
         specifier: ^5.0.5
         version: link:modules/a-markdown
       vona-module-a-rbac:
-        specifier: ^5.0.33
+        specifier: ^5.0.34
         version: link:modules/a-rbac
       vona-module-a-socket:
         specifier: workspace:^
@@ -2370,7 +2370,7 @@ importers:
         specifier: ^5.0.5
         version: link:modules/test-markdown
       vona-module-test-mcp:
-        specifier: ^5.0.14
+        specifier: ^5.0.15
         version: link:modules/test-mcp
       vona-module-test-pay:
         specifier: ^5.0.13
@@ -3197,6 +3197,9 @@ importers:
 
   src/suite-vendor/a-vona/modules/a-permission:
     dependencies:
+      vona-module-a-orm:
+        specifier: workspace:^
+        version: link:../a-orm
       vona-module-a-rbac:
         specifier: workspace:^
         version: link:../../../a-cabloy/modules/a-rbac

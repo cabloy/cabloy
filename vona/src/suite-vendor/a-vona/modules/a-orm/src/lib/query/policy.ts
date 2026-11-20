@@ -206,6 +206,7 @@ export function $defineQuery<
       modelClass: relationClass,
       entityClass: relationEntity,
       key: relation.key,
+      authorizationRequired: relation.authorizationRequired ?? false,
       fields: Object.freeze(childFields),
       limits: Object.freeze(childLimits),
     });

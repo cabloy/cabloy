@@ -96,6 +96,8 @@ export interface IQueryRelationConfig {
   /** Child foreign key for hasOne/hasMany, owner foreign key for belongsTo. */
   readonly key: string;
   readonly fields: Record<string, IQueryRelationFieldConfig>;
+  /** Server-only: compilation requires an explicit trusted scope decision. */
+  readonly authorizationRequired?: boolean;
   readonly limits?: Partial<IQueryLimits>;
 }
 export interface IQueryRelation {
@@ -106,6 +108,8 @@ export interface IQueryRelation {
   /** Child foreign key for hasOne/hasMany, owner foreign key for belongsTo. */
   readonly key: string;
   readonly fields: Readonly<Record<string, IQueryField>>;
+  /** Server-only: compilation requires an explicit trusted scope decision. */
+  readonly authorizationRequired?: boolean;
   readonly limits: Readonly<IQueryLimits>;
 }
 export interface IQueryConfig<
@@ -185,6 +189,7 @@ type QueryLeaf<P extends IQueryPolicy> = {
 }[keyof P['fields'] & string];
 export type TypeQueryWhere<P extends IQueryPolicy> =
   | QueryLeaf<P>
+  | TypeQueryRelationPredicate
   | { and: TypeQueryWhere<P>[] }
   | { or: TypeQueryWhere<P>[] }
   | { not: TypeQueryWhere<P> };
