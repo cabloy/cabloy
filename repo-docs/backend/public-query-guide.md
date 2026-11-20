@@ -98,7 +98,7 @@ Every node has exactly one strict shape:
 - `{ not: predicate }`
 - `{ relation, op: 'exists' | 'notExists', where?: scalarPredicate }` for explicitly registered one-level relations
 
-A relation's optional child `where` admits scalar leaves and Boolean groups only. A complete normalized request admits at most one relation predicate; child ordering, paging, projection, analysis, joins, arbitrary SQL/Raw/Ref, `deleted` and `includeDeleted` controls are not public capabilities. Relation existence filtering is separate from relation loading and does not change fixed parent projection. The server applies the parent and child instance/active-record scope and performs any required child authorization at execution time; static policy metadata is not authorization.
+A relation's optional child `where` admits scalar leaves and Boolean groups only. A complete normalized request admits at most one relation predicate; child ordering, paging, projection, analysis, joins, arbitrary SQL/Raw/Ref, `deleted` and `includeDeleted` controls are not public capabilities. Relation existence filtering is separate from relation loading and does not change fixed parent projection. The compiler applies the parent and child instance/active-record scope. Additional child authorization is an explicit execution-time responsibility of the action or service; ordinary model `prepareWhere` is not an RBAC authorization hook, and static policy metadata is not authorization.
 
 Boolean arrays are nonempty. Omit `where` when there is no client restriction; `where: {}` is invalid. Repeated fields belong in separate leaves, not duplicate JSON keys. Reject mixed node shapes, unknown properties, fields and operators, malformed operands and old underscore operators. A public field is a logical identifier, not a table name, dotted relation path or SQL expression.
 
@@ -213,6 +213,31 @@ mandatory server scope AND canonical client predicate
 ```
 
 Never spread client predicates over ownership/state/visibility predicates. Client OR/NOT stays inside the client restriction and cannot replace server scope. Apply required scope before pagination or aggregation, never by filtering results afterward. ORM-owned instance and soft-delete constraints remain active. Controller preparation does not move business authorization out of services: services still enforce their business rules and any additional ownership/state/visibility restrictions.
+
+### Authorize relation existence independently
+
+Parent `scopeWhere` is not automatically copied into relation subqueries. The parent and child may have different select permissions, owner fields, or department scopes. Denying child access must reject the relation query, not substitute an empty child set: an empty set would make `notExists` succeed.
+
+In Cabloy Start's data-scoped Student example, `trainingRecords` is declared with `authorizationRequired: true`. Before compiling a request that references it, the action authorizes the registered Record `select` action through `bean.permission.authorizeControllerActionQueryScope('training-record.controller.record', 'select')`. This uncached guard-only check runs in a child execution context, does not invoke the Record controller, and does not replace the parent Action's RBAC decision:
+
+- A target protected by `@Passport.systemAdmin()` requires the actual `systemAdmin` role guard.
+- An RBAC target requires its own allowed Action decision. When its `dataScope` is enabled, the target's scope is captured during that authorization; admission-only RBAC does not invent a row restriction.
+- Missing, denied, or unsupported target authorization fails closed. The helper is not a substitute for resource-specific business rules or response authorization.
+
+The action supplies the result as a **server-only** `relationScopes` entry, in addition to its existing parent `scopeWhere`. The compiler requires an own entry for each used authorization-required relation. An own entry with `undefined` means explicitly authorized unrestricted child access; an absent entry is an error. Neither these scopes nor controller/action identities are public query input or MCP capabilities.
+
+Inside `EXISTS` and `NOT EXISTS`, the compiler combines:
+
+```text
+child instance/active-row scope
+AND relation correlation
+AND trusted child authorization scope
+AND public child scalar predicate
+```
+
+Consequently, `notExists` means **no matching child visible under the authorized child scope**. It means global absence within the active instance only when child access is unrestricted. Relation filtering still does not load child data or enlarge the parent response projection. Use the same preparation for select, group, aggregate and list totals; ordinary requests that do not use the relation do not require child select permission.
+
+This scoped relation handoff is demonstrated by Cabloy Start; do not assume an older Cabloy Basic checkout has the same helper or that its systemAdmin-only relation policy grants ordinary RBAC callers access. Fixed related-field bindings remain a separate policy surface; this mechanism does not automatically add dataScope to binding joins.
 
 ### Dedicated business-scoped service contracts remain valid
 
