@@ -42,7 +42,7 @@ export class RenderPageChat extends BeanRenderBase {
               ]}
               disabled={model.mutating}
               aria-pressed={item.id === model.selectedId}
-              onPerform={() => model.select(item.id)}
+              onPerform={() => this.selectConversation(item.id)}
             >
               <span
                 class="min-w-0 truncate"
@@ -111,7 +111,7 @@ export class RenderPageChat extends BeanRenderBase {
     return (
       <ZPage>
         <section class="mx-auto w-full max-w-6xl p-4 md:p-6" data-testid="ai-chat">
-          <header class="mb-5">
+          <header class="mb-5 flex flex-wrap items-center gap-2">
             <ZButton
               class="btn btn-outline"
               data-testid="ai-chat-new"
@@ -122,10 +122,27 @@ export class RenderPageChat extends BeanRenderBase {
             >
               {this.scope.locale.NewConversation()}
             </ZButton>
+            <ZButton
+              class="btn btn-outline md:hidden"
+              data-testid="ai-chat-conversations-toggle"
+              aria-expanded={this.mobileConversationsOpen}
+              aria-controls="ai-chat-conversations"
+              onPerform={() => {
+                this.mobileConversationsOpen = !this.mobileConversationsOpen;
+              }}
+            >
+              {this.scope.locale.Conversations()}
+            </ZButton>
           </header>
           <div class="grid gap-4 md:grid-cols-[15rem_minmax(0,1fr)]">
-            <aside class="rounded-box border border-base-300 bg-base-100 p-3">
+            <aside
+              class={[
+                'rounded-box border border-base-300 bg-base-100 p-3 md:block',
+                this.mobileConversationsOpen ? 'block' : 'hidden',
+              ]}
+            >
               <nav
+                id="ai-chat-conversations"
                 aria-label={this.scope.locale.Conversations()}
                 class="mt-3 max-h-96 space-y-2 overflow-y-auto"
               >

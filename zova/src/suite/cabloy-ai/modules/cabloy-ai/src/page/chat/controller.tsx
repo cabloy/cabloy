@@ -10,6 +10,7 @@ export class ControllerPageChat extends BeanControllerPageBase {
   $$modelChat: ModelChat;
 
   draft = '';
+  mobileConversationsOpen = false;
   protected _sendButton?: HTMLButtonElement;
   protected _messagesElement?: HTMLDivElement;
   protected _messagesContent?: HTMLDivElement;
@@ -32,9 +33,15 @@ export class ControllerPageChat extends BeanControllerPageBase {
       () => [this.$$modelChat.selectedId, this.$passport.user?.id, this.sys.env.SITE_ID],
       () => {
         this.draft = '';
+        this.mobileConversationsOpen = false;
         this._resetMessagesFollow();
       },
     );
+  }
+
+  async selectConversation(id: NonNullable<ModelChat['selectedId']>) {
+    this.mobileConversationsOpen = false;
+    await this.$$modelChat.select(id);
   }
 
   async send() {
