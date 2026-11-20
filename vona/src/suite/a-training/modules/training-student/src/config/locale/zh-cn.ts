@@ -51,6 +51,8 @@ export default {
   ForceDelete: '强制删除',
   BulkDelete: '批量删除',
   TrainingRecords: '学生培训记录',
+  TrainingRecordsQueryDescription:
+    '当前实例及已授权的关联查询范围内，该学生未软删除的培训记录。exists 表示至少存在一条符合条件的记录，notExists 表示不存在；可选 where 使用已公布的子字段和运算符进一步限定记录。不存在符合条件的可见记录，不等于学生从未参加培训。独立要求培训记录查询权限；无权限时查询失败，而非将记录视为不存在。仅筛选学生，不加载培训记录详情，也不扩展响应字段。',
   AddTrainingRecord: '添加学生培训记录',
   EditTrainingRecord: '编辑学生培训记录',
   ViewTrainingRecord: '查看学生培训记录',

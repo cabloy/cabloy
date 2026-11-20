@@ -125,11 +125,16 @@ export function queryPredicateSchema(policy: IQueryPolicy): z.ZodType<TypeQueryP
       info.limits,
       `${policy.name}${relation}Predicate`,
     );
-    return z.strictObject({
-      relation: z.literal(relation),
-      op: z.enum(['exists', 'notExists']),
-      where: child.schema.optional(),
-    });
+    return z
+      .strictObject({
+        relation: z.literal(relation),
+        op: z.enum(['exists', 'notExists']),
+        where: child.schema.optional(),
+      })
+      .openapi({
+        ...(info.title !== undefined ? { title: info.title } : {}),
+        ...(info.description !== undefined ? { description: info.description } : {}),
+      });
   });
   let predicate: z.ZodType<TypeQueryPredicate>;
   const lazy = z.lazy(() => predicate).openapi(`${policy.name}QueryPredicate`);
@@ -167,6 +172,8 @@ export function queryCapabilities(policy: IQueryPolicy) {
       Object.entries(policy.relations ?? {}).map(([name, relation]) => [
         name,
         {
+          ...(relation.title !== undefined ? { title: relation.title } : {}),
+          ...(relation.description !== undefined ? { description: relation.description } : {}),
           operators: ['exists', 'notExists'],
           fields: Object.fromEntries(
             Object.entries(relation.fields).map(([field, info]) => [

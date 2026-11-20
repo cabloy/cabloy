@@ -1,4 +1,4 @@
-import type { Constructable } from 'vona';
+import type { Constructable, ILocaleMagic } from 'vona';
 import type z from 'zod';
 
 import type { BeanModelMeta } from '../lib/bean.model/bean.model_meta.ts';
@@ -91,6 +91,8 @@ export interface IQueryConvenience {
 }
 export interface IQueryRelationFieldConfig extends IQueryFieldConfig {}
 export interface IQueryRelationConfig {
+  readonly title?: string | ILocaleMagic;
+  readonly description?: string | ILocaleMagic;
   readonly type: 'hasOne' | 'hasMany' | 'belongsTo';
   readonly modelLike: TypeAnalysisModelLike;
   /** Child foreign key for hasOne/hasMany, owner foreign key for belongsTo. */
@@ -101,6 +103,8 @@ export interface IQueryRelationConfig {
   readonly limits?: Partial<IQueryLimits>;
 }
 export interface IQueryRelation {
+  readonly title?: string | ILocaleMagic;
+  readonly description?: string | ILocaleMagic;
   readonly type: 'hasOne' | 'hasMany' | 'belongsTo';
   readonly modelLike: TypeAnalysisModelLike;
   readonly modelClass: Constructable<BeanModelMeta>;

@@ -1,3 +1,4 @@
+import { ZodMetadata } from '@cabloy/zod-openapi';
 import knex from 'knex';
 import assert from 'node:assert/strict';
 import { describe, it } from 'node:test';
@@ -15,6 +16,7 @@ import {
   checkQueryBudget,
   PublicQueryError,
   queryCapabilities,
+  queryPredicateSchema,
   validateQuery,
 } from '../src/lib/query/schema.ts';
 import { Op } from '../src/types/modelWhere.ts';
@@ -285,6 +287,39 @@ describe('public query contract', () => {
         await model.connection.destroy();
       }
     }
+  });
+
+  it('publishes optional relation semantics without changing predicate input', () => {
+    const base = policy();
+    const p = {
+      ...base,
+      relations: {
+        ...base.relations,
+        records: {
+          ...base.relations!.records,
+          title: 'Training records',
+          description: 'Records matching the admitted child conditions.',
+        },
+      },
+    };
+    const capabilities = queryCapabilities(p);
+    assert.equal(capabilities.relations.records.title, p.relations.records.title);
+    assert.equal(capabilities.relations.records.description, p.relations.records.description);
+    const schema = queryPredicateSchema(p);
+    assert.equal(queryPredicateSchema(p), schema);
+    const relation = (schema as z.ZodLazy<z.ZodUnion>).unwrap().options.find(option => {
+      return option instanceof z.ZodObject && Object.hasOwn(option.shape, 'relation');
+    });
+    assert.ok(relation instanceof z.ZodObject);
+    const metadata = ZodMetadata.getOpenapiMetadata(relation);
+    assert.equal(metadata?.title, p.relations.records.title);
+    assert.equal(metadata?.description, p.relations.records.description);
+    assert.deepEqual(Object.keys(relation.shape).sort(), ['op', 'relation', 'where']);
+    const input = {
+      where: { relation: 'records', op: 'exists', where: { field: 'name', op: 'eq', value: 'A' } },
+    };
+    assert.deepEqual(validateQuery(p, input), validateQuery(base, input));
+    invalid(() => validateQuery(p, { where: { ...input.where, title: 'Not an input field' } }));
   });
 
   it('validates and compiles bounded relation existence predicates without fan-out', async () => {

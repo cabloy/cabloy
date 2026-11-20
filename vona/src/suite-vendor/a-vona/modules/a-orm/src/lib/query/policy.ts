@@ -201,6 +201,8 @@ export function $defineQuery<
     const childLimits = { ...limitsForRelation(relation.limits) };
     const childFields = buildFields(relation.fields, relationRules);
     relations[name] = Object.freeze({
+      ...(relation.title !== undefined ? { title: relation.title } : {}),
+      ...(relation.description !== undefined ? { description: relation.description } : {}),
       type: relation.type,
       modelLike: relation.modelLike,
       modelClass: relationClass,

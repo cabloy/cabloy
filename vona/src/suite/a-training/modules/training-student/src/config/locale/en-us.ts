@@ -51,6 +51,8 @@ export default {
   ForceDelete: 'Force Delete',
   BulkDelete: 'Bulk Delete',
   TrainingRecords: 'Student Training Records',
+  TrainingRecordsQueryDescription:
+    'The student’s non-deleted training records in the current instance and authorized related-query scope. Use exists for at least one qualifying record or notExists for none; optional where restricts records using the advertised child fields and operators. No qualifying visible record does not prove the student never attended training. Independent training-record select permission is required; denial fails the query rather than treating records as absent. Filters students only; does not load training-record details or expand the response fields.',
   AddTrainingRecord: 'Add Student Training Record',
   EditTrainingRecord: 'Edit Student Training Record',
   ViewTrainingRecord: 'View Student Training Record',

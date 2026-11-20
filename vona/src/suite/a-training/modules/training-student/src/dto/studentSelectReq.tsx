@@ -6,6 +6,7 @@ import { Dto } from 'vona-module-a-web';
 import z from 'zod';
 import { ZovaRender } from 'zova-rest-cabloy-basic-admin';
 
+import { $locale } from '../.metadata/locales.ts';
 import { studentLevelItems } from '../entity/student.tsx';
 import { studentAnalysis } from '../lib/studentAnalysis.ts';
 import { ModelStudent } from '../model/student.ts';
@@ -24,6 +25,8 @@ export const studentQuery = $defineQuery(() => ModelStudent, {
   },
   relations: {
     trainingRecords: {
+      title: $locale('TrainingRecords'),
+      description: $locale('TrainingRecordsQueryDescription'),
       type: 'hasMany',
       modelLike: 'training-record:record',
       key: 'studentId',

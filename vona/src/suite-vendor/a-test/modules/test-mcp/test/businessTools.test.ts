@@ -1508,18 +1508,22 @@ describe('businessTools.test.ts', { concurrency: false, timeout: 60000 }, () => 
             assert.equal(binding.mode, actionName);
             assert.deepEqual(binding.capabilities.query.fields.level.operators, ['eq', 'gte']);
             if (actionName === 'select') {
-              assert.deepEqual(binding.capabilities.query.relations.trainingRecords.operators, [
-                'exists',
-                'notExists',
+              const relation = binding.capabilities.query.relations.trainingRecords;
+              assert.equal(relation.title, app.meta.text(query.relations.trainingRecords.title));
+              assert.equal(
+                relation.description,
+                app.meta.text(query.relations.trainingRecords.description),
+              );
+              assert.deepEqual(relation.operators, ['exists', 'notExists']);
+              assert.deepEqual(Object.keys(relation.fields).sort(), [
+                'averageScore',
+                'createdAt',
+                'name',
+                'subjectCount',
+                'totalScore',
+                'trainingTime',
               ]);
-              assert.deepEqual(
-                Object.keys(binding.capabilities.query.relations.trainingRecords.fields).sort(),
-                ['averageScore', 'createdAt', 'name', 'subjectCount', 'totalScore', 'trainingTime'],
-              );
-              assert.deepEqual(
-                binding.capabilities.query.relations.trainingRecords.fields.name.operators,
-                ['eq', 'containsI'],
-              );
+              assert.deepEqual(relation.fields.name.operators, ['eq', 'containsI']);
             }
             assert.equal(binding.querySchema.properties.where, undefined);
             const nativeInput = await nativeStudentInput(actionName, { preserveRest: true });
@@ -1555,6 +1559,29 @@ describe('businessTools.test.ts', { concurrency: false, timeout: 60000 }, () => 
               },
               'capability operands retain exact native generated leaf schemas',
             );
+            if (actionName === 'select') {
+              const finiteRelations = binding.predicates.anyOf.filter(
+                (branch: any) => branch.properties?.relation,
+              );
+              const fullRelations = nativePredicate.anyOf.filter(
+                (branch: any) => branch.properties?.relation,
+              );
+              assert.equal(finiteRelations.length, 1);
+              assert.equal(fullRelations.length, 1);
+              for (const relation of [...finiteRelations, ...fullRelations]) {
+                assert.equal(
+                  relation.title,
+                  binding.capabilities.query.relations.trainingRecords.title,
+                );
+                assert.equal(
+                  relation.description,
+                  binding.capabilities.query.relations.trainingRecords.description,
+                );
+              }
+              assert.equal(finiteRelations[0].properties.where, undefined);
+              assert.ok(!finiteRelations[0].required?.includes('where'));
+              assert.ok(fullRelations[0].properties.where);
+            }
             const validator = fromJsonSchema(tool.inputSchema)['~standard'];
             const controls = actionName === 'select' ? {} : { aggrs: { count: ['*'] } };
             assert.equal(
@@ -2188,7 +2215,7 @@ describe('businessTools.test.ts', { concurrency: false, timeout: 60000 }, () => 
     });
   });
 
-  it('localizes all eight Student MCP descriptions independently of HTTP OpenAPI summaries', async () => {
+  it('localizes Student MCP descriptions and relation contracts across recreated servers independently of HTTP OpenAPI summaries', async () => {
     if (!app.meta.modules['training-student']) return;
     const { default: enUS } =
       await import('../../../../../suite/a-training/modules/training-student/src/config/locale/en-us.ts');
@@ -2261,6 +2288,50 @@ describe('businessTools.test.ts', { concurrency: false, timeout: 60000 }, () => 
               assert.equal(operation.description, undefined, `${locale}: ${name}`);
               assert.notEqual(enUS[key], zhCN[key], `${key} has a Chinese translation`);
               snapshot.push(tool.description);
+              if (query && actionName === 'select') {
+                const capabilityResponse = await client.request('tools/call', {
+                  name: toolContractToolName,
+                  arguments: { tool: name, section: 'query' },
+                });
+                assert.equal(capabilityResponse.error, undefined);
+                const [binding] = capabilityResponse.result.structuredContent.bindings;
+                const relation = binding.capabilities.query.relations.trainingRecords;
+                const finiteRelations = binding.predicates.anyOf.filter(
+                  (branch: any) => branch.properties?.relation,
+                );
+                const fullInput = await client.request('tools/call', {
+                  name: toolContractToolName,
+                  arguments: { tool: name, section: 'input' },
+                });
+                assert.equal(fullInput.error, undefined);
+                const input = fullInput.result.structuredContent.schema;
+                const predicate = resolveSchema(input.properties.where, input.$defs ?? {});
+                const fullRelations = predicate.anyOf.filter(
+                  (branch: any) => branch.properties?.relation,
+                );
+                assert.equal(finiteRelations.length, 1);
+                assert.equal(fullRelations.length, 1);
+                for (const metadata of [relation, ...finiteRelations, ...fullRelations]) {
+                  assert.equal(metadata.title, dictionaries[locale].TrainingRecords, locale);
+                  assert.equal(
+                    metadata.description,
+                    dictionaries[locale].TrainingRecordsQueryDescription,
+                    locale,
+                  );
+                }
+                assert.deepEqual(relation.operators, ['exists', 'notExists']);
+                assert.equal(finiteRelations[0].properties.where, undefined);
+                assert.ok(!finiteRelations[0].required?.includes('where'));
+                assert.ok(fullRelations[0].properties.where);
+                assert.notEqual(enUS.TrainingRecords, zhCN.TrainingRecords);
+                assert.notEqual(
+                  enUS.TrainingRecordsQueryDescription,
+                  zhCN.TrainingRecordsQueryDescription,
+                );
+                snapshot.push(
+                  JSON.stringify({ relation, predicates: finiteRelations, input: fullRelations }),
+                );
+              }
             }
             snapshots.push(snapshot);
           } finally {

@@ -78,7 +78,12 @@ describe('studentAnalysis.test.ts', { concurrency: false }, () => {
       );
       assert.equal(request.safeParse({ pageSize: 0 }).success, false);
       const relation = requestMetadata?.filter?.capabilities?.query?.relations?.trainingRecords;
-      assert.equal(studentQuery.relations?.trainingRecords.authorizationRequired, true);
+      const relationPolicy = studentQuery.relations?.trainingRecords;
+      assert.equal(relationPolicy?.authorizationRequired, true);
+      assert.ok(relation?.title && relation.description);
+      assert.ok(relationPolicy?.title && relationPolicy.description);
+      assert.equal(app.meta.text(relation.title), app.meta.text(relationPolicy.title));
+      assert.equal(app.meta.text(relation.description), app.meta.text(relationPolicy.description));
       assert.deepEqual(relation?.operators, ['exists', 'notExists']);
       assert.deepEqual(Object.keys(relation?.fields ?? {}).sort(), [
         'averageScore',
@@ -143,8 +148,13 @@ describe('studentAnalysis.test.ts', { concurrency: false }, () => {
           );
           const publishedRelation =
             published.bindings[0].capabilities.query.relations.trainingRecords;
-          assert.deepEqual(Object.keys(publishedRelation).sort(), ['fields', 'operators']);
-          assert.deepEqual(publishedRelation, relation);
+          assert.deepEqual(Object.keys(publishedRelation).sort(), [
+            'description',
+            'fields',
+            'operators',
+            'title',
+          ]);
+          assert.deepEqual(publishedRelation, JSON.parse(JSON.stringify(relation)));
           for (const privateName of [
             'authorizationRequired',
             'relationScopes',

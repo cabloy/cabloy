@@ -275,6 +275,26 @@ The self-service controller supplies `user.id` from `@Arg.user()`, never a query
 
 Fixed related-field bindings are server-owned and target a deterministic scalar/id relationship. The complete Boolean filter is evaluated in one main-ID membership subquery, avoiding parent-row fan-out and preserving repeated-field, OR and NOT semantics. Related models retain their instance/deleted scope; additional business visibility still needs a deliberate server-side design. This is not arbitrary joins, many-side traversal or a public relation graph. Response `include` remains independent of parent membership.
 
+### Describe public relation meaning
+
+A query relation may declare optional `title` and `description` alongside its server-only mapping. Author the meaning of that **query relation**, rather than expecting clients to infer it from the relation identifier or the target Model:
+
+```ts
+relations: {
+  trainingRecords: {
+    title: $locale('TrainingRecords'),
+    description: $locale('TrainingRecordsQueryDescription'),
+    // Existing type, modelLike, key, fields and authorization configuration
+  },
+},
+```
+
+Import `$locale` from the owning module's generated locale helper and author its keys in the module's locale dictionaries. Plain strings are supported for literal metadata. Keep locale wrappers deferred: do not resolve a current-request translation while constructing a startup-stable policy or cached predicate schema.
+
+These values are published on the relation's query-capability entry and OpenAPI predicate object. MCP preserves them in query capabilities, finite relation leaves and the full input contract; compact discovery remains compact. Relations without configured metadata retain their existing shape.
+
+Explain what records qualify, how optional child conditions affect `exists` / `notExists`, and any material visibility or projection boundary. For example, no qualifying visible training record is not proof that a student never attended training. Descriptions do not grant child access, enforce scopes, load relation details or expand response fields; keep enforcement in the existing authorization and compilation paths. See the [MCP query contract](/mcp/mcp-controller-tools#compose-and-execute) for client usage.
+
 ### Check cache dependencies for relations and bindings
 
 Adding or changing policy `relations` (`exists` / `notExists`, including child conditions) or related-field `bindings` requires a cache-dependency check. Neither surface automatically registers invalidation dependencies. When a related-source mutation changes a cached query's membership, ordering, total, or aggregate, declare the source → query-cache-owner dependency in the owning modules and verify a warmed query after the mutation. Do not infer a reverse dependency merely from the relation. See [Cross-model query-cache dependencies](/backend/cache-guide#cross-model-query-cache-dependencies) for direction examples, configuration choices, and cache-bypass boundaries.
