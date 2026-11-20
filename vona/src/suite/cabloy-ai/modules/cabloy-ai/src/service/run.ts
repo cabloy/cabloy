@@ -526,6 +526,8 @@ export class ServiceRun extends BeanBase {
       inputTokens: tokens(usage?.inputTokens),
       outputTokens: tokens(usage?.outputTokens),
       totalTokens: tokens(usage?.totalTokens),
+      cacheReadTokens: tokens(usage?.inputTokenDetails?.cacheReadTokens),
+      cacheWriteTokens: tokens(usage?.inputTokenDetails?.cacheWriteTokens),
     });
   }
 

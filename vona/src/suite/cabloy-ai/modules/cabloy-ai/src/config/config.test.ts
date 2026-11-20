@@ -14,7 +14,7 @@ export function testConfig(): Partial<IAiConfig> {
           // Per-model capture for internal SDK assertions, never response text or raw errors.
           const providerMetadata = { test: { apiKey: options.apiKey ?? null } };
           const usage = {
-            inputTokens: { total: 3, noCache: 3, cacheRead: 0, cacheWrite: 0 },
+            inputTokens: { total: 3, noCache: 1, cacheRead: 1, cacheWrite: 1 },
             outputTokens: { total: 4, text: 4, reasoning: 0 },
           };
           const finishReason = { unified: 'stop' as const, raw: 'stop' };

@@ -26,4 +26,10 @@ export class EntityUsage extends EntityBase {
 
   @Api.field(z.number().int().nonnegative().nullable())
   totalTokens: number | null;
+
+  @Api.field(z.number().int().nonnegative().nullable())
+  cacheReadTokens: number | null;
+
+  @Api.field(z.number().int().nonnegative().nullable())
+  cacheWriteTokens: number | null;
 }

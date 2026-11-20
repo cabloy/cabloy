@@ -104,6 +104,8 @@ describe('cabloy-ai private chat domain', { concurrency: false }, () => {
         assert.ok(usage);
         assert.equal(usage.inputTokens, null);
         assert.equal(usage.totalTokens, null);
+        assert.equal(usage.cacheReadTokens, null);
+        assert.equal(usage.cacheWriteTokens, null);
       });
     } finally {
       await cleanup(conversationId);

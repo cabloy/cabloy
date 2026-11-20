@@ -66,6 +66,8 @@ export class MetaVersion extends BeanBase implements IMetaVersionUpdate {
       table.bigInteger(usage.inputTokens).nullable();
       table.bigInteger(usage.outputTokens).nullable();
       table.bigInteger(usage.totalTokens).nullable();
+      table.bigInteger(usage.cacheReadTokens).nullable();
+      table.bigInteger(usage.cacheWriteTokens).nullable();
     });
   }
 }

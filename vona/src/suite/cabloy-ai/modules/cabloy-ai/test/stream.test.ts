@@ -200,6 +200,8 @@ describe('cabloy-ai native HTTP stream', { concurrency: false }, () => {
         assert.equal(usage?.inputTokens, 3);
         assert.equal(usage?.outputTokens, 4);
         assert.equal(usage?.totalTokens, 7);
+        assert.equal(usage?.cacheReadTokens, 1);
+        assert.equal(usage?.cacheWriteTokens, 1);
         const run = await scope().model.run.get({ id: status.id, userId: fixture!.userId });
         assert.ok(run);
         assertNoCredential({ run, usage });
@@ -331,6 +333,8 @@ describe('cabloy-ai native HTTP stream', { concurrency: false }, () => {
         const usage = await scope().model.usage.get({ runId: status.id });
         assert.equal(usage?.inputTokens, null);
         assert.equal(usage?.outputTokens, null);
+        assert.equal(usage?.cacheReadTokens, null);
+        assert.equal(usage?.cacheWriteTokens, null);
         const run = await scope().model.run.get({ id: status.id, userId: fixture!.userId });
         const messages = await scope().model.message.select({
           where: { runId: status.id, userId: fixture!.userId },
