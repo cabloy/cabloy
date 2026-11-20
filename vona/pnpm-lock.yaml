@@ -734,8 +734,8 @@ importers:
         specifier: npm:@cabloy/zod@4.3.8
         version: '@cabloy/zod@4.3.8'
       zova:
-        specifier: ^5.1.193
-        version: 5.1.193(debug@4.4.3(supports-color@7.2.0))(supports-color@7.2.0)(typescript@5.9.3)(vue@3.5.45(typescript@5.9.3))
+        specifier: ^5.1.194
+        version: 5.1.194(debug@4.4.3(supports-color@7.2.0))(supports-color@7.2.0)(typescript@5.9.3)(vue@3.5.45(typescript@5.9.3))
       zova-jsx:
         specifier: ^1.1.104
         version: 1.1.104(typescript@5.9.3)
@@ -782,8 +782,8 @@ importers:
         specifier: ^5.1.41
         version: 5.1.41(vue@3.5.45(typescript@5.9.3))
       zova-module-a-openapi:
-        specifier: ^5.1.65
-        version: 5.1.65
+        specifier: ^5.1.66
+        version: 5.1.66
       zova-module-a-pay:
         specifier: ^5.0.17
         version: 5.0.17
@@ -830,8 +830,8 @@ importers:
         specifier: ^5.0.5
         version: 5.0.5
       zova-module-rest-resource:
-        specifier: ^5.1.61
-        version: 5.1.61
+        specifier: ^5.1.62
+        version: 5.1.62
 
   .zova-rest/cabloy-basic-web:
     dependencies:
@@ -1987,7 +1987,7 @@ importers:
         specifier: ^5.0.5
         version: link:modules/a-markdown
       vona-module-a-rbac:
-        specifier: ^5.0.32
+        specifier: ^5.0.33
         version: link:modules/a-rbac
       vona-module-a-socket:
         specifier: workspace:^
@@ -2370,7 +2370,7 @@ importers:
         specifier: ^5.0.5
         version: link:modules/test-markdown
       vona-module-test-mcp:
-        specifier: ^5.0.13
+        specifier: ^5.0.14
         version: link:modules/test-mcp
       vona-module-test-pay:
         specifier: ^5.0.13
@@ -9202,6 +9202,9 @@ packages:
   zova-module-a-openapi@5.1.65:
     resolution: {integrity: sha512-jAkGqVxeuKksFgU7LpgitBqQ7ZeJ8dLtwgi3oH8p9ECkhp8WQvRAOIvxOdOIrvCVs315iQGRcj2h2fe6yxQdAQ==}
 
+  zova-module-a-openapi@5.1.66:
+    resolution: {integrity: sha512-4d565dD4u92fe95bGNtg17cecqcyeUYjM1niV46LLIX3GqgBrNuXWAnaYjW2Lys8DJDc9e/0KJtenSmxc8j0oA==}
+
   zova-module-a-pay@5.0.17:
     resolution: {integrity: sha512-LmHMzax2tjNrhWi3TQGdEG7Lq9Avfe2SFtA5yepEK2g7lYtTfet0X/HMDL8NzXF1v36DQ+ZgHGtTnX/Po2+KNg==}
 
@@ -9250,11 +9253,20 @@ packages:
   zova-module-rest-resource@5.1.61:
     resolution: {integrity: sha512-8hINmjg/KaF5m5oD6ifPjvlBebBvU0KqtoWhZvBgVABtQIIqsmEscC45QXOCMLIN0+SJ8T39PK/OgKUox5eNVw==}
 
+  zova-module-rest-resource@5.1.62:
+    resolution: {integrity: sha512-qOgGYCSh0lts63JJBQDSmPmqGiYefpBuoAQFUeLvFVFFvKMpOCGjrfPgmoSKeh+bk164hLtyEkDBEZzWGjdyWQ==}
+
   zova-suite-a-zova@5.1.192:
     resolution: {integrity: sha512-cousipTx2nMBDpMUr5CdSFjQTiRYp2ytLWAWtPyb7zDgIy/SlIO3wnA9yqBRpbllfebNBmYuL+v0b3hS6JLXqg==}
 
+  zova-suite-a-zova@5.1.193:
+    resolution: {integrity: sha512-hZv6Q06ZaChTZzuLxoe8FxDUet1eoL+JtB4+mc3kjtVGQPnE5Z0bd54nlHDch8s/ULXmm7ORUKp2jCzEwHeeuQ==}
+
   zova@5.1.193:
     resolution: {integrity: sha512-gQFBsDNDz7Kt19Tuda52n9jb9JUBMv50q0x6KquozhOqiaUvKFfTxbtpwQ7PH13R/SieoE8H6f9AxmfTpRVXNg==}
+
+  zova@5.1.194:
+    resolution: {integrity: sha512-jcEBL86mwMTFlQAvAky9t3bhp8RrxiiYY68/1kZDomS72mcaoexLDwQw5zXHADU4MyFqFwUYpNJdeRXoN1klCA==}
 
   zwitch@2.0.4:
     resolution: {integrity: sha512-bXE4cR/kVZhKZX/RjPEflHaKVhUVl85noU3v6b8apfQEc1x4A+zBxjZ4lN8LqGd6WZ3dl98pY4o717VFmoPp+A==}
@@ -15088,6 +15100,12 @@ snapshots:
       openapi3-ts: 4.6.2
       typestyle: 2.4.0
 
+  zova-module-a-openapi@5.1.66:
+    dependencies:
+      '@cabloy/json-schema-to-zod': 2.6.5
+      openapi3-ts: 4.6.2
+      typestyle: 2.4.0
+
   zova-module-a-pay@5.0.17: {}
 
   zova-module-a-rbac@5.0.4: {}
@@ -15155,6 +15173,8 @@ snapshots:
 
   zova-module-rest-resource@5.1.61: {}
 
+  zova-module-rest-resource@5.1.62: {}
+
   zova-suite-a-zova@5.1.192(debug@4.4.3(supports-color@7.2.0))(supports-color@7.2.0)(typescript@5.9.3)(vue@3.5.45(typescript@5.9.3)):
     dependencies:
       zova-module-a-api: 5.1.25
@@ -15188,10 +15208,54 @@ snapshots:
       - typescript
       - vue
 
+  zova-suite-a-zova@5.1.193(debug@4.4.3(supports-color@7.2.0))(supports-color@7.2.0)(typescript@5.9.3)(vue@3.5.45(typescript@5.9.3)):
+    dependencies:
+      zova-module-a-api: 5.1.25
+      zova-module-a-app: 5.1.29
+      zova-module-a-bean: 5.1.39
+      zova-module-a-behavior: 5.1.31
+      zova-module-a-behaviors: 5.1.25
+      zova-module-a-command: 5.1.38
+      zova-module-a-fetch: 5.1.28(debug@4.4.3(supports-color@7.2.0))(supports-color@7.2.0)
+      zova-module-a-form: 5.1.57(vue@3.5.45(typescript@5.9.3))
+      zova-module-a-icon: 5.1.30
+      zova-module-a-interceptor: 5.1.34
+      zova-module-a-logger: 5.1.31
+      zova-module-a-meta: 5.1.25
+      zova-module-a-model: 5.1.41(vue@3.5.45(typescript@5.9.3))
+      zova-module-a-openapi: 5.1.66
+      zova-module-a-router: 5.1.46
+      zova-module-a-routerstack: 5.1.32
+      zova-module-a-routertabs: 5.1.38
+      zova-module-a-ssr: 5.1.47
+      zova-module-a-ssrhmr: 5.1.26
+      zova-module-a-ssrserver: 5.1.31
+      zova-module-a-style: 5.1.38
+      zova-module-a-table: 5.1.51(vue@3.5.45(typescript@5.9.3))
+      zova-module-a-zod: 5.1.44
+      zova-module-a-zova: 5.1.124(typescript@5.9.3)(vue@3.5.45(typescript@5.9.3))
+    transitivePeerDependencies:
+      - '@vue/composition-api'
+      - debug
+      - supports-color
+      - typescript
+      - vue
+
   zova@5.1.193(debug@4.4.3(supports-color@7.2.0))(supports-color@7.2.0)(typescript@5.9.3)(vue@3.5.45(typescript@5.9.3)):
     dependencies:
       zova-core: 5.1.104(patch_hash=4d3f61e685e859f28c9de9fdb087090727f4915a935f8c220dff8b28dd60c893)(typescript@5.9.3)
       zova-suite-a-zova: 5.1.192(debug@4.4.3(supports-color@7.2.0))(supports-color@7.2.0)(typescript@5.9.3)(vue@3.5.45(typescript@5.9.3))
+    transitivePeerDependencies:
+      - '@vue/composition-api'
+      - debug
+      - supports-color
+      - typescript
+      - vue
+
+  zova@5.1.194(debug@4.4.3(supports-color@7.2.0))(supports-color@7.2.0)(typescript@5.9.3)(vue@3.5.45(typescript@5.9.3)):
+    dependencies:
+      zova-core: 5.1.104(patch_hash=4d3f61e685e859f28c9de9fdb087090727f4915a935f8c220dff8b28dd60c893)(typescript@5.9.3)
+      zova-suite-a-zova: 5.1.193(debug@4.4.3(supports-color@7.2.0))(supports-color@7.2.0)(typescript@5.9.3)(vue@3.5.45(typescript@5.9.3))
     transitivePeerDependencies:
       - '@vue/composition-api'
       - debug

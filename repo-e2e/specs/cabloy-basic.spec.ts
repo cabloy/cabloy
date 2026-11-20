@@ -2270,7 +2270,58 @@ test(
           await expect(action).toBeVisible();
           await expect(action).toHaveText(label);
         }
+        const menuStyle = await actions.evaluate(element => {
+          const buttons = Array.from(element.querySelectorAll('button'));
+          const textStarts = buttons.map(button => {
+            const walker = document.createTreeWalker(button, NodeFilter.SHOW_TEXT);
+            for (let node = walker.nextNode(); node; node = walker.nextNode()) {
+              if (!node.textContent?.trim()) continue;
+              const range = document.createRange();
+              range.selectNodeContents(node);
+              return range.getBoundingClientRect().left;
+            }
+            return undefined;
+          });
+          return {
+            labels: buttons.map(button => button.textContent?.trim()),
+            borders: buttons.map(button => getComputedStyle(button).borderWidth),
+            shadows: buttons.map(button => getComputedStyle(button).boxShadow),
+            ordinaryNeutral: buttons
+              .filter(button => !button.classList.contains('btn-error'))
+              .every(button => getComputedStyle(button).color === getComputedStyle(element).color),
+            dangerDistinct:
+              getComputedStyle(buttons[2]!).color !== getComputedStyle(buttons[0]!).color &&
+              getComputedStyle(buttons[2]!).color === getComputedStyle(buttons[3]!).color,
+            separators: buttons.filter(button => {
+              const style = getComputedStyle(button, '::before');
+              return style.content !== 'none' && style.borderTopWidth === '1px';
+            }).length,
+            textStarts,
+          };
+        });
+        expect(menuStyle.labels).toEqual(['Summary', 'Edit', 'Delete', 'Force Delete']);
+        expect(menuStyle.borders).toEqual(['0px', '0px', '0px', '0px']);
+        expect(menuStyle.shadows).toEqual(['none', 'none', 'none', 'none']);
+        expect(menuStyle.ordinaryNeutral).toBe(true);
+        expect(menuStyle.dangerDistinct).toBe(true);
+        expect(menuStyle.separators).toBe(1);
+        expect(menuStyle.textStarts.every(left => left !== undefined)).toBe(true);
+        expect(
+          Math.max(...(menuStyle.textStarts as number[])) -
+            Math.min(...(menuStyle.textStarts as number[])),
+        ).toBeLessThanOrEqual(1);
+        const editAction = actions.getByRole('button', { name: 'Edit', exact: true });
+        const restingBackground = await editAction.evaluate(
+          element => getComputedStyle(element).backgroundColor,
+        );
+        await editAction.hover();
+        await expect(editAction).not.toHaveCSS('background-color', restingBackground);
+        await expect(editAction).toHaveCSS('border-width', '0px');
+        await editAction.press('Tab');
         const deleteAction = actions.getByRole('button', { name: 'Delete', exact: true });
+        await expect(deleteAction).toBeFocused();
+        await expect(deleteAction).toHaveCSS('outline-style', 'solid');
+        await expect(deleteAction).toHaveCSS('outline-width', '2px');
         const clipping = await deleteAction.evaluate(element => {
           const wrapper = element.closest('[data-table-compact]')!;
           const rect = element.getBoundingClientRect();

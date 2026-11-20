@@ -45,6 +45,7 @@ export class ControllerRowOperations extends BeanControllerBase {
       maxWidth: 'calc(100vw - 16px)',
       maxHeight: 'calc(100vh - 16px)',
       overflowY: 'auto',
+      color: 'var(--color-base-content)',
       $nest: {
         '&:popover-open': {
           display: 'flex',
@@ -53,7 +54,57 @@ export class ControllerRowOperations extends BeanControllerBase {
           gap: '0.25rem',
         },
         '& > .btn': {
+          position: 'relative',
           justifyContent: 'flex-start',
+          width: '100%',
+          height: 'auto',
+          minHeight: '2.5rem',
+          padding: '0.5rem 0.75rem',
+          paddingInlineStart: 'calc(0.75rem + 24px + 0.5rem)',
+          border: 0,
+          borderRadius: 'var(--radius-field)',
+          background: 'transparent',
+          boxShadow: 'none',
+          textShadow: 'none',
+          textAlign: 'start',
+          fontWeight: 500,
+          translate: 'none',
+        },
+        '& > .btn:not(:disabled):not(.btn-disabled):not([aria-disabled="true"])': {
+          color: 'var(--color-base-content)',
+        },
+        '& > .btn.btn-error:not(:disabled):not(.btn-disabled):not([aria-disabled="true"])': {
+          color: 'var(--color-error)',
+        },
+        '& > .btn:not(:disabled):not(.btn-disabled):not([aria-disabled="true"]):is(:hover, :focus-visible, :active)':
+          {
+            background: 'color-mix(in oklab, currentColor 8%, transparent)',
+          },
+        '& > .btn:focus-visible': {
+          outline: '2px solid currentColor',
+          outlineOffset: '-2px',
+        },
+        '& > .btn > :is(.zova-icon__svg, .zova-icon__img, .loading)': {
+          position: 'absolute',
+          insetInlineStart: '0.75rem',
+          top: '50%',
+          transform: 'translateY(-50%)',
+        },
+        '& > .btn > .loading': {
+          insetInlineStart: 'calc(0.75rem + 4px)',
+        },
+        '& > .btn[aria-busy="true"] > :is(.zova-icon__svg, .zova-icon__img)': {
+          visibility: 'hidden',
+        },
+        '& > .btn:not(.btn-error) + .btn-error': {
+          marginBlockStart: '0.5rem',
+        },
+        '& > .btn:not(.btn-error) + .btn-error::before': {
+          content: "''",
+          position: 'absolute',
+          insetInline: 0,
+          top: '-0.375rem',
+          borderTop: '1px solid var(--color-base-300)',
         },
       },
     });

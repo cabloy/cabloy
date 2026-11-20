@@ -1025,7 +1025,7 @@ importers:
         specifier: ^5.1.104
         version: link:../zova-core
       zova-suite-a-zova:
-        specifier: ^5.1.192
+        specifier: ^5.1.193
         version: link:../../src/suite-vendor/a-zova
     devDependencies:
       clean-package:
@@ -1135,7 +1135,7 @@ importers:
         specifier: ^5.0.4
         version: link:modules/a-rbac
       zova-module-rest-resource:
-        specifier: ^5.1.61
+        specifier: ^5.1.62
         version: link:modules/rest-resource
 
   src/suite-vendor/a-cabloy/modules/a-layoutprofile:
@@ -1258,7 +1258,7 @@ importers:
         specifier: ^5.1.41
         version: link:modules/a-model
       zova-module-a-openapi:
-        specifier: ^5.1.65
+        specifier: ^5.1.66
         version: link:modules/a-openapi
       zova-module-a-router:
         specifier: ^5.1.46
