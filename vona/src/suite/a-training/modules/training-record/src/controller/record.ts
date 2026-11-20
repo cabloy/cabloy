@@ -23,7 +23,7 @@ export interface IControllerOptionsRecord extends IDecoratorControllerOptions {}
 export class ControllerRecord extends BeanBase {
   @Web.post()
   @Api.body(v.tableIdentity())
-  @Passport.systemAdmin()
+  @Passport.rbac()
   async create(@Arg.body() record: DtoRecordCreate): Promise<TableIdentity> {
     return (await this.scope.service.record.create(record)).id;
   }
@@ -31,7 +31,7 @@ export class ControllerRecord extends BeanBase {
   @Web.get()
   @Api.body(DtoRecordSelectRes)
   @Core.serializer()
-  @Passport.systemAdmin()
+  @Passport.rbac()
   async select(
     @Arg.filter(DtoRecordSelectReq) params: TypeQueryInput<typeof recordQuery>,
   ): Promise<DtoRecordSelectRes> {
@@ -43,7 +43,7 @@ export class ControllerRecord extends BeanBase {
   @Web.get(':id')
   @Api.body(v.optional(), v.object(DtoRecordView))
   @Core.serializer()
-  @Passport.systemAdmin()
+  @Passport.rbac()
   async view(
     @Arg.param('id', v.tableIdentity()) id: TableIdentity,
   ): Promise<DtoRecordView | undefined> {
@@ -52,7 +52,7 @@ export class ControllerRecord extends BeanBase {
 
   @Web.patch(':id')
   @Api.body(z.null())
-  @Passport.systemAdmin()
+  @Passport.rbac()
   async update(
     @Arg.param('id', v.tableIdentity()) id: TableIdentity,
     @Arg.body() record: DtoRecordUpdate,
@@ -62,7 +62,7 @@ export class ControllerRecord extends BeanBase {
 
   @Web.delete(':id')
   @Api.body(z.null())
-  @Passport.systemAdmin()
+  @Passport.rbac()
   async delete(@Arg.param('id', v.tableIdentity()) id: TableIdentity): Promise<void> {
     await this.scope.service.record.delete(id);
   }
