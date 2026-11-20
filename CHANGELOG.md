@@ -1,5 +1,17 @@
 # Changelog
 
+## 5.1.291
+
+### Features
+- Add query descriptions.
+- Add model clearing support.
+- Add the `modelsClearedBy` model capability.
+- Add relation scope queries.
+- Add update support.
+
+### Improvements
+- Update the public query guide.
+
 ## 5.1.290
 
 ### Features
