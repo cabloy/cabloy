@@ -12,7 +12,7 @@ Load the self-contained [cabloy-mcp-query Skill](https://github.com/cabloy/cablo
 
 1. Select the intended site's authorized connection (`/mcp/commerce` and `/mcp/web` are different resources), then discover an eligible read-only business query tool and identify its **exact server name**. Clients may prepend a connection prefix or normalize a displayed name; that displayed identifier is not the lookup argument.
 2. Call the built-in `cabloy_tool_contract` on the same server with exactly `{ "tool": "<exact server tool name>", "section": "query" }` and no extra properties. Omitting `section` returns an overview, not query bindings.
-3. Read `grammarVersion: 1`, the matching `tool`, and every applicable binding's `argumentPath`, `mode`, `capabilities`, `querySchema` and `predicates`.
+3. Read the matching `tool`, `grammarVersion: 1` for scalar-only bindings or `grammarVersion: 2` when relation predicates are advertised, and every applicable binding's `argumentPath`, `mode`, `capabilities`, `querySchema` and `predicates`.
 4. Build native JSON at the returned path, then call the business tool. `argumentPath: []` means flat arguments; do not add a query wrapper. Preserve other required argument locations.
 5. Explain the actual result and its page or analysis scope. Capability retrieval itself is not a row query or evidence of matching records.
 
@@ -34,7 +34,7 @@ The explicit `@Mcp.tool()` option `discovery?: { input?: string[][]; output?: st
 
 ## Compose the query
 
-Use an exact admitted `{ field, op, value }` leaf, a value-less `{ field, op: "isNull" }` / `{ field, op: "isNotNull" }` leaf, a nonempty `{ and: [...] }` / `{ or: [...] }` group, or `{ not: predicate }`. Each node has one strict shape. Omit optional `where` for no added restriction; empty objects, field-value shorthand and underscore operators are invalid.
+Use an exact admitted `{ field, op, value }` leaf, a value-less `{ field, op: "isNull" }` / `{ field, op: "isNotNull" }` leaf, a nonempty `{ and: [...] }` / `{ or: [...] }` group, `{ not: predicate }`, or—only in grammar version 2—`{ relation, op: "exists" | "notExists", where?: scalarPredicate }`. Relation predicates are one-level server-registered existence checks; their optional child `where` is scalar-only, a complete request admits at most one relation predicate, and child ordering, paging, projection, analysis, joins, `deleted` and `includeDeleted` controls are invalid. Each node has one strict shape. Omit optional `where` for no added restriction; empty objects, field-value shorthand and underscore operators are invalid.
 
 For alternatives, prefer **one `where.or` call** to separate calls and client-side merging. All supplied named filters are additional AND constraints; use canonical leaves inside the OR and omit conflicting named filters. Returned convenience mappings determine their meaning, not matching field names.
 

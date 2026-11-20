@@ -35,7 +35,7 @@ Do not include a client-added prefix, display alias, scope selector or any extra
 Read the returned data:
 
 ```text
-grammarVersion: 1
+grammarVersion: 1 for scalar-only bindings, or grammarVersion: 2 when the contract advertises relation predicates
 tool: exact server tool name
 bindings: [
   {
@@ -50,7 +50,7 @@ bindings: [
 
 `analysis` is present only where applicable. Treat this as a description of returned data, not literal call arguments.
 
-- Confirm `grammarVersion` is `1` and `tool` matches the requested target. Stop and report an unsupported version, mismatch or missing usable binding instead of inventing a contract.
+- Confirm `grammarVersion` is `1` for scalar-only bindings or `2` when relation predicates are advertised, and confirm `tool` matches the requested target. Stop and report an unsupported version, mismatch or missing usable binding instead of inventing a contract.
 - Follow `argumentPath` exactly. `[]` means the query lives at the argument root. Nonempty paths locate a grouped or nested object; preserve other required target arguments from discovery. Do not add a `query` wrapper to flat arguments.
 - Read `querySchema` for the exact named-filter schemas, requiredness, `orders`, pagination and applicable `groups` / `aggrs`. It is the actual bound query object with only `where` removed, not merely a list of convenience names.
 - Read `predicates.anyOf` for allowed field/operator/operand combinations. Preserve every enum, format, bound, required property and strict leaf shape. Each of `querySchema` and `predicates` has its own reachable `$defs` when necessary; resolve references within that schema document, not the other document or an old tool declaration.
@@ -69,7 +69,10 @@ The formal query tool may advertise a compact object for `where`, retaining its 
 { "and": [predicate, ...] }
 { "or": [predicate, ...] }
 { "not": predicate }
+{ "relation": "admittedRelation", "op": "exists" | "notExists", "where": scalarPredicate }
 ```
+
+Relation predicates are available only in grammar version 2 contracts. They are one-level, server-registered existence checks; the optional child `where` accepts scalar leaves and Boolean groups only. Do not send child relations, joins, ordering, pagination, projection, analysis, `deleted` or `includeDeleted` controls. A complete query admits at most one relation predicate, and capability discovery does not grant child-data authorization.
 
 Each node uses exactly one shape. `and` and `or` arrays are nonempty; `not` has one predicate. Omit optional `where` when no added restriction is needed. Do not send `where: {}`, field-value shorthand, underscore operators, mixed node shapes, duplicate JSON keys, SQL, arbitrary joins, Raw/Ref or undeclared controls.
 

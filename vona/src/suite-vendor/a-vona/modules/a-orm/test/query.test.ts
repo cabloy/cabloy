@@ -40,6 +40,10 @@ class Model {
     builder.where(`${table}.iid`, 1).where(`${table}.deleted`, false);
   }
 
+  buildWhere(builder: any, where: object) {
+    buildWhere(this.db as any, builder, where);
+  }
+
   newInstanceTarget() {
     const target = new Model(this.connection.client.config.client);
     target.getTable = () => 'related';
@@ -86,6 +90,24 @@ function policy() {
     },
     orderable: ['id', 'name'],
     bindings: {},
+    relations: {
+      records: {
+        type: 'hasMany',
+        modelLike: Model,
+        modelClass: Model,
+        entityClass: Model,
+        key: 'mainId',
+        fields: {
+          name: {
+            type: 'string',
+            schema: z.string(),
+            nullable: false,
+            operators: ['eq', 'containsI'],
+          },
+        },
+        limits: queryDefaultLimits,
+      },
+    },
     conveniences: {},
     projection: { mode: 'fixed' },
     defaults: { orders: [{ field: 'id', direction: 'asc' }], pageNo: 1, pageSize: 20 },
@@ -230,6 +252,77 @@ describe('public query contract', () => {
         assert.match(sql, /not .*query_related_0.*name.*is null/s);
         assert.match(sql, /main.*userId/);
         assert.deepEqual(bindings, [1, false, 'trusted', 2, '%a!%!_!!%', 1, false]);
+      } finally {
+        await model.connection.destroy();
+      }
+    }
+  });
+
+  it('validates and compiles bounded relation existence predicates without fan-out', async () => {
+    const p = policy();
+    const valid = {
+      where: {
+        and: [
+          { field: 'level', op: 'gte', value: 2 },
+          {
+            relation: 'records',
+            op: 'notExists',
+            where: { field: 'name', op: 'containsI', value: 'a%_!' },
+          },
+        ],
+      },
+    };
+    assert.deepEqual(validateQuery(p, valid), valid);
+    for (const input of [
+      { where: { relation: 'unknown', op: 'exists' } },
+      {
+        where: {
+          relation: 'records',
+          op: 'exists',
+          where: { field: 'hidden', op: 'eq', value: 'x' },
+        },
+      },
+      {
+        where: {
+          relation: 'records',
+          op: 'exists',
+          where: { relation: 'records', op: 'exists' },
+        },
+      },
+      {
+        where: {
+          and: [
+            { relation: 'records', op: 'exists' },
+            { relation: 'records', op: 'notExists' },
+          ],
+        },
+      },
+    ])
+      invalid(() => validateQuery(p, input));
+    const capabilities = queryCapabilities(p);
+    assert.deepEqual(capabilities.relations, {
+      records: {
+        operators: ['exists', 'notExists'],
+        fields: { name: { operators: ['eq', 'containsI'], type: 'string', nullable: false } },
+      },
+    });
+
+    for (const client of ['pg', 'mysql2', 'sqlite3']) {
+      const model = new Model(client);
+      model.db.dialect.capabilities = { like: client !== 'mysql2', ilike: client !== 'sqlite3' };
+      try {
+        const params = $compileQuery(model as any, p, valid, {
+          scopeWhere: { level: 2 },
+        });
+        const raw = model.selectSql(params);
+        assert.match(raw.sql, /not exists/i);
+        assert.match(raw.sql, /query_exists_0/);
+        assert.match(raw.sql, /query_exists_0.*mainId/s);
+        assert.match(raw.sql, /query_exists_0.*iid/s);
+        assert.match(raw.sql, /query_exists_0.*deleted/s);
+        assert.match(raw.sql, /escape '!'/);
+        assert.doesNotMatch(raw.sql, /join/i);
+        assert.deepEqual((params.where as any)._and_scope, { 'main.level': 2 });
       } finally {
         await model.connection.destroy();
       }

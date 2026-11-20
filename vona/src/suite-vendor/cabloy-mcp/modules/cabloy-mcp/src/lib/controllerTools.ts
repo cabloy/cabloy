@@ -802,7 +802,15 @@ export async function createControllerToolServer(
             }
             const structuredContent =
               section === 'query'
-                ? { grammarVersion: 1, tool: target.tool.name, bindings: target.queryCapabilities }
+                ? {
+                    grammarVersion: target.queryCapabilities.some(
+                      binding => Object.keys(binding.capabilities.query.relations ?? {}).length > 0,
+                    )
+                      ? 2
+                      : 1,
+                    tool: target.tool.name,
+                    bindings: target.queryCapabilities,
+                  }
                 : section === 'input' || section === 'output'
                   ? {
                       contractVersion: 1,

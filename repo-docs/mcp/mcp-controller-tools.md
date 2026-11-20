@@ -277,11 +277,11 @@ For predicate composition, request the generic helper's query section:
 { "tool": "training-student_student_select", "section": "query" }
 ```
 
-This section keeps the query payload below unchanged; it uses `grammarVersion: 1`, not the input/output envelope. The schema-valued properties are objects, not serialized JSON strings:
+This section uses `grammarVersion: 1` for scalar-only bindings and `grammarVersion: 2` when relation predicates are advertised; it is not the input/output envelope. The schema-valued properties are objects, not serialized JSON strings:
 
 ```ts
 type QueryCapabilityResult = {
-  grammarVersion: 1;
+  grammarVersion: 1 | 2;
   tool: string;
   bindings: Array<{
     argumentPath: string[];
@@ -309,7 +309,7 @@ Use the retrieved contract together with the target's declared argument location
 
 - Supply `where`, `orders`, `groups` and `aggrs` as **native JSON**, not JSON strings. Only HTTP GET needs structured-control JSON query encoding. Numeric and Boolean operands are native numbers/Booleans; recursive string coercion is disabled.
 - Use explicit AST leaves (`{ field, op, value }`), nonempty `{ and: [...] }` / `{ or: [...] }` arrays or `{ not: predicate }`. Each node has exactly one strict shape. Omit `where` for no added restriction; `{}` and old property-keyed/underscore-operator queries are invalid. No raw-ORM fallback exists.
-- Explicit `where` and all supplied named conveniences combine by AND. Names in a small form are not the complete advanced field allowlist and need not map to same-named canonical fields.
+- Explicit `where` and all supplied named conveniences combine by AND. In grammar version 2, a relation leaf is `{ relation, op: 'exists' | 'notExists', where? }`; it uses only the exact server-advertised relation and scalar child fields, permits at most one relation per request, and does not grant child authorization. Names in a small form are not the complete advanced field allowlist and need not map to same-named canonical fields.
 - Public string operators match literal `%`, `_` and `!`; they do not accept client LIKE patterns. Use explicit null-check leaves without `value`, typed dates and offset-bearing timestamps as documented in the canonical guide.
 - Select uses structured orders and stable resource-id tie-breaking. Current projection is fixed: do not send `columns`. Group/aggregate reject list orders/projection/paging instead of ignoring them.
 - Shared query byte/node/depth/list/order/string budgets combine. The complete MCP JSON-RPC envelope has separate transport limits, including argument wrappers, so do not assume every semantic maximum fits one call.

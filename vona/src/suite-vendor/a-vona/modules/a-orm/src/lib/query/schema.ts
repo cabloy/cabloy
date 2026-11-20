@@ -3,10 +3,12 @@ import z from 'zod';
 
 import type { IAnalysisPolicy, TypeAnalysisMode } from '../../types/analysis.ts';
 import type {
+  IQueryField,
   IQueryLimits,
   IQueryPolicy,
   TypeQueryInput,
   TypeQueryPredicate,
+  TypeQueryScalarPredicate,
 } from '../../types/query.ts';
 
 import { analysisControlSchemas } from '../analysis/controls.ts';
@@ -67,16 +69,17 @@ export function checkQueryBudget(input: unknown, limits: Readonly<IQueryLimits>)
 }
 
 const predicates = new WeakMap<IQueryPolicy, z.ZodType<TypeQueryPredicate>>();
-export function queryPredicateSchema(policy: IQueryPolicy): z.ZodType<TypeQueryPredicate> {
-  const existing = predicates.get(policy);
-  if (existing) return existing;
+function scalarPredicateSchema(
+  fields: Readonly<Record<string, IQueryField>>,
+  limits: Readonly<IQueryLimits>,
+  name: string,
+): { schema: z.ZodType<TypeQueryScalarPredicate>; leaves: z.ZodType[] } {
   const leaves: z.ZodType[] = [];
-  for (const [field, info] of Object.entries(policy.fields)) {
+  for (const [field, info] of Object.entries(fields)) {
     const scalar =
       info.type === 'string'
-        ? (info.schema as z.ZodString).max(policy.limits.maxStringLength)
+        ? (info.schema as z.ZodString).max(limits.maxStringLength)
         : info.schema;
-    // Operators with identical operand shapes share one strict branch.
     for (const kind of ['scalar', 'list', 'null'] as const) {
       const operators = info.operators.filter(
         op =>
@@ -92,22 +95,52 @@ export function queryPredicateSchema(policy: IQueryPolicy): z.ZodType<TypeQueryP
         op: z.enum(operators as [string, ...string[]]),
       };
       if (kind !== 'null') {
-        shape.value =
-          kind === 'list' ? z.array(scalar).min(1).max(policy.limits.maxListItems) : scalar;
+        shape.value = kind === 'list' ? z.array(scalar).min(1).max(limits.maxListItems) : scalar;
       }
       leaves.push(z.strictObject(shape));
     }
   }
-  let predicate: z.ZodType<TypeQueryPredicate>;
-  const lazy = z.lazy(() => predicate).openapi(`${policy.name}QueryPredicate`);
-  const children = z.array(lazy).min(1).max(policy.limits.maxListItems);
+  let predicate: z.ZodType<TypeQueryScalarPredicate>;
+  const lazy = z.lazy(() => predicate).openapi(name);
+  const children = z.array(lazy).min(1).max(limits.maxListItems);
   predicate = z.union([
     ...leaves,
     z.strictObject({ and: children }),
     z.strictObject({ or: children }),
     z.strictObject({ not: lazy }),
+  ] as unknown as [z.ZodType, z.ZodType, ...z.ZodType[]]) as z.ZodType<TypeQueryScalarPredicate>;
+  return { schema: lazy, leaves };
+}
+export function queryPredicateSchema(policy: IQueryPolicy): z.ZodType<TypeQueryPredicate> {
+  const existing = predicates.get(policy);
+  if (existing) return existing;
+  const scalar = scalarPredicateSchema(
+    policy.fields,
+    policy.limits,
+    `${policy.name}ScalarPredicate`,
+  );
+  const relations = Object.entries(policy.relations ?? {}).map(([relation, info]) => {
+    const child = scalarPredicateSchema(
+      info.fields,
+      info.limits,
+      `${policy.name}${relation}Predicate`,
+    );
+    return z.strictObject({
+      relation: z.literal(relation),
+      op: z.enum(['exists', 'notExists']),
+      where: child.schema.optional(),
+    });
+  });
+  let predicate: z.ZodType<TypeQueryPredicate>;
+  const lazy = z.lazy(() => predicate).openapi(`${policy.name}QueryPredicate`);
+  const children = z.array(lazy).min(1).max(policy.limits.maxListItems);
+  predicate = z.union([
+    ...scalar.leaves,
+    ...relations,
+    z.strictObject({ and: children }),
+    z.strictObject({ or: children }),
+    z.strictObject({ not: lazy }),
   ] as unknown as [z.ZodType, z.ZodType, ...z.ZodType[]]) as z.ZodType<TypeQueryPredicate>;
-  // The named lazy reference is the public recursion anchor.
   predicates.set(policy, lazy);
   return lazy;
 }
@@ -130,6 +163,24 @@ export function queryCapabilities(policy: IQueryPolicy) {
     pagination: policy.pagination !== false,
     limits: policy.limits,
     conveniences: policy.conveniences,
+    relations: Object.fromEntries(
+      Object.entries(policy.relations ?? {}).map(([name, relation]) => [
+        name,
+        {
+          operators: ['exists', 'notExists'],
+          fields: Object.fromEntries(
+            Object.entries(relation.fields).map(([field, info]) => [
+              field,
+              {
+                operators: info.operators,
+                type: info.type,
+                nullable: info.nullable,
+              },
+            ]),
+          ),
+        },
+      ]),
+    ),
   };
 }
 export type IQueryCapabilities = ReturnType<typeof queryCapabilities>;
@@ -173,11 +224,40 @@ export function queryControlSchemas(
   return shape;
 }
 
-function checkPredicateDepth(predicate: TypeQueryPredicate | undefined, limit: number) {
+function checkPredicateDepth(
+  predicate: TypeQueryPredicate | undefined,
+  limit: number,
+  policy: IQueryPolicy,
+) {
   const stack = predicate ? [{ predicate, depth: 1 }] : [];
+  let relations = 0;
   while (stack.length) {
     const { predicate: node, depth } = stack.pop()!;
     if (depth > limit) queryFailure('query_predicate_depth', 'where');
+    if ('relation' in node) {
+      if (!policyRelationName(policy, node.relation)) queryFailure('query_relation', 'where');
+      if (++relations > policy.limits.maxRelations) queryFailure('query_relation_count', 'where');
+      if (node.where) checkScalarPredicateDepth(node.where, limit, 'where');
+    } else if ('and' in node || 'or' in node) {
+      for (const child of 'and' in node ? node.and : node.or)
+        stack.push({ predicate: child, depth: depth + 1 });
+    } else if ('not' in node) {
+      stack.push({ predicate: node.not, depth: depth + 1 });
+    }
+  }
+}
+function policyRelationName(policy: IQueryPolicy, relation: string): boolean {
+  return Boolean(policy.relations?.[relation]);
+}
+function checkScalarPredicateDepth(
+  predicate: TypeQueryScalarPredicate,
+  limit: number,
+  path: string,
+) {
+  const stack = [{ predicate, depth: 1 }];
+  while (stack.length) {
+    const { predicate: node, depth } = stack.pop()!;
+    if (depth > limit) queryFailure('query_predicate_depth', path);
     if ('and' in node || 'or' in node) {
       for (const child of 'and' in node ? node.and : node.or)
         stack.push({ predicate: child, depth: depth + 1 });
@@ -217,7 +297,7 @@ export function validateQuery<P extends IQueryPolicy>(
     queryFailure('query_invalid', issue.path.map(String).join('.'));
   }
   const value = parsed.data as TypeQueryInput;
-  checkPredicateDepth(value.where, policy.limits.maxPredicateDepth + (normalized ? 1 : 0));
+  checkPredicateDepth(value.where, policy.limits.maxPredicateDepth + (normalized ? 1 : 0), policy);
   if (value.orders && new Set(value.orders.map(order => order.field)).size !== value.orders.length)
     queryFailure('query_duplicate_order', 'orders');
   if (mode === 'select') {

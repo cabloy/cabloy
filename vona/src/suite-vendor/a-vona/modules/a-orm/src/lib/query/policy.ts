@@ -8,6 +8,9 @@ import type {
   IQueryConfig,
   IQueryField,
   IQueryFieldConfig,
+  IQueryBinding,
+  IQueryLimits,
+  IQueryRelation,
   TypeQueryPolicy,
 } from '../../types/query.ts';
 
@@ -22,6 +25,7 @@ export const queryDefaultLimits = Object.freeze({
   maxOrders: 5,
   maxStringLength: 256,
   maxPageSize: 100,
+  maxRelations: 1,
 });
 const scalarOps = ['eq', 'ne', 'in', 'notIn'];
 const orderedOps = [...scalarOps, 'gt', 'gte', 'lt', 'lte'];
@@ -42,6 +46,15 @@ function invalid(message: string): never {
 function identifier(name: string) {
   if (!/^[a-z]\w*$/i.test(name) || ['__proto__', 'constructor', 'prototype'].includes(name))
     invalid('invalid public field identifier');
+}
+function limitsForRelation(overrides?: Partial<IQueryLimits>) {
+  const limits = { ...queryDefaultLimits, maxRelations: 0, ...overrides };
+  for (const [name, limit] of Object.entries(limits)) {
+    if (!(name in queryDefaultLimits) || !Number.isSafeInteger(limit) || limit < 0)
+      invalid('invalid relation complexity limit');
+  }
+  if (limits.maxRelations !== 0) invalid('relation child policy cannot contain relations');
+  return limits;
 }
 
 function scalar(input: z.ZodType, config: IQueryFieldConfig, identity: boolean): IQueryField {
@@ -131,30 +144,71 @@ export function $defineQuery<
   const rules = getTargetDecoratorRules(entityClass.prototype, true);
   const fields: Record<string, IQueryField> = {};
   const bindings = { ...config.bindings };
-  for (const [name, field] of Object.entries(config.fields)) {
-    identifier(name);
-    const binding = bindings[name];
-    let source = rules[name];
-    if (binding) {
-      identifier(binding.localKey);
-      identifier(binding.field);
-      if (!rules[binding.localKey] || binding.foreignKey !== 'id')
-        invalid('binding must target a unique model id');
-      if (binding.joinType && !['leftJoin', 'innerJoin'].includes(binding.joinType))
-        invalid('unsupported binding join type');
-      const targetEntity = getClassEntityFromClassModel(
-        prepareClassModel(binding.modelLike as any),
-      );
-      source = getTargetDecoratorRules(targetEntity.prototype, true)[binding.field];
+  const buildFields = (
+    fieldConfig: Record<string, IQueryFieldConfig>,
+    targetRules: Record<string, any>,
+    targetBindings: Record<string, IQueryBinding> = {},
+  ) => {
+    const result: Record<string, IQueryField> = {};
+    for (const [name, field] of Object.entries(fieldConfig)) {
+      identifier(name);
+      const binding = targetBindings[name];
+      let source = targetRules[name];
+      if (binding) {
+        identifier(binding.localKey);
+        identifier(binding.field);
+        if (!targetRules[binding.localKey] || binding.foreignKey !== 'id')
+          invalid('binding must target a unique model id');
+        if (binding.joinType && !['leftJoin', 'innerJoin'].includes(binding.joinType))
+          invalid('unsupported binding join type');
+        const targetEntity = getClassEntityFromClassModel(
+          prepareClassModel(binding.modelLike as any),
+        );
+        source = getTargetDecoratorRules(targetEntity.prototype, true)[binding.field];
+      }
+      if (!source) invalid(`unknown entity field ${name}`);
+      let input = source;
+      if (binding?.joinType !== 'innerJoin' && binding) input = input.nullable();
+      result[name] = scalar(input, field, name === 'id' || name.endsWith('Id'));
     }
-    if (!source) invalid(`unknown entity field ${name}`);
-    let input = source;
-    if (binding?.joinType !== 'innerJoin' && binding) input = input.nullable();
-    fields[name] = scalar(input, field, name === 'id' || name.endsWith('Id'));
+    for (const name of Object.keys(targetBindings)) {
+      if (!result[name]) invalid('binding without a declared query field');
+      targetBindings[name] = Object.freeze({ ...targetBindings[name] });
+    }
+    return result;
+  };
+  Object.assign(fields, buildFields(config.fields, rules, bindings));
+  const limits = { ...queryDefaultLimits, ...config.limits };
+  for (const [name, limit] of Object.entries(limits)) {
+    if (!(name in queryDefaultLimits) || !Number.isSafeInteger(limit) || limit < 1)
+      invalid('invalid complexity limit');
   }
-  for (const name of Object.keys(bindings)) {
-    if (!fields[name]) invalid('binding without a declared query field');
-    bindings[name] = Object.freeze({ ...bindings[name] });
+  const relations: Record<string, IQueryRelation> = {};
+  for (const [name, relation] of Object.entries(config.relations ?? {})) {
+    identifier(name);
+    identifier(relation.key);
+    if (!['hasOne', 'hasMany', 'belongsTo'].includes(relation.type))
+      invalid('unsupported query relation type');
+    const relationClass = prepareClassModel(relation.modelLike as any);
+    const relationEntity = getClassEntityFromClassModel(relationClass);
+    const relationRules = getTargetDecoratorRules(relationEntity.prototype, true);
+    if (!relationRules.id) invalid('query relation target requires a stable id');
+    if (relation.type === 'belongsTo') {
+      if (!rules[relation.key]) invalid('belongsTo relation key must be an owner field');
+    } else if (!relationRules[relation.key]) {
+      invalid('hasOne/hasMany relation key must be a target field');
+    }
+    const childLimits = { ...limitsForRelation(relation.limits) };
+    const childFields = buildFields(relation.fields, relationRules);
+    relations[name] = Object.freeze({
+      type: relation.type,
+      modelLike: relation.modelLike,
+      modelClass: relationClass,
+      entityClass: relationEntity,
+      key: relation.key,
+      fields: Object.freeze(childFields),
+      limits: Object.freeze(childLimits),
+    });
   }
   const orderable = [...config.orderable];
   if (new Set(orderable).size !== orderable.length) invalid('duplicate order field');
@@ -169,11 +223,6 @@ export function $defineQuery<
     if (!fields[entry.field] || (entry.op && !fields[entry.field].operators.includes(entry.op)))
       invalid('invalid convenience binding');
     conveniences[name] = Object.freeze({ ...entry });
-  }
-  const limits = { ...queryDefaultLimits, ...config.limits };
-  for (const [name, limit] of Object.entries(limits)) {
-    if (!(name in queryDefaultLimits) || !Number.isSafeInteger(limit) || limit < 1)
-      invalid('invalid complexity limit');
   }
   const defaults = {
     pageNo: 1,
@@ -214,6 +263,7 @@ export function $defineQuery<
     fields: Object.freeze(fields),
     orderable: Object.freeze(orderable),
     bindings: Object.freeze(bindings),
+    relations: Object.freeze(relations),
     conveniences: Object.freeze(conveniences),
     defaults: Object.freeze({ ...defaults, orders: Object.freeze(defaults.orders) }),
     projection: Object.freeze({ mode: 'fixed' as const }),

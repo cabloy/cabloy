@@ -2132,7 +2132,7 @@ describe('businessHttp.test.ts', { concurrency: false, timeout: 180000 }, () => 
         }
       }
       const contract = output(await lookup(studentSelectName));
-      assert.equal(contract.grammarVersion, 1);
+      assert.equal(contract.grammarVersion, 2);
       assert.equal(contract.tool, studentSelectName);
       assert.equal(contract.bindings.length, 1);
       assert.deepEqual(contract.bindings[0].argumentPath, []);
@@ -4056,7 +4056,18 @@ describe('businessHttp.test.ts', { concurrency: false, timeout: 180000 }, () => 
             {
               anyOf: where.anyOf
                 .map((branch: any) => resolveSchema(branch, schemas))
-                .filter((branch: any) => branch.properties?.field && branch.properties?.op),
+                .filter(
+                  (branch: any) =>
+                    (branch.properties?.field || branch.properties?.relation) &&
+                    branch.properties?.op,
+                )
+                .map((branch: any) => {
+                  if (!branch.properties?.relation) return branch;
+                  const copy = structuredClone(branch);
+                  delete copy.properties.where;
+                  copy.required = (copy.required ?? []).filter((name: string) => name !== 'where');
+                  return copy;
+                }),
             },
             schemas,
           ),
@@ -4612,7 +4623,7 @@ describe('businessHttp.test.ts', { concurrency: false, timeout: 180000 }, () => 
             ),
           );
           assert.deepEqual(Object.keys(capability).sort(), ['bindings', 'grammarVersion', 'tool']);
-          assert.equal(capability.grammarVersion, 1);
+          assert.equal(capability.grammarVersion, 2);
           assert.equal(capability.tool, studentSelectName);
           assert.equal(capability.bindings.length, 1);
           const binding = capability.bindings[0];

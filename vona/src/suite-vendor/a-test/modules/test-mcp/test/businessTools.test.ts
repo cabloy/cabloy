@@ -1507,6 +1507,20 @@ describe('businessTools.test.ts', { concurrency: false, timeout: 60000 }, () => 
             assert.deepEqual(binding.argumentPath, []);
             assert.equal(binding.mode, actionName);
             assert.deepEqual(binding.capabilities.query.fields.level.operators, ['eq', 'gte']);
+            if (actionName === 'select') {
+              assert.deepEqual(binding.capabilities.query.relations.trainingRecords.operators, [
+                'exists',
+                'notExists',
+              ]);
+              assert.deepEqual(
+                Object.keys(binding.capabilities.query.relations.trainingRecords.fields).sort(),
+                ['averageScore', 'createdAt', 'name', 'subjectCount', 'totalScore', 'trainingTime'],
+              );
+              assert.deepEqual(
+                binding.capabilities.query.relations.trainingRecords.fields.name.operators,
+                ['eq', 'containsI'],
+              );
+            }
             assert.equal(binding.querySchema.properties.where, undefined);
             const nativeInput = await nativeStudentInput(actionName, { preserveRest: true });
             const fullInput = await shared.request('tools/call', {
@@ -1527,7 +1541,17 @@ describe('businessTools.test.ts', { concurrency: false, timeout: 60000 }, () => 
             assert.deepEqual(
               binding.predicates,
               {
-                anyOf: nativePredicate.anyOf.filter((branch: any) => branch.properties?.field),
+                anyOf: nativePredicate.anyOf
+                  .filter((branch: any) => branch.properties?.field || branch.properties?.relation)
+                  .map((branch: any) => {
+                    if (!branch.properties?.relation) return branch;
+                    const copy = structuredClone(branch);
+                    delete copy.properties.where;
+                    copy.required = (copy.required ?? []).filter(
+                      (name: string) => name !== 'where',
+                    );
+                    return copy;
+                  }),
               },
               'capability operands retain exact native generated leaf schemas',
             );
@@ -2959,7 +2983,7 @@ describe('businessTools.test.ts', { concurrency: false, timeout: 60000 }, () => 
         assert.equal(accepted.error, undefined);
         const content = accepted.result.structuredContent;
         assert.deepEqual(Object.keys(content).sort(), ['bindings', 'grammarVersion', 'tool']);
-        assert.equal(content.grammarVersion, 1);
+        assert.equal(content.grammarVersion, 2);
         assert.equal(content.tool, select.name);
         assert.equal(content.bindings.length, 1);
         assert.deepEqual(content.bindings[0].argumentPath, []);

@@ -96,6 +96,9 @@ Every node has exactly one strict shape:
 - `{ and: [predicate, ...] }`
 - `{ or: [predicate, ...] }`
 - `{ not: predicate }`
+- `{ relation, op: 'exists' | 'notExists', where?: scalarPredicate }` for explicitly registered one-level relations
+
+A relation's optional child `where` admits scalar leaves and Boolean groups only. A complete normalized request admits at most one relation predicate; child ordering, paging, projection, analysis, joins, arbitrary SQL/Raw/Ref, `deleted` and `includeDeleted` controls are not public capabilities. Relation existence filtering is separate from relation loading and does not change fixed parent projection. The server applies the parent and child instance/active-record scope and performs any required child authorization at execution time; static policy metadata is not authorization.
 
 Boolean arrays are nonempty. Omit `where` when there is no client restriction; `where: {}` is invalid. Repeated fields belong in separate leaves, not duplicate JSON keys. Reject mixed node shapes, unknown properties, fields and operators, malformed operands and old underscore operators. A public field is a logical identifier, not a table name, dotted relation path or SQL expression.
 
