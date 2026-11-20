@@ -1,5 +1,14 @@
 # Changelog
 
+## 5.1.290
+
+### Features
+
+- Add relation query support.
+- Add student relation query support.
+- Add record update capabilities.
+- Add a blog post comparing SSR hydration in Zova and Next.js.
+
 ## 5.1.289
 
 ### Features
