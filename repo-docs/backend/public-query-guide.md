@@ -224,7 +224,25 @@ In Cabloy Start's data-scoped Student example, `trainingRecords` is declared wit
 - An RBAC target requires its own allowed Action decision. When its `dataScope` is enabled, the target's scope is captured during that authorization; admission-only RBAC does not invent a row restriction.
 - Missing, denied, or unsupported target authorization fails closed. The helper is not a substitute for resource-specific business rules or response authorization.
 
-The action supplies the result as a **server-only** `relationScopes` entry, in addition to its existing parent `scopeWhere`. The compiler requires an own entry for each used authorization-required relation. An own entry with `undefined` means explicitly authorized unrestricted child access; an absent entry is an error. Neither these scopes nor controller/action identities are public query input or MCP capabilities.
+For reusable preparation, `getQueryRelationNames(predicate)` from `vona-module-a-orm` collects distinct relation names in a validated query AST. `bean.permission.authorizeQueryRelations(predicate, bindings)` handles traversal and authorization together, using explicit **server-authored** relation-to-Action bindings:
+
+```ts
+const relationActions = {
+  trainingRecords: {
+    controller: 'training-record.controller.record',
+    action: 'select',
+  },
+};
+
+const compiled = $compileQuery(this.scope.model.student, studentQuery, params, {
+  scopeWhere: rbacScopeCurrent.where(),
+  relationScopes: await this.bean.permission.authorizeQueryRelations(params.where, relationActions),
+});
+```
+
+The helper authorizes each distinct referenced relation once, skips unused bindings, and returns `undefined` without child permission checks for relation-free requests. Missing, inherited, or malformed referenced bindings are configuration errors, not unrestricted access. Do not infer authorization targets from model names or accept these bindings from clients. Query validation and complexity budgets still apply before traversal; the collector itself is not a validator.
+
+The action supplies the result as **server-only** `relationScopes`, in addition to its existing parent `scopeWhere`. The compiler requires an own entry for each used authorization-required relation. An own entry with `undefined` means explicitly authorized unrestricted child access; an absent entry is an error. Neither these scopes nor controller/action identities are public query input or MCP capabilities.
 
 Inside `EXISTS` and `NOT EXISTS`, the compiler combines:
 
