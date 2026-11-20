@@ -5,7 +5,7 @@ export default {
   PrivateAiChatNotice: '保存的对话仅对您的账户可见。AI 回答可能不准确。',
   Conversations: '对话列表',
   PinnedConversations: '置顶对话',
-  OtherConversations: '其他对话',
+  Recent: '最近',
   NoSavedConversations: '暂无保存的对话。',
   RenameConversation: '重命名',
   RenameConversationTitle: '重命名对话',

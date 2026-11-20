@@ -6,7 +6,7 @@ export default {
     'Your saved conversations are private to your account. AI responses may be inaccurate.',
   Conversations: 'Conversations',
   PinnedConversations: 'Pinned',
-  OtherConversations: 'Recent',
+  Recent: 'Recent',
   NoSavedConversations: 'No saved conversations yet.',
   RenameConversation: 'Rename',
   RenameConversationTitle: 'Rename conversation',

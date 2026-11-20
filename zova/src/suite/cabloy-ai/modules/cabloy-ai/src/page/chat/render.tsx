@@ -157,7 +157,7 @@ export class RenderPageChat extends BeanRenderBase {
                 {otherConversations.length > 0 && (
                   <section class={pinnedConversations.length > 0 ? 'mt-4' : undefined}>
                     <h3 class="mb-2 px-2 text-xs font-semibold text-base-content/60">
-                      {this.scope.locale.OtherConversations()}
+                      {this.scope.locale.Recent()}
                     </h3>
                     <div class="space-y-2">{renderConversations(otherConversations)}</div>
                   </section>
