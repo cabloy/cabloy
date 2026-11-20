@@ -273,7 +273,11 @@ async selectMine(userId: TableIdentity, input?: TypeQueryInput<typeof reportQuer
 
 The self-service controller supplies `user.id` from `@Arg.user()`, never a query/body identity. Keep any additional business authorization in this service. Such a contract compiles its public input once with its business scope; it must not recompile already-trusted Resource ORM parameters. See [Service Guide](/backend/service-guide#pass-user-identity-explicitly).
 
-Fixed related-field bindings are server-owned and target a deterministic scalar/id relationship. The complete Boolean filter is evaluated in one main-ID membership subquery, avoiding parent-row fan-out and preserving repeated-field, OR and NOT semantics. Related models retain their instance/deleted scope; additional business visibility still needs a deliberate server-side design. This is not arbitrary joins, many-side traversal or a public relation graph. Response `include` remains independent of parent membership. Declare and verify cross-model cache dependencies when related-source mutations affect warmed queries; see [Cache Guide](/backend/cache-guide#cross-model-query-cache-dependencies).
+Fixed related-field bindings are server-owned and target a deterministic scalar/id relationship. The complete Boolean filter is evaluated in one main-ID membership subquery, avoiding parent-row fan-out and preserving repeated-field, OR and NOT semantics. Related models retain their instance/deleted scope; additional business visibility still needs a deliberate server-side design. This is not arbitrary joins, many-side traversal or a public relation graph. Response `include` remains independent of parent membership.
+
+### Check cache dependencies for relations and bindings
+
+Adding or changing policy `relations` (`exists` / `notExists`, including child conditions) or related-field `bindings` requires a cache-dependency check. Neither surface automatically registers invalidation dependencies. When a related-source mutation changes a cached query's membership, ordering, total, or aggregate, declare the source → query-cache-owner dependency in the owning modules and verify a warmed query after the mutation. Do not infer a reverse dependency merely from the relation. See [Cross-model query-cache dependencies](/backend/cache-guide#cross-model-query-cache-dependencies) for direction examples, configuration choices, and cache-bypass boundaries.
 
 ## Group and aggregate Actions
 

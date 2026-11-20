@@ -54,7 +54,22 @@ Representative areas include:
 
 ## Cross-model query-cache dependencies
 
-When a mutation in one Model changes the members, totals, projections, includes, or visibility of a query cached by another Model, declare an explicit cross-model dependency. Decide this from **query-result semantics**, not merely from a relation or foreign key.
+When a mutation in one Model changes the members, ordering, totals, computed results, projections, includes, or visibility of a query cached by another Model, declare an explicit cross-model dependency. Decide this from **query-result semantics**, not merely from a relation or foreign key.
+
+### Check dependencies when changing cross-model queries
+
+Whenever adding or changing relation predicates (`exists` / `notExists`, including child conditions), related-field query `bindings`, joins, sorting, or aggregation, identify the Model that owns the cached query and the related sources whose mutations can change its result. Model relations and public query policies do not register these invalidation dependencies automatically.
+
+The two query directions below require different edges:
+
+| Cached query                                                               | Query-cache owner | Related source mutation                                                                    | Required invalidation direction |
+| -------------------------------------------------------------------------- | ----------------- | ------------------------------------------------------------------------------------------ | ------------------------------- |
+| Student `relations.trainingRecords` existence or child-condition filtering | Student           | Record create, score update, delete, or restore that changes whether the predicate matches | Record → Student                |
+| Record `bindings.studentName` filtering or sorting                         | Record            | Student rename, delete, or restore that changes matching rows or their order               | Student → Record                |
+
+Declare each required edge in the owning modules. Refreshing entity-cache entries does not repair a cached ID membership/order, total, or aggregate. Cache consistency is separate from Action authorization and dataScope; declaring an edge grants no query permission.
+
+Do not add edges solely because a relation exists. A query that explicitly bypasses caching does not itself require a query-cache dependency; check other cached consumers before omitting an edge. Add both directions only when both directions have real cached-result dependencies.
 
 ### Choose one directed declaration
 
