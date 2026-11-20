@@ -5,6 +5,8 @@ export default {
   PrivateAiChatNotice:
     'Your saved conversations are private to your account. AI responses may be inaccurate.',
   Conversations: 'Conversations',
+  PinnedConversations: 'Pinned',
+  OtherConversations: 'Recent',
   NoSavedConversations: 'No saved conversations yet.',
   RenameConversation: 'Rename',
   RenameConversationTitle: 'Rename conversation',
@@ -13,7 +15,6 @@ export default {
   UnpinConversation: 'Unpin',
   DeleteConversation: 'Delete',
   DeleteConversationConfirm: 'Delete this conversation? This cannot be undone.',
-  RefreshHistory: 'Refresh history',
   Messages: 'Messages',
   ChatYou: 'You',
   ChatAssistant: 'Assistant',

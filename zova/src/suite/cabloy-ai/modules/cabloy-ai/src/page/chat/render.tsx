@@ -21,115 +21,130 @@ export class RenderPageChat extends BeanRenderBase {
       .join('');
     const busy =
       model.creating || model.streaming || model.unsettled || !!conversation?.activeRunId;
+    const pinnedConversations = conversations.data?.filter(item => item.pinned) ?? [];
+    const otherConversations = conversations.data?.filter(item => !item.pinned) ?? [];
+    const renderConversations = (items: typeof pinnedConversations) =>
+      items.map(item => {
+        const busy = model.mutating || item.activeRunId !== null;
+        return (
+          <div
+            key={item.id}
+            class="flex items-center gap-1"
+            data-testid="ai-chat-conversation"
+            data-conversation-id={item.id}
+          >
+            <ZButton
+              class={[
+                'btn btn-ghost min-w-0 flex-1 justify-start text-left',
+                {
+                  'btn-active': item.id === model.selectedId,
+                },
+              ]}
+              disabled={model.mutating}
+              aria-pressed={item.id === model.selectedId}
+              onPerform={() => model.select(item.id)}
+            >
+              <span
+                class="min-w-0 truncate"
+                title={item.title || this.scope.locale.NewConversation()}
+              >
+                {item.pinned && <span aria-hidden="true">📌 </span>}
+                {item.title || this.scope.locale.NewConversation()}
+              </span>
+            </ZButton>
+            <ZRowOperations
+              compact
+              slotDefault={() => (
+                <>
+                  <ZButton
+                    class="btn btn-ghost btn-sm"
+                    data-testid="ai-chat-pin"
+                    data-conversation-id={item.id}
+                    aria-label={
+                      item.pinned
+                        ? this.scope.locale.UnpinConversation()
+                        : this.scope.locale.PinConversation()
+                    }
+                    title={
+                      item.pinned
+                        ? this.scope.locale.UnpinConversation()
+                        : this.scope.locale.PinConversation()
+                    }
+                    disabled={busy}
+                    onPerform={() => model.setPinned(item.id, !item.pinned)}
+                  >
+                    {item.pinned ? '📌' : '☆'}
+                    <span>
+                      {item.pinned
+                        ? this.scope.locale.UnpinConversation()
+                        : this.scope.locale.PinConversation()}
+                    </span>
+                  </ZButton>
+                  <ZButton
+                    class="btn btn-ghost btn-sm"
+                    data-testid="ai-chat-rename"
+                    data-conversation-id={item.id}
+                    aria-label={this.scope.locale.RenameConversation()}
+                    title={this.scope.locale.RenameConversation()}
+                    disabled={busy}
+                    onPerform={() => this._rename(item)}
+                  >
+                    ✎<span>{this.scope.locale.RenameConversation()}</span>
+                  </ZButton>
+                  <ZButton
+                    class="btn btn-ghost btn-sm text-error"
+                    data-testid="ai-chat-delete"
+                    data-conversation-id={item.id}
+                    aria-label={this.scope.locale.DeleteConversation()}
+                    title={this.scope.locale.DeleteConversation()}
+                    disabled={busy}
+                    onPerform={() => this._delete(item)}
+                  >
+                    ×<span>{this.scope.locale.DeleteConversation()}</span>
+                  </ZButton>
+                </>
+              )}
+            />
+          </div>
+        );
+      });
     return (
       <ZPage>
         <section class="mx-auto w-full max-w-6xl p-4 md:p-6" data-testid="ai-chat">
           <header class="mb-5">
-            <h1 class="text-2xl font-semibold">{this.scope.locale.PrivateAiChat()}</h1>
-            <p class="mt-1 text-sm text-base-content/70">
-              {this.scope.locale.PrivateAiChatNotice()}
-            </p>
+            <ZButton
+              class="btn btn-outline"
+              data-testid="ai-chat-new"
+              disabled={model.creating}
+              onPerform={async () => {
+                await model.create();
+              }}
+            >
+              {this.scope.locale.NewConversation()}
+            </ZButton>
           </header>
           <div class="grid gap-4 md:grid-cols-[15rem_minmax(0,1fr)]">
             <aside class="rounded-box border border-base-300 bg-base-100 p-3">
-              <ZButton
-                class="btn btn-outline w-full"
-                data-testid="ai-chat-new"
-                disabled={model.creating}
-                onPerform={async () => {
-                  await model.create();
-                }}
-              >
-                {this.scope.locale.NewConversation()}
-              </ZButton>
               <nav
                 aria-label={this.scope.locale.Conversations()}
                 class="mt-3 max-h-96 space-y-2 overflow-y-auto"
               >
-                {conversations.data?.map(item => {
-                  const busy = model.mutating || item.activeRunId !== null;
-                  return (
-                    <div
-                      key={item.id}
-                      class="flex items-center gap-1"
-                      data-testid="ai-chat-conversation"
-                      data-conversation-id={item.id}
-                    >
-                      <ZButton
-                        class={[
-                          'btn btn-ghost min-w-0 flex-1 justify-start text-left',
-                          {
-                            'btn-active': item.id === model.selectedId,
-                          },
-                        ]}
-                        disabled={model.mutating}
-                        aria-pressed={item.id === model.selectedId}
-                        onPerform={() => model.select(item.id)}
-                      >
-                        <span
-                          class="min-w-0 truncate"
-                          title={item.title || this.scope.locale.NewConversation()}
-                        >
-                          {item.pinned && <span aria-hidden="true">📌 </span>}
-                          {item.title || this.scope.locale.NewConversation()}
-                        </span>
-                      </ZButton>
-                      <ZRowOperations
-                        compact
-                        slotDefault={() => (
-                          <>
-                            <ZButton
-                              class="btn btn-ghost btn-sm"
-                              data-testid="ai-chat-pin"
-                              data-conversation-id={item.id}
-                              aria-label={
-                                item.pinned
-                                  ? this.scope.locale.UnpinConversation()
-                                  : this.scope.locale.PinConversation()
-                              }
-                              title={
-                                item.pinned
-                                  ? this.scope.locale.UnpinConversation()
-                                  : this.scope.locale.PinConversation()
-                              }
-                              disabled={busy}
-                              onPerform={() => model.setPinned(item.id, !item.pinned)}
-                            >
-                              {item.pinned ? '📌' : '☆'}
-                              <span>
-                                {item.pinned
-                                  ? this.scope.locale.UnpinConversation()
-                                  : this.scope.locale.PinConversation()}
-                              </span>
-                            </ZButton>
-                            <ZButton
-                              class="btn btn-ghost btn-sm"
-                              data-testid="ai-chat-rename"
-                              data-conversation-id={item.id}
-                              aria-label={this.scope.locale.RenameConversation()}
-                              title={this.scope.locale.RenameConversation()}
-                              disabled={busy}
-                              onPerform={() => this._rename(item)}
-                            >
-                              ✎<span>{this.scope.locale.RenameConversation()}</span>
-                            </ZButton>
-                            <ZButton
-                              class="btn btn-ghost btn-sm text-error"
-                              data-testid="ai-chat-delete"
-                              data-conversation-id={item.id}
-                              aria-label={this.scope.locale.DeleteConversation()}
-                              title={this.scope.locale.DeleteConversation()}
-                              disabled={busy}
-                              onPerform={() => this._delete(item)}
-                            >
-                              ×<span>{this.scope.locale.DeleteConversation()}</span>
-                            </ZButton>
-                          </>
-                        )}
-                      />
-                    </div>
-                  );
-                })}
+                {pinnedConversations.length > 0 && (
+                  <section>
+                    <h3 class="mb-2 px-2 text-xs font-semibold text-base-content/60">
+                      {this.scope.locale.PinnedConversations()}
+                    </h3>
+                    <div class="space-y-2">{renderConversations(pinnedConversations)}</div>
+                  </section>
+                )}
+                {otherConversations.length > 0 && (
+                  <section class={pinnedConversations.length > 0 ? 'mt-4' : undefined}>
+                    <h3 class="mb-2 px-2 text-xs font-semibold text-base-content/60">
+                      {this.scope.locale.OtherConversations()}
+                    </h3>
+                    <div class="space-y-2">{renderConversations(otherConversations)}</div>
+                  </section>
+                )}
                 {conversations.data?.length === 0 && (
                   <p class="p-2 text-sm text-base-content/60">
                     {this.scope.locale.NoSavedConversations()}
@@ -144,15 +159,6 @@ export class RenderPageChat extends BeanRenderBase {
                     ? conversation.title || this.scope.locale.NewConversation()
                     : this.scope.locale.StartConversation()}
                 </h2>
-                {model.selectedId !== undefined && (
-                  <ZButton
-                    class="btn btn-ghost btn-sm"
-                    disabled={model.streaming}
-                    onPerform={() => model.refresh()}
-                  >
-                    {this.scope.locale.RefreshHistory()}
-                  </ZButton>
-                )}
               </div>
               <div
                 class="min-h-64 max-h-[55vh] flex-1 overflow-y-auto"
