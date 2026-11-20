@@ -8,6 +8,9 @@ export interface IModelOptionsRecord extends IDecoratorModelOptions<EntityRecord
 
 @Model<IModelOptionsRecord>({
   entity: EntityRecord,
+  cache: {
+    modelsClearedBy: ['training-student:student'],
+  },
   relations: {
     student: $relation.belongsTo(
       'training-record:record',

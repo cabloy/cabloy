@@ -1,8 +1,14 @@
-import type { DtoRecordCreate, DtoRecordUpdate } from 'vona-module-training-record';
+import type { TableIdentity } from 'table-identity';
+import type {
+  DtoRecordCreate,
+  DtoRecordSelectRes,
+  DtoRecordUpdate,
+} from 'vona-module-training-record';
 import type { DtoStudentCreate } from 'vona-module-training-student';
 
 import fse from 'fs-extra';
 import assert from 'node:assert';
+import { randomUUID } from 'node:crypto';
 import os from 'node:os';
 import path from 'node:path';
 import { describe, it } from 'node:test';
@@ -17,7 +23,7 @@ import { DtoRecordView } from '../src/dto/recordView.tsx';
 const dossierTextAttendance = Buffer.from('attendance dossier file');
 const dossierTextAssessment = Buffer.from('assessment dossier file');
 
-describe('record.test.ts', () => {
+describe('record.test.ts', { concurrency: false }, () => {
   it('action:record:emittedDtoSchemas', async () => {
     await app.bean.executor.mockCtx(async () => {
       const subjectApiJson = await app.bean.openapi.generateJsonOfClass(
@@ -342,6 +348,104 @@ describe('record.test.ts', () => {
         await fse.remove(dossierFilePathAttendance);
         await fse.remove(dossierFilePathAssessment);
         await app.bean.passport.signout();
+      }
+    });
+  });
+
+  it('action:record:refreshes warmed studentName filters, ordering and totals after Student mutations', async () => {
+    await app.bean.executor.mockCtx(async () => {
+      await app.bean.passport.signinMock();
+      const studentModel = app.scope('training-student').model.student;
+      const recordModel = app.scope('training-record').model.record;
+      const studentIds: TableIdentity[] = [];
+      const recordIds: TableIdentity[] = [];
+      // Keep unique owned names within the VARCHAR(50) columns.
+      const marker = `Cache-${randomUUID()}`;
+      const oldFilter = `${marker}-old`;
+      const newFilter = `${marker}-new`;
+      const studentNames = [`A-${oldFilter}`, `M-${marker}`];
+      const renamedStudent = `Z-${newFilter}`;
+      try {
+        assert.equal(studentModel.cacheQuery.enabled, true);
+        assert.equal(recordModel.cacheQuery.enabled, true);
+        for (const [index, name] of studentNames.entries()) {
+          const student = await studentModel.insert({ name, mobile: '13812345678', level: 1 });
+          studentIds.push(student.id);
+          const record = await recordModel.insert({
+            studentId: student.id,
+            name: `${marker}-${index}`,
+            subjectCount: 1,
+            totalScore: 90,
+            averageScore: 90,
+          });
+          recordIds.push(record.id);
+        }
+        const assertSelected = async (studentId: string, indexes: number[]) => {
+          const selected: DtoRecordSelectRes = await app.bean.executor.performAction(
+            'get',
+            '/training/record',
+            {
+              innerAccess: false,
+              query: {
+                name: marker,
+                studentId,
+                orders: [{ field: 'studentName', direction: 'asc' }],
+              },
+            },
+          );
+          assert.equal(selected.total, String(indexes.length));
+          assert.deepEqual(
+            selected.list.map(item => ({
+              id: String(item.id),
+              studentId: String(item.studentId),
+              student: { id: String(item.student?.id), name: item.student?.name },
+            })),
+            indexes.map(index => ({
+              id: String(recordIds[index]),
+              studentId: String(studentIds[index]),
+              student: { id: String(studentIds[index]), name: studentNames[index] },
+            })),
+          );
+        };
+        const assertState = async (old: number[], renamed: number[], ordered: number[]) => {
+          // Public studentId is a name-contains convenience, not a foreign-key filter.
+          await assertSelected(oldFilter, old);
+          await assertSelected(newFilter, renamed);
+          // A shared name fragment keeps both records in the filtered binding join for sorting.
+          await assertSelected(marker, ordered);
+        };
+
+        // Warm both matching and empty memberships, the joined order, and all three totals.
+        await assertState([0], [], [0, 1]);
+        await assertState([0], [], [0, 1]);
+        await studentModel.updateById(studentIds[0], { name: renamedStudent });
+        studentNames[0] = renamedStudent;
+        await assertState([], [0], [1, 0]);
+
+        // Mutate only the Student Model: service deletion would also delete its Record.
+        await studentModel.deleteById(studentIds[0]);
+        assert.equal(
+          (await studentModel.getById(studentIds[0], { disableDeleted: true }))?.deleted,
+          true,
+        );
+        const retainedRecord = await recordModel.getById(recordIds[0]);
+        assert.ok(retainedRecord);
+        assert.equal(String(retainedRecord.studentId), String(studentIds[0]));
+        await assertState([], [], [1]);
+
+        await studentModel.updateById(studentIds[0], { deleted: false }, { disableDeleted: true });
+        await assertState([], [0], [1, 0]);
+      } finally {
+        try {
+          for (const id of recordIds.toReversed()) {
+            await recordModel.deleteById(id, { disableDeleted: true });
+          }
+          for (const id of studentIds.toReversed()) {
+            await studentModel.deleteById(id, { disableDeleted: true });
+          }
+        } finally {
+          await app.bean.passport.signout();
+        }
       }
     });
   });

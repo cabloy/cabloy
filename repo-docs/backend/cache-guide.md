@@ -65,15 +65,19 @@ Express each dependency as one source-to-target edge:
 
 They normalize to the same direction. Choose the form that makes local ownership clearest, but never declare both forms for the same edge.
 
-### Keep the graph acyclic
+### Cycle-safe default propagation
 
-Keep the dependency graph directed, acyclic, and free of duplicate edges. A normal target clear can propagate transitively to its own dependent query caches, so reverse or duplicate declarations are not a way to increase reliability.
+Default clearing follows the directed dependency graph transitively. Within one invalidation wave, the framework clears each effective Model query-cache namespace at most once, including self-references, cycles, and converging paths. Identity includes the Model, normalized datasource client, and effective table; different Model aliases over one table remain distinct cache owners.
+
+Declare each intended directed edge once. A reverse edge is appropriate only when the reverse query-result dependency also exists, not as an extra reliability measure. For example, Student queries filtered by Record existence need Record → Student; Record queries filtered or ordered by Student name also need Student → Record. Both query caches can remain enabled with these two dependencies.
+
+Each independent invalidation, transaction-commit re-clear, and configured delayed double-delete starts a fresh wave. Deduplication does not suppress a later clear after a cache has been rewarmed. This is traversal safety, not automatic discovery of dependencies from relations, joins, or public query bindings.
 
 The default behavior clears affected **query caches**. It does not make a cross-Model entity cache relationship, replace a lock, enforce uniqueness, or create a transaction boundary.
 
 ### Use custom clearing deliberately
 
-`modelsClearedByFn` replaces the normal target-clear behavior for that dependency. When using it, explicitly own the target clear and any required downstream propagation. Do not add it as if it were an additional callback around the normal path.
+`modelsClearedByFn(ctx, modelTarget, modelSource)` replaces the normal target-clear behavior for that dependency. When using it, explicitly own the target clear and any required downstream propagation. Do not add it as if it were an additional callback around the normal path. Callbacks retain their per-edge, source-specific behavior; default target deduplication does not combine callbacks from different sources. The cycle-safety guarantee covers default framework propagation, not arbitrary callback recursion: calling a normal clear entrypoint from a callback starts a new wave, so custom code must avoid re-entering its own cycle.
 
 Prefer normal Model or service mutation paths so source invalidation, transaction-aware re-clearing, and configured cache behavior remain active.
 

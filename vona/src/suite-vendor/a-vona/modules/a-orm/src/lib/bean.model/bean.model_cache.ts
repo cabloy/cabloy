@@ -906,8 +906,18 @@ export class BeanModelCache<TRecord extends {} = {}> extends BeanModelCrud<TReco
   }
 
   public async cacheQueryClearInner(table?: keyof ITableRecord) {
-    await this.cacheQuery.clear(table);
-    await this._cacheQueryClearModelsClear();
+    await this._cacheQueryClearInner(table, new Set<string>());
+  }
+
+  private async _cacheQueryClearInner(table: keyof ITableRecord | undefined, visited: Set<string>) {
+    const cacheQuery = this.cacheQuery;
+    // Disabled caches still forward invalidation without requiring a default table.
+    const tableEffective = cacheQuery.enabled ? table || this.getTable(undefined) : table;
+    const name = cacheQuery.getName(tableEffective as keyof ITableRecord);
+    if (visited.has(name)) return;
+    visited.add(name);
+    await cacheQuery.clear(tableEffective);
+    await this._cacheQueryClearModelsClear(visited);
   }
 
   private _shardingCacheDoubleDelete(jobData: TypeQueueDoubleDeleteJobData) {
@@ -925,7 +935,7 @@ export class BeanModelCache<TRecord extends {} = {}> extends BeanModelCrud<TReco
     });
   }
 
-  private async _cacheQueryClearModelsClear() {
+  private async _cacheQueryClearModelsClear(visited: Set<string>) {
     const modelsClear = this._getModelsClear();
     if (!modelsClear || modelsClear.length === 0) return;
     for (const modelClear of modelsClear) {
@@ -934,7 +944,7 @@ export class BeanModelCache<TRecord extends {} = {}> extends BeanModelCrud<TReco
       if (modelsClearedByFn) {
         await modelsClearedByFn(this.ctx, modelTarget, this);
       } else {
-        await modelTarget.cacheQueryClearInner();
+        await modelTarget._cacheQueryClearInner(undefined, visited);
       }
     }
   }

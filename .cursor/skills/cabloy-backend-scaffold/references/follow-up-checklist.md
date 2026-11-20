@@ -58,8 +58,8 @@ When generation adds locale-backed `@Mcp.tool()` descriptions or `TODO(mcp-descr
 - datasource choice
 - cache behavior
 - cross-Model query-cache dependencies: when a source mutation can change another Model's cached query members, totals, projections, includes, or visibility, declare exactly one directed `modelsClear` / `modelsClearedBy` edge
-- keep the dependency graph acyclic and free of duplicate edges; do not declare both forms for the same edge because propagation is transitive and current runtime collection does not deduplicate targets
-- when `modelsClearedByFn` is required, treat it as replacement behavior and explicitly own the target clear and any necessary downstream propagation
+- avoid duplicate declarations of the same directed edge; add reverse edges only for real reverse query dependencies. Default propagation supports cycles and clears each effective cache target once per wave; independent invalidations, commit-time re-clears, and delayed double-deletes each start fresh waves
+- when `modelsClearedByFn` is required, preserve its per-edge replacement behavior and explicitly own the target clear and downstream propagation; default traversal deduplication does not protect arbitrary callback-driven recursion
 - prefer normal Model/service mutation paths so source invalidation, commit-time re-clear, and configured double-delete remain active
 - add a warm-query → mutate-source → repeat-query regression test for each new dependency path; follow [Cross-model query-cache dependencies](../../../../repo-docs/backend/cache-guide.md#cross-model-query-cache-dependencies) for the portable decision rules
 - transaction and concurrency requirements: leave independent CRUD writes without an explicit transaction or pessimistic lock by default; identify any multi-write atomicity or contention-sensitive invariant before choosing a transaction and the minimum necessary concurrency control. See [Transaction Guide](../../../../repo-docs/backend/transaction-guide.md).
