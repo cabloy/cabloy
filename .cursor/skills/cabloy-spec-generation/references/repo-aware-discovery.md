@@ -59,6 +59,15 @@ A new wrapper must be labeled **planned addition**, with its durable manifest pa
 
 A deferred strategy/tuple gate blocks only affected frontend/site implementation. Backend, unrelated audiences, and runnable discovery tasks retain accurate status. Independent composition never creates a separate tenant, identity, persistence, authorization, or domain-rule authority.
 
+### Personal-center discovery
+
+Apply this check only when a planned SSR audience has signed-in self-service journeys. Those journeys may still belong outside a personal center. If none belong there, omit personal-center scope and do not add a confirmation gate.
+
+- In the active edition, inspect the target site's flavor composition, effective `mine` layout binding, route declarations, and navigation owner. Verify separately that pages can use `meta.layout: 'mine'` and that the layout's navigation can expose the intended business entry points; route registration alone does not add a menu entry. Cite observed owners and do not assume a navigation extension point exists.
+- Prefer the target site's existing personal center when the shell and navigation fit. If the journey needs distinct navigation, entry points, or layout, propose a site-specific `layoutMine` bound to `mine` by the owning site's composition, and check the impact on existing `mine` routes and navigation in that site. A layout change alone is not a reason to create a new SSR site; evaluate deployment, URL mount, admission, and frontend composition boundaries separately.
+- Put the self-service outcome and journey in the PRD. In the SRS, record the site/flavor, layout and navigation ownership, entry and direct-route behavior, admission, and the SSR profile and first-paint/hydration contract. Layout and menu visibility do not grant access: keep route admission and server-authoritative identity, resource ownership, and tenant scope explicit. A custom shell does not establish a new identity, authorization, or persistence boundary.
+- Trace only added or changed work and acceptance in the existing WBS and test plan. Cover the affected business journey and integration (for example, navigation and direct entry, and denial of access to another user's resource where applicable), not unchanged generic login checks. Use the existing confirmation pass for any material unresolved decision and gate only dependent work.
+
 ## Suite-first topology
 
 The intended ownership layout is normally:
