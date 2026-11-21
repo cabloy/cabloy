@@ -71,6 +71,7 @@ export interface IOpenapiOptions {
 }
 
 export type TypeResponseContentType =
+  | 'text/event-stream'
   | 'application/json'
   | 'application/xml'
   | 'application/x-www-form-urlencoded'
