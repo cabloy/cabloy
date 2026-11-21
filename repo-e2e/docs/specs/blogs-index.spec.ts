@@ -25,6 +25,7 @@ interface IArticleGeometry {
 }
 
 const blogArticlePaths = [
+  '/blogs/zova-nextjs-ssr-hydration-differences/',
   '/blogs/nestjs-dynamic-module-vs-vona-module-model/',
   '/blogs/ai-coding-one-prompt-crud-ssr-multitasking/',
   '/blogs/ai-spec-driven-development/',
@@ -128,14 +129,14 @@ test(
     }
     await expect(
       cards.nth(0).getByRole('link', {
-        name: 'Why Cabloy/Vona Has No NestJS Dynamic Module',
+        name: 'SSR Hydration in Zova vs Next.js',
         exact: true,
       }),
     ).toBeVisible();
-    await expect(cards.nth(0).locator('.cabloy-blog-card__date')).toHaveText('November 14, 2026');
+    await expect(cards.nth(0).locator('.cabloy-blog-card__date')).toHaveText('November 18, 2026');
     await expect(cards.nth(0).locator('.cabloy-blog-card__cover')).toHaveAttribute(
       'href',
-      '/blogs/nestjs-dynamic-module-vs-vona-module-model/',
+      '/blogs/zova-nextjs-ssr-hydration-differences/',
     );
 
     const geometry = await getBlogsGeometry(page);
