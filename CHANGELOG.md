@@ -1,5 +1,16 @@
 # Changelog
 
+## 5.1.293
+
+### Features
+
+- Add feature updates (not detailed in the commit messages).
+
+### Improvements
+
+- Enhance the specification generation skill.
+- Update `controller.tsx`.
+
 ## 5.1.292
 
 ### Features
