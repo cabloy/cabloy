@@ -373,7 +373,7 @@ async function openStudentDraftEdit(page: Page, name: string, id: string | numbe
     .locator('tbody tr')
     .filter({ has: page.getByRole('link', { name, exact: true }) });
   await expect(row).toHaveCount(1);
-  await row.locator('button.btn-outline.btn-primary').click();
+  await row.getByRole('button', { name: 'Edit', exact: true }).click();
   await expect(page).toHaveURL(
     new RegExp(`/training-student(?:%3A|:)student/${id}/edit(?:[?#]|$)`),
   );
@@ -2098,44 +2098,35 @@ test(
       });
       await expect(operationsHeader).toHaveCSS('right', '0px');
 
-      const operationsRow = page
-        .locator('tbody tr')
-        .filter({
-          has: page.getByRole('button', { name: 'Summary', exact: true }),
-        })
-        .first();
-      const operationActions = operationsRow.getByRole('button');
-      await expect(operationActions).toHaveCount(4);
-      for (const action of await operationActions.all()) {
-        await expect(action).toBeVisible();
+      const row = tableWrapper.locator('tbody tr').filter({
+        has: page.getByRole('link', { name: studentName, exact: true }),
+      });
+      await expect(row).toHaveCount(1);
+      const operationsCell = row.getByRole('cell').last();
+      const operationActions = operationsCell.getByRole('button');
+      await expect(operationActions).toHaveCount(3);
+      for (const name of ['Edit', 'Delete', 'More actions']) {
+        await expect(operationsCell.getByRole('button', { name, exact: true })).toBeVisible();
       }
       const operationsGeometry = await operationActions.evaluateAll(actions => {
         const cell = actions[0]?.closest('td');
-        const join = actions[0]?.parentElement;
         const wrapper = cell?.closest('table')?.parentElement;
-        if (!cell || !join || !wrapper)
-          throw new Error('Could not resolve the Operations action cell');
-        const cellRect = cell.getBoundingClientRect();
-        const joinRect = join.getBoundingClientRect();
-        const wrapperRect = wrapper.getBoundingClientRect();
+        if (!cell || !wrapper) throw new Error('Could not resolve the Operations action cell');
         const tolerance = 2;
-        return {
-          fitsCell: join.scrollWidth <= cell.clientWidth,
-          joinFitsCell:
-            joinRect.left >= cellRect.left - tolerance &&
-            joinRect.right <= cellRect.right + tolerance,
-          actionsFitWrapper: actions.every(action => {
+        const fitsHorizontally = (container: Element) => {
+          const bounds = container.getBoundingClientRect();
+          return actions.every(action => {
             const rect = action.getBoundingClientRect();
-            return (
-              rect.left >= wrapperRect.left - tolerance &&
-              rect.right <= wrapperRect.right + tolerance
-            );
-          }),
+            return rect.left >= bounds.left - tolerance && rect.right <= bounds.right + tolerance;
+          });
+        };
+        return {
+          actionsFitCell: fitsHorizontally(cell),
+          actionsFitWrapper: fitsHorizontally(wrapper),
         };
       });
       expect(operationsGeometry).toEqual({
-        fitsCell: true,
-        joinFitsCell: true,
+        actionsFitCell: true,
         actionsFitWrapper: true,
       });
       expect(pageErrors).toEqual([]);
@@ -4877,9 +4868,14 @@ test(
       const summaryRouteUrl = (url: URL) => url.pathname === summaryPath;
       await page.route(summaryRouteUrl, summaryHandler);
       try {
-        let row = page.locator('tr').filter({ hasText: studentName });
+        const row = page.locator('tbody tr').filter({
+          has: page.getByRole('link', { name: studentName, exact: true }),
+        });
+        const moreActions = row.getByRole('button', { name: 'More actions', exact: true });
+        const summary = row.getByRole('button', { name: 'Summary', exact: true });
         await expect(row).toHaveCount(1);
-        await row.getByRole('button', { name: 'Summary', exact: true }).click();
+        await moreActions.click();
+        await summary.click();
 
         const dialog = page.getByRole('dialog');
         await expect(dialog).toBeVisible();
@@ -4905,9 +4901,9 @@ test(
         await page.getByRole('button', { name: 'Search', exact: true }).click();
         await nextSearchResponse;
 
-        row = page.locator('tr').filter({ hasText: studentName });
         await expect(row).toHaveCount(1);
-        await row.getByRole('button', { name: 'Summary', exact: true }).click();
+        await moreActions.click();
+        await summary.click();
         await summaryRequest;
         await expect(dialog).toHaveCount(0, { timeout: 250 });
         releaseSummaryResponse?.();

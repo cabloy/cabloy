@@ -1,5 +1,6 @@
 export default {
   'Home': '首页',
+  'AiChat': 'AI聊天',
   'MoreActions': '更多操作',
   'Language': '语言',
   'ColorMode': '明暗模式',

@@ -3,6 +3,7 @@ import { describe, it } from 'node:test';
 import { runWithZodQueryCoercion } from 'vona';
 import { app } from 'vona-mock';
 import { z } from 'zod';
+import * as mini from 'zod/v4/mini';
 
 const query = z.object({ count: z.number(), title: z.string().optional() });
 const level = z.union([z.literal(1), z.literal(2), z.literal(3)]);
@@ -82,6 +83,54 @@ describe('zodQueryScope.test.ts', () => {
       await runWithZodQueryCoercion(false, async () => {
         assert.equal(z.literal([1, 2, 3]).safeParse('2').success, false);
         assert.equal(z.union([z.literal(1), z.literal('1')]).parse('1'), '1');
+      });
+    });
+  });
+
+  it('supports Mini literals and streaming discriminators under query adaptation', async () => {
+    await app.bean.executor.mockCtx(async () => {
+      await runWithZodQueryCoercion(true, async () => {
+        const streamChunk = mini.union([
+          mini.looseObject({ type: mini.literal('text-start'), id: mini.string() }),
+          mini.looseObject({
+            type: mini.literal('text-delta'),
+            id: mini.string(),
+            delta: mini.string(),
+          }),
+          mini.looseObject({
+            type: mini.literal('start'),
+            messageId: mini.optional(mini.string()),
+            messageMetadata: mini.optional(mini.unknown()),
+          }),
+        ]);
+        const chunks = [
+          { type: 'start', messageId: 'run-1', messageMetadata: { status: 'running' } },
+          { type: 'text-start', id: 'text-1' },
+          { type: 'text-delta', id: 'text-1', delta: 'response' },
+        ];
+        for (const chunk of chunks) {
+          assert.deepEqual(await mini.parseAsync(streamChunk, chunk), chunk);
+        }
+        assert.equal(mini.safeParse(streamChunk, { type: 'invalid' }).success, false);
+        assert.equal(
+          mini.safeParse(streamChunk, { type: 'text-delta', id: 'text-1', delta: {} }).success,
+          false,
+        );
+        const discriminated = mini.discriminatedUnion('type', [
+          mini.object({ type: mini.literal('start') }),
+          mini.object({ type: mini.literal('finish') }),
+        ]);
+        assert.deepEqual(mini.parse(discriminated, { type: 'start' }), { type: 'start' });
+        assert.equal(mini.safeParse(discriminated, { type: 'invalid' }).success, false);
+        assert.equal(mini.parse(mini.literal([1, 2, 3]), '2'), 2);
+        assert.equal(mini.parse(mini.literal([1, '1']), '1'), '1');
+        assert.equal(mini.safeParse(mini.literal(1), 'invalid').success, false);
+        assertQuery();
+      });
+      await runWithZodQueryCoercion(false, async () => {
+        assert.equal(mini.safeParse(mini.literal(2), '2').success, false);
+        assert.equal(mini.parse(mini.literal(2), 2), 2);
+        assertNative();
       });
     });
   });

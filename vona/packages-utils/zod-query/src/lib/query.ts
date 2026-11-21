@@ -58,7 +58,9 @@ function __parseAdapter(inst: z.ZodType, parse) {
 /////////////////////////////////////////
 
 function __parseString(inst, parse, payload: IParsePayload, _) {
-  const metadata = ZodMetadata?.getOpenapiMetadata(inst);
+  // OpenAPI's fluent metadata API belongs to classic Zod, not Zod Mini.
+  const metadata =
+    typeof inst.meta === 'function' ? ZodMetadata?.getOpenapiMetadata(inst) : undefined;
   if (metadata?.format === 'binary' && !isNil(payload.value)) {
     // ignore upload file
     return payload;
@@ -95,10 +97,12 @@ function __parseNumber(_inst, parse, payload: IParsePayload, _) {
 /////////////////////////////////////////
 
 function __parseLiteral(inst: z.ZodLiteral, parse, payload: IParsePayload, _) {
+  // The core value set is shared by classic Zod and Zod Mini literals.
+  const values = inst._zod.values;
   if (
     typeof payload.value === 'string' &&
-    !inst.values.has(payload.value) &&
-    [...inst.values].some(value => typeof value === 'number')
+    !values.has(payload.value) &&
+    [...values].some(value => typeof value === 'number')
   ) {
     return __parseNumber(inst, parse, payload, _);
   }
