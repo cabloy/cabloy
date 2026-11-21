@@ -87,6 +87,8 @@ The generator is designed to create the aggregate-detail thread, including:
 
 This keeps the structural pattern consistent before domain-specific refinement starts.
 
+The generated relation, `include`, and nested DTOs are structural aggregate wiring, not a finished public query contract. A `hasMany` relation does not by itself expose child-field predicates or `exists`/`notExists` filtering, and it does not determine the authorization Action for a related resource. Make that query-capability decision during business refinement rather than inferring it from the generated files.
+
 ## Two supported detail-module modes
 
 ### Aggregate mode
@@ -263,11 +265,13 @@ That is the practical boundary to remember:
 1. run `:tools:masterDetail`
 2. inspect the generated relation, DTO, and service thread
 3. confirm whether the detail should remain aggregate-only or also stay standalone
-4. if the detail later becomes a parent of another detail, repeat the same pattern one level lower
-5. refine entity fields and validation rules for the domain
-6. refine detail columns/actions when the default `basic-details` behavior is not enough
-7. refresh and verify metadata/build outputs
-8. complete the mode-aware MCP follow-up below after the actual Action, DTO, and Service changes
+4. decide whether the business needs a public query to filter, group, or aggregate the master by child existence or child fields; do not infer this from the generated `hasMany` or `include`
+5. if such a public relation query is required, use [Public Query Guide](/backend/public-query-guide) for the query policy, `$compileQuery`, trusted scope, and server-authored relation authorization; prepare relation authorization consistently for every exposed `select`, `group`, and `aggregate` Action
+6. if the detail later becomes a parent of another detail, repeat the same pattern one level lower
+7. refine entity fields and validation rules for the domain
+8. refine detail columns/actions when the default `basic-details` behavior is not enough
+9. refresh and verify metadata/build outputs
+10. complete the mode-aware MCP follow-up below after the actual Action, DTO, and Service changes
 
 ## Complete mode-aware MCP follow-up
 
@@ -311,3 +315,5 @@ After generation or documentation changes:
 8. confirm detail schema/index output includes the FK support
 9. confirm the module `.metadata/index.ts` exports the expected nested detail DTOs
 10. if standalone mode was chosen, confirm the detail module still exposes its standalone resource surface
+11. confirm no public relation-query policy or authorization machinery was added solely because a `hasMany` relation exists
+12. when public relation filtering or analysis is required, confirm the deliberate query-policy allowlist, Resource-boundary compilation, server-authored relation binding, child Action authorization, and consistent `relationScopes` preparation for `select`, `group`, and `aggregate`
