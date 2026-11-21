@@ -1,5 +1,15 @@
 # Changelog
 
+## 5.1.294
+
+### Features
+
+- Add AI chat.
+
+### Improvements
+
+- Update the blog index tests.
+
 ## 5.1.293
 
 ### Features
