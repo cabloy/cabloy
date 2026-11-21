@@ -357,7 +357,7 @@ describe('student.test.ts', { concurrency: false }, () => {
           width: component.properties._operationsRow.rest.table.width,
           fixed: component.properties._operationsRow.rest.table.fixed,
         },
-        { align: 'center', width: 360, fixed: 'right' },
+        { align: 'center', width: 240, fixed: 'right' },
       );
     });
   });

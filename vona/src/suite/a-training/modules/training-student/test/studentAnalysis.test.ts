@@ -695,7 +695,7 @@ describe('studentAnalysis.test.ts', { concurrency: false }, () => {
   it('filters students by active, current-instance training-record existence without changing projection', async () => {
     await app.bean.executor.mockCtx(async () => {
       await app.bean.passport.signinMock();
-      const marker = `Relation-${randomUUID()}`;
+      const marker = `Relation-${randomUUID().slice(0, 8)}`;
       const studentModel = app.scope('training-student').model.student;
       const recordModel = app.scope('training-record').model.record;
       const studentIds: TableIdentity[] = [];
