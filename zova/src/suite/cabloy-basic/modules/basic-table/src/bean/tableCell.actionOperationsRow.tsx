@@ -63,7 +63,8 @@ export class TableCellActionOperationsRow extends BeanBase implements ITableCell
     const actions = options.actions;
     if (!actions || actions.length === 0) return;
     const data = renderContext.cellContext.row.original as Record<string, unknown>;
-    const domActions: VNode[] = [];
+    const domPrimaryActions: VNode[] = [];
+    const domOverflowActions: VNode[] = [];
     actions.forEach((action, index) => {
       const actionName = action.name;
       const permissionHint = action.options?.permission;
@@ -77,14 +78,23 @@ export class TableCellActionOperationsRow extends BeanBase implements ITableCell
         builtInLabel ? { showLabel: $$table.compact } : undefined,
       );
       const domAction = $$table.cellRender(action.render!, options2, renderContext);
-      if (this._hasContent(domAction)) domActions.push(domAction);
+      if (!this._hasContent(domAction)) return;
+      if (action.options?.placement === 'overflow') domOverflowActions.push(domAction as VNode);
+      else domPrimaryActions.push(domAction as VNode);
     });
-    if (domActions.length === 0) return;
+    if (domPrimaryActions.length === 0 && domOverflowActions.length === 0) return;
     return (
       <ZRowOperations
         compact={$$table.compact}
+        overflow={domOverflowActions.length > 0}
+        popoverSupported={
+          typeof HTMLElement === 'undefined'
+            ? undefined
+            : typeof HTMLElement.prototype.showPopover === 'function'
+        }
         class={options.class}
-        slotDefault={() => <>{domActions}</>}
+        slotPrimary={() => <>{domPrimaryActions}</>}
+        slotOverflow={() => <>{domOverflowActions}</>}
       />
     );
   }

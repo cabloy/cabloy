@@ -21,7 +21,7 @@ export interface ITableCellOptionsActionUpdate extends IResourceTableActionRowOp
 }
 
 @TableCell<ITableCellOptionsActionUpdate>({
-  class: 'btn btn-outline btn-primary join-item',
+  class: 'btn btn-ghost join-item',
 })
 export class TableCellActionUpdate extends BeanBase implements ITableCellRender {
   render(
@@ -34,6 +34,7 @@ export class TableCellActionUpdate extends BeanBase implements ITableCellRender 
       <ZButton
         class={options.class}
         aria-label={this.scope.locale.Edit()}
+        title={this.scope.locale.Edit()}
         onPerform={async () => {
           await $host.$performCommand('basic-commands:edit', options, renderContext);
         }}

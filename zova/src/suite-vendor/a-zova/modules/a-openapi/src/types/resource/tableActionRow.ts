@@ -14,12 +14,15 @@ export type IResourceTableActionRowNameRecord = {
 
 export interface IResourceTableActionRowRecord {}
 
+export type TypeResourceTableActionRowPlacement = 'inline' | 'overflow';
+
 export interface IResourceTableActionRowOptionsBase {
   class?: any;
   style?: types.NestedCSSProperties;
   resource?: string;
   id?: TableIdentity;
   permission?: IPermissionHintTableActionRow;
+  placement?: TypeResourceTableActionRowPlacement;
 }
 
 export interface IResourceRenderTableActionRowOptionsAction {

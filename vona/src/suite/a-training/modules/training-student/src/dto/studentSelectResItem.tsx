@@ -77,16 +77,18 @@ export class DtoStudentSelectResItem extends $Dto.get(() => ModelStudent) {
   @Api.field(
     v.title($locale('Operations')),
     ZovaRender.order(1, 'max'),
-    ZovaRender.column({ align: 'center', width: 360, fixed: 'right' }),
+    ZovaRender.column({ align: 'center', width: 240, fixed: 'right' }),
     ZovaRender.cell('basic-table:actionOperationsRow', {
       actions: [
         ZovaRender.tableActionRow('training-student:actionSummary', {
           permission: { actionInherit: 'view' },
+          placement: 'overflow',
         }),
         ZovaRender.tableActionRow('basic-table:actionUpdate'),
         ZovaRender.tableActionRow('basic-table:actionDelete'),
         ZovaRender.tableActionRow('training-student:actionDeleteForce', {
           permission: { actionInherit: 'delete' },
+          placement: 'overflow',
         }),
       ],
     }),

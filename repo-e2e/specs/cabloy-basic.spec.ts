@@ -2049,7 +2049,7 @@ test(
       await expect(nameHeader).toHaveCSS('text-align', 'left');
       await expect(operationsHeader).toHaveCSS('position', 'sticky');
       await expect(operationsHeader).toHaveCSS('right', '0px');
-      await expect(operationsHeader).toHaveCSS('min-width', '360px');
+      await expect(operationsHeader).toHaveCSS('min-width', '240px');
       await expect(operationsHeader).toHaveCSS('text-align', 'center');
 
       // Query capabilities enable headers without per-entity sorting opt-ins.
@@ -2197,7 +2197,18 @@ test(
       await expect(row).toHaveCount(1);
       await expect(wrapper).toHaveAttribute('data-table-compact', 'false');
       await expect(nameHeader).toHaveCSS('position', 'sticky');
-      await expect(operationsHeader).toHaveCSS('min-width', '360px');
+      await expect(operationsHeader).toHaveCSS('min-width', '240px');
+      await expect(more).toHaveCount(1);
+      await expect(row.getByRole('button')).toHaveCount(3);
+      await expect(actions).toHaveCount(1);
+      await expect(actions).toBeHidden();
+      await more.click();
+      await expect(actions).toBeVisible();
+      await expect(
+        actions.getByRole('button', { name: 'Force Delete', exact: true }),
+      ).toBeVisible();
+      await page.keyboard.press('Escape');
+      await expect(actions).toBeHidden();
 
       const profileWrites: string[] = [];
       const observeProfileWrites = (request: Request) => {
@@ -2289,9 +2300,17 @@ test(
             ordinaryNeutral: buttons
               .filter(button => !button.classList.contains('btn-error'))
               .every(button => getComputedStyle(button).color === getComputedStyle(element).color),
-            dangerDistinct:
-              getComputedStyle(buttons[2]!).color !== getComputedStyle(buttons[0]!).color &&
-              getComputedStyle(buttons[2]!).color === getComputedStyle(buttons[3]!).color,
+            dangerDistinct: (() => {
+              const ordinaryColor = getComputedStyle(element).color;
+              const dangerColors = buttons
+                .filter(button => button.classList.contains('btn-error'))
+                .map(button => getComputedStyle(button).color);
+              return (
+                dangerColors.length > 0 &&
+                dangerColors.every(color => color === dangerColors[0]) &&
+                dangerColors[0] !== ordinaryColor
+              );
+            })(),
             separators: buttons.filter(button => {
               const style = getComputedStyle(button, '::before');
               return style.content !== 'none' && style.borderTopWidth === '1px';
@@ -2299,7 +2318,7 @@ test(
             textStarts,
           };
         });
-        expect(menuStyle.labels).toEqual(['Summary', 'Edit', 'Delete', 'Force Delete']);
+        expect(menuStyle.labels).toEqual(['Edit', 'Delete', 'Summary', 'Force Delete']);
         expect(menuStyle.borders).toEqual(['0px', '0px', '0px', '0px']);
         expect(menuStyle.shadows).toEqual(['none', 'none', 'none', 'none']);
         expect(menuStyle.ordinaryNeutral).toBe(true);
@@ -2370,10 +2389,17 @@ test(
         await expect(wrapper).toHaveAttribute('data-table-compact', 'false');
         await expect(nameHeader).toHaveCSS('position', 'sticky');
         await expect(operationsHeader).toHaveCSS('position', 'sticky');
-        await expect(operationsHeader).toHaveCSS('min-width', '360px');
-        await expect(operationsCell).toHaveCSS('min-width', '360px');
-        await expect(more).toHaveCount(0);
-        await expect(row.getByRole('button')).toHaveCount(4);
+        await expect(operationsHeader).toHaveCSS('min-width', '240px');
+        await expect(operationsCell).toHaveCSS('min-width', '240px');
+        await expect(more).toHaveCount(1);
+        await expect(row.getByRole('button')).toHaveCount(3);
+        await more.click();
+        await expect(actions).toBeVisible();
+        await expect(
+          actions.getByRole('button', { name: 'Force Delete', exact: true }),
+        ).toBeVisible();
+        await page.keyboard.press('Escape');
+        await expect(actions).toBeHidden();
         expect(profileWrites).toEqual([]);
 
         for (const width of [320, 390]) {
@@ -2513,8 +2539,8 @@ test(
               await expect(actions.locator('button')).toHaveCount(4);
               await expect(row.getByRole('button')).toHaveCount(1);
             } else {
-              await expect(more).toHaveCount(0);
-              await expect(row.getByRole('button')).toHaveCount(4);
+              await expect(more).toHaveCount(1);
+              await expect(row.getByRole('button')).toHaveCount(3);
             }
 
             releaseScripts();
@@ -2543,10 +2569,15 @@ test(
                   await wrapper.evaluate(element => element.clientWidth),
                 ).toBeGreaterThanOrEqual(768);
               }
-              await expect(operationsHeader).toHaveCSS('min-width', '360px');
-              await expect(more).toHaveCount(0);
-              await expect(row.getByRole('button')).toHaveCount(4);
+              await expect(operationsHeader).toHaveCSS('min-width', '240px');
+              await expect(row.getByRole('button')).toHaveCount(
+                scenario.unsupportedPopover ? 4 : 3,
+              );
               if (scenario.unsupportedPopover) {
+                await expect(more).toHaveCount(0);
+                await expect(
+                  row.getByRole('button', { name: 'Force Delete', exact: true }),
+                ).toBeVisible();
                 const summary = row.getByRole('button', { name: 'Summary', exact: true });
                 await summary.scrollIntoViewIfNeeded();
                 await summary.click();
@@ -2557,6 +2588,8 @@ test(
                 ).toBeVisible();
                 await ssrPage.keyboard.press('Escape');
                 await expect(dialog).toHaveCount(0);
+              } else {
+                await expect(more).toHaveCount(1);
               }
             }
             expect(hydrationWarnings).toEqual([]);
@@ -4917,7 +4950,11 @@ test(
               !response.request().headers()['x-vona-openapi-schema']
             );
           });
-          await row.getByRole('button', { name: 'Force Delete', exact: true }).click();
+          const moreActions = row.getByRole('button', { name: 'More actions', exact: true });
+          if (await moreActions.count()) await moreActions.click();
+          const forceDelete = row.getByRole('button', { name: 'Force Delete', exact: true });
+          await expect(forceDelete).toBeVisible();
+          await forceDelete.click();
           await page.getByRole('button', { name: 'Yes', exact: true }).click();
           await deleteResponse;
         }

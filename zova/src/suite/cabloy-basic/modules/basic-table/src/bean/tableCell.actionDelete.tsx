@@ -21,7 +21,7 @@ export interface ITableCellOptionsActionDelete extends IResourceTableActionRowOp
 }
 
 @TableCell<ITableCellOptionsActionDelete>({
-  class: 'btn btn-outline btn-error join-item',
+  class: 'btn btn-ghost btn-square btn-error join-item',
 })
 export class TableCellActionDelete extends BeanBase implements ITableCellRender {
   render(
@@ -34,6 +34,7 @@ export class TableCellActionDelete extends BeanBase implements ITableCellRender 
       <ZButton
         class={options.class}
         aria-label={this.scope.locale.Delete()}
+        title={this.scope.locale.Delete()}
         onPerform={async () => {
           const confirmed = await $host.$performCommand('basic-commands:confirm', {
             text: this.scope.locale.DeleteConfirm(),
