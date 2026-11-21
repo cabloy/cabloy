@@ -1,5 +1,15 @@
 # Changelog
 
+## 5.1.292
+
+### Features
+
+- Add more actions.
+
+### Improvements
+
+- Update the student selection response item component.
+
 ## 5.1.291
 
 ### Features
