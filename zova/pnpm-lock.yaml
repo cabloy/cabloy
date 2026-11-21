@@ -1025,7 +1025,7 @@ importers:
         specifier: ^5.1.104
         version: link:../zova-core
       zova-suite-a-zova:
-        specifier: ^5.1.193
+        specifier: ^5.1.194
         version: link:../../src/suite-vendor/a-zova
     devDependencies:
       clean-package:
@@ -1258,7 +1258,7 @@ importers:
         specifier: ^5.1.41
         version: link:modules/a-model
       zova-module-a-openapi:
-        specifier: ^5.1.66
+        specifier: ^5.1.67
         version: link:modules/a-openapi
       zova-module-a-router:
         specifier: ^5.1.46
