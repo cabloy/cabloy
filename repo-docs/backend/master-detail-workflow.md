@@ -87,7 +87,9 @@ The generator is designed to create the aggregate-detail thread, including:
 
 This keeps the structural pattern consistent before domain-specific refinement starts.
 
-The generated relation, `include`, and nested DTOs are structural aggregate wiring, not a finished public query contract. A `hasMany` relation does not by itself expose child-field predicates or `exists`/`notExists` filtering, and it does not determine the authorization Action for a related resource. Make that query-capability decision during business refinement rather than inferring it from the generated files.
+The generated relation, `include`, and nested DTOs are structural aggregate wiring, not a finished parent-side relation-query contract. A `hasMany` relation does not by itself expose child-field predicates or `exists`/`notExists` filtering, and it does not determine the authorization Action for a related resource. Make that parent-side query-capability decision during business refinement rather than inferring it from the generated files.
+
+In standalone mode, the retained child is also an ordinary CRUD Resource. A newly created child receives the CRUD controller's normal `$compileQuery` boundary (and, in Start, its trusted `scopeWhere` data scope); an existing standalone child is retained unchanged. If direct child filtering by an FK or child field is required, extend the child query policy independently. Do not confuse that ordinary child query with filtering the parent through a child relation.
 
 ## Two supported detail-module modes
 
@@ -265,13 +267,14 @@ That is the practical boundary to remember:
 1. run `:tools:masterDetail`
 2. inspect the generated relation, DTO, and service thread
 3. confirm whether the detail should remain aggregate-only or also stay standalone
-4. decide whether the business needs a public query to filter, group, or aggregate the master by child existence or child fields; do not infer this from the generated `hasMany` or `include`
-5. if such a public relation query is required, use [Public Query Guide](/backend/public-query-guide) for the query policy, `$compileQuery`, trusted scope, and server-authored relation authorization; prepare relation authorization consistently for every exposed `select`, `group`, and `aggregate` Action
-6. if the detail later becomes a parent of another detail, repeat the same pattern one level lower
-7. refine entity fields and validation rules for the domain
-8. refine detail columns/actions when the default `basic-details` behavior is not enough
-9. refresh and verify metadata/build outputs
-10. complete the mode-aware MCP follow-up below after the actual Action, DTO, and Service changes
+4. for standalone mode, confirm the retained child has its ordinary CRUD query contract: a newly scaffolded child gets `$compileQuery` from `crudBasic` or `crudStart` (with Start's trusted `scopeWhere`), while an existing child is retained unchanged; add direct child FK/field filters in the child query policy when the business needs them
+5. decide separately whether the business needs a parent public query to filter, group, or aggregate the master by child existence or child fields; do not infer this from the generated `hasMany` or `include`
+6. if such a parent relation query is required, use [Public Query Guide](/backend/public-query-guide) for the query policy, `$compileQuery`, trusted scope, and server-authored relation authorization; prepare relation authorization consistently for every exposed parent `select`, `group`, and `aggregate` Action
+7. if the detail later becomes a parent of another detail, repeat the same pattern one level lower
+8. refine entity fields and validation rules for the domain
+9. refine detail columns/actions when the default `basic-details` behavior is not enough
+10. refresh and verify metadata/build outputs
+11. complete the mode-aware MCP follow-up below after the actual Action, DTO, and Service changes
 
 ## Complete mode-aware MCP follow-up
 
@@ -315,5 +318,6 @@ After generation or documentation changes:
 8. confirm detail schema/index output includes the FK support
 9. confirm the module `.metadata/index.ts` exports the expected nested detail DTOs
 10. if standalone mode was chosen, confirm the detail module still exposes its standalone resource surface
-11. confirm no public relation-query policy or authorization machinery was added solely because a `hasMany` relation exists
-12. when public relation filtering or analysis is required, confirm the deliberate query-policy allowlist, Resource-boundary compilation, server-authored relation binding, child Action authorization, and consistent `relationScopes` preparation for `select`, `group`, and `aggregate`
+11. if standalone mode was chosen, confirm the child Resource keeps its ordinary CRUD query compiler and the edition-specific trusted scope behavior; if direct child FK/field filtering is required, confirm it was added to the child query policy independently
+12. confirm no parent-side relation-query policy or authorization machinery was added solely because a `hasMany` relation exists
+13. when parent public relation filtering or analysis is required, confirm the deliberate query-policy allowlist, Resource-boundary compilation, server-authored relation binding, child Action authorization, and consistent `relationScopes` preparation for parent `select`, `group`, and `aggregate`

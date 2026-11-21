@@ -157,11 +157,13 @@ Important rule:
 
 Treat `:tools:masterDetail` output as a structural baseline, not finished business behavior. Its `hasMany` relation, service `include`, and nested DTO wiring establish aggregate ownership and loading/editing behavior; they do not imply that clients may filter the master through the relation.
 
-After generation, make an explicit business decision:
+In standalone mode, a newly created child resource is also generated through the edition CRUD command. It therefore keeps the child Resource's ordinary query contract: Basic uses the CRUD controller's normal `$compileQuery`, while Start also preserves the trusted `scopeWhere` data scope. An existing standalone child surface is retained unchanged and must already provide its own valid query contract. If direct child filtering by an FK or child field is needed, extend the child query policy independently; do not confuse that with filtering the parent through a child relation.
 
-- if the public Resource Action does not need child existence (`exists`/`notExists`) or child-field predicates to change the master result set, grouping, or aggregates, do not add query `relations`, `authorizationRequired`, `authorizeQueryRelations`, `relationScopes`, or extra `$compileQuery` handling merely because a `hasMany` relation exists
+After generation, make an explicit business decision about parent-side relation predicates:
+
+- if the public parent Resource Action does not need child existence (`exists`/`notExists`) or child-field predicates to change the master result set, grouping, or aggregates, do not add parent-side query `relations`, `authorizationRequired`, `authorizeQueryRelations`, `relationScopes`, or extra parent-side compilation merely because a `hasMany` relation exists
 - if that public capability is required, follow [Public Query Guide](../../../repo-docs/backend/public-query-guide.md) as the sole source for policy, compilation, scope, relation authorization, and budget details; define only the intended relation and fields, compile at the Resource Action boundary, and use explicit server-authored relation-to-Action bindings
-- authorize the actual child Action used by the binding and prepare `relationScopes` consistently for every exposed `select`, `group`, and `aggregate` path; preserve the parent Action's trusted scope and the active instance/row scope
+- authorize the actual child Action used by the binding and prepare `relationScopes` consistently for every exposed parent `select`, `group`, and `aggregate` path; `relationScopes` is for referenced authorized relation predicates, not relation loading or the child's ordinary standalone scalar query
 
 Do not derive an authorization binding from a model or relation name, accept one from the client, or bind an aggregate-only detail to a nonexistent standalone Action. Relation filtering is separate from relation loading and does not expand the parent response projection.
 
