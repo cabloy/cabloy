@@ -1,5 +1,20 @@
 export default {
   AverageScore: '平均分',
+  RecordSelect: '查询培训记录列表',
+  RecordSelectDescription:
+    '使用当前培训记录查询权限，在当前实例中查询未软删除的培训记录。返回现有的分页序列化响应，并包含可见的学生摘要。',
+  RecordView: '查看培训记录',
+  RecordViewDescription:
+    '使用当前培训记录查看权限，在当前实例中按 ID 读取一条未软删除的培训记录。返回现有的序列化详情，包括可见的学生、科目及文件和图片元数据。',
+  HighestScoresBySubject: '查询各科目最高分',
+  HighestScoresBySubjectDescription:
+    '使用当前培训记录查询权限，在当前实例中检查可见且未软删除的培训记录、学生和科目。按科目名称精确分组，返回所有并列最高分的科目源记录，并包含对应的学生和培训记录标识。没有符合条件的科目时返回空数组，不接受输入筛选条件。',
+  SubjectRecordId: '科目记录 ID',
+  SubjectName: '科目名称',
+  SubjectScore: '科目分数',
+  TrainingRecordId: '培训记录 ID',
+  StudentId: '学生 ID',
+  StudentName: '学生姓名',
   Description: '描述',
   Operations: '操作',
   Student: '学生',

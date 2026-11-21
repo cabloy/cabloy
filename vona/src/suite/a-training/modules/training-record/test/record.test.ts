@@ -1,4 +1,5 @@
 import type { TableIdentity } from 'table-identity';
+import type { IMcpToolOptions } from 'vona-module-a-openapiutils';
 import type {
   DtoRecordCreate,
   DtoRecordSelectRes,
@@ -12,10 +13,16 @@ import { randomUUID } from 'node:crypto';
 import os from 'node:os';
 import path from 'node:path';
 import { describe, it } from 'node:test';
+import { appMetadata } from 'vona';
 import { app } from 'vona-mock';
-import { $makeMetadata, getTargetDecoratorRules } from 'vona-module-a-openapiutils';
+import {
+  $makeMetadata,
+  getTargetDecoratorRules,
+  SymbolMcpOptions,
+} from 'vona-module-a-openapiutils';
 
 import { DtoDetailRecordSubjectResItem } from '../src/dto/detailRecordSubjectResItem.tsx';
+import { DtoHighestScoresBySubjectResItem } from '../src/dto/highestScoresBySubjectResItem.tsx';
 import { DtoRecordSelectReq, recordQuery } from '../src/dto/recordSelectReq.tsx';
 import { DtoRecordSelectResItem } from '../src/dto/recordSelectResItem.tsx';
 import { DtoRecordView } from '../src/dto/recordView.tsx';
@@ -51,6 +58,45 @@ describe('record.test.ts', { concurrency: false }, () => {
         .find(item => item.beanOptions.beanFullName === 'training-record.controller.record')
         ?.beanOptions.beanClass;
       if (!controller) throw new Error('training-record.controller.record not found');
+      const reportApiJson = await app.bean.openapi.generateJsonOfClass(
+        DtoHighestScoresBySubjectResItem,
+      );
+      const reportComponent = Object.values(reportApiJson.components!.schemas as any).find(item => {
+        const properties = (item as any).properties;
+        return properties?.subjectRecordId && properties?.trainingRecordId && properties?.studentId;
+      }) as any;
+      assert.ok(reportComponent);
+      assert.deepEqual(Object.keys(reportComponent.properties).sort(), [
+        'score',
+        'studentId',
+        'studentName',
+        'subjectName',
+        'subjectRecordId',
+        'trainingRecordId',
+        'trainingRecordName',
+        'trainingTime',
+      ]);
+      assert.equal(reportComponent.required.includes('trainingTime'), false);
+
+      const mcpActions = ['select', 'view', 'highestScoresBySubject'] as const;
+      for (const action of mcpActions) {
+        const mcpOptions = appMetadata.getOwnMetadata<IMcpToolOptions>(
+          SymbolMcpOptions,
+          controller.prototype,
+          action,
+        );
+        assert.equal(mcpOptions?.readOnly, true);
+        assert.deepEqual(mcpOptions?.ssrSites, ['basic-siteadmin:admin']);
+      }
+      assert.deepEqual(
+        appMetadata.getOwnMetadata<IMcpToolOptions>(
+          SymbolMcpOptions,
+          controller.prototype,
+          'select',
+        )?.discovery,
+        { output: [['list', 'items']] },
+      );
+
       const controllerApiJson = await app.bean.openapi.generateJsonOfControllerAction(
         controller,
         'select',
@@ -95,6 +141,134 @@ describe('record.test.ts', { concurrency: false }, () => {
           'name',
         ]);
         assert.equal(component.properties.studentId.rest?.table?.enableSorting, undefined);
+      }
+    });
+  });
+
+  it('action:record:highestScoresBySubject', async () => {
+    await app.bean.executor.mockCtx(async () => {
+      await app.bean.passport.signinMock();
+      const studentModel = app.scope('training-student').model.student;
+      const recordModel = app.scope('training-record').model.record;
+      const subjectModel = app.scope('training-recordsubject').model.subject;
+      const studentIds: TableIdentity[] = [];
+      const recordIds: TableIdentity[] = [];
+      const subjectIds: TableIdentity[] = [];
+      try {
+        const studentA = await studentModel.insert({
+          name: '__Highest Scores Student A__',
+          level: 1,
+        });
+        const studentB = await studentModel.insert({
+          name: '__Highest Scores Student B__',
+          level: 1,
+        });
+        studentIds.push(studentA.id, studentB.id);
+        const recordA = await recordModel.insert({
+          studentId: studentA.id,
+          name: '__Highest Scores Record A__',
+          trainingTime: new Date('2026-01-01T00:00:00.000Z'),
+        });
+        const recordB = await recordModel.insert({
+          studentId: studentB.id,
+          name: '__Highest Scores Record B__',
+        });
+        recordIds.push(recordA.id, recordB.id);
+        const subjects = await subjectModel.insertBulk([
+          { recordId: recordA.id, name: '__Highest Math__', score: 95 },
+          { recordId: recordA.id, name: '__Highest Math__', score: 95 },
+          { recordId: recordA.id, name: '__Highest English__', score: 80 },
+          { recordId: recordB.id, name: '__Highest Math__', score: 95 },
+          { recordId: recordB.id, name: '__Highest English__', score: 90 },
+          { recordId: recordB.id, name: '__Highest Deleted__', score: 100 },
+        ]);
+        subjectIds.push(...subjects.map(subject => subject.id));
+        await subjectModel.deleteById(subjects[5].id);
+
+        const result: any[] = await app.bean.executor.performAction(
+          'get',
+          '/training/record/highestScoresBySubject',
+        );
+        assert.deepEqual(
+          result.map(item => ({
+            subjectName: item.subjectName,
+            score: item.score,
+            subjectRecordId: String(item.subjectRecordId),
+            trainingRecordId: String(item.trainingRecordId),
+            trainingRecordName: item.trainingRecordName,
+            studentId: String(item.studentId),
+            studentName: item.studentName,
+          })),
+          [
+            {
+              subjectName: '__Highest English__',
+              score: 90,
+              subjectRecordId: String(subjects[4].id),
+              trainingRecordId: String(recordB.id),
+              trainingRecordName: '__Highest Scores Record B__',
+              studentId: String(studentB.id),
+              studentName: '__Highest Scores Student B__',
+            },
+            {
+              subjectName: '__Highest Math__',
+              score: 95,
+              subjectRecordId: String(subjects[0].id),
+              trainingRecordId: String(recordA.id),
+              trainingRecordName: '__Highest Scores Record A__',
+              studentId: String(studentA.id),
+              studentName: '__Highest Scores Student A__',
+            },
+            {
+              subjectName: '__Highest Math__',
+              score: 95,
+              subjectRecordId: String(subjects[1].id),
+              trainingRecordId: String(recordA.id),
+              trainingRecordName: '__Highest Scores Record A__',
+              studentId: String(studentA.id),
+              studentName: '__Highest Scores Student A__',
+            },
+            {
+              subjectName: '__Highest Math__',
+              score: 95,
+              subjectRecordId: String(subjects[3].id),
+              trainingRecordId: String(recordB.id),
+              trainingRecordName: '__Highest Scores Record B__',
+              studentId: String(studentB.id),
+              studentName: '__Highest Scores Student B__',
+            },
+          ],
+        );
+        assert.equal(
+          result.every(item => !('description' in item)),
+          true,
+        );
+        assert.equal(
+          result.every(item => !('deleted' in item)),
+          true,
+        );
+
+        await subjectModel.updateById(subjects[0].id, { score: 97 });
+        const refreshed: any[] = await app.bean.executor.performAction(
+          'get',
+          '/training/record/highestScoresBySubject',
+        );
+        assert.deepEqual(
+          refreshed
+            .filter(item => item.subjectName === '__Highest Math__')
+            .map(item => [String(item.subjectRecordId), item.score]),
+          [[String(subjects[0].id), 97]],
+        );
+      } finally {
+        for (const id of subjectIds.toReversed()) {
+          await subjectModel.deleteById(id, { disableDeleted: true });
+        }
+        for (const id of recordIds.toReversed()) {
+          await recordModel.deleteById(id, { disableDeleted: true });
+        }
+        for (const id of studentIds.toReversed()) {
+          await studentModel.deleteById(id, { disableDeleted: true });
+        }
+        await app.bean.passport.signout();
       }
     });
   });
@@ -455,7 +629,7 @@ describe('record.test.ts', { concurrency: false }, () => {
       await app.bean.passport.signinMock();
       try {
         app.bean.passport.current!.roles = [];
-        const actions = ['create', 'select', 'view', 'update', 'delete'];
+        const actions = ['create', 'select', 'highestScoresBySubject', 'view', 'update', 'delete'];
         const permissions = await Promise.all(
           actions.map(action =>
             app.bean.permission.retrievePermissionAction('training-record:record', action),
