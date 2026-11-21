@@ -1,5 +1,6 @@
 export default {
   'Home': 'Home',
+  'AiChat': 'AI Chat',
   'MoreActions': 'More actions',
   'AllTabs': 'All tabs',
   'CloseTab': 'Close tab: %s',

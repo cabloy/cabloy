@@ -1,5 +1,6 @@
 export default {
   'Home': '首页',
+  'AiChat': 'AI聊天',
   'MoreActions': '更多操作',
   'AllTabs': '全部页签',
   'CloseTab': '关闭页签：%s',

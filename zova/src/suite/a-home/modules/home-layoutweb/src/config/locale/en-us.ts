@@ -1,5 +1,6 @@
 export default {
   'Home': 'Home',
+  'AiChat': 'AI Chat',
   'MoreActions': 'More actions',
   'Language': 'Language',
   'ColorMode': 'Color mode',

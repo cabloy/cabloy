@@ -1,3 +1,4 @@
+import { RouterLink } from '@cabloy/vue-router';
 import { classes } from 'typestyle';
 import { BeanRenderBase, Use } from 'zova';
 import { Render } from 'zova-module-a-bean';
@@ -73,6 +74,19 @@ export class RenderHeader extends BeanRenderBase {
               )}
             >
               <ul class="menu w-full lg:w-auto lg:menu-horizontal">
+                {this.sys.env.AI_CHAT_BOT_ENABLE === 'true' && (
+                  <li>
+                    <RouterLink
+                      to="/cabloy/ai/chat"
+                      aria-label={this.scope.locale.AiChat()}
+                      title={this.scope.locale.AiChat()}
+                      data-testid="ai-chat-nav"
+                    >
+                      <ZIcon name="::comment-dots" width={24} aria-hidden="true" />
+                      <span class="lg:hidden">{this.scope.locale.AiChat()}</span>
+                    </RouterLink>
+                  </li>
+                )}
                 {this.$$r.$$renderLocale.render()}
                 {this.$$r.$$renderTheme.renderThemeDark()}
                 {this.$$r.$$renderTheme.renderThemeName()}
