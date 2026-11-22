@@ -1,3 +1,5 @@
+import { RouterLink } from '@cabloy/vue-router';
+import { withModifiers } from 'vue';
 import { BeanRenderBase, ClientOnly } from 'zova';
 import { Render } from 'zova-module-a-bean';
 import { ZButton } from 'zova-module-basic-button';
@@ -51,25 +53,12 @@ export class RenderUser extends BeanRenderBase {
               {this.$passport.isAuthenticated ? (
                 <>
                   <li>
-                    <a
-                      href={this.$router.getPagePath('/home/user/account')}
-                      onClick={event => {
-                        if (
-                          event.button !== 0 ||
-                          event.metaKey ||
-                          event.ctrlKey ||
-                          event.shiftKey ||
-                          event.altKey
-                        ) {
-                          return;
-                        }
-                        event.preventDefault();
-                        this.app.$gotoPage('/home/user/account');
-                        closeNearestDetails(event);
-                      }}
+                    <RouterLink
+                      to={this.$router.getPagePath('/home/user/account')}
+                      nativeOnClick={withModifiers(closeNearestDetails, ['left', 'exact'])}
                     >
                       {this.scope.locale['Account Settings']()}
-                    </a>
+                    </RouterLink>
                   </li>
                   <li>
                     <ZButton
@@ -84,25 +73,12 @@ export class RenderUser extends BeanRenderBase {
                 </>
               ) : (
                 <li>
-                  <a
-                    href={this.app.$getPagePathLogin(true)}
-                    onClick={event => {
-                      if (
-                        event.button !== 0 ||
-                        event.metaKey ||
-                        event.ctrlKey ||
-                        event.shiftKey ||
-                        event.altKey
-                      ) {
-                        return;
-                      }
-                      event.preventDefault();
-                      this.app.$gotoLogin(true);
-                      closeNearestDetails(event);
-                    }}
+                  <RouterLink
+                    to={this.app.$getPagePathLogin(true)}
+                    nativeOnClick={withModifiers(closeNearestDetails, ['left', 'exact'])}
                   >
                     {this.scope.locale.Login()}
-                  </a>
+                  </RouterLink>
                 </li>
               )}
             </ul>

@@ -40,6 +40,30 @@ These are the main surface area for page routing behavior.
 
 This matters because path generation is modular by default.
 
+### Links to page routes
+
+For links to pages in the current Zova router, use `RouterLink` and pass the router-local path to `to`; do not hand-build or prepend `APP_PUBLIC_PATH`:
+
+```tsx
+<RouterLink to={this.$router.getPagePath('/home/user/account')}>
+  {this.scope.locale['Account Settings']()}
+</RouterLink>
+```
+
+A UI component that exposes a router-aware `to` prop is equivalent, for example:
+
+```tsx
+<VListItem
+  title={this.scope.locale['Account Settings']()}
+  to={this.$router.getPagePath('/home/user/account')}
+  activeClass="text-primary"
+/>
+```
+
+The router-aware link resolves the configured site history, so its rendered `href` includes the active site public path and its route state can expose active-link semantics such as an active class and `aria-current="page"`. Active route state and visual highlighting are separate concerns: the router determines whether the link is active, while the UI component and theme determine how that state looks. When a component's default active appearance is not sufficiently visible, configure the component's supported active-class or active-color option rather than rebuilding route matching in the page.
+
+Keep native `<a>` for external URLs, downloads, links to another SSR Site, user-authored document links, and other full-document navigation cases. Do not use a native anchor merely because the destination was produced by `$router.getPagePath()` or another page-path helper; those helpers return router-local paths unless an absolute URL was explicitly requested.
+
 ## `name`
 
 A route with dynamic params must define `name`. Typed param-aware routing uses the named route identity to generate and resolve the page's runtime params schema; an unnamed parameterized route does not provide the required `$params` contract.

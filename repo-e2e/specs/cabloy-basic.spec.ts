@@ -1363,8 +1363,14 @@ test(
     await expect(dark.locator('li.disabled')).toHaveText(initialMode);
     await openActions();
     await account.locator('summary').click();
-    await account.getByText('Login', { exact: true }).click();
+    const returnTo = new URL(page.url());
+    const loginLink = account.getByRole('link', { name: 'Login', exact: true });
+    await expect(loginLink).toHaveAttribute('href', /\/login\?/);
+    await loginLink.click();
     await expect(page).toHaveURL(/\/login(?:[/?#]|$)/);
+    expect(new URL(page.url()).searchParams.get('returnTo')).toBe(
+      `${returnTo.pathname}${returnTo.search}${returnTo.hash}`,
+    );
     await expect(page.getByRole('heading', { name: 'Login', exact: true })).toBeVisible();
     expect(consoleErrors).toEqual([]);
     expect(pageErrors).toEqual([]);
