@@ -535,6 +535,10 @@ export type ApiSchemaTrainingRecordSelectQueryPredicate =
   components['schemas']['TrainingRecordSelectQueryPredicate'];
 export type ApiSchemaTrainingRecordSelectQueryPredicatePartial =
   Partial<ApiSchemaTrainingRecordSelectQueryPredicate>;
+export type ApiSchemaTrainingRecordDtoHighestScoresBySubjectResItem =
+  components['schemas']['training-record.dto.highestScoresBySubjectResItem'];
+export type ApiSchemaTrainingRecordDtoHighestScoresBySubjectResItemPartial =
+  Partial<ApiSchemaTrainingRecordDtoHighestScoresBySubjectResItem>;
 export type ApiSchemaTrainingRecordDtoRecordView_2d063d28bc7243bed02ebd8bddf1212a93c6305b_7d715789d9643740a04e8a6c0f6fb951884bc347 =
   components['schemas']['training-record.dto.recordView_2d063d28bc7243bed02ebd8bddf1212a93c6305b_7d715789d9643740a04e8a6c0f6fb951884bc347'];
 export type ApiSchemaTrainingRecordDtoRecordView_2d063d28bc7243bed02ebd8bddf1212a93c6305b_7d715789d9643740a04e8a6c0f6fb951884bc347Partial =
@@ -898,3 +902,35 @@ export type ApiSchemaTestVonaDtoSerializerSimple_542f7be0da9b85a67248a6a1a3629e7
   components['schemas']['test-vona.dto.serializerSimple_542f7be0da9b85a67248a6a1a3629e72de5fdb33_0544b269faee0bd5cd6c610dee78c5be0d490831'];
 export type ApiSchemaTestVonaDtoSerializerSimple_542f7be0da9b85a67248a6a1a3629e72de5fdb33_0544b269faee0bd5cd6c610dee78c5be0d490831Partial =
   Partial<ApiSchemaTestVonaDtoSerializerSimple_542f7be0da9b85a67248a6a1a3629e72de5fdb33_0544b269faee0bd5cd6c610dee78c5be0d490831>;
+export type ApiSchemaCabloyAiDtoChatConversation =
+  components['schemas']['cabloy-ai.dto.chatConversation'];
+export type ApiSchemaCabloyAiDtoChatConversationPartial =
+  Partial<ApiSchemaCabloyAiDtoChatConversation>;
+export type ApiSchemaCabloyAiDtoChatCreate = components['schemas']['cabloy-ai.dto.chatCreate'];
+export type ApiSchemaCabloyAiDtoChatCreatePartial = Partial<ApiSchemaCabloyAiDtoChatCreate>;
+export type ApiSchemaCabloyAiDtoChatList = components['schemas']['cabloy-ai.dto.chatList'];
+export type ApiSchemaCabloyAiDtoChatListPartial = Partial<ApiSchemaCabloyAiDtoChatList>;
+export type ApiSchemaCabloyAiDtoChatHistory = components['schemas']['cabloy-ai.dto.chatHistory'];
+export type ApiSchemaCabloyAiDtoChatHistoryPartial = Partial<ApiSchemaCabloyAiDtoChatHistory>;
+export type ApiSchemaCabloyAiDtoChatConversation_626802c24df1498cec99aab0854fedf90c9b6dd3 =
+  components['schemas']['cabloy-ai.dto.chatConversation_626802c24df1498cec99aab0854fedf90c9b6dd3'];
+export type ApiSchemaCabloyAiDtoChatConversation_626802c24df1498cec99aab0854fedf90c9b6dd3Partial =
+  Partial<ApiSchemaCabloyAiDtoChatConversation_626802c24df1498cec99aab0854fedf90c9b6dd3>;
+export type ApiSchemaCabloyAiDtoChatMessage = components['schemas']['cabloy-ai.dto.chatMessage'];
+export type ApiSchemaCabloyAiDtoChatMessagePartial = Partial<ApiSchemaCabloyAiDtoChatMessage>;
+export type ApiSchemaCabloyAiDtoChatHistoryRequest =
+  components['schemas']['cabloy-ai.dto.chatHistoryRequest'];
+export type ApiSchemaCabloyAiDtoChatHistoryRequestPartial =
+  Partial<ApiSchemaCabloyAiDtoChatHistoryRequest>;
+export type ApiSchemaCabloyAiDtoChatRun = components['schemas']['cabloy-ai.dto.chatRun'];
+export type ApiSchemaCabloyAiDtoChatRunPartial = Partial<ApiSchemaCabloyAiDtoChatRun>;
+export type ApiSchemaCabloyAiDtoChatStatusRequest =
+  components['schemas']['cabloy-ai.dto.chatStatusRequest'];
+export type ApiSchemaCabloyAiDtoChatStatusRequestPartial =
+  Partial<ApiSchemaCabloyAiDtoChatStatusRequest>;
+export type ApiSchemaCabloyAiDtoChatRename = components['schemas']['cabloy-ai.dto.chatRename'];
+export type ApiSchemaCabloyAiDtoChatRenamePartial = Partial<ApiSchemaCabloyAiDtoChatRename>;
+export type ApiSchemaCabloyAiDtoChatPin = components['schemas']['cabloy-ai.dto.chatPin'];
+export type ApiSchemaCabloyAiDtoChatPinPartial = Partial<ApiSchemaCabloyAiDtoChatPin>;
+export type ApiSchemaCabloyAiDtoChatSend = components['schemas']['cabloy-ai.dto.chatSend'];
+export type ApiSchemaCabloyAiDtoChatSendPartial = Partial<ApiSchemaCabloyAiDtoChatSend>;

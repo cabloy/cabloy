@@ -1273,9 +1273,27 @@ export interface paths {
       path?: never;
       cookie?: never;
     };
+    /** List Training Records */
     get: operations['TrainingRecord_select'];
     put?: never;
     post: operations['TrainingRecord_create'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/training/record/highestScoresBySubject': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Find Highest Scores by Subject */
+    get: operations['TrainingRecord_highestScoresBySubject'];
+    put?: never;
+    post?: never;
     delete?: never;
     options?: never;
     head?: never;
@@ -1289,6 +1307,7 @@ export interface paths {
       path?: never;
       cookie?: never;
     };
+    /** View Training Record */
     get: operations['TrainingRecord_view'];
     put?: never;
     post?: never;
@@ -2730,6 +2749,134 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  '/api/cabloy/ai/chat/create': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['CabloyAiChat_create'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/cabloy/ai/chat/list': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['CabloyAiChat_list'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/cabloy/ai/chat/history': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['CabloyAiChat_history'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/cabloy/ai/chat/status': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['CabloyAiChat_status'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/cabloy/ai/chat/remove': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['CabloyAiChat_remove'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/cabloy/ai/chat/rename': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['CabloyAiChat_rename'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/cabloy/ai/chat/pin': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['CabloyAiChat_pin'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/cabloy/ai/chat/send': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['CabloyAiChat_send'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -3325,6 +3472,11 @@ export interface components {
        * @default false
        */
       mcpAccess?: boolean;
+      /**
+       * @description AI Chat Access
+       * @default false
+       */
+      aiChatAccess?: boolean;
       /** @default false */
       builtin?: boolean;
     };
@@ -5311,6 +5463,27 @@ export interface components {
       | {
           not: components['schemas']['TrainingRecordSelectQueryPredicate'];
         };
+    'training-record.dto.highestScoresBySubjectResItem': {
+      /** @description Subject Record ID */
+      subjectRecordId: number | string;
+      /** @description Subject Name */
+      subjectName: string;
+      /** @description Subject Score */
+      score: number;
+      /** @description Training Record ID */
+      trainingRecordId: number | string;
+      /** @description Training Record Name */
+      trainingRecordName: string;
+      /**
+       * Format: date-time
+       * @description Training Time
+       */
+      trainingTime?: Date;
+      /** @description Student ID */
+      studentId: number | string;
+      /** @description Student Name */
+      studentName: string;
+    };
     /** @description View Student Training Record */
     'training-record.dto.recordView_2d063d28bc7243bed02ebd8bddf1212a93c6305b_7d715789d9643740a04e8a6c0f6fb951884bc347':
       | {
@@ -7236,6 +7409,71 @@ export interface components {
       fullName2?: string | undefined;
       fullName3?: string | undefined;
       fullName4?: string | undefined;
+    };
+    'cabloy-ai.dto.chatConversation': {
+      id: number | string;
+      title: string;
+      activeRunId: number | string;
+      pinned: boolean;
+    };
+    'cabloy-ai.dto.chatCreate': {
+      ssrSiteId: string;
+      title?: string | undefined;
+    };
+    'cabloy-ai.dto.chatList': {
+      ssrSiteId: string;
+    };
+    'cabloy-ai.dto.chatHistory': {
+      conversation: components['schemas']['cabloy-ai.dto.chatConversation_626802c24df1498cec99aab0854fedf90c9b6dd3'];
+      messages: components['schemas']['cabloy-ai.dto.chatMessage'][];
+    };
+    'cabloy-ai.dto.chatConversation_626802c24df1498cec99aab0854fedf90c9b6dd3': {
+      id: number | string;
+      title: string;
+      activeRunId: number | string;
+      pinned: boolean;
+    };
+    'cabloy-ai.dto.chatMessage': {
+      id: number | string;
+      runId: number | string;
+      /** @enum {string} */
+      role: 'user' | 'assistant';
+      text: string;
+    };
+    'cabloy-ai.dto.chatHistoryRequest': {
+      ssrSiteId: string;
+      conversationId: number | string;
+    };
+    'cabloy-ai.dto.chatRun': {
+      id: number | string;
+      conversationId: number | string;
+      requestKey: string;
+      /** @enum {string} */
+      status: 'running' | 'completed' | 'failed' | 'aborted' | 'interrupted';
+      deadlineAt: number;
+      finishedAt: number | undefined;
+      errorCode: string | undefined;
+    };
+    'cabloy-ai.dto.chatStatusRequest': {
+      ssrSiteId: string;
+      conversationId: number | string;
+      requestKey: string;
+    };
+    'cabloy-ai.dto.chatRename': {
+      ssrSiteId: string;
+      conversationId: number | string;
+      title: string;
+    };
+    'cabloy-ai.dto.chatPin': {
+      ssrSiteId: string;
+      conversationId: number | string;
+      pinned: boolean;
+    };
+    'cabloy-ai.dto.chatSend': {
+      ssrSiteId: string;
+      conversationId: number | string;
+      requestKey: string;
+      text: string;
     };
   };
   responses: never;
@@ -9964,6 +10202,30 @@ export interface operations {
             code: string;
             message: string;
             data: number | string;
+          };
+        };
+      };
+    };
+    authToken: true;
+  };
+  TrainingRecord_highestScoresBySubject: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data: components['schemas']['training-record.dto.highestScoresBySubjectResItem'][];
           };
         };
       };
@@ -12878,5 +13140,225 @@ export interface operations {
         };
       };
     };
+  };
+  CabloyAiChat_create: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['cabloy-ai.dto.chatCreate'];
+      };
+    };
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data: components['schemas']['cabloy-ai.dto.chatConversation'];
+          };
+        };
+      };
+    };
+    authToken: true;
+  };
+  CabloyAiChat_list: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['cabloy-ai.dto.chatList'];
+      };
+    };
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data: components['schemas']['cabloy-ai.dto.chatConversation'][];
+          };
+        };
+      };
+    };
+    authToken: true;
+  };
+  CabloyAiChat_history: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['cabloy-ai.dto.chatHistoryRequest'];
+      };
+    };
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data: components['schemas']['cabloy-ai.dto.chatHistory'];
+          };
+        };
+      };
+    };
+    authToken: true;
+  };
+  CabloyAiChat_status: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['cabloy-ai.dto.chatStatusRequest'];
+      };
+    };
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data: components['schemas']['cabloy-ai.dto.chatRun'];
+          };
+        };
+      };
+    };
+    authToken: true;
+  };
+  CabloyAiChat_remove: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['cabloy-ai.dto.chatHistoryRequest'];
+      };
+    };
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data: undefined;
+          };
+        };
+      };
+    };
+    authToken: true;
+  };
+  CabloyAiChat_rename: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['cabloy-ai.dto.chatRename'];
+      };
+    };
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data: components['schemas']['cabloy-ai.dto.chatConversation'];
+          };
+        };
+      };
+    };
+    authToken: true;
+  };
+  CabloyAiChat_pin: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['cabloy-ai.dto.chatPin'];
+      };
+    };
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data: components['schemas']['cabloy-ai.dto.chatConversation'];
+          };
+        };
+      };
+    };
+    authToken: true;
+  };
+  CabloyAiChat_send: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['cabloy-ai.dto.chatSend'];
+      };
+    };
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'text/event-stream': string;
+        };
+      };
+    };
+    authToken: true;
   };
 }
