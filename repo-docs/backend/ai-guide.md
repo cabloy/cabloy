@@ -294,7 +294,7 @@ Focused tests use the official AI SDK mock in test mode. The ordinary private-ch
 Real requests require separate authorization and may incur provider charges. After preparing the affected SSR/REST artifacts and configuring the server's five `AI_*` defaults, run only the opted-in qualification file:
 
 ```sh
-CABLOY_AI_LIVE_VERIFY=1 npm run test -- -- --ci src/suite/cabloy-ai/modules/cabloy-ai/test/live.test.ts
+CABLOY_AI_LIVE_VERIFY=1 npm run test -- -- --ci src/suite-vendor/cabloy-ai/modules/cabloy-ai/test/live.test.ts
 ```
 
 This managed backend test starts its own isolated Vona application and HTTP listener, temporarily saves the environment-selected real provider/model and default-scene override in that run's database, then asynchronously runs the existing browser runner against Vona integrated SSR. It sends one public short prompt with a 64-token output cap, a 30-second provider timeout and zero SDK/browser retries. It checks native SSE, completed history, private SSR reload/hydration and same-key replay, then removes the owned account, conversations and temporary configuration. No Zova development server, development database reset, environment edit or executable HTTP setup endpoint is required.
