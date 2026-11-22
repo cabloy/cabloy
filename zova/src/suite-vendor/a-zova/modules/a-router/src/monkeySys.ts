@@ -2,11 +2,14 @@ import type { IModule } from '@cabloy/module-info';
 import type { IMonkeyModuleSys, IMonkeySysApplicationInitialize, ZovaApplication } from 'zova';
 import type { ErrorSSR } from 'zova-module-a-ssr';
 
+import { unref } from 'vue';
 import { BeanSimple, cast, isHttpUrl } from 'zova';
 
 import type { SysRouter } from './bean/sys.router.ts';
 import type { TypeGotoPageResult } from './types/router.ts';
 import type { IGotoPageOptions } from './types/utils.ts';
+
+import { getLoginReturnTo, isLoginPage } from './lib/loginRedirect.ts';
 
 export class MonkeySys
   extends BeanSimple
@@ -69,17 +72,26 @@ export class MonkeySys
         } as never,
       );
     };
+    const isLogin = (pagePath: string | undefined) =>
+      isLoginPage(pagePath, app.sys.env.ROUTER_PAGE_LOGIN, app.meta.$router?.router);
+    const getReturnTo = (target: unknown) =>
+      getLoginReturnTo(target, isLogin, {
+        origin: process.env.CLIENT ? window.location.origin : undefined,
+        publicPath: app.sys.env.APP_PUBLIC_PATH,
+      });
+    app.$isCurrentPageLogin = () => isLogin(app.$getCurrentPagePath());
     app.$getPagePathLogin = (returnTo?: string | boolean, cause?: string) => {
       const query: any = {};
       if (cause) {
         query.cause = cause;
       }
-      const returnTo2 = _fixReturnTo(app, returnTo);
+      const target =
+        typeof returnTo === 'string' || returnTo === false ? returnTo : app.$getCurrentPagePath();
       return app.$getPagePath(
         app.sys.env.ROUTER_PAGE_LOGIN as never,
         {
           query,
-          returnTo: returnTo2,
+          returnTo: getReturnTo(target),
         } as never,
       );
     };
@@ -87,32 +99,15 @@ export class MonkeySys
       return app.$getPagePath('/home/base/errorAccessDenied' as never);
     };
     app.$gotoPage = (pagePath: string, options?: IGotoPageOptions): TypeGotoPageResult => {
-      pagePath = app.$getPagePath(pagePath as never, options as never);
-      // redirect
-      if (process.env.SERVER || options?.forceRedirect) {
-        return app.$redirect(pagePath);
-      }
-      // replace
-      if (isHttpUrl(pagePath)) {
-        window.location[options?.replace ? 'replace' : 'assign'](pagePath);
-      } else {
-        return app.meta.$router[options?.replace ? 'replace' : 'push'](pagePath);
-      }
+      return _gotoPagePath(app, app.$getPagePath(pagePath as never, options as never), options);
     };
     app.$gotoHome = (options?: IGotoPageOptions) => {
       const pagePath = app.$getPagePathHome(options);
       return app.$gotoPage(pagePath, { ...options, params: undefined });
     };
     app.$gotoLogin = (returnTo?: string | boolean, cause?: string) => {
-      const returnTo2 = _fixReturnTo(app, returnTo);
-      if (
-        !returnTo2 &&
-        cast(app.meta.$router.currentRoute)?.path === app.sys.env.ROUTER_PAGE_LOGIN
-      ) {
-        return;
-      }
-      const pagePath = app.$getPagePathLogin(returnTo2, cause);
-      return app.$gotoPage(pagePath);
+      if (app.$isCurrentPageLogin()) return;
+      return _gotoPagePath(app, app.$getPagePathLogin(returnTo, cause));
     };
     app.$gotoAccessDenied = () => {
       const pagePath = app.$getPagePathAccessDenied();
@@ -120,16 +115,12 @@ export class MonkeySys
       return app.$gotoPage(pagePath, { replace: true });
     };
     app.$gotoReturnTo = (returnTo?: string) => {
-      const pagePath = app.$getReturnTo(returnTo);
-      return app.$gotoPage(pagePath, { replace: true });
+      return _gotoPagePath(app, app.$getReturnTo(returnTo), { replace: true });
     };
     app.$getReturnTo = (returnTo?: string) => {
-      // not use ??
-      const pagePath =
-        returnTo ||
-        cast(app.meta.$router.currentRoute)?.query?.[app.sys.env.ROUTER_KEY_RETURNTO] ||
-        app.$getPagePathHome();
-      return pagePath;
+      const route = unref(app.meta.$router?.router.currentRoute);
+      const target = returnTo || route?.query[app.sys.env.ROUTER_KEY_RETURNTO];
+      return getReturnTo(target) ?? app.$getPagePathHome();
     };
     app.$getCurrentPagePath = (): string | undefined => {
       if (process.env.SERVER) {
@@ -138,7 +129,7 @@ export class MonkeySys
           app.sys.util.getPagePathFromAbsoluteUrl(app.ctx.meta.$ssr.context.req.url)
         );
       }
-      return cast(app.meta.$router.currentRoute)?.fullPath;
+      return unref(app.meta.$router?.router.currentRoute)?.fullPath;
     };
     app.$getPagePathHome = (options?: IGotoPageOptions): string => {
       let params = options?.params;
@@ -154,12 +145,17 @@ export class MonkeySys
   }
 }
 
-function _fixReturnTo(app: ZovaApplication, returnTo?: string | boolean) {
-  const returnTo2 =
-    returnTo === false
-      ? false
-      : typeof returnTo === 'string'
-        ? returnTo
-        : app.$getCurrentPagePath();
-  return returnTo2 === app.sys.env.ROUTER_PAGE_LOGIN ? false : returnTo2;
+function _gotoPagePath(
+  app: ZovaApplication,
+  pagePath: string,
+  options?: IGotoPageOptions,
+): TypeGotoPageResult {
+  if (process.env.SERVER || options?.forceRedirect) {
+    return app.$redirect(pagePath);
+  }
+  if (isHttpUrl(pagePath)) {
+    window.location[options?.replace ? 'replace' : 'assign'](pagePath);
+  } else {
+    return app.meta.$router[options?.replace ? 'replace' : 'push'](pagePath);
+  }
 }

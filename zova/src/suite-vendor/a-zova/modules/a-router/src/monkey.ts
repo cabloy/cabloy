@@ -6,7 +6,6 @@ import type {
   BeanBase,
   BeanContainer,
   IControllerData,
-  IErrorHandlerEventData,
   IMonkeyAppClose,
   IMonkeyAppInitialize,
   IMonkeyAppInitialized,
@@ -290,16 +289,20 @@ export class Monkey
   private _ssrErrorHandler() {
     if (!process.env.CLIENT) return;
     this.app.meta.event.on('app:errorHandler', (data, next) => {
-      if (_isLoadErrorHandledClient(data)) {
-        data.load!.disposition = 'handled';
+      const code = Number(data.err.code);
+      if (
+        data.load?.kind === 'controller-load' &&
+        ([301, 302, 600].includes(code) || (code === 401 && !this.app.$isCurrentPageLogin()))
+      ) {
+        data.load.disposition = 'handled';
       }
       const err = next();
       if (!err || !(err instanceof Error)) return err;
-      return this._errorHandlerDefaultClient(err, data);
+      return this._errorHandlerDefaultClient(err);
     });
   }
 
-  private _errorHandlerDefaultClient(err: ErrorSSR, _data: IErrorHandlerEventData) {
+  private _errorHandlerDefaultClient(err: ErrorSSR) {
     if (!process.env.CLIENT) return err;
     // client
     if ([301, 302].includes(Number(err.code))) {
@@ -307,21 +310,16 @@ export class Monkey
       return undefined;
     }
     // COMPONENT_UNMOUNTED
-    if (err.code === 600) {
+    if (Number(err.code) === 600) {
       // do nothing
       return undefined;
     }
     // 401
-    if (err.code === 401) {
+    if (Number(err.code) === 401 && !this.app.$isCurrentPageLogin()) {
       this.app.$gotoLogin();
       return undefined;
     }
     // not handled
     return err;
   }
-}
-
-function _isLoadErrorHandledClient(data: IErrorHandlerEventData) {
-  if (data.load?.kind !== 'controller-load') return false;
-  return [301, 302, 401, 600].includes(Number((data.err as ErrorSSR).code));
 }

@@ -4,6 +4,7 @@ import { expect, test } from '../scripts/managedTest.ts';
 
 const studentResourceUrl =
   /\/admin\/rest\/resource\/training-student(?:%3A|:|%253A)student(?:[/?#]|$)/;
+const studentResourcePath = '/rest/resource/training-student%3Astudent';
 const mobileUserAgent =
   'Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Mobile/15E148 Safari/604.1';
 const desktopUserAgent =
@@ -1831,9 +1832,15 @@ test(
         localStorage.clear();
         sessionStorage.clear();
       });
-      await page.goto('/admin/login?returnTo=/rest/resource/training-student%253Astudent', {
-        waitUntil: 'load',
-      });
+      const returnTo = `${studentResourcePath}?time=10:30`;
+      const resourceResponse = await context.request.get(`/admin${returnTo}`, { maxRedirects: 0 });
+      expect(resourceResponse.status()).toBe(302);
+      const loginUrl = new URL(resourceResponse.headers().location, resourceResponse.url());
+      expect(loginUrl.pathname).toBe('/admin/login');
+      expect(loginUrl.searchParams.getAll('returnTo')).toEqual([returnTo]);
+
+      const document = await page.goto(loginUrl.href, { waitUntil: 'load' });
+      expect(document?.status()).toBe(200);
       await expect(page.locator('html')).toHaveAttribute('data-zova-hydrated', 'admin');
       const usernameInput = page.getByPlaceholder('Your Username');
       const passwordInput = page.getByPlaceholder('Your Password');
@@ -1854,6 +1861,7 @@ test(
       try {
         expect((await loginResponse).ok()).toBeTruthy();
         await expect(page).toHaveURL(studentResourceUrl);
+        expect(new URL(page.url()).searchParams.get('time')).toBe('10:30');
         await initialSelect;
       } finally {
         await initialSelect.catch(() => {});
@@ -1882,6 +1890,51 @@ test(
     } finally {
       await context.close();
     }
+  },
+);
+
+test(
+  'Admin login keeps its return target when a request reports 401',
+  { tag: ['@admin'] },
+  async ({ page }) => {
+    const errorMessage = 'Captcha request unauthorized';
+    const errors = collectConsoleErrors(page);
+    const navigations: string[] = [];
+    page.on('framenavigated', frame => {
+      if (frame === page.mainFrame()) navigations.push(frame.url());
+    });
+    await page.route('**/api/captcha/create', route =>
+      route.fulfill({ status: 401, json: { code: 401, message: errorMessage } }),
+    );
+
+    const loginPath = `/admin/login?${new URLSearchParams({ returnTo: studentResourcePath })}`;
+    await page.goto(loginPath, { waitUntil: 'load' });
+    await expect(page.locator('html')).toHaveAttribute('data-zova-hydrated', 'admin');
+    await expect.poll(() => errors.some(error => error.includes(errorMessage))).toBe(true);
+    await expect(page).toHaveURL(url => url.pathname === '/admin/login');
+    expect(navigations.length).toBeGreaterThan(0);
+    for (const navigation of navigations) {
+      const url = new URL(navigation);
+      expect(url.pathname).toBe('/admin/login');
+      expect(url.searchParams.getAll('returnTo')).toEqual([studentResourcePath]);
+    }
+  },
+);
+
+test(
+  'Admin login falls back to Home for a nested login return target',
+  { tag: ['@admin'] },
+  async ({ page }) => {
+    const nested = `/home/login?${new URLSearchParams({ returnTo: studentResourcePath })}`;
+    await page.goto(`/admin/login?${new URLSearchParams({ returnTo: nested })}`, {
+      waitUntil: 'load',
+    });
+    await expect(page.locator('html')).toHaveAttribute('data-zova-hydrated', 'admin');
+    await page.getByPlaceholder('Your Username').fill('admin');
+    await page.getByPlaceholder('Your Password').fill('123456');
+    await expect(page.getByPlaceholder('Please input captcha')).not.toHaveValue('');
+    await page.getByRole('button', { name: 'Login', exact: true }).click();
+    await expect(page).toHaveURL(/\/admin\/$/);
   },
 );
 

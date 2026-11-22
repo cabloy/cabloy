@@ -55,6 +55,7 @@ declare module 'zova' {
       options?: IPagePathRecord[K] & IGetPagePathOptions,
     ): string;
     $getPagePathLogin(returnTo?: string | boolean, cause?: string): string;
+    $isCurrentPageLogin(): boolean;
     $getPagePathAccessDenied(): string;
     $gotoPage(pagePath: string, options?: IGotoPageOptions): TypeGotoPageResult;
     $gotoHome(options?: IGotoPageOptions): TypeGotoPageResult;

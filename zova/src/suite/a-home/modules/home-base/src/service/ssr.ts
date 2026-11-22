@@ -21,7 +21,7 @@ export class ServiceSsr extends BeanBase {
     if (!process.env.SERVER) return;
     const _eventErrorHandler = this.app.meta.event.on('app:errorHandler', ({ err }, next) => {
       if (err.code === 401) {
-        if (checkErrorJwtExpired(err)) {
+        if (checkErrorJwtExpired(err) && !this.app.$isCurrentPageLogin()) {
           try {
             this.app.$gotoPage('/home/base/errorExpired', { returnTo: true });
           } catch (err: any) {

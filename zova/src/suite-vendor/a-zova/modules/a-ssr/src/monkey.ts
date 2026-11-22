@@ -7,6 +7,7 @@ import type {
   IMonkeyAppInitialize,
   IMonkeyBeanInit,
   IMonkeyModule,
+  ZovaApplication,
   ZovaContext,
 } from 'zova';
 
@@ -125,15 +126,11 @@ export class Monkey
     if (!process.env.SERVER) return;
     const _eventErrorHandler = this.app.meta.event.on('app:errorHandler', (data, next) => {
       const err = next();
-      if (data.load?.kind === 'controller-load') {
-        if (_isLoadErrorHandledServer(data.err)) {
-          data.load.disposition = 'handled';
-          if (!err || !(err instanceof Error)) return err;
-          return this._errorHandlerDefaultServer(err);
-        }
-        return err;
-      }
       if (!err || !(err instanceof Error)) return err;
+      if (data.load?.kind === 'controller-load') {
+        if (!_isLoadErrorHandledServer(err, this.app)) return err;
+        data.load.disposition = 'handled';
+      }
       return this._errorHandlerDefaultServer(err);
     });
     this.ctx.meta.$ssr.context.onRendered((_err?: Error) => {
@@ -148,7 +145,7 @@ export class Monkey
         this.ctx.meta.$ssr.renderSSRError = err;
       }
       return undefined;
-    } else if (err.code === 401) {
+    } else if (Number(err.code) === 401 && !this.app.$isCurrentPageLogin()) {
       try {
         this.app.$gotoLogin();
       } catch (err: any) {
@@ -161,6 +158,12 @@ export class Monkey
   }
 }
 
-function _isLoadErrorHandledServer(err: Error) {
-  return isNavigationFailure(err) || [301, 302, 401].includes(Number((err as any).code));
+function _isLoadErrorHandledServer(err: Error, app: ZovaApplication) {
+  const code = Number(err.code);
+  return (
+    isNavigationFailure(err) ||
+    code === 301 ||
+    code === 302 ||
+    (code === 401 && !app.$isCurrentPageLogin())
+  );
 }
