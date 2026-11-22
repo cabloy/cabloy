@@ -1,5 +1,20 @@
 # Changelog
 
+## 5.1.295
+
+### Features
+
+- Add AI chat to the Cabloy AI suite with server-side rendering and localization.
+- Render streaming responses as styled Markdown with link support.
+- Organize conversations into sessions and groups, and provide quick access to recent and pinned chats.
+- Add controls to start a first chat or a new conversation, along with conversation titles and Enter-key submission.
+- Track cache-read and cache-write token counts separately.
+
+### Improvements
+
+- Refactor the Cabloy AI suite.
+- Synchronize the `zova-core` patch release and workspace dependency lockfiles.
+
 ## 5.1.294
 
 ### Features
