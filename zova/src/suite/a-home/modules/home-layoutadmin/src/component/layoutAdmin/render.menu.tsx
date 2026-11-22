@@ -60,6 +60,10 @@ export class RenderMenu extends BeanRenderBase {
     const menuTree = this.$$modelMenu.menuTree;
     if (!menuTree) return;
     const domItems = this._renderMenuItems(menuTree);
-    return <ul class="menu bg-base-200 text-base-content min-h-full w-full p-4">{domItems}</ul>;
+    return (
+      <ul class="menu bg-base-200 text-base-content min-h-full w-full p-4 [&>li>ul]:ps-0">
+        {domItems}
+      </ul>
+    );
   }
 }
