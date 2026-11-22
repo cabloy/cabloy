@@ -267,11 +267,13 @@ describe('cabloy-ai native HTTP stream', { concurrency: false }, () => {
       );
       await context(async () => {
         const usage = await scope().model.usage.get({ runId: status.id, userId: fixture!.userId });
-        assert.equal(usage?.inputTokens, 3);
-        assert.equal(usage?.outputTokens, 4);
-        assert.equal(usage?.totalTokens, 7);
-        assert.equal(usage?.cacheReadTokens, 1);
-        assert.equal(usage?.cacheWriteTokens, 1);
+        assert.ok(usage);
+        // PostgreSQL returns these BIGINT columns as strings.
+        assert.equal(Number(usage.inputTokens), 3);
+        assert.equal(Number(usage.outputTokens), 4);
+        assert.equal(Number(usage.totalTokens), 7);
+        assert.equal(Number(usage.cacheReadTokens), 1);
+        assert.equal(Number(usage.cacheWriteTokens), 1);
         const run = await scope().model.run.get({ id: status.id, userId: fixture!.userId });
         assert.ok(run);
         assertNoCredential({ run, usage });

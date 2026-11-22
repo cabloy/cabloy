@@ -256,14 +256,16 @@ describe('cabloy-ai private chat domain', { concurrency: false }, () => {
       );
       const input = command(conversationId);
       await context(async () => {
-        const service = scope().service.run;
+        const bean = app.ctx.bean;
+        const service = bean._newBean('cabloy-ai.service.run');
         const admitted = await service.prepare(userId, input, identity, limits);
         await service.finalize(userId, ssrSiteId, admitted.run.id, conversationId!, {
           status: 'completed',
           text: 'Reply',
         });
-        // Replace only these request-owned collaborators; no app-global configuration mutation.
-        const create = t.mock.method(app.bean.ai, 'create', async () => {
+        // Route this service's bean lookups through the request container, not the app singletons.
+        const localBean = t.mock.getter(service as any, 'bean', () => bean);
+        const create = t.mock.method(bean.ai, 'create', async () => {
           throw new Error('deployment unavailable');
         });
         const replay = t.mock.method(
@@ -293,6 +295,7 @@ describe('cabloy-ai private chat domain', { concurrency: false }, () => {
         } finally {
           replay.mock.restore();
           create.mock.restore();
+          localBean.mock.restore();
         }
       });
     } finally {
@@ -655,17 +658,24 @@ describe('cabloy-ai private chat domain', { concurrency: false }, () => {
         async () => (await scope().service.conversation.create(userId, { ssrSiteId })).id,
       );
       await context(async () => {
-        const message = scope().model.message;
+        const bean = app.ctx.bean;
+        const service = bean._newBean('cabloy-ai.service.run');
+        const localScope = bean.scope('cabloy-ai');
+        const message = bean._newBean('cabloy-ai.model.message');
+        // Fault only the model used by this admission, never concurrent stream finalization.
+        Object.defineProperty(localScope.model, 'message', { value: message });
+        const serviceScope = t.mock.getter(service, 'scope', () => localScope);
         const insert = t.mock.method(message, 'insert', async () => {
           throw new Error('owned persistence fault');
         });
         try {
           await assert.rejects(
-            () => scope().service.run.prepare(userId, command(conversationId!), identity, limits),
+            () => service.prepare(userId, command(conversationId!), identity, limits),
             /owned persistence fault/,
           );
         } finally {
           insert.mock.restore();
+          serviceScope.mock.restore();
         }
         assert.equal(
           Number(await scope().model.run.count({ where: { conversationId, userId } })),
