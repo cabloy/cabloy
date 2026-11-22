@@ -518,7 +518,7 @@ test(
       const history = await readHistory(request, account, conversation.id);
       expect(history.conversation.activeRunId).toBeNull();
       expect(history.messages).toEqual([]);
-      await page.getByRole('button', { name: 'Refresh history', exact: true }).click();
+      // The chat should recover without a manual refresh.
       await expect(page.getByTestId('ai-chat-input')).toBeEnabled();
       await expect(page.getByTestId('ai-chat-status')).toHaveText('Ready');
       await expect(page.getByTestId('ai-chat-stream')).toHaveCount(0);
