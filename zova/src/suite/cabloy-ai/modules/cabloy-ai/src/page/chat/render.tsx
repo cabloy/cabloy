@@ -15,10 +15,7 @@ export class RenderPageChat extends BeanRenderBase {
     const conversations = model.conversations();
     const history = model.history();
     const conversation = history?.data?.conversation;
-    const streamingText = model.streamMessage?.parts
-      .filter(part => part.type === 'text')
-      .map(part => part.text)
-      .join('');
+    const messages = model.messages(history?.data?.messages);
     const busy =
       model.creating || model.streaming || model.unsettled || !!conversation?.activeRunId;
     const pinnedConversations = conversations.data?.filter(item => item.pinned) ?? [];
@@ -194,15 +191,24 @@ export class RenderPageChat extends BeanRenderBase {
                       this.setMessagesContent?.((element as HTMLDivElement | null) ?? undefined);
                   }}
                 >
-                  {history?.data?.messages.map(message => (
+                  {messages.map(message => (
                     <article
-                      key={message.id}
+                      key={message.key}
                       class={['chat', message.role === 'user' ? 'chat-end' : 'chat-start']}
+                      data-testid={
+                        message.role === 'assistant' && message.pending
+                          ? 'ai-chat-stream'
+                          : undefined
+                      }
                     >
                       <div class="chat-header text-xs">
                         {message.role === 'user'
-                          ? this.scope.locale.ChatYou()
-                          : this.scope.locale.ChatAssistant()}
+                          ? message.pending
+                            ? this.scope.locale.ChatYouPending()
+                            : this.scope.locale.ChatYou()
+                          : message.pending
+                            ? this.scope.locale.ChatAssistantLive()
+                            : this.scope.locale.ChatAssistant()}
                       </div>
                       <div class="chat-bubble max-w-full break-words">
                         {message.role === 'user' ? (
@@ -212,7 +218,7 @@ export class RenderPageChat extends BeanRenderBase {
                             <MarkdownRender
                               mode="chat"
                               content={message.text}
-                              final
+                              final={!message.pending || !model.streaming}
                               htmlPolicy="safe"
                               isDark={this.$theme.dark}
                             />
@@ -221,30 +227,6 @@ export class RenderPageChat extends BeanRenderBase {
                       </div>
                     </article>
                   ))}
-                  {model.pendingText && (
-                    <article class="chat chat-end">
-                      <div class="chat-header text-xs">{this.scope.locale.ChatYouPending()}</div>
-                      <div class="chat-bubble max-w-full whitespace-pre-wrap break-words">
-                        {model.pendingText}
-                      </div>
-                    </article>
-                  )}
-                  {streamingText && (
-                    <article class="chat chat-start" data-testid="ai-chat-stream">
-                      <div class="chat-header text-xs">{this.scope.locale.ChatAssistantLive()}</div>
-                      <div class="chat-bubble max-w-full break-words">
-                        <div class={this.cMarkdown}>
-                          <MarkdownRender
-                            mode="chat"
-                            content={streamingText}
-                            final={!model.streaming}
-                            htmlPolicy="safe"
-                            isDark={this.$theme.dark}
-                          />
-                        </div>
-                      </div>
-                    </article>
-                  )}
                   {model.selectedId === undefined && (
                     <p class="text-base-content/60">{this.scope.locale.CreateConversationHint()}</p>
                   )}

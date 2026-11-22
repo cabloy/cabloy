@@ -169,13 +169,17 @@ function observeBrowser(page: Page, sends: Send[]) {
   return errors;
 }
 
+function conversationRow(page: Page, id: Identity) {
+  return page.locator(`[data-testid="ai-chat-conversation"][data-conversation-id="${id}"]`);
+}
+
 async function newConversation(page: Page): Promise<Conversation> {
   const created = waitForApiResponse(page, `${chatApiPath}/create`);
   await page.getByTestId('ai-chat-new').click();
   const response = await created;
   expect(response.ok()).toBe(true);
   const conversation = (await response.json()).data as Conversation;
-  await expect(page.locator(`[data-conversation-id="${conversation.id}"]`)).toBeVisible();
+  await expect(conversationRow(page, conversation.id)).toBeVisible();
   return conversation;
 }
 
@@ -403,11 +407,18 @@ test(
       expect(String(send.conversationId)).toBe(String(conversation.id));
       await expect(input).toHaveValue('');
       expect(await postChat<Conversation[]>(request, account, 'list', {})).toHaveLength(1);
-      const streamBubble = page.getByTestId('ai-chat-stream').locator('.chat-bubble');
+      const stream = page.getByTestId('ai-chat-stream');
+      const streamBubble = stream.locator('.chat-bubble');
       await expect(streamBubble).toHaveText(responsePrefix, {
         timeout: streamTimeout,
         useInnerText: false,
       });
+      await expect(streamBubble.locator('.markdown-renderer')).toHaveCSS(
+        'content-visibility',
+        'visible',
+      );
+      // Mark the live article to verify the save handoff updates it in place.
+      await stream.evaluate(article => article.setAttribute('data-observed-live-reply', ''));
       await expect
         .poll(async () => (await readMessageScroll(page)).bottomDistance, {
           timeout: streamTimeout,
@@ -457,7 +468,11 @@ test(
       const history = await readHistory(request, account, conversation.id);
       expectCompletedHistory(history, prompt);
       await expect(page.getByTestId('ai-chat-status')).toHaveText('Ready');
-      await expect(page.getByTestId('ai-chat-stream')).toHaveCount(0);
+      await expect(stream).toHaveCount(0);
+      await expect(
+        page.getByTestId('ai-chat-messages').locator('[data-observed-live-reply]'),
+      ).toContainText(`${responsePrefix}${prompt}`);
+      await expect(page.getByTestId('ai-chat-messages').locator('article.chat')).toHaveCount(2);
       await expect(page.getByTestId('ai-chat-error')).toHaveCount(0);
 
       const document = await page.reload({ waitUntil: 'load' });
@@ -561,11 +576,11 @@ test(
       await loginBrowser(page, account);
       const first = await newConversation(page);
       const second = await newConversation(page);
-      await page.locator(`[data-conversation-id="${first.id}"]`).click();
+      await conversationRow(page, first.id).locator('button[aria-pressed]').click();
       const switchedPrompt = `[slow] Switched chat ${randomBytes(8).toString('hex')}`;
       const switched = await sendMessage(page, switchedPrompt);
       await expectIncrementalText(page, switchedPrompt);
-      await page.locator(`[data-conversation-id="${second.id}"]`).click();
+      await conversationRow(page, second.id).locator('button[aria-pressed]').click();
       expect((await waitForTerminal(request, account, switched)).status).toBe('aborted');
       await expect(page.getByTestId('ai-chat-messages')).not.toContainText(switchedPrompt);
       await expect(page.getByTestId('ai-chat-messages')).not.toContainText(responsePrefix);
@@ -581,7 +596,7 @@ test(
       );
       await expect(page.getByTestId('ai-chat-messages')).not.toContainText(switchedPrompt);
 
-      await page.locator(`[data-conversation-id="${first.id}"]`).click();
+      await conversationRow(page, first.id).locator('button[aria-pressed]').click();
       const disposedPrompt = `[slow] Disposed chat ${randomBytes(8).toString('hex')}`;
       const disposed = await sendMessage(page, disposedPrompt);
       await expectIncrementalText(page, disposedPrompt);
@@ -591,7 +606,7 @@ test(
       expect((await readHistory(request, account, first.id)).messages).toEqual([]);
       await page.goto(chatPath, { waitUntil: 'load' });
       await expect(page.locator('html')).toHaveAttribute('data-zova-hydrated', 'web');
-      await page.locator(`[data-conversation-id="${second.id}"]`).click();
+      await conversationRow(page, second.id).locator('button[aria-pressed]').click();
       await expect(page.getByTestId('ai-chat-messages')).toContainText(
         `${responsePrefix}${secondPrompt}`,
       );

@@ -7,9 +7,11 @@ export function chatMarkdownStyle(): NestedCSSProperties {
     minWidth: 0,
     overflowWrap: 'break-word',
     $nest: {
-      '& .markstream-vue': {
+      '& .markstream-vue.markdown-renderer': {
         minWidth: 0,
         overflowWrap: 'break-word',
+        // The scroll panel needs the bubble's actual height, not Markstream's offscreen estimate.
+        contentVisibility: 'visible',
       },
       '& .markstream-vue > :first-child, & .markstream-vue > :first-child > :first-child': {
         marginTop: 0,

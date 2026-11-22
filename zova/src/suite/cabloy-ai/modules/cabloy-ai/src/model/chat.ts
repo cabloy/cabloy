@@ -4,6 +4,10 @@ import type { IDecoratorModelOptions } from 'zova-module-a-model';
 import { markRaw } from 'vue';
 import { $QueryEnsureLoaded, BeanModelBase, Model } from 'zova-module-a-model';
 
+import type {
+  ApiSchemaCabloyAiDtoChatMessage,
+  ApiSchemaCabloyAiDtoChatRun,
+} from '../api/openapi/schemas.ts';
 import type { ChatSendCommand, ChatStreamMessage } from '../lib/aiStreamAdapter.ts';
 
 import { createAiStreamAdapter } from '../lib/aiStreamAdapter.ts';
@@ -11,6 +15,11 @@ import { createAiStreamAdapter } from '../lib/aiStreamAdapter.ts';
 export interface IModelOptionsChat extends IDecoratorModelOptions {}
 
 type ConversationId = number | string;
+
+type ChatMessageView = Pick<ApiSchemaCabloyAiDtoChatMessage, 'role' | 'text'> & {
+  key: string;
+  pending?: boolean;
+};
 
 @Model<IModelOptionsChat>()
 export class ModelChat extends BeanModelBase {
@@ -20,8 +29,7 @@ export class ModelChat extends BeanModelBase {
   unsettled = false;
   mutating = false;
   mutationError?: string;
-  streamMessage?: ChatStreamMessage;
-  pendingText?: string;
+  private _streamMessage?: ChatStreamMessage;
   private _error?:
     | 'ResponseInterrupted'
     | 'SavedStateUnconfirmed'
@@ -78,6 +86,30 @@ export class ModelChat extends BeanModelBase {
       retry: false,
       meta: { persister: false },
     });
+  }
+
+  messages(saved: ApiSchemaCabloyAiDtoChatMessage[] = []): ChatMessageView[] {
+    const messages: ChatMessageView[] = saved.map(({ runId, role, text }) => ({
+      key: `${runId}:${role}`,
+      role,
+      text,
+    }));
+    const command = this._command;
+    if (!command) return messages;
+    // Saved history replaces the live turn without moving or remounting its bubbles.
+    const runId = this._streamMessage?.metadata?.runId ?? this.status(command)?.data?.id;
+    if (runId !== undefined && saved.some(message => String(message.runId) === String(runId))) {
+      return messages;
+    }
+    const turnKey = runId ?? command.requestKey;
+    messages.push({ key: `${turnKey}:user`, role: 'user', text: command.text, pending: true });
+    const text = this._streamMessage?.parts
+      .filter(part => part.type === 'text')
+      .map(part => part.text)
+      .join('');
+    if (text)
+      messages.push({ key: `${turnKey}:assistant`, role: 'assistant', text, pending: true });
+    return messages;
   }
 
   status(command = this._command) {
@@ -200,8 +232,7 @@ export class ModelChat extends BeanModelBase {
     this.streaming = false;
     this.unsettled = false;
     this._command = undefined;
-    this.streamMessage = undefined;
-    this.pendingText = undefined;
+    this._streamMessage = undefined;
     this._error = undefined;
     this.mutationError = undefined;
     this.selectedId = conversationId;
@@ -239,8 +270,7 @@ export class ModelChat extends BeanModelBase {
     const revision = ++this._revision;
     this._command = command;
     this._error = undefined;
-    this.streamMessage = undefined;
-    this.pendingText = command.text;
+    this._streamMessage = undefined;
     this.streaming = true;
     this.unsettled = true;
     this._abort = markRaw(new AbortController());
@@ -255,7 +285,7 @@ export class ModelChat extends BeanModelBase {
       if (!this._current(revision)) return;
       for await (const message of this._adapter.send(command, abort.signal)) {
         if (!this._current(revision)) return;
-        this.streamMessage = message;
+        this._streamMessage = message;
       }
     } catch (error) {
       if (this._current(revision) && !abort.signal.aborted) {
@@ -300,21 +330,14 @@ export class ModelChat extends BeanModelBase {
     if (!this._current(revision)) return;
     const command = this._command;
     const query = this.status(command);
+    let terminalStatus: ApiSchemaCabloyAiDtoChatRun['status'] | undefined;
     if (query && command?.conversationId === this.selectedId) {
       // Transport close and durable server finalization may settle a moment apart.
       for (let attempt = 0; attempt < 12; attempt++) {
         const result = await query.refetch({ throwOnError: true });
         if (!this._current(revision)) return;
         if (result.data && result.data.status !== 'running') {
-          this.unsettled = false;
-          this._error =
-            result.data.status === 'completed'
-              ? undefined
-              : result.data.status === 'failed'
-                ? 'RequestFailed'
-                : result.data.status === 'aborted'
-                  ? 'RequestAborted'
-                  : 'RequestInterrupted';
+          terminalStatus = result.data.status;
           break;
         }
         if (attempt < 11) await new Promise(resolve => setTimeout(resolve, 150));
@@ -322,14 +345,22 @@ export class ModelChat extends BeanModelBase {
     }
     await this.history()?.refetch({ throwOnError: true });
     if (!this._current(revision)) return;
-    await this.conversations().refetch({ throwOnError: true });
-    if (!this._current(revision)) return;
-    if (!this.unsettled) {
-      this.streamMessage = undefined;
-      this.pendingText = undefined;
+    if (terminalStatus) {
+      this.unsettled = false;
+      this._command = undefined;
+      this._streamMessage = undefined;
+      this._error =
+        terminalStatus === 'completed'
+          ? undefined
+          : terminalStatus === 'failed'
+            ? 'RequestFailed'
+            : terminalStatus === 'aborted'
+              ? 'RequestAborted'
+              : 'RequestInterrupted';
     } else if (!this.streaming) {
       this._error = 'RequestPending';
     }
+    await this.conversations().refetch({ throwOnError: true });
   }
 
   private async _prepareStreamRequest() {
@@ -358,8 +389,7 @@ export class ModelChat extends BeanModelBase {
     this.selectedId = undefined;
     this.streaming = false;
     this.unsettled = false;
-    this.streamMessage = undefined;
-    this.pendingText = undefined;
+    this._streamMessage = undefined;
     this._error = undefined;
     this.mutationError = undefined;
     this._command = undefined;
