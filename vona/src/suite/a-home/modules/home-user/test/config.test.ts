@@ -37,6 +37,8 @@ describe('config.test.ts', () => {
     assert.deepEqual(defaults.builtinRoles.systemAdmin.siteIds, ['*']);
     assert.equal(defaults.builtinRoles.registeredUser.mcpAccess, true);
     assert.equal(defaults.builtinRoles.systemAdmin.mcpAccess, true);
+    assert.equal(defaults.builtinRoles.registeredUser.aiChatAccess, true);
+    assert.equal(defaults.builtinRoles.systemAdmin.aiChatAccess, true);
   });
 
   it('parses comma-delimited role site IDs and falls back for blank values', () => {

@@ -61,6 +61,7 @@
       "a-ormutils": "5.0.0",
       "a-version": "5.0.0",
       "a-core": "5.0.0",
+      "a-aspect": "5.0.0",
       "a-web": "5.0.0",
       "a-user": "5.0.0",
       "a-redlock": "5.0.0"

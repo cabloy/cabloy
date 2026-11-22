@@ -2,6 +2,7 @@ import type { IUser } from 'vona-module-a-user';
 import type { IDecoratorControllerOptions } from 'vona-module-a-web';
 
 import { BeanBase } from 'vona';
+import { Aspect } from 'vona-module-a-aspect';
 import { Api, v } from 'vona-module-a-openapiutils';
 import { Arg, Controller, Web } from 'vona-module-a-web';
 import { z } from 'zod';
@@ -21,6 +22,7 @@ export interface IControllerOptionsChat extends IDecoratorControllerOptions {}
 
 // Ordinary Passport authentication remains enabled. Owner identity never comes from the body.
 @Controller<IControllerOptionsChat>('chat')
+@Aspect.guard('cabloy-ai:aiChatAccess')
 export class ControllerChat extends BeanBase {
   @Web.post('create')
   @Api.body(DtoChatConversation)

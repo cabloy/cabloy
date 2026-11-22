@@ -74,10 +74,10 @@ export class RenderHeader extends BeanRenderBase {
               )}
             >
               <ul class="menu w-full lg:w-auto lg:menu-horizontal">
-                {this.sys.env.AI_CHAT_BOT_ENABLE === 'true' && (
+                {this.sys.env.AI_CHAT_BOT_ENABLE === 'true' && this.$passport.aiChatAccess && (
                   <li>
                     <RouterLink
-                      to="/cabloy/ai/chat"
+                      to={this.$router.getPagePath('/cabloy/ai/chat')}
                       aria-label={this.scope.locale.AiChat()}
                       title={this.scope.locale.AiChat()}
                       data-testid="ai-chat-nav"

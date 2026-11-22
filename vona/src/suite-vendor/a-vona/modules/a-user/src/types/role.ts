@@ -16,6 +16,7 @@ export interface IRole {
   titleLocales?: LocalizedTextMap;
   siteIds: string[];
   mcpAccess: boolean;
+  aiChatAccess: boolean;
   builtin?: boolean;
 }
 

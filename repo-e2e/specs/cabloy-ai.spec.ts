@@ -128,6 +128,7 @@ async function loginBrowser(page: Page, account: Account) {
   await page.getByRole('button', { name: 'Login', exact: true }).click();
   expect((await login).ok()).toBe(true);
   await expect(page).toHaveURL(chatPath);
+  await expect(page.getByTestId('ai-chat-nav')).toHaveAttribute('href', chatPath);
   await expect(page.getByTestId('ai-chat-input')).toBeVisible();
 }
 

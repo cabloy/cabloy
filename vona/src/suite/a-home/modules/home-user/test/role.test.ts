@@ -44,10 +44,19 @@ describe('role.test.ts', { concurrency: false }, () => {
       assert.deepEqual(passportSystemAdmin?.siteIds, scope.config.builtinRoles.systemAdmin.siteIds);
       assert.equal(passportSystemAdmin?.builtin, true);
       assert.equal(passportSystemAdmin?.mcpAccess, true);
+
+      for (const role of [
+        roleRegisteredUser,
+        roleSystemAdmin,
+        passportRegisteredUser,
+        passportSystemAdmin,
+      ]) {
+        assert.equal(role?.aiChatAccess, true);
+      }
     });
   });
 
-  it('model:role defaults MCP access to false and persists explicit changes', async () => {
+  it('model:role defaults MCP and AI Chat access to false and persists them independently', async () => {
     let roleId: string | undefined;
     try {
       await app.bean.executor.mockCtx(async () => {
@@ -59,13 +68,21 @@ describe('role.test.ts', { concurrency: false }, () => {
           builtin: false,
         });
         roleId = String(role.id);
-        assert.equal((await model.getById(role.id))?.mcpAccess, false);
+        const assertAccess = async (mcpAccess: boolean, aiChatAccess: boolean) => {
+          const saved = await model.getById(role.id);
+          assert.equal(saved?.mcpAccess, mcpAccess);
+          assert.equal(saved?.aiChatAccess, aiChatAccess);
+        };
+        await assertAccess(false, false);
 
         await model.update({ id: role.id, mcpAccess: true });
-        assert.equal((await model.getById(role.id))?.mcpAccess, true);
+        await assertAccess(true, false);
 
-        await model.update({ id: role.id, mcpAccess: false });
-        assert.equal((await model.getById(role.id))?.mcpAccess, false);
+        await model.update({ id: role.id, mcpAccess: false, aiChatAccess: true });
+        await assertAccess(false, true);
+
+        await model.update({ id: role.id, aiChatAccess: false });
+        await assertAccess(false, false);
       });
     } finally {
       await app.bean.executor.mockCtx(async () => {

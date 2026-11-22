@@ -144,6 +144,76 @@ async function readStream(response: Response) {
 }
 
 describe('cabloy-ai native HTTP stream', { concurrency: false }, () => {
+  it('checks current AI Chat roles on every action, including new sends and replay', async () => {
+    let fixture: IFixture | undefined;
+    const roleIds: TableIdentity[] = [];
+    const roleModel = () => app.scope('home-user').model.role;
+    try {
+      const user = (fixture = await createFixture());
+      const grantingRoleId = await context(async () => {
+        const mcpRole = await roleModel().insert({
+          name: `ai-test-mcp-${randomUUID()}`,
+          title: 'MCP only',
+          siteIds: [ssrSiteId],
+          mcpAccess: true,
+        });
+        roleIds.push(mcpRole.id);
+        const chatRole = await roleModel().insert({
+          name: `ai-test-chat-${randomUUID()}`,
+          title: 'AI Chat only',
+          siteIds: [ssrSiteId],
+        });
+        roleIds.push(chatRole.id);
+        await app.bean.role.replaceUserRoleIds(user.userId, roleIds);
+        return chatRole.id;
+      });
+      const assertDenied = async (action: string, body: object) => {
+        const response = await request(user, action, body);
+        assert.equal(response.status, 403, action);
+        assert.doesNotMatch(response.headers.get('content-type') ?? '', /^text\/event-stream/);
+        assert.equal(response.headers.get('x-vercel-ai-ui-message-stream'), null);
+        await response.text();
+      };
+      await assertDenied('list', { ssrSiteId });
+
+      await context(() => roleModel().update({ id: grantingRoleId, aiChatAccess: true }));
+      assert.deepEqual(await json(user, 'list', { ssrSiteId }), []);
+      const conversationId = await conversation(user);
+      const target = { ssrSiteId, conversationId };
+      const sent = { ...target, requestKey: randomUUID(), text: 'Before revocation' };
+      await readStream(await request(user, 'send', sent));
+
+      await context(() => roleModel().update({ id: grantingRoleId, aiChatAccess: false }));
+      const deniedSend = { ...sent, requestKey: randomUUID() };
+      await assertDenied('create', { ssrSiteId, title: 'Denied' });
+      await assertDenied('list', { ssrSiteId });
+      await assertDenied('history', target);
+      await assertDenied('status', sent);
+      await assertDenied('remove', target);
+      await assertDenied('rename', { ...target, title: 'Denied' });
+      await assertDenied('pin', { ...target, pinned: true });
+      await assertDenied('send', deniedSend);
+      await assertDenied('send', sent);
+      await context(async () => {
+        const where = { conversationId, userId: user.userId };
+        const runs = await scope().model.run.select({ where });
+        assert.deepEqual(
+          runs.map(run => run.requestKey),
+          [sent.requestKey],
+        );
+        assert.equal((await scope().model.message.select({ where })).length, 2);
+      });
+    } finally {
+      try {
+        await removeFixture(fixture);
+      } finally {
+        await context(async () => {
+          for (const roleId of roleIds.reverse()) await roleModel().deleteById(roleId);
+        });
+      }
+    }
+  });
+
   it('authenticates, emits incremental SDK chunks, durably completes before finish, and replays without another turn', async () => {
     let fixture: IFixture | undefined;
     let other: IFixture | undefined;

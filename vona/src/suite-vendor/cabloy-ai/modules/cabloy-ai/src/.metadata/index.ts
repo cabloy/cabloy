@@ -548,7 +548,10 @@ export * from '../dto/chatConversation.tsx';
 export * from '../dto/chatCreate.tsx';
 export * from '../dto/chatHistory.tsx';
 export * from '../dto/chatHistoryRequest.tsx';
+export * from '../dto/chatList.tsx';
 export * from '../dto/chatMessage.tsx';
+export * from '../dto/chatPin.tsx';
+export * from '../dto/chatRename.tsx';
 export * from '../dto/chatRun.tsx';
 export * from '../dto/chatSend.tsx';
 export * from '../dto/chatStatusRequest.tsx';
@@ -556,7 +559,10 @@ import type { IDtoOptionsChatConversation } from '../dto/chatConversation.tsx';
 import type { IDtoOptionsChatCreate } from '../dto/chatCreate.tsx';
 import type { IDtoOptionsChatHistory } from '../dto/chatHistory.tsx';
 import type { IDtoOptionsChatHistoryRequest } from '../dto/chatHistoryRequest.tsx';
+import type { IDtoOptionsChatList } from '../dto/chatList.tsx';
 import type { IDtoOptionsChatMessage } from '../dto/chatMessage.tsx';
+import type { IDtoOptionsChatPin } from '../dto/chatPin.tsx';
+import type { IDtoOptionsChatRename } from '../dto/chatRename.tsx';
 import type { IDtoOptionsChatRun } from '../dto/chatRun.tsx';
 import type { IDtoOptionsChatSend } from '../dto/chatSend.tsx';
 import type { IDtoOptionsChatStatusRequest } from '../dto/chatStatusRequest.tsx';
@@ -568,7 +574,10 @@ declare module 'vona-module-a-web' {
 'cabloy-ai:chatCreate': IDtoOptionsChatCreate;
 'cabloy-ai:chatHistory': IDtoOptionsChatHistory;
 'cabloy-ai:chatHistoryRequest': IDtoOptionsChatHistoryRequest;
+'cabloy-ai:chatList': IDtoOptionsChatList;
 'cabloy-ai:chatMessage': IDtoOptionsChatMessage;
+'cabloy-ai:chatPin': IDtoOptionsChatPin;
+'cabloy-ai:chatRename': IDtoOptionsChatRename;
 'cabloy-ai:chatRun': IDtoOptionsChatRun;
 'cabloy-ai:chatSend': IDtoOptionsChatSend;
 'cabloy-ai:chatStatusRequest': IDtoOptionsChatStatusRequest;
@@ -585,7 +594,10 @@ import type { DtoChatConversation } from '../dto/chatConversation.tsx';
 import type { DtoChatCreate } from '../dto/chatCreate.tsx';
 import type { DtoChatHistory } from '../dto/chatHistory.tsx';
 import type { DtoChatHistoryRequest } from '../dto/chatHistoryRequest.tsx';
+import type { DtoChatList } from '../dto/chatList.tsx';
 import type { DtoChatMessage } from '../dto/chatMessage.tsx';
+import type { DtoChatPin } from '../dto/chatPin.tsx';
+import type { DtoChatRename } from '../dto/chatRename.tsx';
 import type { DtoChatRun } from '../dto/chatRun.tsx';
 import type { DtoChatSend } from '../dto/chatSend.tsx';
 import type { DtoChatStatusRequest } from '../dto/chatStatusRequest.tsx';
@@ -607,8 +619,20 @@ declare module 'vona-module-cabloy-ai' {
       fields?: TypeEntityOptionsFields<DtoChatHistoryRequest, IDtoOptionsChatHistoryRequest[TypeSymbolKeyFieldsMore]>;
     }
 
+    export interface IDtoOptionsChatList {
+      fields?: TypeEntityOptionsFields<DtoChatList, IDtoOptionsChatList[TypeSymbolKeyFieldsMore]>;
+    }
+
     export interface IDtoOptionsChatMessage {
       fields?: TypeEntityOptionsFields<DtoChatMessage, IDtoOptionsChatMessage[TypeSymbolKeyFieldsMore]>;
+    }
+
+    export interface IDtoOptionsChatPin {
+      fields?: TypeEntityOptionsFields<DtoChatPin, IDtoOptionsChatPin[TypeSymbolKeyFieldsMore]>;
+    }
+
+    export interface IDtoOptionsChatRename {
+      fields?: TypeEntityOptionsFields<DtoChatRename, IDtoOptionsChatRename[TypeSymbolKeyFieldsMore]>;
     }
 
     export interface IDtoOptionsChatRun {
@@ -666,12 +690,40 @@ declare module 'vona-module-a-web' {
 '/cabloy/ai/chat/history': undefined;
 '/cabloy/ai/chat/status': undefined;
 '/cabloy/ai/chat/remove': undefined;
+'/cabloy/ai/chat/rename': undefined;
+'/cabloy/ai/chat/pin': undefined;
 '/cabloy/ai/chat/send': undefined;
     }
 
 }
 
 /** controller: end */
+/** guard: begin */
+export * from '../bean/guard.aiChatAccess.ts';
+import type { IGuardOptionsAiChatAccess } from '../bean/guard.aiChatAccess.ts';
+import 'vona-module-a-aspect';
+declare module 'vona-module-a-aspect' {
+
+
+export interface IGuardRecordLocal {
+  'cabloy-ai:aiChatAccess': IGuardOptionsAiChatAccess;
+}
+
+}
+declare module 'vona-module-cabloy-ai' {
+
+        export interface GuardAiChatAccess {
+          /** @internal */
+          get scope(): ScopeModuleCabloyAi;
+        }
+
+          export interface GuardAiChatAccess {
+            get $beanFullName(): 'cabloy-ai.guard.aiChatAccess';
+            get $onionName(): 'cabloy-ai:aiChatAccess';
+            get $onionOptions(): IGuardOptionsAiChatAccess;
+          }
+}
+/** guard: end */
 /** bean: begin */
 export * from '../bean/bean.ai.ts';
 

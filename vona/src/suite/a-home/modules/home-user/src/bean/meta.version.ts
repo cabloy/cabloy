@@ -26,6 +26,11 @@ export class MetaVersion extends BeanBase implements IMetaVersionUpdate, IMetaVe
           .defaultTo(entityRole.$default.mcpAccess)
           .comment(entityRole.$comment.mcpAccess);
         table
+          .boolean(entityRole.aiChatAccess)
+          .notNullable()
+          .defaultTo(entityRole.$default.aiChatAccess)
+          .comment(entityRole.$comment.aiChatAccess);
+        table
           .boolean(entityRole.builtin)
           .defaultTo(entityRole.$default.builtin)
           .comment(entityRole.$comment.builtin);
@@ -72,6 +77,7 @@ export class MetaVersion extends BeanBase implements IMetaVersionUpdate, IMetaVe
           titleLocales: role.titleLocales ?? {},
           siteIds: role.siteIds,
           mcpAccess: role.mcpAccess,
+          aiChatAccess: role.aiChatAccess,
           builtin: role.builtin,
         });
       }

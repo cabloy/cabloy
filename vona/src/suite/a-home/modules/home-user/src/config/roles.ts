@@ -7,6 +7,7 @@ export interface IRoleConfig {
   titleLocales?: LocalizedTextMap;
   siteIds: string[];
   mcpAccess: boolean;
+  aiChatAccess: boolean;
   builtin: boolean;
 }
 
@@ -19,6 +20,7 @@ export const builtinRoles: Record<string, IRoleConfig> = {
     },
     siteIds: [roleSiteIdAll],
     mcpAccess: true,
+    aiChatAccess: true,
   },
   systemAdmin: {
     title: 'System Administrator',
@@ -28,5 +30,6 @@ export const builtinRoles: Record<string, IRoleConfig> = {
     },
     siteIds: [roleSiteIdAll],
     mcpAccess: true,
+    aiChatAccess: true,
   },
 };

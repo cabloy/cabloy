@@ -195,6 +195,10 @@ export class ModelPassport extends BeanModelBase {
     return this.passport?.roles;
   }
 
+  get aiChatAccess(): boolean {
+    return this.roles?.some(role => role.aiChatAccess === true) ?? false;
+  }
+
   get isSystemAdmin() {
     return !!this.passport?.roles.some(item => item.name === 'systemAdmin');
   }

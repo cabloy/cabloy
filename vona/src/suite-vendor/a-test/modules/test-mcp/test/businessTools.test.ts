@@ -1170,6 +1170,7 @@ describe('businessTools.test.ts', { concurrency: false, timeout: 60000 }, () => 
             title: 'Admin',
             siteIds: [],
             mcpAccess: true,
+            aiChatAccess: false,
           },
         ];
         await app.bean.passport.setCurrent(passport);

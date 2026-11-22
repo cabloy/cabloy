@@ -59,7 +59,7 @@ export class RenderHeader extends BeanRenderBase {
                 {this.sys.env.AI_CHAT_BOT_ENABLE === 'true' && (
                   <li>
                     <RouterLink
-                      to="/cabloy/ai/chat"
+                      to={this.$router.getPagePath('/cabloy/ai/chat')}
                       aria-label={this.scope.locale.AiChat()}
                       title={this.scope.locale.AiChat()}
                       data-testid="ai-chat-nav"
