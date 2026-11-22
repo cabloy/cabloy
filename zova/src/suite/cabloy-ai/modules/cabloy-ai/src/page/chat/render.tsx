@@ -54,7 +54,7 @@ export class RenderPageChat extends BeanRenderBase {
             </ZButton>
             <ZRowOperations
               compact
-              slotDefault={() => (
+              slotPrimary={() => (
                 <>
                   <ZButton
                     class="btn btn-ghost btn-sm"
