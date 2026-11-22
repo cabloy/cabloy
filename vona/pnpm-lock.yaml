@@ -2014,7 +2014,7 @@ importers:
         specifier: ^5.0.5
         version: link:modules/a-markdown
       vona-module-a-rbac:
-        specifier: ^5.0.36
+        specifier: ^5.0.37
         version: link:modules/a-rbac
       vona-module-a-socket:
         specifier: workspace:^
@@ -2397,7 +2397,7 @@ importers:
         specifier: ^5.0.5
         version: link:modules/test-markdown
       vona-module-test-mcp:
-        specifier: ^5.0.16
+        specifier: ^5.0.17
         version: link:modules/test-mcp
       vona-module-test-pay:
         specifier: ^5.0.13
@@ -3550,7 +3550,7 @@ importers:
   src/suite-vendor/cabloy-ai:
     dependencies:
       vona-module-cabloy-ai:
-        specifier: ^5.0.0
+        specifier: ^5.0.1
         version: link:modules/cabloy-ai
 
   src/suite-vendor/cabloy-ai/modules/cabloy-ai:
