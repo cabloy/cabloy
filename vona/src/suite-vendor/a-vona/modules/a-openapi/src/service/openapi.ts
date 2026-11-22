@@ -430,26 +430,26 @@ export class ServiceOpenapi extends BeanBase {
       if (argsMapWithField.file) Object.assign(schemaObj, argsMapWithField.file);
       if (argsMapIsolate.files) schemaObj.blobs = argsMapIsolate.files;
       request.body = z.object(schemaObj);
-    } else {
-      for (const argumentType of __ArgumentTypes) {
-        let schema: z.ZodType | undefined = argsMapIsolate[argumentType];
-        if (argsMapWithField[argumentType]) {
-          if (!schema) {
-            schema = z.object(argsMapWithField[argumentType]);
-          } else {
-            schema = (schema as any).extend(argsMapWithField[argumentType]);
-          }
+    }
+    // Multipart replaces the request body, not the other HTTP parameters.
+    for (const argumentType of isUpload ? ['param', 'query', 'headers'] : __ArgumentTypes) {
+      let schema: z.ZodType | undefined = argsMapIsolate[argumentType];
+      if (argsMapWithField[argumentType]) {
+        if (!schema) {
+          schema = z.object(argsMapWithField[argumentType]);
+        } else {
+          schema = (schema as any).extend(argsMapWithField[argumentType]);
         }
-        if (!schema) continue;
-        // check schema
-        if (getInnerTypeName(schema) === 'any') {
-          throw new Error(
-            `Invalid Openapi argument type: ${info.relativeName}:${controller.name}.${actionKey}#${argumentType}`,
-          );
-        }
-        const name = argumentType === 'param' ? 'params' : argumentType;
-        request[name] = schema;
       }
+      if (!schema) continue;
+      // check schema
+      if (getInnerTypeName(schema) === 'any') {
+        throw new Error(
+          `Invalid Openapi argument type: ${info.relativeName}:${controller.name}.${actionKey}#${argumentType}`,
+        );
+      }
+      const name = argumentType === 'param' ? 'params' : argumentType;
+      request[name] = schema;
     }
 
     return { request, isUpload: !!isUpload };
