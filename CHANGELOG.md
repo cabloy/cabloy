@@ -1,5 +1,17 @@
 # Changelog
 
+## 5.1.296
+
+### Features
+
+- Add AI chat access.
+- Add a sidebar width setting.
+
+### Bug Fixes
+
+- Correct the login redirect.
+- Preserve OpenAPI parameters for multipart uploads.
+
 ## 5.1.295
 
 ### Features
