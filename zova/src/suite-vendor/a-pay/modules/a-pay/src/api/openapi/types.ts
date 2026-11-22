@@ -1,4 +1,21 @@
 export interface paths {
+  '/api/image/upload-base64': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** Upload image content */
+    post: operations['Image_uploadBase64'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   '/api/image/upload-policy': {
     parameters: {
       query?: never;
@@ -8,6 +25,7 @@ export interface paths {
     };
     get?: never;
     put?: never;
+    /** Get image upload policy */
     post: operations['Image_getUploadPolicy'];
     delete?: never;
     options?: never;
@@ -1255,9 +1273,27 @@ export interface paths {
       path?: never;
       cookie?: never;
     };
+    /** List Training Records */
     get: operations['TrainingRecord_select'];
     put?: never;
     post: operations['TrainingRecord_create'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/training/record/highestScoresBySubject': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Find Highest Scores by Subject */
+    get: operations['TrainingRecord_highestScoresBySubject'];
+    put?: never;
+    post?: never;
     delete?: never;
     options?: never;
     head?: never;
@@ -1271,6 +1307,7 @@ export interface paths {
       path?: never;
       cookie?: never;
     };
+    /** View Training Record */
     get: operations['TrainingRecord_view'];
     put?: never;
     post?: never;
@@ -1862,6 +1899,10 @@ export interface paths {
       path?: never;
       cookie?: never;
     };
+    /**
+     * Read MCP test values
+     * @description Returns fixed array values for managed MCP browser tests.
+     */
     get: operations['CabloyMcpAccessTokenTest_read'];
     put?: never;
     post?: never;
@@ -1965,6 +2006,22 @@ export interface paths {
     get?: never;
     put?: never;
     post: operations['TestMcpToolFixture_effect'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/mcp/test/actions/semantic': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['TestMcpToolFixture_semantic'];
     delete?: never;
     options?: never;
     head?: never;
@@ -2692,6 +2749,134 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  '/api/cabloy/ai/chat/create': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['CabloyAiChat_create'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/cabloy/ai/chat/list': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['CabloyAiChat_list'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/cabloy/ai/chat/history': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['CabloyAiChat_history'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/cabloy/ai/chat/status': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['CabloyAiChat_status'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/cabloy/ai/chat/remove': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['CabloyAiChat_remove'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/cabloy/ai/chat/rename': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['CabloyAiChat_rename'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/cabloy/ai/chat/pin': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['CabloyAiChat_pin'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/cabloy/ai/chat/send': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['CabloyAiChat_send'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -2752,18 +2937,6 @@ export interface components {
       amount: number;
       orderId: number | string;
     };
-    'a-image.dto.imageUploadPolicyResponse': {
-      imageScene: string;
-      maxSize?: number | undefined;
-      mimeTypes?: string[] | undefined;
-      extensions?: string[] | undefined;
-      multiple?: boolean | undefined;
-      public?: boolean | undefined;
-      directUpload?: boolean | undefined;
-    };
-    'a-image.dto.imageUploadPolicyRequest': {
-      imageScene: string;
-    };
     'a-image.dto.imageUploadResponse': {
       id: number | string;
       filename?: string | undefined;
@@ -2774,6 +2947,47 @@ export interface components {
       public?: boolean | undefined;
       url?: string | undefined;
       signed?: boolean | undefined;
+    };
+    'a-image.dto.imageUploadBase64Request': {
+      imageScene: string;
+      filename: string;
+      /** @enum {string} */
+      mimeType: 'image/png' | 'image/jpeg' | 'image/webp';
+      base64: string;
+    };
+    'a-image.dto.imageUploadPolicyResponse': {
+      imageScene: string;
+      maxSize?: number | undefined;
+      mimeTypes?: string[] | undefined;
+      extensions?: string[] | undefined;
+      multiple?: boolean | undefined;
+      public?: boolean | undefined;
+      directUpload?: boolean | undefined;
+      processing?: components['schemas']['a-image.dto.imageProcessingOptions_2d063d28bc7243bed02ebd8bddf1212a93c6305b'];
+    };
+    'a-image.dto.imageProcessingOptions_2d063d28bc7243bed02ebd8bddf1212a93c6305b':
+      | {
+          enableCrop?: boolean | undefined;
+          cropAspectRatio?: number | undefined;
+          /** @enum {string|null} */
+          cropShape?: 'rect' | 'round' | null | undefined;
+          resize?: components['schemas']['a-image.dto.imageResizeOptions_2d063d28bc7243bed02ebd8bddf1212a93c6305b'];
+        }
+      | undefined;
+    'a-image.dto.imageResizeOptions_2d063d28bc7243bed02ebd8bddf1212a93c6305b':
+      | {
+          width?: number | undefined;
+          height?: number | undefined;
+          /** @enum {string|null} */
+          fit?: 'scale-down' | 'contain' | 'cover' | 'crop' | 'pad' | null | undefined;
+          background?: string | undefined;
+          /** @enum {string|null} */
+          format?: 'auto' | 'avif' | 'webp' | 'jpeg' | 'png' | null | undefined;
+          quality?: number | undefined;
+        }
+      | undefined;
+    'a-image.dto.imageUploadPolicyRequest': {
+      imageScene: string;
     };
     'a-image.dto.imageDirectUploadResponse': {
       id: number | string;
@@ -2913,7 +3127,7 @@ export interface components {
       addressLine2?: string | undefined;
     };
     /** @description Recursive Boolean predicate: use explicit leaves { field, op, value }, nonempty { and: [...] } / { or: [...] } groups, or { not: predicate }. Field-value maps such as { fieldName: value } are not supported inside where. The isNull and isNotNull operators omit value; in and notIn require nonempty value arrays. Use only fields, operators and value types admitted by this schema and respect its query limits. Omit where for no added restriction. Supplied named filters combine with where by AND. */
-    'CommerceAddressMineQueryPredicate_dc2a69005a769a476af75f8ddcac9f6b01986cbc':
+    'CommerceAddressMineQueryPredicate_d3af71cfbdf079447b85b6e1216f5e85916fd9fd':
       | {
           and: components['schemas']['CommerceAddressMineQueryPredicate'][];
         }
@@ -3018,7 +3232,7 @@ export interface components {
       _operationsRow?: unknown;
     };
     /** @description Recursive Boolean predicate: use explicit leaves { field, op, value }, nonempty { and: [...] } / { or: [...] } groups, or { not: predicate }. Field-value maps such as { fieldName: value } are not supported inside where. The isNull and isNotNull operators omit value; in and notIn require nonempty value arrays. Use only fields, operators and value types admitted by this schema and respect its query limits. Omit where for no added restriction. Supplied named filters combine with where by AND. */
-    'CommerceAddressSelectQueryPredicate_281fb5dbb12729e4fcf775d43464b6d1dee7f1c4':
+    'CommerceAddressSelectQueryPredicate_def18399a3bc1ac6e068bee835d0528b6f53ec0c':
       | {
           /** @enum {string} */
           field: 'recipientName';
@@ -3258,6 +3472,11 @@ export interface components {
        * @default false
        */
       mcpAccess?: boolean;
+      /**
+       * @description AI Chat Access
+       * @default false
+       */
+      aiChatAccess?: boolean;
       /** @default false */
       builtin?: boolean;
     };
@@ -3437,7 +3656,7 @@ export interface components {
       _operationsRow?: unknown;
     };
     /** @description Recursive Boolean predicate: use explicit leaves { field, op, value }, nonempty { and: [...] } / { or: [...] } groups, or { not: predicate }. Field-value maps such as { fieldName: value } are not supported inside where. The isNull and isNotNull operators omit value; in and notIn require nonempty value arrays. Use only fields, operators and value types admitted by this schema and respect its query limits. Omit where for no added restriction. Supplied named filters combine with where by AND. */
-    'CommerceCouponTemplateSelectQueryPredicate_f1ad438326f24b325310489202991e4fba89700b':
+    'CommerceCouponTemplateSelectQueryPredicate_d61c3f4ef8772e3933d4c79b81df2438f73872d7':
       | {
           /** @enum {string} */
           field: 'name';
@@ -3644,7 +3863,7 @@ export interface components {
       payableTotalCents: number;
     };
     /** @description Recursive Boolean predicate: use explicit leaves { field, op, value }, nonempty { and: [...] } / { or: [...] } groups, or { not: predicate }. Field-value maps such as { fieldName: value } are not supported inside where. The isNull and isNotNull operators omit value; in and notIn require nonempty value arrays. Use only fields, operators and value types admitted by this schema and respect its query limits. Omit where for no added restriction. Supplied named filters combine with where by AND. */
-    'CommerceOrderMineQueryPredicate_b384b6f552106d32a751938d95717f1347ff2cc9':
+    'CommerceOrderMineQueryPredicate_0a3ee10c437a1f050c4f2edbd349f1ec006fae28':
       | {
           /** @enum {string} */
           field: 'state';
@@ -3910,7 +4129,7 @@ export interface components {
       _operationsRow?: unknown;
     };
     /** @description Recursive Boolean predicate: use explicit leaves { field, op, value }, nonempty { and: [...] } / { or: [...] } groups, or { not: predicate }. Field-value maps such as { fieldName: value } are not supported inside where. The isNull and isNotNull operators omit value; in and notIn require nonempty value arrays. Use only fields, operators and value types admitted by this schema and respect its query limits. Omit where for no added restriction. Supplied named filters combine with where by AND. */
-    'CommerceOrderSelectQueryPredicate_da2274d737fe5ffedcfa26bc0a7e6fab61ef3b5f':
+    'CommerceOrderSelectQueryPredicate_970617f292d62839b07db728c1c90b8c567a9fe4':
       | {
           /** @enum {string} */
           field: 'state';
@@ -4111,7 +4330,7 @@ export interface components {
         }
       | undefined;
     /** @description Recursive Boolean predicate: use explicit leaves { field, op, value }, nonempty { and: [...] } / { or: [...] } groups, or { not: predicate }. Field-value maps such as { fieldName: value } are not supported inside where. The isNull and isNotNull operators omit value; in and notIn require nonempty value arrays. Use only fields, operators and value types admitted by this schema and respect its query limits. Omit where for no added restriction. Supplied named filters combine with where by AND. */
-    'CommerceStockAuditSelectQueryPredicate_18925a5c8530f6f0f81e9aa4ed03244d4cdbbc36':
+    'CommerceStockAuditSelectQueryPredicate_315e8d6d9ad8bb6d178d9b6f1f6c51e7ffcf7b76':
       | {
           /** @enum {string} */
           field: 'skuId';
@@ -4275,7 +4494,7 @@ export interface components {
       _operationsRow?: unknown;
     };
     /** @description Recursive Boolean predicate: use explicit leaves { field, op, value }, nonempty { and: [...] } / { or: [...] } groups, or { not: predicate }. Field-value maps such as { fieldName: value } are not supported inside where. The isNull and isNotNull operators omit value; in and notIn require nonempty value arrays. Use only fields, operators and value types admitted by this schema and respect its query limits. Omit where for no added restriction. Supplied named filters combine with where by AND. */
-    'CommerceStockBalanceSelectQueryPredicate_18925a5c8530f6f0f81e9aa4ed03244d4cdbbc36':
+    'CommerceStockBalanceSelectQueryPredicate_315e8d6d9ad8bb6d178d9b6f1f6c51e7ffcf7b76':
       | {
           /** @enum {string} */
           field: 'skuId';
@@ -4414,7 +4633,7 @@ export interface components {
       _operationsRow?: unknown;
     };
     /** @description Recursive Boolean predicate: use explicit leaves { field, op, value }, nonempty { and: [...] } / { or: [...] } groups, or { not: predicate }. Field-value maps such as { fieldName: value } are not supported inside where. The isNull and isNotNull operators omit value; in and notIn require nonempty value arrays. Use only fields, operators and value types admitted by this schema and respect its query limits. Omit where for no added restriction. Supplied named filters combine with where by AND. */
-    'CommerceCategorySelectQueryPredicate_f1ad438326f24b325310489202991e4fba89700b':
+    'CommerceCategorySelectQueryPredicate_d61c3f4ef8772e3933d4c79b81df2438f73872d7':
       | {
           /** @enum {string} */
           field: 'name';
@@ -4594,7 +4813,7 @@ export interface components {
       _operationsRow?: unknown;
     };
     /** @description Recursive Boolean predicate: use explicit leaves { field, op, value }, nonempty { and: [...] } / { or: [...] } groups, or { not: predicate }. Field-value maps such as { fieldName: value } are not supported inside where. The isNull and isNotNull operators omit value; in and notIn require nonempty value arrays. Use only fields, operators and value types admitted by this schema and respect its query limits. Omit where for no added restriction. Supplied named filters combine with where by AND. */
-    'CommerceProductSelectQueryPredicate_c7173b5725d5509026a89427a16667ed875cee88':
+    'CommerceProductSelectQueryPredicate_03426885e7632f969a0370d0e9649a1932575f69':
       | {
           /** @enum {string} */
           field: 'title';
@@ -4845,7 +5064,7 @@ export interface components {
       _operationsRow?: unknown;
     };
     /** @description Recursive Boolean predicate: use explicit leaves { field, op, value }, nonempty { and: [...] } / { or: [...] } groups, or { not: predicate }. Field-value maps such as { fieldName: value } are not supported inside where. The isNull and isNotNull operators omit value; in and notIn require nonempty value arrays. Use only fields, operators and value types admitted by this schema and respect its query limits. Omit where for no added restriction. Supplied named filters combine with where by AND. */
-    'CommerceSkuSelectQueryPredicate_8bdbeec68753567c80f489c2071001167d8cc4ca':
+    'CommerceSkuSelectQueryPredicate_eb5bdf68e6f783d6ca46936f7a2d4c42bc6728dc':
       | {
           /** @enum {string} */
           field: 'code';
@@ -5166,7 +5385,7 @@ export interface components {
       signed?: boolean;
     };
     /** @description Recursive Boolean predicate: use explicit leaves { field, op, value }, nonempty { and: [...] } / { or: [...] } groups, or { not: predicate }. Field-value maps such as { fieldName: value } are not supported inside where. The isNull and isNotNull operators omit value; in and notIn require nonempty value arrays. Use only fields, operators and value types admitted by this schema and respect its query limits. Omit where for no added restriction. Supplied named filters combine with where by AND. */
-    'TrainingRecordSelectQueryPredicate_5d7645eb449dede52c248d2b353769a1eb9528c6':
+    'TrainingRecordSelectQueryPredicate_c98d2500213d354338d42ca1caeedb367a4ba2b5':
       | {
           /** @enum {string} */
           field: 'name';
@@ -5244,6 +5463,27 @@ export interface components {
       | {
           not: components['schemas']['TrainingRecordSelectQueryPredicate'];
         };
+    'training-record.dto.highestScoresBySubjectResItem': {
+      /** @description Subject Record ID */
+      subjectRecordId: number | string;
+      /** @description Subject Name */
+      subjectName: string;
+      /** @description Subject Score */
+      score: number;
+      /** @description Training Record ID */
+      trainingRecordId: number | string;
+      /** @description Training Record Name */
+      trainingRecordName: string;
+      /**
+       * Format: date-time
+       * @description Training Time
+       */
+      trainingTime?: Date;
+      /** @description Student ID */
+      studentId: number | string;
+      /** @description Student Name */
+      studentName: string;
+    };
     /** @description View Student Training Record */
     'training-record.dto.recordView_2d063d28bc7243bed02ebd8bddf1212a93c6305b_7d715789d9643740a04e8a6c0f6fb951884bc347':
       | {
@@ -5570,7 +5810,7 @@ export interface components {
         }
       | undefined;
     /** @description Recursive Boolean predicate: use explicit leaves { field, op, value }, nonempty { and: [...] } / { or: [...] } groups, or { not: predicate }. Field-value maps such as { fieldName: value } are not supported inside where. The isNull and isNotNull operators omit value; in and notIn require nonempty value arrays. Use only fields, operators and value types admitted by this schema and respect its query limits. Omit where for no added restriction. Supplied named filters combine with where by AND. */
-    'TrainingStudentSelectQueryPredicate_52faf9b0777604cfccabc1d562ef60a2e5b2deb9':
+    'TrainingStudentSelectQueryPredicate_7d2c9ea34af8c25bc11ac8e4bb21c96554fa1a09':
       | {
           /** @enum {string} */
           field: 'id';
@@ -5608,6 +5848,13 @@ export interface components {
           value: Date;
         }
       | {
+          /** @enum {string} */
+          relation: 'trainingRecords';
+          /** @enum {string} */
+          op: 'exists' | 'notExists';
+          where?: components['schemas']['TrainingStudentSelecttrainingRecordsPredicate'];
+        }
+      | {
           and: components['schemas']['TrainingStudentSelectQueryPredicate'][];
         }
       | {
@@ -5615,6 +5862,60 @@ export interface components {
         }
       | {
           not: components['schemas']['TrainingStudentSelectQueryPredicate'];
+        };
+    'TrainingStudentSelecttrainingRecordsPredicate':
+      | {
+          /** @enum {string} */
+          field: 'name';
+          /** @enum {string} */
+          op: 'eq' | 'containsI';
+          value: string;
+        }
+      | {
+          /** @enum {string} */
+          field: 'subjectCount';
+          /** @enum {string} */
+          op: 'eq' | 'gte' | 'lte';
+          value: number;
+        }
+      | {
+          /** @enum {string} */
+          field: 'totalScore';
+          /** @enum {string} */
+          op: 'eq' | 'gte' | 'lte';
+          value: number;
+        }
+      | {
+          /** @enum {string} */
+          field: 'averageScore';
+          /** @enum {string} */
+          op: 'eq' | 'gte' | 'lte';
+          value: number;
+        }
+      | {
+          /** @enum {string} */
+          field: 'trainingTime';
+          /** @enum {string} */
+          op: 'gte' | 'lt' | 'lte';
+          /** Format: date-time */
+          value: Date;
+        }
+      | {
+          /** @enum {string} */
+          field: 'createdAt';
+          /** @enum {string} */
+          op: 'gte' | 'lt' | 'lte';
+          /** Format: date-time */
+          value: Date;
+        }
+      | {
+          and: components['schemas']['TrainingStudentSelecttrainingRecordsPredicate'][];
+        }
+      | {
+          or: components['schemas']['TrainingStudentSelecttrainingRecordsPredicate'][];
+        }
+      | {
+          not: components['schemas']['TrainingStudentSelecttrainingRecordsPredicate'];
         };
     'TrainingStudentSelectQueryPredicate':
       | {
@@ -5654,6 +5955,13 @@ export interface components {
           value: Date;
         }
       | {
+          /** @enum {string} */
+          relation: 'trainingRecords';
+          /** @enum {string} */
+          op: 'exists' | 'notExists';
+          where?: components['schemas']['TrainingStudentSelecttrainingRecordsPredicate'];
+        }
+      | {
           and: components['schemas']['TrainingStudentSelectQueryPredicate'][];
         }
       | {
@@ -5676,7 +5984,7 @@ export interface components {
       count_imageId?: string | undefined;
     };
     /** @description View Student */
-    'training-student.dto.studentView_2d063d28bc7243bed02ebd8bddf1212a93c6305b_4826fc678e47603ec467782ddb0d02463792cd60':
+    'training-student.dto.studentView_2d063d28bc7243bed02ebd8bddf1212a93c6305b_18135e445ee0fe9e801ee837a48ad6ba42a657bd':
       | {
           /**
            * Format: date-time
@@ -6132,6 +6440,8 @@ export interface components {
     'mcp-auth.dto.authorizationSummary': {
       clientName: string;
       resource: string;
+      ssrSiteId: string;
+      scopesUrl: string;
       scope: string;
       options: components['schemas']['mcp-auth.dto.mcpScopeOption'][];
       expiresAt: number;
@@ -6214,6 +6524,8 @@ export interface components {
       updatedAt: Date;
       /** @description ID */
       id: number | string;
+      /** Format: uri */
+      resource: string;
       scope: string;
       /**
        * Name
@@ -6361,7 +6673,7 @@ export interface components {
       _operationsRow?: unknown;
     };
     /** @description Recursive Boolean predicate: use explicit leaves { field, op, value }, nonempty { and: [...] } / { or: [...] } groups, or { not: predicate }. Field-value maps such as { fieldName: value } are not supported inside where. The isNull and isNotNull operators omit value; in and notIn require nonempty value arrays. Use only fields, operators and value types admitted by this schema and respect its query limits. Omit where for no added restriction. Supplied named filters combine with where by AND. */
-    'TestRestProductSelectQueryPredicate_f1ad438326f24b325310489202991e4fba89700b':
+    'TestRestProductSelectQueryPredicate_d61c3f4ef8772e3933d4c79b81df2438f73872d7':
       | {
           /** @enum {string} */
           field: 'name';
@@ -6689,7 +7001,7 @@ export interface components {
       amount: number;
     };
     /** @description Recursive Boolean predicate: use explicit leaves { field, op, value }, nonempty { and: [...] } / { or: [...] } groups, or { not: predicate }. Field-value maps such as { fieldName: value } are not supported inside where. The isNull and isNotNull operators omit value; in and notIn require nonempty value arrays. Use only fields, operators and value types admitted by this schema and respect its query limits. Omit where for no added restriction. Supplied named filters combine with where by AND. */
-    'TestOrderQueryQueryPredicate_c8db73513567a95fc6ee516ad7800e472749f6dc':
+    'TestOrderQueryQueryPredicate_c0657f566117588522c1a36adbe1bdd4c08cc436':
       | {
           /** @enum {string} */
           field: 'orderNo';
@@ -6759,7 +7071,7 @@ export interface components {
       pageNo: number;
     };
     /** @description Recursive Boolean predicate: use explicit leaves { field, op, value }, nonempty { and: [...] } / { or: [...] } groups, or { not: predicate }. Field-value maps such as { fieldName: value } are not supported inside where. The isNull and isNotNull operators omit value; in and notIn require nonempty value arrays. Use only fields, operators and value types admitted by this schema and respect its query limits. Omit where for no added restriction. Supplied named filters combine with where by AND. */
-    'TestOrderQueryPageQueryPredicate_d70b338779a27af13b495572382d0bd4d2d05fe8':
+    'TestOrderQueryPageQueryPredicate_63c2737623a5b6c6ffa37f0562d47a9981863c6b':
       | {
           /** @enum {string} */
           field: 'orderNo';
@@ -6819,7 +7131,7 @@ export interface components {
       max_stars?: string | undefined;
     };
     /** @description Recursive Boolean predicate: use explicit leaves { field, op, value }, nonempty { and: [...] } / { or: [...] } groups, or { not: predicate }. Field-value maps such as { fieldName: value } are not supported inside where. The isNull and isNotNull operators omit value; in and notIn require nonempty value arrays. Use only fields, operators and value types admitted by this schema and respect its query limits. Omit where for no added restriction. Supplied named filters combine with where by AND. */
-    'TestPostSelectQueryPredicate_8e7798840241a6ca2a2638e9efcb0dd99340c602':
+    'TestPostSelectQueryPredicate_d0635cc2c6b14134be97757f9bd00bf2ff67341c':
       | {
           /** @enum {string} */
           field: 'title';
@@ -6958,7 +7270,7 @@ export interface components {
       max_stars?: string | undefined;
     };
     'test-vona.dto.postSelectReq': {
-      where?: components['schemas']['TestPostSelectQueryPredicate_8e7798840241a6ca2a2638e9efcb0dd99340c602'];
+      where?: components['schemas']['TestPostSelectQueryPredicate_d0635cc2c6b14134be97757f9bd00bf2ff67341c'];
       orders?:
         | {
             /** @enum {string} */
@@ -7098,6 +7410,71 @@ export interface components {
       fullName3?: string | undefined;
       fullName4?: string | undefined;
     };
+    'cabloy-ai.dto.chatConversation': {
+      id: number | string;
+      title: string;
+      activeRunId: number | string;
+      pinned: boolean;
+    };
+    'cabloy-ai.dto.chatCreate': {
+      ssrSiteId: string;
+      title?: string | undefined;
+    };
+    'cabloy-ai.dto.chatList': {
+      ssrSiteId: string;
+    };
+    'cabloy-ai.dto.chatHistory': {
+      conversation: components['schemas']['cabloy-ai.dto.chatConversation_626802c24df1498cec99aab0854fedf90c9b6dd3'];
+      messages: components['schemas']['cabloy-ai.dto.chatMessage'][];
+    };
+    'cabloy-ai.dto.chatConversation_626802c24df1498cec99aab0854fedf90c9b6dd3': {
+      id: number | string;
+      title: string;
+      activeRunId: number | string;
+      pinned: boolean;
+    };
+    'cabloy-ai.dto.chatMessage': {
+      id: number | string;
+      runId: number | string;
+      /** @enum {string} */
+      role: 'user' | 'assistant';
+      text: string;
+    };
+    'cabloy-ai.dto.chatHistoryRequest': {
+      ssrSiteId: string;
+      conversationId: number | string;
+    };
+    'cabloy-ai.dto.chatRun': {
+      id: number | string;
+      conversationId: number | string;
+      requestKey: string;
+      /** @enum {string} */
+      status: 'running' | 'completed' | 'failed' | 'aborted' | 'interrupted';
+      deadlineAt: number;
+      finishedAt: number | undefined;
+      errorCode: string | undefined;
+    };
+    'cabloy-ai.dto.chatStatusRequest': {
+      ssrSiteId: string;
+      conversationId: number | string;
+      requestKey: string;
+    };
+    'cabloy-ai.dto.chatRename': {
+      ssrSiteId: string;
+      conversationId: number | string;
+      title: string;
+    };
+    'cabloy-ai.dto.chatPin': {
+      ssrSiteId: string;
+      conversationId: number | string;
+      pinned: boolean;
+    };
+    'cabloy-ai.dto.chatSend': {
+      ssrSiteId: string;
+      conversationId: number | string;
+      requestKey: string;
+      text: string;
+    };
   };
   responses: never;
   parameters: never;
@@ -7107,6 +7484,34 @@ export interface components {
 }
 export type $defs = Record<string, never>;
 export interface operations {
+  Image_uploadBase64: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['a-image.dto.imageUploadBase64Request'];
+      };
+    };
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data: components['schemas']['a-image.dto.imageUploadResponse'];
+          };
+        };
+      };
+    };
+    authToken: true;
+  };
   Image_getUploadPolicy: {
     parameters: {
       query?: never;
@@ -7502,7 +7907,7 @@ export interface operations {
     parameters: {
       query?: {
         /** @description Recursive Boolean predicate: use explicit leaves { field, op, value }, nonempty { and: [...] } / { or: [...] } groups, or { not: predicate }. Field-value maps such as { fieldName: value } are not supported inside where. The isNull and isNotNull operators omit value; in and notIn require nonempty value arrays. Use only fields, operators and value types admitted by this schema and respect its query limits. Omit where for no added restriction. Supplied named filters combine with where by AND. */
-        where?: components['schemas']['CommerceAddressMineQueryPredicate_dc2a69005a769a476af75f8ddcac9f6b01986cbc'];
+        where?: components['schemas']['CommerceAddressMineQueryPredicate_d3af71cfbdf079447b85b6e1216f5e85916fd9fd'];
         orders?:
           | {
               /** @enum {string} */
@@ -7652,7 +8057,7 @@ export interface operations {
         recipientName?: string | undefined;
         phone?: string | undefined;
         /** @description Recursive Boolean predicate: use explicit leaves { field, op, value }, nonempty { and: [...] } / { or: [...] } groups, or { not: predicate }. Field-value maps such as { fieldName: value } are not supported inside where. The isNull and isNotNull operators omit value; in and notIn require nonempty value arrays. Use only fields, operators and value types admitted by this schema and respect its query limits. Omit where for no added restriction. Supplied named filters combine with where by AND. */
-        where?: components['schemas']['CommerceAddressSelectQueryPredicate_281fb5dbb12729e4fcf775d43464b6d1dee7f1c4'];
+        where?: components['schemas']['CommerceAddressSelectQueryPredicate_def18399a3bc1ac6e068bee835d0528b6f53ec0c'];
         orders?:
           | {
               /** @enum {string} */
@@ -8283,7 +8688,7 @@ export interface operations {
         createdAt?: string | undefined;
         name?: string | undefined;
         /** @description Recursive Boolean predicate: use explicit leaves { field, op, value }, nonempty { and: [...] } / { or: [...] } groups, or { not: predicate }. Field-value maps such as { fieldName: value } are not supported inside where. The isNull and isNotNull operators omit value; in and notIn require nonempty value arrays. Use only fields, operators and value types admitted by this schema and respect its query limits. Omit where for no added restriction. Supplied named filters combine with where by AND. */
-        where?: components['schemas']['CommerceCouponTemplateSelectQueryPredicate_f1ad438326f24b325310489202991e4fba89700b'];
+        where?: components['schemas']['CommerceCouponTemplateSelectQueryPredicate_d61c3f4ef8772e3933d4c79b81df2438f73872d7'];
         orders?:
           | {
               /** @enum {string} */
@@ -8623,7 +9028,7 @@ export interface operations {
           | null
           | undefined;
         /** @description Recursive Boolean predicate: use explicit leaves { field, op, value }, nonempty { and: [...] } / { or: [...] } groups, or { not: predicate }. Field-value maps such as { fieldName: value } are not supported inside where. The isNull and isNotNull operators omit value; in and notIn require nonempty value arrays. Use only fields, operators and value types admitted by this schema and respect its query limits. Omit where for no added restriction. Supplied named filters combine with where by AND. */
-        where?: components['schemas']['CommerceOrderMineQueryPredicate_b384b6f552106d32a751938d95717f1347ff2cc9'];
+        where?: components['schemas']['CommerceOrderMineQueryPredicate_0a3ee10c437a1f050c4f2edbd349f1ec006fae28'];
         orders?:
           | {
               /** @enum {string} */
@@ -8920,7 +9325,7 @@ export interface operations {
         createdAt?: string | undefined;
         state?: string | undefined;
         /** @description Recursive Boolean predicate: use explicit leaves { field, op, value }, nonempty { and: [...] } / { or: [...] } groups, or { not: predicate }. Field-value maps such as { fieldName: value } are not supported inside where. The isNull and isNotNull operators omit value; in and notIn require nonempty value arrays. Use only fields, operators and value types admitted by this schema and respect its query limits. Omit where for no added restriction. Supplied named filters combine with where by AND. */
-        where?: components['schemas']['CommerceOrderSelectQueryPredicate_da2274d737fe5ffedcfa26bc0a7e6fab61ef3b5f'];
+        where?: components['schemas']['CommerceOrderSelectQueryPredicate_970617f292d62839b07db728c1c90b8c567a9fe4'];
         orders?:
           | {
               /** @enum {string} */
@@ -8985,7 +9390,7 @@ export interface operations {
         createdAt?: string | undefined;
         skuId?: number | string | undefined;
         /** @description Recursive Boolean predicate: use explicit leaves { field, op, value }, nonempty { and: [...] } / { or: [...] } groups, or { not: predicate }. Field-value maps such as { fieldName: value } are not supported inside where. The isNull and isNotNull operators omit value; in and notIn require nonempty value arrays. Use only fields, operators and value types admitted by this schema and respect its query limits. Omit where for no added restriction. Supplied named filters combine with where by AND. */
-        where?: components['schemas']['CommerceStockAuditSelectQueryPredicate_18925a5c8530f6f0f81e9aa4ed03244d4cdbbc36'];
+        where?: components['schemas']['CommerceStockAuditSelectQueryPredicate_315e8d6d9ad8bb6d178d9b6f1f6c51e7ffcf7b76'];
         orders?:
           | {
               /** @enum {string} */
@@ -9078,7 +9483,7 @@ export interface operations {
         createdAt?: string | undefined;
         skuId?: number | string | undefined;
         /** @description Recursive Boolean predicate: use explicit leaves { field, op, value }, nonempty { and: [...] } / { or: [...] } groups, or { not: predicate }. Field-value maps such as { fieldName: value } are not supported inside where. The isNull and isNotNull operators omit value; in and notIn require nonempty value arrays. Use only fields, operators and value types admitted by this schema and respect its query limits. Omit where for no added restriction. Supplied named filters combine with where by AND. */
-        where?: components['schemas']['CommerceStockBalanceSelectQueryPredicate_18925a5c8530f6f0f81e9aa4ed03244d4cdbbc36'];
+        where?: components['schemas']['CommerceStockBalanceSelectQueryPredicate_315e8d6d9ad8bb6d178d9b6f1f6c51e7ffcf7b76'];
         orders?:
           | {
               /** @enum {string} */
@@ -9143,7 +9548,7 @@ export interface operations {
         createdAt?: string | undefined;
         name?: string | undefined;
         /** @description Recursive Boolean predicate: use explicit leaves { field, op, value }, nonempty { and: [...] } / { or: [...] } groups, or { not: predicate }. Field-value maps such as { fieldName: value } are not supported inside where. The isNull and isNotNull operators omit value; in and notIn require nonempty value arrays. Use only fields, operators and value types admitted by this schema and respect its query limits. Omit where for no added restriction. Supplied named filters combine with where by AND. */
-        where?: components['schemas']['CommerceCategorySelectQueryPredicate_f1ad438326f24b325310489202991e4fba89700b'];
+        where?: components['schemas']['CommerceCategorySelectQueryPredicate_d61c3f4ef8772e3933d4c79b81df2438f73872d7'];
         orders?:
           | {
               /** @enum {string} */
@@ -9292,7 +9697,7 @@ export interface operations {
         createdAt?: string | undefined;
         title?: string | undefined;
         /** @description Recursive Boolean predicate: use explicit leaves { field, op, value }, nonempty { and: [...] } / { or: [...] } groups, or { not: predicate }. Field-value maps such as { fieldName: value } are not supported inside where. The isNull and isNotNull operators omit value; in and notIn require nonempty value arrays. Use only fields, operators and value types admitted by this schema and respect its query limits. Omit where for no added restriction. Supplied named filters combine with where by AND. */
-        where?: components['schemas']['CommerceProductSelectQueryPredicate_c7173b5725d5509026a89427a16667ed875cee88'];
+        where?: components['schemas']['CommerceProductSelectQueryPredicate_03426885e7632f969a0370d0e9649a1932575f69'];
         orders?:
           | {
               /** @enum {string} */
@@ -9494,7 +9899,7 @@ export interface operations {
         createdAt?: string | undefined;
         code?: string | undefined;
         /** @description Recursive Boolean predicate: use explicit leaves { field, op, value }, nonempty { and: [...] } / { or: [...] } groups, or { not: predicate }. Field-value maps such as { fieldName: value } are not supported inside where. The isNull and isNotNull operators omit value; in and notIn require nonempty value arrays. Use only fields, operators and value types admitted by this schema and respect its query limits. Omit where for no added restriction. Supplied named filters combine with where by AND. */
-        where?: components['schemas']['CommerceSkuSelectQueryPredicate_8bdbeec68753567c80f489c2071001167d8cc4ca'];
+        where?: components['schemas']['CommerceSkuSelectQueryPredicate_eb5bdf68e6f783d6ca46936f7a2d4c42bc6728dc'];
         orders?:
           | {
               /** @enum {string} */
@@ -9742,7 +10147,7 @@ export interface operations {
         name?: string | undefined;
         studentId?: string | undefined;
         /** @description Recursive Boolean predicate: use explicit leaves { field, op, value }, nonempty { and: [...] } / { or: [...] } groups, or { not: predicate }. Field-value maps such as { fieldName: value } are not supported inside where. The isNull and isNotNull operators omit value; in and notIn require nonempty value arrays. Use only fields, operators and value types admitted by this schema and respect its query limits. Omit where for no added restriction. Supplied named filters combine with where by AND. */
-        where?: components['schemas']['TrainingRecordSelectQueryPredicate_5d7645eb449dede52c248d2b353769a1eb9528c6'];
+        where?: components['schemas']['TrainingRecordSelectQueryPredicate_c98d2500213d354338d42ca1caeedb367a4ba2b5'];
         orders?:
           | {
               /** @enum {string} */
@@ -9797,6 +10202,30 @@ export interface operations {
             code: string;
             message: string;
             data: number | string;
+          };
+        };
+      };
+    };
+    authToken: true;
+  };
+  TrainingRecord_highestScoresBySubject: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data: components['schemas']['training-record.dto.highestScoresBySubjectResItem'][];
           };
         };
       };
@@ -9893,7 +10322,7 @@ export interface operations {
         /** @description 1=Foundation Track; 2=Progress Track; 3=Advanced Workshop */
         level?: 1 | 2 | 3 | undefined;
         /** @description Recursive Boolean predicate: use explicit leaves { field, op, value }, nonempty { and: [...] } / { or: [...] } groups, or { not: predicate }. Field-value maps such as { fieldName: value } are not supported inside where. The isNull and isNotNull operators omit value; in and notIn require nonempty value arrays. Use only fields, operators and value types admitted by this schema and respect its query limits. Omit where for no added restriction. Supplied named filters combine with where by AND. */
-        where?: components['schemas']['TrainingStudentSelectQueryPredicate_52faf9b0777604cfccabc1d562ef60a2e5b2deb9'];
+        where?: components['schemas']['TrainingStudentSelectQueryPredicate_7d2c9ea34af8c25bc11ac8e4bb21c96554fa1a09'];
         orders?:
           | {
               /** @enum {string} */
@@ -9962,7 +10391,7 @@ export interface operations {
         /** @description 1=Foundation Track; 2=Progress Track; 3=Advanced Workshop */
         level?: 1 | 2 | 3 | undefined;
         /** @description Recursive Boolean predicate: use explicit leaves { field, op, value }, nonempty { and: [...] } / { or: [...] } groups, or { not: predicate }. Field-value maps such as { fieldName: value } are not supported inside where. The isNull and isNotNull operators omit value; in and notIn require nonempty value arrays. Use only fields, operators and value types admitted by this schema and respect its query limits. Omit where for no added restriction. Supplied named filters combine with where by AND. */
-        where?: components['schemas']['TrainingStudentSelectQueryPredicate_52faf9b0777604cfccabc1d562ef60a2e5b2deb9'];
+        where?: components['schemas']['TrainingStudentSelectQueryPredicate_7d2c9ea34af8c25bc11ac8e4bb21c96554fa1a09'];
         aggrs?: {
           count?: ('*' | 'imageId')[] | undefined;
         };
@@ -9997,7 +10426,7 @@ export interface operations {
         /** @description 1=Foundation Track; 2=Progress Track; 3=Advanced Workshop */
         level?: 1 | 2 | 3 | undefined;
         /** @description Recursive Boolean predicate: use explicit leaves { field, op, value }, nonempty { and: [...] } / { or: [...] } groups, or { not: predicate }. Field-value maps such as { fieldName: value } are not supported inside where. The isNull and isNotNull operators omit value; in and notIn require nonempty value arrays. Use only fields, operators and value types admitted by this schema and respect its query limits. Omit where for no added restriction. Supplied named filters combine with where by AND. */
-        where?: components['schemas']['TrainingStudentSelectQueryPredicate_52faf9b0777604cfccabc1d562ef60a2e5b2deb9'];
+        where?: components['schemas']['TrainingStudentSelectQueryPredicate_7d2c9ea34af8c25bc11ac8e4bb21c96554fa1a09'];
         aggrs?: {
           count?: ('*' | 'imageId')[] | undefined;
         };
@@ -10042,7 +10471,7 @@ export interface operations {
           'application/json': {
             code: string;
             message: string;
-            data?: components['schemas']['training-student.dto.studentView_2d063d28bc7243bed02ebd8bddf1212a93c6305b_4826fc678e47603ec467782ddb0d02463792cd60'];
+            data?: components['schemas']['training-student.dto.studentView_2d063d28bc7243bed02ebd8bddf1212a93c6305b_18135e445ee0fe9e801ee837a48ad6ba42a657bd'];
           };
         };
       };
@@ -10596,7 +11025,8 @@ export interface operations {
   };
   McpAuthAccessToken_mine: {
     parameters: {
-      query?: {
+      query: {
+        ssrSiteId: string;
         pageNo?: number;
         pageSize?: number;
       };
@@ -10623,7 +11053,9 @@ export interface operations {
   };
   McpAuthAccessToken_createMine: {
     parameters: {
-      query?: never;
+      query: {
+        ssrSiteId: string;
+      };
       header?: never;
       path?: never;
       cookie?: never;
@@ -10651,7 +11083,9 @@ export interface operations {
   };
   McpAuthAccessToken_deleteMine: {
     parameters: {
-      query?: never;
+      query: {
+        ssrSiteId: string;
+      };
       header?: never;
       path: {
         id: number | string;
@@ -10731,7 +11165,8 @@ export interface operations {
   };
   McpAuthAuthorizationGrant_mine: {
     parameters: {
-      query?: {
+      query: {
+        ssrSiteId: string;
         pageNo?: number;
         pageSize?: number;
       };
@@ -10758,7 +11193,9 @@ export interface operations {
   };
   McpAuthAuthorizationGrant_revokeMine: {
     parameters: {
-      query?: never;
+      query: {
+        ssrSiteId: string;
+      };
       header?: never;
       path: {
         id: number | string;
@@ -10784,7 +11221,9 @@ export interface operations {
   };
   McpAuthAuthorizationGrant_deleteMine: {
     parameters: {
-      query?: never;
+      query: {
+        ssrSiteId: string;
+      };
       header?: never;
       path: {
         id: number | string;
@@ -10810,7 +11249,9 @@ export interface operations {
   };
   McpAuthCustomScope_mine: {
     parameters: {
-      query?: never;
+      query: {
+        ssrSiteId: string;
+      };
       header?: never;
       path?: never;
       cookie?: never;
@@ -10834,7 +11275,9 @@ export interface operations {
   };
   McpAuthCustomScope_catalog: {
     parameters: {
-      query?: never;
+      query: {
+        ssrSiteId: string;
+      };
       header?: never;
       path?: never;
       cookie?: never;
@@ -10858,7 +11301,9 @@ export interface operations {
   };
   McpAuthCustomScope_createMine: {
     parameters: {
-      query?: never;
+      query: {
+        ssrSiteId: string;
+      };
       header?: never;
       path?: never;
       cookie?: never;
@@ -10886,7 +11331,9 @@ export interface operations {
   };
   McpAuthCustomScope_updateMine: {
     parameters: {
-      query?: never;
+      query: {
+        ssrSiteId: string;
+      };
       header?: never;
       path: {
         id: number | string;
@@ -10916,7 +11363,9 @@ export interface operations {
   };
   McpAuthCustomScope_deleteMine: {
     parameters: {
-      query?: never;
+      query: {
+        ssrSiteId: string;
+      };
       header?: never;
       path: {
         id: number | string;
@@ -11128,6 +11577,88 @@ export interface operations {
       };
     };
   };
+  TestMcpToolFixture_semantic: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': {
+          value: string;
+          serverOwned: string;
+          /** Format: date-time */
+          at?: Date;
+          strict?:
+            | {
+                writable: string;
+                serverOwned: string;
+              }
+            | undefined;
+          loose?:
+            | ({
+                writable: string;
+                serverOwned: string;
+              } & {
+                [key: string]: unknown;
+              })
+            | undefined;
+          catchall?:
+            | ({
+                writable: string;
+                serverOwned: string;
+              } & {
+                [key: string]: number;
+              })
+            | undefined;
+          /** @enum {string|null} */
+          failure?: 'status422' | 'zod' | null | undefined;
+        };
+      };
+    };
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data: {
+              value: string;
+              serverOwned: string;
+              /** Format: date-time */
+              at?: Date;
+              strict?:
+                | {
+                    writable: string;
+                  }
+                | undefined;
+              loose?:
+                | ({
+                    writable: string;
+                  } & {
+                    [key: string]: unknown;
+                  })
+                | undefined;
+              catchall?:
+                | ({
+                    writable: string;
+                  } & {
+                    [key: string]: number;
+                  })
+                | undefined;
+              /** @enum {string|null} */
+              failure?: 'status422' | 'zod' | null | undefined;
+            };
+          };
+        };
+      };
+    };
+  };
   TestMcpToolFixture_array: {
     parameters: {
       query?: never;
@@ -11220,7 +11751,7 @@ export interface operations {
         createdAt?: string | undefined;
         name?: string | undefined;
         /** @description Recursive Boolean predicate: use explicit leaves { field, op, value }, nonempty { and: [...] } / { or: [...] } groups, or { not: predicate }. Field-value maps such as { fieldName: value } are not supported inside where. The isNull and isNotNull operators omit value; in and notIn require nonempty value arrays. Use only fields, operators and value types admitted by this schema and respect its query limits. Omit where for no added restriction. Supplied named filters combine with where by AND. */
-        where?: components['schemas']['TestRestProductSelectQueryPredicate_f1ad438326f24b325310489202991e4fba89700b'];
+        where?: components['schemas']['TestRestProductSelectQueryPredicate_d61c3f4ef8772e3933d4c79b81df2438f73872d7'];
         orders?:
           | {
               /** @enum {string} */
@@ -12170,7 +12701,7 @@ export interface operations {
         remark?: string | undefined;
         userName?: string | undefined;
         /** @description Recursive Boolean predicate: use explicit leaves { field, op, value }, nonempty { and: [...] } / { or: [...] } groups, or { not: predicate }. Field-value maps such as { fieldName: value } are not supported inside where. The isNull and isNotNull operators omit value; in and notIn require nonempty value arrays. Use only fields, operators and value types admitted by this schema and respect its query limits. Omit where for no added restriction. Supplied named filters combine with where by AND. */
-        where?: components['schemas']['TestOrderQueryQueryPredicate_c8db73513567a95fc6ee516ad7800e472749f6dc'];
+        where?: components['schemas']['TestOrderQueryQueryPredicate_c0657f566117588522c1a36adbe1bdd4c08cc436'];
         orders?:
           | {
               /** @enum {string} */
@@ -12207,7 +12738,7 @@ export interface operations {
         orderNo?: string | undefined;
         remark?: string | undefined;
         /** @description Recursive Boolean predicate: use explicit leaves { field, op, value }, nonempty { and: [...] } / { or: [...] } groups, or { not: predicate }. Field-value maps such as { fieldName: value } are not supported inside where. The isNull and isNotNull operators omit value; in and notIn require nonempty value arrays. Use only fields, operators and value types admitted by this schema and respect its query limits. Omit where for no added restriction. Supplied named filters combine with where by AND. */
-        where?: components['schemas']['TestOrderQueryPageQueryPredicate_d70b338779a27af13b495572382d0bd4d2d05fe8'];
+        where?: components['schemas']['TestOrderQueryPageQueryPredicate_63c2737623a5b6c6ffa37f0562d47a9981863c6b'];
         orders?:
           | {
               /** @enum {string} */
@@ -12247,7 +12778,7 @@ export interface operations {
         title?: string | undefined;
         userName?: string | undefined;
         /** @description Recursive Boolean predicate: use explicit leaves { field, op, value }, nonempty { and: [...] } / { or: [...] } groups, or { not: predicate }. Field-value maps such as { fieldName: value } are not supported inside where. The isNull and isNotNull operators omit value; in and notIn require nonempty value arrays. Use only fields, operators and value types admitted by this schema and respect its query limits. Omit where for no added restriction. Supplied named filters combine with where by AND. */
-        where?: components['schemas']['TestPostSelectQueryPredicate_8e7798840241a6ca2a2638e9efcb0dd99340c602'];
+        where?: components['schemas']['TestPostSelectQueryPredicate_d0635cc2c6b14134be97757f9bd00bf2ff67341c'];
         aggrs?: {
           count?: ('*' | 'stars')[] | undefined;
           sum?: 'stars'[] | undefined;
@@ -12285,7 +12816,7 @@ export interface operations {
         title?: string | undefined;
         userName?: string | undefined;
         /** @description Recursive Boolean predicate: use explicit leaves { field, op, value }, nonempty { and: [...] } / { or: [...] } groups, or { not: predicate }. Field-value maps such as { fieldName: value } are not supported inside where. The isNull and isNotNull operators omit value; in and notIn require nonempty value arrays. Use only fields, operators and value types admitted by this schema and respect its query limits. Omit where for no added restriction. Supplied named filters combine with where by AND. */
-        where?: components['schemas']['TestPostSelectQueryPredicate_8e7798840241a6ca2a2638e9efcb0dd99340c602'];
+        where?: components['schemas']['TestPostSelectQueryPredicate_d0635cc2c6b14134be97757f9bd00bf2ff67341c'];
         aggrs?: {
           count?: ('*' | 'stars')[] | undefined;
           sum?: 'stars'[] | undefined;
@@ -12322,7 +12853,7 @@ export interface operations {
         title?: string | undefined;
         userName?: string | undefined;
         /** @description Recursive Boolean predicate: use explicit leaves { field, op, value }, nonempty { and: [...] } / { or: [...] } groups, or { not: predicate }. Field-value maps such as { fieldName: value } are not supported inside where. The isNull and isNotNull operators omit value; in and notIn require nonempty value arrays. Use only fields, operators and value types admitted by this schema and respect its query limits. Omit where for no added restriction. Supplied named filters combine with where by AND. */
-        where?: components['schemas']['TestPostSelectQueryPredicate_8e7798840241a6ca2a2638e9efcb0dd99340c602'];
+        where?: components['schemas']['TestPostSelectQueryPredicate_d0635cc2c6b14134be97757f9bd00bf2ff67341c'];
         orders?:
           | {
               /** @enum {string} */
@@ -12361,7 +12892,7 @@ export interface operations {
         title?: string | undefined;
         userName?: string | undefined;
         /** @description Recursive Boolean predicate: use explicit leaves { field, op, value }, nonempty { and: [...] } / { or: [...] } groups, or { not: predicate }. Field-value maps such as { fieldName: value } are not supported inside where. The isNull and isNotNull operators omit value; in and notIn require nonempty value arrays. Use only fields, operators and value types admitted by this schema and respect its query limits. Omit where for no added restriction. Supplied named filters combine with where by AND. */
-        where?: components['schemas']['TestPostSelectQueryPredicate_8e7798840241a6ca2a2638e9efcb0dd99340c602'];
+        where?: components['schemas']['TestPostSelectQueryPredicate_d0635cc2c6b14134be97757f9bd00bf2ff67341c'];
         orders?:
           | {
               /** @enum {string} */
@@ -12609,5 +13140,225 @@ export interface operations {
         };
       };
     };
+  };
+  CabloyAiChat_create: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['cabloy-ai.dto.chatCreate'];
+      };
+    };
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data: components['schemas']['cabloy-ai.dto.chatConversation'];
+          };
+        };
+      };
+    };
+    authToken: true;
+  };
+  CabloyAiChat_list: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['cabloy-ai.dto.chatList'];
+      };
+    };
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data: components['schemas']['cabloy-ai.dto.chatConversation'][];
+          };
+        };
+      };
+    };
+    authToken: true;
+  };
+  CabloyAiChat_history: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['cabloy-ai.dto.chatHistoryRequest'];
+      };
+    };
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data: components['schemas']['cabloy-ai.dto.chatHistory'];
+          };
+        };
+      };
+    };
+    authToken: true;
+  };
+  CabloyAiChat_status: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['cabloy-ai.dto.chatStatusRequest'];
+      };
+    };
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data: components['schemas']['cabloy-ai.dto.chatRun'];
+          };
+        };
+      };
+    };
+    authToken: true;
+  };
+  CabloyAiChat_remove: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['cabloy-ai.dto.chatHistoryRequest'];
+      };
+    };
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data: undefined;
+          };
+        };
+      };
+    };
+    authToken: true;
+  };
+  CabloyAiChat_rename: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['cabloy-ai.dto.chatRename'];
+      };
+    };
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data: components['schemas']['cabloy-ai.dto.chatConversation'];
+          };
+        };
+      };
+    };
+    authToken: true;
+  };
+  CabloyAiChat_pin: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['cabloy-ai.dto.chatPin'];
+      };
+    };
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            code: string;
+            message: string;
+            data: components['schemas']['cabloy-ai.dto.chatConversation'];
+          };
+        };
+      };
+    };
+    authToken: true;
+  };
+  CabloyAiChat_send: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['cabloy-ai.dto.chatSend'];
+      };
+    };
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'text/event-stream': string;
+        };
+      };
+    };
+    authToken: true;
   };
 }
