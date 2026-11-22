@@ -858,6 +858,9 @@ test(
     await summary.click();
     const actions = userMenu.locator('ul > li > a, ul > li > button');
     await expect(actions).toHaveText(['Account Settings', 'Logout']);
+    await expect(
+      userMenu.getByRole('link', { name: 'Account Settings', exact: true }),
+    ).toHaveAttribute('href', '/admin/home/user/account');
 
     const accountResponse = page.waitForResponse(response => {
       const url = new URL(response.url());
@@ -869,10 +872,28 @@ test(
     await expect(page.getByRole('heading', { name: 'Account Settings' })).toBeVisible();
     await expect(userMenu).not.toHaveAttribute('open', '');
     await expect(page.getByTestId('layout-mine')).toBeVisible();
+    const mineHeader = page
+      .locator('[data-testid="layout-mine"] details')
+      .filter({ has: page.getByText('Logout', { exact: true }) });
+    await mineHeader.locator('summary').click();
+    const mineAccountLink = mineHeader.getByRole('link', {
+      name: 'Account Settings',
+      exact: true,
+    });
+    await expect(mineAccountLink).toHaveAttribute('href', '/admin/home/user/account');
+    await expect(mineAccountLink).toHaveClass(/router-link-active/);
+    await expect(mineAccountLink).toHaveClass(/router-link-exact-active/);
+    await expect(mineAccountLink).toHaveAttribute('aria-current', 'page');
+    const homeLinks = page
+      .getByTestId('layout-mine')
+      .locator('header')
+      .getByRole('link', { name: 'Home' });
+    await expect(homeLinks).toHaveCount(2);
+    for (const homeLink of await homeLinks.all()) {
+      await expect(homeLink).toHaveAttribute('href', '/admin/');
+    }
+    await mineHeader.locator('summary').click();
     const navigation = page.getByTestId('mine-navigation');
-    await expect(
-      navigation.getByRole('link', { name: 'Account Settings', exact: true }),
-    ).toHaveAttribute('href', '/admin/home/user/account');
     await navigation.getByRole('link', { name: 'MCP scopes', exact: true }).click();
     await expect(page).toHaveURL(/\/admin\/cabloy\/mcp\/scopes$/);
     await expect(page.getByRole('heading', { name: 'MCP scopes', exact: true })).toBeVisible();
@@ -880,6 +901,16 @@ test(
       'aria-current',
       'page',
     );
+    await navigation.getByRole('link', { name: 'MCP access tokens', exact: true }).click();
+    await expect(page).toHaveURL(/\/admin\/cabloy\/mcp\/accessTokens$/);
+    await page.getByTestId('mcp-access-token-create').click();
+    const accessTokenForm = page.getByTestId('mcp-access-token-create-form');
+    await expect(accessTokenForm).toBeVisible();
+    const manageScopes = accessTokenForm.getByRole('link', { name: 'Manage scopes', exact: true });
+    await expect(manageScopes).toHaveAttribute('href', '/admin/cabloy/mcp/scopes');
+    await manageScopes.click();
+    await expect(page).toHaveURL(/\/admin\/cabloy\/mcp\/scopes$/);
+    await expect(accessTokenForm).toHaveCount(0);
     const response = await page.reload({ waitUntil: 'load' });
     expect(response?.ok()).toBeTruthy();
     expect(await response!.text()).toContain('data-testid="layout-mine"');

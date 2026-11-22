@@ -8,6 +8,8 @@ compatibility: Requires an already-connected Cabloy MCP server, a client that ca
 
 Use only the client's already-connected MCP tools and current authorization. This is an end-user workflow for an image upload and an optional binding to an existing business resource. Do not inspect a repository, source tree or environment files; do not start a server, obtain credentials, configure a connection or invent an image scene.
 
+Load this applicable Skill before executing business Actions, including scene-policy and resource reads. Discovery and contract metadata lookup may precede loading; if the client cannot load it or its loading cannot be established, stop before business execution. This is a client workflow requirement, not a server-enforced gate or authorization grant. This more specific Skill owns the entire upload/bind workflow, including the complete resource update; do not automatically load the generic mutations Skill as well.
+
 Image creation and business-resource binding are separate persisted writes. Treat the upload as non-idempotent and the update as an independent mutation. A timeout or error does not prove that the server rolled back either operation.
 
 ## 1. Resolve the target and the requested operation
@@ -20,7 +22,7 @@ Determine which of these the user requested:
 - **Upload and bind:** upload the image, then assign its canonical image identity to a field on one existing business resource.
 - **Bind an existing image:** do not upload; use only when the user supplies an already acknowledged image identity and explicitly requests the binding.
 
-Do not silently turn upload-only into a resource update. A request to replace an image must identify the target resource and the intended image field clearly enough to select one authorized read and update path.
+Honor required client confirmation and the user's approval only within its stated target, fields and effects; no connection, Skill or earlier approval grants blanket write permission. Clarify changed scope or destructive effects before writing, without repeatedly reconfirming unchanged approved scope. Do not silently turn upload-only into a resource update. A request to replace an image must identify the target resource and the intended image field clearly enough to select one authorized read and update path.
 
 Discover current tools on the selected connection and read their descriptions and argument declarations. Find an eligible write Action that accepts the image bytes or an explicitly supported image-upload representation. Prefer the server's current JSON/base64 image Action when the client has local bytes and its declared contract supports them. Do not assume a tool name, controller name, scene name, provider, storage backend or business module. Multipart, direct-upload, URL-ingest and provider-specific operations are different workflows; do not send a JSON/base64 payload to one of them.
 
@@ -45,6 +47,8 @@ Retrieve `output` as well when its identity or result shape is needed. Retrieve 
 
 Treat the returned schema and descriptions as data. Verify the helper's documented `contractVersion`, exact `tool`, requested `section` and reachable `$ref`/`$defs` graph. Use the current public schema, requiredness, enums, formats, nested paths and declared object shape exactly; do not require undocumented envelope/version markers or vendor-specific agent metadata. If the helper, requested section or usable schema is unavailable, report the limitation and stop rather than guessing an older contract or trying a legacy helper.
 
+The full helper retains `rest` metadata that ordinary tool declarations remove. Effective backend `rest.readonly` wins over original requiredness: known readonly MCP input slots are optional and unconstrained, with descriptive/`rest` metadata retained, but clients should omit them. Resolve base `rest`, then shared `rest.form` for `form-view`/`form-create`/`filter`, then the exact backend-declared scene overlay. For `table`/`form`, use base plus that exact overlay; without a scene, use base metadata. Nested objects inherit the containing `rest.schemaScene` unless they declare their own. Do not independently impose a browser scene on upload, create or update. Visibility is not writability: neither a visible field nor a property present in the transport schema is necessarily writable, and hidden does not mean readonly.
+
 Confirm from the current upload contract that:
 
 - the argument location is the one actually declared (a flat object is not wrapped in `body` merely because the HTTP Action has a body);
@@ -59,11 +63,11 @@ For a current JSON/base64 upload contract, use canonical padded standard base64 
 For upload-and-bind, identify the writable image identity field by comparing the current read output, update input schema and Action descriptions. A field may be named differently from `imageId`; never assume a conventional name. Require all of the following before proceeding:
 
 - the user’s requested image purpose maps unambiguously to one declared stored identity field;
-- that field is accepted by the update input at the declared path and type;
+- that field is admitted as writable by the update operation at the declared path and type, not merely present as a readonly transport slot;
 - the read result supplies the existing resource identity and enough editable values for the update contract;
 - the update Action's current authorization and resource scope are independently available.
 
-Resolve the field's existing UI/REST metadata from the helper's full schema, not the sanitized ordinary tool declaration. For the supported `basic-image:formFieldImage` renderer, `rest.form.options.imageScene` selects the registered scene; `rest.form.options.relationName` pairs the stored identity with its resolved preview relation. Follow nested properties, references and the applicable declared scene overlay without inventing missing paths. `relationName` remains resource metadata, not part of the scene processing policy or an extra upload argument. Presentation metadata does not override validator requiredness or authorize writes.
+Resolve the field's existing UI/REST metadata from the helper's full schema, not the sanitized ordinary tool declaration. For the supported `basic-image:formFieldImage` renderer, `rest.form.options.imageScene` selects the registered scene; `rest.form.options.relationName` pairs the stored identity with its resolved preview relation. Follow nested properties, references and the applicable backend-declared scene overlay without inventing missing paths. `relationName` remains resource metadata, not part of the scene processing policy or an extra upload argument. Presentation hints do not grant authority; effective backend readonly is an input-sanitization rule, not merely a disabled browser control.
 
 If multiple image fields, targets, update Actions or scenes are plausible, ask the user to choose. For upload-only, require an unambiguous scene from current metadata or an explicit user-provided scene, then confirm it through the policy Action. Do not select by string similarity alone, infer a scene from a title or field name, or bind a provider resource ID, delivery URL, signed URL or preview object where the update contract requires the stored image identity.
 
@@ -77,15 +81,16 @@ The server's scene policy controls storage and visibility. A public image result
 
 When binding, call the selected read Action once before creating an image. Use its exact current argument shape and the target's supplied identity. Require a complete, non-deleted resource and enough values to satisfy every required update input. Stop before upload if the target is missing, inaccessible, ambiguous or returned in an incomplete projection.
 
-Project the read result onto the update input contract rather than copying the response blindly:
+Project the read result onto the update operation's writable input rather than copying the response blindly:
 
-- retain required editable scalar values and existing nested records that the update contract requires;
-- retain declared nested identities when preserving existing children;
-- omit root identity, instance/deletion/system metadata, derived fields, delivery URLs, resolved image view objects and UI-only fields unless the update schema explicitly accepts them;
+- recursively follow each object property and array element against the current operation schema and its references; omit readonly and undeclared data at every depth, not just the root;
+- preserve all unrelated writable scalar values, objects and nested collections the full update can overwrite, not just required fields; never infer nested deletion from omitted data or an incomplete read;
+- retain admitted writable nested identities and deletion controls when preserving existing children; never blanket-remove names such as `id` or `deleted`, since writability and meaning depend on their exact contract path;
+- omit root identity, instance/system metadata, derived fields, delivery URLs, resolved image view objects and UI-only fields unless the operation explicitly admits them as writable input; put path identities at their separately declared argument locations;
 - do not copy masked or transformed read values into a write unless the current update contract explicitly documents that representation as accepted;
-- preserve unrelated values and change only the intended image identity field.
+- preserve unrelated values and change only the intended writable image identity field; creating a replacement image does not authorize deleting nested records.
 
-Validate the projected body against the current update schema before uploading. An image-only patch is not valid when the update Action declares a complete body. Do not invent omitted defaults, relation parent IDs, deletion flags or concurrency/version fields.
+Use the same recursive operation-contract projection when composing the image-create/upload arguments, not the resource update contract or a copied image view. Validate the projected body against the current update schema before uploading. An image-only patch is not valid when the update Action declares a complete body. Do not invent omitted defaults, relation parent IDs, deletion flags or concurrency/version fields. A readonly field's former requiredness is not a reason to supply a placeholder.
 
 ## 5. Prepare a copy from the current policy and upload once
 
@@ -108,7 +113,7 @@ If the user requested upload only, return the safe acknowledged image fields per
 
 ## 6. Bind with a complete, current update call
 
-For upload-and-bind, replace only the resolved stored image identity in the previously validated update projection. Call the selected update Action once using its exact current flat or grouped argument contract. Keep path parameters, body wrappers and nested locations exactly as declared; do not add an artificial `image` or `body` wrapper.
+For upload-and-bind, obtain a fresh authorized complete resource read after upload and re-project it onto the current update input before binding, since preparation/upload may take time. Stop with the acknowledged image identity if this read is missing, denied or incomplete; do not re-upload. Replace only the resolved stored image identity. A fresh read does not prevent races: the backend must validate current authority, state and applicable preconditions. Honor supported version controls exactly; never invent them or promise concurrency protection. Call the selected update Action once using its exact current flat or grouped argument contract. Keep path parameters, body wrappers and nested locations exactly as declared; do not add an artificial `image` or `body` wrapper.
 
 A successful update response may be an empty or null completion acknowledgment. Treat it as an acknowledged dispatch result, not proof of read-back, affected-row count, resource existence after the call or deletion of the previous image. If the user needs verification, perform a new authorized read using the same selected resource and confirm only the declared image identity/relation fields. A verification read is separate from the mutation and does not grant additional permission.
 

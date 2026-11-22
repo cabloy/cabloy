@@ -17,6 +17,18 @@ export {
   summarizeToolQueries,
 } from './lib/controllerToolDiagnostics.ts';
 export { controllerToolQuery } from './lib/controllerToolQuery.ts';
+export {
+  resourcePageLinksResult,
+  resourcePageLinksTool,
+  resourcePageLinksToolName,
+  resolveResourcePageLink,
+  resolveResourcePageLinks,
+} from './lib/resourcePageLinks.ts';
+export type {
+  IResourcePageLink,
+  IResourcePageLinkRequest,
+  TypeResourcePage,
+} from './lib/resourcePageLinks.ts';
 export { createSharedBusinessToolServer } from './lib/sharedBusinessTools.ts';
 export { createBusinessTransport, fail as failBusinessTransport } from './lib/businessTransport.ts';
 export { handleMcpRequest, mcpTransportSnapshot, closeMcpTransport } from './lib/mcpTransport.ts';

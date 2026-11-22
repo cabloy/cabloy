@@ -324,7 +324,7 @@ For an operator calling through MCP, use a personal access token issued for the 
 
 Upload is a persisted, non-idempotent write. An error, timeout or lost response can happen after storage or image-record creation; automatic retry can create another image. The upload and a later business binding are separate writes, not one transaction. If binding fails after an acknowledged upload, retain the returned `id`, inspect the target resource with separately authorized reads, and explicitly complete the binding or arrange authorized cleanup of an unused image. Do not blindly re-upload, replay an uncertain update or delete an image that might already be referenced.
 
-For connected Agent clients, the optional [Cabloy MCP image skill](https://github.com/cabloy/cabloy/tree/main/repo-client-governance/skills/cabloy-mcp-image) packages contract discovery, scene-policy lookup, local preparation, upload and resource binding without a resource-specific command.
+For connected Agent clients, load the applicable [Cabloy MCP image Skill](https://github.com/cabloy/cabloy/tree/main/repo-client-governance/skills/cabloy-mcp-image) before policy/business reads or writes. Discovery and contract metadata lookup may precede loading; unsupported or unestablished loading means stop before business execution. This is a client workflow requirement, not server enforcement or an authorization grant. This more specific, self-contained Skill owns the entire preparation/upload/bind sequence, including resource read/update, without automatically loading the generic mutations Skill too.
 
 ## Direct upload
 

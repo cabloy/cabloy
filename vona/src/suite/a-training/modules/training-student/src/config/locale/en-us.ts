@@ -37,7 +37,7 @@ export default {
     'Read complete student details by ID using your current student-view permission and instance. Returns the existing serialized detail response, including masked mobile, Markdown content, nested training records and subjects, and optional image URL metadata.',
   StudentUpdate: 'Update Student',
   StudentUpdateDescription:
-    'Update a student using your current student-update permission and instance. First call training-student_student_view for params.id, change only the intended fields, and submit the complete update body with name, mobile and level, preserving editable content and training records with subjects. Project the read result onto the update input contract; do not copy readonly or derived fields. A mobile matching the masked format (three digits, four asterisks, remaining digits) preserves the stored mobile; other values are validated and written normally. Declared nested id/deleted controls can delete children. Returns null completion, not existence or read-back proof. Partial writes are possible; do not automatically replay after errors or uncertain responses.',
+    'Update a student using your current student-update permission and instance. Requires name, mobile and level; supports editable content and training records with subjects, excluding readonly or derived fields. A mobile matching the masked format (three digits, four asterisks, remaining digits) preserves the stored mobile; other values are validated and written normally. Declared nested id/deleted controls can delete children. Returns null completion, not existence or read-back proof. Partial writes are possible.',
   StudentSummary: 'View Student Summary',
   StudentSummaryDescription:
     'Read a student summary by ID using your current student-view permission and instance. Excludes mobile and full notes.',
@@ -51,6 +51,8 @@ export default {
   ForceDelete: 'Force Delete',
   BulkDelete: 'Bulk Delete',
   TrainingRecords: 'Student Training Records',
+  TrainingRecordsQueryDescription:
+    'The student’s non-deleted training records in the current instance and authorized related-query scope. Use exists for at least one qualifying record or notExists for none; optional where restricts records using the advertised child fields and operators. No qualifying visible record does not prove the student never attended training. Independent training-record select permission is required; denial fails the query rather than treating records as absent. Filters students only; does not load training-record details or expand the response fields.',
   AddTrainingRecord: 'Add Student Training Record',
   EditTrainingRecord: 'Edit Student Training Record',
   ViewTrainingRecord: 'View Student Training Record',

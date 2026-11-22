@@ -47,6 +47,8 @@ For suite-first ownership, the short name is `{providerId}-{suiteName}`; `suiteN
 
 First inspect active shared-site composition owners, extension points, independent-site conventions, and framework constraints. A capability module or an Admin audience alone does not require an independent site.
 
+For signed-in self-service journeys on an SSR site, check whether they belong in a personal center and, if so, whether to reuse the existing `mine` layout or propose a site-specific one. Keep this separate from the shared/independent site decision; see [personal-center discovery](references/repo-aware-discovery.md#personal-center-discovery).
+
 - If both Web and Admin strategies are unresolved, evaluate them separately, recommend contextually, and present one single-select decision: shared/shared, independent/shared, shared/independent, independent/independent. Keep Other for custom/no-site/deferred choices.
 - If only one audience is in scope or unresolved, ask only about that audience.
 - If an established strategy already governs the requested change, preserve it; do not repeat the four-way question absent a material change.

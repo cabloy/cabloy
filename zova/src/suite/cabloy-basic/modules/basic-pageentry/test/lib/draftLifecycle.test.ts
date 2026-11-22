@@ -80,6 +80,51 @@ const ControllerBlockPageEntry = evaluateController({
   h,
   ZButton: 'ZButton',
 });
+// The runtime @Use decorator supplies this property; the evaluator injects a stub instead.
+Object.defineProperty(ControllerBlockPageEntry.prototype, '$$modelResource', {
+  value: undefined,
+  writable: true,
+});
+
+test('create and update submit projected copies while page metadata retains original values', async () => {
+  for (const editMode of ['update', 'create']) {
+    const entry: any = new ControllerBlockPageEntry();
+    const values = { name: 'Edited name', server: 'Display only', unknown: 'View only' };
+    const original = structuredClone(values);
+    let submitted: any;
+    let metadata: any;
+    let removed = false;
+    entry.$props = { id: 7 };
+    entry.formMeta = { formMode: 'edit', editMode };
+    entry.$$modelResource = {
+      projectFormSubmitData(formMeta: typeof entry.formMeta, data: typeof values) {
+        assert.equal(formMeta, entry.formMeta);
+        assert.equal(data, values);
+        return { name: data.name };
+      },
+      getFormMutationSubmit() {
+        return {
+          mutateAsync: async (payload: any) => {
+            submitted = payload;
+          },
+        };
+      },
+    };
+    entry._removeDraft = async () => {
+      removed = true;
+    };
+    entry.setPageMeta = (data: any) => {
+      metadata = data;
+    };
+    await entry.submitData({ value: values });
+    assert.deepEqual(submitted, { name: 'Edited name' });
+    assert.notEqual(submitted, values);
+    assert.equal(metadata, values);
+    assert.deepEqual(values, original);
+    assert.equal(removed, true);
+    assert.equal(entry._dirty, false);
+  }
+});
 
 const baseline = {
   id: 7,

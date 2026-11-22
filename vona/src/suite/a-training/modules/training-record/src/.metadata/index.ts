@@ -138,6 +138,197 @@ declare module 'vona-module-a-orm' {
   }
 }
 /** model: end */
+/** dto: begin */
+export * from '../dto/detailRecordSubjectBase.tsx';
+export * from '../dto/detailRecordSubjectMutate.tsx';
+export * from '../dto/detailRecordSubjectResItem.tsx';
+export * from '../dto/detailRecordSubjectView.tsx';
+export * from '../dto/highestScoresBySubjectResItem.tsx';
+export * from '../dto/recordCreate.tsx';
+export * from '../dto/recordSelectReq.tsx';
+export * from '../dto/recordSelectRes.tsx';
+export * from '../dto/recordSelectResItem.tsx';
+export * from '../dto/recordUpdate.tsx';
+export * from '../dto/recordView.tsx';
+import type { IDtoOptionsDetailRecordSubjectBase } from '../dto/detailRecordSubjectBase.tsx';
+import type { IDtoOptionsDetailRecordSubjectMutate } from '../dto/detailRecordSubjectMutate.tsx';
+import type { IDtoOptionsDetailRecordSubjectResItem } from '../dto/detailRecordSubjectResItem.tsx';
+import type { IDtoOptionsDetailRecordSubjectView } from '../dto/detailRecordSubjectView.tsx';
+import type { IDtoOptionsHighestScoresBySubjectResItem } from '../dto/highestScoresBySubjectResItem.tsx';
+import type { IDtoOptionsRecordCreate } from '../dto/recordCreate.tsx';
+import type { IDtoOptionsRecordSelectReq } from '../dto/recordSelectReq.tsx';
+import type { IDtoOptionsRecordSelectRes } from '../dto/recordSelectRes.tsx';
+import type { IDtoOptionsRecordSelectResItem } from '../dto/recordSelectResItem.tsx';
+import type { IDtoOptionsRecordUpdate } from '../dto/recordUpdate.tsx';
+import type { IDtoOptionsRecordView } from '../dto/recordView.tsx';
+import 'vona-module-a-web';
+declare module 'vona-module-a-web' {
+
+    export interface IDtoRecord {
+      'training-record:detailRecordSubjectBase': IDtoOptionsDetailRecordSubjectBase;
+'training-record:detailRecordSubjectMutate': IDtoOptionsDetailRecordSubjectMutate;
+'training-record:detailRecordSubjectResItem': IDtoOptionsDetailRecordSubjectResItem;
+'training-record:detailRecordSubjectView': IDtoOptionsDetailRecordSubjectView;
+'training-record:highestScoresBySubjectResItem': IDtoOptionsHighestScoresBySubjectResItem;
+'training-record:recordCreate': IDtoOptionsRecordCreate;
+'training-record:recordSelectReq': IDtoOptionsRecordSelectReq;
+'training-record:recordSelectRes': IDtoOptionsRecordSelectRes;
+'training-record:recordSelectResItem': IDtoOptionsRecordSelectResItem;
+'training-record:recordUpdate': IDtoOptionsRecordUpdate;
+'training-record:recordView': IDtoOptionsRecordView;
+    }
+
+
+}
+declare module 'vona-module-training-record' {
+
+}
+/** dto: end */
+/** dto: begin */
+import type { DtoDetailRecordSubjectBase } from '../dto/detailRecordSubjectBase.tsx';
+import type { DtoDetailRecordSubjectMutate } from '../dto/detailRecordSubjectMutate.tsx';
+import type { DtoDetailRecordSubjectResItem } from '../dto/detailRecordSubjectResItem.tsx';
+import type { DtoDetailRecordSubjectView } from '../dto/detailRecordSubjectView.tsx';
+import type { DtoHighestScoresBySubjectResItem } from '../dto/highestScoresBySubjectResItem.tsx';
+import type { DtoRecordCreate } from '../dto/recordCreate.tsx';
+import type { DtoRecordSelectReq } from '../dto/recordSelectReq.tsx';
+import type { DtoRecordSelectRes } from '../dto/recordSelectRes.tsx';
+import type { DtoRecordSelectResItem } from '../dto/recordSelectResItem.tsx';
+import type { DtoRecordUpdate } from '../dto/recordUpdate.tsx';
+import type { DtoRecordView } from '../dto/recordView.tsx';
+declare module 'vona-module-training-record' {
+
+    export interface IDtoOptionsDetailRecordSubjectBase {
+      fields?: TypeEntityOptionsFields<DtoDetailRecordSubjectBase, IDtoOptionsDetailRecordSubjectBase[TypeSymbolKeyFieldsMore]>;
+    }
+
+    export interface IDtoOptionsDetailRecordSubjectMutate {
+      fields?: TypeEntityOptionsFields<DtoDetailRecordSubjectMutate, IDtoOptionsDetailRecordSubjectMutate[TypeSymbolKeyFieldsMore]>;
+    }
+
+    export interface IDtoOptionsDetailRecordSubjectResItem {
+      fields?: TypeEntityOptionsFields<DtoDetailRecordSubjectResItem, IDtoOptionsDetailRecordSubjectResItem[TypeSymbolKeyFieldsMore]>;
+    }
+
+    export interface IDtoOptionsDetailRecordSubjectView {
+      fields?: TypeEntityOptionsFields<DtoDetailRecordSubjectView, IDtoOptionsDetailRecordSubjectView[TypeSymbolKeyFieldsMore]>;
+    }
+
+    export interface IDtoOptionsHighestScoresBySubjectResItem {
+      fields?: TypeEntityOptionsFields<DtoHighestScoresBySubjectResItem, IDtoOptionsHighestScoresBySubjectResItem[TypeSymbolKeyFieldsMore]>;
+    }
+
+    export interface IDtoOptionsRecordCreate {
+      fields?: TypeEntityOptionsFields<DtoRecordCreate, IDtoOptionsRecordCreate[TypeSymbolKeyFieldsMore]>;
+    }
+
+    export interface IDtoOptionsRecordSelectReq {
+      fields?: TypeEntityOptionsFields<DtoRecordSelectReq, IDtoOptionsRecordSelectReq[TypeSymbolKeyFieldsMore]>;
+    }
+
+    export interface IDtoOptionsRecordSelectRes {
+      fields?: TypeEntityOptionsFields<DtoRecordSelectRes, IDtoOptionsRecordSelectRes[TypeSymbolKeyFieldsMore]>;
+    }
+
+    export interface IDtoOptionsRecordSelectResItem {
+      fields?: TypeEntityOptionsFields<DtoRecordSelectResItem, IDtoOptionsRecordSelectResItem[TypeSymbolKeyFieldsMore]>;
+    }
+
+    export interface IDtoOptionsRecordUpdate {
+      fields?: TypeEntityOptionsFields<DtoRecordUpdate, IDtoOptionsRecordUpdate[TypeSymbolKeyFieldsMore]>;
+    }
+
+    export interface IDtoOptionsRecordView {
+      fields?: TypeEntityOptionsFields<DtoRecordView, IDtoOptionsRecordView[TypeSymbolKeyFieldsMore]>;
+    }
+}
+/** dto: end */
+/** controller: begin */
+export * from '../controller/record.ts';
+import type { IControllerOptionsRecord } from '../controller/record.ts';
+import 'vona-module-a-web';
+declare module 'vona-module-a-web' {
+
+    export interface IControllerRecord {
+      'training-record:record': IControllerOptionsRecord;
+    }
+
+
+}
+declare module 'vona-module-training-record' {
+
+        export interface ControllerRecord {
+          /** @internal */
+          get scope(): ScopeModuleTrainingRecord;
+        }
+
+          export interface ControllerRecord {
+            get $beanFullName(): 'training-record.controller.record';
+            get $onionName(): 'training-record:record';
+            get $onionOptions(): IControllerOptionsRecord;
+          }
+}
+/** controller: end */
+/** controller: begin */
+// @ts-ignore ignore
+import type { ControllerRecord } from '../controller/record.ts';
+declare module 'vona-module-training-record' {
+
+    export interface IControllerOptionsRecord {
+      actions?: TypeControllerOptionsActions<ControllerRecord>;
+    }
+}
+declare module 'vona-module-a-web' {
+  export interface IApiPathPostRecord{
+        '/training/record': undefined;
+    }
+export interface IApiPathGetRecord{
+        '/training/record': undefined;
+'/training/record/highestScoresBySubject': undefined;
+'/training/record/:id': undefined;
+    }
+export interface IApiPathPatchRecord{
+        '/training/record/:id': undefined;
+    }
+export interface IApiPathDeleteRecord{
+        '/training/record/:id': undefined;
+    }
+
+}
+import 'vona-module-a-openapi';
+  declare module 'vona-module-a-openapi' {
+    export interface IResourceRecord {
+      'training-record:record': never;
+    }
+  }
+
+/** controller: end */
+/** imageScene: begin */
+export * from '../bean/imageScene.sceneImage.ts';
+
+import { type IDecoratorImageSceneOptions } from 'vona-module-a-image';
+declare module 'vona-module-a-image' {
+
+    export interface IImageSceneRecord {
+      'training-record:sceneImage': IDecoratorImageSceneOptions;
+    }
+
+
+}
+declare module 'vona-module-training-record' {
+
+        export interface ImageSceneSceneImage {
+          /** @internal */
+          get scope(): ScopeModuleTrainingRecord;
+        }
+
+          export interface ImageSceneSceneImage {
+            get $beanFullName(): 'training-record.imageScene.sceneImage';
+            get $onionName(): 'training-record:sceneImage';
+            get $onionOptions(): IDecoratorImageSceneOptions;
+          }
+}
+/** imageScene: end */
 /** service: begin */
 export * from '../service/record.ts';
 
@@ -216,162 +407,6 @@ declare module 'vona-module-training-record' {
           }
 }
 /** meta: end */
-/** dto: begin */
-export * from '../dto/detailRecordSubjectBase.tsx';
-export * from '../dto/detailRecordSubjectMutate.tsx';
-export * from '../dto/detailRecordSubjectResItem.tsx';
-export * from '../dto/detailRecordSubjectView.tsx';
-export * from '../dto/recordCreate.tsx';
-export * from '../dto/recordSelectReq.tsx';
-export * from '../dto/recordSelectRes.tsx';
-export * from '../dto/recordSelectResItem.tsx';
-export * from '../dto/recordUpdate.tsx';
-export * from '../dto/recordView.tsx';
-import type { IDtoOptionsDetailRecordSubjectBase } from '../dto/detailRecordSubjectBase.tsx';
-import type { IDtoOptionsDetailRecordSubjectMutate } from '../dto/detailRecordSubjectMutate.tsx';
-import type { IDtoOptionsDetailRecordSubjectResItem } from '../dto/detailRecordSubjectResItem.tsx';
-import type { IDtoOptionsDetailRecordSubjectView } from '../dto/detailRecordSubjectView.tsx';
-import type { IDtoOptionsRecordCreate } from '../dto/recordCreate.tsx';
-import type { IDtoOptionsRecordSelectReq } from '../dto/recordSelectReq.tsx';
-import type { IDtoOptionsRecordSelectRes } from '../dto/recordSelectRes.tsx';
-import type { IDtoOptionsRecordSelectResItem } from '../dto/recordSelectResItem.tsx';
-import type { IDtoOptionsRecordUpdate } from '../dto/recordUpdate.tsx';
-import type { IDtoOptionsRecordView } from '../dto/recordView.tsx';
-import 'vona-module-a-web';
-declare module 'vona-module-a-web' {
-
-    export interface IDtoRecord {
-      'training-record:detailRecordSubjectBase': IDtoOptionsDetailRecordSubjectBase;
-'training-record:detailRecordSubjectMutate': IDtoOptionsDetailRecordSubjectMutate;
-'training-record:detailRecordSubjectResItem': IDtoOptionsDetailRecordSubjectResItem;
-'training-record:detailRecordSubjectView': IDtoOptionsDetailRecordSubjectView;
-'training-record:recordCreate': IDtoOptionsRecordCreate;
-'training-record:recordSelectReq': IDtoOptionsRecordSelectReq;
-'training-record:recordSelectRes': IDtoOptionsRecordSelectRes;
-'training-record:recordSelectResItem': IDtoOptionsRecordSelectResItem;
-'training-record:recordUpdate': IDtoOptionsRecordUpdate;
-'training-record:recordView': IDtoOptionsRecordView;
-    }
-
-
-}
-declare module 'vona-module-training-record' {
-
-}
-/** dto: end */
-/** dto: begin */
-import type { DtoDetailRecordSubjectBase } from '../dto/detailRecordSubjectBase.tsx';
-import type { DtoDetailRecordSubjectMutate } from '../dto/detailRecordSubjectMutate.tsx';
-import type { DtoDetailRecordSubjectResItem } from '../dto/detailRecordSubjectResItem.tsx';
-import type { DtoDetailRecordSubjectView } from '../dto/detailRecordSubjectView.tsx';
-import type { DtoRecordCreate } from '../dto/recordCreate.tsx';
-import type { DtoRecordSelectReq } from '../dto/recordSelectReq.tsx';
-import type { DtoRecordSelectRes } from '../dto/recordSelectRes.tsx';
-import type { DtoRecordSelectResItem } from '../dto/recordSelectResItem.tsx';
-import type { DtoRecordUpdate } from '../dto/recordUpdate.tsx';
-import type { DtoRecordView } from '../dto/recordView.tsx';
-declare module 'vona-module-training-record' {
-
-    export interface IDtoOptionsDetailRecordSubjectBase {
-      fields?: TypeEntityOptionsFields<DtoDetailRecordSubjectBase, IDtoOptionsDetailRecordSubjectBase[TypeSymbolKeyFieldsMore]>;
-    }
-
-    export interface IDtoOptionsDetailRecordSubjectMutate {
-      fields?: TypeEntityOptionsFields<DtoDetailRecordSubjectMutate, IDtoOptionsDetailRecordSubjectMutate[TypeSymbolKeyFieldsMore]>;
-    }
-
-    export interface IDtoOptionsDetailRecordSubjectResItem {
-      fields?: TypeEntityOptionsFields<DtoDetailRecordSubjectResItem, IDtoOptionsDetailRecordSubjectResItem[TypeSymbolKeyFieldsMore]>;
-    }
-
-    export interface IDtoOptionsDetailRecordSubjectView {
-      fields?: TypeEntityOptionsFields<DtoDetailRecordSubjectView, IDtoOptionsDetailRecordSubjectView[TypeSymbolKeyFieldsMore]>;
-    }
-
-    export interface IDtoOptionsRecordCreate {
-      fields?: TypeEntityOptionsFields<DtoRecordCreate, IDtoOptionsRecordCreate[TypeSymbolKeyFieldsMore]>;
-    }
-
-    export interface IDtoOptionsRecordSelectReq {
-      fields?: TypeEntityOptionsFields<DtoRecordSelectReq, IDtoOptionsRecordSelectReq[TypeSymbolKeyFieldsMore]>;
-    }
-
-    export interface IDtoOptionsRecordSelectRes {
-      fields?: TypeEntityOptionsFields<DtoRecordSelectRes, IDtoOptionsRecordSelectRes[TypeSymbolKeyFieldsMore]>;
-    }
-
-    export interface IDtoOptionsRecordSelectResItem {
-      fields?: TypeEntityOptionsFields<DtoRecordSelectResItem, IDtoOptionsRecordSelectResItem[TypeSymbolKeyFieldsMore]>;
-    }
-
-    export interface IDtoOptionsRecordUpdate {
-      fields?: TypeEntityOptionsFields<DtoRecordUpdate, IDtoOptionsRecordUpdate[TypeSymbolKeyFieldsMore]>;
-    }
-
-    export interface IDtoOptionsRecordView {
-      fields?: TypeEntityOptionsFields<DtoRecordView, IDtoOptionsRecordView[TypeSymbolKeyFieldsMore]>;
-    }
-}
-/** dto: end */
-/** controller: begin */
-export * from '../controller/record.ts';
-import type { IControllerOptionsRecord } from '../controller/record.ts';
-import 'vona-module-a-web';
-declare module 'vona-module-a-web' {
-
-    export interface IControllerRecord {
-      'training-record:record': IControllerOptionsRecord;
-    }
-
-
-}
-declare module 'vona-module-training-record' {
-
-        export interface ControllerRecord {
-          /** @internal */
-          get scope(): ScopeModuleTrainingRecord;
-        }
-
-          export interface ControllerRecord {
-            get $beanFullName(): 'training-record.controller.record';
-            get $onionName(): 'training-record:record';
-            get $onionOptions(): IControllerOptionsRecord;
-          }
-}
-/** controller: end */
-/** controller: begin */
-// @ts-ignore ignore
-import type { ControllerRecord } from '../controller/record.ts';
-declare module 'vona-module-training-record' {
-
-    export interface IControllerOptionsRecord {
-      actions?: TypeControllerOptionsActions<ControllerRecord>;
-    }
-}
-declare module 'vona-module-a-web' {
-  export interface IApiPathPostRecord{
-        '/training/record': undefined;
-    }
-export interface IApiPathGetRecord{
-        '/training/record': undefined;
-'/training/record/:id': undefined;
-    }
-export interface IApiPathPatchRecord{
-        '/training/record/:id': undefined;
-    }
-export interface IApiPathDeleteRecord{
-        '/training/record/:id': undefined;
-    }
-
-}
-import 'vona-module-a-openapi';
-  declare module 'vona-module-a-openapi' {
-    export interface IResourceRecord {
-      'training-record:record': never;
-    }
-  }
-
-/** controller: end */
 /** ssrMenu: begin */
 export * from '../bean/ssrMenu.record.ts';
 import type { ISsrMenuOptionsRecord } from '../bean/ssrMenu.record.ts';
@@ -398,32 +433,6 @@ declare module 'vona-module-training-record' {
           }
 }
 /** ssrMenu: end */
-/** imageScene: begin */
-export * from '../bean/imageScene.sceneImage.ts';
-
-import { type IDecoratorImageSceneOptions } from 'vona-module-a-image';
-declare module 'vona-module-a-image' {
-
-    export interface IImageSceneRecord {
-      'training-record:sceneImage': IDecoratorImageSceneOptions;
-    }
-
-
-}
-declare module 'vona-module-training-record' {
-
-        export interface ImageSceneSceneImage {
-          /** @internal */
-          get scope(): ScopeModuleTrainingRecord;
-        }
-
-          export interface ImageSceneSceneImage {
-            get $beanFullName(): 'training-record.imageScene.sceneImage';
-            get $onionName(): 'training-record:sceneImage';
-            get $onionOptions(): IDecoratorImageSceneOptions;
-          }
-}
-/** imageScene: end */
 /** fileScene: begin */
 export * from '../bean/fileScene.dossierFile.ts';
 

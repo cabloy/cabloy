@@ -28,6 +28,13 @@ import { studentAnalysis } from '../lib/studentAnalysis.ts';
 
 export interface IControllerOptionsStudent extends IDecoratorControllerOptions {}
 
+const studentRelationActions = {
+  trainingRecords: {
+    controller: 'training-record.controller.record',
+    action: 'select',
+  },
+};
+
 @Controller<IControllerOptionsStudent>('student', {
   summary: $locale('StudentController'),
 })
@@ -59,7 +66,12 @@ export class ControllerStudent extends BeanBase {
     @Arg.filter(DtoStudentSelectReq) params: TypeQueryInput<typeof studentQuery>,
   ): Promise<DtoStudentSelectRes> {
     return await this.scope.service.student.select(
-      $compileQuery(this.scope.model.student, studentQuery, params),
+      $compileQuery(this.scope.model.student, studentQuery, params, {
+        relationScopes: await this.bean.permission.authorizeQueryRelations(
+          params.where,
+          studentRelationActions,
+        ),
+      }),
     );
   }
 
@@ -79,6 +91,10 @@ export class ControllerStudent extends BeanBase {
       $compileQuery(this.scope.model.student, studentQuery, params, {
         mode: 'group',
         analysis: studentAnalysis,
+        relationScopes: await this.bean.permission.authorizeQueryRelations(
+          params.where,
+          studentRelationActions,
+        ),
       }),
     );
   }
@@ -99,6 +115,10 @@ export class ControllerStudent extends BeanBase {
       $compileQuery(this.scope.model.student, studentQuery, params, {
         mode: 'aggregate',
         analysis: studentAnalysis,
+        relationScopes: await this.bean.permission.authorizeQueryRelations(
+          params.where,
+          studentRelationActions,
+        ),
       }),
     );
   }

@@ -54,7 +54,22 @@ Representative areas include:
 
 ## Cross-model query-cache dependencies
 
-When a mutation in one Model changes the members, totals, projections, includes, or visibility of a query cached by another Model, declare an explicit cross-model dependency. Decide this from **query-result semantics**, not merely from a relation or foreign key.
+When a mutation in one Model changes the members, ordering, totals, computed results, projections, includes, or visibility of a query cached by another Model, declare an explicit cross-model dependency. Decide this from **query-result semantics**, not merely from a relation or foreign key.
+
+### Check dependencies when changing cross-model queries
+
+Whenever adding or changing relation predicates (`exists` / `notExists`, including child conditions), related-field query `bindings`, joins, sorting, or aggregation, identify the Model that owns the cached query and the related sources whose mutations can change its result. Model relations and public query policies do not register these invalidation dependencies automatically.
+
+The two query directions below require different edges:
+
+| Cached query                                                               | Query-cache owner | Related source mutation                                                                    | Required invalidation direction |
+| -------------------------------------------------------------------------- | ----------------- | ------------------------------------------------------------------------------------------ | ------------------------------- |
+| Student `relations.trainingRecords` existence or child-condition filtering | Student           | Record create, score update, delete, or restore that changes whether the predicate matches | Record → Student                |
+| Record `bindings.studentName` filtering or sorting                         | Record            | Student rename, delete, or restore that changes matching rows or their order               | Student → Record                |
+
+Declare each required edge in the owning modules. Refreshing entity-cache entries does not repair a cached ID membership/order, total, or aggregate. Cache consistency is separate from Action authorization and dataScope; declaring an edge grants no query permission.
+
+Do not add edges solely because a relation exists. A query that explicitly bypasses caching does not itself require a query-cache dependency; check other cached consumers before omitting an edge. Add both directions only when both directions have real cached-result dependencies.
 
 ### Choose one directed declaration
 
@@ -65,15 +80,19 @@ Express each dependency as one source-to-target edge:
 
 They normalize to the same direction. Choose the form that makes local ownership clearest, but never declare both forms for the same edge.
 
-### Keep the graph acyclic
+### Cycle-safe default propagation
 
-Keep the dependency graph directed, acyclic, and free of duplicate edges. A normal target clear can propagate transitively to its own dependent query caches, so reverse or duplicate declarations are not a way to increase reliability.
+Default clearing follows the directed dependency graph transitively. Within one invalidation wave, the framework clears each effective Model query-cache namespace at most once, including self-references, cycles, and converging paths. Identity includes the Model, normalized datasource client, and effective table; different Model aliases over one table remain distinct cache owners.
+
+Declare each intended directed edge once. A reverse edge is appropriate only when the reverse query-result dependency also exists, not as an extra reliability measure. For example, Student queries filtered by Record existence need Record → Student; Record queries filtered or ordered by Student name also need Student → Record. Both query caches can remain enabled with these two dependencies.
+
+Each independent invalidation, transaction-commit re-clear, and configured delayed double-delete starts a fresh wave. Deduplication does not suppress a later clear after a cache has been rewarmed. This is traversal safety, not automatic discovery of dependencies from relations, joins, or public query bindings.
 
 The default behavior clears affected **query caches**. It does not make a cross-Model entity cache relationship, replace a lock, enforce uniqueness, or create a transaction boundary.
 
 ### Use custom clearing deliberately
 
-`modelsClearedByFn` replaces the normal target-clear behavior for that dependency. When using it, explicitly own the target clear and any required downstream propagation. Do not add it as if it were an additional callback around the normal path.
+`modelsClearedByFn(ctx, modelTarget, modelSource)` replaces the normal target-clear behavior for that dependency. When using it, explicitly own the target clear and any required downstream propagation. Do not add it as if it were an additional callback around the normal path. Callbacks retain their per-edge, source-specific behavior; default target deduplication does not combine callbacks from different sources. The cycle-safety guarantee covers default framework propagation, not arbitrary callback recursion: calling a normal clear entrypoint from a callback starts a new wave, so custom code must avoid re-entering its own cycle.
 
 Prefer normal Model or service mutation paths so source invalidation, transaction-aware re-clearing, and configured cache behavior remain active.
 

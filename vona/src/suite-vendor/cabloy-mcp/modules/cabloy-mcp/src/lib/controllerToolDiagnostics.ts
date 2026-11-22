@@ -19,6 +19,7 @@ interface IQueryDiagnosticInput {
 
 type QueryShape =
   | { field: string; op: string }
+  | { relation: string; op: string; where?: QueryShape }
   | { and: QueryShape[] }
   | { or: QueryShape[] }
   | { not: QueryShape }
@@ -40,6 +41,23 @@ export function summarizeToolQueries(inputs: IQueryDiagnosticInput[]) {
       name => !controlNames.has(name) && query?.[name] !== undefined,
     );
     if (names.length > 16 || names.some(name => name.length > 64)) truncated = true;
+    const projectChild = (node: any, relation: any, depth: number): QueryShape => {
+      if (remaining-- <= 0 || depth > 6 || !node || typeof node !== 'object') return trim();
+      if ('and' in node || 'or' in node) {
+        const key = 'and' in node ? 'and' : 'or';
+        if (!Array.isArray(node[key])) return trim();
+        return {
+          [key]: node[key].map((child: any) => projectChild(child, relation, depth + 1)),
+        } as QueryShape;
+      }
+      if ('not' in node) return { not: projectChild(node.not, relation, depth + 1) };
+      const field = Object.keys(relation.fields).find(name => name === node.field);
+      const op =
+        field &&
+        relation.fields[field].operators.find((candidate: string) => candidate === node.op);
+      if (!field || !op || field.length > 64) return trim();
+      return { field, op };
+    };
     const project = (node: any, depth: number): QueryShape => {
       if (remaining-- <= 0 || depth > 6 || !node || typeof node !== 'object') return trim();
       if ('and' in node || 'or' in node) {
@@ -56,6 +74,17 @@ export function summarizeToolQueries(inputs: IQueryDiagnosticInput[]) {
         return key === 'and' ? { and: children } : { or: children };
       }
       if ('not' in node) return { not: project(node.not, depth + 1) };
+      if ('relation' in node) {
+        const relation = policy.relations?.[node.relation];
+        if (!relation || !['exists', 'notExists'].includes(node.op)) return trim();
+        return {
+          relation: node.relation,
+          op: node.op,
+          ...(node.where === undefined
+            ? {}
+            : { where: projectChild(node.where, relation, depth + 1) }),
+        };
+      }
       const field = Object.keys(policy.fields).find(name => name === node.field);
       const op = field && policy.fields[field].operators.find(op => op === node.op);
       if (!field || !op || field.length > 64) return trim();

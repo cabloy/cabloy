@@ -62,13 +62,14 @@ function withoutCapabilities(schema: ToolSchema): ToolSchema {
 }
 
 function predicateLeaves(where: ToolSchema, schemas: Record<string, ToolSchema>): ToolSchema {
-  const predicate = resolveSchema(where, schemas);
-  const branches = predicate.anyOf;
-  if (!Array.isArray(branches)) throw new UnsupportedActionContract('Unsupported query predicate');
   const leaves: ToolSchema[] = [];
   const booleans = new Set<string>();
-  for (const branch of branches) {
-    const resolved = resolveSchema(branch, schemas);
+  function collect(schema: ToolSchema): void {
+    const resolved = resolveSchema(schema, schemas);
+    if (Array.isArray(resolved.anyOf)) {
+      for (const branch of resolved.anyOf) collect(branch);
+      return;
+    }
     const properties = resolved.properties ?? {};
     const names = Object.keys(properties);
     if (resolved.type !== 'object' || resolved.additionalProperties !== false) {
@@ -86,12 +87,35 @@ function predicateLeaves(where: ToolSchema, schemas: Record<string, ToolSchema>)
       }
       assertFinite(resolved, schemas);
       leaves.push(resolved);
+    } else if (names.includes('relation') && names.includes('op')) {
+      if (
+        names.some(name => !['relation', 'op', 'where'].includes(name)) ||
+        !resolved.required?.includes('relation') ||
+        !resolved.required?.includes('op') ||
+        (!properties.relation.const && !properties.relation.enum) ||
+        (!properties.op.const && !properties.op.enum)
+      ) {
+        throw new UnsupportedActionContract('Unsupported query relation predicate');
+      }
+      // Relation child predicates are described by the published relation
+      // capabilities. Keep this finite schema limited to the relation leaf so
+      // the recursive child predicate graph is never published here.
+      const finite = {
+        ...resolved,
+        properties: Object.fromEntries(
+          Object.entries(properties).filter(([name]) => name !== 'where'),
+        ),
+        required: (resolved.required ?? []).filter((name: string) => name !== 'where'),
+      };
+      assertFinite(finite, schemas);
+      leaves.push(finite);
     } else if (names.length === 1 && ['and', 'or', 'not'].includes(names[0])) {
       booleans.add(names[0]);
     } else {
       throw new UnsupportedActionContract('Unsupported query predicate branch');
     }
   }
+  collect(where);
   if (!leaves.length || booleans.size !== 3) {
     throw new UnsupportedActionContract('Incomplete query predicate');
   }

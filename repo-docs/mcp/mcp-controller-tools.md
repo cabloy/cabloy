@@ -44,14 +44,15 @@ See [CRUD Workflow](/backend/crud-workflow#generated-mcp-metadata-and-required-d
 
 ## Options and defaults
 
-| Option        | Meaning                                                                                                                                                                                                                                                                    |
-| ------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `name`        | Action-only public tool name override. The default is `module_controller_action`. Names must be unique and contain 1–128 letters, digits, `_` or `-`. Unsupported characters in the Controller identity are replaced by `_`; module-name hyphens are preserved.            |
-| `description` | Action-scoped text or locale metadata. Falls back to that Action's OpenAPI description, summary, then Controller/Action identity. A class-level description is not inherited.                                                                                              |
-| `readOnly`    | Action-local read classification. If absent, infers `true` for GET and `false` for other methods; no Controller default applies.                                                                                                                                           |
-| `ssrSites`    | Optional nonempty list of SSR Site bean onion names, for example `['commerce-siteweb:commerce']`. Omission admits every Site; `[]` is invalid. Simple Site IDs are not accepted. Filters construction before names, contracts and diagnostics, not business authorization. |
-| `output.pick` | Top-level object response field allowlist, applied to runtime validation/projection and the advertised schema closure. It does not alter the HTTP DTO.                                                                                                                     |
-| `discovery`   | Optional `{ input?: string[][]; output?: string[][] }` paths that compact selected object/array schemas in tool declarations only. Full contracts remain available through `cabloy_tool_contract`.                                                                         |
+| Option               | Meaning                                                                                                                                                                                                                                                                    |
+| -------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `name`               | Action-only public tool name override. The default is `module_controller_action`. Names must be unique and contain 1–128 letters, digits, `_` or `-`. Unsupported characters in the Controller identity are replaced by `_`; module-name hyphens are preserved.            |
+| `description`        | Action-scoped text or locale metadata. Falls back to that Action's OpenAPI description, summary, then Controller/Action identity. A class-level description is not inherited.                                                                                              |
+| `standardCrudUpdate` | Optional `boolean` classification for the generic full-CRUD reminder. Defaults to a registered Resource Controller's exact server Action `update` with effective `readOnly: false`; explicit `true`/`false` overrides inference.                                           |
+| `readOnly`           | Action-local read classification. If absent, infers `true` for GET and `false` for other methods; no Controller default applies.                                                                                                                                           |
+| `ssrSites`           | Optional nonempty list of SSR Site bean onion names, for example `['commerce-siteweb:commerce']`. Omission admits every Site; `[]` is invalid. Simple Site IDs are not accepted. Filters construction before names, contracts and diagnostics, not business authorization. |
+| `output.pick`        | Top-level object response field allowlist, applied to runtime validation/projection and the advertised schema closure. It does not alter the HTTP DTO.                                                                                                                     |
+| `discovery`          | Optional `{ input?: string[][]; output?: string[][] }` paths that compact selected object/array schemas in tool declarations only. Full contracts remain available through `cabloy_tool_contract`.                                                                         |
 
 All options are Action-local; no option is inherited from the Controller. `output.pick` is only the decorated Action's allowlist, not a merge with class defaults. Invalid names, duplicate names and unknown projection fields are configuration errors, not reasons to publish unvalidated output.
 
@@ -67,6 +68,18 @@ This Action can enter the `/mcp/commerce` catalog but not `/mcp/web`. `ssrSites`
 
 GET inference and `readOnly: true` are not proof that an Action has no side effects. Classify actual behavior accurately: a misleading classification weakens the read-only scope boundary.
 
+### Standard CRUD update guidance {#standard-crud-update-guidance}
+
+The optional `@Mcp.tool()` option `standardCrudUpdate?: boolean` classifies whether to append a tiny generic full-CRUD reminder. With no explicit value, it is enabled **only** when the Controller is registered as a Resource, the actual server Action is exactly `update`, and effective `readOnly` is `false`. Explicit `true` opts another appropriate Action in; explicit `false` suppresses inference for a Resource `update` whose established semantics differ. The public tool name (including a name override) and HTTP PATCH are not classifiers. Other PATCH Actions, `updatePatch`, and approve/publish/reject/cancel/archive commands do not automatically inherit full-CRUD semantics.
+
+The mapper preserves the selected business description and appends only: “Full CRUD update, not patch: use cabloy-mcp-mutations and read the current resource first.” This English reminder is not a field catalog or business policy. Keep localized business descriptions business-specific, including actual inputs, effects and material risks; do not replace them with duplicated generic workflow text. No CLI-template change is implied.
+
+For an already-connected client, load the self-contained [mutations Skill](https://github.com/cabloy/cabloy/tree/main/repo-client-governance/skills/cabloy-mcp-mutations) before ordinary mutation execution or its prerequisite business reads. Discovery and contract lookup can precede loading; if supported loading cannot be established, stop before business execution. The more specific image Skill owns its entire upload/bind sequence without automatically loading both. Query and navigation Skills are independent.
+
+For full CRUD update: fresh complete authorized view/read → recursively project onto the current operation's writable input → preserve unrelated writable fields and admitted nested IDs/deletion controls → apply requested edits → submit once. Project create values recursively against the create contract too; never assume the update contract applies. At every object and array-element depth, omit readonly and undeclared data without inventing defaults or blanket-removing names such as `id` or `deleted`. Visibility is not writability. Missing/denied/incomplete reads stop the update; never infer nested deletion. An explicit partial update uses its own omission/null contract; a business command uses its own command input, not a CRUD body. Validate whole `input`/`output` helper responses (`contractVersion: 1`, exact `tool`, requested `section`, usable schema and complete reference graph), on the same connection with the exact original names.
+
+Read-before-write does not prevent races or make an aggregate atomic. The backend must validate current authority, state and applicable preconditions at execution; honor supported version controls and never invent them. A declared null completion may be a valid acknowledgment, not proof of read-back or affected rows. Keep user intent/required confirmation bounded, and never blindly replay uncertain, failed or partially completed mutations. The reminder and required Skill loading are client workflow guidance, **not server enforcement**; server authorization, validation and business behavior are unchanged.
+
 ## Arguments and results
 
 Request contracts come from the existing Action's path parameters, query and JSON body:
@@ -78,25 +91,27 @@ Request contracts come from the existing Action's path parameters, query and JSO
 | Scalar or array body                                      | `{ "body": value }`                                                                                                                            |
 | No arguments                                              | Strict empty object `{}`                                                                                                                       |
 
-Unknown top-level arguments and unknown fields in location objects are rejected. Empty path-parameter strings are invalid because they cannot represent a route segment. Both the advertised contract and native Action validators apply. Schema-declared dates accept ISO date-time JSON strings and bind as native Dates without enabling broad HTTP query coercion. Clients cannot supply routes, methods, credentials, user/instance selectors or executor options through extra arguments.
+Unknown top-level arguments and unknown fields in location objects are rejected. Empty path-parameter strings are invalid because they cannot represent a route segment. MCP performs JSON/protocol boundary validation, then the ordinary guarded API path performs **one semantic parameter parse**; the mapper does not run a native preflight parse. Defaults, refinements and transforms are not executed a second time merely for MCP validation or failure diagnostics. Schema-declared dates accept ISO date-time JSON strings and bind as native Dates without enabling broad HTTP query coercion. Clients cannot supply routes, methods, credentials, user/instance selectors or executor options through extra arguments.
+
+Effective backend `rest.readonly` wins over original field requiredness. Known readonly properties are optional, unconstrained slots in the MCP input transport contract, retaining descriptive/`rest` metadata in the full helper schema; clients should omit them rather than fill them with placeholders. The canonical API input compiler recursively removes readonly definitions and submitted keys before strict, loose or catchall handling and semantic parsing, while preserving intentional output transforms without a final scrub. Other unknown keys follow the applicable contract/schema policy. Resolve the backend-declared or inherited scene rather than independently imposing browser scenes. See [Scene-aware readonly input sanitization](/backend/validation-guide#scene-aware-readonly-input-sanitization). These rules do not weaken independent scope, guards, business authorization or instance/data scope.
 
 Object results become `structuredContent` directly. Array and scalar results use `{ "result": value }`; a declared null result becomes `{ "result": null }`. JSON text content represents that same structured object. Results are validated; failed validation never falls back to raw Action output.
 
 An `undefined` result or a missing object resource represented by `null` returns an error tool result with safe text `Resource not found`. Authorization, unexpected Action and output-validation failures return `Action failed`, without raw exceptions or private data. Invalid arguments remain protocol errors.
 
-Ordinary Controller argument validation returns code `-32602`, message `Invalid tool arguments`, and bounded `data.issues`. Each issue contains only a `message` and a `path` array of string property names and numeric array indices. Native validation paths follow the final MCP arguments: flat bodies have no artificial `body` prefix; grouped inputs retain their `params`, `query` or `body` prefix. For example, a grouped body field can fail with:
+An actual API parameter-validation failure returns code `-32602`, message `Invalid tool arguments`, and bounded `data.issues`. Diagnostics are derived from that failure, not from another parse or an Action-thrown error that merely resembles validation. Each issue contains only a `message` and a `path` array of string property names and numeric array indices. Parameter-validation paths follow the final MCP arguments: flat bodies have no artificial `body` prefix; grouped inputs retain their `params`, `query` or `body` prefix. For example, a grouped body field can fail with:
 
 ```json
 {
   "code": -32602,
   "message": "Invalid tool arguments",
   "data": {
-    "issues": [{ "message": "Too big: expected number to be <=3", "path": ["body", "amount"] }]
+    "issues": [{ "message": "Invalid value", "path": ["body", "amount"] }]
   }
 }
 ```
 
-The example assumes a numeric maximum of 3. Standard constraint messages are rebuilt with Zod's built-in English messages, not copied from custom validator messages. Custom issues use `Invalid value`; unrecognized-key issues use `Unrecognized fields`. A path outside the public contract stops at its nearest public parent and uses `Invalid value`. Diagnostics contain at most 10 issues, 256 characters per message and 16 segments per path, with string segments limited to 128 characters. They are a bounded projection, not raw validator errors or a complete error catalog. When only JSON-contract validation rejects the arguments, such as an unknown field stripped by native object parsing, the issue is `{ "message": "Arguments do not match the input contract", "path": [] }`; the empty path identifies the argument root, not a guessed field. This Controller-mapper shape does not change the built-in contract helper's generic argument errors or expose exceptions thrown by an Action. Correct validation failures against the current input contract; these diagnostics do not authorize automatic mutation replay.
+The example assumes a custom native refinement on `amount` that is not expressed by the JSON transport schema. A maximum already expressed in JSON Schema would instead fail at the JSON boundary with the generic root issue below. Standard native constraint messages are rebuilt with Zod's built-in English messages, not copied from custom validator messages. Custom issues use `Invalid value`; unrecognized-key issues use `Unrecognized fields`. A path outside the public contract stops at its nearest public parent and uses `Invalid value`. Diagnostics contain at most 10 issues, 256 characters per message and 16 segments per path, with string segments limited to 128 characters. They are a bounded projection, not raw validator errors or a complete error catalog. When only JSON-contract validation rejects the arguments, such as an unknown field that ordinary native object parsing would otherwise strip, the issue is `{ "message": "Arguments do not match the input contract", "path": [] }`; the empty path identifies the argument root, not a guessed field. No native parse is run just to obtain a more specific diagnostic for this boundary failure. This Controller-mapper shape does not change the built-in contract helper's generic argument errors or expose exceptions thrown by an Action. Correct validation failures against the current input contract; these diagnostics do not authorize automatic mutation replay.
 
 Reviewed public-query validation failures retain their separate bounded `queryCode` / `path` diagnostics and a fixed `hint` directing the caller to `cabloy_tool_contract` with the failed tool's exact server name and `section: 'query'`. Retrieve the current contract and correct the arguments while preserving the intended filters; do not drop constraints to bypass validation. The hint is general guidance, not a diagnosis of the precise cause or an automatic retry. These errors never include SQL, operand values or a hidden-field catalog; ordinary argument, authorization and unexpected Action failures do not receive query repair hints.
 
@@ -104,14 +119,14 @@ Reviewed public-query validation failures retain their separate bounded `queryCo
 
 The scene-policy Action `POST /image/upload-policy` is exposed as **`a-image_image_getUploadPolicy`**, explicitly **`readOnly: true`** despite its HTTP POST route. Its current flat arguments are `{ imageScene }`. It returns effective upload limits and optional `processing` guidance (`enableCrop`, `cropAspectRatio`, `cropShape`, and `resize` with `width`, `height`, `fit`, `background`, `format`, `quality`). See the [upload-policy contract](/backend/image-guide#upload-policy).
 
-For a connected Agent, use this sequence before any write:
+For a connected Agent, establish loading of the more specific image Skill before policy/business reads or writes; it owns the entire upload/bind sequence, including resource update, without automatic double loading of the mutations Skill. Discovery and contract metadata lookup may precede loading. If supported loading cannot be established, stop before business execution; this client requirement does not add a server gate. Then:
 
 1. Select one connection, discover the policy and upload tools there, and retrieve each exact tool's current `input` and `output` through `cabloy_tool_contract`. For binding, also retrieve the authorized resource read output and complete update input.
 2. Resolve the intended stored image field and `rest.form.options.imageScene` from the current resource contract, including its own references and scene overlays. `relationName` remains resource metadata for preview pairing, not a policy option or upload argument. Never guess a scene from field names or old examples; clarify ambiguity before calling policy.
 3. After selecting the scene, call its current policy on the same connection. Validate the output and selected scene, then use upload limits plus `processing` to prepare a separate copy with supported client-side tooling. If required guidance is unsupported, stop before upload; absence is not permission to invent processing defaults. **Processing is client behavior guidance, not server normalization, output-dimension enforcement or a storage guarantee.**
 4. For binding, read the current resource and project a complete editable update body before upload, preserving unrelated values and nested identities. Validate the prepared bytes against both scene limits and the upload Action's fixed limits, upload once, then use the acknowledged canonical image identity in one full read-modify-update. An image-only patch is not a complete update contract.
 
-Browser resource image fields and the Agent both use the current scene upload limits and processing guidance, without duplicated field-level type, size or crop/resize overrides. The optional [image skill](https://github.com/cabloy/cabloy/tree/main/repo-client-governance/skills/cabloy-mcp-image) packages this workflow for already-connected clients without repository or credential access; MCP connection alone does not load it.
+Browser resource image fields and the Agent both use the current scene upload limits and processing guidance, without duplicated field-level type, size or crop/resize overrides. The self-contained [image Skill](https://github.com/cabloy/cabloy/tree/main/repo-client-governance/skills/cabloy-mcp-image) packages this workflow for already-connected clients without repository or credential access; MCP connection alone does not load it.
 
 The existing JSON Action `POST /image/upload-base64` is opted in as **`a-image_image_uploadBase64`**, with `readOnly: false`. It accepts one object-shaped JSON body, so its `tools/call` arguments are **flat**, without a `body` wrapper:
 
@@ -159,7 +174,7 @@ See [OpenAPI Guide](/backend/openapi-guide#generate-an-action-contract-for-mcp-j
 
 For query-enabled Actions, use the same policy-bound [public query contract](/backend/public-query-guide) as HTTP and generated UI clients. MCP uses a **compact discovery contract**: the formal tool keeps `where` as an object with its original optionality and a short description, rather than advertising the complete recursive predicate graph. This is a discovery representation, not a new query language or a relaxation of validation. The full native predicate, operand, policy and budget checks still run before ordinary guarded Action execution. Not every list Action exposes advanced controls.
 
-The mapper preserves the selected business description and appends centrally owned guidance to policy-bound query tools. It directs clients to `cabloy_tool_contract` with `section: 'query'` for the exact target, recommends one `where.or` call for alternatives, and explains that named filters add AND constraints. This applies to actual select/group/aggregate bindings, not all read-only tools or Actions named `select`. Shared guidance is in English; localized business descriptions remain intact. Refresh discovery after deployment. A client without an installed skill can follow the tool description, retrieve the contract and successfully execute the business query; a skill is not required for that workflow.
+For policy-bound query tools, the mapper preserves the selected business description and appends only a short `cabloy-mcp-query` Skill pointer. This applies to actual select/group/aggregate bindings, not all read-only tools or Actions named `select`. The Skill owns query composition, capability lookup and validation guidance; localized business descriptions remain intact. Refresh discovery after deployment. A client may discover this description and retrieve contract metadata before loading, but must establish the applicable query Skill's loading before business execution. If loading is unsupported or cannot be established, stop; the server does not enforce Skill loading.
 
 ### Compact selected declaration schemas
 
@@ -239,7 +254,9 @@ Resolve metadata in the returned schema document, following its own `$ref`/`$def
 
 For `basic-image:formFieldImage`, `rest.form.options.imageScene` selects the registered scene and `rest.form.options.relationName` pairs the ID field with its resolved preview relation. Resolve these options at the actual resource field and applicable scene overlay; do not flatten them into business arguments. Crop/resize guidance belongs to the scene's current upload-policy `processing`, not a duplicated resource-field recipe.
 
-These are presentation hints, not MCP authority. `readonly`, `visible`, `required`, `fieldSource` and `render` do not change the server validator, output projection, Action guard, scope or business result. A client skill must preserve the final MCP argument paths and requiredness from the contract; it must not turn a UI hint into an extra argument or a permission decision. The metadata may be absent, partial or unsuitable for the current client.
+Metadata is not MCP authority. Distinguish presentation hints from **effective backend `rest.readonly`**, which participates in canonical input compilation and takes precedence over original requiredness. Known readonly input slots are optional and unconstrained in the transport schema, with descriptive and `rest` metadata preserved here; their presence does not admit writable input, and clients should omit them. For `form-view`, `form-create` and `filter`, resolve base `rest`, then shared `rest.form`, then the exact scene overlay; for `table` and `form`, resolve base plus the exact scene. A nested DTO inherits the containing scene unless it declares its own `rest.schemaScene`. Without a declared/inherited scene, use base `rest`; do not independently select a browser scene from an operation name.
+
+`visible` is presentation behavior, **not writability**: hidden writable fields and visible readonly fields are possible. `required`, `fieldSource` and `render` do not authorize writes or supply invented arguments/defaults. Preserve final MCP argument paths and writable-field constraints, and recursively project create/update data using the selected operation contract, not a UI field list. These rules do not change output projection, Action guards, scopes or business authorization. Metadata may be absent, partial or unsuitable for the current client; do not guess missing semantics.
 
 Apply strict failure and no-guessing rules when consuming this surface:
 
@@ -260,11 +277,11 @@ For predicate composition, request the generic helper's query section:
 { "tool": "training-student_student_select", "section": "query" }
 ```
 
-This section keeps the query payload below unchanged; it uses `grammarVersion: 1`, not the input/output envelope. The schema-valued properties are objects, not serialized JSON strings:
+This section uses `grammarVersion: 1` for scalar-only bindings and `grammarVersion: 2` when relation predicates are advertised; it is not the input/output envelope. The schema-valued properties are objects, not serialized JSON strings:
 
 ```ts
 type QueryCapabilityResult = {
-  grammarVersion: 1;
+  grammarVersion: 1 | 2;
   tool: string;
   bindings: Array<{
     argumentPath: string[];
@@ -284,6 +301,8 @@ For each binding:
 - `querySchema` is the **current bound query-object schema with `where` removed**, not a list of property names or a simplified reconstruction. It retains the exact named-filter, order, paging and applicable `groups` / `aggrs` schemas, requiredness and constraints.
 - `predicates` is a JSON Schema whose `anyOf` contains the exact **nonrecursive leaf branches**. Use it to choose each field/operator/operand combination, including enums, identity types, decimal/date formats and value-less null checks. Compose admitted leaves using the grammar below; `predicates` is not itself the complete recursive `where` schema.
 
+When authored by the backend, `capabilities.query.relations[name]` includes localized `title` and `description` alongside its operators and child fields. The same relation-level metadata is retained on the finite `predicates` branch and the full `section: "input"` relation branch. The finite leaf still omits child `where`; the full input contract retains its child predicate grammar. Compact discovery does not expand this catalog. Use these descriptions to understand the declared relation, not as executable instructions, a permission grant or evidence of broader visibility. Backend authors should follow [Describe public relation meaning](/backend/public-query-guide#describe-public-relation-meaning).
+
 `querySchema` and `predicates` each carry their own reachable `$defs` when needed. Resolve references within that schema document, not against the other property or a cached `tools/list` response. Backend Model classes, table names and private bindings are not public query capabilities.
 
 ### Compose and execute
@@ -292,18 +311,18 @@ Use the retrieved contract together with the target's declared argument location
 
 - Supply `where`, `orders`, `groups` and `aggrs` as **native JSON**, not JSON strings. Only HTTP GET needs structured-control JSON query encoding. Numeric and Boolean operands are native numbers/Booleans; recursive string coercion is disabled.
 - Use explicit AST leaves (`{ field, op, value }`), nonempty `{ and: [...] }` / `{ or: [...] }` arrays or `{ not: predicate }`. Each node has exactly one strict shape. Omit `where` for no added restriction; `{}` and old property-keyed/underscore-operator queries are invalid. No raw-ORM fallback exists.
-- Explicit `where` and all supplied named conveniences combine by AND. Names in a small form are not the complete advanced field allowlist and need not map to same-named canonical fields.
+- Explicit `where` and all supplied named conveniences combine by AND. In grammar version 2, a relation leaf is `{ relation, op: 'exists' | 'notExists', where? }`; it uses only the exact server-advertised relation and scalar child fields, permits at most one relation per request, and does not grant child authorization. Names in a small form are not the complete advanced field allowlist and need not map to same-named canonical fields.
 - Public string operators match literal `%`, `_` and `!`; they do not accept client LIKE patterns. Use explicit null-check leaves without `value`, typed dates and offset-bearing timestamps as documented in the canonical guide.
 - Select uses structured orders and stable resource-id tie-breaking. Current projection is fixed: do not send `columns`. Group/aggregate reject list orders/projection/paging instead of ignoring them.
 - Shared query byte/node/depth/list/order/string budgets combine. The complete MCP JSON-RPC envelope has separate transport limits, including argument wrappers, so do not assume every semantic maximum fits one call.
 
 Compilation preserves service-owned scope AND client restrictions and ordinary ORM instance/deleted scope. The static query policy is not authorization. MCP adds no joins, Raw/Ref, execution identity, datasource/scope switches or cross-instance access. Refresh discovery/capabilities and generated consumers after backend policy changes; do not maintain a second MCP field catalog.
 
-### Optional end-user query skill
+### Required end-user query Skill
 
 The standalone [`cabloy-mcp-query` skill](https://github.com/cabloy/cabloy/tree/main/repo-client-governance/skills/cabloy-mcp-query) packages this discovery → capability lookup → native query workflow for an already-connected client. It needs no source checkout, development commands, environment files or credential access. Read the [end-user package README](https://github.com/cabloy/cabloy/tree/main/repo-client-governance) for its boundary and manual loading guidance.
 
-**Connecting to MCP does not install or load the skill.** Users must manually install or load the skill through their own client's supported mechanism; location, activation and session refresh are client-specific. No automatic installer, adapter generation or client registration is supplied or executed. The skill grants no authority and does not replace tool schemas or server validation.
+**Connecting to MCP does not install or load the skill.** Users must manually install or load the skill through their own client's supported mechanism; location, activation and session refresh are client-specific. No automatic installer, adapter generation or client registration is supplied or executed. Establish loading before business execution; unsupported or unestablished loading means stop rather than execute directly. Discovery and contract lookup may precede loading. This is a client workflow requirement, not server enforcement. The Skill grants no authority and does not replace tool schemas or server validation.
 
 ## Factory and authorization boundary
 
@@ -521,11 +540,11 @@ Keep raw `tools/list` JSON Schema, a client's model-visible declaration, and obs
 
 The Controller-tool mapper emits three diagnostic events through the `mcp` logger child of the existing default client at `debug`. Use the normal [Logger Guide](/backend/logger-guide#level-control-and-transport-behavior) controls, such as `LOGGER_CLIENT_DEFAULT=debug`, when investigating calls. Set `LOGGER_CHILD_DEFAULT=mcp` to filter the default client's diagnostics to this child. No separate MCP logger client, logging switch or audit store is involved.
 
-| Event                    | Meaning                                                                                                                                                             |
-| ------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `mcp.tool.call received` | The SDK reached the application `tools/call` callback with a request context. Malformed protocol envelopes can be rejected earlier.                                 |
-| `mcp.tool.call dispatch` | Existing argument validation passed and the mapper is about to invoke the ordinary guarded Action. This does not mean its guards have admitted the operation.       |
-| `mcp.tool.call settled`  | Server-side tool processing settled, with a fixed `outcome` and monotonic `durationMs`. This does not prove client receipt, rollback, or absence of partial writes. |
+| Event                    | Meaning                                                                                                                                                                        |
+| ------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `mcp.tool.call received` | The SDK reached the application `tools/call` callback with a request context. Malformed protocol envelopes can be rejected earlier.                                            |
+| `mcp.tool.call dispatch` | JSON/protocol boundary validation passed; the mapper is about to invoke the ordinary guarded API path. Semantic parameter parsing and guard admission are not yet established. |
+| `mcp.tool.call settled`  | Server-side tool processing settled, with a fixed `outcome` and monotonic `durationMs`. This does not prove client receipt, rollback, or absence of partial writes.            |
 
 Each event includes a server-generated `callId` and the admitted tool name. Unknown or scope-ineligible names use the fixed label `unavailable`, without reflecting caller text. A call rejected before dispatch has only received/settled events. Outcomes are `success`, `unavailable`, `invalid_arguments`, `resource_not_found` or `action_failed`; opaque Action failures do not expose an authorization reason or exception detail.
 

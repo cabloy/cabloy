@@ -1,5 +1,105 @@
 # Changelog
 
+## 5.1.294
+
+### Features
+
+- Add AI chat.
+
+### Improvements
+
+- Update the blog index tests.
+
+## 5.1.293
+
+### Features
+
+- Add feature updates (not detailed in the commit messages).
+
+### Improvements
+
+- Enhance the specification generation skill.
+- Update `controller.tsx`.
+
+## 5.1.292
+
+### Features
+
+- Add more actions.
+
+### Improvements
+
+- Update the student selection response item component.
+
+## 5.1.291
+
+### Features
+
+- Add query descriptions.
+- Add model clearing support.
+- Add the `modelsClearedBy` model capability.
+- Add relation scope queries.
+- Add update support.
+
+### Improvements
+
+- Update the public query guide.
+
+## 5.1.290
+
+### Features
+
+- Add relation query support.
+- Add student relation query support.
+- Add record update capabilities.
+- Add a blog post comparing SSR hydration in Zova and Next.js.
+
+## 5.1.289
+
+### Features
+
+- Add validation and schema support.
+- Add a skill for Cabloy MCP mutations.
+
+### Improvements
+
+- Update Koa to version 3.3.0.
+- Update access token tests.
+
+## 5.1.288
+
+### Features
+
+- Add form action editing.
+
+### Improvements
+
+- Add a blog post explaining why Cabloy/Vona has no NestJS dynamic module.
+- Update query and development database preparation tests.
+
+## 5.1.287
+
+### Features
+
+- Update functionality.
+
+## 5.1.286
+
+### Features
+
+- Add MCP resource pages support.
+- Add the `cabloy-mcp-resource-pages` skill.
+- Enhance MCP skills and documentation.
+
+### Bug Fixes
+
+- Fix `needHandleBorder` handling.
+- Resolve type-checking issues.
+
+### Improvements
+
+- Update business and local HTTP tests.
+
 ## 5.1.285
 
 ### Features

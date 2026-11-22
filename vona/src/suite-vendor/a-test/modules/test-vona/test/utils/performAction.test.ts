@@ -1,6 +1,7 @@
 import assert from 'node:assert';
 import { describe, it } from 'node:test';
 import { app, mockUrl } from 'vona-mock';
+import { SymbolValidationFailureCapture } from 'vona-module-a-executor';
 
 describe('performAction.test.ts', { concurrency: false }, () => {
   it('preserves results and errors without generic executor logs', async () => {
@@ -31,6 +32,31 @@ describe('performAction.test.ts', { concurrency: false }, () => {
       } finally {
         logger.off('data', observe);
       }
+    });
+  });
+  it('keeps validation observers local to their child dispatch', async () => {
+    await app.bean.executor.mockCtx(async () => {
+      const caller = app.ctx;
+      const state = caller.state;
+      const captures: string[] = [];
+      const capture = { capture: (location: string) => captures.push(location) };
+      await app.bean.executor.newCtx(
+        async () => {
+          const child = app.ctx;
+          const observer = child.state[SymbolValidationFailureCapture];
+          assert.equal(observer.context, child);
+          assert.equal(observer.capture, capture);
+          assert.notEqual(child.state, state);
+          await app.bean.executor.newCtx(async () => {
+            assert.equal(app.ctx.state[SymbolValidationFailureCapture], undefined);
+          });
+          assert.equal(child.state[SymbolValidationFailureCapture], observer);
+        },
+        { validationFailureCapture: capture },
+      );
+      assert.equal(caller.state, state);
+      assert.equal(state[SymbolValidationFailureCapture], undefined);
+      assert.deepEqual(captures, []);
     });
   });
   it('action:performAction', async () => {

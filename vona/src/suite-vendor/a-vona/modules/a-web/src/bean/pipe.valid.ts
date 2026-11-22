@@ -9,6 +9,8 @@ import type { ValidatorOptions } from 'vona-module-a-validation';
 import { BeanBase } from 'vona';
 import { createArgumentPipe, Pipe } from 'vona-module-a-aspect';
 
+import { parameterValidationFailure } from '../lib/validationFailure.ts';
+
 export type TypePipeValidData = unknown;
 
 export type TypePipeValidResult = TypePipeValidData;
@@ -37,7 +39,10 @@ export class PipeValid
       return await this.bean.validator.validateSchema(
         options.schema,
         value,
-        options,
+        {
+          ...options,
+          onValidationFailure: parameterValidationFailure(this.ctx, metadata),
+        },
         metadata.field,
       );
     }

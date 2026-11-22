@@ -46,9 +46,9 @@ That is important because many real validation cases need augmentation rather th
 
 ## Scene-aware readonly input sanitization
 
-DTO and field OpenAPI metadata can identify a Cabloy schema scene and its scene-specific field behavior. After a schema parses successfully, Vona removes each known property whose **effective** `rest` metadata resolves to `readonly: true` for that scene.
+DTO and field OpenAPI metadata can identify a Cabloy schema scene and its scene-specific field behavior. Vona's canonical API input compiler derives an executable input schema that removes each known property whose **effective** `rest` metadata resolves to `readonly: true`. It also removes those submitted keys recursively **before** the affected object applies strict, loose or catchall handling and semantic parsing.
 
-This is server-side input sanitization, not a browser-only disabled control and not a validation error. A caller cannot turn a read-only field into a write channel by bypassing a Zova form.
+This is server-side input sanitization, not a browser-only disabled control and not a validation error. Effective readonly wins over the property's original requiredness: an omitted or invalid submitted readonly value does not run that property's validators, defaults, refinements or transforms. A caller cannot turn a readonly field into a write channel by bypassing a Zova form. `visible` is independent presentation behavior, not writability.
 
 For `form-view`, `form-create`, and `filter`, Vona resolves field metadata in this order:
 
@@ -56,9 +56,9 @@ For `form-view`, `form-create`, and `filter`, Vona resolves field metadata in th
 2. shared `rest.form` metadata
 3. the exact scene metadata, such as `rest['form-create']`
 
-For `table` and `form`, only the base metadata and exact-scene metadata apply. A nested DTO inherits the containing scene unless it declares its own `rest.schemaScene`.
+For `table` and `form`, only the base metadata and exact-scene metadata apply. A nested DTO inherits the containing scene unless it declares its own `rest.schemaScene`. Without a declared or inherited scene, base `rest.readonly` still applies; do not independently impose a browser scene merely because an Action creates or updates a resource.
 
-The sanitization traverses nested DTO/object values and array elements, including framework lazy and chained schema composition. For example, a create request can prevent callers from supplying a line-item price while still accepting its quantity:
+The compiler traverses nested DTO/object values and array elements, including framework lazy and chained schema composition. It removes readonly definitions as well as submitted keys so a strict object does not reject them as unknown and a loose object or catchall cannot retain or validate them. Other unknown keys remain subject to the supplied Zod schema's normal policy; this is not blanket unknown-key removal. For example, a create request can prevent callers from supplying a line-item price while still accepting its quantity:
 
 ```typescript
 class DtoLineItem {
@@ -85,7 +85,15 @@ export class DtoOrderCreate extends $Dto.create(() => ModelOrder) {
 }
 ```
 
-Use DTO projection to omit a field that the API must never accept or return. Use scene-aware `readonly` when a field belongs to the schema but must be removed from write input for one contract scene. This sanitization is not response serialization; response payload shaping remains a separate concern in the [Serialization Guide](/backend/serialization-guide). General object parsing and unknown-key behavior still belong to the supplied Zod schema; readonly sanitization removes known protected fields only after successful parsing.
+Use DTO projection to omit a field that the API must never accept or return. Use scene-aware `readonly` when a field belongs to the schema but must be removed from caller input for that backend contract. Writable fields retain their normal parsing and requiredness. Object-level checks see the projected input, while intentional output transforms remain intact: there is **no final readonly scrub** of the parsed result. A transform may deliberately produce a server-computed property with the same name as a removed caller-input property; that is not caller write authority. This input compilation is not response serialization; response payload shaping remains a separate concern in the [Serialization Guide](/backend/serialization-guide).
+
+### MCP transport and client projection
+
+MCP retains JSON/protocol boundary validation and dispatches through the ordinary guarded API path for **one semantic parameter parse**. It does not run a native preflight parse in the mapper or reparse arguments to diagnose a JSON-contract failure. This avoids executing defaults, refinements or transforms twice. Actual API parameter-validation failures can yield bounded, safe public-path diagnostics; a JSON-only rejection uses a generic root diagnostic rather than guessing a field. See [MCP arguments and results](/mcp/mcp-controller-tools#arguments-and-results).
+
+Known readonly properties remain optional, unconstrained slots in the MCP **input transport contract**, even when the original DTO property was required. Descriptive metadata and `rest` metadata remain in the full `cabloy_tool_contract` input schema; ordinary tool declarations sanitize schema-position `rest`. This transport representation does not make the property writable: clients should omit it, and the backend strips it before semantic parsing.
+
+For both create and update, a client projects values recursively against the selected operation's current contract, omitting readonly and undeclared data at every object/array depth without inventing defaults. Preserve admitted writable nested IDs and deletion controls; never remove fields solely because they are named `id` or `deleted`. Visibility does not select the writable set, and a client must not independently choose browser scenes. Full CRUD updates still need a fresh complete authorized read and preservation of unrelated writable state; projection alone is not permission, concurrency control or replay safety. MCP scopes, Action guards, business authorization and instance/data scope remain independent.
 
 A useful distinction is:
 

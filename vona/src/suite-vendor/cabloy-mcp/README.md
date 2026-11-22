@@ -10,9 +10,12 @@ Public usage documentation is published in the formal MCP documentation section;
 - [MCP Controller Tools](../../../../repo-docs/mcp/mcp-controller-tools.md): decorator options, argument/result mapping, examples and diagnostics.
 - [MCP Browser Authorization](../../../../repo-docs/mcp/mcp-browser-authorization.md): registration, login, consent, tokens and personal scopes.
 - [Personal MCP Access Tokens](../../../../repo-docs/mcp/mcp-access-tokens.md): independent Account Security page, one-time token creation, finite lifetimes, status and deletion for clients without OAuth support.
-- [Connected-client Query Guide](../../../../repo-docs/mcp/mcp-query-guide.md): compact declarations, exact-target `cabloy_tool_contract` lookup and native query composition, with or without an optional skill.
+- [Connected-client Query Guide](../../../../repo-docs/mcp/mcp-query-guide.md): compact declarations, exact-target `cabloy_tool_contract` lookup and native query composition after loading the applicable client Skill.
 - [Log out from an MCP client](../../../../repo-docs/mcp/mcp-browser-authorization.md#log-out-from-an-mcp-client): revoke the current OAuth authorization or personal access token through `cabloy_logout`, including shared-credential effects and reconnect requirements.
-- [End-user client skills](../../../../repo-client-governance/README.md): standalone skill packaging and manual client loading, independent of repository-development adapters.
+- [End-user client skills](../../../../repo-client-governance/README.md): standalone Skill catalog, packaging and manual client loading, independent of repository-development adapters.
+- [End-user mutations Skill](../../../../repo-client-governance/skills/cabloy-mcp-mutations/SKILL.md): ordinary create/delete, complete aggregate read-modify-update, explicit partial contracts and business commands without blind replay.
+
+Load the applicable Skill before business execution; discovery and contract metadata lookup may precede loading. If loading is unsupported or cannot be established, stop before execution. This is a client workflow requirement, not server enforcement. The more specific image Skill owns the entire upload/bind sequence without automatically loading the mutations Skill too; query and navigation Skills remain independent and self-contained. Server authorization and validation are unchanged.
 
 ## Suite ownership
 

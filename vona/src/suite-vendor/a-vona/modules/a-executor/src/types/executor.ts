@@ -10,6 +10,17 @@ import type { ConfigOnions } from 'vona-module-a-onion';
 import type { IDbInfo, ITransactionOptions } from 'vona-module-a-orm';
 
 export const SymbolRouterMiddleware = Symbol('SymbolRouterMiddleware');
+export const SymbolActionQuery = Symbol('SymbolActionQuery');
+export const SymbolValidationFailureCapture = Symbol('SymbolValidationFailureCapture');
+
+export interface IValidationFailureCapture {
+  capture(location: string, issues: unknown[]): void;
+}
+
+export interface IValidationFailureObserver {
+  context: VonaContext;
+  capture: IValidationFailureCapture;
+}
 
 export interface INewCtxExtraData {
   state?: ContextState;
@@ -43,6 +54,7 @@ export interface INewCtxBaseOptions {
   transactionOptions?: ITransactionOptions;
   extraData?: INewCtxExtraData | undefined;
   innerAccess?: boolean;
+  validationFailureCapture?: IValidationFailureCapture;
   req?: any;
   res?: any;
 }
@@ -53,11 +65,15 @@ export interface IPerformActionOptions {
   innerAccess?: boolean;
   params?: object;
   query?: object;
+  /** Preserve internal JSON query types instead of reparsing their URL encoding. */
+  queryNative?: boolean;
   headers?: object;
   body?: any;
   onions?: PowerPartial<ConfigOnions>;
   authToken?: string;
   extraData?: INewCtxExtraData | undefined;
+  /** Internal per-dispatch validation diagnostics; never serialized. */
+  validationFailureCapture?: IValidationFailureCapture;
 }
 
 export interface IGeneralInfoOptions {

@@ -96,6 +96,9 @@ Every node has exactly one strict shape:
 - `{ and: [predicate, ...] }`
 - `{ or: [predicate, ...] }`
 - `{ not: predicate }`
+- `{ relation, op: 'exists' | 'notExists', where?: scalarPredicate }` for explicitly registered one-level relations
+
+A relation's optional child `where` admits scalar leaves and Boolean groups only. A complete normalized request admits at most one relation predicate; child ordering, paging, projection, analysis, joins, arbitrary SQL/Raw/Ref, `deleted` and `includeDeleted` controls are not public capabilities. Relation existence filtering is separate from relation loading and does not change fixed parent projection. The compiler applies the parent and child instance/active-record scope. Additional child authorization is an explicit execution-time responsibility of the action or service; ordinary model `prepareWhere` is not an RBAC authorization hook, and static policy metadata is not authorization.
 
 Boolean arrays are nonempty. Omit `where` when there is no client restriction; `where: {}` is invalid. Repeated fields belong in separate leaves, not duplicate JSON keys. Reject mixed node shapes, unknown properties, fields and operators, malformed operands and old underscore operators. A public field is a logical identifier, not a table name, dotted relation path or SQL expression.
 
@@ -211,6 +214,49 @@ mandatory server scope AND canonical client predicate
 
 Never spread client predicates over ownership/state/visibility predicates. Client OR/NOT stays inside the client restriction and cannot replace server scope. Apply required scope before pagination or aggregation, never by filtering results afterward. ORM-owned instance and soft-delete constraints remain active. Controller preparation does not move business authorization out of services: services still enforce their business rules and any additional ownership/state/visibility restrictions.
 
+### Authorize relation existence independently
+
+Parent `scopeWhere` is not automatically copied into relation subqueries. The parent and child may have different select permissions, owner fields, or department scopes. Denying child access must reject the relation query, not substitute an empty child set: an empty set would make `notExists` succeed.
+
+In the Student example, `trainingRecords` is declared with `authorizationRequired: true`. Before compiling a request that references it, the action authorizes the registered Record `select` action through `bean.permission.authorizeControllerActionQueryScope('training-record.controller.record', 'select')`. This uncached guard-only check runs in a child execution context, does not invoke the Record controller, and does not replace the parent Action's RBAC decision:
+
+- A target protected by `@Passport.systemAdmin()` requires the actual `systemAdmin` role guard.
+- An RBAC target requires its own allowed Action decision. When its `dataScope` is enabled, the target's scope is captured during that authorization; admission-only RBAC does not invent a row restriction.
+- Missing, denied, or unsupported target authorization fails closed. The helper is not a substitute for resource-specific business rules or response authorization.
+
+For reusable preparation, `getQueryRelationNames(predicate)` from `vona-module-a-orm` collects distinct relation names in a validated query AST. `bean.permission.authorizeQueryRelations(predicate, bindings)` handles traversal and authorization together, using explicit **server-authored** relation-to-Action bindings:
+
+```ts
+const relationActions = {
+  trainingRecords: {
+    controller: 'training-record.controller.record',
+    action: 'select',
+  },
+};
+
+const compiled = $compileQuery(this.scope.model.student, studentQuery, params, {
+  scopeWhere: rbacScopeCurrent.where(),
+  relationScopes: await this.bean.permission.authorizeQueryRelations(params.where, relationActions),
+});
+```
+
+The helper authorizes each distinct referenced relation once, skips unused bindings, and returns `undefined` without child permission checks for relation-free requests. Missing, inherited, or malformed referenced bindings are configuration errors, not unrestricted access. Do not infer authorization targets from model names or accept these bindings from clients. Query validation and complexity budgets still apply before traversal; the collector itself is not a validator.
+
+The action supplies the result as **server-only** `relationScopes`, in addition to its existing parent `scopeWhere`. The compiler requires an own entry for each used authorization-required relation. An own entry with `undefined` means explicitly authorized unrestricted child access; an absent entry is an error. Neither these scopes nor controller/action identities are public query input or MCP capabilities.
+
+Inside `EXISTS` and `NOT EXISTS`, the compiler combines:
+
+```text
+child instance/active-row scope
+AND relation correlation
+AND trusted child authorization scope
+AND public child scalar predicate
+```
+
+Consequently, `notExists` means **no matching child visible under the authorized child scope**. It means global absence within the active instance only when child access is unrestricted. Relation filtering still does not load child data or enlarge the parent response projection. Use the same preparation for select, group, aggregate and list totals; ordinary requests that do not use the relation do not require child select permission.
+
+These helpers are shared by Cabloy Basic and Cabloy Start, but the business Action configuration determines row-scope behavior. Basic's Student and Record example uses admission-only RBAC: callers authorized for both Actions may use relation filters, without an additional child row restriction. Start's data-scoped example also supplies the independently authorized parent and child scopes. For an admission-only parent, omit `scopeWhere` from the example above rather than inventing a row scope. Fixed related-field bindings remain a separate policy surface; this mechanism does not automatically add dataScope to binding joins.
+
 ### Dedicated business-scoped service contracts remain valid
 
 This Resource handoff is not a ban on services accepting public query business contracts. A dedicated self-service method may own compilation when it accepts explicit caller identity and defines its own mandatory business scope, rather than depending implicitly on the current Resource Action's RBAC decision:
@@ -227,7 +273,31 @@ async selectMine(userId: TableIdentity, input?: TypeQueryInput<typeof reportQuer
 
 The self-service controller supplies `user.id` from `@Arg.user()`, never a query/body identity. Keep any additional business authorization in this service. Such a contract compiles its public input once with its business scope; it must not recompile already-trusted Resource ORM parameters. See [Service Guide](/backend/service-guide#pass-user-identity-explicitly).
 
-Fixed related-field bindings are server-owned and target a deterministic scalar/id relationship. The complete Boolean filter is evaluated in one main-ID membership subquery, avoiding parent-row fan-out and preserving repeated-field, OR and NOT semantics. Related models retain their instance/deleted scope; additional business visibility still needs a deliberate server-side design. This is not arbitrary joins, many-side traversal or a public relation graph. Response `include` remains independent of parent membership. Declare and verify cross-model cache dependencies when related-source mutations affect warmed queries; see [Cache Guide](/backend/cache-guide#cross-model-query-cache-dependencies).
+Fixed related-field bindings are server-owned and target a deterministic scalar/id relationship. The complete Boolean filter is evaluated in one main-ID membership subquery, avoiding parent-row fan-out and preserving repeated-field, OR and NOT semantics. Related models retain their instance/deleted scope; additional business visibility still needs a deliberate server-side design. This is not arbitrary joins, many-side traversal or a public relation graph. Response `include` remains independent of parent membership.
+
+### Describe public relation meaning
+
+A query relation may declare optional `title` and `description` alongside its server-only mapping. Author the meaning of that **query relation**, rather than expecting clients to infer it from the relation identifier or the target Model:
+
+```ts
+relations: {
+  trainingRecords: {
+    title: $locale('TrainingRecords'),
+    description: $locale('TrainingRecordsQueryDescription'),
+    // Existing type, modelLike, key, fields and authorization configuration
+  },
+},
+```
+
+Import `$locale` from the owning module's generated locale helper and author its keys in the module's locale dictionaries. Plain strings are supported for literal metadata. Keep locale wrappers deferred: do not resolve a current-request translation while constructing a startup-stable policy or cached predicate schema.
+
+These values are published on the relation's query-capability entry and OpenAPI predicate object. MCP preserves them in query capabilities, finite relation leaves and the full input contract; compact discovery remains compact. Relations without configured metadata retain their existing shape.
+
+Explain what records qualify, how optional child conditions affect `exists` / `notExists`, and any material visibility or projection boundary. For example, no qualifying visible training record is not proof that a student never attended training. Descriptions do not grant child access, enforce scopes, load relation details or expand response fields; keep enforcement in the existing authorization and compilation paths. See the [MCP query contract](/mcp/mcp-controller-tools#compose-and-execute) for client usage.
+
+### Check cache dependencies for relations and bindings
+
+Adding or changing policy `relations` (`exists` / `notExists`, including child conditions) or related-field `bindings` requires a cache-dependency check. Neither surface automatically registers invalidation dependencies. When a related-source mutation changes a cached query's membership, ordering, total, or aggregate, declare the source → query-cache-owner dependency in the owning modules and verify a warmed query after the mutation. Do not infer a reverse dependency merely from the relation. See [Cross-model query-cache dependencies](/backend/cache-guide#cross-model-query-cache-dependencies) for direction examples, configuration choices, and cache-bypass boundaries.
 
 ## Group and aggregate Actions
 

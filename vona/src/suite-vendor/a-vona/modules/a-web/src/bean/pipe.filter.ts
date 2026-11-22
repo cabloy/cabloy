@@ -29,6 +29,7 @@ import {
 import type { IFilterTransformRecord, IFilterTransformWhere } from '../types/filterTransform.ts';
 
 import { filterControlNames } from '../lib/analysisFilter.ts';
+import { parameterValidationFailure } from '../lib/validationFailure.ts';
 
 export type TypePipeFilterData = Record<string, unknown>;
 export type TypePipeFilterResult = TypeQueryInput;
@@ -65,7 +66,11 @@ export class PipeFilter
     }
     if (!!options.analysis !== !!options.analysisMode)
       throw new TypeError('Analysis filter requires both a policy and an action mode');
-    const object = ZodMetadata.unwrapChained(options.schema) as z.ZodObject;
+    options = {
+      ...options,
+      onValidationFailure: parameterValidationFailure(this.ctx, metadata),
+    };
+    const object = ZodMetadata.unwrapChained(options.schema!) as z.ZodObject;
     if (object.type !== 'object') throw new TypeError('Filter requires an object schema');
     const limits = options.query?.limits ?? queryDefaultLimits;
     // Bound bytes and graph traversal before JSON decoding, without applying leaf-string

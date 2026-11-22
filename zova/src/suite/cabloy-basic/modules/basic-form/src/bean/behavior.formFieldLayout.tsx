@@ -68,8 +68,14 @@ export class BehaviorFormFieldLayout extends BeanBehaviorBase<
     const field = this.$$formField.field;
     const layout = renderContext.propsBucket.layout;
     // needHandleBorder
-    renderContext.propsBucket.needHandleBorder = layout?.disable || !layout?.inline;
-    const vnode = next(renderContext);
+    const renderContextNext = {
+      ...renderContext,
+      propsBucket: {
+        ...renderContext.propsBucket,
+        needHandleBorder: layout?.disable || !layout?.inline,
+      },
+    };
+    const vnode = next(renderContextNext);
     if (layout?.disable) return vnode;
     const error = field.state.meta.errors[0] as z.ZodError | undefined;
     if (layout?.inline) {

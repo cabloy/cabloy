@@ -1,5 +1,20 @@
 export default {
   AverageScore: 'Average Score',
+  RecordSelect: 'List Training Records',
+  RecordSelectDescription:
+    'Select non-deleted training records in the current instance using your current training-record select permission. Returns the existing paginated serialized response with the visible student projection.',
+  RecordView: 'View Training Record',
+  RecordViewDescription:
+    'Read one non-deleted training record in the current instance by ID using your current training-record view permission. Returns the existing serialized detail response, including its visible student, subjects, and file/image metadata.',
+  HighestScoresBySubject: 'Find Highest Scores by Subject',
+  HighestScoresBySubjectDescription:
+    'Using your current training-record select permission, inspect visible non-deleted records, students, and subjects in the current instance. Group exact subject names and return every source subject row tied for the highest score, including its student and training-record identity. Returns an empty array when no qualifying subject exists and accepts no input filters.',
+  SubjectRecordId: 'Subject Record ID',
+  SubjectName: 'Subject Name',
+  SubjectScore: 'Subject Score',
+  TrainingRecordId: 'Training Record ID',
+  StudentId: 'Student ID',
+  StudentName: 'Student Name',
   Description: 'Description',
   Operations: 'Operations',
   Student: 'Student',

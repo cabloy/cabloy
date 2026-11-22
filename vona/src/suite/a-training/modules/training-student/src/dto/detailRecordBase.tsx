@@ -42,6 +42,7 @@ export class DtoDetailRecordBase extends $Dto.get(() => ModelRecord, {
 }) {
   @Api.field(
     ZovaRender.visible(false),
+    ZovaRender.readonly(true),
     v.optional(),
     v.serializerTransform('a-image:resolveViews', {
       fieldName: 'sceneImageIds',
@@ -55,6 +56,7 @@ export class DtoDetailRecordBase extends $Dto.get(() => ModelRecord, {
   @Api.field(
     v.title($locale('DossierFiles')),
     ZovaRender.visible(false),
+    ZovaRender.readonly(true),
     v.optional(),
     v.serializerTransform('a-file:resolveViews', {
       fieldName: 'dossierFileIds',

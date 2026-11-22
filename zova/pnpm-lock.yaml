@@ -294,7 +294,7 @@ importers:
         specifier: workspace:^
         version: link:packages-zova/zova
       zova-jsx:
-        specifier: ^1.1.104
+        specifier: ^1.1.105
         version: link:packages-utils/zova-jsx
       zova-module-a-api:
         specifier: workspace:^
@@ -884,7 +884,7 @@ importers:
         specifier: ^3.5.38
         version: 3.5.42(typescript@5.9.3)
       zova-core:
-        specifier: ^5.1.104
+        specifier: ^5.1.105
         version: link:../../packages-zova/zova-core
     devDependencies:
       clean-package:
@@ -1025,10 +1025,10 @@ importers:
   packages-zova/zova:
     dependencies:
       zova-core:
-        specifier: ^5.1.104
+        specifier: ^5.1.105
         version: link:../zova-core
       zova-suite-a-zova:
-        specifier: ^5.1.192
+        specifier: ^5.1.195
         version: link:../../src/suite-vendor/a-zova
     devDependencies:
       clean-package:
@@ -1089,8 +1089,8 @@ importers:
         specifier: ^1.1.10
         version: 1.1.10
       '@cabloy/zod-query':
-        specifier: ^2.1.19
-        version: 2.1.19
+        specifier: ^2.1.20
+        version: 2.1.20
       '@types/js-cookie':
         specifier: ^3.0.6
         version: 3.0.6
@@ -1138,7 +1138,7 @@ importers:
         specifier: ^5.0.4
         version: link:modules/a-rbac
       zova-module-rest-resource:
-        specifier: ^5.1.61
+        specifier: ^5.1.62
         version: link:modules/rest-resource
 
   src/suite-vendor/a-cabloy/modules/a-layoutprofile:
@@ -1261,7 +1261,7 @@ importers:
         specifier: ^5.1.41
         version: link:modules/a-model
       zova-module-a-openapi:
-        specifier: ^5.1.65
+        specifier: ^5.1.67
         version: link:modules/a-openapi
       zova-module-a-router:
         specifier: ^5.1.46
@@ -1288,10 +1288,10 @@ importers:
         specifier: ^5.1.51
         version: link:modules/a-table
       zova-module-a-zod:
-        specifier: ^5.1.44
+        specifier: ^5.1.45
         version: link:modules/a-zod
       zova-module-a-zova:
-        specifier: ^5.1.124
+        specifier: ^5.1.125
         version: link:modules/a-zova
 
   src/suite-vendor/a-zova/modules/a-api:
@@ -1581,8 +1581,8 @@ importers:
         specifier: ^1.1.10
         version: 1.1.10
       '@cabloy/zod-query':
-        specifier: ^2.1.19
-        version: 2.1.19
+        specifier: ^2.1.20
+        version: 2.1.20
       zod:
         specifier: npm:@cabloy/zod@4.3.8
         version: '@cabloy/zod@4.3.8'
@@ -1624,7 +1624,7 @@ importers:
         specifier: ^3.7.2
         version: 3.7.2
       zova-jsx:
-        specifier: ^1.1.104
+        specifier: ^1.1.105
         version: link:../../../../../packages-utils/zova-jsx
     devDependencies:
       '@cabloy/cli':
@@ -2715,8 +2715,8 @@ packages:
   '@cabloy/zod-openapi@1.1.10':
     resolution: {integrity: sha512-9FfPM6xlotXZQo6Y0bJAkeVk+sppfy3jIjHdlpbPujjNx1a98yIO27JtjUdI1vHOugRDMHf4+LbkJ9g1d/Yh+A==}
 
-  '@cabloy/zod-query@2.1.19':
-    resolution: {integrity: sha512-dsX/Q108/jFLkYiG8g/qHPX+2w8fzOLcIMy420vtnLmARpOWLCVgpsUuaVGwfhq8ToCvWSFUQvaBZmob2PkuSQ==}
+  '@cabloy/zod-query@2.1.20':
+    resolution: {integrity: sha512-MyvbP9YghvM9JnjOQGJiP75Wy21DlgcWMxut/3zGBFR1KYLblU1TD7ZR/arKcP/VgQhu2WFFo3jtus4JicbAxQ==}
 
   '@cabloy/zod-to-openapi@8.1.6':
     resolution: {integrity: sha512-pb9iUQuvi5SCYHevqeNBVZO65LguRDSvkHlJ6gxxOXNYQRcObwbIzxLag9/ZUj3GejAPPUNJgjb0CPaYM5s98Q==}
@@ -9306,7 +9306,7 @@ snapshots:
       '@cabloy/zod-to-openapi': 8.1.6
       zod: '@cabloy/zod@4.3.8'
 
-  '@cabloy/zod-query@2.1.19':
+  '@cabloy/zod-query@2.1.20':
     dependencies:
       zod: '@cabloy/zod@4.3.8'
 

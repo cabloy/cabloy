@@ -25,17 +25,17 @@ export class RenderLayoutMine extends BeanRenderBase {
     return (
       <div class={this.cLayout} data-testid="layout-mine">
         <header class="navbar sticky top-0 z-20 flex-wrap gap-2 bg-base-300">
-          <a
+          <RouterLink
             class="btn btn-square btn-ghost"
-            href={this.app.$getPagePathHome()}
+            to={this.app.$getPagePathHome()}
             aria-label={this.scope.locale.Home()}
           >
             <ZIcon name=":social:cabloy" width={24} />
-          </a>
+          </RouterLink>
           <span class="min-w-0 flex-1 text-xl">{this.sys.env.APP_TITLE}</span>
-          <a class="btn btn-ghost shrink-0" href={this.app.$getPagePathHome()}>
+          <RouterLink class="btn btn-ghost shrink-0" to={this.app.$getPagePathHome()}>
             {this.scope.locale.Home()}
-          </a>
+          </RouterLink>
           <ZButton
             data-testid="mine-menu-toggle"
             class="btn btn-ghost lg:hidden"

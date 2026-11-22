@@ -14,7 +14,11 @@ import { SchemaObject } from 'openapi3-ts/oas31';
 import { UseScope } from 'zova';
 import { formSceneFromFormMeta } from 'zova-module-a-form';
 import { $QueryEnsureLoaded, BeanModelBase, Model } from 'zova-module-a-model';
-import { ScopeModuleAOpenapi, SymbolOpenapiSchemaName } from 'zova-module-a-openapi';
+import {
+  projectSchemaPayload,
+  ScopeModuleAOpenapi,
+  SymbolOpenapiSchemaName,
+} from 'zova-module-a-openapi';
 
 import { prepareDeleteRequestConfig } from '../lib/deleteRequest.ts';
 import { runMutationSuccess } from '../lib/mutationSuccess.ts';
@@ -295,6 +299,24 @@ export class ModelResource<
     if (formScene === 'create') return this.apiSchemasCreate;
     if (formScene === 'edit') return this.apiSchemasUpdate;
     throw new Error('invalid parameters');
+  }
+
+  public projectFormSubmitData<T extends EntityCreate | EntityUpdate>(
+    formMeta: IFormMeta,
+    data: T,
+  ): T {
+    if (formMeta.formMode !== 'edit' || !['create', 'update'].includes(formMeta.editMode ?? '')) {
+      throw new Error('Resource form has no submit contract');
+    }
+    const create = formMeta.editMode === 'create';
+    const schema = create ? this.schemaCreate : this.schemaUpdate;
+    if (!schema) throw new Error(`Resource ${formMeta.editMode} schema is not loaded`);
+    return projectSchemaPayload(
+      schema,
+      data,
+      reference => this.$sdk.getSchema(reference).data,
+      create ? 'form-create' : 'form',
+    );
   }
 
   public getFormMutationSubmit(formMeta: IFormMeta, id?: TableIdentity): DataMutation | undefined {

@@ -295,7 +295,7 @@ The dependency should be directional:
 companion mutation → parent query cache invalidation
 ```
 
-Keep the cache graph acyclic and avoid duplicate or reverse edges. Cache invalidation is not a lock, a uniqueness constraint, or a transaction. Continue to use normal Model mutation APIs so the framework’s cache behavior remains active. Read [Cross-model query-cache dependencies](/backend/cache-guide#cross-model-query-cache-dependencies) for the graph rules.
+Declare each directed dependency once; add a reverse edge only when the reverse query-result dependency also exists. Default propagation is cycle-safe and clears each effective query-cache target once per invalidation wave. Custom replacement callbacks still own their clearing and recursion behavior. Cache invalidation is not a lock, a uniqueness constraint, or a transaction. Continue to use normal Model mutation APIs so the framework’s cache behavior remains active. Read [Cross-model query-cache dependencies](/backend/cache-guide#cross-model-query-cache-dependencies) for the graph rules.
 
 ## DTO and contract design
 

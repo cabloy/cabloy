@@ -6,7 +6,7 @@ import { Service } from 'vona-module-a-bean';
 
 import type { IGeneralInfoOptions, IPerformActionOptions } from '../types/executor.ts';
 
-import { SymbolRouterMiddleware } from '../types/executor.ts';
+import { SymbolActionQuery, SymbolRouterMiddleware } from '../types/executor.ts';
 
 @Service()
 export class ServiceExecutor extends BeanBase {
@@ -35,6 +35,7 @@ export class ServiceExecutor extends BeanBase {
             params: options?.params,
             query: options?.query,
           });
+          if (options?.queryNative) ctx[SymbolActionQuery] = options.query;
           // headers
           ctx.req.headers = Object.assign({}, ctx.req.headers, options?.headers);
           // json
@@ -76,6 +77,7 @@ export class ServiceExecutor extends BeanBase {
         },
         {
           innerAccess: options?.innerAccess,
+          validationFailureCapture: options?.validationFailureCapture,
           extraData: {
             ...options?.extraData,
             state: {

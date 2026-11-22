@@ -1,5 +1,6 @@
 import type { CallToolResult, Tool } from '@modelcontextprotocol/server';
 import type { Constructable, VonaApplication } from 'vona';
+import type { IValidationFailureCapture } from 'vona-module-a-executor';
 import type { IMcpToolOptions } from 'vona-module-a-openapiutils';
 import type { IAnalysisPolicy, IQueryPolicy, TypeAnalysisMode } from 'vona-module-a-orm';
 import type { IDecoratorSsrSiteOptions } from 'vona-module-a-ssr';
@@ -10,13 +11,14 @@ import { appMetadata, runWithZodQueryCoercion } from 'vona';
 import { SymbolMcpOptions } from 'vona-module-a-openapiutils';
 import { checkQueryBudget, PublicQueryError, validateQuery } from 'vona-module-a-orm';
 import { RateLimitError, RateLimitUnavailableError } from 'vona-module-a-ratelimit';
-import { getCacheControllerRoutes } from 'vona-module-a-web';
+import { getCacheControllerRoutes, recordResourceNameToRoutePath } from 'vona-module-a-web';
 import { isMcpScope } from 'vona-module-mcp-auth';
 import z from 'zod';
 
 import type { IToolCallDiagnostic } from './controllerToolDiagnostics.ts';
 import type { IControllerQueryCapability } from './controllerToolQuery.ts';
 import type { ToolSchema } from './controllerToolSchema.ts';
+import type { IResourcePageLink, IResourcePageLinkRequest } from './resourcePageLinks.ts';
 
 import {
   compactToolSchema,
@@ -37,6 +39,12 @@ import {
   UnsupportedActionContract,
 } from './controllerToolSchema.ts';
 import { toolValidationData } from './controllerToolValidation.ts';
+import {
+  resourcePageLinksResult,
+  resourcePageLinksTool,
+  resourcePageLinksToolName,
+  resolveResourcePageLinks,
+} from './resourcePageLinks.ts';
 
 export interface IControllerToolDiagnostic {
   controller: string;
@@ -79,6 +87,7 @@ interface IControllerTool {
   inputContract: ToolSchema;
   outputContract: ToolSchema;
   compactPaths: { input: string[][]; output: string[][] };
+  resource?: string;
   call(args: Record<string, unknown>, diagnostic: IToolCallDiagnostic): Promise<CallToolResult>;
 }
 
@@ -135,6 +144,7 @@ export async function createControllerToolServer(
   const registeredSites = new Set<string>(
     Object.values(app.bean.onion.ssrSite.onionsNormal).map(site => site.name),
   );
+  const ssrSiteOptions = ssrSite.beanOptions.options as IDecoratorSsrSiteOptions;
   return runWithZodQueryCoercion(true, async () => {
     const tools = new Map<string, IControllerTool>();
     const diagnostics: IControllerToolDiagnostic[] = [];
@@ -178,6 +188,7 @@ export async function createControllerToolServer(
           !/^[\w-]{1,128}$/.test(name) ||
           tools.has(name) ||
           name === toolContractName ||
+          name === resourcePageLinksToolName ||
           name === logoutName
         ) {
           throw new Error(`Invalid or duplicate MCP tool name: ${name}`);
@@ -393,13 +404,22 @@ export async function createControllerToolServer(
           const outputCheck = isPrimitiveSchema(rawOutput, schemas)
             ? fromJsonSchema(outputContract as Parameters<typeof fromJsonSchema>[0])['~standard']
             : undefined;
-          const description = options.description
+          const resource = Object.entries(recordResourceNameToRoutePath).find(
+            ([, routePathInfo]) => routePathInfo.controller === route.controller,
+          )?.[0];
+          const standardCrudUpdate =
+            options.standardCrudUpdate ??
+            (resource !== undefined && route.action === 'update' && readOnly === false);
+          const businessDescription = options.description
             ? app.meta.text(options.description)
             : operation.description ||
               operation.summary ||
               `${controller.beanOptions.beanFullName}#${route.action}`;
+          const description = standardCrudUpdate
+            ? `${businessDescription}\n\nFull CRUD update, not patch: use cabloy-mcp-mutations and read the current resource first.`
+            : businessDescription;
           const queryDescription = queryBindings.length
-            ? `${description}\n\nFor alternatives within one query, prefer a single call using where.or rather than separate calls and client-side merging. Use where.and for combined constraints; named filters are additional AND constraints. ${queryCapabilities.length ? `Before constructing where, call ${toolContractName} with {"tool":"${name}","section":"query"} for current argument paths, admitted fields, operators, exact operands and limits. The compact object declaration is not the full validation contract.` : 'Follow the full inputSchema for argument locations, admitted fields, operators and value types.'}`
+            ? `${description}\n\nUse the cabloy-mcp-query Skill for this query.`
             : description;
           const tool: Tool = {
             name,
@@ -417,6 +437,7 @@ export async function createControllerToolServer(
           tools.set(name, {
             identity: { controller: controller.beanOptions.beanFullName, action: route.action },
             controller: route.controller,
+            resource,
             controllerSummary: controller.beanOptions.options?.summary
               ? app.meta.text(controller.beanOptions.options.summary)
               : '',
@@ -455,27 +476,8 @@ export async function createControllerToolServer(
                 const checked = await inputCheck.validate(
                   serializeDateTransport(args, runtimeInputSchema, runtimeInputSchema.$defs ?? {}),
                 );
-                // Native validation already supplies Vona's field messages and paths.
-                // Parse once even when the JSON contract rejects, but retain that
-                // rejection: native object parsing may otherwise strip unknown fields.
                 for (const key of keys) {
-                  const schema = contract.request[key as keyof typeof contract.request];
-                  const transported = normalizeDateTransport(values[key], locations[key], schemas);
-                  const parsed = await runWithZodQueryCoercion(false, () =>
-                    schema!.safeParseAsync(transported, { reportInput: true }),
-                  );
-                  if (!parsed.success) {
-                    throw new ProtocolError(
-                      -32602,
-                      'Invalid tool arguments',
-                      toolValidationData(
-                        parsed.error.issues,
-                        flat ? [] : [key],
-                        runtimeInputSchema,
-                      ),
-                    );
-                  }
-                  bound[key] = parsed.data;
+                  bound[key] = normalizeDateTransport(values[key], locations[key], schemas);
                 }
                 if (checked.issues) {
                   // The SDK JSON Schema adapter provides no structured field path.
@@ -515,12 +517,27 @@ export async function createControllerToolServer(
                     };
                   }),
               );
+              let validationFailure: ReturnType<typeof toolValidationData> | undefined;
+              const validationFailureCapture: IValidationFailureCapture = {
+                capture(location, issues) {
+                  if (!keys.includes(location) || validationFailure) return;
+                  validationFailure = toolValidationData(
+                    issues as z.core.$ZodIssue[],
+                    flat ? [] : [location],
+                    runtimeInputSchema,
+                  );
+                },
+              };
               try {
-                const result = await app.bean.executor.performAction(
-                  route.routeMethod as any,
-                  route.routePathRaw,
-                  { ...bound, innerAccess: false },
+                const result = await runWithZodQueryCoercion(false, () =>
+                  app.bean.executor.performAction(route.routeMethod as any, route.routePathRaw, {
+                    ...bound,
+                    ...(bound.query === undefined ? {} : { queryNative: true }),
+                    innerAccess: false,
+                    validationFailureCapture,
+                  }),
                 );
+                validationFailure = undefined;
                 if (result === undefined || (direct && result === null)) {
                   diagnostic.outcome = 'resource_not_found';
                   return failure('Resource not found');
@@ -538,6 +555,9 @@ export async function createControllerToolServer(
                   structuredContent,
                 };
               } catch (error) {
+                if (validationFailure) {
+                  throw new ProtocolError(-32602, 'Invalid tool arguments', validationFailure);
+                }
                 if (error instanceof RateLimitError || error instanceof RateLimitUnavailableError) {
                   return {
                     ...failure(
@@ -629,6 +649,9 @@ export async function createControllerToolServer(
     const contractInputCheck = fromJsonSchema(
       toolContract.inputSchema as Parameters<typeof fromJsonSchema>[0],
     )['~standard'];
+    const resourcePageLinksInputCheck = fromJsonSchema(
+      resourcePageLinksTool.inputSchema as Parameters<typeof fromJsonSchema>[0],
+    )['~standard'];
     const env = app.meta.env;
     const server = new Server(
       {
@@ -640,10 +663,12 @@ export async function createControllerToolServer(
     server.setRequestHandler('tools/list', () =>
       track(async () => {
         const visible = await visibleTools();
+        const resourceTools = visible.filter(item => item.resource);
         return {
           tools: [
             ...visible.map(item => item.tool),
             ...(visible.length ? [toolContract] : []),
+            ...(resourceTools.length ? [resourcePageLinksTool] : []),
             ...(serverOptions.logout ? [logoutTool] : []),
           ],
         };
@@ -653,6 +678,7 @@ export async function createControllerToolServer(
       track(async () => {
         if (!app.ctx) throw new ProtocolError(-32603, 'Request context required');
         const contractCall = request.params.name === toolContractName;
+        const resourcePageLinksCall = request.params.name === resourcePageLinksToolName;
         const logoutCall = request.params.name === logoutName && serverOptions.logout;
         const tool = tools.get(request.params.name);
         const admitted = tool && allowed(tool);
@@ -661,9 +687,11 @@ export async function createControllerToolServer(
             ? logoutName
             : contractCall
               ? toolContractName
-              : admitted
-                ? tool.tool.name
-                : 'unavailable',
+              : resourcePageLinksCall
+                ? resourcePageLinksToolName
+                : admitted
+                  ? tool.tool.name
+                  : 'unavailable',
         );
         recordToolCall(app, diagnostic, 'received');
         try {
@@ -689,6 +717,72 @@ export async function createControllerToolServer(
               structuredContent,
             };
           }
+          if (resourcePageLinksCall) {
+            const args = request.params.arguments ?? {};
+            if ((await resourcePageLinksInputCheck.validate(args)).issues) {
+              diagnostic.outcome = 'invalid_arguments';
+              throw new ProtocolError(-32602, 'Invalid tool arguments');
+            }
+            const source = tools.get(args.sourceTool as string);
+            if (!source || !source.resource || !allowed(source) || !(await targetVisible(source))) {
+              diagnostic.outcome = 'unavailable';
+              throw new ProtocolError(-32602, 'Tool unavailable');
+            }
+            const requests = args.links as IResourcePageLinkRequest[];
+            const routePathInfo = recordResourceNameToRoutePath[source.resource];
+            if (!routePathInfo) {
+              diagnostic.outcome = 'unavailable';
+              throw new ProtocolError(-32602, 'Tool unavailable');
+            }
+            const targetActions: Record<string, string> = {
+              list: 'select',
+              create: 'create',
+              view: 'view',
+              edit: 'update',
+            };
+            const resolved: IResourcePageLink[] = [];
+            for (const requestItem of requests) {
+              const action = targetActions[requestItem.page];
+              const target = action
+                ? tools.get(
+                    [...tools.entries()].find(
+                      ([, candidate]) =>
+                        candidate.resource === source.resource &&
+                        candidate.identity.action === action,
+                    )?.[0] ?? '',
+                  )
+                : undefined;
+              if (!target || !allowed(target) || !(await targetVisible(target))) continue;
+              try {
+                resolved.push(
+                  resolveResourcePageLinks({
+                    protocol: app.util.protocol,
+                    host: app.util.host,
+                    publicPath: String(ssrSiteOptions.publicPath),
+                    businessResource: source.resource,
+                    requests: [requestItem],
+                  })[0],
+                );
+              } catch {
+                diagnostic.outcome = 'invalid_arguments';
+                throw new ProtocolError(-32602, 'Invalid tool arguments');
+              }
+            }
+            if (!resolved.length) {
+              diagnostic.outcome = 'success';
+              return resourcePageLinksResult({
+                sourceTool: source.tool.name,
+                resource: source.resource,
+                links: [],
+              });
+            }
+            diagnostic.outcome = 'success';
+            return resourcePageLinksResult({
+              sourceTool: source.tool.name,
+              resource: source.resource,
+              links: resolved,
+            });
+          }
           if (contractCall) {
             const args = request.params.arguments ?? {};
             if ((await contractInputCheck.validate(args)).issues) {
@@ -708,7 +802,15 @@ export async function createControllerToolServer(
             }
             const structuredContent =
               section === 'query'
-                ? { grammarVersion: 1, tool: target.tool.name, bindings: target.queryCapabilities }
+                ? {
+                    grammarVersion: target.queryCapabilities.some(
+                      binding => Object.keys(binding.capabilities.query.relations ?? {}).length > 0,
+                    )
+                      ? 2
+                      : 1,
+                    tool: target.tool.name,
+                    bindings: target.queryCapabilities,
+                  }
                 : section === 'input' || section === 'output'
                   ? {
                       contractVersion: 1,

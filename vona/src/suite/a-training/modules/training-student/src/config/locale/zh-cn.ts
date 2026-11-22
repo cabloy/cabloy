@@ -37,7 +37,7 @@ export default {
     '使用当前学生查看权限，在当前实例中按 ID 读取完整学生详情。返回现有的序列化详情响应，包括脱敏手机号、Markdown 内容、嵌套培训记录及其明细，以及可选的图片 URL 元数据。',
   StudentUpdate: '更新学生',
   StudentUpdateDescription:
-    '使用当前学生更新权限，在当前实例中更新学生。先调用 training-student_student_view 读取 params.id 对应的完整详情，仅修改目标字段，再按更新输入契约提交完整 body，必须包含 name、mobile、level，并保留可编辑内容、培训记录及其明细。不要原样回传只读或派生字段。手机号符合脱敏格式（前三位数字、四个星号、剩余数字）时保留数据库原值；其他值按正常规则校验并修改。已声明的嵌套 id/deleted 控制字段可删除子记录。返回 null 仅表示操作完成，不证明记录存在或已读回验证。可能发生部分写入；遇到错误或响应不确定时，不得自动重放。',
+    '使用当前学生更新权限，在当前实例中更新学生。必须包含 name、mobile、level；支持可编辑内容、培训记录及其明细，不包含只读或派生字段。手机号符合脱敏格式（前三位数字、四个星号、剩余数字）时保留数据库原值；其他值按正常规则校验并修改。已声明的嵌套 id/deleted 控制字段可删除子记录。返回 null 仅表示操作完成，不证明记录存在或已读回验证。可能发生部分写入。',
   StudentSummary: '查看学生摘要',
   StudentSummaryDescription:
     '使用当前学生查看权限，在当前实例中按 ID 读取学生摘要。不包含手机号和完整备注内容。',
@@ -51,6 +51,8 @@ export default {
   ForceDelete: '强制删除',
   BulkDelete: '批量删除',
   TrainingRecords: '学生培训记录',
+  TrainingRecordsQueryDescription:
+    '当前实例及已授权的关联查询范围内，该学生未软删除的培训记录。exists 表示至少存在一条符合条件的记录，notExists 表示不存在；可选 where 使用已公布的子字段和运算符进一步限定记录。不存在符合条件的可见记录，不等于学生从未参加培训。独立要求培训记录查询权限；无权限时查询失败，而非将记录视为不存在。仅筛选学生，不加载培训记录详情，也不扩展响应字段。',
   AddTrainingRecord: '添加学生培训记录',
   EditTrainingRecord: '编辑学生培训记录',
   ViewTrainingRecord: '查看学生培训记录',

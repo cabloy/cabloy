@@ -153,6 +153,20 @@ Important rule:
 
 - do not start from hand-patching DTO placement or relation semantics until the generator path and specimen shape have been checked first
 
+### Conditional public relation-query follow-up
+
+Treat `:tools:masterDetail` output as a structural baseline, not finished business behavior. Its `hasMany` relation, service `include`, and nested DTO wiring establish aggregate ownership and loading/editing behavior; they do not imply that clients may filter the master through the relation.
+
+In standalone mode, a newly created child resource is also generated through the edition CRUD command. It therefore keeps the child Resource's ordinary query contract: Basic uses the CRUD controller's normal `$compileQuery`, while Start also preserves the trusted `scopeWhere` data scope. An existing standalone child surface is retained unchanged and must already provide its own valid query contract. If direct child filtering by an FK or child field is needed, extend the child query policy independently; do not confuse that with filtering the parent through a child relation.
+
+After generation, make an explicit business decision about parent-side relation predicates:
+
+- if the public parent Resource Action does not need child existence (`exists`/`notExists`) or child-field predicates to change the master result set, grouping, or aggregates, do not add parent-side query `relations`, `authorizationRequired`, `authorizeQueryRelations`, `relationScopes`, or extra parent-side compilation merely because a `hasMany` relation exists
+- if that public capability is required, follow [Public Query Guide](../../../repo-docs/backend/public-query-guide.md) as the sole source for policy, compilation, scope, relation authorization, and budget details; define only the intended relation and fields, compile at the Resource Action boundary, and use explicit server-authored relation-to-Action bindings
+- authorize the actual child Action used by the binding and prepare `relationScopes` consistently for every exposed parent `select`, `group`, and `aggregate` path; `relationScopes` is for referenced authorized relation predicates, not relation loading or the child's ordinary standalone scalar query
+
+Do not derive an authorization binding from a model or relation name, accept one from the client, or bind an aggregate-only detail to a nonexistent standalone Action. Relation filtering is separate from relation loading and does not expand the parent response projection.
+
 ## Step 6: Preserve the instance boundary across the aggregate
 
 Master-detail ownership is separate from Vona's tenant/instance boundary:
@@ -194,6 +208,8 @@ Typical checks include:
 - confirm detail schema/index support is present
 - confirm both modules’ `.metadata/index.ts` outputs reflect the expected nested detail DTOs
 - if standalone mode applies, confirm the detail module still exposes its standalone resource surface
+- confirm no public relation-query policy or authorization machinery was added solely because a `hasMany` relation exists
+- when public relation filtering is required, confirm the deliberate query-policy allowlist, `$compileQuery` boundary, server-authored relation binding, child Action authorization, and consistent `relationScopes` preparation for `select`, `group`, and `aggregate`
 - verify migration, initialization, or seed changes through managed isolated tests covering the affected aggregate and detail behavior; focused runs still prepare the test database, so a `meta.version.ts` edit alone does not require the full suite
 - decide development-database updates separately: isolated tests do not update dev data, normal startup applies pending migrations, and replaying an already-applied positive-numbered branch on disposable dev data requires explicit reset approval; use a new migration to preserve existing data
 

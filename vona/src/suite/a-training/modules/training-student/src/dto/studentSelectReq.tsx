@@ -6,6 +6,7 @@ import { Dto } from 'vona-module-a-web';
 import z from 'zod';
 import { ZovaRender } from 'zova-rest-cabloy-basic-admin';
 
+import { $locale } from '../.metadata/locales.ts';
 import { studentLevelItems } from '../entity/student.tsx';
 import { studentAnalysis } from '../lib/studentAnalysis.ts';
 import { ModelStudent } from '../model/student.ts';
@@ -21,6 +22,24 @@ export const studentQuery = $defineQuery(() => ModelStudent, {
       type: 'number',
     },
     createdAt: { operators: ['gte', 'lt', 'lte'] },
+  },
+  relations: {
+    trainingRecords: {
+      title: $locale('TrainingRecords'),
+      description: $locale('TrainingRecordsQueryDescription'),
+      type: 'hasMany',
+      modelLike: 'training-record:record',
+      key: 'studentId',
+      authorizationRequired: true,
+      fields: {
+        name: { operators: ['eq', 'containsI'] },
+        subjectCount: { operators: ['eq', 'gte', 'lte'] },
+        totalScore: { operators: ['eq', 'gte', 'lte'] },
+        averageScore: { operators: ['eq', 'gte', 'lte'] },
+        trainingTime: { operators: ['gte', 'lt', 'lte'] },
+        createdAt: { operators: ['gte', 'lt', 'lte'] },
+      },
+    },
   },
   orderable: ['id', 'name', 'level', 'createdAt'],
   defaults: { orders: [{ field: 'createdAt', direction: 'desc' }] },

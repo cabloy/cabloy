@@ -1,6 +1,6 @@
 {
   "name": "zova-suite-a-cabloy",
-  "version": "5.1.65",
+  "version": "5.1.66",
   "gitHead": "4dece229b6d3f4735930e833afcb4b95ec51bf86",
   "description": "",
   "author": "",
@@ -9,7 +9,7 @@
   "dependencies": {
     "zova-module-a-layoutprofile": "^5.0.10",
     "zova-module-a-rbac": "^5.0.4",
-    "zova-module-rest-resource": "^5.1.61"
+    "zova-module-rest-resource": "^5.1.62"
   },
   "title": "a-cabloy"
 }

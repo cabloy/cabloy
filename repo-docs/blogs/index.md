@@ -10,6 +10,36 @@ Selected articles on Cabloy, Vona, Zova, and the architectural questions that sh
 
 <div class="cabloy-blog-grid">
   <article class="cabloy-blog-card">
+    <a class="cabloy-blog-card__cover" href="/blogs/zova-nextjs-ssr-hydration-differences/" aria-label="Read SSR Hydration in Zova vs Next.js">
+      <img src="/blogs/zova-nextjs-ssr-hydration-differences/cover-en-v1.png" alt="SSR Hydration in Zova vs Next.js" />
+    </a>
+    <div class="cabloy-blog-card__content">
+      <p class="cabloy-blog-card__date">November 18, 2026</p>
+      <h2><a href="/blogs/zova-nextjs-ssr-hydration-differences/">SSR Hydration in Zova vs Next.js</a></h2>
+      <p>Compare Zova’s full-tree SSR hydration with Next.js Pages Router and App Router, from state injection and error replay to selective hydration and streaming.</p>
+      <div class="cabloy-blog-card__tags" aria-label="Article topics">
+        <span>SSR</span><span>Hydration</span><span>Next.js</span><span>Zova</span>
+      </div>
+      <a class="cabloy-blog-card__read" href="/blogs/zova-nextjs-ssr-hydration-differences/">Read article <span aria-hidden="true">→</span></a>
+    </div>
+  </article>
+
+  <article class="cabloy-blog-card">
+    <a class="cabloy-blog-card__cover" href="/blogs/nestjs-dynamic-module-vs-vona-module-model/" aria-label="Read Why Cabloy/Vona Has No NestJS Dynamic Module">
+      <img src="/blogs/nestjs-dynamic-module-vs-vona-module-model/cover-en-v1.png" alt="Why Cabloy/Vona Has No NestJS Dynamic Module" />
+    </a>
+    <div class="cabloy-blog-card__content">
+      <p class="cabloy-blog-card__date">November 14, 2026</p>
+      <h2><a href="/blogs/nestjs-dynamic-module-vs-vona-module-model/">Why Cabloy/Vona Has No NestJS Dynamic Module</a></h2>
+      <p>Compare the four needs behind NestJS dynamic modules with Vona’s config pipeline, startup phases, bean registry, and resolution-time binding.</p>
+      <div class="cabloy-blog-card__tags" aria-label="Article topics">
+        <span>NestJS</span><span>Cabloy</span><span>Vona</span><span>Dependency Injection</span>
+      </div>
+      <a class="cabloy-blog-card__read" href="/blogs/nestjs-dynamic-module-vs-vona-module-model/">Read article <span aria-hidden="true">→</span></a>
+    </div>
+  </article>
+
+  <article class="cabloy-blog-card">
     <a class="cabloy-blog-card__cover" href="/blogs/ai-coding-one-prompt-crud-ssr-multitasking/" aria-label="Read AI Coding in Action: One Prompt for CRUD, SSR &amp; Multitasking">
       <img src="/blogs/ai-coding-one-prompt-crud-ssr-multitasking/cover-en-v1.png" alt="AI Coding in Action: One Prompt for CRUD, SSR &amp; Multitasking" />
     </a>

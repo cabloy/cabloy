@@ -21,7 +21,7 @@ declare module 'zova-module-a-openapi' {
 export interface ITableCellOptionsActionSummary extends IResourceTableActionRowOptionsBase {}
 
 @TableCell<ITableCellOptionsActionSummary>({
-  class: 'btn btn-outline btn-info join-item',
+  class: 'btn btn-ghost join-item',
 })
 export class TableCellActionSummary extends BeanBase implements ITableCellRender {
   render(

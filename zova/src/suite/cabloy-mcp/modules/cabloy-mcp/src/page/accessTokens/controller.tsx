@@ -1,6 +1,7 @@
 import type { TableIdentity } from 'table-identity';
 import type { TypeFormOnSubmitData } from 'zova-module-a-form';
 
+import { RouterLink } from '@cabloy/vue-router';
 import { BeanControllerPageBase, Use } from 'zova';
 import { Controller } from 'zova-module-a-bean';
 import { ZForm, ZFormField } from 'zova-module-a-form';
@@ -206,12 +207,12 @@ export class ControllerPageAccessTokens extends BeanControllerPageBase {
                       ? this.scope.locale.AuthorizationAllScopeHelp()
                       : this.scope.locale.McpAccessTokenScopeHelp()}
                   </p>
-                  <a
+                  <RouterLink
                     class="link link-primary text-sm"
-                    href={this.$router.getPagePath('/cabloy/mcp/scopes')}
+                    to={this.$router.getPagePath('/cabloy/mcp/scopes')}
                   >
                     {this.scope.locale.McpManageScopes()}
-                  </a>
+                  </RouterLink>
                 </div>
               )}
             />

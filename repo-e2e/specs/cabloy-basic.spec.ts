@@ -373,7 +373,7 @@ async function openStudentDraftEdit(page: Page, name: string, id: string | numbe
     .locator('tbody tr')
     .filter({ has: page.getByRole('link', { name, exact: true }) });
   await expect(row).toHaveCount(1);
-  await row.locator('button.btn-outline.btn-primary').click();
+  await row.getByRole('button', { name: 'Edit', exact: true }).click();
   await expect(page).toHaveURL(
     new RegExp(`/training-student(?:%3A|:)student/${id}/edit(?:[?#]|$)`),
   );
@@ -1363,8 +1363,14 @@ test(
     await expect(dark.locator('li.disabled')).toHaveText(initialMode);
     await openActions();
     await account.locator('summary').click();
-    await account.getByText('Login', { exact: true }).click();
+    const returnTo = new URL(page.url());
+    const loginLink = account.getByRole('link', { name: 'Login', exact: true });
+    await expect(loginLink).toHaveAttribute('href', /\/login\?/);
+    await loginLink.click();
     await expect(page).toHaveURL(/\/login(?:[/?#]|$)/);
+    expect(new URL(page.url()).searchParams.get('returnTo')).toBe(
+      `${returnTo.pathname}${returnTo.search}${returnTo.hash}`,
+    );
     await expect(page.getByRole('heading', { name: 'Login', exact: true })).toBeVisible();
     expect(consoleErrors).toEqual([]);
     expect(pageErrors).toEqual([]);
@@ -2049,7 +2055,7 @@ test(
       await expect(nameHeader).toHaveCSS('text-align', 'left');
       await expect(operationsHeader).toHaveCSS('position', 'sticky');
       await expect(operationsHeader).toHaveCSS('right', '0px');
-      await expect(operationsHeader).toHaveCSS('min-width', '360px');
+      await expect(operationsHeader).toHaveCSS('min-width', '240px');
       await expect(operationsHeader).toHaveCSS('text-align', 'center');
 
       // Query capabilities enable headers without per-entity sorting opt-ins.
@@ -2098,44 +2104,35 @@ test(
       });
       await expect(operationsHeader).toHaveCSS('right', '0px');
 
-      const operationsRow = page
-        .locator('tbody tr')
-        .filter({
-          has: page.getByRole('button', { name: 'Summary', exact: true }),
-        })
-        .first();
-      const operationActions = operationsRow.getByRole('button');
-      await expect(operationActions).toHaveCount(4);
-      for (const action of await operationActions.all()) {
-        await expect(action).toBeVisible();
+      const row = tableWrapper.locator('tbody tr').filter({
+        has: page.getByRole('link', { name: studentName, exact: true }),
+      });
+      await expect(row).toHaveCount(1);
+      const operationsCell = row.getByRole('cell').last();
+      const operationActions = operationsCell.getByRole('button');
+      await expect(operationActions).toHaveCount(3);
+      for (const name of ['Edit', 'Delete', 'More actions']) {
+        await expect(operationsCell.getByRole('button', { name, exact: true })).toBeVisible();
       }
       const operationsGeometry = await operationActions.evaluateAll(actions => {
         const cell = actions[0]?.closest('td');
-        const join = actions[0]?.parentElement;
         const wrapper = cell?.closest('table')?.parentElement;
-        if (!cell || !join || !wrapper)
-          throw new Error('Could not resolve the Operations action cell');
-        const cellRect = cell.getBoundingClientRect();
-        const joinRect = join.getBoundingClientRect();
-        const wrapperRect = wrapper.getBoundingClientRect();
+        if (!cell || !wrapper) throw new Error('Could not resolve the Operations action cell');
         const tolerance = 2;
-        return {
-          fitsCell: join.scrollWidth <= cell.clientWidth,
-          joinFitsCell:
-            joinRect.left >= cellRect.left - tolerance &&
-            joinRect.right <= cellRect.right + tolerance,
-          actionsFitWrapper: actions.every(action => {
+        const fitsHorizontally = (container: Element) => {
+          const bounds = container.getBoundingClientRect();
+          return actions.every(action => {
             const rect = action.getBoundingClientRect();
-            return (
-              rect.left >= wrapperRect.left - tolerance &&
-              rect.right <= wrapperRect.right + tolerance
-            );
-          }),
+            return rect.left >= bounds.left - tolerance && rect.right <= bounds.right + tolerance;
+          });
+        };
+        return {
+          actionsFitCell: fitsHorizontally(cell),
+          actionsFitWrapper: fitsHorizontally(wrapper),
         };
       });
       expect(operationsGeometry).toEqual({
-        fitsCell: true,
-        joinFitsCell: true,
+        actionsFitCell: true,
         actionsFitWrapper: true,
       });
       expect(pageErrors).toEqual([]);
@@ -2197,7 +2194,18 @@ test(
       await expect(row).toHaveCount(1);
       await expect(wrapper).toHaveAttribute('data-table-compact', 'false');
       await expect(nameHeader).toHaveCSS('position', 'sticky');
-      await expect(operationsHeader).toHaveCSS('min-width', '360px');
+      await expect(operationsHeader).toHaveCSS('min-width', '240px');
+      await expect(more).toHaveCount(1);
+      await expect(row.getByRole('button')).toHaveCount(3);
+      await expect(actions).toHaveCount(1);
+      await expect(actions).toBeHidden();
+      await more.click();
+      await expect(actions).toBeVisible();
+      await expect(
+        actions.getByRole('button', { name: 'Force Delete', exact: true }),
+      ).toBeVisible();
+      await page.keyboard.press('Escape');
+      await expect(actions).toBeHidden();
 
       const profileWrites: string[] = [];
       const observeProfileWrites = (request: Request) => {
@@ -2270,7 +2278,66 @@ test(
           await expect(action).toBeVisible();
           await expect(action).toHaveText(label);
         }
+        const menuStyle = await actions.evaluate(element => {
+          const buttons = Array.from(element.querySelectorAll('button'));
+          const textStarts = buttons.map(button => {
+            const walker = document.createTreeWalker(button, NodeFilter.SHOW_TEXT);
+            for (let node = walker.nextNode(); node; node = walker.nextNode()) {
+              if (!node.textContent?.trim()) continue;
+              const range = document.createRange();
+              range.selectNodeContents(node);
+              return range.getBoundingClientRect().left;
+            }
+            return undefined;
+          });
+          return {
+            labels: buttons.map(button => button.textContent?.trim()),
+            borders: buttons.map(button => getComputedStyle(button).borderWidth),
+            shadows: buttons.map(button => getComputedStyle(button).boxShadow),
+            ordinaryNeutral: buttons
+              .filter(button => !button.classList.contains('btn-error'))
+              .every(button => getComputedStyle(button).color === getComputedStyle(element).color),
+            dangerDistinct: (() => {
+              const ordinaryColor = getComputedStyle(element).color;
+              const dangerColors = buttons
+                .filter(button => button.classList.contains('btn-error'))
+                .map(button => getComputedStyle(button).color);
+              return (
+                dangerColors.length > 0 &&
+                dangerColors.every(color => color === dangerColors[0]) &&
+                dangerColors[0] !== ordinaryColor
+              );
+            })(),
+            separators: buttons.filter(button => {
+              const style = getComputedStyle(button, '::before');
+              return style.content !== 'none' && style.borderTopWidth === '1px';
+            }).length,
+            textStarts,
+          };
+        });
+        expect(menuStyle.labels).toEqual(['Edit', 'Delete', 'Summary', 'Force Delete']);
+        expect(menuStyle.borders).toEqual(['0px', '0px', '0px', '0px']);
+        expect(menuStyle.shadows).toEqual(['none', 'none', 'none', 'none']);
+        expect(menuStyle.ordinaryNeutral).toBe(true);
+        expect(menuStyle.dangerDistinct).toBe(true);
+        expect(menuStyle.separators).toBe(1);
+        expect(menuStyle.textStarts.every(left => left !== undefined)).toBe(true);
+        expect(
+          Math.max(...(menuStyle.textStarts as number[])) -
+            Math.min(...(menuStyle.textStarts as number[])),
+        ).toBeLessThanOrEqual(1);
+        const editAction = actions.getByRole('button', { name: 'Edit', exact: true });
+        const restingBackground = await editAction.evaluate(
+          element => getComputedStyle(element).backgroundColor,
+        );
+        await editAction.hover();
+        await expect(editAction).not.toHaveCSS('background-color', restingBackground);
+        await expect(editAction).toHaveCSS('border-width', '0px');
+        await editAction.press('Tab');
         const deleteAction = actions.getByRole('button', { name: 'Delete', exact: true });
+        await expect(deleteAction).toBeFocused();
+        await expect(deleteAction).toHaveCSS('outline-style', 'solid');
+        await expect(deleteAction).toHaveCSS('outline-width', '2px');
         const clipping = await deleteAction.evaluate(element => {
           const wrapper = element.closest('[data-table-compact]')!;
           const rect = element.getBoundingClientRect();
@@ -2319,10 +2386,17 @@ test(
         await expect(wrapper).toHaveAttribute('data-table-compact', 'false');
         await expect(nameHeader).toHaveCSS('position', 'sticky');
         await expect(operationsHeader).toHaveCSS('position', 'sticky');
-        await expect(operationsHeader).toHaveCSS('min-width', '360px');
-        await expect(operationsCell).toHaveCSS('min-width', '360px');
-        await expect(more).toHaveCount(0);
-        await expect(row.getByRole('button')).toHaveCount(4);
+        await expect(operationsHeader).toHaveCSS('min-width', '240px');
+        await expect(operationsCell).toHaveCSS('min-width', '240px');
+        await expect(more).toHaveCount(1);
+        await expect(row.getByRole('button')).toHaveCount(3);
+        await more.click();
+        await expect(actions).toBeVisible();
+        await expect(
+          actions.getByRole('button', { name: 'Force Delete', exact: true }),
+        ).toBeVisible();
+        await page.keyboard.press('Escape');
+        await expect(actions).toBeHidden();
         expect(profileWrites).toEqual([]);
 
         for (const width of [320, 390]) {
@@ -2462,8 +2536,8 @@ test(
               await expect(actions.locator('button')).toHaveCount(4);
               await expect(row.getByRole('button')).toHaveCount(1);
             } else {
-              await expect(more).toHaveCount(0);
-              await expect(row.getByRole('button')).toHaveCount(4);
+              await expect(more).toHaveCount(1);
+              await expect(row.getByRole('button')).toHaveCount(3);
             }
 
             releaseScripts();
@@ -2492,10 +2566,15 @@ test(
                   await wrapper.evaluate(element => element.clientWidth),
                 ).toBeGreaterThanOrEqual(768);
               }
-              await expect(operationsHeader).toHaveCSS('min-width', '360px');
-              await expect(more).toHaveCount(0);
-              await expect(row.getByRole('button')).toHaveCount(4);
+              await expect(operationsHeader).toHaveCSS('min-width', '240px');
+              await expect(row.getByRole('button')).toHaveCount(
+                scenario.unsupportedPopover ? 4 : 3,
+              );
               if (scenario.unsupportedPopover) {
+                await expect(more).toHaveCount(0);
+                await expect(
+                  row.getByRole('button', { name: 'Force Delete', exact: true }),
+                ).toBeVisible();
                 const summary = row.getByRole('button', { name: 'Summary', exact: true });
                 await summary.scrollIntoViewIfNeeded();
                 await summary.click();
@@ -2506,6 +2585,8 @@ test(
                 ).toBeVisible();
                 await ssrPage.keyboard.press('Escape');
                 await expect(dialog).toHaveCount(0);
+              } else {
+                await expect(more).toHaveCount(1);
               }
             }
             expect(hydrationWarnings).toEqual([]);
@@ -3397,6 +3478,96 @@ test(
       expect(effects.mutations).toEqual([]);
       expect(effects.hydrationWarnings).toEqual([]);
       expect(effects.pageErrors).toEqual([]);
+    });
+  },
+);
+
+test(
+  'resource detail Edit opens the same record and returns to refreshed detail after submit',
+  { tag: ['@admin', '@flow'] },
+  async ({ page }) => {
+    await loginAsAdmin(page);
+    await withDraftStudents(page, 1, async ([student], headers) => {
+      const viewPath = `/admin/rest/resource/training-student%3Astudent/${student.id}`;
+      await page.goto(viewPath, { waitUntil: 'load' });
+      await expect(page.locator('html')).toHaveAttribute('data-zova-hydrated', 'admin');
+      const edit = page.getByRole('link', { name: 'Edit', exact: true });
+      await expect(edit).toHaveCount(1);
+      await expect(edit).toHaveAttribute(
+        'href',
+        new RegExp(`/training-student(?:%3A|:)student/${student.id}/edit$`),
+      );
+      await edit.click();
+      await expect(page).toHaveURL(
+        new RegExp(`/training-student(?:%3A|:)student/${student.id}/edit$`),
+      );
+      await expect(edit).toHaveCount(0);
+      await expect(studentDraftNameInput(page)).toHaveValue(student.name);
+      const updatedName = `${student.name} edited from detail`;
+      await studentDraftNameInput(page).fill(updatedName);
+      const update = page.waitForResponse(
+        response =>
+          response.request().method() === 'PATCH' &&
+          new URL(response.url()).pathname === `/api/training/student/${student.id}` &&
+          !response.request().headers()['x-vona-openapi-schema'],
+      );
+      await page.getByRole('button', { name: 'Submit', exact: true }).click();
+      expect((await update).ok()).toBeTruthy();
+      await expect(page).toHaveURL(new RegExp(`/training-student(?:%3A|:)student/${student.id}$`));
+      await expect(studentDraftNameInput(page).and(page.locator('[readonly]'))).toHaveValue(
+        updatedName,
+      );
+      await expect(edit).toHaveCount(1);
+      const saved = await page.request.get(`/api/training/student/${student.id}`, { headers });
+      expect(saved.ok()).toBeTruthy();
+      expect((await saved.json()).name).toBe(updatedName);
+      await page.reload({ waitUntil: 'load' });
+      await expect(studentDraftNameInput(page).and(page.locator('[readonly]'))).toHaveValue(
+        updatedName,
+      );
+    });
+  },
+);
+
+test(
+  'resource detail Edit stays hidden when record update permission is denied',
+  { tag: ['@admin', '@flow'] },
+  async ({ page }) => {
+    await loginAsAdmin(page);
+    await withDraftStudents(page, 1, async ([student]) => {
+      // Exercise the browser's row-aware permission projection without changing server policy.
+      await page.route('**/api/home/base/permission/*', async route => {
+        if (
+          !decodeURIComponent(new URL(route.request().url()).pathname).endsWith(
+            'training-student:student',
+          )
+        ) {
+          await route.continue();
+          return;
+        }
+        const response = await route.fetch();
+        const body = await response.json();
+        body.data = {
+          actions: {
+            select: true,
+            view: true,
+            update: {
+              key: 'training-student:student#update',
+              allowed: true,
+              matcher: { mode: 'any', rules: [{ field: 'id', values: ['not-this-record'] }] },
+            },
+          },
+        };
+        await route.fulfill({ response, json: body });
+      });
+      await page.getByRole('link', { name: 'Student', exact: true }).click();
+      await page.getByLabel('Student Name').fill(student.name);
+      const select = waitForStudentSelect(page);
+      await page.getByRole('button', { name: 'Search', exact: true }).click();
+      await select;
+      await page.getByRole('link', { name: student.name, exact: true }).click();
+      await expect(page.getByRole('button', { name: 'Back', exact: true })).toBeVisible();
+      await expect(page.getByRole('link', { name: 'Edit', exact: true })).toHaveCount(0);
     });
   },
 );
@@ -4703,9 +4874,14 @@ test(
       const summaryRouteUrl = (url: URL) => url.pathname === summaryPath;
       await page.route(summaryRouteUrl, summaryHandler);
       try {
-        let row = page.locator('tr').filter({ hasText: studentName });
+        const row = page.locator('tbody tr').filter({
+          has: page.getByRole('link', { name: studentName, exact: true }),
+        });
+        const moreActions = row.getByRole('button', { name: 'More actions', exact: true });
+        const summary = row.getByRole('button', { name: 'Summary', exact: true });
         await expect(row).toHaveCount(1);
-        await row.getByRole('button', { name: 'Summary', exact: true }).click();
+        await moreActions.click();
+        await summary.click();
 
         const dialog = page.getByRole('dialog');
         await expect(dialog).toBeVisible();
@@ -4731,9 +4907,9 @@ test(
         await page.getByRole('button', { name: 'Search', exact: true }).click();
         await nextSearchResponse;
 
-        row = page.locator('tr').filter({ hasText: studentName });
         await expect(row).toHaveCount(1);
-        await row.getByRole('button', { name: 'Summary', exact: true }).click();
+        await moreActions.click();
+        await summary.click();
         await summaryRequest;
         await expect(dialog).toHaveCount(0, { timeout: 250 });
         releaseSummaryResponse?.();
@@ -4776,7 +4952,11 @@ test(
               !response.request().headers()['x-vona-openapi-schema']
             );
           });
-          await row.getByRole('button', { name: 'Force Delete', exact: true }).click();
+          const moreActions = row.getByRole('button', { name: 'More actions', exact: true });
+          if (await moreActions.count()) await moreActions.click();
+          const forceDelete = row.getByRole('button', { name: 'Force Delete', exact: true });
+          await expect(forceDelete).toBeVisible();
+          await forceDelete.click();
           await page.getByRole('button', { name: 'Yes', exact: true }).click();
           await deleteResponse;
         }

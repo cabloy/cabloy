@@ -1,4 +1,4 @@
-import type { Constructable } from 'vona';
+import type { Constructable, ILocaleMagic } from 'vona';
 import type z from 'zod';
 
 import type { BeanModelMeta } from '../lib/bean.model/bean.model_meta.ts';
@@ -29,13 +29,24 @@ export type TypeQueryOperator =
   | 'isNull'
   | 'isNotNull';
 export type TypeQueryScalar = string | number | boolean;
-export type TypeQueryPredicate<Field extends string = string> =
+export type TypeQueryScalarPredicate<Field extends string = string> =
   | {
       field: Field;
       op: Exclude<TypeQueryOperator, 'isNull' | 'isNotNull'>;
       value: TypeQueryScalar | TypeQueryScalar[];
     }
   | { field: Field; op: 'isNull' | 'isNotNull' }
+  | { and: TypeQueryScalarPredicate<Field>[] }
+  | { or: TypeQueryScalarPredicate<Field>[] }
+  | { not: TypeQueryScalarPredicate<Field> };
+export type TypeQueryRelationPredicate = {
+  relation: string;
+  op: 'exists' | 'notExists';
+  where?: TypeQueryScalarPredicate;
+};
+export type TypeQueryPredicate<Field extends string = string> =
+  | TypeQueryScalarPredicate<Field>
+  | TypeQueryRelationPredicate
   | { and: TypeQueryPredicate<Field>[] }
   | { or: TypeQueryPredicate<Field>[] }
   | { not: TypeQueryPredicate<Field> };
@@ -52,6 +63,7 @@ export interface IQueryLimits {
   maxOrders: number;
   maxStringLength: number;
   maxPageSize: number;
+  maxRelations: number;
 }
 export interface IQueryFieldConfig {
   readonly operators: readonly TypeQueryOperator[];
@@ -77,6 +89,33 @@ export interface IQueryConvenience {
   readonly field: string;
   readonly op?: TypeQueryOperator;
 }
+export interface IQueryRelationFieldConfig extends IQueryFieldConfig {}
+export interface IQueryRelationConfig {
+  readonly title?: string | ILocaleMagic;
+  readonly description?: string | ILocaleMagic;
+  readonly type: 'hasOne' | 'hasMany' | 'belongsTo';
+  readonly modelLike: TypeAnalysisModelLike;
+  /** Child foreign key for hasOne/hasMany, owner foreign key for belongsTo. */
+  readonly key: string;
+  readonly fields: Record<string, IQueryRelationFieldConfig>;
+  /** Server-only: compilation requires an explicit trusted scope decision. */
+  readonly authorizationRequired?: boolean;
+  readonly limits?: Partial<IQueryLimits>;
+}
+export interface IQueryRelation {
+  readonly title?: string | ILocaleMagic;
+  readonly description?: string | ILocaleMagic;
+  readonly type: 'hasOne' | 'hasMany' | 'belongsTo';
+  readonly modelLike: TypeAnalysisModelLike;
+  readonly modelClass: Constructable<BeanModelMeta>;
+  readonly entityClass: Constructable;
+  /** Child foreign key for hasOne/hasMany, owner foreign key for belongsTo. */
+  readonly key: string;
+  readonly fields: Readonly<Record<string, IQueryField>>;
+  /** Server-only: compilation requires an explicit trusted scope decision. */
+  readonly authorizationRequired?: boolean;
+  readonly limits: Readonly<IQueryLimits>;
+}
 export interface IQueryConfig<
   Fields extends Record<string, IQueryFieldConfig> = Record<string, IQueryFieldConfig>,
 > {
@@ -85,6 +124,7 @@ export interface IQueryConfig<
   readonly fields: Fields;
   readonly orderable: readonly string[];
   readonly bindings?: Readonly<Record<string, IQueryBinding>>;
+  readonly relations?: Readonly<Record<string, IQueryRelationConfig>>;
   readonly conveniences?: Readonly<Record<string, IQueryConvenience>>;
   readonly defaults?: {
     readonly orders?: readonly IQueryOrder[];
@@ -108,6 +148,7 @@ export interface IQueryPolicy {
   readonly fields: Readonly<Record<string, IQueryField>>;
   readonly orderable: readonly string[];
   readonly bindings: Readonly<Record<string, IQueryBinding>>;
+  readonly relations?: Readonly<Record<string, IQueryRelation>>;
   readonly conveniences: Readonly<Record<string, IQueryConvenience>>;
   readonly defaults: {
     readonly orders: readonly IQueryOrder[];
@@ -152,6 +193,7 @@ type QueryLeaf<P extends IQueryPolicy> = {
 }[keyof P['fields'] & string];
 export type TypeQueryWhere<P extends IQueryPolicy> =
   | QueryLeaf<P>
+  | TypeQueryRelationPredicate
   | { and: TypeQueryWhere<P>[] }
   | { or: TypeQueryWhere<P>[] }
   | { not: TypeQueryWhere<P> };

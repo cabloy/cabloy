@@ -31,6 +31,7 @@ import { Service } from 'vona-module-a-bean';
 import {
   $schema,
   bodySchemaWrapperDefault,
+  inputSchemaTransport,
   SymbolOpenApiOptions,
   SymbolRouteHandlersArgumentsMeta,
 } from 'vona-module-a-openapiutils';
@@ -313,6 +314,7 @@ export class ServiceOpenapi extends BeanBase {
         actionKey,
         actionOpenApiOptions,
         controllerOpenApiOptions,
+        options.schemaTarget ?? 'http',
       ),
       responses: this._collectResponses(controller, actionKey, actionOpenApiOptions),
     });
@@ -357,6 +359,7 @@ export class ServiceOpenapi extends BeanBase {
     actionKey: string,
     actionOpenApiOptions: IOpenapiOptions | undefined,
     controllerOpenApiOptions: IOpenapiOptions | undefined,
+    schemaTarget: 'http' | 'mcp' = 'http',
   ) {
     const { request: schemas, isUpload } = this._groupRequestSchemas(
       info,
@@ -364,6 +367,7 @@ export class ServiceOpenapi extends BeanBase {
       actionKey,
       actionOpenApiOptions,
       controllerOpenApiOptions,
+      schemaTarget,
     );
     const { body, ...request } = schemas;
     if (!body) return request as RouteConfig['request'];
@@ -383,6 +387,7 @@ export class ServiceOpenapi extends BeanBase {
     actionKey: string,
     actionOpenApiOptions: IOpenapiOptions | undefined,
     controllerOpenApiOptions: IOpenapiOptions | undefined,
+    schemaTarget: 'http' | 'mcp' = 'http',
   ) {
     // meta
     const argsMeta = this._prepareArgsMeta(
@@ -405,10 +410,12 @@ export class ServiceOpenapi extends BeanBase {
         if (!argsMapWithField[argMeta.type]) {
           argsMapWithField[argMeta.type] = {};
         }
-        argsMapWithField[argMeta.type][argMeta.field] = argMeta.schema;
+        argsMapWithField[argMeta.type][argMeta.field] =
+          schemaTarget === 'mcp' ? inputSchemaTransport(argMeta.schema) : argMeta.schema;
       } else {
         if (!argsMapIsolate[argMeta.type]) {
-          argsMapIsolate[argMeta.type] = argMeta.schema;
+          argsMapIsolate[argMeta.type] =
+            schemaTarget === 'mcp' ? inputSchemaTransport(argMeta.schema) : argMeta.schema;
         }
       }
     }

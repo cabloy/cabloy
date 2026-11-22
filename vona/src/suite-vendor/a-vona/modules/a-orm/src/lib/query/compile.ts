@@ -8,7 +8,13 @@ import type {
 } from '../../types/analysis.ts';
 import type { IModelSelectParamsJoin, IQueryParams } from '../../types/model.ts';
 import type { TypeModelWhere } from '../../types/modelWhere.ts';
-import type { IQueryPolicy, TypeQueryInput, TypeQueryPredicate } from '../../types/query.ts';
+import type {
+  IQueryField,
+  IQueryPolicy,
+  TypeQueryInput,
+  TypeQueryPredicate,
+  TypeQueryScalarPredicate,
+} from '../../types/query.ts';
 import type { TypeModelOfModelLike } from '../../types/relations.ts';
 import type { BeanModelCache } from '../bean.model/bean.model_cache.ts';
 
@@ -21,6 +27,8 @@ import { validateQuery } from './schema.ts';
 export interface ICompileQueryOptions {
   mode?: 'select' | TypeAnalysisMode;
   scopeWhere?: TypeModelWhere<any>;
+  /** Trusted child scopes; an own undefined entry explicitly permits unrestricted access. */
+  relationScopes?: Readonly<Record<string, TypeModelWhere<any> | undefined>>;
   analysis?: IAnalysisPolicy;
 }
 
@@ -69,6 +77,7 @@ export function $compileQuery<P extends IQueryPolicy>(
   if (options.scopeWhere) where[`${Op.and}scope`] = qualifyWhere(options.scopeWhere, main);
   const aliases = new Map<string, string>();
   const joins: IModelSelectParamsJoin<any, any, string>[] = [];
+  let relationIndex = 0;
   const addBinding = (field: string) => {
     const binding = policy.bindings[field];
     if (!binding) return `${main}.${field}`;
@@ -89,7 +98,85 @@ export function $compileQuery<P extends IQueryPolicy>(
     }
     return `${alias}.${binding.field}`;
   };
+  const compileScalar = (
+    node: TypeQueryScalarPredicate,
+    fields: Readonly<Record<string, IQueryField>>,
+    tableAlias: string,
+  ): TypeModelWhere<any> => {
+    if ('and' in node || 'or' in node) {
+      const op = 'and' in node ? Op.and : Op.or;
+      const children = 'and' in node ? node.and : node.or;
+      return {
+        [op]: Object.fromEntries(
+          children.map((child, index) => [
+            `${Op.and}${index}`,
+            compileScalar(child, fields, tableAlias),
+          ]),
+        ),
+      };
+    }
+    if ('not' in node) return { [Op.not]: compileScalar(node.not, fields, tableAlias) };
+    const column = `${tableAlias}.${node.field}`;
+    const op = node.op;
+    if (op === 'isNull') return { [column]: { [Op.is]: null } };
+    if (op === 'isNotNull') return { [column]: { [Op.isNot]: null } };
+    const rawValue = 'value' in node ? node.value : undefined;
+    const field = fields[node.field];
+    const convert = (entry: unknown) =>
+      field.type === 'timestamp' ? new Date(entry as string) : entry;
+    const operand = Array.isArray(rawValue) ? rawValue.map(convert) : convert(rawValue);
+    const compare = {
+      eq: Op.eq,
+      ne: Op.notEq,
+      gt: Op.gt,
+      gte: Op.gte,
+      lt: Op.lt,
+      lte: Op.lte,
+      in: Op.in,
+      notIn: Op.notIn,
+    } as const;
+    if (op in compare) return { [column]: { [compare[op as keyof typeof compare]]: operand } };
+    const escaped = String(operand).replace(/[!%_]/g, '!$&');
+    const pattern = op.startsWith('contains')
+      ? `%${escaped}%`
+      : op.startsWith('startsWith')
+        ? `${escaped}%`
+        : op.startsWith('endsWith')
+          ? `%${escaped}`
+          : escaped;
+    const insensitive = op.endsWith('I');
+    const capabilities = owner.db.dialect.capabilities;
+    const operator = insensitive && capabilities.like && capabilities.ilike ? 'ilike' : 'like';
+    return owner.raw(`?? ${operator} ? escape '!'`, [column, pattern]) as any;
+  };
   const compile = (node: TypeQueryPredicate): TypeModelWhere<any> => {
+    if ('relation' in node) {
+      const relation = policy.relations?.[node.relation];
+      if (!relation) throw new TypeError('Unknown query relation');
+      const hasScope = Object.hasOwn(options.relationScopes ?? {}, node.relation);
+      if (relation.authorizationRequired && !hasScope)
+        throw new TypeError(`Query relation ${node.relation} requires an authorization scope`);
+      const scope = hasScope ? options.relationScopes![node.relation] : undefined;
+      const target = owner.newInstanceTarget(relation.modelLike as any) as BeanModelCache<any>;
+      const targetTable = target.getTable(undefined);
+      const targetAlias = `query_exists_${relationIndex++}`;
+      const child = target.builder(`${targetTable} as ${targetAlias}`).select(1);
+      target.prepareWhere(child, targetAlias as any, {});
+      const correlation =
+        relation.type === 'belongsTo'
+          ? { [`${targetAlias}.id`]: target.ref(`${main}.${relation.key}`) }
+          : { [`${targetAlias}.${relation.key}`]: target.ref(`${main}.id`) };
+      target.buildWhere(child, {
+        [Op.and]: {
+          [`${Op.and}correlation`]: correlation,
+          ...(scope === undefined ? {} : { [`${Op.and}scope`]: qualifyWhere(scope, targetAlias) }),
+          ...(node.where
+            ? { [`${Op.and}query`]: compileScalar(node.where, relation.fields, targetAlias) }
+            : {}),
+        },
+      } as any);
+      return { [node.op === 'exists' ? Op.exists : Op.notExists]: child } as any;
+    }
     if ('and' in node || 'or' in node) {
       const op = 'and' in node ? Op.and : Op.or;
       const children = 'and' in node ? node.and : node.or;

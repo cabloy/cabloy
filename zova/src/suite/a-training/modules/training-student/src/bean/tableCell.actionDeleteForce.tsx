@@ -21,7 +21,7 @@ declare module 'zova-module-a-openapi' {
 export interface ITableCellOptionsActionDeleteForce extends IResourceTableActionRowOptionsBase {}
 
 @TableCell<ITableCellOptionsActionDeleteForce>({
-  class: 'btn btn-outline btn-error join-item',
+  class: 'btn btn-ghost btn-error join-item',
 })
 export class TableCellActionDeleteForce extends BeanBase implements ITableCellRender {
   render(

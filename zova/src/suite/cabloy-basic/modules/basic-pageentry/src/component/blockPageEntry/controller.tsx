@@ -517,7 +517,8 @@ export class ControllerBlockPageEntry<TData extends {} = {}> extends BeanControl
   async submitData(data: TypeFormOnSubmitData<TData>) {
     const mutationSubmit = this.$$modelResource.getFormMutationSubmit(this.formMeta, this.entryId);
     if (!mutationSubmit) throw new Error('Resource form has no submit mutation');
-    this.entryIdCreated = (await mutationSubmit.mutateAsync(data.value as any)) as TableIdentity;
+    const payload = this.$$modelResource.projectFormSubmitData(this.formMeta, data.value);
+    this.entryIdCreated = (await mutationSubmit.mutateAsync(payload as any)) as TableIdentity;
     this._dirty = false;
     await this._removeDraft();
     this.setPageMeta(data.value, false);

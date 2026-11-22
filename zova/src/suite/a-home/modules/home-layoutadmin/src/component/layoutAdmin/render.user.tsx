@@ -1,3 +1,5 @@
+import { RouterLink } from '@cabloy/vue-router';
+import { withModifiers } from 'vue';
 import { BeanRenderBase } from 'zova';
 import { Render } from 'zova-module-a-bean';
 import { ZButton } from 'zova-module-basic-button';
@@ -23,25 +25,12 @@ export class RenderUser extends BeanRenderBase {
           </summary>
           <ul class="bg-base-100 rounded-t-none p-2 w-32">
             <li>
-              <a
-                href={this.$router.getPagePath('/home/user/account')}
-                onClick={event => {
-                  if (
-                    event.button !== 0 ||
-                    event.metaKey ||
-                    event.ctrlKey ||
-                    event.shiftKey ||
-                    event.altKey
-                  ) {
-                    return;
-                  }
-                  event.preventDefault();
-                  this.app.$gotoPage('/home/user/account');
-                  closeNearestDetails(event);
-                }}
+              <RouterLink
+                to={this.$router.getPagePath('/home/user/account')}
+                nativeOnClick={withModifiers(closeNearestDetails, ['left', 'exact'])}
               >
                 {this.scope.locale['Account Settings']()}
-              </a>
+              </RouterLink>
             </li>
             <li>
               <ZButton
