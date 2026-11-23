@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import { mkdtemp, readFile, readdir, rm, writeFile } from 'node:fs/promises';
+import { glob, mkdtemp, readFile, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { resolve } from 'node:path';
 import { test } from 'node:test';
@@ -610,17 +610,14 @@ test('ATP catalogue role headers define scenarios but coverage and evidence tabl
 });
 
 test('repository ATP catalogues remain compatible with strict definitions', async () => {
-  const root = resolve(import.meta.dirname, '../../..');
-  const suiteEntries = await readdir(resolve(root, 'repo-specs'), { withFileTypes: true });
-  const suiteNames = suiteEntries
-    .filter(entry => entry.isDirectory() && !entry.name.startsWith('.'))
-    .map(entry => entry.name)
-    .sort();
-  assert.ok(suiteNames.length > 0, 'repo-specs must contain at least one suite directory');
-  for (const suiteName of suiteNames) {
-    const testPlan = await readFile(resolve(root, 'repo-specs', suiteName, 'test-plan.md'), 'utf8');
-    const atpIds = parseAtpIds(testPlan);
-    assert.ok(atpIds.size > 0, `${suiteName}/test-plan.md must define formal ATP scenarios`);
+  const specsRoot = resolve(import.meta.dirname, '../../../repo-specs');
+  // Lightweight specs may record acceptance in their README instead of a separate test plan.
+  const testPlans = (await Array.fromAsync(glob('*/test-plan.md', { cwd: specsRoot }))).sort();
+  assert.ok(testPlans.length > 0, 'repo-specs must contain at least one test plan');
+  for (const file of testPlans) {
+    const testPlan = await readFile(resolve(specsRoot, file), 'utf8');
+    const atpIds = parseAtpIds(testPlan, { file });
+    assert.ok(atpIds.size > 0, `${file} must define formal ATP scenarios`);
   }
 });
 
