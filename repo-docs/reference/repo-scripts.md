@@ -378,6 +378,22 @@ Cabloy Start exposes the equivalent Start repository surface:
 
 Cabloy Start does not expose Basic Commerce or root documentation wrappers.
 
+### Suite source ZIPs
+
+In a checkout that exposes `cabloy-suite-pack` and `cabloy-suite-import`, use these commands to transfer the authored source, specification files, and selected E2E files of one suite. The commands currently ship in Cabloy Start; the tooling supports Basic → Basic and Start → Start when available in the respective checkouts. It does not convert between editions or upgrade the framework.
+
+```bash
+npm run cabloy-suite-pack -- --suite <suite-id> --out ./artifacts/suite.zip
+npm run cabloy-suite-import -- ./artifacts/suite.zip --dry-run
+npm run cabloy-suite-import -- ./artifacts/suite.zip --apply
+```
+
+A version 3 ZIP contains only the new source payload, not a publisher-selected merge baseline. The importer stores the original ZIP and its SHA-256 after a successful source apply. This state lives in the destination's private Git worktree metadata (`cabloy-suite-import/`), not in tracked files or a shared location across linked worktrees. The next import compares the saved payload, current files, and incoming payload, even when releases were skipped. Switch branches away from an import only with care: a branch switch does not roll back this worktree-local state.
+
+If no baseline exists, absent files are added, identical files are left alone, and different existing files conflict. For an older installation without saved state, pass `--baseline ./artifacts/previous.zip` only when it is the trusted original release actually imported. Inspect the baseline source and digest shown in the dry run. Version 2 ZIPs remain readable, but their embedded `base/` is never used. A dry run, a conflict, or a failed source write does not advance the baseline; files absent from the incoming ZIP are not deleted. Use one source line per edition and suite identifier in a worktree: the local state is not bound to a Spec Store product.
+
+`--apply` does not execute the typed post-import tasks. To run them as part of an approved apply, pass `--apply --run-post-import`. A task failure does not roll back a successful source apply. These commands neither publish to Spec Store nor import ordinary product attachments as source packages.
+
 ## Development database preparation
 
 **Cabloy Basic and Cabloy Start** share this explicit development-preparation lifecycle. Use the active repository's commands and configuration; sharing the lifecycle does not make the editions' flavors or frontend outputs interchangeable.
