@@ -4,6 +4,16 @@
 
 In this tutorial, one prompt lets AI turn the new module into its first real business thread by generating a `student` CRUD workflow.
 
+## What you get from CRUD generation
+
+CRUD generation provides the resource with a ready-to-use capability baseline, not just a collection of files:
+
+- **HTTP CRUD API** — create, query, group, aggregate, view details, update, and delete operations, with DTO validation and OpenAPI metadata.
+- **Admin CRUD page** — the resource is automatically connected to Cabloy’s existing schema-driven `presetResource` CRUD page.
+- **RBAC guard baseline** — generated actions include action-level `@Passport.rbac()` guards, providing a foundation for additional scope-based data permissions.
+- **MCP tool metadata** — generated actions are marked as MCP tools, providing the metadata foundation for agent-driven business automation.
+- **ORM caching** — generated models use Vona’s default entity and query caches, providing out-of-the-box caching for ordinary model operations.
+
 ## Goal
 
 By the end of this tutorial, you will understand:
