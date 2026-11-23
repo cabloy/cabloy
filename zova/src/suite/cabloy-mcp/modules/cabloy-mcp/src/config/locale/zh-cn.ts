@@ -76,6 +76,22 @@ export default {
   McpScopeNoAllowedOption: '此请求没有可以授予的权限范围。请拒绝后从应用重新发起请求。',
   McpGrantedScope: '实际授予的权限范围',
   Close: '关闭',
+  McpQuickStart: 'MCP 快速上手',
+  McpQuickStartIntro: '采用 MCP 可以实现 Agent 驱动的业务自动化。',
+  McpQuickStartCard1: '配置 MCP Server',
+  McpQuickStartPromptHelp: '请在 Agent 客户端中输入如下提示词：',
+  McpQuickStartNameHelp: 'Name 可以自定义。',
+  McpQuickStartCard2: '连接并授权',
+  McpQuickStartAuthorize: '连接 MCP Server，并完成授权。',
+  McpQuickStartCard3: '开始使用 Agent',
+  McpQuickStartCopy: '复制提示词',
+  McpQuickStartPrompt1: `请你执行以下两个任务：
+1. 从以下URL安装Skills
+   - URL: %s
+2. 基于以下配置新增MCP Server
+   - Name: %s
+   - URL: %s`,
+  McpQuickStartPrompt3: '使用%s连接器能做些什么？',
   McpAccessTokens: 'MCP 访问令牌',
   McpAccessTokensHelp: '创建个人访问令牌，让 MCP 客户端以您的账户连接服务。',
   McpAccessTokenRetention: '过期和撤销的令牌会保留在列表中，直到您主动删除。令牌不支持编辑或刷新。',

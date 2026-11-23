@@ -668,6 +668,7 @@ test(
       const navigation = page.getByTestId('mine-navigation');
       await expect(navigation.getByRole('link')).toHaveText([
         'Account Settings',
+        'MCP quick start',
         'MCP scopes',
         'MCP authorizations',
         'MCP access tokens',
@@ -676,6 +677,7 @@ test(
         navigation.getByRole('link', { name: 'Account Settings', exact: true }),
       ).toHaveAttribute('aria-current', 'page');
       for (const item of [
+        { title: 'MCP quick start', path: '/cabloy/mcp/quickStart' },
         { title: 'MCP scopes', path: '/cabloy/mcp/scopes' },
         { title: 'MCP authorizations', path: '/cabloy/mcp/authorizations' },
         { title: 'MCP access tokens', path: '/cabloy/mcp/accessTokens' },
@@ -686,6 +688,27 @@ test(
         await expect(
           navigation.getByRole('link', { name: item.title, exact: true }),
         ).toHaveAttribute('aria-current', 'page');
+        if (item.path === '/cabloy/mcp/quickStart') {
+          const quickStart = page.getByTestId('mcp-quick-start');
+          await expect(quickStart).toBeVisible();
+          await expect(quickStart.locator('[data-testid^="mcp-quick-start-card-"]')).toHaveCount(3);
+          const prompt = page.getByTestId('mcp-quick-start-prompt-1');
+          await expect(prompt).toContainText(
+            'https://github.com/cabloy/cabloy/tree/main/repo-client-governance/skills/',
+          );
+          await expect(prompt).toContainText(`${new URL(page.url()).origin}/mcp/web`);
+          const connectionName = await prompt.getAttribute('data-connection-name');
+          expect(connectionName).toMatch(/^[a-z0-9]+(?:_[a-z0-9]+)+$/);
+          await expect(page.getByTestId('mcp-quick-start-prompt-3')).toContainText(connectionName!);
+          await page.context().grantPermissions(['clipboard-read', 'clipboard-write'], {
+            origin: new URL(page.url()).origin,
+          });
+          await page.getByTestId('mcp-quick-start-copy-prompt-3').click();
+          await expect
+            .poll(() => page.evaluate(() => navigator.clipboard.readText()))
+            .toContain(connectionName!);
+          await page.evaluate(() => navigator.clipboard.writeText(''));
+        }
         const response = await page.reload({ waitUntil: 'load' });
         expect(response?.ok()).toBeTruthy();
         expect(await response!.text()).toContain('data-testid="layout-mine"');

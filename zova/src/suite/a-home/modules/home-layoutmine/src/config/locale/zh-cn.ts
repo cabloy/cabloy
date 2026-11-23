@@ -2,6 +2,7 @@ export default {
   'Home': '首页',
   'PersonalCenter': '个人中心',
   'Account Settings': '账户设置',
+  'McpQuickStart': 'MCP快速上手',
   'McpScopes': 'MCP权限范围',
   'McpAuthorizations': 'MCP授权',
   'McpAccessTokens': 'MCP访问令牌',

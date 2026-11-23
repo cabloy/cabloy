@@ -2,6 +2,7 @@ export default {
   'Home': 'Home',
   'PersonalCenter': 'Personal center',
   'Account Settings': 'Account Settings',
+  'McpQuickStart': 'MCP quick start',
   'McpScopes': 'MCP scopes',
   'McpAuthorizations': 'MCP authorizations',
   'McpAccessTokens': 'MCP access tokens',

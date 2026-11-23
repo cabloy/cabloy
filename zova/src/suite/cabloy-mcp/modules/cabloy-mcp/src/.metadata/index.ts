@@ -253,6 +253,7 @@ declare module 'zova' {
 export * from '../page/accessTokens/controller.tsx';
 export * from '../page/authorizations/controller.tsx';
 export * from '../page/consent/controller.tsx';
+export * from '../page/quickStart/controller.tsx';
 export * from '../page/scopes/controller.tsx';
 
 import 'zova';
@@ -277,6 +278,11 @@ declare module 'zova-module-cabloy-mcp' {
           get scope(): ScopeModuleCabloyMcp;
         }
 
+        export interface ControllerPageQuickStart {
+          /** @internal */
+          get scope(): ScopeModuleCabloyMcp;
+        }
+
         export interface ControllerPageScopes {
           /** @internal */
           get scope(): ScopeModuleCabloyMcp;
@@ -287,6 +293,7 @@ declare module 'zova-module-cabloy-mcp' {
 import type { ControllerPageAccessTokens } from '../page/accessTokens/controller.tsx';
 import type { ControllerPageAuthorizations } from '../page/authorizations/controller.tsx';
 import type { ControllerPageConsent } from '../page/consent/controller.tsx';
+import type { ControllerPageQuickStart } from '../page/quickStart/controller.tsx';
 import type { ControllerPageScopes } from '../page/scopes/controller.tsx';
 import 'zova';
 declare module 'zova' {
@@ -294,6 +301,7 @@ declare module 'zova' {
     'cabloy-mcp.controller.pageAccessTokens': ControllerPageAccessTokens;
 'cabloy-mcp.controller.pageAuthorizations': ControllerPageAuthorizations;
 'cabloy-mcp.controller.pageConsent': ControllerPageConsent;
+'cabloy-mcp.controller.pageQuickStart': ControllerPageQuickStart;
 'cabloy-mcp.controller.pageScopes': ControllerPageScopes;
   }
 }
@@ -303,6 +311,7 @@ export * from './page/accessTokens.ts';
 export * from './page/authorizations.ts';
 export * from './page/consent.ts';
 import { NSControllerPageConsent } from './page/consent.ts';
+export * from './page/quickStart.ts';
 export * from './page/scopes.ts';
 export * from '../routes.ts';
 import { TypePagePathSchema } from 'zova-module-a-router';
@@ -312,6 +321,7 @@ export interface IPagePathRecord {
   '/cabloy/mcp/accessTokens': TypePagePathSchema<undefined,undefined>;
 '/cabloy/mcp/authorizations': TypePagePathSchema<undefined,undefined>;
 '/cabloy/mcp/consent': TypePagePathSchema<undefined,NSControllerPageConsent.QueryInput>;
+'/cabloy/mcp/quickStart': TypePagePathSchema<undefined,undefined>;
 '/cabloy/mcp/scopes': TypePagePathSchema<undefined,undefined>;
 }
 export interface IPageNameRecord {

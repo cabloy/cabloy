@@ -84,6 +84,22 @@ export default {
     'No scope can be granted for this request. Deny it and start a new request from the application.',
   McpGrantedScope: 'Granted scope',
   Close: 'Close',
+  McpQuickStart: 'MCP quick start',
+  McpQuickStartIntro: 'Use MCP to automate business tasks with an Agent.',
+  McpQuickStartCard1: 'Configure the MCP Server',
+  McpQuickStartPromptHelp: 'Enter the following prompt in your Agent client:',
+  McpQuickStartNameHelp: 'You can customize the Name.',
+  McpQuickStartCard2: 'Connect and authorize',
+  McpQuickStartAuthorize: 'Connect the MCP Server and complete authorization.',
+  McpQuickStartCard3: 'Ask the Agent',
+  McpQuickStartCopy: 'Copy prompt',
+  McpQuickStartPrompt1: `Please complete the following two tasks:
+1. Install Skills from the following URL:
+   - URL: %s
+2. Add a new MCP Server with the following configuration:
+   - Name: %s
+   - URL: %s`,
+  McpQuickStartPrompt3: 'What can I do with the %s connector?',
   McpAccessTokens: 'MCP access tokens',
   McpAccessTokensHelp: 'Create a personal access token to connect an MCP client with your account.',
   McpAccessTokenRetention:

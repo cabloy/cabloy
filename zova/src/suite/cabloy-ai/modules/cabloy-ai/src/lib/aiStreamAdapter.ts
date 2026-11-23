@@ -21,6 +21,7 @@ export interface ChatSendCommand {
 /** Native SDK protocol; the Model supplies the normal authenticated request path. */
 export function createAiStreamAdapter(prepareRequest: () => Promise<AxiosRequestConfig>) {
   return {
+    // oxlint-disable-next-line @stylistic/generator-star-spacing
     async *send(command: ChatSendCommand, signal: AbortSignal) {
       const prepared = await prepareRequest();
       signal.throwIfAborted();
