@@ -3550,7 +3550,7 @@ importers:
   src/suite-vendor/cabloy-ai:
     dependencies:
       vona-module-cabloy-ai:
-        specifier: ^5.0.2
+        specifier: ^5.0.3
         version: link:modules/cabloy-ai
 
   src/suite-vendor/cabloy-ai/modules/cabloy-ai:
