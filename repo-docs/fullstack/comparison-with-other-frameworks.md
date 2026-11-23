@@ -1,6 +1,6 @@
 # Comparison with Other Frameworks
 
-This page shows how **Cabloy** differs from several common framework choices, focusing on its one fullstack system for AI vibe coding: bidirectional type sync, CLI-first workflows, source-grounded docs and skills, and AI Spec-Driven Development. It also distinguishes strengths of the fullstack system from those of the backend layer provided by **Vona**.
+This page shows how **Cabloy** differs from several common framework choices, focusing on its Node.js fullstack system for AI-native vibe coding and spec-driven development, with agent-driven business automation through MCP, bidirectional type sync, CLI-first workflows, and source-grounded docs and skills. It also distinguishes strengths of the fullstack system from those of the backend layer provided by **Vona**.
 
 ## What is being compared
 

@@ -3,8 +3,8 @@ layout: home
 
 hero:
   name: 'Cabloy'
-  text: 'Node.js fullstack framework for AI vibe coding'
-  tagline: Vona and Zova stay connected through bidirectional type sync; AI Spec-Driven Development guides work from confirmed specs to verifiable delivery.
+  text: 'Node.js fullstack framework for AI-native vibe coding'
+  tagline: Spec-driven development for agent-driven business automation through MCP, with Vona and Zova connected by bidirectional type sync.
   actions:
     - theme: brand
       text: Get Started

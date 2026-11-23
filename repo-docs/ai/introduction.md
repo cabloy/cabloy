@@ -1,10 +1,10 @@
 # AI Development Introduction
 
-This page is the entrypoint for contributors who are designing, reviewing, or maintaining AI vibe coding workflows in the Cabloy repository.
+This page is the entrypoint for contributors who are designing, reviewing, or maintaining AI-native vibe coding workflows in the Cabloy repository.
 
-For work that must move from confirmed product intent to evidence-backed verification, use [AI Spec-Driven Development](/ai/ai-spec-driven-development). It is a disciplined specification-delivery path within AI Development, not a synonym for every AI vibe coding workflow.
+For work that must move from confirmed product intent to evidence-backed verification, use [AI Spec-Driven Development](/ai/ai-spec-driven-development). It is a disciplined specification-delivery path within AI Development, not a synonym for every AI-native vibe coding workflow.
 
-The Cabloy monorepo is a good fit for AI vibe coding because the source tree already contains most of the framework knowledge an agent needs:
+The Cabloy monorepo is a good fit for AI-native vibe coding because the source tree already contains most of the framework knowledge an agent needs:
 
 - root scripts for shared workflows
 - Vona CLI source and command groups
@@ -40,7 +40,7 @@ For contributor and automation workflows in this repository, prefer this order:
 
 Use `repo-docs/` for user-facing and agent-facing guidance that should remain durable and source-aligned.
 
-For normal project usage, prefer the user-facing entry docs such as [Fullstack Quickstart](/fullstack/quickstart). This AI section focuses on repository workflows and AI vibe coding.
+For normal project usage, prefer the user-facing entry docs such as [Fullstack Quickstart](/fullstack/quickstart). This AI section focuses on repository workflows and AI-native vibe coding.
 
 ### `repo-docs-internal/` engineering docs
 

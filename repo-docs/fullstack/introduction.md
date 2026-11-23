@@ -1,6 +1,6 @@
 # Fullstack Introduction
 
-Cabloy is a Node.js fullstack framework for AI vibe coding, with AI Spec-Driven Development guiding work from confirmed specs to verifiable delivery.
+Cabloy is a Node.js fullstack framework for AI-native vibe coding and spec-driven development, with agent-driven business automation through MCP.
 
 ## Shared architecture
 
