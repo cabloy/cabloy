@@ -1,12 +1,12 @@
 {
   "name": "vona-suite-a-file",
-  "version": "5.0.7",
+  "version": "5.0.8",
   "description": "",
   "author": "",
   "files": [],
   "type": "module",
   "dependencies": {
-    "vona-module-a-file": "^5.0.7",
+    "vona-module-a-file": "^5.0.8",
     "vona-module-file-cloudflare": "^5.0.5",
     "vona-module-file-native": "^5.0.5"
   },
