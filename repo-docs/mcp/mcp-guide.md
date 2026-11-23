@@ -1,10 +1,10 @@
 # MCP Integration Guide
 
-<Badge type="info" text="Basic" />
+Cabloy Basic and Cabloy Start both let an Agent use existing business APIs through the Model Context Protocol (MCP). **Tools** expose specific operations, **Skills** guide the Agent through a business task, and **authorization** controls what a connected client can use. The same Vona Controller Actions handle the business logic, validation and permissions for both HTTP and MCP.
 
-Cabloy Basic lets an Agent use existing business APIs through the Model Context Protocol (MCP). **Tools** expose specific operations, **Skills** guide the Agent through a business task, and **authorization** controls what a connected client can use. The same Vona Controller Actions handle the business logic, validation and permissions for both HTTP and MCP.
+<a id="what-cabloy-basic-provides"></a>
 
-## What Cabloy Basic provides
+## What Cabloy provides
 
 | Capability                              | What it does                                                                                                                                                                                                                          |
 | --------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -105,7 +105,7 @@ Links carry no credentials, do not run the source or target Action, and do not p
 
 Backend `cabloy-mcp` serves `/mcp/:ssrSiteId` on Vona's existing listener. The shared issuer is `${origin}/mcp`, with `/mcp/auth`, `/mcp/token` and `/mcp/register` owned by `mcp-auth`. An old bare `/mcp` connection must be replaced with an explicit Site URL and fresh authorization; there is no redirect or credential conversion. The frontend `cabloy-mcp` module supplies the four pages in existing SSR Sites.
 
-A tool enters a Site catalog only if its Controller is enabled, its Action has a registered route and its own `@Mcp.tool()` metadata, any server `includeTool` predicate and Action `ssrSites` filter allow it, and the mapper supports its contract. Unsupported opted-in Actions are omitted with server-side diagnostics. A Resource declaration is not required. Fixtures live separately in `a-test/test-mcp`; the [anonymous local test catalog](/mcp/mcp-commerce-local) is not a substitute for the authenticated Site endpoint.
+A tool enters a Site catalog only if its Controller is enabled, its Action has a registered route and its own `@Mcp.tool()` metadata, any server `includeTool` predicate and Action `ssrSites` filter allow it, and the mapper supports its contract. Unsupported opted-in Actions are omitted with server-side diagnostics. A Resource declaration is not required. Where available, the [anonymous local test catalog](/mcp/mcp-commerce-local) uses separate `a-test/test-mcp` fixtures and is not a substitute for the authenticated Site endpoint.
 
 Recognized dev/test/prod modes use the same authorization and instance boundary. Production requires an explicit trusted public `server.serve.protocol`/`host` pair. Unknown modes, unavailable runtime state and invalid required authority configuration fail closed. The integration is enabled by default; only literal `CABLOY_MCP_ENABLED=false` disables its environment-derived default. Application configuration can override that default.
 
@@ -131,7 +131,7 @@ MCP does not add transactionality, deduplication or rollback to an Action. An er
 
 ### Automated verification
 
-With the [repository test prerequisites](/reference/repo-scripts) available, run both commands from the repository root:
+In a checkout that includes `a-test/test-mcp` and the `test:mcp:no-listener` Vona script, run both commands from the repository root with the [repository test prerequisites](/reference/repo-scripts) available:
 
 ```bash
 npm run test

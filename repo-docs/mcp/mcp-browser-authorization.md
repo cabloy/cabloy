@@ -1,10 +1,8 @@
 # MCP Browser Authorization
 
-<Badge type="info" text="Basic" />
+This guide explains how an MCP client connects to Cabloy's authenticated `/mcp/:ssrSiteId` resources, such as `/mcp/admin` and `/mcp/web`. The authorization server uses RFC 7591 Dynamic Client Registration (DCR), existing Cabloy login, explicit consent and authorization code exchange with PKCE. Static OAuth client registrations are not supported. Clients that cannot perform OAuth but can send a Bearer header may instead use [personal MCP access tokens](/mcp/mcp-access-tokens), managed separately under Account → Security.
 
-This guide explains how an MCP client connects to Cabloy Basic's authenticated `/mcp/:ssrSiteId` resources, such as `/mcp/commerce` and `/mcp/web`. The authorization server uses RFC 7591 Dynamic Client Registration (DCR), existing Cabloy login, explicit consent and authorization code exchange with PKCE. Static OAuth client registrations are not supported. Clients that cannot perform OAuth but can send a Bearer header may instead use [personal MCP access tokens](/mcp/mcp-access-tokens), managed separately under Account → Security.
-
-Read [MCP Integration Guide](/mcp/mcp-guide) for endpoint ownership and admission, and [MCP Controller Tools](/mcp/mcp-controller-tools) for Action mapping and business examples. The [independent local test launcher](/mcp/mcp-commerce-local) is anonymous and rejects credentials; do not send OAuth tokens to it.
+Read [MCP Integration Guide](/mcp/mcp-guide) for endpoint ownership and admission, and [MCP Controller Tools](/mcp/mcp-controller-tools) for Action mapping and business examples. Where available, the [independent local test launcher](/mcp/mcp-commerce-local) is anonymous and rejects credentials; do not send OAuth tokens to it.
 
 ## Connected journey
 
@@ -49,7 +47,7 @@ Shared/role/nested scopes, a generalized scope policy engine, Client ID Metadata
 | Site MCP resource                         | `/mcp/:ssrSiteId`                                      |
 | Consent page inside the selected SSR Site | `/cabloy/mcp/consent`                                  |
 
-The shared authorization-server issuer is exactly **`${origin}/mcp`**. Each protected resource is exactly **`${origin}/mcp/${ssrSiteId}`**, for example `https://mcp.example.com/mcp/commerce` or `https://mcp.example.com/mcp/web`. These resources share the issuer, not credentials or tool catalogs. Site IDs are simple registered IDs, not flavor names, public-path prefixes or bean selectors. Protected-resource metadata and the Bearer challenge identify that exact Site resource; authorization-server metadata remains at `/.well-known/oauth-authorization-server/mcp`.
+The shared authorization-server issuer is exactly **`${origin}/mcp`**. Each protected resource is exactly **`${origin}/mcp/${ssrSiteId}`**, for example `https://mcp.example.com/mcp/admin` or `https://mcp.example.com/mcp/web`. These resources share the issuer, not credentials or tool catalogs. Site IDs are simple registered IDs, not flavor names, public-path prefixes or bean selectors. Protected-resource metadata and the Bearer challenge identify that exact Site resource; authorization-server metadata remains at `/.well-known/oauth-authorization-server/mcp`.
 
 Bare `/mcp` and the old unsuffixed protected-resource metadata path are not compatibility entrypoints. There is no default-Site fallback, redirect or conversion of old grants, personal scopes or tokens. Reconfigure the client and obtain new Site-bound authorization. `getMcpIssuer(...)` obtains `origin` through `app.util.getAbsoluteUrl()`: `AppUtil` uses the current context's effective `server.serve.protocol` and `server.serve.host` when present, otherwise root config, not `config.modules['mcp-auth']`. MCP URL validation still enforces the supported scheme, loopback-HTTP policy and exact origin shape.
 
@@ -127,7 +125,7 @@ The `cabloy` connection name in the scope example is illustrative, not required.
 
 A `cabloy_` prefix can help people and, where the client exposes it, an Agent recognize the source. It is optional branding, not a capability test, automatic skill trigger or authorization rule. Skills must not require that prefix. Tool namespace/display behavior is client-specific; do not assume a universal prefix format or mechanically strip one to recover a server tool name.
 
-A connection name is only a label: `prod`, `test` or `readonly` does not establish the effective environment or permissions. Renaming it does not change the endpoint, OAuth resource, server-owned instance routing or resource-bound consent Site. Configure the endpoint with the intended Site resource; the server derives the corresponding consent Site. Distinct SSR Sites have distinct `/mcp/:ssrSiteId` resources even when they share one backend, issuer and instance. Use separate connections and authorization for `/mcp/commerce` and `/mcp/web` when both are needed; never reuse a token across them. Two frontend URLs that resolve to the same Site ID do not create additional resources. Decide using the actual Site resource and instance/data scope, not website labels alone.
+A connection name is only a label: `prod`, `test` or `readonly` does not establish the effective environment or permissions. Renaming it does not change the endpoint, OAuth resource, server-owned instance routing or resource-bound consent Site. Configure the endpoint with the intended Site resource; the server derives the corresponding consent Site. Distinct SSR Sites have distinct `/mcp/:ssrSiteId` resources even when they share one backend, issuer and instance. Use separate connections and authorization for `/mcp/admin` and `/mcp/web` when both are needed; never reuse a token across them. Two frontend URLs that resolve to the same Site ID do not create additional resources. Decide using the actual Site resource and instance/data scope, not website labels alone.
 
 For each operation, resolve the user's intended business/site and environment using the client's available connection information and current tool descriptions. A name is a selection hint, not proof of identity or authority. If multiple connections still fit and the target is unclear, ask before sending business arguments or reading rows; do not query every server to guess the intended target.
 
@@ -155,7 +153,7 @@ Before login, custom validation checks syntax only. Authenticated resolution che
 
 ### Site-scoped Account Security management
 
-Personal scopes, OAuth authorizations and personal access tokens are managed within the current Site resource, current user and active instance. Their management APIs require the `ssrSiteId` query parameter; the UI supplies the current runtime `sys.env.SITE_ID`. The UI does not choose an unrelated Site or infer a Site from the page URL. A definition, grant or token from `/mcp/commerce` does not appear as a `/mcp/web` record or become mutable through a Web request just because its ID or scope name is known. Listing, revocation and deletion remain available to the owner after MCP eligibility is lost; issuing or exercising authority requires current admission.
+Personal scopes, OAuth authorizations and personal access tokens are managed within the current Site resource, current user and active instance. Their management APIs require the `ssrSiteId` query parameter; the UI supplies the current runtime `sys.env.SITE_ID`. The UI does not choose an unrelated Site or infer a Site from the page URL. A definition, grant or token from `/mcp/admin` does not appear as a `/mcp/web` record or become mutable through a Web request just because its ID or scope name is known. Listing, revocation and deletion remain available to the owner after MCP eligibility is lost; issuing or exercising authority requires current admission.
 
 ## Configure the server and consent Site
 
@@ -173,7 +171,7 @@ Illustrative configuration, **not a provisioned or verified deployment**:
 config.server.serve.protocol = 'https';
 config.server.serve.host = 'mcp.example.com';
 // Shared issuer: https://mcp.example.com/mcp.
-// Site resources: https://mcp.example.com/mcp/commerce and .../mcp/web.
+// Site resources: https://mcp.example.com/mcp/admin and .../mcp/web.
 config.modules['mcp-auth'] = {
   registration: {
     maxBodyBytes: 16384,
@@ -189,7 +187,7 @@ config.modules['mcp-auth'] = {
 };
 ```
 
-The requested resource selects its consent Site: `/mcp/commerce` uses the `commerce` SSR Site, and `/mcp/web` uses `web`. `MCP_AUTH_SSR_SITE` and `config.modules['mcp-auth'].ssrSite` are removed, without compatibility. There is no shortest-`publicPath` default, alternate-Site fallback, route-capability probe or role bypass. An unknown, disabled or unavailable Site fails closed. Include the shared consent page in every intended flavor. The normal page-path helper adds the resource Site's own public-path prefix; its runtime `SITE_ID` must match the pending authorization's Site.
+The requested resource selects its consent Site: `/mcp/admin` uses the `admin` SSR Site, and `/mcp/web` uses `web`. `MCP_AUTH_SSR_SITE` and `config.modules['mcp-auth'].ssrSite` are removed, without compatibility. There is no shortest-`publicPath` default, alternate-Site fallback, route-capability probe or role bypass. An unknown, disabled or unavailable Site fails closed. Include the shared consent page in every intended flavor. The normal page-path helper adds the resource Site's own public-path prefix; its runtime `SITE_ID` must match the pending authorization's Site.
 
 ### Existing databases and authority changes
 
@@ -201,7 +199,7 @@ Old origin-only issuer values differ from the exact `${origin}/mcp` issuer, and 
 
 ### 1. Start a fresh authorization request
 
-After DCR, create a fresh PKCE verifier and S256 challenge, then open `/mcp/auth`. Parameters identify `response_type=code`, the issued `client_id`, exact registered `redirect_uri`, exact Site `resource` (for example `https://mcp.example.com/mcp/commerce`, not the shared issuer), optional `scope`, `code_challenge` and `code_challenge_method=S256`. Omit scope to inherit the client ceiling, or request `mcp:read` to narrow an all registration. Keep and verify client-generated OAuth `state` for callback correlation.
+After DCR, create a fresh PKCE verifier and S256 challenge, then open `/mcp/auth`. Parameters identify `response_type=code`, the issued `client_id`, exact registered `redirect_uri`, exact Site `resource` (for example `https://mcp.example.com/mcp/admin`, not the shared issuer), optional `scope`, `code_challenge` and `code_challenge_method=S256`. Omit scope to inherit the client ceiling, or request `mcp:read` to narrow an all registration. Keep and verify client-generated OAuth `state` for callback correlation.
 
 The server validates client, redirect, resource, scope, instance and PKCE before redirecting toward a client callback, including error callbacks. Malformed/duplicate parameters and mismatched bindings are rejected.
 
@@ -310,7 +308,7 @@ The selected `passportAuthTokenClient` survives the MCP Passport handoff and cle
 - **Consent API origin mismatch:** check explicit Site/module overrides first. Vona integrated SSR normally supplies runtime API origins; see [Runtime API origins](/fullstack/ssr-entry-modes#runtime-api-origins-in-vona-integrated-ssr). Do not change environment values merely to match an isolated test listener.
 - **Decision rejected:** check current identity, lifetime and trusted origin. Do not replace authenticated POST with GET or weaken origin checks.
 - **Code/refresh rejected:** check exact bindings, verifier or current credential pair, expiry, revocation and scope. Reauthorize when needed; do not replay, recover or convert ordinary login credentials.
-- **MCP denied:** check the exact Site resource and current direct-role union's MCP and Site admission, then distinguish credential failure from independent business authorization. A `/mcp/commerce` token cannot authenticate `/mcp/web`; tokens do not create local roles or cross-instance access.
+- **MCP denied:** check the exact Site resource and current direct-role union's MCP and Site admission, then distinguish credential failure from independent business authorization. A `/mcp/admin` token cannot authenticate `/mcp/web`; tokens do not create local roles or cross-instance access.
 - **503 or missing tools:** check recognized mode, enabled/ready state, shutdown, required authority, Controller/route registration, Action-level opt-in, `ssrSites`, supported contract, scope and actual Action guards. Inspect server-side `diagnostics` for unsupported opted-in contracts. The standalone launcher always composes exactly three fixtures, while shared discovery can also include their opted-in Actions when `a-test/test-mcp` is active. Each `/mcp/:ssrSiteId` resource remains authenticated and does not use a fixed three-tool catalog.
 
 ## Operational limits

@@ -1,12 +1,10 @@
 # Personal MCP Access Tokens
 
-<Badge type="info" text="Basic" />
-
-Use a personal access token when an MCP client supports a configured Bearer header but cannot complete OAuth. This is an alternative issuance method for an authenticated `/mcp/:ssrSiteId` resource, such as `/mcp/commerce` or `/mcp/web`, not an anonymous endpoint or a different tool execution path. OAuth-capable clients can continue using [browser authorization](/mcp/mcp-browser-authorization).
+Use a personal access token when an MCP client supports a configured Bearer header but cannot complete OAuth. This is an alternative issuance method for an authenticated `/mcp/:ssrSiteId` resource, such as `/mcp/admin` or `/mcp/web`, not an anonymous endpoint or a different tool execution path. OAuth-capable clients can continue using [browser authorization](/mcp/mcp-browser-authorization).
 
 ## Create and connect
 
-1. Sign in through the intended Cabloy Site and open **Account → Security → MCP access tokens** (`/cabloy/mcp/accessTokens`, beneath that Site's public-path prefix). The page supplies the current runtime `sys.env.SITE_ID` as `ssrSiteId`; the Commerce Site manages `/mcp/commerce`, while the Web Site manages `/mcp/web`. This page is separate from **MCP authorizations** and **MCP personal scopes**.
+1. Sign in through the intended Cabloy Site and open **Account → Security → MCP access tokens** (`/cabloy/mcp/accessTokens`, beneath that Site's public-path prefix). The page supplies the current runtime `sys.env.SITE_ID` as `ssrSiteId`; the Admin Site manages `/mcp/admin`, while the Web Site manages `/mcp/web`. This page is separate from **MCP authorizations** and **MCP personal scopes**.
 2. Choose **Create**, enter a descriptive name and select one scope. The default is `mcp:read`; `mcp:all` permits write-capable tools only when the account already has their business permissions. An existing personal `mcp:custom:<name>` scope on this same Site resource restricts access to its selected exact tools. Manage those definitions on the personal scopes page.
 3. Set the lifetime in days. The default is **7 days**. The page converts days to seconds for the API. There is **no product maximum**: a longer positive, finite, safely representable lifetime is allowed. This does not provide a never-expiring token. OAuth access/refresh lifetime policies are unchanged.
 4. Create once, then copy the token and the server-derived MCP URL from the one-time result. Store the token in the client's protected credential configuration. The application cannot reveal it again after the dialog closes or navigation clears it; create a replacement and delete an unused token if necessary.
@@ -50,7 +48,7 @@ The authenticated personal API is owned by `mcp-auth`:
 | Create once            | `POST /api/mcp/auth/accessToken/createMine`       |
 | Delete own token       | `DELETE /api/mcp/auth/accessToken/deleteMine/:id` |
 
-All operations require the `ssrSiteId` query parameter. The UI takes it from the current runtime `sys.env.SITE_ID`, not a cross-Site picker. Create accepts `name`, optional `scope` and optional positive integer `expiresIn` (seconds) in its body. The server validates the Site and derives its canonical resource; user/auth identity and instance are not client-selected controls. Tokens, custom scopes and OAuth grants are resource-scoped: a `/mcp/commerce` credential cannot authenticate `/mcp/web`, and deleting an ID under another Site's management boundary does not bypass ownership.
+All operations require the `ssrSiteId` query parameter. The UI takes it from the current runtime `sys.env.SITE_ID`, not a cross-Site picker. Create accepts `name`, optional `scope` and optional positive integer `expiresIn` (seconds) in its body. The server validates the Site and derives its canonical resource; user/auth identity and instance are not client-selected controls. Tokens, custom scopes and OAuth grants are resource-scoped: a `/mcp/admin` credential cannot authenticate `/mcp/web`, and deleting an ID under another Site's management boundary does not bypass ownership.
 
 Responses use `Cache-Control: no-store`. The frontend consumes regenerated DTO/OpenAPI contracts; secret-bearing create results are kept out of query persistence and SSR transfer.
 

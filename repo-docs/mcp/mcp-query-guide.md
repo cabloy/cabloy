@@ -1,7 +1,5 @@
 # Query through an already-connected MCP client
 
-<Badge type="info" text="Basic" />
-
 Use this workflow after the client is connected and authorized. It needs no source inspection, environment files, credentials or development commands. To connect first, use [browser authorization](/mcp/mcp-browser-authorization) or [personal MCP access tokens](/mcp/mcp-access-tokens). For server integration, read the [MCP Integration Guide](/mcp/mcp-guide).
 
 ## Load the applicable Skill before execution
@@ -10,7 +8,7 @@ Load the self-contained [cabloy-mcp-query Skill](https://github.com/cabloy/cablo
 
 ## Discover, retrieve capabilities, then query
 
-1. Select the intended site's authorized connection (`/mcp/commerce` and `/mcp/web` are different resources), then discover an eligible read-only business query tool and identify its **exact server name**. Clients may prepend a connection prefix or normalize a displayed name; that displayed identifier is not the lookup argument.
+1. Select the intended site's authorized connection (for example, `/mcp/admin` and `/mcp/web` are different resources), then discover an eligible read-only business query tool and identify its **exact server name**. Clients may prepend a connection prefix or normalize a displayed name; that displayed identifier is not the lookup argument.
 2. Call the built-in `cabloy_tool_contract` on the same server with exactly `{ "tool": "<exact server tool name>", "section": "query" }` and no extra properties. Omitting `section` returns an overview, not query bindings.
 3. Read the matching `tool`, `grammarVersion: 1` for scalar-only bindings or `grammarVersion: 2` when relation predicates are advertised, and every applicable binding's `argumentPath`, `mode`, `capabilities`, `querySchema` and `predicates`.
 4. Build native JSON at the returned path, then call the business tool. `argumentPath: []` means flat arguments; do not add a query wrapper. Preserve other required argument locations.
