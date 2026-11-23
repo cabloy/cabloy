@@ -36,6 +36,19 @@ For Cabloy Start, clone the [Cabloy Start repository](https://github.com/cabloy/
 
 See the [AI Spec-Driven Development](https://cabloy.com/ai/ai-spec-driven-development).
 
+## MCP Business Automation
+
+Cabloy enables AI agents to use existing business APIs through the Model Context Protocol (MCP). Existing Vona Controller Actions can be exposed as MCP tools with `@Mcp.tool()`, reusing the same contracts, validation, serialization, authorization, and business logic as their HTTP APIs.
+
+MCP Skills guide agents through task-level workflows such as querying data, making business changes, uploading images, and handing off to browser pages. Site-scoped MCP endpoints, OAuth authorization, and personal access tokens keep connected clients within the permissions and business scope of the current account.
+
+- **MCP Tools:** Expose selected business operations to authorized agents.
+- **MCP Skills:** Turn individual tools into reusable, task-oriented business workflows.
+- **Shared business logic:** Serve HTTP and MCP clients through the same Vona Controller Actions.
+- **Scoped authorization:** Control Site, tool, and account access independently.
+
+Read the [MCP Integration Guide](https://cabloy.com/mcp/mcp-guide) and [MCP Controller Tools](https://cabloy.com/mcp/mcp-controller-tools) to connect a client or expose an API as an MCP tool.
+
 ## Demonstrations(Videos)
 
 ### 1. AI Coding in Action: One Prompt for CRUD, SSR & Multitasking (Duration: 3:50)
