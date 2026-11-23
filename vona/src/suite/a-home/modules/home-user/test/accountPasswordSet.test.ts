@@ -642,7 +642,7 @@ async function issuePasswordSetLink(
   } finally {
     mail.send = send;
   }
-  if (typeof text !== 'string') throw new Error('password-set email text not found');
+  if (typeof text !== 'string') throw new TypeError('password-set email text not found');
   const link = text.trim().split('\n').at(-1)?.trim();
   if (!link) throw new Error('password-set link not found');
   const url = new URL(link);

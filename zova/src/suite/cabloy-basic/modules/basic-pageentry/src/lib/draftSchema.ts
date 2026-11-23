@@ -552,7 +552,7 @@ function restoreNode(
       baselineRow = undefined;
       if (id !== undefined) {
         if (typeof id !== 'string' && (typeof id !== 'number' || !Number.isFinite(id)))
-          throw new Error('Invalid draft identity');
+          throw new TypeError('Invalid draft identity');
         const key = `${typeof id}:${id}`;
         const matches = rows.filter(item => rowId(item) === id);
         if (used.has(key) || matches.length !== 1) throw new Error('Changed draft relation');

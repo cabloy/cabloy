@@ -190,7 +190,7 @@ function detach(
   const result = array ? [] : Object.create(null);
   for (const key of Reflect.ownKeys(value)) {
     if (array && key === 'length') continue;
-    if (typeof key !== 'string') throw new Error('Unsupported completed configuration');
+    if (typeof key !== 'string') throw new TypeError('Unsupported completed configuration');
     const desc = Object.getOwnPropertyDescriptor(value, key)!;
     if (!('value' in desc)) throw new Error('Unsupported completed configuration');
     Object.defineProperty(result, key, {

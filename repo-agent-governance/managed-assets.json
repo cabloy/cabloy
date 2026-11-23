@@ -256,6 +256,20 @@
     {
       "adapter": "codex",
       "category": "skill",
+      "sha256": "c5a8676e50933425e077cfda630312de2fa201560ec25b14dc8e365b3cd941dd",
+      "source": "skills/cabloy-suite-import/SKILL.md",
+      "target": ".agents/skills/cabloy-suite-import/SKILL.md"
+    },
+    {
+      "adapter": "codex",
+      "category": "skill",
+      "sha256": "f01318b4f1cd9aa95c384faff9c1878458e21bb8b2d7c7a122e02c250d208382",
+      "source": "skills/cabloy-suite-pack/SKILL.md",
+      "target": ".agents/skills/cabloy-suite-pack/SKILL.md"
+    },
+    {
+      "adapter": "codex",
+      "category": "skill",
       "sha256": "900d9c74bd44f746990046c3ea142d653da740b156a648c573992134b5cc1b9f",
       "source": "skills/cabloy-workflow/evals/evals.json",
       "target": ".agents/skills/cabloy-workflow/evals/evals.json"
@@ -588,6 +602,20 @@
       "sha256": "e72bc7a4d476eb4e99aba7ca3e827618fcdf32f7d447ab0f2bdd3b503d8356de",
       "source": "skills/cabloy-spec-generation/SKILL.md",
       "target": ".claude/skills/cabloy-spec-generation/SKILL.md"
+    },
+    {
+      "adapter": "claude",
+      "category": "skill",
+      "sha256": "c5a8676e50933425e077cfda630312de2fa201560ec25b14dc8e365b3cd941dd",
+      "source": "skills/cabloy-suite-import/SKILL.md",
+      "target": ".claude/skills/cabloy-suite-import/SKILL.md"
+    },
+    {
+      "adapter": "claude",
+      "category": "skill",
+      "sha256": "f01318b4f1cd9aa95c384faff9c1878458e21bb8b2d7c7a122e02c250d208382",
+      "source": "skills/cabloy-suite-pack/SKILL.md",
+      "target": ".claude/skills/cabloy-suite-pack/SKILL.md"
     },
     {
       "adapter": "claude",
@@ -938,6 +966,20 @@
       "sha256": "e72bc7a4d476eb4e99aba7ca3e827618fcdf32f7d447ab0f2bdd3b503d8356de",
       "source": "skills/cabloy-spec-generation/SKILL.md",
       "target": ".cursor/skills/cabloy-spec-generation/SKILL.md"
+    },
+    {
+      "adapter": "cursor",
+      "category": "skill",
+      "sha256": "c5a8676e50933425e077cfda630312de2fa201560ec25b14dc8e365b3cd941dd",
+      "source": "skills/cabloy-suite-import/SKILL.md",
+      "target": ".cursor/skills/cabloy-suite-import/SKILL.md"
+    },
+    {
+      "adapter": "cursor",
+      "category": "skill",
+      "sha256": "f01318b4f1cd9aa95c384faff9c1878458e21bb8b2d7c7a122e02c250d208382",
+      "source": "skills/cabloy-suite-pack/SKILL.md",
+      "target": ".cursor/skills/cabloy-suite-pack/SKILL.md"
     },
     {
       "adapter": "cursor",

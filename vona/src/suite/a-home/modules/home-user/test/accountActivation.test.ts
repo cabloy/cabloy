@@ -257,7 +257,7 @@ async function registerWithActivationLink(): Promise<IRegistration> {
         await app.scope('a-captcha').cacheRedis.captcha.mdel(captchaKeys);
       }
     });
-    if (typeof text !== 'string') throw new Error('activation email text not found');
+    if (typeof text !== 'string') throw new TypeError('activation email text not found');
     const url = new URL(text.match(/https?:\/\/\S+/)?.[0] ?? '');
     const token = url.searchParams.get('token');
     if (!token) throw new Error('activation token not found');
@@ -341,7 +341,7 @@ async function issueActivationLink(fixture: IFixture, consumerUrl = activationCo
   } finally {
     mail.send = send;
   }
-  if (typeof text !== 'string') throw new Error('activation email text not found');
+  if (typeof text !== 'string') throw new TypeError('activation email text not found');
   const url = new URL(text.match(/https?:\/\/\S+/)?.[0] ?? '');
   const token = url.searchParams.get('token');
   if (!token) throw new Error('activation token not found');

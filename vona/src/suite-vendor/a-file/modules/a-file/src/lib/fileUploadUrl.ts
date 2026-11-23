@@ -218,7 +218,7 @@ function parseContentLength(value: string | string[] | undefined) {
   if (contentLength === undefined) return undefined;
   if (!/^\d+$/.test(contentLength)) throw new Error('Remote file Content-Length is invalid');
   const size = Number(contentLength);
-  if (!Number.isSafeInteger(size)) throw new Error('Remote file Content-Length is invalid');
+  if (!Number.isSafeInteger(size)) throw new TypeError('Remote file Content-Length is invalid');
   return size;
 }
 

@@ -380,7 +380,7 @@ Cabloy Start does not expose Basic Commerce or root documentation wrappers.
 
 ### Suite source ZIPs
 
-In a checkout that exposes `cabloy-suite-pack` and `cabloy-suite-import`, use these commands to transfer the authored source, specification files, and selected E2E files of one suite. The commands currently ship in Cabloy Start; the tooling supports Basic → Basic and Start → Start when available in the respective checkouts. It does not convert between editions or upgrade the framework.
+In a checkout that exposes `cabloy-suite-pack` and `cabloy-suite-import`, use these commands to transfer the authored source, specification files, and selected E2E files of one suite. The commands ship in Cabloy Basic and Cabloy Start; the tooling supports Basic → Basic and Start → Start when available in the respective checkouts. It does not convert between editions or upgrade the framework.
 
 ```bash
 npm run cabloy-suite-pack -- --suite <suite-id> --out ./artifacts/suite.zip

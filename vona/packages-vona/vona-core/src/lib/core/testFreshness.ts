@@ -115,7 +115,7 @@ export async function hasFreshnessDatabase(
       [plan.prefix.length, plan.prefix],
     );
     const rows = pg ? result?.rows : result?.[0];
-    if (!Array.isArray(rows)) throw new Error('Invalid freshness database response');
+    if (!Array.isArray(rows)) throw new TypeError('Invalid freshness database response');
     return rows.length !== 0;
   } finally {
     await connection.destroy();

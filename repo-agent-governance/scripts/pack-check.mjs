@@ -3,6 +3,7 @@ import { readFileSync } from 'node:fs';
 
 const output = execFileSync('npm', ['pack', '--json', '--dry-run', '--ignore-scripts'], {
   encoding: 'utf8',
+  maxBuffer: 128 * 1024 * 1024,
 });
 const packageInfo = JSON.parse(output)[0];
 const files = new Set(packageInfo.files.map(entry => entry.path));

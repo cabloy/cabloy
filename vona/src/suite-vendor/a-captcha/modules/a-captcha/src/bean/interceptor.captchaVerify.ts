@@ -25,7 +25,7 @@ export class InterceptorCaptchaVerify extends BeanBase implements IInterceptorEx
     const bodyField = options.bodyField!;
     const captcha: DtoCaptchaVerify | undefined = this.ctx.request.body[bodyField];
     if (!captcha) throw new Error('not found captcha data');
-    if (typeof captcha !== 'object') throw new Error('not found valid captcha data');
+    if (typeof captcha !== 'object') throw new TypeError('not found valid captcha data');
     // verify
     const verified = await this.bean.captcha.verify(captcha.id, captcha.token, sceneName);
     if (!verified) throw zodCustomError([bodyField], this.scope.locale.CaptchaInvalid());

@@ -191,7 +191,7 @@ function validateManifest() {
   if (!Array.isArray(skills.targets) || !skills.targets.length)
     throw new Error('Skill targets must be a non-empty array');
 
-  if (!Array.isArray(manifest.commands)) throw new Error('Commands must be an array');
+  if (!Array.isArray(manifest.commands)) throw new TypeError('Commands must be an array');
   const commands = manifest.commands.map((command, index) => {
     const item = requireObject(command, `Command ${index}`);
     assertKeys(item, ['adapter', 'source', 'target'], `Command ${index}`);

@@ -157,7 +157,7 @@ function oneOf(value: unknown, values: string[]) {
   if (!values.includes(value as string)) throw new Error('Invalid test claim state');
 }
 function bool(value: unknown) {
-  if (typeof value !== 'boolean') throw new Error('Invalid test claim boolean');
+  if (typeof value !== 'boolean') throw new TypeError('Invalid test claim boolean');
 }
 function array(value: unknown): asserts value is any[] {
   if (!Array.isArray(value) || value.length > 10000) throw new Error('Invalid test claim array');
@@ -848,7 +848,7 @@ export function getTestClaimRedisPrefix(
 
 function assertNoTlsTargetOverrides(tls: unknown) {
   if (!tls) return;
-  if (typeof tls === 'string') throw new Error('Unsupported managed TLS profile');
+  if (typeof tls === 'string') throw new TypeError('Unsupported managed TLS profile');
   if (typeof tls === 'object') {
     for (const key of [
       'host',

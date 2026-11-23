@@ -586,7 +586,7 @@ export function createSchemaRefreshContract(
               ]),
           ];
         } else if (schemaArrays.has(key) || (key === 'items' && Array.isArray(value))) {
-          if (!Array.isArray(value)) throw new Error('Invalid schema array');
+          if (!Array.isArray(value)) throw new TypeError('Invalid schema array');
           projected = [
             'schemas',
             value.map((item, index) =>
