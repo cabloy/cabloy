@@ -6,7 +6,7 @@
 [![Docs](https://img.shields.io/badge/docs-cabloy-4f46e5.svg?style=flat-square)](https://cabloy.com)
 [![Demo](https://img.shields.io/badge/demo-cabloy.com-059669.svg?style=flat-square)](https://cabloy.com/demo)
 
-Cabloy is a Node.js fullstack framework for AI vibe coding, with AI Spec-Driven Development guiding work from confirmed specs to verifiable delivery.
+Cabloy is a Node.js fullstack framework for AI-native vibe coding and spec-driven development, with agent-driven business automation through MCP.
 
 Cabloy Basic and Cabloy Start are complete editions built on this shared architecture; see [Editions Overview](https://cabloy.com/editions/overview) for their differences.
 
