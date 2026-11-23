@@ -1,5 +1,15 @@
 # Changelog
 
+## 5.1.297
+
+### Bug Fixes
+
+- Fix the chat test.
+
+### Improvements
+
+- Synchronize the release dependency lockfile.
+
 ## 5.1.296
 
 ### Features
