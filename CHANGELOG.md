@@ -1,5 +1,24 @@
 # Changelog
 
+## 5.1.298
+
+### Features
+
+- Add MCP quick-start guidance.
+- Add pack and import capabilities.
+- Update feature functionality.
+
+### Bug Fixes
+
+- Serialize the live test environment.
+
+### Improvements
+
+- Document MCP business automation and agent-driven workflows.
+- Add an MCP guide.
+- Update the README and CRUD tutorial.
+- Update implementation chart tests.
+
 ## 5.1.297
 
 ### Bug Fixes
