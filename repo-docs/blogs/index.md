@@ -10,6 +10,21 @@ Selected articles on Cabloy, Vona, Zova, and the architectural questions that sh
 
 <div class="cabloy-blog-grid">
   <article class="cabloy-blog-card">
+    <a class="cabloy-blog-card__cover" href="/blogs/zova-frontend-cache-vs-nextjs/" aria-label="Read Frontend Caching in Zova vs Next.js">
+      <img src="/blogs/zova-frontend-cache-vs-nextjs/cover-en-v1.png" alt="Two Answers to Frontend Caching: State Persistence vs Rendered Output Reuse" />
+    </a>
+    <div class="cabloy-blog-card__content">
+      <p class="cabloy-blog-card__date">November 23, 2026</p>
+      <h2><a href="/blogs/zova-frontend-cache-vs-nextjs/">Frontend Caching in Zova vs Next.js</a></h2>
+      <p>Compare Zova’s identity-scoped browser persistence and SSR state transfer with the data and rendering caches in the Next.js 15 App Router.</p>
+      <div class="cabloy-blog-card__tags" aria-label="Article topics">
+        <span>Caching</span><span>Next.js</span><span>Zova</span><span>TanStack Query</span>
+      </div>
+      <a class="cabloy-blog-card__read" href="/blogs/zova-frontend-cache-vs-nextjs/">Read article <span aria-hidden="true">→</span></a>
+    </div>
+  </article>
+
+  <article class="cabloy-blog-card">
     <a class="cabloy-blog-card__cover" href="/blogs/zova-nextjs-ssr-hydration-differences/" aria-label="Read SSR Hydration in Zova vs Next.js">
       <img src="/blogs/zova-nextjs-ssr-hydration-differences/cover-en-v1.png" alt="SSR Hydration in Zova vs Next.js" />
     </a>

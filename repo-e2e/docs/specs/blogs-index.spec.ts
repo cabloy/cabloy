@@ -25,6 +25,7 @@ interface IArticleGeometry {
 }
 
 const blogArticlePaths = [
+  '/blogs/zova-frontend-cache-vs-nextjs/',
   '/blogs/zova-nextjs-ssr-hydration-differences/',
   '/blogs/nestjs-dynamic-module-vs-vona-module-model/',
   '/blogs/ai-coding-one-prompt-crud-ssr-multitasking/',
@@ -129,14 +130,14 @@ test(
     }
     await expect(
       cards.nth(0).getByRole('link', {
-        name: 'SSR Hydration in Zova vs Next.js',
+        name: 'Frontend Caching in Zova vs Next.js',
         exact: true,
       }),
     ).toBeVisible();
-    await expect(cards.nth(0).locator('.cabloy-blog-card__date')).toHaveText('November 18, 2026');
+    await expect(cards.nth(0).locator('.cabloy-blog-card__date')).toHaveText('November 23, 2026');
     await expect(cards.nth(0).locator('.cabloy-blog-card__cover')).toHaveAttribute(
       'href',
-      '/blogs/zova-nextjs-ssr-hydration-differences/',
+      '/blogs/zova-frontend-cache-vs-nextjs/',
     );
 
     const geometry = await getBlogsGeometry(page);
