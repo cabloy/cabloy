@@ -109,7 +109,12 @@ describe('cabloy-ai live browser qualification', { concurrency: false }, () => {
             ],
             {
               cwd: dirname(app.projectPath),
-              env: { ...process.env, CABLOY_AI_LIVE_PREPARED: runId },
+              env: {
+                ...Object.fromEntries(
+                  Object.entries(process.env).map(([key, value]) => [key, String(value)]),
+                ),
+                CABLOY_AI_LIVE_PREPARED: runId,
+              } as unknown as NodeJS.ProcessEnv,
               timeout: 200_000,
               maxBuffer: 4 * 1024 * 1024,
             },
