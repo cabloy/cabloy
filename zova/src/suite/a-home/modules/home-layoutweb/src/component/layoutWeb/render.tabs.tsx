@@ -9,10 +9,11 @@ import { closeNearestDetails } from 'zova-module-home-base';
 
 import type { TypeMenuGroup, TypeMenuItem } from '../../model/menu.ts';
 
-type TypeMenuLeaf = Exclude<TypeMenuItem, TypeMenuGroup>;
+export type TypeMenuLeaf = Exclude<TypeMenuItem, TypeMenuGroup>;
 
 @Render()
 export class RenderTabs extends BeanRenderBase {
+  menuItemExtra?: (item: TypeMenuLeaf) => VNode | undefined;
   public renderTabs(): VNode | undefined {
     const $$modelTabs = this.$$modelTabs;
     if (!$$modelTabs) return;
@@ -62,7 +63,7 @@ export class RenderTabs extends BeanRenderBase {
     const title = item.title ?? '';
     const key = this._getMenuItemKey(item);
     const className = this._getMenuItemClassName(this._isMenuLeafActive(item, tabKey));
-    const domContent = this._renderMenuItemContent(item.icon as any, title);
+    const domContent = this._renderMenuItemContent(item.icon as any, title, item);
     const onClick = topLevel ? undefined : closeNearestDetails;
 
     if (item.external) {
@@ -157,11 +158,18 @@ export class RenderTabs extends BeanRenderBase {
     return isActive ? 'active text-primary' : '';
   }
 
-  private _renderMenuItemContent(icon: string | undefined, title: string): VNode {
+  protected _renderMenuItemExtra(_item: TypeMenuLeaf): VNode | undefined {}
+
+  protected _renderMenuItemContent(
+    icon: string | undefined,
+    title: string,
+    item?: TypeMenuLeaf,
+  ): VNode {
     return (
       <>
         {this._renderItemIcon(icon)}
         <span>{title}</span>
+        {item && (this.menuItemExtra ? this.menuItemExtra(item) : this._renderMenuItemExtra(item))}
       </>
     );
   }
