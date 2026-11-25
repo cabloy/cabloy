@@ -158,7 +158,9 @@ export class RenderTabs extends BeanRenderBase {
     return isActive ? 'active text-primary' : '';
   }
 
-  protected _renderMenuItemExtra(_item: TypeMenuLeaf): VNode | undefined {}
+  protected _renderMenuItemExtra(_item: TypeMenuLeaf): VNode | undefined {
+    return undefined;
+  }
 
   protected _renderMenuItemContent(
     icon: string | undefined,
