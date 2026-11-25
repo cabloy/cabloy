@@ -157,8 +157,46 @@ const sanitizeOptions: sanitizeHtml.IOptions = {
   },
 };
 
+const inertHtmlOptions: sanitizeHtml.IOptions = {
+  allowedTags: [
+    'blockquote',
+    'br',
+    'code',
+    'del',
+    'em',
+    'h1',
+    'h2',
+    'h3',
+    'h4',
+    'h5',
+    'h6',
+    'hr',
+    'li',
+    'mark',
+    'ol',
+    'p',
+    'pre',
+    's',
+    'span',
+    'strong',
+    'table',
+    'tbody',
+    'td',
+    'th',
+    'thead',
+    'tr',
+    'ul',
+  ],
+  allowedAttributes: { code: ['class'], span: ['class'] },
+  allowedClasses: sanitizeOptions.allowedClasses,
+};
+
 @Bean()
 export class BeanMarkdown extends BeanBase {
+  sanitizeInertHtml(html: string): string {
+    return sanitizeHtml(html, inertHtmlOptions);
+  }
+
   renderHtml(markdown?: string): string {
     if (!markdown?.trim()) return '';
     const json = markdownManager.parse(markdown);
