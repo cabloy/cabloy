@@ -10,6 +10,20 @@ Selected articles on Cabloy, Vona, Zova, and the architectural questions that sh
 
 <div class="cabloy-blog-grid">
   <article class="cabloy-blog-card">
+    <a class="cabloy-blog-card__cover" href="/blogs/cabloy-zova-nextjs-layout-components/" aria-label="Read Cabloy/Zova and Next.js Layouts: From Directory Nesting to Route Shells">
+      <img src="/blogs/cabloy-zova-nextjs-layout-components/cover-en-v1.png" alt="Cabloy/Zova and Next.js Layouts: From Directory Nesting to Route Shells" />
+    </a>
+    <div class="cabloy-blog-card__content">
+      <p class="cabloy-blog-card__date">November 27, 2026</p>
+      <h2><a href="/blogs/cabloy-zova-nextjs-layout-components/">Cabloy/Zova and Next.js Layouts: From Directory Nesting to Route Shells</a></h2>
+      <p>Compare how Zova and the two Next.js routers select layouts, host routed content, retain state, and render shared shells through SSR.</p>
+      <div class="cabloy-blog-card__tags" aria-label="Article topics">
+        <span>Cabloy</span><span>Zova</span><span>Next.js</span><span>Layouts</span>
+      </div>
+      <a class="cabloy-blog-card__read" href="/blogs/cabloy-zova-nextjs-layout-components/">Read article <span aria-hidden="true">→</span></a>
+    </div>
+  </article>
+  <article class="cabloy-blog-card">
     <a class="cabloy-blog-card__cover" href="/blogs/zova-frontend-cache-vs-nextjs/" aria-label="Read Frontend Caching in Zova vs Next.js">
       <img src="/blogs/zova-frontend-cache-vs-nextjs/cover-en-v1.png" alt="Two Answers to Frontend Caching: State Persistence vs Rendered Output Reuse" />
     </a>
