@@ -136,6 +136,8 @@ Unlike ordinary additive config merging, **each config layer that supplies `loca
 
 An enabled language may have no installed provider; missing text then uses the normal `en-us` / original-key fallback. Conversely, an installed but disabled language remains unavailable for active selection. Neither case is proof of translation completeness. The configured default does not change missing-message fallback; see [Module Scope](/frontend/module-scope#override-precedence-and-missing-message-fallback).
 
+For the distinction between this runtime-locale policy and a locale represented in a page URL, see [Runtime locale and route locale](/frontend/page-route-guide#runtime-locale-and-route-locale).
+
 ### Configure frontend and backend roots separately
 
 For a paired application, also configure Vona's root `config.locale.items` and `config.locale.default` in `vona/src/backend/config/config/config.ts` or its applicable config layer. Keep the deployed frontend and backend policies aligned deliberately: neither stack automatically synchronizes its enabled set or default to the other. `APP_LOCALE_DEFAULT` supplies the frontend default only where the frontend config reads it; it does not enable the language or configure the backend root.

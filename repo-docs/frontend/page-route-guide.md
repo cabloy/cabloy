@@ -96,6 +96,19 @@ Choose `meta.ssrProfile` from the page's rendering contract. Use `session` when 
 
 This is one reason route records matter so much: they are not just URL declarations. They are an application-behavior surface.
 
+### Runtime locale and route locale
+
+Cabloy has two related but different locale mechanisms:
+
+| Concept            | Meaning                                                                                                                                                                                                                                                                                          | Does it change the URL?                                                                                                                                     |
+| ------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Runtime locale** | The active application language in `app.meta.locale.current`. Its policy comes from frontend `config.locale.default`, `config.locale.items`, and `config.locale.storeKey`; the configured store key can persist a preference in a locale cookie when the effective runtime allows cookie access. | Not necessarily. Switching the runtime locale changes translations and other locale-dependent application state while the current URL can remain unchanged. |
+| **Route locale**   | An explicit `:locale` URL parameter on a route that opts into URL-locale handling with `meta.locale: true`. A public alias commonly gives that parameter a shape such as `/:locale(${LocalePattern})?`.                                                                                          | Yes. The locale becomes part of the public route when it is present. The configured default is commonly omitted from an optional locale segment.            |
+
+A route-locale navigation synchronizes the resolved URL locale into `app.meta.locale.current` during SSR and navigation, and the router can canonicalize the default-locale URL. This synchronization is conditional on `meta.locale: true`: a locale-looking path segment on an unrelated route does not by itself enable route-locale behavior. Conversely, a route without a locale parameter can still use a non-default runtime locale selected from configuration or a saved preference.
+
+Do not treat `config.locale.default`, `APP_LOCALE_DEFAULT`, or a locale cookie as a declaration of a `:locale` route parameter. For URL shape and alias generation, see the [Route Alias Guide](/frontend/route-alias-guide); for enabled languages and runtime-locale policy, see the [Environment and Config Guide](/frontend/environment-config-guide). `meta.ssrProfile` remains a separate rendering and cookie-capability decision, and `requiresAuth` remains a separate route-admission decision. When a public route exposes locale in its URL, its SSR canonicalization and response-cache policy must treat the locale-specific URLs as distinct public variants.
+
 ## Route records inside routed dialogs
 
 An ordinary page route can also be the target of a [Routed Dialog](/frontend/routed-dialog-guide). The route still follows the rules on this page: dynamic params require `name`, static routes normally remain unnamed, and generated `$params` / `$query` schemas continue to apply.

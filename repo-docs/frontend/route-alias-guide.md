@@ -74,6 +74,8 @@ The current pattern accepts the common `xx` and `xx-yy` forms, such as `en-us`, 
 
 When the route declares `meta.locale: true`, `$router.getAliasPath(..., { params: { locale: true } })` uses the current locale and omits the configured default locale from an optional locale segment. Thus, with `en-us` as the default, the same alias can produce `/product/42` for `en-us` and `/zh-cn/product/42` for `zh-cn`.
 
+This URL-oriented behavior is distinct from changing the active application language without changing the URL. See [Runtime locale and route locale](/frontend/page-route-guide#runtime-locale-and-route-locale) for the complete distinction and its SSR implications.
+
 ## Generate a configured alias path
 
 When application code needs a user-facing URL for a named route, use the canonical route name with `$router.getAliasPath(...)`:
